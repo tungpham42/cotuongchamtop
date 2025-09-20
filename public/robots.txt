@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://cotuong.top/sitemap.xml

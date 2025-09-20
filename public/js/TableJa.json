@@ -1,0 +1,18 @@
+
+{
+	"sProcessing":   "処理...",
+	"sLengthMenu":   "見せる _MENU_ 部屋",
+	"sZeroRecords":  "一致する部屋が見つかりません",
+	"sInfo":         "表示中 _START_ に _END_ の _TOTAL_ 部屋",
+	"sInfoEmpty":    "表示中 0 に 0 の 0 部屋",
+	"sInfoFiltered": "(合計 _MAX_ 部屋からフィルタ)",
+	"sInfoPostFix":  "",
+	"sSearch":       "探す:",
+	"sUrl":          "",
+	"oPaginate": {
+		"sFirst":    "初め",
+		"sLast":     "最後",
+		"sNext":     "次",
+		"sPrevious": "前"
+	}
+}

@@ -1,0 +1,9 @@
+RewriteEngine on
+# if a directory or a file exists, use it directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RedirectMatch 404 /\.git
+
+# otherwise forward it to index.php
+RewriteRule (.*) index.php?r=$1 [QSA]

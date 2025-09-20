@@ -1,0 +1,37 @@
+{
+"short_name": "Cờ tướng",
+"name": "Cờ tướng cho mọi người",
+"description": "Cờ tướng 2 người, cờ tướng online, chơi cờ tướng với máy",
+"lang": "vi-VN",
+"theme_color": "#f04124",
+"background_color": "#f04124",
+"display": "fullscreen",
+"icons": [
+    {
+    "src": "/img/app-icons/icon-48-game.png",
+    "type": "image/png",
+    "sizes": "48x48"
+    },
+    {
+    "src": "/img/app-icons/icon-96-game.png",
+    "type": "image/png",
+    "sizes": "96x96"
+    },
+    {
+    "src": "/img/app-icons/icon-144-game.png",
+    "type": "image/png",
+    "sizes": "144x144"
+    },
+    {
+    "src": "/img/app-icons/icon-192-game.png",
+    "type": "image/png",
+    "sizes": "192x192"
+    },
+    {
+    "src": "/img/app-icons/icon-512-game.png",
+    "type": "image/png",
+    "sizes": "512x512"
+    }
+],
+"start_url": "/?utm_source=homescreen"
+}

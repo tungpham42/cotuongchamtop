@@ -1,0 +1,1 @@
+<a id="volumeSwitch" style="width: 60px !important;" class="btn btn-dark btn-lg text-light" href="javascript:void(0);" onclick="toggleMute();" data-toggle="tooltip" data-placement="top" title=""><i class="fad"></i></a>

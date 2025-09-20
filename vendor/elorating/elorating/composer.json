@@ -1,0 +1,29 @@
+{
+    "name": "elorating/elorating",
+    "description": "Generate ELO ratings for each of your players.",
+    "type": "library",
+    "keywords": ["chess"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Elijah Cruz",
+            "email": "elijah@ecwebservices.net"
+        }
+    ],
+    "require": {
+        "php": "^7.0|^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "EloRating\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "EloRating\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}

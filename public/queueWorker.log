@@ -1,0 +1,596 @@
+  2023-03-26 13:25:47 App\Jobs\QuickMatchJob ......................... RUNNING
+  2023-03-26 13:25:48 App\Jobs\QuickMatchJob ................... 369.20ms FAIL
+
+   UnexpectedValueException 
+
+  The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cotuong_main.failed_jobs' doesn't exist (SQL: insert into `failed_jobs` (`uuid`, `connection`, `queue`, `payload`, `exception`, `failed_at`) values (0abea417-6cc8-47de-a272-e4f7c2a453db, database, default, {"uuid":"0abea417-6cc8-47de-a272-e4f7c2a453db","displayName":"App\\Jobs\\QuickMatchJob","job":"Illuminate\\Queue\\CallQueuedHandler@call","maxTries":null,"maxExceptions":null,"failOnTimeout":false,"backoff":null,"timeout":null,"retryUntil":null,"data":{"commandName":"App\\Jobs\\QuickMatchJob","command":"O:22:\"App\\Jobs\\QuickMatchJob\":0:{}"}}, Error: Class "App\Jobs\Cache" not found in /home/cotuong/domains/cotuong.top/public_html/app/Jobs/QuickMatchJob.php:39
+Stack trace:
+#0 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\Jobs\QuickMatchJob->handle()
+#1 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
+#2 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\Container\Util::unwrapIfClosure()
+#3 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\Container\BoundMethod::callBoundMethod()
+#4 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(661): Illuminate\Container\BoundMethod::call()
+#5 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Bus/Dispatcher.php(128): Illuminate\Container\Container->call()
+#6 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(141): Illuminate\Bus\Dispatcher->Illuminate\Bus\{closure}()
+#7 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(116): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#8 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Bus/Dispatcher.php(132): Illuminate\Pipeline\Pipeline->then()
+#9 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(124): Illuminate\Bus\Dispatcher->dispatchNow()
+#10 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(141): Illuminate\Queue\CallQueuedHandler->Illuminate\Queue\{closure}()
+#11 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(116): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#12 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(126): Illuminate\Pipeline\Pipeline->then()
+#13 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(70): Illuminate\Queue\CallQueuedHandler->dispatchThroughMiddleware()
+#14 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Jobs/Job.php(98): Illuminate\Queue\CallQueuedHandler->call()
+#15 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(425): Illuminate\Queue\Jobs\Job->fire()
+#16 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(375): Illuminate\Queue\Worker->process()
+#17 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(173): Illuminate\Queue\Worker->runJob()
+#18 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Console/WorkCommand.php(147): Illuminate\Queue\Worker->daemon()
+#19 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Console/WorkCommand.php(130): Illuminate\Queue\Console\WorkCommand->runWorker()
+#20 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\Queue\Console\WorkCommand->handle()
+#21 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
+#22 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\Container\Util::unwrapIfClosure()
+#23 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\Container\BoundMethod::callBoundMethod()
+#24 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(661): Illuminate\Container\BoundMethod::call()
+#25 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Console/Command.php(183): Illuminate\Container\Container->call()
+#26 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Command/Command.php(312): Illuminate\Console\Command->execute()
+#27 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Console/Command.php(153): Symfony\Component\Console\Command\Command->run()
+#28 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Application.php(1022): Illuminate\Console\Command->run()
+#29 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Application.php(314): Symfony\Component\Console\Application->doRunCommand()
+#30 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Application.php(168): Symfony\Component\Console\Application->doRun()
+#31 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Console/Application.php(102): Symfony\Component\Console\Application->run()
+#32 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(155): Illuminate\Console\Application->run()
+#33 /home/cotuong/domains/cotuong.top/public_html/artisan(37): Illuminate\Foundation\Console\Kernel->handle()
+#34 {main}, 2023-03-26 13:25:48))
+Context: {"exception":{"errorInfo":["42S02",1146,"Table 'cotuong_main.failed_jobs' doesn't exist"]}}
+Context: {"exception":{}}
+Context: {"exception":{}}
+
+  at /home/cotuong/domains/cotuong.top/public_html/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php:146
+    142▕             restore_error_handler();
+    143▕             if (!is_resource($stream)) {
+    144▕                 $this->stream = null;
+    145▕ 
+  ➜ 146▕                 throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened in append mode: '.$this->errorMessage, $url) . Utils::getRecordMessageForException($record));
+    147▕             }
+    148▕             stream_set_chunk_size($stream, $this->streamChunkSize);
+    149▕             $this->stream = $stream;
+    150▕         }
+
+      [2m+10 vendor frames [22m
+  11  [internal]:0
+      Illuminate\Foundation\Bootstrap\HandleExceptions::Illuminate\Foundation\Bootstrap\{closure}()
+  2023-03-26 13:27:10 App\Jobs\QuickMatchJob ......................... RUNNING
+  2023-03-26 13:27:10 App\Jobs\QuickMatchJob ................... 299.50ms FAIL
+
+   UnexpectedValueException 
+
+  The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cotuong_main.failed_jobs' doesn't exist (SQL: insert into `failed_jobs` (`uuid`, `connection`, `queue`, `payload`, `exception`, `failed_at`) values (c3fb6339-2476-4152-bc8c-5a6eb0c82773, database, default, {"uuid":"c3fb6339-2476-4152-bc8c-5a6eb0c82773","displayName":"App\\Jobs\\QuickMatchJob","job":"Illuminate\\Queue\\CallQueuedHandler@call","maxTries":null,"maxExceptions":null,"failOnTimeout":false,"backoff":null,"timeout":null,"retryUntil":null,"data":{"commandName":"App\\Jobs\\QuickMatchJob","command":"O:22:\"App\\Jobs\\QuickMatchJob\":0:{}"}}, Error: Class "App\Jobs\Cache" not found in /home/cotuong/domains/cotuong.top/public_html/app/Jobs/QuickMatchJob.php:39
+Stack trace:
+#0 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\Jobs\QuickMatchJob->handle()
+#1 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
+#2 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\Container\Util::unwrapIfClosure()
+#3 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\Container\BoundMethod::callBoundMethod()
+#4 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(661): Illuminate\Container\BoundMethod::call()
+#5 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Bus/Dispatcher.php(128): Illuminate\Container\Container->call()
+#6 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(141): Illuminate\Bus\Dispatcher->Illuminate\Bus\{closure}()
+#7 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(116): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#8 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Bus/Dispatcher.php(132): Illuminate\Pipeline\Pipeline->then()
+#9 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(124): Illuminate\Bus\Dispatcher->dispatchNow()
+#10 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(141): Illuminate\Queue\CallQueuedHandler->Illuminate\Queue\{closure}()
+#11 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(116): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#12 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(126): Illuminate\Pipeline\Pipeline->then()
+#13 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(70): Illuminate\Queue\CallQueuedHandler->dispatchThroughMiddleware()
+#14 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Jobs/Job.php(98): Illuminate\Queue\CallQueuedHandler->call()
+#15 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(425): Illuminate\Queue\Jobs\Job->fire()
+#16 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(375): Illuminate\Queue\Worker->process()
+#17 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(173): Illuminate\Queue\Worker->runJob()
+#18 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Console/WorkCommand.php(147): Illuminate\Queue\Worker->daemon()
+#19 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Console/WorkCommand.php(130): Illuminate\Queue\Console\WorkCommand->runWorker()
+#20 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\Queue\Console\WorkCommand->handle()
+#21 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
+#22 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\Container\Util::unwrapIfClosure()
+#23 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\Container\BoundMethod::callBoundMethod()
+#24 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(661): Illuminate\Container\BoundMethod::call()
+#25 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Console/Command.php(183): Illuminate\Container\Container->call()
+#26 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Command/Command.php(312): Illuminate\Console\Command->execute()
+#27 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Console/Command.php(153): Symfony\Component\Console\Command\Command->run()
+#28 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Application.php(1022): Illuminate\Console\Command->run()
+#29 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Application.php(314): Symfony\Component\Console\Application->doRunCommand()
+#30 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Application.php(168): Symfony\Component\Console\Application->doRun()
+#31 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Console/Application.php(102): Symfony\Component\Console\Application->run()
+#32 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(155): Illuminate\Console\Application->run()
+#33 /home/cotuong/domains/cotuong.top/public_html/artisan(37): Illuminate\Foundation\Console\Kernel->handle()
+#34 {main}, 2023-03-26 13:27:10))
+Context: {"exception":{"errorInfo":["42S02",1146,"Table 'cotuong_main.failed_jobs' doesn't exist"]}}
+Context: {"exception":{}}
+Context: {"exception":{}}
+
+  at /home/cotuong/domains/cotuong.top/public_html/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php:146
+    142▕             restore_error_handler();
+    143▕             if (!is_resource($stream)) {
+    144▕                 $this->stream = null;
+    145▕ 
+  ➜ 146▕                 throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened in append mode: '.$this->errorMessage, $url) . Utils::getRecordMessageForException($record));
+    147▕             }
+    148▕             stream_set_chunk_size($stream, $this->streamChunkSize);
+    149▕             $this->stream = $stream;
+    150▕         }
+
+      [2m+10 vendor frames [22m
+  11  [internal]:0
+      Illuminate\Foundation\Bootstrap\HandleExceptions::Illuminate\Foundation\Bootstrap\{closure}()
+  2023-03-26 13:28:09 App\Jobs\QuickMatchJob ......................... RUNNING
+  2023-03-26 13:28:09 App\Jobs\QuickMatchJob ................... 305.10ms FAIL
+
+   UnexpectedValueException 
+
+  The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cotuong_main.failed_jobs' doesn't exist (SQL: insert into `failed_jobs` (`uuid`, `connection`, `queue`, `payload`, `exception`, `failed_at`) values (6f43c1cb-b8e6-4bc5-8229-2854eb8bd736, database, default, {"uuid":"6f43c1cb-b8e6-4bc5-8229-2854eb8bd736","displayName":"App\\Jobs\\QuickMatchJob","job":"Illuminate\\Queue\\CallQueuedHandler@call","maxTries":null,"maxExceptions":null,"failOnTimeout":false,"backoff":null,"timeout":null,"retryUntil":null,"data":{"commandName":"App\\Jobs\\QuickMatchJob","command":"O:22:\"App\\Jobs\\QuickMatchJob\":0:{}"}}, Error: Class "App\Jobs\Cache" not found in /home/cotuong/domains/cotuong.top/public_html/app/Jobs/QuickMatchJob.php:39
+Stack trace:
+#0 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\Jobs\QuickMatchJob->handle()
+#1 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
+#2 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\Container\Util::unwrapIfClosure()
+#3 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\Container\BoundMethod::callBoundMethod()
+#4 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(661): Illuminate\Container\BoundMethod::call()
+#5 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Bus/Dispatcher.php(128): Illuminate\Container\Container->call()
+#6 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(141): Illuminate\Bus\Dispatcher->Illuminate\Bus\{closure}()
+#7 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(116): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#8 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Bus/Dispatcher.php(132): Illuminate\Pipeline\Pipeline->then()
+#9 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(124): Illuminate\Bus\Dispatcher->dispatchNow()
+#10 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(141): Illuminate\Queue\CallQueuedHandler->Illuminate\Queue\{closure}()
+#11 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(116): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#12 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(126): Illuminate\Pipeline\Pipeline->then()
+#13 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(70): Illuminate\Queue\CallQueuedHandler->dispatchThroughMiddleware()
+#14 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Jobs/Job.php(98): Illuminate\Queue\CallQueuedHandler->call()
+#15 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(425): Illuminate\Queue\Jobs\Job->fire()
+#16 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(375): Illuminate\Queue\Worker->process()
+#17 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(173): Illuminate\Queue\Worker->runJob()
+#18 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Console/WorkCommand.php(147): Illuminate\Queue\Worker->daemon()
+#19 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Console/WorkCommand.php(130): Illuminate\Queue\Console\WorkCommand->runWorker()
+#20 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\Queue\Console\WorkCommand->handle()
+#21 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
+#22 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\Container\Util::unwrapIfClosure()
+#23 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\Container\BoundMethod::callBoundMethod()
+#24 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(661): Illuminate\Container\BoundMethod::call()
+#25 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Console/Command.php(183): Illuminate\Container\Container->call()
+#26 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Command/Command.php(312): Illuminate\Console\Command->execute()
+#27 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Console/Command.php(153): Symfony\Component\Console\Command\Command->run()
+#28 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Application.php(1022): Illuminate\Console\Command->run()
+#29 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Application.php(314): Symfony\Component\Console\Application->doRunCommand()
+#30 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Application.php(168): Symfony\Component\Console\Application->doRun()
+#31 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Console/Application.php(102): Symfony\Component\Console\Application->run()
+#32 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(155): Illuminate\Console\Application->run()
+#33 /home/cotuong/domains/cotuong.top/public_html/artisan(37): Illuminate\Foundation\Console\Kernel->handle()
+#34 {main}, 2023-03-26 13:28:09))
+Context: {"exception":{"errorInfo":["42S02",1146,"Table 'cotuong_main.failed_jobs' doesn't exist"]}}
+Context: {"exception":{}}
+Context: {"exception":{}}
+
+  at /home/cotuong/domains/cotuong.top/public_html/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php:146
+    142▕             restore_error_handler();
+    143▕             if (!is_resource($stream)) {
+    144▕                 $this->stream = null;
+    145▕ 
+  ➜ 146▕                 throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened in append mode: '.$this->errorMessage, $url) . Utils::getRecordMessageForException($record));
+    147▕             }
+    148▕             stream_set_chunk_size($stream, $this->streamChunkSize);
+    149▕             $this->stream = $stream;
+    150▕         }
+
+      [2m+10 vendor frames [22m
+  11  [internal]:0
+      Illuminate\Foundation\Bootstrap\HandleExceptions::Illuminate\Foundation\Bootstrap\{closure}()
+  2023-03-26 13:30:50 App\Jobs\QuickMatchJob ......................... RUNNING
+  2023-03-26 13:30:50 App\Jobs\QuickMatchJob ................... 100.91ms FAIL
+
+   UnexpectedValueException 
+
+  The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cotuong_main.failed_jobs' doesn't exist (SQL: insert into `failed_jobs` (`uuid`, `connection`, `queue`, `payload`, `exception`, `failed_at`) values (8fdea073-0c61-40fc-ae9d-77d8107a6659, database, default, {"uuid":"8fdea073-0c61-40fc-ae9d-77d8107a6659","displayName":"App\\Jobs\\QuickMatchJob","job":"Illuminate\\Queue\\CallQueuedHandler@call","maxTries":null,"maxExceptions":null,"failOnTimeout":false,"backoff":null,"timeout":null,"retryUntil":null,"data":{"commandName":"App\\Jobs\\QuickMatchJob","command":"O:22:\"App\\Jobs\\QuickMatchJob\":0:{}"}}, Error: Class "App\Jobs\Cache" not found in /home/cotuong/domains/cotuong.top/public_html/app/Jobs/QuickMatchJob.php:39
+Stack trace:
+#0 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\Jobs\QuickMatchJob->handle()
+#1 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
+#2 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\Container\Util::unwrapIfClosure()
+#3 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\Container\BoundMethod::callBoundMethod()
+#4 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(661): Illuminate\Container\BoundMethod::call()
+#5 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Bus/Dispatcher.php(128): Illuminate\Container\Container->call()
+#6 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(141): Illuminate\Bus\Dispatcher->Illuminate\Bus\{closure}()
+#7 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(116): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#8 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Bus/Dispatcher.php(132): Illuminate\Pipeline\Pipeline->then()
+#9 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(124): Illuminate\Bus\Dispatcher->dispatchNow()
+#10 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(141): Illuminate\Queue\CallQueuedHandler->Illuminate\Queue\{closure}()
+#11 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(116): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#12 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(126): Illuminate\Pipeline\Pipeline->then()
+#13 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(70): Illuminate\Queue\CallQueuedHandler->dispatchThroughMiddleware()
+#14 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Jobs/Job.php(98): Illuminate\Queue\CallQueuedHandler->call()
+#15 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(425): Illuminate\Queue\Jobs\Job->fire()
+#16 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(375): Illuminate\Queue\Worker->process()
+#17 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(173): Illuminate\Queue\Worker->runJob()
+#18 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Console/WorkCommand.php(147): Illuminate\Queue\Worker->daemon()
+#19 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Console/WorkCommand.php(130): Illuminate\Queue\Console\WorkCommand->runWorker()
+#20 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\Queue\Console\WorkCommand->handle()
+#21 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
+#22 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\Container\Util::unwrapIfClosure()
+#23 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\Container\BoundMethod::callBoundMethod()
+#24 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(661): Illuminate\Container\BoundMethod::call()
+#25 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Console/Command.php(183): Illuminate\Container\Container->call()
+#26 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Command/Command.php(312): Illuminate\Console\Command->execute()
+#27 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Console/Command.php(153): Symfony\Component\Console\Command\Command->run()
+#28 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Application.php(1022): Illuminate\Console\Command->run()
+#29 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Application.php(314): Symfony\Component\Console\Application->doRunCommand()
+#30 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Application.php(168): Symfony\Component\Console\Application->doRun()
+#31 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Console/Application.php(102): Symfony\Component\Console\Application->run()
+#32 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(155): Illuminate\Console\Application->run()
+#33 /home/cotuong/domains/cotuong.top/public_html/artisan(37): Illuminate\Foundation\Console\Kernel->handle()
+#34 {main}, 2023-03-26 13:30:50))
+Context: {"exception":{"errorInfo":["42S02",1146,"Table 'cotuong_main.failed_jobs' doesn't exist"]}}
+Context: {"exception":{}}
+Context: {"exception":{}}
+
+  at /home/cotuong/domains/cotuong.top/public_html/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php:146
+    142▕             restore_error_handler();
+    143▕             if (!is_resource($stream)) {
+    144▕                 $this->stream = null;
+    145▕ 
+  ➜ 146▕                 throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened in append mode: '.$this->errorMessage, $url) . Utils::getRecordMessageForException($record));
+    147▕             }
+    148▕             stream_set_chunk_size($stream, $this->streamChunkSize);
+    149▕             $this->stream = $stream;
+    150▕         }
+
+      [2m+10 vendor frames [22m
+  11  [internal]:0
+      Illuminate\Foundation\Bootstrap\HandleExceptions::Illuminate\Foundation\Bootstrap\{closure}()
+  2023-03-26 13:30:55 App\Jobs\QuickMatchJob ......................... RUNNING
+  2023-03-26 13:30:55 App\Jobs\QuickMatchJob .................... 31.92ms FAIL
+
+   UnexpectedValueException 
+
+  The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cotuong_main.failed_jobs' doesn't exist (SQL: insert into `failed_jobs` (`uuid`, `connection`, `queue`, `payload`, `exception`, `failed_at`) values (6d798d5a-3daf-47c4-9877-fc8fa730f88f, database, default, {"uuid":"6d798d5a-3daf-47c4-9877-fc8fa730f88f","displayName":"App\\Jobs\\QuickMatchJob","job":"Illuminate\\Queue\\CallQueuedHandler@call","maxTries":null,"maxExceptions":null,"failOnTimeout":false,"backoff":null,"timeout":null,"retryUntil":null,"data":{"commandName":"App\\Jobs\\QuickMatchJob","command":"O:22:\"App\\Jobs\\QuickMatchJob\":0:{}"}}, Error: Class "App\Jobs\Cache" not found in /home/cotuong/domains/cotuong.top/public_html/app/Jobs/QuickMatchJob.php:39
+Stack trace:
+#0 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\Jobs\QuickMatchJob->handle()
+#1 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
+#2 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\Container\Util::unwrapIfClosure()
+#3 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\Container\BoundMethod::callBoundMethod()
+#4 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(661): Illuminate\Container\BoundMethod::call()
+#5 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Bus/Dispatcher.php(128): Illuminate\Container\Container->call()
+#6 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(141): Illuminate\Bus\Dispatcher->Illuminate\Bus\{closure}()
+#7 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(116): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#8 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Bus/Dispatcher.php(132): Illuminate\Pipeline\Pipeline->then()
+#9 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(124): Illuminate\Bus\Dispatcher->dispatchNow()
+#10 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(141): Illuminate\Queue\CallQueuedHandler->Illuminate\Queue\{closure}()
+#11 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(116): Illuminate\Pipeline\Pipeline->Illuminate\Pipeline\{closure}()
+#12 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(126): Illuminate\Pipeline\Pipeline->then()
+#13 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/CallQueuedHandler.php(70): Illuminate\Queue\CallQueuedHandler->dispatchThroughMiddleware()
+#14 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Jobs/Job.php(98): Illuminate\Queue\CallQueuedHandler->call()
+#15 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(425): Illuminate\Queue\Jobs\Job->fire()
+#16 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(375): Illuminate\Queue\Worker->process()
+#17 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Worker.php(173): Illuminate\Queue\Worker->runJob()
+#18 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Console/WorkCommand.php(147): Illuminate\Queue\Worker->daemon()
+#19 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Queue/Console/WorkCommand.php(130): Illuminate\Queue\Console\WorkCommand->runWorker()
+#20 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\Queue\Console\WorkCommand->handle()
+#21 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
+#22 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate\Container\Util::unwrapIfClosure()
+#23 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(37): Illuminate\Container\BoundMethod::callBoundMethod()
+#24 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Container/Container.php(661): Illuminate\Container\BoundMethod::call()
+#25 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Console/Command.php(183): Illuminate\Container\Container->call()
+#26 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Command/Command.php(312): Illuminate\Console\Command->execute()
+#27 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Console/Command.php(153): Symfony\Component\Console\Command\Command->run()
+#28 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Application.php(1022): Illuminate\Console\Command->run()
+#29 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Application.php(314): Symfony\Component\Console\Application->doRunCommand()
+#30 /home/cotuong/domains/cotuong.top/public_html/vendor/symfony/console/Application.php(168): Symfony\Component\Console\Application->doRun()
+#31 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Console/Application.php(102): Symfony\Component\Console\Application->run()
+#32 /home/cotuong/domains/cotuong.top/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(155): Illuminate\Console\Application->run()
+#33 /home/cotuong/domains/cotuong.top/public_html/artisan(37): Illuminate\Foundation\Console\Kernel->handle()
+#34 {main}, 2023-03-26 13:30:55))
+Context: {"exception":{"errorInfo":["42S02",1146,"Table 'cotuong_main.failed_jobs' doesn't exist"]}}
+Context: {"exception":{}}
+Context: {"exception":{}}
+
+  at /home/cotuong/domains/cotuong.top/public_html/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php:146
+    142▕             restore_error_handler();
+    143▕             if (!is_resource($stream)) {
+    144▕                 $this->stream = null;
+    145▕ 
+  ➜ 146▕                 throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened in append mode: '.$this->errorMessage, $url) . Utils::getRecordMessageForException($record));
+    147▕             }
+    148▕             stream_set_chunk_size($stream, $this->streamChunkSize);
+    149▕             $this->stream = $stream;
+    150▕         }
+
+      [2m+10 vendor frames [22m
+  11  [internal]:0
+      Illuminate\Foundation\Bootstrap\HandleExceptions::Illuminate\Foundation\Bootstrap\{closure}()
+  2023-03-26 13:35:10 App\Jobs\QuickMatchJob ......................... RUNNING
+  2023-03-26 13:35:10 App\Jobs\QuickMatchJob ................... 293.85ms FAIL
+
+   UnexpectedValueException 
+
+  The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: Class "App\Jobs\Cache" not found
+Context: {"exception":{}}
+Context: {"exception":{}}
+Context: {"exception":{}}
+
+  at /home/cotuong/domains/cotuong.top/public_html/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php:146
+    142▕             restore_error_handler();
+    143▕             if (!is_resource($stream)) {
+    144▕                 $this->stream = null;
+    145▕ 
+  ➜ 146▕                 throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened in append mode: '.$this->errorMessage, $url) . Utils::getRecordMessageForException($record));
+    147▕             }
+    148▕             stream_set_chunk_size($stream, $this->streamChunkSize);
+    149▕             $this->stream = $stream;
+    150▕         }
+
+      [2m+10 vendor frames [22m
+  11  [internal]:0
+      Illuminate\Foundation\Bootstrap\HandleExceptions::Illuminate\Foundation\Bootstrap\{closure}()
+  2023-03-26 13:36:49 App\Jobs\QuickMatchJob ......................... RUNNING
+  2023-03-26 13:36:49 App\Jobs\QuickMatchJob ................... 290.24ms FAIL
+
+   UnexpectedValueException 
+
+  The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: Class "App\Jobs\Cache" not found
+Context: {"exception":{}}
+Context: {"exception":{}}
+Context: {"exception":{}}
+
+  at /home/cotuong/domains/cotuong.top/public_html/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php:146
+    142▕             restore_error_handler();
+    143▕             if (!is_resource($stream)) {
+    144▕                 $this->stream = null;
+    145▕ 
+  ➜ 146▕                 throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened in append mode: '.$this->errorMessage, $url) . Utils::getRecordMessageForException($record));
+    147▕             }
+    148▕             stream_set_chunk_size($stream, $this->streamChunkSize);
+    149▕             $this->stream = $stream;
+    150▕         }
+
+      [2m+10 vendor frames [22m
+  11  [internal]:0
+      Illuminate\Foundation\Bootstrap\HandleExceptions::Illuminate\Foundation\Bootstrap\{closure}()
+  2023-03-26 13:37:34 App\Jobs\QuickMatchJob ......................... RUNNING
+  2023-03-26 13:37:34 App\Jobs\QuickMatchJob .................... 24.20ms FAIL
+
+   UnexpectedValueException 
+
+  The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: Class "App\Jobs\Cache" not found
+Context: {"exception":{}}
+Context: {"exception":{}}
+Context: {"exception":{}}
+
+  at /home/cotuong/domains/cotuong.top/public_html/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php:146
+    142▕             restore_error_handler();
+    143▕             if (!is_resource($stream)) {
+    144▕                 $this->stream = null;
+    145▕ 
+  ➜ 146▕                 throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened in append mode: '.$this->errorMessage, $url) . Utils::getRecordMessageForException($record));
+    147▕             }
+    148▕             stream_set_chunk_size($stream, $this->streamChunkSize);
+    149▕             $this->stream = $stream;
+    150▕         }
+
+      [2m+10 vendor frames [22m
+  11  [internal]:0
+      Illuminate\Foundation\Bootstrap\HandleExceptions::Illuminate\Foundation\Bootstrap\{closure}()
+
+   UnexpectedValueException 
+
+  The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: SQLSTATE[HY000] [2002] Connection refused
+Context: {"exception":{"errorInfo":["HY000",2002,"Connection refused"]}}
+Context: {"exception":{}}
+Context: {"exception":{}}
+
+  at /home/cotuong/domains/cotuong.top/public_html/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php:146
+
+   UnexpectedValueException 
+
+  The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: SQLSTATE[HY000] [2002] Connection refused
+Context: {"exception":{"errorInfo":["HY000",2002,"Connection refused"]}}
+Context: {"exception":{}}
+Context: {"exception":{}}
+
+  at /home/cotuong/domains/cotuong.top/public_html/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php:146
+
+   UnexpectedValueException 
+
+  The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: SQLSTATE[HY000] [2002] Connection refused
+Context: {"exception":{"errorInfo":["HY000",2002,"Connection refused"]}}
+Context: {"exception":{}}
+Context: {"exception":{}}
+
+
+  at /home/cotuong/domains/cotuong.top/public_html/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php:146
+
+   UnexpectedValueException 
+
+  The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: SQLSTATE[HY000] [2002] Connection refused
+Context: {"exception":{"errorInfo":["HY000",2002,"Connection refused"]}}
+Context: {"exception":{}}
+Context: {"exception":{}}
+
+  at /home/cotuong/domains/cotuong.top/public_html/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php:146
+   UnexpectedValueException 
+
+  The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: SQLSTATE[HY000] [2002] Connection refused
+Context: {"exception":{"errorInfo":["HY000",2002,"Connection refused"]}}
+Context: {"exception":{}}
+Context: {"exception":{}}
+
+  at /home/cotuong/domains/cotuong.top/public_html/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php:146
+
+   UnexpectedValueException 
+
+  The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: SQLSTATE[HY000] [2002] Connection refused
+Context: {"exception":{"errorInfo":["HY000",2002,"Connection refused"]}}
+Context: {"exception":{}}
+Context: {"exception":{}}
+
+  at /home/cotuong/domains/cotuong.top/public_html/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php:146
+
+   UnexpectedValueException 
+
+  The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: SQLSTATE[HY000] [2002] Connection refused
+Context: {"exception":{"errorInfo":["HY000",2002,"Connection refused"]}}
+Context: {"exception":{}}
+Context: {"exception":{}}
+    142▕             restore_error_handler();
+    143▕             if (!is_resource($stream)) {
+    144▕                 $this->stream = null;
+    145▕ 
+  ➜ 146▕                 throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened in append mode: '.$this->errorMessage, $url) . Utils::getRecordMessageForException($record));
+    147▕             }
+    148▕             stream_set_chunk_size($stream, $this->streamChunkSize);
+    149▕             $this->stream = $stream;
+    150▕         }
+
+  at /home/cotuong/domains/cotuong.top/public_html/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php:146
+
+   UnexpectedValueException 
+
+  The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: The stream or file "/home/cotuong/domains/cotuong.top/public_html/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied
+The exception occurred while attempting to log: SQLSTATE[HY000] [2002] Connection refused
+Context: {"exception":{"errorInfo":["HY000",2002,"Connection refused"]}}
+Context: {"exception":{}}
+Context: {"exception":{}}
+
+  at /home/cotuong/domains/cotuong.top/public_html/vendor/monolog/monolog/src/Monolog/Handler/StreamHandler.php:146
+    142▕             restore_error_handler();
+    143▕             if (!is_resource($stream)) {
+    144▕                 $this->stream = null;
+    145▕ 
+  ➜ 146▕                 throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened in append mode: '.$this->errorMessage, $url) . Utils::getRecordMessageForException($record));
+    147▕             }
+    148▕             stream_set_chunk_size($stream, $this->streamChunkSize);
+    149▕             $this->stream = $stream;
+    150▕         }
+    142▕             restore_error_handler();
+    143▕             if (!is_resource($stream)) {
+    144▕                 $this->stream = null;
+    145▕ 
+  ➜ 146▕                 throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened in append mode: '.$this->errorMessage, $url) . Utils::getRecordMessageForException($record));
+    147▕             }
+    148▕             stream_set_chunk_size($stream, $this->streamChunkSize);
+    149▕             $this->stream = $stream;
+    150▕         }
+    142▕             restore_error_handler();
+    143▕             if (!is_resource($stream)) {
+    144▕                 $this->stream = null;
+    145▕ 
+  ➜ 146▕                 throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened in append mode: '.$this->errorMessage, $url) . Utils::getRecordMessageForException($record));
+    147▕             }
+    148▕             stream_set_chunk_size($stream, $this->streamChunkSize);
+    149▕             $this->stream = $stream;
+    150▕         }
+    142▕             restore_error_handler();
+    143▕             if (!is_resource($stream)) {
+    144▕                 $this->stream = null;
+    145▕ 
+  ➜ 146▕                 throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened in append mode: '.$this->errorMessage, $url) . Utils::getRecordMessageForException($record));
+    147▕             }
+    148▕             stream_set_chunk_size($stream, $this->streamChunkSize);
+    149▕             $this->stream = $stream;
+    150▕         }
+    142▕             restore_error_handler();
+    143▕             if (!is_resource($stream)) {
+    144▕                 $this->stream = null;
+    145▕ 
+  ➜ 146▕                 throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened in append mode: '.$this->errorMessage, $url) . Utils::getRecordMessageForException($record));
+    147▕             }
+    148▕             stream_set_chunk_size($stream, $this->streamChunkSize);
+    149▕             $this->stream = $stream;
+    150▕         }
+    142▕             restore_error_handler();
+    143▕             if (!is_resource($stream)) {
+    144▕                 $this->stream = null;
+    145▕ 
+  ➜ 146▕                 throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened in append mode: '.$this->errorMessage, $url) . Utils::getRecordMessageForException($record));
+    147▕             }
+    148▕             stream_set_chunk_size($stream, $this->streamChunkSize);
+    149▕             $this->stream = $stream;
+    150▕         }
+    142▕             restore_error_handler();
+    143▕             if (!is_resource($stream)) {
+    144▕                 $this->stream = null;
+    145▕ 
+  ➜ 146▕                 throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened in append mode: '.$this->errorMessage, $url) . Utils::getRecordMessageForException($record));
+    147▕             }
+    148▕             stream_set_chunk_size($stream, $this->streamChunkSize);
+    149▕             $this->stream = $stream;
+    150▕         }
+
+      [2m+10 vendor frames [22m
+  11  [internal]:0
+      Illuminate\Foundation\Bootstrap\HandleExceptions::Illuminate\Foundation\Bootstrap\{closure}()
+
+      [2m+10 vendor frames [22m
+
+      [2m+10 vendor frames [22m
+  11  [internal]:0
+      Illuminate\Foundation\Bootstrap\HandleExceptions::Illuminate\Foundation\Bootstrap\{closure}()
+  11  [internal]:0
+      Illuminate\Foundation\Bootstrap\HandleExceptions::Illuminate\Foundation\Bootstrap\{closure}()
+
+      [2m+10 vendor frames [22m
+  11  [internal]:0
+      Illuminate\Foundation\Bootstrap\HandleExceptions::Illuminate\Foundation\Bootstrap\{closure}()
+
+      [2m+10 vendor frames [22m
+  11  [internal]:0
+      Illuminate\Foundation\Bootstrap\HandleExceptions::Illuminate\Foundation\Bootstrap\{closure}()
+
+      [2m+10 vendor frames [22m
+
+      [2m+10 vendor frames [22m
+  11  [internal]:0
+      Illuminate\Foundation\Bootstrap\HandleExceptions::Illuminate\Foundation\Bootstrap\{closure}()
+  11  [internal]:0
+      Illuminate\Foundation\Bootstrap\HandleExceptions::Illuminate\Foundation\Bootstrap\{closure}()
+
+      [2m+10 vendor frames [22m
+  11  [internal]:0
+      Illuminate\Foundation\Bootstrap\HandleExceptions::Illuminate\Foundation\Bootstrap\{closure}()

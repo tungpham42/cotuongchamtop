@@ -1,0 +1,18 @@
+
+{
+	"sProcessing":   "Processing...",
+	"sLengthMenu":   "Show _MENU_ rooms",
+	"sZeroRecords":  "No matching rooms found",
+	"sInfo":         "Showing _START_ to _END_ of _TOTAL_ rooms",
+	"sInfoEmpty":    "Showing 0 to 0 of 0 rooms",
+	"sInfoFiltered": "(filtered from _MAX_ total rooms)",
+	"sInfoPostFix":  "",
+	"sSearch":       "Search:",
+	"sUrl":          "",
+	"oPaginate": {
+		"sFirst":    "First",
+		"sLast":     "Last",
+		"sNext":     "Next",
+		"sPrevious": "Previous"
+	}
+}

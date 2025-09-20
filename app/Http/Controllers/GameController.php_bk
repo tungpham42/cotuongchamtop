@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use App\Models\Room;
+use App\Services\EloRatingService;
+
+class GameController extends Controller
+{
+    protected $eloService;
+
+    public function __construct(EloRatingService $eloService)
+    {
+        $this->eloService = $eloService;
+    }
+
+    public function updateRatings($player1Id, $player2Id, $player1Score)
+    {
+        // Fetch player elos from the database
+        $player1Rating = User::find($player1Id)->elo;
+        $player2Rating = User::find($player2Id)->elo;
+
+        // Calculate new elos
+        $newRatings = $this->eloService->calculateNewRatings($player1Rating, $player2Rating, $player1Score);
+
+        // Update player elos in the database
+        User::where('id', $player1Id)->update(['elo' => $newRatings['player1']]);
+        User::where('id', $player2Id)->update(['elo' => $newRatings['player2']]);
+
+        return response()->json([
+            'player1' => $newRatings['player1'],
+            'player2' => $newRatings['player2'],
+        ]);
+    }
+
+    public static function calculateElo($currentElo, $opponentElo, $result, $k = 30) {
+        // Calculate expected score
+        $expectedScore = 1 / (1 + pow(10, ($opponentElo - $currentElo) / 400));
+        
+        // Calculate new Elo
+        $newElo = $currentElo + $k * ($result - $expectedScore);
+        
+        // Round to the nearest whole number and return the result
+        return round($newElo);
+    }
+
+    // Example usage
+    // $ratingA = 1600; // Current rating of player A
+    // $ratingB = 1400; // Current rating of player B
+    // $scoreA = 1;     // Player A wins
+    // $kFactor = 30;   // K-Factor
+
+    // list($newRatingA, $newRatingB) = calculateElo($ratingA, $ratingB, $scoreA, $kFactor);
+
+}

@@ -1,0 +1,18 @@
+
+{
+	"sProcessing":   "처리...",
+	"sLengthMenu":   "쇼 _MENU_ 방들",
+	"sZeroRecords":  "일치하는 룸을 찾을 수 없습니다.",
+	"sInfo":         "상영 _START_ 로 _END_ 의 _TOTAL_ 방들",
+	"sInfoEmpty":    "상영 0 로 0 의 0 방들",
+	"sInfoFiltered": "(에서 걸러진 _MAX_ 총 방들)",
+	"sInfoPostFix":  "",
+	"sSearch":       "서치:",
+	"sUrl":          "",
+	"oPaginate": {
+		"sFirst":    "첫번째",
+		"sLast":     "지난",
+		"sNext":     "다음 분",
+		"sPrevious": "이전의"
+	}
+}

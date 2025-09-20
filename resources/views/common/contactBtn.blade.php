@@ -1,0 +1,2 @@
+{{-- <a id="contactBtn" class="btn btn-lg btn-danger position-fixed" style="bottom: 100px; left: 30px;" href="https://hoc.cotuong.top/lien-he"><i class="fad fa-envelope"></i></a> --}}
+@include('common.zalo')

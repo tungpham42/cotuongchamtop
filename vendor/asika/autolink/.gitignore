@@ -1,0 +1,12 @@
+# System
+.*
+!.gitignore
+!.travis.yml
+!.github
+
+# Composer
+/vendor/*
+composer.lock
+
+# Test
+phpunit.xml

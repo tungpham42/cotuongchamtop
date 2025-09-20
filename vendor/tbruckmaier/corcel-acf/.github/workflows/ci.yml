@@ -1,0 +1,45 @@
+name: PHPunit
+
+on:
+  push:
+  pull_request:
+    types: [opened, reopened]
+  schedule:
+    - cron: "23 4 17 * *"
+
+jobs:
+  build-tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - laravel-version: '^12.0'
+            php-version: '8.4'
+          - laravel-version: '^12.0'
+            php-version: '8.3'
+          - laravel-version: '^12.0'
+            php-version: '8.2'
+          - laravel-version: '^11.0'
+            php-version: '8.4'
+          - laravel-version: '^11.0'
+            php-version: '8.3'
+          - laravel-version: '^11.0'
+            php-version: '8.2'
+
+    name: PHPunit PHP v${{ matrix.php-version }} / Laravel ${{ matrix.laravel-version }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: pdo_sqlite ctype curl filter hash mbstring openssl pcre pdo session tokenizer
+    - name: Install composer dependencies
+      run: |
+        composer require laravel/framework=${{ matrix.laravel-version }} --dev --no-install
+        composer install
+    - name: Run phpunit tests
+      run: php vendor/bin/phpunit

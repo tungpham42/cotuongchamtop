@@ -1,0 +1,97 @@
+{
+  "name": "laravel/laravel",
+  "type": "project",
+  "description": "The Laravel Framework.",
+  "keywords": [
+    "framework",
+    "laravel"
+  ],
+  "license": "MIT",
+  "require": {
+    "php": "^8.0.2",
+    "asika/autolink": "^2.0",
+    "atrox/haikunator": "^1.3",
+    "binshops/laravel-blog": "^9.2",
+    "creativeorange/gravatar": "~1.0",
+    "elorating/elorating": "master",
+    "fruitcake/laravel-cors": "^2.0.5",
+    "guzzlehttp/guzzle": "^7.2",
+    "jgrossi/corcel": "^6.0",
+    "laravel-lang/lang": "^11.0",
+    "laravel/framework": "^9.0",
+    "laravel/octane": "^1.2",
+    "laravel/sanctum": "^2.14",
+    "laravel/socialite": "^5.6",
+    "laravel/tinker": "^2.7",
+    "laravel/ui": "^4.2",
+    "laravolt/avatar": "^5.0",
+    "litespeed/lscache-laravel": "^1.3",
+    "munafio/chatify": "^1.6",
+    "phpmailer/phpmailer": "^6.5",
+    "pragmarx/health": "^1.1",
+    "renatomarinho/laravel-page-speed": "^2.1",
+    "riverskies/laravel-mobile-detect": "^1.3",
+    "simplesoftwareio/simple-qrcode": "~4",
+    "socialiteproviders/zalo": "^5.0",
+    "spatie/laravel-cookie-consent": "^3.1",
+    "spatie/laravel-sitemap": "^6.3",
+    "spatie/schema-org": "^3.14",
+    "swooletw/laravel-swoole": "^2.12",
+    "symfony/mailer": "^6.0",
+    "tbruckmaier/corcel-acf": "^1.8",
+    "that0n3guy/transliteration": "^2.0",
+    "tttran/viet_qr_generator": "^0.7.0",
+    "tungpham42/corcel-acf": "dev-master",
+    "vedmant/laravel-feed-reader": "^1.5",
+    "vrkansagara/lara-out-press": "^2.1",
+    "yajra/laravel-datatables-oracle": "^9.19",
+    "yamadashy/laravel-blade-minify-directive": "^0.1.3"
+  },
+  "require-dev": {
+    "fakerphp/faker": "^1.9.1",
+    "laravel/sail": "^1.0.1",
+    "mockery/mockery": "^1.4.4",
+    "nunomaduro/collision": "^6.1",
+    "phpunit/phpunit": "^9.5.10",
+    "spatie/laravel-ignition": "^1.0"
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "extra": {
+    "laravel": {
+      "dont-discover": []
+    }
+  },
+  "autoload": {
+    "files": [
+      "app/Helpers/functions.php"
+    ],
+    "psr-4": {
+      "App\\": "app/",
+      "Database\\Factories\\": "database/factories/",
+      "Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "scripts": {
+    "post-autoload-dump": [
+      "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+      "@php artisan package:discover --ansi"
+    ],
+    "post-root-package-install": [
+      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+    ],
+    "post-create-project-cmd": [
+      "@php artisan key:generate --ansi"
+    ]
+  }
+}

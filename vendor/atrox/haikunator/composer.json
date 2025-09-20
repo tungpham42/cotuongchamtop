@@ -1,0 +1,31 @@
+{
+  "name": "atrox/haikunator",
+  "description": "Generate Heroku-like random names to use in your php applications.",
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "Atrox",
+      "email": "hello@atrox.dev"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "php": ">=5.5"
+  },
+  "require-dev": {
+    "phpunit/phpunit": ">=5.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Atrox\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Atrox\\Test\\": "tests"
+    }
+  },
+  "scripts": {
+    "test": "phpunit"
+  }
+}

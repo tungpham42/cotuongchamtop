@@ -1,0 +1,47 @@
+{
+    "contact_email": "sellers_json@google.com",
+    "contact_address": "1600 Amphitheatre Parkway Mountain View, CA 94043",
+    "identifiers": [{
+        "name": "TAG-ID",
+        "value": "f08c47fec0942fa0"
+    }],
+    "version": "1.0",
+    "sellers": [
+        {
+            "seller_id": "pub-3585118770961536",
+            "name": "Pham Tung",
+            "domain": "cotuong.top",
+            "seller_type": "PUBLISHER"
+        },
+        {
+            "seller_id": "pub-3585118770961536",
+            "name": "Pham Tung",
+            "domain": "covua.top",
+            "seller_type": "PUBLISHER"
+        },
+        {
+            "seller_id": "pub-3585118770961536",
+            "name": "Pham Tung",
+            "domain": "chessroom.top",
+            "seller_type": "PUBLISHER"
+        },
+        {
+            "seller_id": "pub-3585118770961536",
+            "name": "Pham Tung",
+            "domain": "biorhythm.xyz",
+            "seller_type": "PUBLISHER"
+        },
+        {
+            "seller_id": "pub-3585118770961536",
+            "name": "Pham Tung",
+            "domain": "nhipsinhhoc.vn",
+            "seller_type": "PUBLISHER"
+        },
+        {
+            "seller_id": "pub-3585118770961536",
+            "name": "Pham Tung",
+            "domain": "cungrao.net",
+            "seller_type": "PUBLISHER"
+        }
+    ]
+}

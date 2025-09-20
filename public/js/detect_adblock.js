@@ -1,0 +1,1 @@
+function detectAdblock(n){var t="https://adblockanalytics.com";if(window.fetch){var e=new Request(t,{method:"HEAD",mode:"no-cors"});fetch(e).then(function(t){404===t.status?n(!1):n("unknown ("+t.status+")")}).catch(function(t){n(!0)})}else{var c=new XMLHttpRequest;c.open("HEAD",t,!1);try{c.send()}catch(t){n(!0)}404===c.status?n(!1):n("unknown ("+c.status+")")}}

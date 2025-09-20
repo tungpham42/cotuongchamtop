@@ -1,0 +1,11 @@
+table {
+  th {
+    &.no-sort {
+      cursor: default !important;
+      pointer-events: none !important;
+      &::before, &::after {
+        display: none !important;
+      }
+    }
+  }
+}

@@ -1,0 +1,119 @@
+/*!
+* xiangqiboard.js $version$
+*
+* Copyright 2013 Chris Oakman
+* Copyright 2018 @lengyanyu258
+* Released under the MIT license
+* https://github.com/lengyanyu258/xiangqiboardjs/blob/master/LICENSE
+*
+* Date: $date$
+*/
+
+.clearfix-5f3b5 {
+  clear: both;
+}
+
+.board-1ef78 {
+  box-sizing: content-box;
+  pointer-events: none !important;
+  margin: auto;
+  .row-cb702 {
+    &:first-of-type {
+      .square-2b8ce {
+        .notation-8c7a2 {
+          top: -21px !important;
+          bottom: auto !important;
+        }
+      }
+    }
+    &:last-of-type {
+      .square-2b8ce {
+        .notation-8c7a2 {
+          bottom: -21px !important;
+          top: auto !important;
+        }
+      }
+    }
+  }
+}
+
+.xiangqiboard-8ddcb {
+  .spare-pieces-top-e4b47 {
+    margin-bottom: 21px !important;
+  }
+  .spare-pieces-bottom-29dac {
+    margin-top: 21px !important;
+  }
+}
+
+.square-2b8ce {
+  float: left;
+  position: relative;
+
+  /* disable any native browser highlighting */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  pointer-events: none !important;
+  img {
+    // filter: drop-shadow(0 5px 5px #555555);
+    pointer-events: all !important;
+  }
+  // &:hover, &:active, &:focus {
+  //     img {
+  //         filter: drop-shadow(0 3px 3px #333333);
+  //     }
+  // }
+  &:hover {
+    z-index: 2;
+    img {
+      cursor: pointer;
+    }
+  }
+  /*
+    &:active {
+        img {
+            cursor: grab;
+            cursor: -moz-grab;
+            cursor: -webkit-grab;
+        }
+    }
+    &:focus {
+        img {
+            cursor: grabbing;
+            cursor: -moz-grabbing;
+            cursor: -webkit-grabbing;
+        }
+    }
+    */
+}
+
+.highlight1-e13fc,
+.highlight2-e0a03 {
+  box-shadow: inset 0 0 3px 3px goldenrod;
+}
+
+.notation-8c7a2 {
+  cursor: default;
+  font-family: $font-family-base;
+  font-size: 14px;
+  position: absolute;
+  color: black;
+}
+
+.alpha-f4ef2 {
+  bottom: 1px;
+  right: 40%;
+}
+
+.numeric-fe76e {
+  top: 40%;
+  left: 1px;
+}
+
+.piece-1e8b9 {
+  cursor: pointer;
+}

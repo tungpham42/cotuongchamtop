@@ -1,0 +1,10 @@
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^cotuong.top$ [NC,OR]
+RewriteCond %{HTTP_HOST} ^www.cotuong.top$
+RewriteCond %{REQUEST_URI} !public/
+RewriteRule (.*) /public/$1 [L]
+<IfModule LiteSpeed>
+    SpdyEnabled http2 http3
+    CacheLookup on
+    QuicEnable on
+</IfModule>
