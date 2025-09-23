@@ -63,6 +63,10 @@ Route::get('/check-anonymous-match-status/ko', [RoomController::class, 'checkAno
 Route::post('/anonymous-quick-match/zh', [RoomController::class, 'anonymousQuickMatchZh'])->name('anonymous-quick-match-zh');
 Route::get('/check-anonymous-match-status/zh', [RoomController::class, 'checkAnonymousMatchStatusZh'])->name('check-anonymous-match-status-zh');
 
+// Test routes (no CSRF required)
+Route::post('/test-anonymous-quick-match', [RoomController::class, 'anonymousQuickMatch'])->name('test-anonymous-quick-match');
+Route::post('/test-check-anonymous-match-status', [RoomController::class, 'checkAnonymousMatchStatus'])->name('test-check-anonymous-match-status');
+
 Route::get('/terms-and-conditions', function () {
   return view('terms', ['headTitle' => 'Terms and Conditions', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'canonicalUrl' => '/terms-and-conditions']);
 });

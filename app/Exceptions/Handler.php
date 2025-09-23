@@ -26,19 +26,22 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
-        // Handle HttpExceptions (404, 405, etc.)
-        if ($exception instanceof HttpExceptionInterface) {
-            switch ($exception->getStatusCode()) {
-                case 404:
-                case 405:
-                case 500:
-                    return redirect('/', 301);
+        // Only redirect in production environment
+        if (app()->environment('production')) {
+            // Handle HttpExceptions (404, 405, etc.)
+            if ($exception instanceof HttpExceptionInterface) {
+                switch ($exception->getStatusCode()) {
+                    case 404:
+                    case 405:
+                    case 500:
+                        return redirect('/', 301);
+                }
             }
-        }
 
-        // Handle generic non-Http exceptions (often cause 500)
-        if (! $exception instanceof HttpExceptionInterface) {
-            return redirect('/', 301);
+            // Handle generic non-Http exceptions (often cause 500)
+            if (! $exception instanceof HttpExceptionInterface) {
+                return redirect('/', 301);
+            }
         }
 
         return parent::render($request, $exception);

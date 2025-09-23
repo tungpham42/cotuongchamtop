@@ -17,6 +17,23 @@ class VerifyCsrfToken extends Middleware
         '/doiPass',
         '/processMail',
         '/xulyMail',
-        '/updateFEN'
+        '/updateFEN',
+        '/test-*'  // Allow all test routes
     ];
+
+    /**
+     * Determine if the request has a URI that should pass through CSRF verification.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
+    protected function inExceptArray($request)
+    {
+        // Bypass CSRF in non-production environments
+        if (app()->environment() !== 'production') {
+            return true;
+        }
+
+        return parent::inExceptArray($request);
+    }
 }

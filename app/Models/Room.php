@@ -22,6 +22,8 @@ class Room extends Model
         'name',
         'host_id',
         'guest_id',
+        'host_session',
+        'guest_session',
         'pass',
         'modified_at',
     ];
@@ -54,18 +56,19 @@ class Room extends Model
     }
 
     /**
-     * Find an open room for anonymous matchmaking (no guest, no result, public, no host_id).
+     * Find an open room for anonymous matchmaking (has host but no guest).
      *
      * @return \App\Models\Room|null
      */
     public static function findOpenAnonymousRoom()
     {
-        return self::whereNull('host_id')
-            ->whereNull('guest_id')
+        return self::whereNotNull('host_session')
+            ->whereNull('guest_session')
             ->whereNull('result')
             ->whereNull('pass')
             ->where('fen', env('INITIAL_FEN'))
-            ->inRandomOrder()
+            ->where('modified_at', '>', now()->subMinutes(5)) // Only recent rooms
+            ->orderBy('modified_at', 'asc') // First come first serve
             ->first();
     }
 }

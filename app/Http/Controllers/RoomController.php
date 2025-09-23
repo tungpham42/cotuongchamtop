@@ -1293,6 +1293,85 @@ class RoomController extends Controller
         );
     }
 
+    /**
+     * Helper method for anonymous match status checking
+     */
+    private function checkAnonymousMatchStatusHelper(Request $request, $sideNames = ['do', 'den'], $colorNames = ['đỏ', 'đen'])
+    {
+        $sessionId = $request->input('session_id');
+        if (!$sessionId) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session ID required.',
+            ], 400);
+        }
+
+        // First check if current session is already in a room
+        $currentRoom = Room::where(function($query) use ($sessionId) {
+            $query->where('host_session', $sessionId)
+                  ->orWhere('guest_session', $sessionId);
+        })->whereNull('result')->first();
+
+        if ($currentRoom) {
+            // Already in a room, check if opponent joined
+            if ($currentRoom->host_session && $currentRoom->guest_session) {
+                $isHost = $currentRoom->host_session == $sessionId;
+                $side = $isHost ? $sideNames[0] : $sideNames[1];
+                $color = $isHost ? $colorNames[0] : $colorNames[1];
+                return response()->json([
+                    'status' => 'matched',
+                    'room_code' => $currentRoom->code,
+                    'room_name' => $currentRoom->name,
+                    'side' => $side,
+                    'color' => $color,
+                ]);
+            }
+            return response()->json(['status' => 'waiting']);
+        }
+
+        // Look for available room with host waiting for guest
+        $availableRoom = Room::whereNotNull('host_session')
+            ->whereNull('guest_session')
+            ->whereNull('result')
+            ->whereNull('pass')
+            ->where('fen', '=', env('INITIAL_FEN'))
+            ->where('modified_at', '>', now()->subMinutes(5))
+            ->orderBy('modified_at', 'asc')
+            ->first();
+
+        if ($availableRoom) {
+            // Join as guest
+            $availableRoom->update([
+                'guest_session' => $sessionId,
+                'modified_at' => now(),
+            ]);
+            
+            return response()->json([
+                'status' => 'matched',
+                'room_code' => $availableRoom->code,
+                'room_name' => $availableRoom->name,
+                'side' => $sideNames[1],
+                'color' => $colorNames[1],
+            ]);
+        }
+
+        // No available room, create new room and wait as host
+        $roomCode = md5(time() . $sessionId);
+        Room::create([
+            'code' => $roomCode,
+            'fen' => env('INITIAL_FEN'),
+            'name' => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
+            'host_session' => $sessionId,
+            'guest_session' => null,
+            'host_id' => null,
+            'guest_id' => null,
+            'pass' => null,
+            'modified_at' => now(),
+        ]);
+
+        return response()->json(['status' => 'waiting']);
+    }
+
     public function anonymousQuickMatch(Request $request)
     {
         $sessionId = $request->session()->get('anonymous_match_id', Str::random(32));
@@ -1309,49 +1388,7 @@ class RoomController extends Controller
 
     public function checkAnonymousMatchStatus(Request $request)
     {
-        $sessionId = $request->input('session_id');
-        if (!$sessionId) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Session ID required.',
-            ], 400);
-        }
-
-        $room = Room::whereNull('host_id')
-            ->whereNull('guest_id')
-            ->whereNull('result')
-            ->whereNull('pass')
-            ->where('fen', '=', env('INITIAL_FEN'))
-            ->orderBy('modified_at', 'desc')
-            ->first();
-
-        if (!$room) {
-            $roomCode = md5(time());
-            Room::create([
-                'code' => $roomCode,
-                'fen' => env('INITIAL_FEN'),
-                'name' => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
-                'host_id' => null,
-                'guest_id' => null,
-                'pass' => null,
-                'modified_at' => now(),
-            ]);
-        }
-
-        if ($room) {
-            $sides = ['do', 'den'];
-            $side = $sides[array_rand($sides)];
-            $color = $side == 'do' ? 'đỏ' : 'đen';
-            return response()->json([
-                'status' => 'matched',
-                'room_code' => $room->code,
-                'room_name' => $room->name,
-                'side' => $side,
-                'color' => $color,
-            ]);
-        }
-
-        return response()->json(['status' => 'waiting']);
+        return $this->checkAnonymousMatchStatusHelper($request, ['do', 'den'], ['đỏ', 'đen']);
     }
 
     public function anonymousQuickMatchEn(Request $request)
@@ -1370,49 +1407,7 @@ class RoomController extends Controller
 
     public function checkAnonymousMatchStatusEn(Request $request)
     {
-        $sessionId = $request->input('session_id');
-        if (!$sessionId) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Session ID required.',
-            ], 400);
-        }
-
-        $room = Room::whereNull('host_id')
-            ->whereNull('guest_id')
-            ->whereNull('result')
-            ->whereNull('pass')
-            ->where('fen', '=', env('INITIAL_FEN'))
-            ->orderBy('modified_at', 'desc')
-            ->first();
-
-        if (!$room) {
-            $roomCode = md5(time());
-            Room::create([
-                'code' => $roomCode,
-                'fen' => env('INITIAL_FEN'),
-                'name' => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
-                'host_id' => null,
-                'guest_id' => null,
-                'pass' => null,
-                'modified_at' => now(),
-            ]);
-        }
-
-        if ($room) {
-            $sides = ['red', 'black'];
-            $side = $sides[array_rand($sides)];
-            $color = $side == 'red' ? 'red' : 'black';
-            return response()->json([
-                'status' => 'matched',
-                'room_code' => $room->code,
-                'room_name' => $room->name,
-                'side' => $side,
-                'color' => $color,
-            ]);
-        }
-
-        return response()->json(['status' => 'waiting']);
+        return $this->checkAnonymousMatchStatusHelper($request, ['red', 'black'], ['red', 'black']);
     }
 
     public function anonymousQuickMatchJa(Request $request)
@@ -1431,49 +1426,7 @@ class RoomController extends Controller
 
     public function checkAnonymousMatchStatusJa(Request $request)
     {
-        $sessionId = $request->input('session_id');
-        if (!$sessionId) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Session ID required.',
-            ], 400);
-        }
-
-        $room = Room::whereNull('host_id')
-            ->whereNull('guest_id')
-            ->whereNull('result')
-            ->whereNull('pass')
-            ->where('fen', '=', env('INITIAL_FEN'))
-            ->orderBy('modified_at', 'desc')
-            ->first();
-
-        if (!$room) {
-            $roomCode = md5(time());
-            Room::create([
-                'code' => $roomCode,
-                'fen' => env('INITIAL_FEN'),
-                'name' => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
-                'host_id' => null,
-                'guest_id' => null,
-                'pass' => null,
-                'modified_at' => now(),
-            ]);
-        }
-
-        if ($room) {
-            $sides = ['aka', 'kuro'];
-            $side = $sides[array_rand($sides)];
-            $color = $side == 'aka' ? '赤' : '黒';
-            return response()->json([
-                'status' => 'matched',
-                'room_code' => $room->code,
-                'room_name' => $room->name,
-                'side' => $side,
-                'color' => $color,
-            ]);
-        }
-
-        return response()->json(['status' => 'waiting']);
+        return $this->checkAnonymousMatchStatusHelper($request, ['aka', 'kuro'], ['赤', '黒']);
     }
 
     public function anonymousQuickMatchKo(Request $request)
@@ -1492,49 +1445,7 @@ class RoomController extends Controller
 
     public function checkAnonymousMatchStatusKo(Request $request)
     {
-        $sessionId = $request->input('session_id');
-        if (!$sessionId) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Session ID required.',
-            ], 400);
-        }
-
-        $room = Room::whereNull('host_id')
-            ->whereNull('guest_id')
-            ->whereNull('result')
-            ->whereNull('pass')
-            ->where('fen', '=', env('INITIAL_FEN'))
-            ->orderBy('modified_at', 'desc')
-            ->first();
-
-        if (!$room) {
-            $roomCode = md5(time());
-            Room::create([
-                'code' => $roomCode,
-                'fen' => env('INITIAL_FEN'),
-                'name' => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
-                'host_id' => null,
-                'guest_id' => null,
-                'pass' => null,
-                'modified_at' => now(),
-            ]);
-        }
-
-        if ($room) {
-            $sides = ['ppalgan', 'geom-eunsaeg'];
-            $side = $sides[array_rand($sides)];
-            $color = $side == 'ppalgan' ? '빨간색' : '검은색';
-            return response()->json([
-                'status' => 'matched',
-                'room_code' => $room->code,
-                'room_name' => $room->name,
-                'side' => $side,
-                'color' => $color,
-            ]);
-        }
-
-        return response()->json(['status' => 'waiting']);
+        return $this->checkAnonymousMatchStatusHelper($request, ['ppalgan', 'geom-eunsaeg'], ['빨간색', '검은색']);
     }
 
     public function anonymousQuickMatchZh(Request $request)
@@ -1553,48 +1464,6 @@ class RoomController extends Controller
 
     public function checkAnonymousMatchStatusZh(Request $request)
     {
-        $sessionId = $request->input('session_id');
-        if (!$sessionId) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Session ID required.',
-            ], 400);
-        }
-
-        $room = Room::whereNull('host_id')
-            ->whereNull('guest_id')
-            ->whereNull('result')
-            ->whereNull('pass')
-            ->where('fen', '=', env('INITIAL_FEN'))
-            ->orderBy('modified_at', 'desc')
-            ->first();
-
-        if (!$room) {
-            $roomCode = md5(time());
-            Room::create([
-                'code' => $roomCode,
-                'fen' => env('INITIAL_FEN'),
-                'name' => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
-                'host_id' => null,
-                'guest_id' => null,
-                'pass' => null,
-                'modified_at' => now(),
-            ]);
-        }
-
-        if ($room) {
-            $sides = ['hongse', 'heise'];
-            $side = $sides[array_rand($sides)];
-            $color = $side == 'hongse' ? '红色的' : '黑色的';
-            return response()->json([
-                'status' => 'matched',
-                'room_code' => $room->code,
-                'room_name' => $room->name,
-                'side' => $side,
-                'color' => $color,
-            ]);
-        }
-
-        return response()->json(['status' => 'waiting']);
+        return $this->checkAnonymousMatchStatusHelper($request, ['hongse', 'heise'], ['红色的', '黑色的']);
     }
 }

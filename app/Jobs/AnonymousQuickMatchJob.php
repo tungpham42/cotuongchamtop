@@ -33,27 +33,32 @@ class AnonymousQuickMatchJob implements ShouldQueue
      */
     public function handle()
     {
-        // Find an open anonymous room
+        // Clean up old rooms (older than 5 minutes with no guest)
+        Room::whereNotNull('host_session')
+            ->whereNull('guest_session')
+            ->where('modified_at', '<', now()->subMinutes(5))
+            ->delete();
+
+        // Find an open anonymous room (has host, no guest)
         $room = Room::findOpenAnonymousRoom();
 
         if ($room) {
-            // Mark the room as having a second player
+            // Join as guest
             $room->update([
-                'name' => $room->name ?: Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
+                'guest_session' => $this->sessionId,
                 'modified_at' => now(),
             ]);
-
-            // Store session IDs in session storage (handled by frontend)
-            // Optionally, store guest_token if schema is updated
             return;
         }
 
-        // No open room found, create a new one
-        $roomCode = md5(time());
+        // No open room found, create a new one as host
+        $roomCode = md5(time() . $this->sessionId);
         Room::create([
             'code' => $roomCode,
             'fen' => env('INITIAL_FEN'),
             'name' => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
+            'host_session' => $this->sessionId,
+            'guest_session' => null,
             'host_id' => null,
             'guest_id' => null,
             'pass' => null,
