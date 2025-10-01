@@ -696,7 +696,8 @@ class RoomController extends Controller
         $host_id = $request->input('host_id');
         $pass    = $request->input('pass');
 
-        Room::updateOrInsert(
+        // Nếu phòng chưa tồn tại thì tạo mới (reset timer)
+        $room = Room::firstOrCreate(
             ['code' => $code],
             [
                 'fen'           => $fen,
@@ -704,13 +705,31 @@ class RoomController extends Controller
                 'name'          => $name,
                 'pass'          => $pass,
                 'modified_at'   => now(),
-                // reset timer mỗi khi tạo/cập nhật phòng
-                'black_time'    => 600,   // 10 phút
-                'red_time'      => 600,   // 10 phút
+                'black_time'    => 600,   // reset timer khi phòng mới
+                'red_time'      => 600,
                 'active_player' => null,
                 'last_update'   => null,
             ]
         );
+
+        // Nếu phòng đã tồn tại -> chỉ update các thông tin khác, KHÔNG reset timer
+        if (!$room->wasRecentlyCreated) {
+            $room->update([
+                'fen'         => $fen,
+                'host_id'     => $host_id,
+                'name'        => $name,
+                'pass'        => $pass,
+                'modified_at' => now(),
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $room->wasRecentlyCreated
+                ? 'Phòng mới đã được tạo và timer reset.'
+                : 'Phòng đã tồn tại, chỉ cập nhật thông tin.',
+            'room' => $room,
+        ]);
     }
 
     public function compete(Request $request)
