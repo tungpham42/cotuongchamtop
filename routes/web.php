@@ -42,12 +42,17 @@ Route::get('/sitemap', function () {
   });
 
   $sitemap->writeToFile(public_path('sitemap.xml'));
-  
+
   return 'Sitemap generated!';
 });
 Route::get('/sitemap-the-co.xml', function() {
   return response()->view('sitemap-puzzle')->header('Content-Type', 'text/xml');
 });
+
+Route::post('/startTimer/{roomCode}/{player}', [RoomController::class, 'startTimer']);
+Route::post('/pauseTimer/{roomCode}/{player}', [RoomController::class, 'pauseTimer']);
+Route::get('/getTime/{roomCode}', [RoomController::class, 'getTime']);
+
 Route::post('/anonymous-quick-match', [RoomController::class, 'anonymousQuickMatch'])->name('anonymous-quick-match');
 Route::get('/check-anonymous-match-status', [RoomController::class, 'checkAnonymousMatchStatus'])->name('check-anonymous-match-status');
 

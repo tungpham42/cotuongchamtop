@@ -676,11 +676,11 @@ class RoomController extends Controller
             'room' => $firstRoom
         ]);
     }
-      
+
     public static function getRoomName($code)
     {
         $name = Room::where('code', $code)->value('name');
-    
+
         return $name;
     }
     /**
@@ -690,14 +690,26 @@ class RoomController extends Controller
      */
     public function create(Request $request)
     {
-        $code = $request->input('ma-phong');
-        $name = $request->input('ten-phong');
-        $fen = $request->input('FEN');
+        $code    = $request->input('ma-phong');
+        $name    = $request->input('ten-phong');
+        $fen     = $request->input('FEN');
         $host_id = $request->input('host_id');
-        $pass = $request->input('pass');
+        $pass    = $request->input('pass');
+
         Room::updateOrInsert(
             ['code' => $code],
-            ['fen' => $fen, 'host_id' => $host_id, 'name' => $name, 'pass' => $pass, 'modified_at' => date('Y-m-d H:i:s')]
+            [
+                'fen'           => $fen,
+                'host_id'       => $host_id,
+                'name'          => $name,
+                'pass'          => $pass,
+                'modified_at'   => now(),
+                // reset timer mỗi khi tạo/cập nhật phòng
+                'black_time'    => 600,   // 10 phút
+                'red_time'      => 600,   // 10 phút
+                'active_player' => null,
+                'last_update'   => null,
+            ]
         );
     }
 
@@ -749,14 +761,14 @@ class RoomController extends Controller
         $room = Room::select('host_id', 'guest_id')
                 ->where('code', $code)
                 ->first();;
-    
+
         $host = User::find($room->host_id);
         $guest = User::find($room->guest_id);
-    
+
         $eloRatings = GameController::getEloRatings($host->elo, $guest->elo, $result);
-    
+
         [$host->elo, $guest->elo] = $eloRatings;
-    
+
         $host->save();
         $guest->save();
     }
@@ -971,14 +983,14 @@ class RoomController extends Controller
     {
         $code = $request->input('ma-phong');
         $hostId = Room::where('code', $code)->value('host_id');
-    
+
         return $hostId;
-    }    
+    }
 
     public static function getHostIdRoute($code)
     {
         $hostId = Room::where('code', $code)->value('host_id');
-    
+
         return $hostId;
     }
 
@@ -988,9 +1000,9 @@ class RoomController extends Controller
         $roomData = Room::select('host_id', 'guest_id')
                         ->where('code', '=', $code)
                         ->first();
-    
+
         return $roomData ? $roomData->toArray() : [];
-    }    
+    }
 
     public static function getMatchRooms()
     {
@@ -1096,12 +1108,12 @@ class RoomController extends Controller
             // Update user's online status
             auth()->user()->update(['last_seen_at' => now()]);
         }
-    
+
         $fen = Room::where('code', $code)->value('fen');
-    
+
         return $fen;
     }
-    
+
     /**
      * Display the specified resource.
      *
@@ -1111,9 +1123,9 @@ class RoomController extends Controller
     public function getPass(Room $room, $code)
     {
         $pass = Room::where('code', $code)->value('pass');
-    
+
         return $pass;
-    }    
+    }
 
     /**
      * Update the specified resource in storage.
@@ -1224,21 +1236,21 @@ class RoomController extends Controller
     public function getEventStream(Room $room, $code)
     {
         $fen = Room::where('code', $code)->value('fen');
-    
+
         $response = new StreamedResponse(function () use ($fen) {
             echo "data: $fen\n\n";
             ob_flush();
             flush();
             usleep(2500000); // Sleep for 2.5 seconds (adjust as needed)
         });
-    
+
         $response->headers->set('Content-Type', 'text/event-stream');
         $response->headers->set('X-Accel-Buffering', 'no');
         $response->headers->set('Cache-Control', 'no-cache');
-    
+
         return $response;
     }
-    
+
     public static function updateRoomScores($id)
     {
         $hostWinScores = Room::where('host_id', '=', $id)
@@ -1345,7 +1357,7 @@ class RoomController extends Controller
                 'guest_session' => $sessionId,
                 'modified_at' => now(),
             ]);
-            
+
             return response()->json([
                 'status' => 'matched',
                 'room_code' => $availableRoom->code,
@@ -1466,4 +1478,73 @@ class RoomController extends Controller
     {
         return $this->checkAnonymousMatchStatusHelper($request, ['hongse', 'heise'], ['红色的', '黑色的']);
     }
+
+    public function startTimer($roomCode, $player)
+    {
+        $room = Room::where('code', $roomCode)->first();
+        if (!$room) return response()->json(['error' => 'Room not found'], 404);
+
+        // Cập nhật last_update
+        $room->active_player = $player;
+        $room->last_update = now();
+        $room->save();
+
+        return response()->json(['success' => true, 'active_player' => $player]);
+    }
+
+    public function pauseTimer($roomCode, $player)
+    {
+        $room = Room::where('code', $roomCode)->first();
+        if (!$room) return response()->json(['error' => 'Room not found'], 404);
+
+        if ($room->active_player === $player) {
+            // Tính thời gian đã chạy
+            $elapsed = now()->diffInSeconds($room->last_update);
+
+            if ($player === 'red') {
+                $room->red_time = max(0, $room->red_time - $elapsed);
+            } else {
+                $room->black_time = max(0, $room->black_time - $elapsed);
+            }
+
+            $room->active_player = null;
+            $room->last_update = now();
+            $room->save();
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    public function getTime($roomCode)
+    {
+        $room = Room::where('code', $roomCode)->first();
+        if (!$room) return response()->json(['error' => 'Room not found'], 404);
+
+        // Nếu có player đang chạy → tính realtime
+        if ($room->active_player) {
+            $elapsed = now()->diffInSeconds($room->last_update);
+
+            $redTime = $room->red_time;
+            $blackTime = $room->black_time;
+
+            if ($room->active_player === 'red') {
+                $redTime = max(0, $room->red_time - $elapsed);
+            } elseif ($room->active_player === 'black') {
+                $blackTime = max(0, $room->black_time - $elapsed);
+            }
+
+            return response()->json([
+                'red_time' => $redTime,
+                'black_time' => $blackTime,
+                'active_player' => $room->active_player
+            ]);
+        }
+
+        return response()->json([
+            'red_time' => $room->red_time,
+            'black_time' => $room->black_time,
+            'active_player' => null
+        ]);
+    }
 }
+

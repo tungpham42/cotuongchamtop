@@ -6,6 +6,7 @@
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="Bạn đang đi quân đỏ">Bạn là chủ phòng</h5>
 @endif
 <span id="room-name">Tên phòng: {{ $room->name }}</span>
+@include('layout.partials.timer')
 @endsection
 @section('aboveContent')
 <p class="w-100 text-center mt-0 mb-1">
@@ -159,6 +160,8 @@ function manipulateRoom(roomCode) {
         game.load(newFEN);
         nuocCo.play();
       }
+      const currentPlayer = game.turn() === 'b' ? 'red' : 'black';
+      switchTurn(roomCode, currentPlayer);
     }
     updateStatus()
   });
@@ -254,7 +257,7 @@ function onDragStart (source, piece) {
       (game.turn() === 'b' && piece.search(/^r/) !== -1)) {
     return false;
   }
-  
+
   if ((board.orientation() == 'red' && game.turn() === 'b') || (board.orientation() == 'black' && game.turn() === 'r')) {
     return false;
   }
@@ -268,6 +271,11 @@ function onDrop (source, target) {
     from: source,
     to: target
   });
+
+  if (move !== null) {
+    // trước khi update trạng thái, đổi timer trước
+    switchTurn('{{ $roomCode }}', game.turn() === 'b' ? 'red' : 'black');
+  }
 
   // illegal move
   //if (move === null) return 'snapback';
@@ -375,6 +383,7 @@ function updateStatus () {
   } else if (game.turn() === 'b') {
     $('#game-status').removeClass('red').addClass('black');
   }
+
   $('#game-status').html(status);
   $('#header-status').html(': '+status);
   if (game.game_over()) {
