@@ -1555,14 +1555,16 @@ class RoomController extends Controller
             return response()->json([
                 'red_time' => $redTime,
                 'black_time' => $blackTime,
-                'active_player' => $room->active_player
+                'active_player' => $room->active_player,
+                'last_update' => $room->last_update,
             ]);
         }
 
         return response()->json([
             'red_time' => $room->red_time,
             'black_time' => $room->black_time,
-            'active_player' => null
+            'active_player' => null,
+            'last_update' => $room->last_update,
         ]);
     }
 }
