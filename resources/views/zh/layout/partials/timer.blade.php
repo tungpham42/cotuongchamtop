@@ -174,5 +174,5 @@
     // Khởi động timer
     fetchTime();
     setInterval(updateClockDisplay, 1000);
-    setInterval(fetchTime, 5000);
+    setInterval(fetchTime, 2000);
 </script>
