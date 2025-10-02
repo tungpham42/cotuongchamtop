@@ -50,7 +50,6 @@
     let activePlayer = null;
     let lastFetchTime = Date.now();
     let saveInterval = null;
-    let gameOverShown = false;
 
     function startRealtimeSave() {
         if (saveInterval) clearInterval(saveInterval);
@@ -111,6 +110,22 @@
         }
     }
 
+    async function fetchTime() {
+        try {
+            const res = await fetch(`/getTime/${roomCode}`);
+            const data = await res.json();
+
+            redTime = data.red_time;
+            blackTime = data.black_time;
+            activePlayer = data.active_player;
+            lastFetchTime = Date.now();
+
+            updateClockDisplay();
+        } catch (err) {
+            console.error("Lỗi fetchTime:", err);
+        }
+    }
+
     function updateClockDisplay() {
         let now = Date.now();
         let elapsed = Math.floor((now - lastFetchTime) / 1000);
@@ -131,37 +146,17 @@
         document.getElementById("black-clock").parentElement.classList.toggle("active", activePlayer === "black");
 
         // KIỂM TRA HẾT GIỜ
-        if ((redDisplay <= 0 || blackDisplay <= 0) && !gameOverShown) {
+        if ((redDisplay <= 0 || blackDisplay <= 0)) {
             stopRealtimeSave();
             activePlayer = null; // dừng lượt
-            gameOverShown = true; // đánh dấu đã hiển thị
 
-            let message = "";
-            if (redDisplay <= 0 && blackDisplay <= 0) {
-                message = "同点！どちらも時間切れです。";
-            } else if (redDisplay <= 0) {
-                message = "赤は時間切れです。黒が勝ちです！";
-            } else if (blackDisplay <= 0) {
-                message = "黒は時間切れです。赤が勝ちです！";
+            if (redDisplay == 0 && blackDisplay == 0) {
+                updateResult('{{ $roomCode }}', '0');
+            } else if (redDisplay == 0) {
+                updateResult('{{ $roomCode }}', '-1');
+            } else if (blackDisplay == 0) {
+                updateResult('{{ $roomCode }}', '1');
             }
-
-            // Bootbox popup
-            bootbox.alert({
-                title: "試合結果",
-                message: message,
-                size: 'small',
-                centerVertical: true,
-                closeButton: false,
-                locale: 'vi',
-                buttons: {
-                    ok: {
-                    className: 'btn-danger'
-                    }
-                },
-                callback: function() {
-                    console.log("Popup đóng.");
-                }
-            });
         }
     }
 

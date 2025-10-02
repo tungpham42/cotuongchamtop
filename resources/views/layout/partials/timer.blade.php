@@ -50,7 +50,6 @@
     let activePlayer = null;
     let lastFetchTime = Date.now();
     let saveInterval = null;
-    let gameOverShown = false;
 
     function startRealtimeSave() {
         if (saveInterval) clearInterval(saveInterval);
@@ -131,37 +130,17 @@
         document.getElementById("black-clock").parentElement.classList.toggle("active", activePlayer === "black");
 
         // KIỂM TRA HẾT GIỜ
-        if ((redDisplay <= 0 || blackDisplay <= 0) && !gameOverShown) {
+        if ((redDisplay <= 0 || blackDisplay <= 0)) {
             stopRealtimeSave();
             activePlayer = null; // dừng lượt
-            gameOverShown = true; // đánh dấu đã hiển thị
 
-            let message = "";
-            if (redDisplay <= 0 && blackDisplay <= 0) {
-                message = "Hòa! Cả hai hết giờ.";
-            } else if (redDisplay <= 0) {
-                message = "Quân đỏ hết giờ. Quân đen thắng!";
-            } else if (blackDisplay <= 0) {
-                message = "Quân đen hết giờ. Quân đỏ thắng!";
+            if (redDisplay == 0 && blackDisplay == 0) {
+                updateResult('{{ $roomCode }}', '0');
+            } else if (redDisplay == 0) {
+                updateResult('{{ $roomCode }}', '-1');
+            } else if (blackDisplay == 0) {
+                updateResult('{{ $roomCode }}', '1');
             }
-
-            // Bootbox popup
-            bootbox.alert({
-                title: "Kết quả trận đấu",
-                message: message,
-                size: 'small',
-                centerVertical: true,
-                closeButton: false,
-                locale: 'vi',
-                buttons: {
-                    ok: {
-                    className: 'btn-danger'
-                    }
-                },
-                callback: function() {
-                    console.log("Popup đóng.");
-                }
-            });
         }
     }
 
