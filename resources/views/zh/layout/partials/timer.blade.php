@@ -50,6 +50,7 @@
     let activePlayer = null;
     let lastFetchTime = Date.now();
     let saveInterval = null;
+    let gameOverShown = false;
 
     function startRealtimeSave() {
         if (saveInterval) clearInterval(saveInterval);
@@ -85,6 +86,10 @@
     }
 
     async function switchTurn(roomCode, currentPlayer) {
+        if (!activePlayer) {
+            console.log("Không thể chuyển lượt. Một người chơi đã hết giờ.");
+            return;
+        }
         stopRealtimeSave(); // dừng save thời gian cũ
         const nextPlayer = currentPlayer === "red" ? "black" : "red";
         await pauseTimer(roomCode, currentPlayer);
@@ -126,9 +131,42 @@
         document.getElementById("red-clock").innerText = formatTime(redDisplay);
         document.getElementById("black-clock").innerText = formatTime(blackDisplay);
 
-        // highlight người đang đi
         document.getElementById("red-clock").parentElement.classList.toggle("active", activePlayer === "red");
         document.getElementById("black-clock").parentElement.classList.toggle("active", activePlayer === "black");
+
+        // KIỂM TRA HẾT GIỜ
+        if ((redDisplay <= 0 || blackDisplay <= 0) && !gameOverShown) {
+            stopRealtimeSave();
+            activePlayer = null; // dừng lượt
+            gameOverShown = true; // đánh dấu đã hiển thị
+
+            let message = "";
+            if (redDisplay <= 0 && blackDisplay <= 0) {
+                message = "平局！两人都超时了。";
+            } else if (redDisplay <= 0) {
+                message = "红棋时间已到，黑棋获胜！";
+            } else if (blackDisplay <= 0) {
+                message = "黑棋时间已到，红棋获胜！";
+            }
+
+            // Bootbox popup
+            bootbox.alert({
+                title: "比赛结果",
+                message: message,
+                size: 'small',
+                centerVertical: true,
+                closeButton: false,
+                locale: 'vi',
+                buttons: {
+                    ok: {
+                    className: 'btn-danger'
+                    }
+                },
+                callback: function() {
+                    console.log("Popup đóng.");
+                }
+            });
+        }
     }
 
     function formatTime(seconds) {

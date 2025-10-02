@@ -50,6 +50,7 @@
     let activePlayer = null;
     let lastFetchTime = Date.now();
     let saveInterval = null;
+    let gameOverShown = false;
 
     function startRealtimeSave() {
         if (saveInterval) clearInterval(saveInterval);
@@ -85,6 +86,12 @@
     }
 
     async function switchTurn(roomCode, currentPlayer) {
+        // Nếu hết giờ → không chuyển lượt
+        if (!activePlayer) {
+            console.log("Không thể chuyển lượt. Một người chơi đã hết giờ.");
+            return;
+        }
+
         stopRealtimeSave(); // dừng save thời gian cũ
         const nextPlayer = currentPlayer === "red" ? "black" : "red";
         await pauseTimer(roomCode, currentPlayer);
@@ -126,9 +133,42 @@
         document.getElementById("red-clock").innerText = formatTime(redDisplay);
         document.getElementById("black-clock").innerText = formatTime(blackDisplay);
 
-        // highlight người đang đi
         document.getElementById("red-clock").parentElement.classList.toggle("active", activePlayer === "red");
         document.getElementById("black-clock").parentElement.classList.toggle("active", activePlayer === "black");
+
+        // KIỂM TRA HẾT GIỜ
+        if ((redDisplay <= 0 || blackDisplay <= 0) && !gameOverShown) {
+            stopRealtimeSave();
+            activePlayer = null; // dừng lượt
+            gameOverShown = true; // đánh dấu đã hiển thị
+
+            let message = "";
+            if (redDisplay <= 0 && blackDisplay <= 0) {
+                message = "Hòa! Cả hai hết giờ.";
+            } else if (redDisplay <= 0) {
+                message = "Quân đỏ hết giờ. Quân đen thắng!";
+            } else if (blackDisplay <= 0) {
+                message = "Quân đen hết giờ. Quân đỏ thắng!";
+            }
+
+            // Bootbox popup
+            bootbox.alert({
+                title: "Kết quả trận đấu",
+                message: message,
+                size: 'small',
+                centerVertical: true,
+                closeButton: false,
+                locale: 'vi',
+                buttons: {
+                    ok: {
+                    className: 'btn-danger'
+                    }
+                },
+                callback: function() {
+                    console.log("Popup đóng.");
+                }
+            });
+        }
     }
 
     function formatTime(seconds) {
