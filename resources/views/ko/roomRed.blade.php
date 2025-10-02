@@ -308,7 +308,11 @@ function updateStatus () {
   }
 }
 let config = {
+  @if ($room->red_time == 0 || $room->black_time == 0 || !isset($room->host_id))
+  draggable: false,
+  @else
   draggable: true,
+  @endif
   position: 'start',
   onDragStart: onDragStart,
   onDrop: onDrop,
