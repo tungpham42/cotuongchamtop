@@ -126,13 +126,14 @@
         document.getElementById("red-clock").innerText = formatTime(redDisplay);
         document.getElementById("black-clock").innerText = formatTime(blackDisplay);
 
-        document.getElementById("red-clock").parentElement.classList.toggle("active", activePlayer === "red");
-        document.getElementById("black-clock").parentElement.classList.toggle("active", activePlayer === "black");
-
         // KIỂM TRA HẾT GIỜ
         if ((redDisplay <= 0 || blackDisplay <= 0)) {
             stopRealtimeSave();
             activePlayer = null; // dừng lượt
+
+            // remove class active luôn khi hết giờ
+            document.getElementById("red-clock").parentElement.classList.remove("active");
+            document.getElementById("black-clock").parentElement.classList.remove("active");
 
             if (redDisplay == 0 && blackDisplay == 0) {
                 updateResult('{{ $roomCode }}', '0');
@@ -141,6 +142,10 @@
             } else if (blackDisplay == 0) {
                 updateResult('{{ $roomCode }}', '1');
             }
+        } else {
+            // chỉ toggle khi còn đang chơi
+            document.getElementById("red-clock").parentElement.classList.toggle("active", activePlayer === "red");
+            document.getElementById("black-clock").parentElement.classList.toggle("active", activePlayer === "black");
         }
     }
 
