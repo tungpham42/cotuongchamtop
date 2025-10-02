@@ -86,12 +86,6 @@
     }
 
     async function switchTurn(roomCode, currentPlayer) {
-        // Nếu hết giờ → không chuyển lượt
-        if (!activePlayer) {
-            console.log("Không thể chuyển lượt. Một người chơi đã hết giờ.");
-            return;
-        }
-
         stopRealtimeSave(); // dừng save thời gian cũ
         const nextPlayer = currentPlayer === "red" ? "black" : "red";
         await pauseTimer(roomCode, currentPlayer);
