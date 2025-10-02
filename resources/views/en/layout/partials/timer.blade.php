@@ -110,22 +110,6 @@
         }
     }
 
-    async function fetchTime() {
-        try {
-            const res = await fetch(`/getTime/${roomCode}`);
-            const data = await res.json();
-
-            redTime = data.red_time;
-            blackTime = data.black_time;
-            activePlayer = data.active_player;
-            lastFetchTime = Date.now();
-
-            updateClockDisplay();
-        } catch (err) {
-            console.error("Lỗi fetchTime:", err);
-        }
-    }
-
     function updateClockDisplay() {
         let now = Date.now();
         let elapsed = Math.floor((now - lastFetchTime) / 1000);
