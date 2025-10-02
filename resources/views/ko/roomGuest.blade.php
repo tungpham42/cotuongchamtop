@@ -83,6 +83,7 @@ $(document).ready(function() {
 let board = null;
 let game = new Xiangqi();
 let currentFEN = game.fen();
+let alertShown = false;
 
 function updateFenCode(roomCode) {
   board.position(game.fen(), true);
@@ -124,6 +125,8 @@ function manipulateRoom(roomCode) {
 }
 
 function updateResult(roomCode, result) {
+  if (alertShown) return;
+  alertShown = true;
   @if(!isset($room->host_id))
   $.ajax({
     type: "POST",
