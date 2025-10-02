@@ -305,7 +305,7 @@ function updateStatus () {
   }
 }
 let config = {
-  @if ($room->red_time == 0 || $room->black_time == 0 || !isset($room->host_id))
+  @if ($room->red_time == 0 || $room->black_time == 0)
   draggable: false,
   @else
   draggable: true,
