@@ -1567,5 +1567,18 @@ class RoomController extends Controller
             'last_update' => $room->last_update,
         ]);
     }
+
+    public function saveTime(Request $request, $roomCode)
+    {
+        $room = Room::where('code', $roomCode)->first();
+        if (!$room) return response()->json(['error' => 'Room not found'], 404);
+
+        $room->red_time = $request->input('red_time', $room->red_time);
+        $room->black_time = $request->input('black_time', $room->black_time);
+        $room->last_update = now();
+        $room->save();
+
+        return response()->json(['success' => true]);
+    }
 }
 

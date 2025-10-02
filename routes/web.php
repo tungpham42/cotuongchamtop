@@ -52,6 +52,7 @@ Route::get('/sitemap-the-co.xml', function() {
 Route::post('/startTimer/{roomCode}/{player}', [RoomController::class, 'startTimer']);
 Route::post('/pauseTimer/{roomCode}/{player}', [RoomController::class, 'pauseTimer']);
 Route::get('/getTime/{roomCode}', [RoomController::class, 'getTime']);
+Route::post('/saveTime/{roomCode}', [RoomController::class, 'saveTime']);
 
 Route::post('/anonymous-quick-match', [RoomController::class, 'anonymousQuickMatch'])->name('anonymous-quick-match');
 Route::get('/check-anonymous-match-status', [RoomController::class, 'checkAnonymousMatchStatus'])->name('check-anonymous-match-status');

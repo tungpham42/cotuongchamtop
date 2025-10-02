@@ -49,7 +49,33 @@
     let blackTime = 0;
     let activePlayer = null;
     let lastFetchTime = Date.now();
+    let saveInterval = null;
 
+    function startRealtimeSave() {
+        if (saveInterval) clearInterval(saveInterval);
+        saveInterval = setInterval(async () => {
+            if (!activePlayer) return;
+
+            let now = Date.now();
+            let elapsed = Math.floor((now - lastFetchTime) / 1000);
+
+            let redToSave = redTime;
+            let blackToSave = blackTime;
+
+            if (activePlayer === 'red') redToSave = Math.max(0, redTime - elapsed);
+            if (activePlayer === 'black') blackToSave = Math.max(0, blackTime - elapsed);
+
+            await fetch(`/saveTime/${roomCode}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ red_time: redToSave, black_time: blackToSave }),
+            });
+        }, 1000); // mỗi giây
+    }
+
+    function stopRealtimeSave() {
+        if (saveInterval) clearInterval(saveInterval);
+    }
     async function pauseTimer(roomCode, player) {
         return fetch(`/pauseTimer/${roomCode}/${player}`, { method: "POST" });
     }
@@ -59,9 +85,11 @@
     }
 
     async function switchTurn(roomCode, currentPlayer) {
+        stopRealtimeSave(); // dừng save thời gian cũ
         const nextPlayer = currentPlayer === "red" ? "black" : "red";
         await pauseTimer(roomCode, currentPlayer);
         await startTimer(roomCode, nextPlayer);
+        startRealtimeSave(); // bắt đầu save cho người mới
         console.log(`Chuyển lượt: ${currentPlayer} → ${nextPlayer}`);
         fetchTime();
     }
