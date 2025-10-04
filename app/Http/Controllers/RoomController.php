@@ -1571,14 +1571,26 @@ class RoomController extends Controller
     public function saveTime(Request $request, $roomCode)
     {
         $room = Room::where('code', $roomCode)->first();
-        if (!$room) return response()->json(['error' => 'Room not found'], 404);
+        if (!$room) {
+            return response()->json(['error' => 'Room not found'], 404);
+        }
 
-        $room->red_time = $request->input('red_time', $room->red_time);
-        $room->black_time = $request->input('black_time', $room->black_time);
+        // Lấy thời gian từ request hoặc giữ nguyên nếu không có
+        $redTime = $request->input('red_time', $room->red_time);
+        $blackTime = $request->input('black_time', $room->black_time);
+
+        // Kiểm tra và đảm bảo thời gian không âm
+        $room->red_time = max(0, $redTime);
+        $room->black_time = max(0, $blackTime);
         $room->last_update = now();
         $room->save();
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'red_time' => $room->red_time,
+            'black_time' => $room->black_time,
+            'last_update' => $room->last_update,
+        ]);
     }
 }
 
