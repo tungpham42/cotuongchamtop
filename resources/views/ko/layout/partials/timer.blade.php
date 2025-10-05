@@ -44,106 +44,109 @@
 </style>
 
 <script>
-    const roomCode = "{{ $roomCode }}"; // truyền từ Controller sang view
+    const roomCode = "{{ $roomCode }}"; // Transmitted from Controller to view
     let redTime = 0;
     let blackTime = 0;
     let activePlayer = null;
-    let lastFetchTime = Date.now();
     let saveInterval = null;
+    let isGameOver = false;
 
     function startRealtimeSave() {
         if (saveInterval) clearInterval(saveInterval);
         saveInterval = setInterval(async () => {
-            if (!activePlayer) return;
-
-            let now = Date.now();
-            let elapsed = Math.floor((now - lastFetchTime) / 1000);
-
-            let redToSave = redTime;
-            let blackToSave = blackTime;
-
-            if (activePlayer === 'red') redToSave = Math.max(0, redTime - elapsed);
-            if (activePlayer === 'black') blackToSave = Math.max(0, blackTime - elapsed);
+            if (!activePlayer || isGameOver) return;
 
             await fetch(`/saveTime/${roomCode}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ red_time: redToSave, black_time: blackToSave }),
+                body: JSON.stringify({ red_time: redTime, black_time: blackTime }),
             });
-        }, 1000); // mỗi giây
+        }, 1000); // Save every second
     }
 
     function stopRealtimeSave() {
         if (saveInterval) clearInterval(saveInterval);
     }
+
     async function pauseTimer(roomCode, player) {
-        return fetch(`/pauseTimer/${roomCode}/${player}`, { method: "POST" });
+        try {
+            const response = await fetch(`/pauseTimer/${roomCode}/${player}`, { method: "POST" });
+            if (!response.ok) throw new Error('Failed to pause timer');
+            return response.json();
+        } catch (err) {
+            console.error("Error pausing timer:", err);
+        }
     }
 
     async function startTimer(roomCode, player) {
-        return fetch(`/startTimer/${roomCode}/${player}`, { method: "POST" });
+        try {
+            const response = await fetch(`/startTimer/${roomCode}/${player}`, { method: "POST" });
+            if (!response.ok) throw new Error('Failed to start timer');
+            return response.json();
+        } catch (err) {
+            console.error("Error starting timer:", err);
+        }
     }
 
     async function switchTurn(roomCode, currentPlayer) {
-        stopRealtimeSave(); // dừng save thời gian cũ
+        stopRealtimeSave();
         const nextPlayer = currentPlayer === "red" ? "black" : "red";
         await pauseTimer(roomCode, currentPlayer);
         await startTimer(roomCode, nextPlayer);
-        startRealtimeSave(); // bắt đầu save cho người mới
-        console.log(`Chuyển lượt: ${currentPlayer} → ${nextPlayer}`);
+        startRealtimeSave();
+        console.log(`Turn switched: ${currentPlayer} → ${nextPlayer}`);
         fetchTime();
     }
 
     async function fetchTime() {
+        if (isGameOver) return;
         try {
             const res = await fetch(`/getTime/${roomCode}`);
+            if (!res.ok) throw new Error('Failed to fetch time');
             const data = await res.json();
+
+            if (data.error) {
+                console.error("Fetch time error:", data.error);
+                return;
+            }
 
             redTime = data.red_time;
             blackTime = data.black_time;
             activePlayer = data.active_player;
-            lastFetchTime = Date.now();
 
             updateClockDisplay();
         } catch (err) {
-            console.error("Lỗi fetchTime:", err);
+            console.error("Error fetching time:", err);
+            // Fallback to client-side update if server fetch fails
+            updateClockDisplay();
         }
     }
 
     function updateClockDisplay() {
-        let now = Date.now();
-        let elapsed = Math.floor((now - lastFetchTime) / 1000);
+        if (isGameOver) return;
 
-        let redDisplay = redTime;
-        let blackDisplay = blackTime;
+        document.getElementById("red-clock").innerText = formatTime(redTime);
+        document.getElementById("black-clock").innerText = formatTime(blackTime);
 
-        if (activePlayer === "red") {
-            redDisplay = Math.max(0, redTime - elapsed);
-        } else if (activePlayer === "black") {
-            blackDisplay = Math.max(0, blackTime - elapsed);
-        }
-
-        document.getElementById("red-clock").innerText = formatTime(redDisplay);
-        document.getElementById("black-clock").innerText = formatTime(blackDisplay);
-
-        // KIỂM TRA HẾT GIỜ
-        if ((redDisplay <= 0 || blackDisplay <= 0)) {
+        // Check for game over due to time
+        if (redTime <= 0 || blackTime <= 0) {
+            isGameOver = true;
             stopRealtimeSave();
-            activePlayer = null; // dừng lượt
+            activePlayer = null;
 
-            // remove class active luôn khi hết giờ
             document.getElementById("red-clock").parentElement.classList.remove("active");
             document.getElementById("black-clock").parentElement.classList.remove("active");
 
-            if (redDisplay == 0 && blackDisplay == 0) {
-                updateResult('{{ $roomCode }}', '0');
-            } else if (redDisplay == 0) {
-                updateResult('{{ $roomCode }}', '-1');
-            } else if (blackDisplay == 0) {
-                updateResult('{{ $roomCode }}', '1');
+            let result;
+            if (redTime <= 0 && blackTime <= 0) {
+                result = '0'; // Draw
+            } else if (redTime <= 0) {
+                result = '-1'; // Black wins
+            } else if (blackTime <= 0) {
+                result = '1'; // Red wins
             }
+            updateResult('{{ $roomCode }}', result);
         } else {
-            // chỉ toggle khi còn đang chơi
             document.getElementById("red-clock").parentElement.classList.toggle("active", activePlayer === "red");
             document.getElementById("black-clock").parentElement.classList.toggle("active", activePlayer === "black");
         }
@@ -155,8 +158,7 @@
         return `${m}:${s.toString().padStart(2, '0')}`;
     }
 
-    // Khởi động timer
+    // Initialize timer
     fetchTime();
-    setInterval(updateClockDisplay, 1000);
-    setInterval(fetchTime, 5000);
+    setInterval(fetchTime, 1000); // Fetch time every second
 </script>
