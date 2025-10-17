@@ -20,6 +20,12 @@
         box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         min-width: 120px;
         text-align: center;
+
+        /* FIX 1: Initialize border to maintain size */
+        border: 3px solid transparent;
+
+        /* FIX 2: Add transition for smooth animation */
+        transition: border 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
     }
 
     #red-clock {
@@ -40,6 +46,8 @@
 
     .timer-container div.active {
         border: 3px solid gold;
+        /* Optional: enhance the active visual state with a glow */
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.7), 0 2px 8px rgba(0,0,0,0.15);
     }
 </style>
 
@@ -49,10 +57,10 @@
     let blackTime = 0;
     let activePlayer = null;
     let saveInterval = null;
-    let tickInterval = null; // New interval for local ticking
+    let tickInterval = null; // Interval for local ticking
     let isGameOver = false;
 
-    // --- Time Ticking Logic (Fix for flickering/lagging) ---
+    // --- Time Ticking Logic ---
 
     function startLocalTick() {
         if (tickInterval) clearInterval(tickInterval);
@@ -65,7 +73,6 @@
                 blackTime = Math.max(0, blackTime - 1);
             }
 
-            // Update display locally every second for smooth ticking
             updateClockDisplay();
         }, 1000);
     }
@@ -74,11 +81,10 @@
         if (tickInterval) clearInterval(tickInterval);
     }
 
-    // --- Server Communication (Modified) ---
+    // --- Server Communication ---
 
     function startRealtimeSave() {
         if (saveInterval) clearInterval(saveInterval);
-        // Save less frequently (e.g., every 5 seconds) since the local tick handles display
         saveInterval = setInterval(async () => {
             if (!activePlayer || isGameOver) return;
 
@@ -119,14 +125,11 @@
         stopRealtimeSave();
         const nextPlayer = currentPlayer === "red" ? "black" : "red";
 
-        // 1. Pause current
         await pauseTimer(roomCode, currentPlayer);
-        // 2. Start next
         await startTimer(roomCode, nextPlayer);
 
         console.log(`Turn switched: ${currentPlayer} → ${nextPlayer}`);
 
-        // 3. Synchronize time from server and restart local intervals
         await fetchTime();
         startLocalTick();
         startRealtimeSave();
@@ -144,7 +147,6 @@
                 return;
             }
 
-            // Update local state with server data (Synchronization)
             redTime = data.red_time;
             blackTime = data.black_time;
             const previousActivePlayer = activePlayer;
@@ -152,7 +154,6 @@
 
             updateClockDisplay();
 
-            // Re-evaluate ticking if the active player status has changed
             if (activePlayer && activePlayer !== previousActivePlayer) {
                  stopLocalTick();
                  startLocalTick();
@@ -164,7 +165,6 @@
             return data;
         } catch (err) {
             console.error("Error fetching time:", err);
-            // Fallback to client-side update if server fetch fails
             updateClockDisplay();
         }
     }
@@ -193,11 +193,11 @@
             } else if (blackTime <= 0) {
                 result = '1'; // Red wins
             }
-            // Assume updateResult is a global function defined elsewhere
             if (typeof updateResult === 'function') {
                 updateResult('{{ $roomCode }}', result);
             }
         } else {
+            // This is the line that triggers the smooth CSS transition
             document.getElementById("red-clock").parentElement.classList.toggle("active", activePlayer === "red");
             document.getElementById("black-clock").parentElement.classList.toggle("active", activePlayer === "black");
         }
@@ -209,7 +209,7 @@
         return `${m}:${s.toString().padStart(2, '0')}`;
     }
 
-    // --- Initialization (Modified) ---
+    // --- Initialization ---
 
     async function initializeTimer() {
         const data = await fetchTime();
@@ -221,6 +221,6 @@
 
     initializeTimer();
 
-    // Safety net: Synchronize time with server every 10 seconds (much less frequent than original)
+    // Sync with server every 10 seconds as a safety net
     setInterval(fetchTime, 10000);
 </script>
