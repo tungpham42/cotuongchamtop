@@ -87,7 +87,6 @@ let board = null;
 let game = new Xiangqi();
 let currentFEN = game.fen();
 let alertShown = false;
-let resignAlertShown = false;
 
 function updateFenCode(roomCode) {
   board.position(game.fen(), true);
@@ -359,20 +358,8 @@ function updateStatus () {
     clearInterval(updatePlayers);
     @endif
   }
-  if (game.fen().includes('resign') && !resignAlertShown) {
-    resignAlertShown = true;
+  if (game.fen().includes('resign')) {
     $('#header-status').html(': '+status+' - Đã bỏ cuộc');
-
-    // Determine who resigned based on whose turn it is now
-    let resignResult;
-    if (board.orientation() === 'black') {
-      // Black player resigned (Black loses = 1)
-      resignResult = '1';
-    } else {
-      // Red player resigned (Red loses = -1)
-      resignResult = '-1';
-    }
-
     bootbox.alert({
       message: '<i class="fad fa-flag-checkered"></i> Đã bỏ cuộc',
       locale: 'vi',
@@ -385,7 +372,7 @@ function updateStatus () {
         }
       },
       callback: function() {
-        updateResult('{{ $roomCode }}', resignResult);
+        updateResult('{{ $roomCode }}', '0');
       }
     });
     $('#game-over').html('<i class="fad fa-flag-checkered"></i> Đã bỏ cuộc');
@@ -477,6 +464,23 @@ $('#resign').on('click', function() {
   updateFenCode('{{ $roomCode }}');
   updateStatus();
 });
+
+// Add CSS for loading state
+const style = document.createElement('style');
+style.textContent = `
+  .fa-spinner {
+    margin-left: 5px;
+  }
+  .disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .highlight {
+    background-color: #ffeb3b !important;
+    opacity: 0.6;
+  }
+`;
+document.head.appendChild(style);
 </script>
 {{-- @include('layout.partials.userPuzzlesWrapper') --}}
 @include('layout.partials.players')

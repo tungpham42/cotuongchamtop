@@ -32,6 +32,8 @@
 <script>
 let board = null;
 let game = new Xiangqi();
+let isComputerThinking = false;
+let resignAlertShown = false;
 
 function removeGreySquares () {
   $('#ban-co .square-2b8ce').removeClass('highlight');
@@ -39,50 +41,124 @@ function removeGreySquares () {
 
 function greySquare (square) {
   let $square = $('#ban-co .square-' + square);
-
   $square.addClass('highlight');
 }
 
 function onDragStart (source, piece, position, orientation) {
-  if (game.in_checkmate() === true || game.in_draw() === true || piece.search(/^b/) !== -1) {
+  if (game.in_checkmate() === true || game.in_draw() === true ||
+      piece.search(/^b/) !== -1 || isComputerThinking) {
     return false;
   }
 }
 
-function makeBestMove() {
-  var aiWorker = new Worker('/js/xiangqi_bot_worker.js');
-  var bestMove;
-  aiWorker.postMessage({
-    fen: game.fen(),
-    depth: {{ $level }}
-  });
-  aiWorker.onmessage = function(e) {
-    bestMove = e.data;
-    console.log(bestMove);
-    game.ugly_move(bestMove);
-    board.position(game.fen());
-    nuocCo.play();
-    updateStatus();
+// Use Pikafish engine for AI moves
+async function makeBestMove() {
+  if (isComputerThinking || game.game_over()) return;
+
+  isComputerThinking = true;
+  $('#game-status').html('Máy đang suy nghĩ... <i class="fas fa-spinner fa-spin"></i>');
+
+  try {
+    const response = await fetch('/api/xiangqi/best-move', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+      },
+      body: JSON.stringify({
+        fen: game.fen(),
+        timeout: getTimeoutByLevel({{ $level }})
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success && data.best_move) {
+      // Convert engine move format to Xiangqi.js format
+      const move = convertEngineMoveToXiangqiJS(data.best_move);
+
+      if (move && game.move(move) !== null) {
+        board.position(game.fen());
+        nuocCo.play();
+        updateStatus();
+      } else {
+        console.error('Invalid move from engine:', data.best_move);
+        makeRandomMove(); // Fallback
+      }
+    } else {
+      console.error('Engine error:', data.error);
+      makeRandomMove(); // Fallback to random move
+    }
+  } catch (error) {
+    console.error('Request failed:', error);
+    makeRandomMove(); // Fallback to random move
+  } finally {
+    isComputerThinking = false;
+  }
+}
+
+// Convert engine move format ("h2e2") to Xiangqi.js move object
+function convertEngineMoveToXiangqiJS(engineMove) {
+  if (!engineMove || engineMove.length !== 4) return null;
+
+  const from = engineMove.substring(0, 2);
+  const to = engineMove.substring(2, 4);
+
+  return {
+    from: from,
+    to: to
+  };
+}
+
+// Get timeout based on level
+function getTimeoutByLevel(level) {
+  const timeouts = {
+    1: 500,   // Mới chơi
+    2: 1000,   // Dễ
+    3: 1500,   // Bình thường
+    4: 2000,   // Khó
+    5: 2500   // Khó nhất
+  };
+  return timeouts[level] || 3000;
+}
+
+// Fallback function if engine fails
+function makeRandomMove() {
+  const moves = game.moves({verbose: true});
+  if (moves.length > 0) {
+    const randomMove = moves[Math.floor(Math.random() * moves.length)];
+    if (game.move(randomMove) !== null) {
+      board.position(game.fen());
+      nuocCo.play();
+      updateStatus();
+    }
   }
 }
 
 function onDrop (source, target) {
+  if (isComputerThinking) return 'snapback';
+
   // see if the move is legal
   let move = game.move({
     from: source,
     to: target,
-    promotion: 'q' // NOTE: always promote to a queen for example simplicity
+    promotion: 'q'
   });
 
   // illegal move
   if (move === null) return 'snapback';
+
   updateStatus();
-  // make random legal move for black
-  //window.setTimeout(makeRandomMove, 250);
-  makeBestMove();
+
+  // If it's computer's turn after player move
+  if (!game.game_over() && game.turn() === 'b') {
+    setTimeout(makeBestMove, 500);
+  }
 }
 
 function onMouseoverSquare (square, piece) {
+  if (isComputerThinking) return;
+
   // get list of possible moves for this square
   let moves = game.moves({
     square: square,
@@ -104,71 +180,96 @@ function onMouseoverSquare (square, piece) {
 function onMouseoutSquare (square, piece) {
   removeGreySquares();
 }
-// update the board position after the piece snap
-// for castling, en passant, pawn promotion
+
 function onSnapEnd () {
   board.position(game.fen());
   nuocCo.play();
   updateStatus();
 }
-function updateStatus () {
-  var status = ''
 
-  var moveColor = 'Red'
+function updateStatus () {
+  var status = '';
+  var moveColor = 'Red';
+
   if (game.turn() === 'b') {
-    moveColor = 'Black'
+    moveColor = 'Black';
   }
 
   // checkmate?
   if (game.in_checkmate()) {
-    status = moveColor + ' is in checkmate'
+    status = moveColor + ' is checkmated';
   }
-
   // draw?
   else if (game.in_draw()) {
-    status = 'Drawn position'
+    status = 'Draw';
   }
-
   // game still on
   else {
-    status = moveColor + "'s turn to move"
+    status = "It's " + moveColor + "'s turn";
 
     // check?
     if (game.in_check()) {
-      status += ', ' + moveColor + ' is in check'
+      status += ', ' + moveColor + ' is in check';
+      if ((board.orientation() == 'red' && game.turn() === 'r') ||
+          (board.orientation() == 'black' && game.turn() === 'b')) {
+        $('#checkmateText').show();
+      }
+    } else {
+      $('#checkmateText').hide();
     }
   }
+
   if (game.turn() === 'r') {
     $('#game-status').removeClass('black').addClass('red');
   } else if (game.turn() === 'b') {
     $('#game-status').removeClass('red').addClass('black');
   }
+
   $('#game-status').html(status);
-  $('#header-status').html(': '+status);
-  if (game.game_over()) {
-    hetTran.play();
-    $('#header-status').html(': '+status+' - Game over');
-    $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> Game over');
+
+  if (typeof $('#header-status') !== 'undefined' && $('#header-status').length) {
+    $('#header-status').html(': ' + status);
   }
+
+  if (game.game_over()) {
+    if (typeof hetTran !== 'undefined') {
+      hetTran.play();
+    }
+    if (typeof $('#header-status') !== 'undefined' && $('#header-status').length) {
+      $('#header-status').html(': ' + status + ' - Game over');
+    }
+    $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> Game over');
+    isComputerThinking = false;
+  }
+
   if (game.fen().includes('resign') && !resignAlertShown) {
-    $('#header-status').html(': '+status+' - Resigned');
-    bootbox.alert({
-      message: '<i class="fad fa-flag-checkered"></i> Resigned',
-      locale: 'en',
-      centerVertical: true,
-      closeButton: false,
-      size: 'small',
-      buttons: {
-        ok: {
-          className: 'btn-danger pulse-red'
+    if (typeof $('#header-status') !== 'undefined' && $('#header-status').length) {
+      $('#header-status').html(': ' + status + ' - Resigned');
+    }
+
+    if (typeof bootbox !== 'undefined') {
+      bootbox.alert({
+        message: '<i class="fad fa-flag-checkered"></i> Resigned',
+        locale: 'en',
+        centerVertical: true,
+        closeButton: false,
+        size: 'small',
+        buttons: {
+          ok: {
+            className: 'btn-danger'
+          }
         }
-      }
-    });
+      });
+    }
+
     $('#game-over').html('<i class="fad fa-flag-checkered"></i> Resigned');
     $('#resign, #switch').addClass('disabled').attr('aria-disabled', true);
     config.draggable = false;
+    isComputerThinking = false;
+    resignAlertShown = true;
   }
 }
+
 let config = {
   draggable: true,
   position: 'start',
@@ -180,25 +281,48 @@ let config = {
   //pieceTheme: '/static/img/xiangqipieces/traditional/{piece}.svg'
 };
 board = Xiangqiboard('ban-co', config);
-$(window).resize(board.resize);
+
+// Handle window resize
+if (typeof $(window).resize === 'function') {
+  $(window).resize(board.resize);
+}
+
 updateStatus();
+
 $(document).ready(function() {
-  $('#FEN').val(game.fen());
+  if (typeof $('#FEN') !== 'undefined' && $('#FEN').length) {
+    $('#FEN').val(game.fen());
+  }
 });
+
 $('#resign').on('click', function() {
+  if (isComputerThinking) return;
   game.load(game.fen() + ' resign');
   updateStatus();
 });
+
 $('#undo').on('click', function(){
-  if (game.turn() == 'r') {
+  if (isComputerThinking) return;
+
+  if (game.history().length >= 2) {
     game.undo();
     game.undo();
     board.position(game.fen());
-    nuocCo.play();
+    if (typeof nuocCo !== 'undefined') {
+      nuocCo.play();
+    }
     updateStatus();
   }
 });
+
+$('#switch').on('click', function() {
+  if (isComputerThinking) return;
+  board.flip();
+});
+
 $('#reset').on('click', function() {
+  isComputerThinking = false;
+  resignAlertShown = false;
   board.position('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR');
   game.load('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1');
   $('#game-status').removeClass('black').addClass('red');
@@ -207,26 +331,30 @@ $('#reset').on('click', function() {
   $('#resign, #switch').removeClass('disabled').attr('aria-disabled', false);
   config.draggable = true;
 });
-$('.level.dropup .dropdown-item').each(function(){
-  const activePointer = '<i class="far fa-hand-point-right"></i>  ';
-  if ($(this).hasClass('active')) {
-    $(this).prepend(activePointer);
+
+// Add CSS for loading state
+const style = document.createElement('style');
+style.textContent = `
+  .fa-spinner {
+    margin-left: 5px;
   }
-  $(this).on('click auxclick', function(e){
-    if (removeTrailingSlash($(this).attr('href')) !== removeTrailingSlash(window.location.href)) {
-      e.preventDefault();
-      $('#AdSenseModal').attr('data-url', $(this).attr('href')).modal('show');
-    } else {
-      window.location.href = $(this).attr('href');
-    }
-  }).on('mouseenter mouseleave', function(){
-    if ($(this).has('i').length) {
-      $(this).find('i').remove();
-    } else {
-      $(this).prepend(activePointer);
-    }
-  });
+  .disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .highlight {
+    background-color: #ffeb3b !important;
+    opacity: 0.6;
+  }
+`;
+document.head.appendChild(style);
+
+// Initialize computer move if black starts first
+@if(isset($computerStarts) && $computerStarts)
+$(document).ready(function() {
+  setTimeout(makeBestMove, 1000);
 });
+@endif
 </script>
 @include('en.layout.partials.puzzles')
 @endsection

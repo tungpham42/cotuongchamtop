@@ -482,6 +482,25 @@ $('#resign').on('click', function() {
 @if (isset($room->host_id) && auth()->id() == $room->host_id)
 $('#choi').removeClass('pulse-red').addClass('disabled');
 @endif
+  updateStatus();
+});
+
+// Add CSS for loading state
+const style = document.createElement('style');
+style.textContent = `
+  .fa-spinner {
+    margin-left: 5px;
+  }
+  .disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .highlight {
+    background-color: #ffeb3b !important;
+    opacity: 0.6;
+  }
+`;
+document.head.appendChild(style);
 </script>
 {{-- @include('layout.partials.userPuzzlesWrapper') --}}
 @include('layout.partials.players')

@@ -30,7 +30,57 @@ use Spatie\Sitemap\Sitemap;
 $cdnUrl = "https://cotuong.r.worldssl.net"; // URL::to('')
 $fenRegex = "[a-zA-Z0-9\-\/\s|&nbsp;]+";
 // Common function to get random room
+Route::get('/test-engine', function() {
+  try {
+    echo "<h1>Pikafish Engine Test</h1>";
 
+    // Check if files exist
+    $enginePath = storage_path('engines/pikafish');
+    $networkPath = storage_path('engines/pikafish.nnue');
+
+    echo "<p>Engine exists: " . (file_exists($enginePath) ? 'YES' : 'NO') . "</p>";
+    echo "<p>Network exists: " . (file_exists($networkPath) ? 'YES' : 'NO') . "</p>";
+
+    if (file_exists($enginePath)) {
+      echo "<p>Engine executable: " . (is_executable($enginePath) ? 'YES' : 'NO') . "</p>";
+    }
+
+    if (file_exists($networkPath)) {
+      echo "<p>Network size: " . filesize($networkPath) . " bytes</p>";
+    }
+
+    // Test engine
+    $engine = new \App\Services\XiangqiEngineService();
+
+    echo "<p>Engine initialized: " . ($engine->isReady() ? 'YES' : 'NO') . "</p>";
+
+    if ($engine->isReady()) {
+      $fen = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1';
+      $bestMove = $engine->getBestMove($fen, 3000);
+
+      echo "<p>Best move: <strong>" . ($bestMove ?? 'NOT FOUND') . "</strong></p>";
+      echo "<p>FEN: " . $fen . "</p>";
+
+      // Test API endpoint
+      echo "<h2>API Test</h2>";
+      $client = new \GuzzleHttp\Client();
+      $response = $client->post(url('/api/xiangqi/best-move'), [
+        'form_params' => [
+          'fen' => $fen,
+          'timeout' => 2000,
+          'level' => 3,
+          '_token' => csrf_token()
+        ]
+      ]);
+
+      $result = json_decode($response->getBody(), true);
+      echo "<p>API Response: " . json_encode($result) . "</p>";
+    }
+  } catch (Exception $e) {
+    echo "<p style='color: red;'>Error: " . $e->getMessage() . "</p>";
+    echo "<pre>" . $e->getTraceAsString() . "</pre>";
+  }
+});
 Route::get('/sitemap', function () {
   $sitemap = Sitemap::create();
 
@@ -551,7 +601,7 @@ Route::match(['get', 'post'], '/ban-co-kho-nhat/{fen}', function ($fen) {
 return view('boardAi', ['headTitle' => 'Bàn cờ khó nhất', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '4', 'levelTxt' => 'Khó nhất', 'cdnUrl' => URL::to(''), 'langViUrl' => '/ban-co-kho-nhat/'.$fen, 'langEnUrl' => '/hardest-board/'.$fen, 'langJaUrl' => '/mottomo-muzukashi-bodo/'.$fen, 'langKoUrl' => '/gajang-dandanhan-bodeu/'.$fen, 'langZhUrl' => '/zuiyingban/'.$fen, 'canonicalUrl' => '/ban-co-kho-nhat/'.$fen, 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
 })->where(['fen' => $fenRegex]);
 Route::match(['get', 'post'], '/giai-co-the/{fen}', function ($fen) {
-return view('puzzleAi', ['headTitle' => 'Giải cờ thế', 'bodyClass' => 'puzzle', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '4', 'levelTxt' => 'Khó nhất', 'cdnUrl' => URL::to(''), 'langViUrl' => '/giai-co-the/'.$fen, 'langEnUrl' => '/solve-puzzle/'.$fen, 'langJaUrl' => '/pazuru-o-toku/'.$fen, 'langKoUrl' => '/pojeureul-pulda/'.$fen, 'langZhUrl' => '/jiejuenanti/'.$fen, 'canonicalUrl' => '/giai-co-the/'.$fen, 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
+return view('puzzleAi', ['headTitle' => 'Giải cờ thế', 'bodyClass' => 'puzzle', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '5', 'levelTxt' => 'Khó nhất', 'cdnUrl' => URL::to(''), 'langViUrl' => '/giai-co-the/'.$fen, 'langEnUrl' => '/solve-puzzle/'.$fen, 'langJaUrl' => '/pazuru-o-toku/'.$fen, 'langKoUrl' => '/pojeureul-pulda/'.$fen, 'langZhUrl' => '/jiejuenanti/'.$fen, 'canonicalUrl' => '/giai-co-the/'.$fen, 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
 })->where(['fen' => $fenRegex]);
 
 Route::match(['get', 'post'], '/board/{fen}', function ($fen) {

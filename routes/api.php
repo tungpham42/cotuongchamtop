@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\XiangqiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +16,10 @@ use App\Http\Controllers\RoomController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+Route::post('/xiangqi/best-move', [XiangqiController::class, 'getBestMove']);
+Route::post('/xiangqi/analyze', [XiangqiController::class, 'analyzePosition']);
+Route::get('/xiangqi/status', [XiangqiController::class, 'getEngineStatus']);
+Route::get('/xiangqi/health', [XiangqiController::class, 'healthCheck']);
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });

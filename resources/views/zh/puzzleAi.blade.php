@@ -33,6 +33,8 @@ $('#copy-url').on('click', function() {
 <script>
 let board = null;
 let game = new Xiangqi();
+let isComputerThinking = false;
+let resignAlertShown = false;
 
 function removeGreySquares () {
   $('#ban-co .square-2b8ce').removeClass('highlight');
@@ -40,50 +42,124 @@ function removeGreySquares () {
 
 function greySquare (square) {
   let $square = $('#ban-co .square-' + square);
-
   $square.addClass('highlight');
 }
 
 function onDragStart (source, piece, position, orientation) {
-  if (game.in_checkmate() === true || game.in_draw() === true || piece.search(/^b/) !== -1) {
+  if (game.in_checkmate() === true || game.in_draw() === true ||
+      piece.search(/^b/) !== -1 || isComputerThinking) {
     return false;
   }
 }
 
-function makeBestMove() {
-  var aiWorker = new Worker('/js/xiangqi_bot_worker.js');
-  var bestMove;
-  aiWorker.postMessage({
-    fen: game.fen(),
-    depth: {{ $level }}
-  });
-  aiWorker.onmessage = function(e) {
-    bestMove = e.data;
-    console.log(bestMove);
-    game.ugly_move(bestMove);
-    board.position(game.fen());
-    nuocCo.play();
-    updateStatus();
+// Use Pikafish engine for AI moves
+async function makeBestMove() {
+  if (isComputerThinking || game.game_over()) return;
+
+  isComputerThinking = true;
+  $('#game-status').html('Máy đang suy nghĩ... <i class="fas fa-spinner fa-spin"></i>');
+
+  try {
+    const response = await fetch('/api/xiangqi/best-move', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+      },
+      body: JSON.stringify({
+        fen: game.fen(),
+        timeout: getTimeoutByLevel({{ $level }})
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success && data.best_move) {
+      // Convert engine move format to Xiangqi.js format
+      const move = convertEngineMoveToXiangqiJS(data.best_move);
+
+      if (move && game.move(move) !== null) {
+        board.position(game.fen());
+        nuocCo.play();
+        updateStatus();
+      } else {
+        console.error('Invalid move from engine:', data.best_move);
+        makeRandomMove(); // Fallback
+      }
+    } else {
+      console.error('Engine error:', data.error);
+      makeRandomMove(); // Fallback to random move
+    }
+  } catch (error) {
+    console.error('Request failed:', error);
+    makeRandomMove(); // Fallback to random move
+  } finally {
+    isComputerThinking = false;
+  }
+}
+
+// Convert engine move format ("h2e2") to Xiangqi.js move object
+function convertEngineMoveToXiangqiJS(engineMove) {
+  if (!engineMove || engineMove.length !== 4) return null;
+
+  const from = engineMove.substring(0, 2);
+  const to = engineMove.substring(2, 4);
+
+  return {
+    from: from,
+    to: to
+  };
+}
+
+// Get timeout based on level
+function getTimeoutByLevel(level) {
+  const timeouts = {
+    1: 500,   // Mới chơi
+    2: 1000,   // Dễ
+    3: 1500,   // Bình thường
+    4: 2000,   // Khó
+    5: 2500   // Khó nhất
+  };
+  return timeouts[level] || 3000;
+}
+
+// Fallback function if engine fails
+function makeRandomMove() {
+  const moves = game.moves({verbose: true});
+  if (moves.length > 0) {
+    const randomMove = moves[Math.floor(Math.random() * moves.length)];
+    if (game.move(randomMove) !== null) {
+      board.position(game.fen());
+      nuocCo.play();
+      updateStatus();
+    }
   }
 }
 
 function onDrop (source, target) {
+  if (isComputerThinking) return 'snapback';
+
   // see if the move is legal
   let move = game.move({
     from: source,
     to: target,
-    promotion: 'q' // NOTE: always promote to a queen for example simplicity
+    promotion: 'q'
   });
 
   // illegal move
   if (move === null) return 'snapback';
+
   updateStatus();
-  // make random legal move for black
-  //window.setTimeout(makeRandomMove, 1000);
-  makeBestMove();
+
+  // If it's computer's turn after player move
+  if (!game.game_over() && game.turn() === 'b') {
+    setTimeout(makeBestMove, 500);
+  }
 }
 
 function onMouseoverSquare (square, piece) {
+  if (isComputerThinking) return;
+
   // get list of possible moves for this square
   let moves = game.moves({
     square: square,
@@ -105,71 +181,96 @@ function onMouseoverSquare (square, piece) {
 function onMouseoutSquare (square, piece) {
   removeGreySquares();
 }
-// update the board position after the piece snap
-// for castling, en passant, pawn promotion
+
 function onSnapEnd () {
   board.position(game.fen());
   nuocCo.play();
   updateStatus();
 }
-function updateStatus () {
-  var status = ''
 
-  var moveColor = '红色'
+function updateStatus () {
+  var status = '';
+  var moveColor = '红方';
+
   if (game.turn() === 'b') {
-    moveColor = '黑色'
+    moveColor = '黑方';
   }
 
   // checkmate?
   if (game.in_checkmate()) {
-    status = moveColor + '将死'
+    status = moveColor + ' 被将死';
   }
-
   // draw?
   else if (game.in_draw()) {
-    status = '平仓'
+    status = '平局';
   }
-
   // game still on
   else {
-    status = moveColor + "转向移动"
+    status = '轮到 ' + moveColor + ' 走棋';
 
     // check?
     if (game.in_check()) {
-      status += ',' + moveColor + '在检查中'
+      status += '，' + moveColor + ' 正在被将军';
+      if ((board.orientation() == 'red' && game.turn() === 'r') ||
+          (board.orientation() == 'black' && game.turn() === 'b')) {
+        $('#checkmateText').show();
+      }
+    } else {
+      $('#checkmateText').hide();
     }
   }
+
   if (game.turn() === 'r') {
     $('#game-status').removeClass('black').addClass('red');
   } else if (game.turn() === 'b') {
     $('#game-status').removeClass('red').addClass('black');
   }
+
   $('#game-status').html(status);
-  $('#header-status').html(': '+status);
-  if (game.game_over()) {
-    hetTran.play();
-    $('#header-status').html(': '+status+' - 游戏结束了');
-    $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> 游戏结束了');
+
+  if (typeof $('#header-status') !== 'undefined' && $('#header-status').length) {
+    $('#header-status').html('：' + status);
   }
+
+  if (game.game_over()) {
+    if (typeof hetTran !== 'undefined') {
+      hetTran.play();
+    }
+    if (typeof $('#header-status') !== 'undefined' && $('#header-status').length) {
+      $('#header-status').html('：' + status + ' - 对局结束');
+    }
+    $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> 对局结束');
+    isComputerThinking = false;
+  }
+
   if (game.fen().includes('resign') && !resignAlertShown) {
-    $('#header-status').html(': '+status+' - 听天由命');
-    bootbox.alert({
-      message: '<i class="fad fa-flag-checkered"></i> 听天由命',
-      locale: 'zh',
-      centerVertical: true,
-      closeButton: false,
-      size: 'small',
-      buttons: {
-        ok: {
-          className: 'btn-danger pulse-red'
+    if (typeof $('#header-status') !== 'undefined' && $('#header-status').length) {
+      $('#header-status').html('：' + status + ' - 认输');
+    }
+
+    if (typeof bootbox !== 'undefined') {
+      bootbox.alert({
+        message: '<i class="fad fa-flag-checkered"></i> 认输',
+        locale: 'zh',
+        centerVertical: true,
+        closeButton: false,
+        size: 'small',
+        buttons: {
+          ok: {
+            className: 'btn-danger'
+          }
         }
-      }
-    });
-    $('#game-over').html('<i class="fad fa-flag-checkered"></i> 听天由命');
-    $('#resign').addClass('disabled').attr('aria-disabled', true);
+      });
+    }
+
+    $('#game-over').html('<i class="fad fa-flag-checkered"></i> 认输');
+    $('#resign, #switch').addClass('disabled').attr('aria-disabled', true);
     config.draggable = false;
+    isComputerThinking = false;
+    resignAlertShown = true;
   }
 }
+
 let config = {
   draggable: true,
   position: '{{ $fen }}',

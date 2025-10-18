@@ -38,6 +38,7 @@
     "spatie/schema-org": "^3.14",
     "swooletw/laravel-swoole": "^2.12",
     "symfony/mailer": "^6.0",
+    "symfony/process": "^6.4",
     "tbruckmaier/corcel-acf": "^1.8",
     "that0n3guy/transliteration": "^2.0",
     "tttran/viet_qr_generator": "^0.7.0",

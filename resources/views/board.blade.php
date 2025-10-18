@@ -12,7 +12,7 @@
   <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> HẾT TRẬN</span>
 </p>
 <div class="sharethis-inline-reaction-buttons"></div>
-<div class="dropup mx-auto text-center my-1">
+{{-- <div class="dropup mx-auto text-center my-1">
   <button class="btn btn-lg btn-dark dropdown-toggle" type="button" id="levelDropdown" data-toggle="dropdown" aria-haspopup="true" data-step="1" data-intro="Hãy chọn cấp độ phù hợp với bạn nhé" aria-expanded="false">
     <i class="fad fa-robot"></i> Chọn cấp độ bàn cờ
   </button>
@@ -23,7 +23,7 @@
     <a class="add-fen dropdown-item" href="{{ url('/ban-co-kho') }}" style="cursor: pointer !important;">Khó</a>
     <a class="add-fen dropdown-item" href="{{ url('/ban-co-kho-nhat') }}" style="cursor: pointer !important;">Khó nhất</a>
   </div>
-</div>
+</div> --}}
 <div class="dropup mx-auto text-center my-1">
   <button class="btn btn-danger btn-lg dropdown-toggle" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     <span data-toggle="tooltip" data-placement="top" title="Đấu với bạn bè trong phòng"><i class="fad fa-gamepad-alt"></i> Chơi online</span>
