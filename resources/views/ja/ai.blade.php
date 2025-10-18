@@ -113,11 +113,11 @@ function convertEngineMoveToXiangqiJS(engineMove) {
 // Get timeout based on level
 function getTimeoutByLevel(level) {
   const timeouts = {
-    1: 1000,   // Mới chơi
-    2: 2000,   // Dễ
-    3: 3000,   // Bình thường
-    4: 5000,   // Khó
-    5: 10000   // Khó nhất
+    1: 500,   // Mới chơi
+    2: 1000,   // Dễ
+    3: 1500,   // Bình thường
+    4: 2000,   // Khó
+    5: 2500   // Khó nhất
   };
   return timeouts[level] || 3000;
 }
