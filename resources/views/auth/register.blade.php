@@ -83,6 +83,9 @@
                                 <button data-step="5" data-intro="Ấn vào đây để tạo tài khoản mới" type="submit" class="btn btn-lg btn-danger">
                                     <i class="fad fa-user-plus"></i> {{ __('Register') }}
                                 </button>
+                                <a href="{{ url('/dang-nhap') }}" class="btn btn-lg btn-dark">
+                                    <i class="fad fa-sign-in"></i> {{ __('Login') }}
+                                </a>
                             </div>
                         </div>
                     </form>

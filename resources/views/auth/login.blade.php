@@ -69,16 +69,22 @@
                         </div>
 
                         <div class="row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button data-step="4" data-intro="Ấn để đăng nhập" type="submit" class="btn btn-lg btn-danger mt-3">
-                                    <i class="fad fa-sign-in"></i> {{ __('Login') }}
-                                </button>
+                            <div class="col-12">
+                                <div class="d-flex flex-wrap justify-content-center align-items-center gap-5 mt-3">
+                                    <button data-step="4" data-intro="Ấn để đăng nhập" type="submit" class="btn btn-lg btn-danger mr-2 mb-2">
+                                        <i class="fad fa-sign-in"></i> {{ __('Login') }}
+                                    </button>
 
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-lg btn-dark mt-3" href="{{ route('password.request') }}">
-                                        <i class="fad fa-key"></i> {{ __('Forgot Your Password?') }}
+                                    @if (Route::has('password.request'))
+                                        <a class="btn btn-lg btn-dark mb-2" href="{{ route('password.request') }}">
+                                            <i class="fad fa-key"></i> {{ __('Forgot Your Password?') }}
+                                        </a>
+                                    @endif
+
+                                    <a href="{{ url('/dang-ky') }}" class="btn btn-lg btn-success text-light px-4 shadow-sm ml-2 mb-2">
+                                        <i class="fad fa-user-plus mr-2"></i> Đăng ký
                                     </a>
-                                @endif
+                                </div>
                             </div>
                         </div>
                     </form>

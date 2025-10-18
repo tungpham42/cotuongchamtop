@@ -36,11 +36,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               </li>
             @endif
 
-            @if (Route::has('register'))
+            {{-- @if (Route::has('register'))
               <li class="nav-item">
                 <a class="showPromotion register" href="{{ route('register') }}"><i class="far fa-user-plus"></i> {{ __('Register') }}</a>
               </li>
-            @endif
+            @endif --}}
           @else
             <li class="dropdown">
               <a id="navbarDropdown" class="dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false">
@@ -64,7 +64,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               </div>
             </li>
           @endguest
-          {{-- <li class="dropdown language-switcher">
+          <li class="dropdown language-switcher">
             <a class="lang dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false"><i class="far fa-language"></i> Tiếng Việt</a>
             <div class="dropdown-menu dropdown-menu-right shadow">
               <a class="dropdown-item showPromotion active disabled" href="{{ url('/') }}"><span class="shadow-sm fi fi-vn"></span> Tiếng Việt</a>
@@ -73,7 +73,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <a class="dropdown-item showPromotion" href="{{ url('/ko') }}"><span class="shadow-sm fi fi-kr"></span> 한국어</a>
               <a class="dropdown-item showPromotion" href="{{ url('/zh') }}"><span class="shadow-sm fi fi-cn"></span> 中文</a>
             </div>
-          </li> --}}
+          </li>
         </ul>
       </nav>
     </div>
