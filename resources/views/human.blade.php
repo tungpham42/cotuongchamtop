@@ -179,7 +179,7 @@ function updateStatus () {
     $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> Hết trận');
     $('#header-status').html(': '+status+' - Hết trận');
   }
-  if (game.fen().includes('resign')) {
+  if (game.fen().includes('resign') && !resignAlertShown) {
     $('#header-status').html(': '+status+' - Đã bỏ cuộc');
     bootbox.alert({
       message: '<i class="fad fa-flag-checkered"></i> Đã bỏ cuộc',

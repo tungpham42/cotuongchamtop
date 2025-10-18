@@ -91,7 +91,7 @@ function onDragStart (source, piece) {
       (game.turn() === 'b' && piece.search(/^r/) !== -1)) {
     return false;
   }
-  
+
   if ((board.orientation() == 'red' && game.turn() === 'b') || (board.orientation() == 'black' && game.turn() === 'r')) {
     return false;
   }
@@ -185,7 +185,7 @@ function updateStatus () {
     // evtSource.close();
     clearInterval(updateBoard);
   }
-  if (game.fen().includes('resign')) {
+  if (game.fen().includes('resign') && !resignAlertShown) {
     $('#header-status').html(': '+status+' - 辞任');
     bootbox.alert({
       message: '<i class="fad fa-flag-checkered"></i> 辞任',

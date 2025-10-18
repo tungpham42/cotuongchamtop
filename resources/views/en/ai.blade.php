@@ -150,7 +150,7 @@ function updateStatus () {
     $('#header-status').html(': '+status+' - Game over');
     $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> Game over');
   }
-  if (game.fen().includes('resign')) {
+  if (game.fen().includes('resign') && !resignAlertShown) {
     $('#header-status').html(': '+status+' - Resigned');
     bootbox.alert({
       message: '<i class="fad fa-flag-checkered"></i> Resigned',

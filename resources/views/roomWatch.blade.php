@@ -92,7 +92,7 @@ function onDragStart (source, piece) {
       (game.turn() === 'b' && piece.search(/^r/) !== -1)) {
     return false;
   }
-  
+
   if ((board.orientation() == 'red' && game.turn() === 'b') || (board.orientation() == 'black' && game.turn() === 'r')) {
     return false;
   }
@@ -215,7 +215,7 @@ function updateStatus () {
     clearInterval(updatePlayers);
     @endif
   }
-  if (game.fen().includes('resign')) {
+  if (game.fen().includes('resign') && !resignAlertShown) {
     $('#header-status').html(': '+status+' - Đã bỏ cuộc');
     bootbox.alert({
       message: '<i class="fad fa-flag-checkered"></i> Đã bỏ cuộc',

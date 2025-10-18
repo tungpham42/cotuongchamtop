@@ -150,7 +150,7 @@ function updateStatus () {
     $('#header-status').html(': '+status+' - ゲームオーバー');
     $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> ゲームオーバー');
   }
-  if (game.fen().includes('resign')) {
+  if (game.fen().includes('resign') && !resignAlertShown) {
     $('#header-status').html(': '+status+' - 辞任');
     bootbox.alert({
       message: '<i class="fad fa-flag-checkered"></i> 辞任',

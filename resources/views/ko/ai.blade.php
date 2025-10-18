@@ -150,7 +150,7 @@ function updateStatus () {
     $('#header-status').html(': '+status+' - 게임 오버');
     $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> 게임 오버');
   }
-  if (game.fen().includes('resign')) {
+  if (game.fen().includes('resign') && !resignAlertShown) {
     $('#header-status').html(': '+status+' - 사임');
     bootbox.alert({
       message: '<i class="fad fa-flag-checkered"></i> 사임',

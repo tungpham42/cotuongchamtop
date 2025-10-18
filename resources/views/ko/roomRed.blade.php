@@ -84,6 +84,7 @@ let board = null;
 let game = new Xiangqi();
 let currentFEN = game.fen();
 let alertShown = false;
+let resignAlertShown = false;
 
 function updateFenCode(roomCode) {
   board.position(game.fen(), true);
@@ -288,8 +289,19 @@ function updateStatus () {
     // evtSource.close();
     clearInterval(updateBoard);
   }
-  if (game.fen().includes('resign')) {
+  if (game.fen().includes('resign') && !resignAlertShown) {
     $('#header-status').html(': '+status+' - 사임');
+
+    // Determine who resigned based on whose turn it is now
+    let resignResult;
+    if (board.orientation() === 'black') {
+      // Black player resigned (Black loses = 1)
+      resignResult = '1';
+    } else {
+      // Red player resigned (Red loses = -1)
+      resignResult = '-1';
+    }
+
     bootbox.alert({
       message: '<i class="fad fa-flag-checkered"></i> 사임',
       locale: 'ko',
@@ -302,7 +314,7 @@ function updateStatus () {
         }
       },
       callback: function() {
-        updateResult('{{ $roomCode }}', '0');
+        updateResult('{{ $roomCode }}', resignResult);
       }
     });
     $('#game-over').html('<i class="fad fa-flag-checkered"></i> 사임');

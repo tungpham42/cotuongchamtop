@@ -151,7 +151,7 @@ function updateStatus () {
     $('#header-status').html(': '+status+' - 游戏结束了');
     $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> 游戏结束了');
   }
-  if (game.fen().includes('resign')) {
+  if (game.fen().includes('resign') && !resignAlertShown) {
     $('#header-status').html(': '+status+' - 听天由命');
     bootbox.alert({
       message: '<i class="fad fa-flag-checkered"></i> 听天由命',
