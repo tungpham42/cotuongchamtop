@@ -343,7 +343,7 @@ class XiangqiController extends Controller
         try {
             $isReady = $this->engineAvailable && $this->xiangqiEngine->isReady();
             $networkExists = file_exists(storage_path('engines/pikafish.nnue'));
-            $engineExists = file_exists(storage_path('engines/pikafish'));
+            $engineExists = file_exists(storage_path('engines/pikafish_vps'));
 
             return response()->json([
                 'success' => true,
@@ -353,7 +353,7 @@ class XiangqiController extends Controller
                 'files' => [
                     'engine_exists' => $engineExists,
                     'network_exists' => $networkExists,
-                    'engine_executable' => $engineExists ? is_executable(storage_path('engines/pikafish')) : false
+                    'engine_executable' => $engineExists ? is_executable(storage_path('engines/pikafish_vps')) : false
                 ],
                 'timestamp' => now()->toISOString()
             ]);
