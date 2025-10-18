@@ -3,7 +3,7 @@
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="提高你的国际象棋技能">你正在解决这个问题</h5>
 @endsection
 @section('aboveContent')
-<div class="dropup mx-auto text-center my-1">
+{{-- <div class="dropup mx-auto text-center my-1">
   <button class="btn btn-lg btn-dark dropdown-toggle" type="button" id="levelDropdown" data-toggle="dropdown" aria-haspopup="true" data-step="1" data-intro="让我们为您选择一个适合的级别吧" aria-expanded="false">
     <i class="fad fa-robot"></i> 选择董事会级别
   </button>
@@ -14,7 +14,7 @@
     <a class="add-fen dropdown-item" href="{{ url('/yingban') }}" style="cursor: pointer !important;">坚固的</a>
     <a class="add-fen dropdown-item" href="{{ url('/zuiyingban') }}" style="cursor: pointer !important;">最难的</a>
   </div>
-</div>
+</div> --}}
 @endsection
 @section('belowContent')
 <p class="w-100 text-center mt-0 mb-1">
@@ -83,7 +83,7 @@ function onDrop (source, target) {
   });
   // illegal move
   if (move === null) return 'snapback';
-  
+
   if (move.color === 'r') {
     removeHighlights('red');
     $board.find('.square-' + source).addClass('highlight-red');

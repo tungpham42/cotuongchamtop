@@ -330,6 +330,30 @@ $('.level.dropup .dropdown-item').each(function(){
     }
   });
 });
+
+// Add CSS for loading state
+const style = document.createElement('style');
+style.textContent = `
+  .fa-spinner {
+    margin-left: 5px;
+  }
+  .disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .highlight {
+    background-color: #ffeb3b !important;
+    opacity: 0.6;
+  }
+`;
+document.head.appendChild(style);
+
+// Initialize computer move if black starts first
+@if(isset($computerStarts) && $computerStarts)
+$(document).ready(function() {
+  setTimeout(makeBestMove, 1000);
+});
+@endif
 </script>
 @include('en.layout.partials.puzzles')
 @endsection

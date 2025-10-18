@@ -3,7 +3,7 @@
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="チェスのスキルを向上させる">あなたはボードを解決しています</h5>
 @endsection
 @section('aboveContent')
-<div class="dropup mx-auto text-center my-3">
+{{-- <div class="dropup mx-auto text-center my-3">
   <button class="btn btn-lg btn-dark dropdown-toggle" type="button" id="levelDropdown" data-toggle="dropdown" aria-haspopup="true" data-step="1" data-intro="私の適切なレベルを選びましょう" aria-expanded="false">
     <i class="fad fa-robot"></i> ボードレベルを選択
   </button>
@@ -14,7 +14,7 @@
     <a class="add-fen dropdown-item" href="{{ url('/hado-bodo') }}" style="cursor: pointer !important;">ハード</a>
     <a class="add-fen dropdown-item" href="{{ url('/mottomo-muzukashi-bodo') }}" style="cursor: pointer !important;">最も難しい</a>
   </div>
-</div>
+</div> --}}
 @endsection
 @section('belowContent')
 <p class="w-100 text-center mt-0 mb-1">
@@ -83,7 +83,7 @@ function onDrop (source, target) {
   });
   // illegal move
   if (move === null) return 'snapback';
-  
+
   if (move.color === 'r') {
     removeHighlights('red');
     $board.find('.square-' + source).addClass('highlight-red');

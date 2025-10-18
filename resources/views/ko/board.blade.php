@@ -3,7 +3,7 @@
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="게임 기술 향상">너는 보드를 풀고 있다</h5>
 @endsection
 @section('aboveContent')
-<div class="dropup mx-auto text-center my-1">
+{{-- <div class="dropup mx-auto text-center my-1">
   <button class="btn btn-lg btn-dark dropdown-toggle" type="button" id="levelDropdown" data-toggle="dropdown" aria-haspopup="true" data-step="1" data-intro="당신에게 적합한 레벨을 선택해 봅시다" aria-expanded="false">
     <i class="fad fa-robot"></i> 보드 레벨 선택
   </button>
@@ -14,7 +14,7 @@
     <a class="add-fen dropdown-item" href="{{ url('/hadeu-bodeu') }}" style="cursor: pointer !important;">하드</a>
     <a class="add-fen dropdown-item" href="{{ url('/gajang-dandanhan-bodeu') }}" style="cursor: pointer !important;">가장 단단한</a>
   </div>
-</div>
+</div> --}}
 @endsection
 @section('belowContent')
 <p class="w-100 text-center mt-0 mb-1">
@@ -83,7 +83,7 @@ function onDrop (source, target) {
   });
   // illegal move
   if (move === null) return 'snapback';
-  
+
   if (move.color === 'r') {
     removeHighlights('red');
     $board.find('.square-' + source).addClass('highlight-red');
