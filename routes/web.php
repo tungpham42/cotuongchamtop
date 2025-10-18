@@ -727,7 +727,7 @@ Route::match(['get', 'post'], '/kho', function () {
 return view('ai', ['headTitle' => 'Khó', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/kho', 'langEnUrl' => '/hard', 'langJaUrl' => '/muzukashi', 'langKoUrl' => '/hadeu', 'langZhUrl' => '/jiangude', 'level' => '4', 'levelTxt' => 'Khó', 'canonicalUrl' => '/kho', 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
 });
 Route::match(['get', 'post'], '/kho-nhat', function () {
-return view('ai', ['headTitle' => 'Khó nhất', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/kho-nhat', 'langEnUrl' => '/hardest', 'langJaUrl' => '/mottomo-muzukashi', 'langKoUrl' => '/gajang-dandanhan', 'langZhUrl' => '/zuinande', 'level' => '4', 'levelTxt' => 'Khó nhất', 'canonicalUrl' => '/kho-nhat', 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
+return view('ai', ['headTitle' => 'Khó nhất', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/kho-nhat', 'langEnUrl' => '/hardest', 'langJaUrl' => '/mottomo-muzukashi', 'langKoUrl' => '/gajang-dandanhan', 'langZhUrl' => '/zuinande', 'level' => '5', 'levelTxt' => 'Khó nhất', 'canonicalUrl' => '/kho-nhat', 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
 });
 Route::match(['get', 'post'], '/en', function () {
 return view('en/ai', ['headTitle' => 'Home', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'level' => '3', 'levelTxt' => 'Normal', 'canonicalUrl' => '/en']);
@@ -748,7 +748,7 @@ Route::match(['get', 'post'], '/hard', function () {
 return view('en/ai', ['headTitle' => 'Hard', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/kho', 'langEnUrl' => '/hard', 'langJaUrl' => '/muzukashi', 'langKoUrl' => '/hadeu', 'langZhUrl' => '/jiangude', 'level' => '4', 'levelTxt' => 'Hard', 'canonicalUrl' => '/hard']);
 });
 Route::match(['get', 'post'], '/hardest', function () {
-return view('en/ai', ['headTitle' => 'Hardest', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/kho-nhat', 'langEnUrl' => '/hardest', 'langJaUrl' => '/mottomo-muzukashi', 'langKoUrl' => '/gajang-dandanhan', 'langZhUrl' => '/zuinande', 'level' => '4', 'levelTxt' => 'Hardest', 'canonicalUrl' => '/hardest']);
+return view('en/ai', ['headTitle' => 'Hardest', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/kho-nhat', 'langEnUrl' => '/hardest', 'langJaUrl' => '/mottomo-muzukashi', 'langKoUrl' => '/gajang-dandanhan', 'langZhUrl' => '/zuinande', 'level' => '5', 'levelTxt' => 'Hardest', 'canonicalUrl' => '/hardest']);
 });
 Route::match(['get', 'post'], '/play-with-ai', function () {
 return redirect('/en', 301);
@@ -791,7 +791,7 @@ Route::match(['get', 'post'], '/hado', function () {
 return view('ja/ai', ['headTitle' => 'ハード', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/kho', 'langEnUrl' => '/hard', 'langJaUrl' => '/muzukashi', 'langKoUrl' => '/hadeu', 'langZhUrl' => '/jiangude', 'level' => '4', 'levelTxt' => 'ハード', 'canonicalUrl' => '/muzukashi']);
 });
 Route::match(['get', 'post'], '/mottomo-muzukashi', function () {
-return view('ja/ai', ['headTitle' => '最も難しい', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/kho-nhat', 'langEnUrl' => '/hardest', 'langJaUrl' => '/mottomo-muzukashi', 'langKoUrl' => '/gajang-dandanhan', 'langZhUrl' => '/zuinande', 'level' => '4', 'levelTxt' => '最も難しい', 'canonicalUrl' => '/mottomo-muzukashi']);
+return view('ja/ai', ['headTitle' => '最も難しい', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/kho-nhat', 'langEnUrl' => '/hardest', 'langJaUrl' => '/mottomo-muzukashi', 'langKoUrl' => '/gajang-dandanhan', 'langZhUrl' => '/zuinande', 'level' => '5', 'levelTxt' => '最も難しい', 'canonicalUrl' => '/mottomo-muzukashi']);
 });
 
 Route::match(['get', 'post'], '/ko', function () {
@@ -813,7 +813,7 @@ Route::match(['get', 'post'], '/hadeu', function () {
 return view('ko/ai', ['headTitle' => '하드', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/kho', 'langEnUrl' => '/hard', 'langJaUrl' => '/muzukashi', 'langKoUrl' => '/hadeu', 'langZhUrl' => '/jiangude', 'level' => '4', 'levelTxt' => '하드', 'canonicalUrl' => '/hadeu']);
 });
 Route::match(['get', 'post'], '/gajang-dandanhan', function () {
-return view('ko/ai', ['headTitle' => '가장 단단한', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/kho-nhat', 'langEnUrl' => '/hardest', 'langJaUrl' => '/mottomo-muzukashi', 'langKoUrl' => '/gajang-dandanhan', 'langZhUrl' => '/zuinande', 'level' => '4', 'levelTxt' => '가장 단단한', 'canonicalUrl' => '/gajang-dandanhan']);
+return view('ko/ai', ['headTitle' => '가장 단단한', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/kho-nhat', 'langEnUrl' => '/hardest', 'langJaUrl' => '/mottomo-muzukashi', 'langKoUrl' => '/gajang-dandanhan', 'langZhUrl' => '/zuinande', 'level' => '5', 'levelTxt' => '가장 단단한', 'canonicalUrl' => '/gajang-dandanhan']);
 });
 
 
@@ -836,7 +836,7 @@ Route::match(['get', 'post'], '/jiangude', function () {
 return view('zh/ai', ['headTitle' => '坚固的', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/kho', 'langEnUrl' => '/hard', 'langJaUrl' => '/muzukashi', 'langKoUrl' => '/hadeu', 'langZhUrl' => '/jiangude', 'level' => '4', 'levelTxt' => '坚固的', 'canonicalUrl' => '/jiangude']);
 });
 Route::match(['get', 'post'], '/zuinande', function () {
-return view('zh/ai', ['headTitle' => '最难的', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/kho-nhat', 'langEnUrl' => '/hardest', 'langJaUrl' => '/mottomo-muzukashi', 'langKoUrl' => '/gajang-dandanhan', 'langZhUrl' => '/zuinande', 'level' => '4', 'levelTxt' => '最难的', 'canonicalUrl' => '/zuinande']);
+return view('zh/ai', ['headTitle' => '最难的', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/kho-nhat', 'langEnUrl' => '/hardest', 'langJaUrl' => '/mottomo-muzukashi', 'langKoUrl' => '/gajang-dandanhan', 'langZhUrl' => '/zuinande', 'level' => '5', 'levelTxt' => '最难的', 'canonicalUrl' => '/zuinande']);
 });
 
 Route::match(['get', 'post'], '/gioi-thieu', function () {
