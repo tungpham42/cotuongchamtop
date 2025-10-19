@@ -1,31 +1,35 @@
 <script>
-const nuocCoVolume = document.getElementById('nuoc-co');
-const hetTranVolume = document.getElementById('het-tran');
-if (!localStorage.getItem('volumeState')) {
-  localStorage.setItem('volumeState', 'unmuted');
-}
-if (localStorage.getItem('volumeState') == 'unmuted') {
-  $('#volumeSwitch').find('i').removeClass('fa-volume-slash').addClass('fa-volume-up');
-  $('#volumeSwitch').removeClass('mute').addClass('unmute');
-  nuocCoVolume.muted = false;
-  hetTranVolume.muted = false;
-} else if (localStorage.getItem('volumeState') == 'muted') {
-  $('#volumeSwitch').find('i').removeClass('fa-volume-up').addClass('fa-volume-slash');
-  $('#volumeSwitch').removeClass('unmute').addClass('mute');
-  nuocCoVolume.muted = true;
-  hetTranVolume.muted = true;
-}
-function toggleMute() {
-  nuocCoVolume.muted = !nuocCoVolume.muted;
-  hetTranVolume.muted = !hetTranVolume.muted;
-  if (nuocCoVolume.muted == false && hetTranVolume.muted == false) {
-    localStorage.setItem('volumeState', 'unmuted');
-    $('#volumeSwitch').find('i').removeClass('fa-volume-slash').addClass('fa-volume-up');
-    $('#volumeSwitch').removeClass('mute').addClass('unmute');
-  } else if (nuocCoVolume.muted == true && hetTranVolume.muted == true) {
-    localStorage.setItem('volumeState', 'muted');
-    $('#volumeSwitch').find('i').removeClass('fa-volume-up').addClass('fa-volume-slash');
-    $('#volumeSwitch').removeClass('unmute').addClass('mute');
-  }
-}
+document.addEventListener('DOMContentLoaded', () => {
+  const nuocCoVolume = document.getElementById('nuoc-co');
+  const hetTranVolume = document.getElementById('het-tran');
+  const volumeSwitch = $('#volumeSwitch');
+
+  // Default to unmuted if no stored state
+  const savedState = localStorage.getItem('volumeState') || 'unmuted';
+  localStorage.setItem('volumeState', savedState);
+
+  const applyVolumeState = (state) => {
+    const isMuted = state === 'muted';
+    nuocCoVolume.muted = isMuted;
+    hetTranVolume.muted = isMuted;
+
+    if (isMuted) {
+      volumeSwitch.find('i').removeClass('fa-volume-up').addClass('fa-volume-slash');
+      volumeSwitch.removeClass('unmute').addClass('mute');
+    } else {
+      volumeSwitch.find('i').removeClass('fa-volume-slash').addClass('fa-volume-up');
+      volumeSwitch.removeClass('mute').addClass('unmute');
+    }
+  };
+
+  // Apply saved state on load
+  applyVolumeState(savedState);
+
+  // Toggle function
+  window.toggleMute = () => {
+    const newState = nuocCoVolume.muted ? 'unmuted' : 'muted';
+    localStorage.setItem('volumeState', newState);
+    applyVolumeState(newState);
+  };
+});
 </script>
