@@ -523,8 +523,6 @@ $('#resign').on('click', function() {
 @if (isset($room->host_id) && auth()->id() == $room->host_id)
 $('#choi').removeClass('pulse-red').addClass('disabled');
 @endif
-  updateStatus();
-});
 
 // Add CSS for loading state
 const style = document.createElement('style');
