@@ -2,7 +2,7 @@
 const nuocCoVolume = document.getElementById('nuoc-co');
 const hetTranVolume = document.getElementById('het-tran');
 if (!localStorage.getItem('volumeState')) {
-  localStorage.setItem('volumeState', 'muted');
+  localStorage.setItem('volumeState', 'unmuted');
 }
 if (localStorage.getItem('volumeState') == 'unmuted') {
   $('#volumeSwitch').find('i').removeClass('fa-volume-slash').addClass('fa-volume-up');
