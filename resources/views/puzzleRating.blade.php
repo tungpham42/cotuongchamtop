@@ -1,4 +1,10 @@
 @extends('layout.gamelayout')
+@php
+    $reactionData = $reactions ?? ['likes' => 0, 'hard' => 0, 'unsolved' => 0, 'rating' => 0];
+    $totalReactions = $reactionData['likes'] + $reactionData['hard'] + $reactionData['unsolved'];
+    $puzzleDescription = $description ?? ($puzzle->description ?? '');
+    $isPrivate = isset($isPublic) ? !$isPublic : (!$puzzle->is_public ?? false);
+@endphp
 @section('aboveBoard')
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title='Bạn đang thi đấu thế cờ "{{ $name }}'>Bạn đang thi đấu thế cờ "{{ $name }}"</h5>
 <p class="w-100 text-center mt-0 mb-1">
@@ -8,45 +14,324 @@
 </p>
 @endsection
 @section('rightSide')
-<p class="w-100 text-center m-0">
-  <span class="rounded p-0 d-block" id="game-status"></span>
-</p>
-<p class="w-100 text-center mx-0 mb-0 mt-2">
-  <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> HẾT TRẬN</span>
-</p>
-<div class="sharethis-inline-reaction-buttons"></div>
-<p class="w-50 text-center lead mx-auto my-0"><i class="fas fa-thumbs-up"></i> Đánh giá: <span id="totalRating">0</span></p>
-<div class="dropup mx-auto text-center my-1">
-  <button class="btn btn-danger btn-lg dropdown-toggle" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <span data-toggle="tooltip" data-placement="top" title="Đấu với bạn bè trong phòng"><i class="fad fa-gamepad-alt"></i> Chơi online</span>
-  </button>
-  @if ( isset($name) && $name != '' )
-  <a id="switch" class="btn btn-dark btn-lg mx-auto"><i class="fad fa-sync"></i> Đổi bên</a>
-  @endif
-  <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/') }}/phong/{{ md5(time()) }}">
-    @if (!auth()->check())
-    <a data-toggle="tooltip" data-placement="bottom" title="Đăng nhập để tham gia thi đấu" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="{{ URL::to('/dang-nhap') }}"><i class="fas fa-sign-in text-dark"></i> Đăng nhập</a>
+<style>
+  .puzzle-side-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(100, 116, 139, 0.5) #1a1a1a;
+  }
+  @media (min-width: 992px) {
+    .puzzle-side-panel {
+      position: sticky;
+      top: 0.75rem;
+      max-height: calc(100vh - 110px);
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+  }
+  .puzzle-side-panel::-webkit-scrollbar {
+    width: 6px;
+  }
+  .puzzle-side-panel::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 999px;
+  }
+  .puzzle-side-panel::-webkit-scrollbar-thumb {
+    background-color: rgba(100, 116, 139, 0.7);
+    border-radius: 999px;
+  }
+  #puzzle-note-block {
+    width: 100%;
+    margin: 1rem 0 0 auto;
+  }
+  .puzzle-side-card {
+    background: #222222;
+    color: #f8fafc;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(34, 34, 34, 0.8);
+  }
+  .puzzle-side-card .card-body {
+    padding: 1rem 1.2rem;
+  }
+  .puzzle-side-card h5 {
+    color: #e2e8f0;
+    font-weight: 600;
+  }
+  .puzzle-side-card .text-muted {
+    color: rgba(226, 232, 240, 0.72) !important;
+  }
+  .puzzle-reaction-mini {
+    display: flex;
+    gap: 0.45rem;
+    justify-content: flex-end;
+  }
+  .puzzle-reaction-mini .reaction-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    padding: 0.28rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: rgba(34, 34, 34, 0.85);
+    color: #f8fafc;
+    transition: all 0.15s ease;
+  }
+  .puzzle-reaction-mini .reaction-btn.disabled,
+  .puzzle-reaction-mini .reaction-btn:disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .puzzle-reaction-mini .reaction-btn:hover {
+    background: rgba(248, 113, 113, 0.18);
+    border-color: rgba(248, 113, 113, 0.35);
+    color: #fca5a5;
+  }
+  .puzzle-reaction-mini .reaction-btn .reaction-count {
+    padding: 0.05rem 0.4rem;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.45);
+    font-size: 0.68rem;
+  }
+  .puzzle-comment-feed {
+    background-color: #222222;
+    border-radius: 0.85rem;
+    padding: 1rem;
+    color: #e5e7eb;
+  }
+  .puzzle-comment-feed h6 {
+    color: #f3f4f6;
+    font-weight: 600;
+  }
+  .puzzle-comments {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .puzzle-comment-card {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 0.75rem;
+    padding: 0.85rem 1rem;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+  }
+  .puzzle-comment-card .comment-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.6rem;
+  }
+  .puzzle-comment-card .comment-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #111827;
+    background: linear-gradient(135deg, #f87171, #fbbf24);
+  }
+  .puzzle-comment-card .comment-body {
+    color: #f9fafb;
+    line-height: 1.45;
+  }
+  .puzzle-comment-card .comment-meta {
+    font-size: 0.8rem;
+    color: rgba(229, 231, 235, 0.75);
+  }
+  .puzzle-comment-card .comment-actions {
+    display: flex;
+    gap: 1.25rem;
+    margin-top: 0.5rem;
+    font-size: 0.82rem;
+    color: rgba(229, 231, 235, 0.75);
+    cursor: pointer;
+  }
+  .puzzle-comment-card .comment-actions span:hover {
+    color: #f87171;
+  }
+  .puzzle-empty-comment {
+    background: rgba(34, 34, 34, 0.85);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    text-align: center;
+    color: rgba(229, 231, 235, 0.85);
+  }
+  .puzzle-empty-comment.error {
+    color: #f87171;
+  }
+  .puzzle-side-panel .btn-group-lg .btn {
+    border-radius: 999px;
+  }
+  .puzzle-side-panel label {
+    color: #cbd5f5;
+  }
+  .puzzle-side-panel .form-control {
+    color: #e2e8f0 !important;
+  }
+  .puzzle-side-panel .form-control::placeholder {
+    color: rgba(148, 163, 184, 0.8) !important;
+  }
+  .puzzle-side-panel .form-control {
+    background-color: rgba(34, 34, 34, 0.8);
+    border-radius: 0.65rem;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+  }
+  .puzzle-side-panel .form-control:focus {
+    background-color: rgba(34, 34, 34, 0.95);
+    border-color: #f87171;
+    box-shadow: 0 0 0 0.2rem rgba(248, 113, 113, 0.25);
+  }
+  .puzzle-comment-card.reply {
+    margin-left: 1.5rem;
+    background: rgba(34, 34, 34, 0.65);
+  }
+  .puzzle-comment-children {
+    margin-top: 0.75rem;
+    border-left: 1px solid rgba(148, 163, 184, 0.2);
+    padding-left: 1rem;
+  }
+  .comment-reply-form {
+    background: rgba(34, 34, 34, 0.85);
+    border-radius: 0.65rem;
+    padding: 0.75rem;
+    margin-top: 0.75rem;
+  }
+  .comment-reply-form .form-control {
+    background-color: rgba(17, 24, 39, 0.8);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    color: #e2e8f0;
+  }
+  .comment-reply-form .form-control::placeholder {
+    color: rgba(148, 163, 184, 0.8) !important;
+  }
+  .comment-reply-form .form-control:focus {
+    background-color: rgba(17, 24, 39, 0.95);
+    border-color: #f87171;
+    box-shadow: 0 0 0 0.2rem rgba(248, 113, 113, 0.25);
+  }
+</style>
+<div id="puzzle-note-block" class="puzzle-side-card">
+  <div class="card-body">
+    <h5 class="mb-2 text-left"><i class="fas fa-info-circle text-danger"></i> Ghi chú thế cờ</h5>
+    @if (!empty($puzzleDescription))
+      <div style="color:#f1f5f9" class="mb-3">{!! nl2br(e($puzzleDescription)) !!}</div>
     @else
-    <a data-toggle="tooltip" data-placement="bottom" title="Thi đấu tính điểm và xếp hạng" id="create-room" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="javascript:createRoom();"><i class="fas fa-trophy-alt text-dark"></i> Thi đấu</a>
+      <div class="puzzle-empty-comment mb-3">Chưa có ghi chú cho thế cờ này.</div>
     @endif
-    {{-- <a data-toggle="tooltip" data-placement="bottom" title="Chơi không cần mật khẩu" id="tao-phong-public" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-globe text-dark"></i> Công khai</a> --}}
-    <a data-toggle="tooltip" data-placement="bottom" title="Chơi cần mật khẩu" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> Riêng tư</a>
-    @if ($randomRoom != null)
-    <a data-toggle="tooltip" data-placement="bottom" title="Chơi trong phòng Công khai ngẫu nhiên" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ URL::to('/') }}/phong/{{ $randomRoom['code'] }}/ngau-nhien"><i class="fas fa-random text-dark"></i> Ngẫu nhiên</a>
-    @endif
-    <a data-toggle="tooltip" data-placement="bottom" title="Tìm phòng trống" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ URL::to('/sanh-cho') }}"><i class="fas fa-list-alt text-dark"></i> Sảnh chờ</a>
+    <p class="text-muted small mb-2 text-left" id="reaction-summary">
+      Tổng phản hồi: <span id="reaction-total">{{ $totalReactions }}</span>
+    </p>
+    <div class="puzzle-reaction-mini justify-content-end">
+      <button type="button" class="reaction-btn reaction-btn-like" data-reaction="like">
+        <i class="fas fa-thumbs-up"></i>
+        <span class="reaction-count" id="reaction-like-count">{{ $reactionData['likes'] }}</span>
+      </button>
+      <button type="button" class="reaction-btn reaction-btn-hard" data-reaction="hard">
+        <i class="fas fa-heart"></i>
+        <span class="reaction-count" id="reaction-hard-count">{{ $reactionData['hard'] }}</span>
+      </button>
+      <button type="button" class="reaction-btn reaction-btn-unsolved" data-reaction="unsolved">
+        <i class="fas fa-question-circle"></i>
+        <span class="reaction-count" id="reaction-unsolved-count">{{ $reactionData['unsolved'] }}</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<div class="puzzle-side-panel">
+  <div class="puzzle-side-card">
+    <div class="card-body text-center">
+      <div class="puzzle-note-status mb-3">
+        <span class="rounded d-block" id="game-status"></span>
+        <span class="rounded d-none mt-2" id="game-over"><i class="fad fa-flag-checkered"></i> HẾT TRẬN</span>
+      </div>
+      @if ($isPrivate)
+        <div class="alert alert-warning shadow-sm mb-3 text-left">
+          <i class="fas fa-lock"></i> Thế cờ này đang ở chế độ <strong>riêng tư</strong>. Chỉ những ai có liên kết mới có thể xem.
+        </div>
+      @endif
+      <div class="sharethis-inline-reaction-buttons mb-3"></div>
+      <div class="dropup">
+        <button class="btn btn-danger btn-lg dropdown-toggle w-100" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span data-toggle="tooltip" data-placement="top" title="Đấu với bạn bè trong phòng"><i class="fad fa-gamepad-alt"></i> Chơi online</span>
+        </button>
+        @if ( isset($name) && $name != '' )
+        <a id="switch" class="btn btn-dark btn-lg w-100 mt-2"><i class="fad fa-sync"></i> Đổi bên</a>
+        @endif
+        <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/') }}/phong/{{ md5(time()) }}">
+          @if (!auth()->check())
+          <a data-toggle="tooltip" data-placement="bottom" title="Đăng nhập để tham gia thi đấu" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="{{ URL::to('/dang-nhap') }}"><i class="fas fa-sign-in text-dark"></i> Đăng nhập</a>
+          @else
+          <a data-toggle="tooltip" data-placement="bottom" title="Thi đấu tính điểm và xếp hạng" id="create-room" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="javascript:createRoom();"><i class="fas fa-trophy-alt text-dark"></i> Thi đấu</a>
+          @endif
+          <a data-toggle="tooltip" data-placement="bottom" title="Chơi cần mật khẩu" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> Riêng tư</a>
+          @if ($randomRoom != null)
+          <a data-toggle="tooltip" data-placement="bottom" title="Chơi trong phòng Công khai ngẫu nhiên" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ URL::to('/') }}/phong/{{ $randomRoom['code'] }}/ngau-nhien"><i class="fas fa-random text-dark"></i> Ngẫu nhiên</a>
+          @endif
+          <a data-toggle="tooltip" data-placement="bottom" title="Tìm phòng trống" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ URL::to('/sanh-cho') }}"><i class="fas fa-list-alt text-dark"></i> Sảnh chờ</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="puzzle-side-card">
+    <div class="card-body">
+      <h5 class="mb-3"><i class="fas fa-comments text-danger"></i> Bình luận &amp; góp ý</h5>
+      <form id="puzzle-comment-form">
+        <div class="form-group">
+          <label for="comment_author">Tên bạn (không bắt buộc)</label>
+          <input type="text" class="form-control" id="comment_author" maxlength="120" placeholder="Ví dụ: Kỳ thủ A">
+        </div>
+        <div class="form-group">
+          <label for="comment_content">Nội dung</label>
+          <textarea class="form-control" id="comment_content" rows="3" maxlength="1000" placeholder="Chia sẻ hướng giải hoặc góp ý cho thế cờ này..." required></textarea>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <small class="d-none text-danger" id="comment-feedback"></small>
+          <button type="submit" class="btn btn-danger" id="comment-submit"><i class="fas fa-paper-plane"></i> Gửi bình luận</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="puzzle-comment-feed">
+    <h6 class="mb-3"><i class="fas fa-comment-dots text-danger"></i> Dòng thảo luận</h6>
+    <div id="puzzle-comment-list" class="puzzle-comments"></div>
   </div>
 </div>
 @endsection
 @section('belowContent')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const noteBlock = document.getElementById('puzzle-note-block');
+  const board = document.getElementById('ban-co');
+  function syncNoteBlockWidth() {
+    if (!noteBlock) return;
+    const boardSurface = document.querySelector('#ban-co .xiangqiboard-8ddcb');
+    if (boardSurface) {
+      noteBlock.style.maxWidth = boardSurface.getBoundingClientRect().width + 'px';
+    }
+  }
+
+  if (noteBlock && board && board.parentElement && !noteBlock.dataset.moved) {
+    board.parentElement.appendChild(noteBlock);
+    noteBlock.dataset.moved = 'true';
+    syncNoteBlockWidth();
+    setTimeout(syncNoteBlockWidth, 300);
+    window.addEventListener('resize', syncNoteBlockWidth);
+  }
+});
+</script>
 <p class="w-100 text-center mt-0 mb-1">
   <a data-step="2" data-intro="Ấn vào đây để xếp thế cờ mới" id="setup" class="w-25 btn btn-dark btn-lg" href="{{ url('/') }}/co-the"><i class="fad fa-plus-hexagon"></i> Xếp ván mới</a>
   <a data-step="3" data-intro="Ấn vào đây để quay lại nước trước đó" id="undo" class="w-25 btn btn-dark btn-lg"><i class="fad fa-undo-alt"></i> Đi lại</a>
 </p>
-<p class="w-100 text-center mt-0 mb-1">
-  <a data-step="4" data-intro="Ấn vào đây để cộng điểm thế cờ" id="upvote" class="w-25 btn btn-dark btn-lg"><i class="fad fa-thumbs-up"></i> Thích</a>
-  <a data-step="5" data-intro="Ấn vào đây để trừ điểm thế cờ" id="downvote" class="w-25 btn btn-dark btn-lg"><i class="fad fa-thumbs-down"></i> Không thích</a>
-</p>
+
 <p class="w-100 text-center mt-0 mb-1">
   <i class="fad fa-external-link-alt"></i> Mời bạn bè chơi bằng cách gửi liên kết bên dưới.
 </p>
@@ -289,54 +574,261 @@ $("#capture").on('click', function() {
   }
 });
 $('#switch').on('click', board.flip);
-function updateTotalRating() {
-  $.ajax({
-    url: '{{ url('/api') }}/totalRating',
-    type: "POST",
-    data : {
-      'slug': '{{ $slug }}'
-    },
-    dataType: 'text'
-  }).done(function(rating){
-    $('span#totalRating').text(rating);
-    $('#board-{{ md5($slug) }}').parent('div').attr('data-rating', rating);
-    $('#{{ md5($slug) }} span.totalRating').text(rating);
-    // $.ajax({
-    //   url: '/getUserPuzzlesTemplate',
-    //   type: 'GET'
-    // }).done(function(response){
-    //   $('#userPuzzlesWrapper').html(response);
-    //   $('#userPuzzlesWrapper ul.pagination a.page-link').each(function(){
-    //     $(this)[0].pathname = window.location.pathname;
-    //   });
-    // });
+
+const reactionEndpoints = {
+  list: '{{ url('/api/puzzles/'.$slug.'/reactions') }}',
+  react: '{{ url('/api/puzzles/'.$slug.'/reactions') }}'
+};
+const commentsEndpoint = '{{ url('/api/puzzles/'.$slug.'/comments') }}';
+
+function renderReactions(data) {
+  const like = parseInt(data.likes ?? 0, 10);
+  const hard = parseInt(data.hard ?? 0, 10);
+  const unsolved = parseInt(data.unsolved ?? 0, 10);
+  $('#reaction-like-count').text(like);
+  $('#reaction-hard-count').text(hard);
+  $('#reaction-unsolved-count').text(unsolved);
+  $('#reaction-total').text(like + hard + unsolved);
+}
+
+function loadReactions() {
+  $.get(reactionEndpoints.list).done(function(response) {
+    renderReactions(response);
   });
 }
-updateTotalRating();
-$('#upvote').on('click', function() {
+
+$('.reaction-btn').on('click', function() {
+  const $btn = $(this);
+  if ($btn.data('loading')) {
+    return;
+  }
+  const type = $btn.data('reaction');
+  $btn.data('loading', true).prop('disabled', true).addClass('disabled');
+
   $.ajax({
-    url: '{{ url('/api') }}/upvote',
-    type: "POST",
-    data : {
-      'slug': '{{ $slug }}'
+    url: reactionEndpoints.react,
+    method: 'POST',
+    data: {
+      type: type
     },
-    dataType: 'text'
-  }).done(function(){
-    updateTotalRating();
+    headers: {
+      'X-CSRF-TOKEN': '{{ csrf_token() }}'
+    }
+  }).done(function(response) {
+    renderReactions(response);
+  }).fail(function(xhr) {
+    let message = 'Không thể ghi nhận phản hồi, vui lòng thử lại.';
+    if (xhr.responseJSON && xhr.responseJSON.message) {
+      message = xhr.responseJSON.message;
+    }
+    bootbox.alert({
+      message: message,
+      locale: 'vi',
+      centerVertical: true,
+      closeButton: false,
+      size: 'small'
+    });
+  }).always(function() {
+    setTimeout(function() {
+      $btn.data('loading', false).prop('disabled', false).removeClass('disabled');
+    }, 600);
   });
 });
-$('#downvote').on('click', function() {
+
+function formatCommentDate(dateString) {
+  const date = new Date(dateString);
+  if (!isNaN(date)) {
+    return date.toLocaleString('vi-VN', { hour12: false });
+  }
+  return dateString || '';
+}
+
+function buildCommentCard(comment, level = 0) {
+  const author = comment.author_name ? comment.author_name : 'Ẩn danh';
+  const createdAt = comment.created_at ? formatCommentDate(comment.created_at) : '';
+  const initials = author.trim().length ? author.trim().charAt(0).toUpperCase() : 'Ẩ';
+  const contentHtml = $('<div>').text(comment.content || '').html().replace(/\n/g, '<br>');
+
+  const card = $('<div class="puzzle-comment-card"></div>');
+  if (level > 0) {
+    card.addClass('reply');
+  }
+
+  const header = $('<div class="comment-header"></div>');
+  header.append('<div class="comment-avatar">' + initials + '</div>');
+  const userInfo = $('<div></div>');
+  userInfo.append('<div class="font-weight-bold">' + $('<div>').text(author).html() + '</div>');
+  if (createdAt) {
+    userInfo.append('<div class="small text-muted"><i class="far fa-clock"></i> ' + $('<div>').text(createdAt).html() + '</div>');
+  }
+  header.append(userInfo);
+  card.append(header);
+
+  card.append('<div class="comment-body">' + contentHtml + '</div>');
+
+  const actions = $('<div class="comment-actions"></div>');
+  actions.append('<span class="comment-action"><i class="far fa-thumbs-up"></i> Thích</span>');
+  actions.append('<span class="comment-action comment-reply-toggle" data-comment-id="' + comment.id + '"><i class="far fa-comment"></i> Trả lời</span>');
+  card.append(actions);
+
+  const replyForm = $('<form class="comment-reply-form d-none" data-comment-id="' + comment.id + '"></form>');
+  replyForm.append('<div class="form-group mb-2"><input type="text" class="form-control form-control-sm reply-author" maxlength="120" placeholder="Tên bạn (không bắt buộc)"></div>');
+  replyForm.append('<div class="form-group mb-2"><textarea class="form-control form-control-sm reply-content" rows="2" maxlength="1000" placeholder="Phản hồi của bạn..." required></textarea></div>');
+  replyForm.append('<small class="reply-feedback d-none"></small>');
+  const replyActions = $('<div class="d-flex justify-content-end gap-2"></div>');
+  replyActions.append('<button type="button" class="btn btn-outline-light btn-sm comment-reply-cancel">Hủy</button>');
+  replyActions.append('<button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-paper-plane"></i> Gửi</button>');
+  replyForm.append(replyActions);
+  card.append(replyForm);
+
+  if (comment.replies && comment.replies.length) {
+    const childrenWrapper = $('<div class="puzzle-comment-children"></div>');
+    comment.replies.forEach(function(reply) {
+      childrenWrapper.append(buildCommentCard(reply, level + 1));
+    });
+    card.append(childrenWrapper);
+  }
+
+  return card;
+}
+
+function renderComments(comments) {
+  const container = $('#puzzle-comment-list');
+  container.empty();
+
+  if (!comments || !comments.length) {
+    container.append('<div class="puzzle-empty-comment">Chưa có bình luận nào. Hãy là người đầu tiên chia sẻ cảm nhận!</div>');
+    return;
+  }
+
+  comments.forEach(function(comment) {
+    container.append(buildCommentCard(comment));
+  });
+}
+
+function loadComments() {
+  $.get(commentsEndpoint)
+    .done(function(response) {
+      renderComments(response.comments || []);
+    })
+    .fail(function() {
+      const container = $('#puzzle-comment-list');
+      container.empty().append('<div class="puzzle-empty-comment error">Không thể tải bình luận. Vui lòng thử lại sau.</div>');
+    });
+}
+
+$('#puzzle-comment-form').on('submit', function(e) {
+  e.preventDefault();
+  const author = $('#comment_author').val().trim();
+  const content = $('#comment_content').val().trim();
+  const feedback = $('#comment-feedback');
+  const submitBtn = $('#comment-submit');
+
+  if (!content.length) {
+    feedback.removeClass('d-none text-success').addClass('text-danger').text('Vui lòng nhập nội dung bình luận.');
+    return;
+  }
+
+  submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang gửi...');
+  feedback.addClass('d-none').text('').removeClass('text-danger text-success');
+
   $.ajax({
-    url: '{{ url('/api') }}/downvote',
-    type: "POST",
-    data : {
-      'slug': '{{ $slug }}'
+    url: commentsEndpoint,
+    method: 'POST',
+    data: {
+      author_name: author,
+      content: content
     },
-    dataType: 'text'
-  }).done(function(){
-    updateTotalRating();
+    headers: {
+      'X-CSRF-TOKEN': '{{ csrf_token() }}'
+    }
+  }).done(function() {
+    $('#comment_author').val('');
+    $('#comment_content').val('');
+    feedback.removeClass('d-none text-danger').addClass('text-success').text('Cảm ơn bạn! Bình luận đã được gửi.');
+    loadComments();
+    setTimeout(function() {
+      feedback.addClass('d-none').text('').removeClass('text-success');
+    }, 4000);
+  }).fail(function(xhr) {
+    let message = 'Không thể gửi bình luận, vui lòng thử lại.';
+    if (xhr.responseJSON) {
+      if (xhr.responseJSON.message) {
+        message = xhr.responseJSON.message;
+      } else if (xhr.responseJSON.errors) {
+        message = Object.values(xhr.responseJSON.errors).flat().join(' ');
+      }
+    }
+    feedback.removeClass('d-none text-success').addClass('text-danger').text(message);
+  }).always(function() {
+    submitBtn.prop('disabled', false).html('<i class="fas fa-paper-plane"></i> Gửi bình luận');
   });
 });
+
+$('#puzzle-comment-list').on('click', '.comment-reply-toggle', function() {
+  const form = $(this).closest('.puzzle-comment-card').find('.comment-reply-form').first();
+  form.toggleClass('d-none');
+  if (!form.hasClass('d-none')) {
+    form.find('.reply-content').trigger('focus');
+  }
+});
+
+$('#puzzle-comment-list').on('click', '.comment-reply-cancel', function() {
+  const form = $(this).closest('.comment-reply-form');
+  form.addClass('d-none');
+  form[0].reset();
+  form.find('.reply-feedback').addClass('d-none').text('').removeClass('text-danger text-success');
+});
+
+$('#puzzle-comment-list').on('submit', '.comment-reply-form', function(e) {
+  e.preventDefault();
+  const form = $(this);
+  const submitBtn = form.find('button[type="submit"]');
+  const feedback = form.find('.reply-feedback');
+  const author = form.find('.reply-author').val().trim();
+  const content = form.find('.reply-content').val().trim();
+  const parentId = form.data('comment-id');
+
+  if (!content.length) {
+    feedback.removeClass('d-none text-success').addClass('text-danger').text('Vui lòng nhập nội dung phản hồi.');
+    return;
+  }
+
+  submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang gửi...');
+  feedback.addClass('d-none').text('').removeClass('text-danger text-success');
+
+  $.ajax({
+    url: commentsEndpoint,
+    method: 'POST',
+    data: {
+      author_name: author,
+      content: content,
+      parent_id: parentId
+    },
+    headers: {
+      'X-CSRF-TOKEN': '{{ csrf_token() }}'
+    }
+  }).done(function() {
+    form[0].reset();
+    form.addClass('d-none');
+    loadComments();
+  }).fail(function(xhr) {
+    let message = 'Không thể gửi phản hồi, vui lòng thử lại.';
+    if (xhr.responseJSON) {
+      if (xhr.responseJSON.message) {
+        message = xhr.responseJSON.message;
+      } else if (xhr.responseJSON.errors) {
+        message = Object.values(xhr.responseJSON.errors).flat().join(' ');
+      }
+    }
+    feedback.removeClass('d-none text-success').addClass('text-danger').text(message);
+  }).always(function() {
+    submitBtn.prop('disabled', false).html('<i class="fas fa-paper-plane"></i> Gửi');
+  });
+});
+
+loadReactions();
+loadComments();
 $('#reset').on('click', function() {
   board.position('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR');
   game.load('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1');

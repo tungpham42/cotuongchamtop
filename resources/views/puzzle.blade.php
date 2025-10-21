@@ -38,7 +38,7 @@
 @section('belowContent')
 <p class="w-100 text-center mt-0 mb-1">
   <a data-step="2" data-intro="Ấn vào đây để vào trang giải thế cờ" id="solve-puzzle" class="w-25 btn btn-dark btn-lg" href="{{ url('/giai-co-the') }}"><i class="fad fa-abacus"></i> Giải cờ thế</a>
-  <a data-step="3" data-intro="Ấn vào đây để đặt tên cho thế cờ" id="name-puzzle" class="w-25 btn btn-lg btn-dark" href="javascript:void(0);"><i class="fad fa-save"></i> Lưu thế cờ</a>
+  <a data-step="3" data-intro="Ấn vào đây để lưu và chia sẻ thế cờ" id="name-puzzle" class="w-25 btn btn-lg btn-dark" href="javascript:void(0);"><i class="fad fa-save"></i> Lưu &amp; chia sẻ</a>
 </p>
 <p class="w-100 text-center mt-0 mb-1">
   <a data-step="4" data-intro="Ấn vào đây để lưu trạng thái bàn cờ" id="new-board" class="w-25 btn btn-dark btn-lg"><i class="fad fa-chess-board"></i> Lưu bàn cờ</a>
@@ -198,8 +198,89 @@ $('#new-board').on('click auxclick', function(e){
   }
 });
 $('#undo').on('click', undo);
+
+const savePuzzleFormTemplate = `
+  <form id="save-puzzle-form">
+    <div class="form-group">
+      <label for="save-puzzle-name" class="font-weight-bold">Tên thế cờ</label>
+      <input type="text" class="form-control" id="save-puzzle-name" maxlength="255" placeholder="Ví dụ: Cửu tử hồn - thế khó nhất 2025" required>
+    </div>
+    <div class="form-group">
+      <label for="save-puzzle-description" class="font-weight-bold">Mô tả / hướng dẫn (không bắt buộc)</label>
+      <textarea class="form-control" id="save-puzzle-description" rows="3" maxlength="1000" placeholder="Viết ghi chú ngắn hoặc hướng giải..."></textarea>
+    </div>
+    <div class="form-group mb-0">
+      <label class="font-weight-bold d-block">Chế độ hiển thị</label>
+      <div class="custom-control custom-radio">
+        <input type="radio" id="save-puzzle-public" name="save-puzzle-privacy" class="custom-control-input" value="public" checked>
+        <label class="custom-control-label" for="save-puzzle-public">Công khai (mọi người đều xem được)</label>
+      </div>
+      <div class="custom-control custom-radio mt-1">
+        <input type="radio" id="save-puzzle-private" name="save-puzzle-privacy" class="custom-control-input" value="private">
+        <label class="custom-control-label" for="save-puzzle-private">Riêng tư (chỉ ai có link mới xem được)</label>
+      </div>
+    </div>
+    <div class="alert alert-danger d-none mt-3 mb-0" id="save-puzzle-error"></div>
+  </form>
+`;
+
+function submitPuzzle(dialog) {
+  const errorBox = dialog.find('#save-puzzle-error');
+  const nameInput = dialog.find('#save-puzzle-name');
+  const descriptionInput = dialog.find('#save-puzzle-description');
+  const privacyValue = dialog.find('input[name="save-puzzle-privacy"]:checked').val();
+  const confirmButton = dialog.find('.btn-danger');
+
+  const puzzleName = nameInput.val().trim();
+  if (!puzzleName.length) {
+    errorBox.removeClass('d-none').text('Vui lòng đặt tên cho Thế cờ!');
+    nameInput.focus();
+    return false;
+  }
+
+  const validation = game.validate_fen(board.fen() + ' r - - 0 1');
+  if (!validation.valid) {
+    errorBox.removeClass('d-none').text('Bàn cờ thế không hợp lệ, vui lòng xếp lại.');
+    return false;
+  }
+
+  confirmButton.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang lưu...');
+  errorBox.addClass('d-none').text('');
+
+  $.ajax({
+    url: '{{ url('/api/puzzles') }}',
+    method: 'POST',
+    data: {
+      name: puzzleName,
+      description: descriptionInput.val().trim(),
+      fen: board.fen(),
+      is_public: privacyValue === 'public' ? 1 : 0,
+      rating: 0
+    },
+    headers: {
+      'X-CSRF-TOKEN': '{{ csrf_token() }}'
+    }
+  }).done(function(response) {
+    window.location.href = response.url;
+  }).fail(function(xhr) {
+    confirmButton.prop('disabled', false).html('<i class="fas fa-share-alt"></i> Lưu & chia sẻ');
+    let message = 'Không thể lưu thế cờ, vui lòng thử lại.';
+    if (xhr.responseJSON) {
+      if (xhr.responseJSON.message) {
+        message = xhr.responseJSON.message;
+      } else if (xhr.responseJSON.errors) {
+        message = Object.values(xhr.responseJSON.errors).flat().join(' ');
+      }
+    }
+    errorBox.removeClass('d-none').text(message);
+  });
+
+  return false;
+}
+
 $('#name-puzzle').on('click auxclick', function(e) {
   e.preventDefault();
+
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
       message: "Bàn cờ thế không hợp lệ",
@@ -214,96 +295,33 @@ $('#name-puzzle').on('click auxclick', function(e) {
         }
       }
     });
-  } else {
-    bootbox.prompt({
-      title: "Mời đặt tên cho Thế cờ:",
-      locale: 'vi',
-      centerVertical: true,
-      closeButton: false,
-      maxlength: 32,
-      buttons: {
-        confirm: {
-          label: '<i class="fas fa-check"></i> Đặt tên',
-          className: 'btn-danger'
-        },
-        cancel: {
-          className: 'btn-dark text-light'
-        }
+    return;
+  }
+
+  const dialog = bootbox.dialog({
+    title: "Lưu & chia sẻ thế cờ",
+    message: savePuzzleFormTemplate,
+    locale: 'vi',
+    centerVertical: true,
+    closeButton: false,
+    buttons: {
+      cancel: {
+        label: 'Hủy',
+        className: 'btn-dark text-light'
       },
-      callback: function(puzzleName){
-        if (puzzleName != null) {
-          let puzzleSlug = slugify(puzzleName, {
-						lowercase: true,
-						separator: "-",
-					});
-          if (puzzleName.trim().length === 0 || puzzleName.length === 0) {
-            bootbox.alert({
-              message: "Vui lòng đặt tên cho Thế cờ!",
-              size: 'small',
-              locale: 'vi',
-              centerVertical: true,
-              closeButton: false,
-              buttons: {
-                ok: {
-                  className: 'btn-danger'
-                }
-              },
-              callback: function () {
-                $('#name-puzzle').trigger('click');
-              }
-            });
-          } else {
-            $.ajax({
-              url: "{{ url('/api') }}/checkUniqueName",
-              type: "POST",
-              data : {
-                'name': puzzleName,
-                'slug': puzzleSlug,
-                'fen': board.fen()
-              },
-              dataType: 'json'
-            }).done(function(data){
-              if (data.code == '1') {
-                $.ajax({
-                  url: '{{ url('/api') }}/createPuzzle',
-                  type: "POST",
-                  data : {
-                    'name': puzzleName,
-                    'slug': puzzleSlug,
-                    'fen': board.fen(),
-                    'rating': '0'
-                  },
-                  dataType: 'text'
-                }).done(function(){
-                  // $('#AdSenseModal').attr('data-url', '{{ url('/the-co/') }}' + '/' + puzzleSlug).modal('show');
-                  // $('#adModalCloseBtn').attr('data-original-title', $('#AdSenseModal').attr('data-url'));
-                  // $('#adModalCloseBtn').tooltip();
-                  window.location.href = '{{ url('/the-co/') }}' + '/' + puzzleSlug;
-                });
-              } else {
-                bootbox.alert({
-                  message: data.message,
-                  locale: 'vi',
-                  size: 'small',
-                  centerVertical: true,
-                  closeButton: false,
-                  buttons: {
-                    ok: {
-                      className: 'btn-danger',
-                      label: 'Xếp lại'
-                    }
-                  },
-                  callback: function () {
-                    $('#name-puzzle').trigger('click');
-                  }
-                });
-              }
-            });
-          }
+      confirm: {
+        label: '<i class="fas fa-share-alt"></i> Lưu & chia sẻ',
+        className: 'btn-danger',
+        callback: function() {
+          return submitPuzzle(dialog);
         }
       }
-    });
-  }
+    }
+  });
+
+  dialog.init(function() {
+    dialog.find('#save-puzzle-name').trigger('focus');
+  });
 });
 $("#capture").on('click', function() {
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {

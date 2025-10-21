@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Puzzle;
+use App\Models\PuzzleComment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use DataTables;
@@ -24,7 +26,7 @@ class PuzzleController extends Controller
     public function getPuzzlesVi(Request $request)
     {
         if ($request->ajax()) {
-            $puzzles = Puzzle::select(['id', 'name', 'slug', 'fen', 'rating', 'updated_at']);
+            $puzzles = Puzzle::public()->select(['id', 'name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'updated_at']);
             return Datatables::of($puzzles)
                 ->addColumn('rank', function($row){
                     $puzzleRank = self::renderPuzzleRank($row->id);
@@ -35,8 +37,7 @@ class PuzzleController extends Controller
                     return $puzzleName;
                 })
                 ->addColumn('rating', function($row){
-                    $puzzleRating = $row->rating;
-                    return $puzzleRating;
+                    return (int) $row->likes_count;
                 })
                 ->addColumn('action', function($row){
                     $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 140px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.URL::to('/').'/giai-co-the/'.$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> Giải cờ thế</a>';
@@ -48,7 +49,7 @@ class PuzzleController extends Controller
                 })
                 ->escapeColumns([])
                 ->orderColumn('name', 'name $1')
-                ->orderColumn('rating', 'rating $1')
+                ->orderColumn('rating', 'likes_count $1')
                 ->orderColumn('time', 'updated_at $1')
                 ->filterColumn('name', function($query, $keyword) {
                     $query->where(function($query) use ($keyword) {
@@ -67,30 +68,38 @@ class PuzzleController extends Controller
 
     public static function renderPuzzleRank($id)
     {
-        $puzzleRating = Puzzle::find($id)->rating;
-    
-        $rank = Puzzle::where('rating', '>', $puzzleRating)->count() + 1;
-    
-        return $rank;
+        $puzzle = Puzzle::find($id);
+        if (!$puzzle) {
+            return null;
+        }
+
+        $likes = $puzzle->likes_count;
+
+        return Puzzle::public()
+                ->where('likes_count', '>', $likes)
+                ->count() + 1;
     }    
 
     public static function getUserPuzzles()
     {
-        return Puzzle::select('name', 'slug', 'fen', 'rating', 'updated_at')
+        return Puzzle::public()
+                        ->select('name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'description', 'updated_at')
                         ->orderByDesc('updated_at')
                         ->paginate(6);
     } 
 
     public static function getFirstUserPuzzles()
     {
-        return Puzzle::select('name', 'slug', 'fen', 'rating', 'updated_at')
+        return Puzzle::public()
+                        ->select('name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'description', 'updated_at')
                         ->orderByDesc('updated_at')
                         ->paginate(6, ['*'], 'page', 1);
     }    
 
     public static function getSitemapPuzzles()
     {
-        return Puzzle::select('name', 'slug', 'fen', 'rating', 'updated_at')
+        return Puzzle::public()
+                        ->select('name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'description', 'updated_at')
                         ->orderByDesc('updated_at')
                         ->paginate(4096);
     }    
@@ -102,40 +111,80 @@ class PuzzleController extends Controller
      */
     public function create(Request $request)
     {
-        $data = [
-            'slug' => $request->input('slug'),
-            'fen' => $request->input('fen'),
-            'rating' => $request->input('rating'),
-            'updated_at' => now()->format('Y-m-d H:i:s')
-        ];
-    
-        $name = $request->input('name');
-        
-        Puzzle::updateOrInsert(['name' => $name], $data);
+        $payload = $request->validate([
+            'name' => 'required|string|max:255',
+            'fen' => 'required|string|max:255',
+            'description' => 'nullable|string|max:2000',
+            'is_public' => 'required|boolean',
+        ]);
+
+        $rating = (int) $request->input('rating', 0);
+
+        if (Puzzle::where('name', $payload['name'])->exists()) {
+            return response()->json([
+                'message' => 'Tên thế cờ đã tồn tại trong hệ thống, vui lòng chọn tên khác!',
+                'code' => 0,
+            ], 422);
+        }
+
+        if (Puzzle::where('fen', $payload['fen'])->exists()) {
+            return response()->json([
+                'message' => 'Bàn cờ đã tồn tại trong hệ thống, vui lòng xếp lại!',
+                'code' => 0,
+            ], 422);
+        }
+
+        $slug = Puzzle::makeUniqueSlug($payload['name'], $request->input('slug'));
+
+        $puzzle = Puzzle::create([
+            'name' => $payload['name'],
+            'slug' => $slug,
+            'fen' => $payload['fen'],
+            'rating' => $rating,
+            'description' => $payload['description'] ?? null,
+            'is_public' => $payload['is_public'],
+        ]);
+
+        return response()->json([
+            'message' => 'Tạo thế cờ thành công!',
+            'code' => 1,
+            'slug' => $puzzle->slug,
+            'url' => URL::to('/').'/the-co/'.$puzzle->slug,
+        ], 201);
     }    
 
-    public function checkUniqueName(Request $request) {
+    public function checkUniqueName(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'fen' => 'nullable|string|max:255',
+            'slug' => 'nullable|string|max:255',
+        ]);
+
         $name = $request->input('name');
-        $slug = $request->input('slug');
         $fen = $request->input('fen');
 
-        if (!$name || $name === '') {
-            return response()->json(['message' => 'Tên thế cờ không được để trống', 'code' => 0]);
+        if (Puzzle::where('name', $name)->exists()) {
+            return response()->json([
+                'message' => 'Tên thế cờ đã tồn tại trong hệ thống, vui lòng chọn tên khác!',
+                'code' => 0,
+            ]);
         }
 
-        $name_count = Puzzle::where('name', $name)->count();
-        $slug_count = Puzzle::where('slug', $slug)->count();
-        $fen_count = Puzzle::where('fen', $fen)->count();
-
-        if ($name_count > 0) {
-            return response()->json(['message' => 'Tên thế cờ đã tồn tại trong hệ thống, vui lòng chọn tên khác!', 'code' => 0]);
-        } elseif ($slug_count > 0) {
-            return response()->json(['message' => 'Đường dẫn thế cờ đã tồn tại trong hệ thống, vui lòng chọn tên thế cờ khác!', 'code' => 0]);
-        } elseif ($fen_count > 0) {
-            return response()->json(['message' => 'Bàn cờ đã tồn tại trong hệ thống, vui lòng xếp lại!', 'code' => 0]);
+        if ($fen && Puzzle::where('fen', $fen)->exists()) {
+            return response()->json([
+                'message' => 'Bàn cờ đã tồn tại trong hệ thống, vui lòng xếp lại!',
+                'code' => 0,
+            ]);
         }
 
-        return response()->json(['message' => 'Tạo thế cờ thành công!', 'code' => 1]);
+        $slug = Puzzle::makeUniqueSlug($name, $request->input('slug'));
+
+        return response()->json([
+            'message' => 'Bạn có thể sử dụng tên thế cờ này.',
+            'code' => 1,
+            'slug' => $slug,
+        ]);
     }
 
     /**
@@ -160,33 +209,189 @@ class PuzzleController extends Controller
         return Puzzle::where('name', $name)->value('fen');
     }
     
+    public static function findBySlug(string $slug): ?Puzzle
+    {
+        return Puzzle::where('slug', $slug)->first();
+    }
+    
     public static function getFen($slug)
     {
-        return Puzzle::where('slug', $slug)->value('fen');
+        return optional(self::findBySlug($slug))->fen;
     }
     
     public static function getName($slug)
     {
-        return Puzzle::where('slug', $slug)->value('name');
+        return optional(self::findBySlug($slug))->name;
     }
 
     public function upvote(Request $request)
     {
         $slug = $request->input('slug');
-        Puzzle::where('slug', $slug)->increment('rating');
+        return $this->react($request, $slug ?? '');
     }    
 
     public function downvote(Request $request)
     {
         $slug = $request->input('slug');
-        Puzzle::where('slug', $slug)->decrement('rating');
+        $request->merge(['type' => 'unsolved']);
+        return $this->react($request, $slug ?? '');
     }
 
     public function totalRating(Request $request)
     {
         $slug = $request->input('slug');
-        $rating = Puzzle::where('slug', $slug)->value('rating');
-        return $rating;
+        $puzzle = $this->getPuzzleOrFail($slug);
+
+        return response()->json([
+            'likes' => $puzzle->likes_count,
+            'hard' => $puzzle->hard_count,
+            'unsolved' => $puzzle->unsolved_count,
+            'rating' => $puzzle->rating,
+        ]);
+    }
+
+    public function getReactions(string $slug)
+    {
+        $puzzle = $this->getPuzzleOrFail($slug);
+
+        return response()->json([
+            'likes' => $puzzle->likes_count,
+            'hard' => $puzzle->hard_count,
+            'unsolved' => $puzzle->unsolved_count,
+            'rating' => $puzzle->rating,
+        ]);
+    }
+
+    public function react(Request $request, string $slug = null)
+    {
+        $slug = $slug ?? $request->input('slug');
+
+        $data = $request->validate([
+            'type' => 'sometimes|required|string|in:like,hard,unsolved',
+            'slug' => 'nullable|string|max:255',
+        ]);
+
+        $reaction = $data['type'] ?? $request->input('type');
+        if (!$reaction) {
+            $reaction = 'like';
+        }
+
+        $puzzle = $this->getPuzzleOrFail($slug);
+
+        switch ($reaction) {
+            case 'like':
+                $puzzle->increment('likes_count');
+                $puzzle->increment('rating');
+                break;
+            case 'hard':
+                $puzzle->increment('hard_count');
+                break;
+            case 'unsolved':
+                $puzzle->increment('unsolved_count');
+                break;
+        }
+
+        $puzzle->refresh();
+
+        return response()->json([
+            'likes' => $puzzle->likes_count,
+            'hard' => $puzzle->hard_count,
+            'unsolved' => $puzzle->unsolved_count,
+            'rating' => $puzzle->rating,
+        ]);
+    }
+
+    public function comments(Request $request, string $slug)
+    {
+        $puzzle = $this->getPuzzleOrFail($slug);
+
+        $comments = $puzzle->comments()
+            ->where('is_public', true)
+            ->whereNull('parent_id')
+            ->with(['replies' => function ($query) {
+                $query->where('is_public', true)
+                    ->select('id', 'puzzle_id', 'parent_id', 'author_name', 'content', 'created_at');
+            }])
+            ->latest()
+            ->get(['id', 'puzzle_id', 'parent_id', 'author_name', 'content', 'created_at']);
+
+        return response()->json([
+            'comments' => $comments->map(fn($comment) => $this->transformComment($comment)),
+        ]);
+    }
+
+    public function addComment(Request $request, string $slug)
+    {
+        $puzzle = $this->getPuzzleOrFail($slug);
+
+        $data = $request->validate([
+            'author_name' => 'nullable|string|max:120',
+            'content' => 'required|string|max:1000',
+            'parent_id' => 'nullable|integer|exists:puzzle_comments,id',
+        ]);
+
+        $parentId = $data['parent_id'] ?? null;
+        $parentComment = null;
+
+        if ($parentId) {
+            $parentComment = PuzzleComment::where('id', $parentId)
+                ->where('puzzle_id', $puzzle->id)
+                ->first();
+
+            if (!$parentComment) {
+                return response()->json([
+                    'message' => 'Bình luận gốc không tồn tại.',
+                ], 422);
+            }
+        }
+
+        $author = $data['author_name'] ?? (Auth::check() ? Auth::user()->name : null);
+        $author = $author ? Str::limit(strip_tags($author), 120, '') : null;
+        $content = trim(strip_tags($data['content']));
+
+        if ($content === '') {
+            return response()->json([
+                'message' => 'Nội dung bình luận không được để trống.',
+            ], 422);
+        }
+
+        $comment = $puzzle->comments()->create([
+            'user_id' => Auth::id(),
+            'parent_id' => $parentId,
+            'author_name' => $author,
+            'content' => $content,
+            'is_public' => true,
+            'ip_address' => $request->ip(),
+        ]);
+
+        return response()->json([
+            'comment' => $this->transformComment($comment->load('replies')),
+        ], 201);
+    }
+
+    protected function transformComment(PuzzleComment $comment)
+    {
+        $replies = $comment->relationLoaded('replies')
+            ? $comment->replies
+            : $comment->replies()->where('is_public', true)->orderBy('created_at')->get();
+
+        return [
+            'id' => $comment->id,
+            'parent_id' => $comment->parent_id,
+            'author_name' => $comment->author_name,
+            'content' => $comment->content,
+            'created_at' => $comment->created_at,
+            'replies' => $replies->map(fn($reply) => $this->transformComment($reply))->values(),
+        ];
+    }
+
+    protected function getPuzzleOrFail(?string $slug): Puzzle
+    {
+        if (!$slug) {
+            abort(404);
+        }
+
+        return Puzzle::where('slug', $slug)->firstOrFail();
     }
     /**
      * Show the form for editing the specified resource.

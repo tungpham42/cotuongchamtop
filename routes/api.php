@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\XiangqiController;
+use App\Http\Controllers\PuzzleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -202,23 +203,15 @@ Route::post('/dangChat', [
   "as" => 'dang'
 ]);
 
-Route::post('/createPuzzle', [
-    "uses" => 'PuzzleController@create',
-    "as" => 'createPuzzle'
-]);
-Route::post('/checkUniqueName', [
-    "uses" => 'PuzzleController@checkUniqueName',
-    "as" => 'checkUniqueName'
-]);
-Route::post('/upvote', [
-    "uses" => 'PuzzleController@upvote',
-    "as" => 'upvote'
-]);
-Route::post('/downvote', [
-    "uses" => 'PuzzleController@downvote',
-    "as" => 'downvote'
-]);
-Route::post('/totalRating', [
-    "uses" => 'PuzzleController@totalRating',
-    "as" => 'totalRating'
-]);
+Route::post('/createPuzzle', [PuzzleController::class, 'create'])->name('createPuzzle');
+Route::post('/checkUniqueName', [PuzzleController::class, 'checkUniqueName'])->name('checkUniqueName');
+Route::post('/upvote', [PuzzleController::class, 'upvote'])->name('upvote');
+Route::post('/downvote', [PuzzleController::class, 'downvote'])->name('downvote');
+Route::post('/totalRating', [PuzzleController::class, 'totalRating'])->name('totalRating');
+
+Route::post('/puzzles', [PuzzleController::class, 'create'])->name('puzzles.create');
+Route::post('/puzzles/check-name', [PuzzleController::class, 'checkUniqueName'])->name('puzzles.check-name');
+Route::get('/puzzles/{slug}/reactions', [PuzzleController::class, 'getReactions'])->name('puzzles.reactions.show');
+Route::post('/puzzles/{slug}/reactions', [PuzzleController::class, 'react'])->name('puzzles.reactions.store');
+Route::get('/puzzles/{slug}/comments', [PuzzleController::class, 'comments'])->name('puzzles.comments.index');
+Route::post('/puzzles/{slug}/comments', [PuzzleController::class, 'addComment'])->name('puzzles.comments.store');

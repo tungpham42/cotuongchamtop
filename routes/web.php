@@ -555,7 +555,43 @@ return view('puzzleCompete', ['headTitle' => 'Thách đấu', 'bodyClass' => 'pu
 })->where(['board' => $fenRegex]);
 
 Route::match(['get', 'post'], '/the-co/{slug}', function ($slug) {
-return view('puzzleRating', ['headTitle' => 'Thế cờ "'.PuzzleController::getName($slug).'"', 'bodyClass' => 'puzzle', 'name' => PuzzleController::getName($slug), 'slug' => $slug, 'fen' => PuzzleController::getFen($slug) , 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'canonicalUrl' => '/the-co/'.$slug, 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
+    $puzzle = Puzzle::where('slug', $slug)->firstOrFail();
+
+    $headTitle = $puzzle->name ? 'Thế cờ "' . $puzzle->name . '"' : 'Thế cờ';
+
+    return view('puzzleRating', [
+        'headTitle' => $headTitle,
+        'bodyClass' => 'puzzle',
+        'puzzle' => $puzzle,
+        'name' => $puzzle->name,
+        'slug' => $puzzle->slug,
+        'fen' => $puzzle->fen,
+        'description' => $puzzle->description,
+        'isPublic' => $puzzle->is_public,
+        'reactions' => [
+            'likes' => $puzzle->likes_count,
+            'hard' => $puzzle->hard_count,
+            'unsolved' => $puzzle->unsolved_count,
+            'rating' => $puzzle->rating,
+        ],
+        'randomRoom' => RoomController::getRandomRoom(),
+        'roomCode' => '',
+        'cdnUrl' => URL::to(''),
+        'langViUrl' => '/',
+        'langEnUrl' => '/en',
+        'langJaUrl' => '/ja',
+        'langKoUrl' => '/ko',
+        'langZhUrl' => '/zh',
+        'canonicalUrl' => '/the-co/'.$puzzle->slug,
+        'userPuzzles' => PuzzleController::getUserPuzzles(),
+        'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(),
+        'boards' => RoomController::getBoards(),
+        'firstPageBoards' => RoomController::getFirstPageBoards(),
+        'playedBoards' => RoomController::getPlayedBoards(),
+        'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(),
+        'players' => UserController::getPlayers(),
+        'firstPagePlayers' => UserController::getFirstPagePlayers(),
+    ]);
 });
 
 Route::match(['get', 'post'], '/getUserPuzzlesTemplate', function(){

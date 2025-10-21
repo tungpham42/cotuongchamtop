@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\Puzzle;
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 
 class UpdatePuzzleSlugsCommand extends Command
@@ -34,8 +33,7 @@ class UpdatePuzzleSlugsCommand extends Command
 
         // Loop through the puzzles and update their points
         foreach ($puzzles as $puzzle) {
-            $name = $puzzle->name;
-            $puzzle->slug = Str::slug($name, '-');
+            $puzzle->slug = Puzzle::makeUniqueSlug($puzzle->name);
             $puzzle->save();
         }
 
