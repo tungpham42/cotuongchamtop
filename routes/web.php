@@ -35,7 +35,7 @@ Route::get('/test-engine', function() {
     echo "<h1>Pikafish Engine Test</h1>";
 
     // Check if files exist
-    $enginePath = storage_path('engines/pikafish_vps');
+    $enginePath = storage_path('engines/pikafish');
     $networkPath = storage_path('engines/pikafish.nnue');
 
     echo "<p>Engine exists: " . (file_exists($enginePath) ? 'YES' : 'NO') . "</p>";
