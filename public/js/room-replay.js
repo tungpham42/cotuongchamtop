@@ -129,14 +129,7 @@
         align-items: center;
         color: #f8f9fa;
       }
-      #room-replay-board {
-        width: 100%;
-        max-width: 420px;
-        margin: 12px auto;
-      }
-      #room-replay-board .xiangqiboard-8ddcb {
-        margin: auto;
-      }
+
       #room-replay-controls .btn {
         min-width: 42px;
       }
@@ -178,21 +171,30 @@
       return;
     }
 
-    // Kiểm tra xem ván đấu có đang diễn ra không
-    // Nếu có element game-over hoặc result, có nghĩa là ván đã kết thúc
-    const gameOver = $('#game-over:visible').length > 0 || 
-                     $('.game-result:visible').length > 0 ||
-                     $('#game-status').text().toLowerCase().includes('thắng') ||
-                     $('#game-status').text().toLowerCase().includes('thua') ||
-                     $('#game-status').text().toLowerCase().includes('hòa');
+    // Kiểm tra xem có thể hiển thị kỳ phổ không
+    const gameOverVisible = $('#game-over:visible').length > 0;
+    const gameResultVisible = $('.game-result:visible').length > 0;
+    const statusText = $('#game-status').text().toLowerCase();
+    const hasWinLoseText = statusText.includes('thắng') || 
+                          statusText.includes('thua') || 
+                          statusText.includes('hòa') || 
+                          statusText.includes('kết thúc');
+    const hasHistory = state.history && state.history.length > 0;
+    const isReplayMode = window.location.pathname.includes('/replay') || 
+                        window.location.search.includes('replay=1') ||
+                        hasHistory;
+    
+    const canShowReplay = gameOverVisible || 
+                         gameResultVisible || 
+                         hasWinLoseText || 
+                         (isReplayMode && hasHistory);
 
     const panel = $(`
-      <section id="room-replay-panel" style="${gameOver ? '' : 'display: none;'}">
+      <section id="room-replay-panel" style="${canShowReplay ? '' : 'display: none;'}">
         <div class="room-replay-header">
           <span><i class="fad fa-book-open"></i> Kỳ phổ</span>
           <span id="room-replay-status" class="small text-muted"></span>
         </div>
-        <div id="room-replay-board"></div>
         <div id="room-replay-controls" class="btn-group btn-group-sm d-flex justify-content-center" role="group">
           <button type="button" class="btn btn-outline-light" data-replay-action="first" title="Về đầu"><i class="fal fa-angle-double-left"></i></button>
           <button type="button" class="btn btn-outline-light" data-replay-action="prev" title="Lùi 1 nước"><i class="fal fa-angle-left"></i></button>
@@ -206,11 +208,38 @@
 
     $('#ban-co').after(panel);
 
-    state.replayBoard = window.Xiangqiboard('room-replay-board', {
-      draggable: false,
-      position: config.initialFen,
-      showNotation: true,
+    // Thêm nút toggle kỳ phổ
+    const toggleButton = $(`
+      <div class="text-center mt-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="toggle-replay-panel">
+          <i class="fal fa-book-open"></i> <span class="toggle-text">${canShowReplay ? 'Ẩn' : 'Hiện'} Kỳ phổ</span>
+        </button>
+      </div>
+    `);
+    
+    $('#ban-co').after(toggleButton);
+    
+    // Sự kiện click cho nút toggle
+    $('#toggle-replay-panel').on('click', function() {
+      const panel = $('#room-replay-panel');
+      const button = $(this);
+      const text = button.find('.toggle-text');
+      
+      if (panel.is(':visible')) {
+        panel.slideUp(300);
+        text.text('Hiện Kỳ phổ');
+      } else {
+        panel.slideDown(300);
+        text.text('Ẩn Kỳ phổ');
+      }
     });
+
+    // Không tạo replay board vì sẽ sử dụng bàn cờ chính
+    // state.replayBoard = window.Xiangqiboard('room-replay-board', {
+    //   draggable: false,
+    //   position: config.initialFen,
+    //   showNotation: true,
+    // });
 
     state.elements.status = $('#room-replay-status');
     state.elements.moveList = $('#room-replay-move-list');
@@ -283,13 +312,18 @@
   }
 
   function syncReplayBoard() {
-    if (!state.replayBoard || !state.replayGame) {
+    if (!state.replayGame) {
       return;
     }
     const fen = getFenForIndex(state.currentIndex);
     try {
       state.replayGame.load(fen);
-      state.replayBoard.position(fen, true);
+      
+      // Sử dụng bàn cờ chính thay vì tạo bàn cờ riêng
+      const mainBoard = getBoardInstance();
+      if (mainBoard && typeof mainBoard.position === 'function') {
+        mainBoard.position(fen, true);
+      }
     } catch (err) {
       // Ignore invalid FEN
     }
@@ -555,19 +589,47 @@
   function watchGameStatus($) {
     // Theo dõi các thay đổi trong DOM để phát hiện khi game kết thúc
     const checkGameStatus = function() {
-      const gameOver = $('#game-over:visible').length > 0 || 
-                       $('.game-result:visible').length > 0 ||
-                       $('#game-status').text().toLowerCase().includes('thắng') ||
-                       $('#game-status').text().toLowerCase().includes('thua') ||
-                       $('#game-status').text().toLowerCase().includes('hòa') ||
-                       $('#game-status').text().toLowerCase().includes('kết thúc');
+      // Kiểm tra nhiều điều kiện để xác định game đã kết thúc
+      const gameOverVisible = $('#game-over:visible').length > 0;
+      const gameResultVisible = $('.game-result:visible').length > 0;
+      const statusText = $('#game-status').text().toLowerCase();
+      const hasWinLoseText = statusText.includes('thắng') || 
+                            statusText.includes('thua') || 
+                            statusText.includes('hòa') || 
+                            statusText.includes('kết thúc');
+      
+      // Kiểm tra nếu có lịch sử nước đi (nghĩa là ván đã được chơi)
+      const hasHistory = state.history && state.history.length > 0;
+      
+      // Kiểm tra URL có chứa từ khóa xem lại không
+      const isReplayMode = window.location.pathname.includes('/replay') || 
+                          window.location.search.includes('replay=1') ||
+                          hasHistory; // Nếu có history thì có thể xem replay
+      
+      // Game được coi là "có thể replay" nếu:
+      // 1. Đã kết thúc rõ ràng (game-over visible hoặc có text kết thúc)
+      // 2. Hoặc đang ở chế độ xem lại và có history
+      const canShowReplay = gameOverVisible || 
+                           gameResultVisible || 
+                           hasWinLoseText || 
+                           (isReplayMode && hasHistory);
       
       const panel = $('#room-replay-panel');
+      const toggleButton = $('#toggle-replay-panel .toggle-text');
+      
       if (panel.length) {
-        if (gameOver) {
+        if (canShowReplay) {
           panel.slideDown(300);
+          if (toggleButton.length) {
+            toggleButton.text('Ẩn Kỳ phổ');
+          }
+          console.log('Showing replay panel - Game can be replayed');
         } else {
           panel.slideUp(300);
+          if (toggleButton.length) {
+            toggleButton.text('Hiện Kỳ phổ');
+          }
+          console.log('Hiding replay panel - Game is still active');
         }
       }
     };
