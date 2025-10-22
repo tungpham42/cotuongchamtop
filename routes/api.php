@@ -219,6 +219,16 @@ Route::post('/dangChat', [
   "as" => 'dang'
 ]);
 
+// New database-based chat routes
+Route::post('/getChatMessages', [
+  "uses" => 'ChatController@getMessages',
+  "as" => 'getChatMessages'
+]);
+Route::post('/sendChatMessage', [
+  "uses" => 'ChatController@sendMessage',
+  "as" => 'sendChatMessage'
+]);
+
 Route::post('/createPuzzle', [PuzzleController::class, 'create'])->name('createPuzzle');
 Route::post('/checkUniqueName', [PuzzleController::class, 'checkUniqueName'])->name('checkUniqueName');
 Route::post('/upvote', [PuzzleController::class, 'upvote'])->name('upvote');
