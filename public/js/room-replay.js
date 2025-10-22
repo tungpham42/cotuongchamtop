@@ -166,38 +166,48 @@
     document.head.appendChild(style);
   }
 
-  function setupReplayBoard($) {
-    if (!$('#ban-co').length || $('#room-replay-panel').length) {
+  function setupReplayBoard() {
+    if (!state.history || !state.history.length) {
+      console.log('No game history available for replay');
       return;
     }
 
-    // Kiểm tra các dấu hiệu game đã kết thúc
-    const gameOverVisible = $('#game-over:visible').length > 0;
-    const gameResultVisible = $('.game-result:visible').length > 0;
-    const statusText = $('#game-status').text().toLowerCase();
-    const hasWinLoseText = statusText.includes('thắng') || 
-                          statusText.includes('thua') || 
-                          statusText.includes('hòa') || 
-                          statusText.includes('kết thúc');
+    // Kiểm tra xem có phải đang ở chế độ xem lại không
+    const isReplayMode = window.location.hash.includes('replay') || 
+                        window.location.pathname.includes('replay') ||
+                        $('.replay-mode-indicator').length > 0;
+
+    // Kiểm tra trạng thái game từ DOM
+    const gameStatusElement = $('.game-status, .room-status, [data-game-status]');
+    const gameStatusText = gameStatusElement.text() || '';
     
-    // Kiểm tra có history move không (nghĩa là đã từng có người chơi)
-    const hasHistory = state.history && state.history.length > 0;
-    
-    // Kiểm tra URL xem có phải đang xem replay không
-    const isViewingReplay = window.location.pathname.includes('/phong/') || 
-                           window.location.pathname.includes('/room/') ||
-                           window.location.pathname.includes('/bang/') ||
-                           window.location.pathname.includes('/rumu/') ||
-                           window.location.pathname.includes('/fangjian/');
-    
-    // Hiển thị kỳ phổ nếu:
-    // 1. Game đã kết thúc rõ ràng, HOẶC  
-    // 2. Đang xem replay và có history (nghĩa là ván đã được đánh)
-    const canShowReplay = gameOverVisible || gameResultVisible || hasWinLoseText || 
-                         (isViewingReplay && hasHistory);
+    // Game đang active nếu có text cho thấy đang chơi
+    const isGameActive = gameStatusText.includes('đang đánh') || 
+                        gameStatusText.includes('playing') ||
+                        gameStatusText.includes('轮到') ||
+                        gameStatusText.includes('lượt của') ||
+                        (gameStatusText.includes('Trắng') || gameStatusText.includes('Đỏ')) && 
+                        !gameStatusText.includes('thắng') && 
+                        !gameStatusText.includes('thua');
+
+    console.log('Replay setup check:', {
+      isReplayMode,
+      isGameActive, 
+      gameStatusText: gameStatusText.trim(),
+      shouldCreateReplay: isReplayMode || !isGameActive
+    });
+
+    // TRƯỜNG HỢP 1: Đang đánh game - KHÔNG tạo kỳ phổ
+    if (!isReplayMode && isGameActive) {
+      console.log('🚫 Game is active - NO replay elements created');
+      return;
+    }
+
+    // TRƯỜNG HỢP 2: Xem lại HOẶC game đã kết thúc - TạO kỳ phổ
+    console.log('✅ Creating replay panel - either in replay mode or game finished');
 
     const panel = $(`
-      <section id="room-replay-panel" style="${canShowReplay ? '' : 'display: none;'}">
+      <section id="room-replay-panel" style="">
         <div class="room-replay-header">
           <span><i class="fad fa-book-open"></i> Kỳ phổ</span>
           <span id="room-replay-status" class="small text-muted"></span>
@@ -217,9 +227,9 @@
 
     // Thêm nút toggle kỳ phổ - chỉ hiện khi game đã kết thúc
     const toggleButton = $(`
-      <div class="text-center mt-2" id="toggle-replay-container" style="${canShowReplay ? '' : 'display: none;'}">
+      <div class="text-center mt-2" id="toggle-replay-container">
         <button type="button" class="btn btn-sm btn-outline-secondary" id="toggle-replay-panel">
-          <i class="fal fa-book-open"></i> <span class="toggle-text">${canShowReplay ? 'Ẩn' : 'Hiện'} Kỳ phổ</span>
+          <i class="fal fa-book-open"></i> <span class="toggle-text">Ẩn Kỳ phổ</span>
         </button>
       </div>
     `);
