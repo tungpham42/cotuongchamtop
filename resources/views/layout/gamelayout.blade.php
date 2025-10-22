@@ -60,7 +60,7 @@
           @if ( !$roomCode && !isset($slug) )
           <div class="row">
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-1">
-              <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
+              <div id="ban-co" class="mx-auto h-auto"></div>
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-auto">
               @yield('rightSide')
@@ -69,7 +69,7 @@
           @elseif ( !$roomCode && $slug )
           <div class="puzzle-layout-wrapper">
             <div class="puzzle-layout-board">
-              <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
+              <div id="ban-co" class="mx-auto h-auto"></div>
               @yield('belowBoardExtras')
             </div>
             <div class="puzzle-layout-panel">
@@ -79,9 +79,9 @@
           @else
           <div class="row">
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-              <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
+              <div id="ban-co" class="mx-auto h-auto"></div>
             </div>
-            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-5 mt-sm-5 mt-xs-5">
+            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-4 mt-sm-4 mt-xs-4">
               @include('layout.partials.comments')
               @include('common.sideAds')
             </div>

@@ -171,7 +171,7 @@
       return;
     }
 
-    // Chỉ hiển thị kỳ phổ khi ván đấu đã kết thúc hoàn toàn
+    // Kiểm tra các dấu hiệu game đã kết thúc
     const gameOverVisible = $('#game-over:visible').length > 0;
     const gameResultVisible = $('.game-result:visible').length > 0;
     const statusText = $('#game-status').text().toLowerCase();
@@ -180,10 +180,21 @@
                           statusText.includes('hòa') || 
                           statusText.includes('kết thúc');
     
-    // Chỉ cho phép hiển thị khi game đã kết thúc rõ ràng
-    const gameDefinitelyOver = gameOverVisible || gameResultVisible || hasWinLoseText;
+    // Kiểm tra có history move không (nghĩa là đã từng có người chơi)
+    const hasHistory = state.history && state.history.length > 0;
     
-    const canShowReplay = gameDefinitelyOver;
+    // Kiểm tra URL xem có phải đang xem replay không
+    const isViewingReplay = window.location.pathname.includes('/phong/') || 
+                           window.location.pathname.includes('/room/') ||
+                           window.location.pathname.includes('/bang/') ||
+                           window.location.pathname.includes('/rumu/') ||
+                           window.location.pathname.includes('/fangjian/');
+    
+    // Hiển thị kỳ phổ nếu:
+    // 1. Game đã kết thúc rõ ràng, HOẶC  
+    // 2. Đang xem replay và có history (nghĩa là ván đã được đánh)
+    const canShowReplay = gameOverVisible || gameResultVisible || hasWinLoseText || 
+                         (isViewingReplay && hasHistory);
 
     const panel = $(`
       <section id="room-replay-panel" style="${canShowReplay ? '' : 'display: none;'}">
@@ -583,9 +594,9 @@
   }
 
   function watchGameStatus($) {
-    // Theo dõi các thay đổi trong DOM để phát hiện khi game kết thúc
+    // Theo dõi các thay đổi trong DOM để phát hiện khi có thể hiện kỳ phổ
     const checkGameStatus = function() {
-      // Chỉ kiểm tra các dấu hiệu game đã kết thúc rõ ràng
+      // Kiểm tra các dấu hiệu game đã kết thúc
       const gameOverVisible = $('#game-over:visible').length > 0;
       const gameResultVisible = $('.game-result:visible').length > 0;
       const statusText = $('#game-status').text().toLowerCase();
@@ -594,9 +605,34 @@
                             statusText.includes('hòa') || 
                             statusText.includes('kết thúc');
       
-      // Chỉ hiển thị kỳ phổ khi game đã kết thúc hoàn toàn
-      // Không dựa vào history hay URL để tránh hiện sai lúc
-      const canShowReplay = gameOverVisible || gameResultVisible || hasWinLoseText;
+      // Kiểm tra có history move không
+      const hasHistory = state.history && state.history.length > 0;
+      
+      // Kiểm tra URL xem có phải đang xem replay không
+      const isViewingReplay = window.location.pathname.includes('/phong/') || 
+                             window.location.pathname.includes('/room/') ||
+                             window.location.pathname.includes('/bang/') ||
+                             window.location.pathname.includes('/rumu/') ||
+                             window.location.pathname.includes('/fangjian/');
+      
+      // Hiển thị kỳ phổ nếu:
+      // 1. Game đã kết thúc rõ ràng, HOẶC
+      // 2. Đang xem replay và có history
+      const canShowReplay = gameOverVisible || gameResultVisible || hasWinLoseText || 
+                           (isViewingReplay && hasHistory);
+      
+      // Debug log để kiểm tra
+      console.log('Replay status check:', {
+        gameOverVisible,
+        gameResultVisible, 
+        hasWinLoseText,
+        statusText,
+        hasHistory,
+        historyLength: state.history ? state.history.length : 0,
+        isViewingReplay,
+        currentURL: window.location.pathname,
+        canShowReplay
+      });
       
       const panel = $('#room-replay-panel');
       const toggleButton = $('#toggle-replay-panel .toggle-text');

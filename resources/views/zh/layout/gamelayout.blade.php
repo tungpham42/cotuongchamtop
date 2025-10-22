@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh">
   <head>
-    @include('zh.layout.partials.head')
+            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+              <div id="ban-co" class="mx-auto h-auto"></div>
+            </div>
+            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-5 mt-sm-5 mt-xs-5">@include('zh.layout.partials.head')
   </head>
   <body class="{{ $bodyClass }}">
     @include('common.afterBody')
@@ -43,7 +46,7 @@
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
               <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
             </div>
-            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-5 mt-sm-5 mt-xs-5">
+            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-4 mt-sm-4 mt-xs-4">
               @include('zh.layout.partials.comments')
               @include('common.sideAds')
             </div>
