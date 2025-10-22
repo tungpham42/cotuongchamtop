@@ -61,6 +61,7 @@
           <div class="row">
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-1">
               <div id="ban-co" class="mx-auto h-auto"></div>
+              @include('common.themeSelector')
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-auto">
               @yield('rightSide')
@@ -70,6 +71,7 @@
           <div class="puzzle-layout-wrapper">
             <div class="puzzle-layout-board">
               <div id="ban-co" class="mx-auto h-auto"></div>
+              @include('common.themeSelector')
               @yield('belowBoardExtras')
             </div>
             <div class="puzzle-layout-panel">
@@ -80,6 +82,7 @@
           <div class="row">
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
               <div id="ban-co" class="mx-auto h-auto"></div>
+              @include('common.themeSelector')
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-4 mt-sm-4 mt-xs-4">
               @include('layout.partials.comments')

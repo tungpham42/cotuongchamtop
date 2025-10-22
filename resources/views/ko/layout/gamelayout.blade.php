@@ -36,12 +36,14 @@
           <div class="row">
             <div class="col-12">
               <div id="ban-co" class="mx-auto h-auto"></div>
+              @include('common.themeSelector')
             </div>
           </div>
           @else
           <div class="row">
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
               <div id="ban-co" class="mx-auto h-auto"></div>
+              @include('common.themeSelector')
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-4 mt-sm-4 mt-xs-4">
               @include('ko.layout.partials.comments')

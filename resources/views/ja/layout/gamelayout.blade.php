@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+            <div class="row">
+            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-1">
+              <div id="ban-co" class="mx-auto h-auto"></div>
+              @include('common.themeSelector')
+            </div>      <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
               <div id="ban-co" class="mx-auto h-auto"></div>
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-5 mt-sm-5 mt-xs-5">@include('ja.layout.partials.head')
@@ -39,12 +43,14 @@
           <div class="row">
             <div class="col-12">
               <div id="ban-co" class="mx-auto h-auto"></div>
+              @include('common.themeSelector')
             </div>
           </div>
           @else
           <div class="row">
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
               <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
+              @include('common.themeSelector')
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-4 mt-sm-4 mt-xs-4">
               @include('ja.layout.partials.comments')
