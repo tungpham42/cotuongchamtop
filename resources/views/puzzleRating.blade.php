@@ -237,7 +237,7 @@
     box-shadow: 0 0 0 0.2rem rgba(248, 113, 113, 0.25);
   }
 </style>
-<div id="puzzle-note-block" class="puzzle-side-card">
+<div id="puzzle-note-block" class="puzzle-side-card mr-lg-0 mx-md-auto">
   <div class="card-body">
     <h5 class="mb-2 text-left"><i class="fas fa-info-circle text-danger"></i> Ghi chú thế cờ</h5>
     @if (!empty($puzzleDescription))
