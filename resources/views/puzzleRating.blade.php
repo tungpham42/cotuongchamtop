@@ -293,6 +293,7 @@
         </button>
         @if ( isset($name) && $name != '' )
         <a id="switch" class="btn btn-dark btn-lg w-100 mt-2"><i class="fad fa-sync"></i> Đổi bên</a>
+        <a id="solve-puzzle" class="btn btn-dark btn-lg w-100 mt-2" href="javascript:solvePuzzle('{{ $fen }}')"><i class="fad fa-mouse"></i> Giải thế cờ "{{ $name }}"</a>
         @endif
         <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/') }}/phong/{{ md5(time()) }}">
           @if (!auth()->check())
@@ -1024,6 +1025,23 @@ $('#reset').on('click', function() {
   $('#resign').removeClass('disabled').attr('aria-disabled', false);
   config.draggable = true;
 });
+function solvePuzzle(fenCode) {
+  if (!game.validate_fen(fenCode + ' r - - 0 1').valid) {
+    bootbox.alert({
+    message: "Bàn cờ thế không hợp lệ",
+    locale: 'vi',
+    centerVertical: true,
+    closeButton: false,
+    buttons: {
+      ok: {
+        className: 'btn-danger pulse-red'
+      }
+    }});
+  } else {
+    // $('#AdSenseModal').attr('data-url', '{{ url('/giai-co-the') }}/' + fenCode + ' r - - 0 1').modal('show');
+    window.location.href = '{{ url('/giai-co-the') }}/' + fenCode + ' r - - 0 1';
+  }
+}
 </script>
 {{-- @include('layout.partials.userPuzzlesWrapper') --}}
 @include('layout.partials.players')
