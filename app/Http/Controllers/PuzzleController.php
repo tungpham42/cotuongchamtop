@@ -81,30 +81,56 @@ class PuzzleController extends Controller
         return Puzzle::public()
                 ->where('likes_count', '>', $likes)
                 ->count() + 1;
+    }
+
+    protected static function puzzleListQuery()
+    {
+        $commentCountSql = 'SELECT COUNT(*) FROM puzzle_comments pc WHERE pc.puzzle_id = puzzles.id AND pc.is_public = 1';
+        $latestCommentSql = 'SELECT MAX(pc.created_at) FROM puzzle_comments pc WHERE pc.puzzle_id = puzzles.id AND pc.is_public = 1';
+        $now = now();
+        $oneHourAgo = $now->copy()->subHour();
+        $fiveHoursAgo = $now->copy()->subHours(5);
+
+        return Puzzle::public()
+            ->select([
+                'puzzles.id',
+                'puzzles.name',
+                'puzzles.slug',
+                'puzzles.fen',
+                'puzzles.rating',
+                'puzzles.likes_count',
+                'puzzles.hard_count',
+                'puzzles.unsolved_count',
+                'puzzles.description',
+                'puzzles.created_at',
+                'puzzles.updated_at',
+            ])
+            ->selectRaw("COALESCE(($commentCountSql), 0) as comments_count")
+            ->selectRaw("($latestCommentSql) as latest_comment_at")
+            ->selectRaw("GREATEST(puzzles.updated_at, COALESCE(($latestCommentSql), puzzles.created_at)) as last_activity_at")
+            ->orderByRaw('CASE WHEN last_activity_at >= ? THEN 1 ELSE 0 END DESC', [$oneHourAgo])
+            ->orderByRaw('CASE WHEN puzzles.created_at >= ? THEN 1 ELSE 0 END DESC', [$fiveHoursAgo])
+            ->orderByDesc('comments_count')
+            ->orderByDesc('last_activity_at')
+            ->orderByDesc('likes_count');
     }    
 
     public static function getUserPuzzles()
     {
-        return Puzzle::public()
-                        ->select('name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'description', 'updated_at')
-                        ->orderByDesc('updated_at')
-                        ->paginate(6);
+        return self::puzzleListQuery()
+            ->paginate(6);
     } 
 
     public static function getFirstUserPuzzles()
     {
-        return Puzzle::public()
-                        ->select('name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'description', 'updated_at')
-                        ->orderByDesc('updated_at')
-                        ->paginate(6, ['*'], 'page', 1);
+        return self::puzzleListQuery()
+            ->paginate(6, ['*'], 'page', 1);
     }    
 
     public static function getSitemapPuzzles()
     {
-        return Puzzle::public()
-                        ->select('name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'description', 'updated_at')
-                        ->orderByDesc('updated_at')
-                        ->paginate(4096);
+        return self::puzzleListQuery()
+            ->paginate(4096);
     }    
 
     /**
