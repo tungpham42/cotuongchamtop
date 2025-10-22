@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use DB;
 use App\Models\Room;
 use App\Models\User;
+use App\Models\RoomComment;
+use App\Models\RoomCommentLike;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
@@ -17,6 +19,9 @@ use App\Jobs\QuickMatchJob;
 use App\Jobs\AnonymousQuickMatchJob;
 use Illuminate\Support\Str;
 use Atrox\Haikunator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 
 class RoomController extends Controller
 {
@@ -700,15 +705,19 @@ class RoomController extends Controller
         $room = Room::firstOrCreate(
             ['code' => $code],
             [
-                'fen'           => $fen,
-                'host_id'       => $host_id,
-                'name'          => $name,
-                'pass'          => $pass,
-                'modified_at'   => now(),
-                'black_time'    => 600,   // reset timer khi phòng mới
-                'red_time'      => 600,
-                'active_player' => null,
-                'last_update'   => null,
+                'fen'             => $fen,
+                'host_id'         => $host_id,
+                'name'            => $name,
+                'pass'            => $pass,
+                'modified_at'     => now(),
+                'black_time'      => 600,   // reset timer khi phòng mới
+                'red_time'        => 600,
+                'active_player'   => null,
+                'last_update'     => null,
+                'move_history'    => [],
+                'game_started_at' => null,
+                'game_finished_at'=> null,
+                'last_move_at'    => null,
             ]
         );
 
@@ -756,10 +765,48 @@ class RoomController extends Controller
     {
         $code = $request->input('ma-phong');
         $fen = $request->input('FEN');
-        Room::updateOrInsert(
-            ['code' => $code],
-            ['fen' => $fen, 'modified_at' => date('Y-m-d H:i:s')]
-        );
+        if (!$code || !$fen) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Thiếu mã phòng hoặc FEN.',
+            ], 422);
+        }
+
+        $room = Room::firstOrNew(['code' => $code]);
+        $history = collect($room->move_history ?? []);
+        $movePayload = $this->decodeMovePayload($request->input('move'));
+
+        if ($movePayload) {
+            $lastFen = $history->last()['fen'] ?? null;
+            $fenBefore = $movePayload['fen_before'] ?? $lastFen ?? env('INITIAL_FEN');
+
+            if ($history->isNotEmpty() && $lastFen !== null && $fenBefore !== $lastFen) {
+                $history = collect();
+                $room->game_started_at = null;
+                $room->game_finished_at = null;
+            }
+
+            $entry = $this->buildMoveEntry($movePayload, $fen, $history);
+
+            if ($entry !== null) {
+                $history->push($entry);
+                $room->last_move_at = now();
+                if (is_null($room->game_started_at)) {
+                    $room->game_started_at = now();
+                }
+                $room->game_finished_at = null;
+            }
+        }
+
+        $room->fen = $fen;
+        $room->move_history = $history->values()->all();
+        $room->modified_at = now();
+        $room->save();
+
+        return response()->json([
+            'success' => true,
+            'moves' => $room->move_history,
+        ]);
     }
 
     public function join(Request $request)
@@ -801,7 +848,11 @@ class RoomController extends Controller
         // Update or insert the room result
         Room::updateOrInsert(
             ['code' => $code],
-            ['result' => $result, 'modified_at' => now()]
+            [
+                'result' => $result,
+                'modified_at' => now(),
+                'game_finished_at' => now(),
+            ]
         );
 
         // Retrieve host and guest IDs for the room
@@ -1498,6 +1549,217 @@ class RoomController extends Controller
         return $this->checkAnonymousMatchStatusHelper($request, ['hongse', 'heise'], ['红色的', '黑色的']);
     }
 
+    public function moveHistory(Request $request, string $code)
+    {
+        $after = max(0, (int) $request->query('after', 0));
+        $room = Room::where('code', $code)->first();
+
+        if (!$room) {
+            return response()->json([
+                'moves' => [],
+                'total' => 0,
+            ]);
+        }
+
+        $history = collect($room->move_history ?? []);
+
+        if ($after > 0) {
+            $history = $history->slice($after)->values();
+        }
+
+        return response()->json([
+            'moves' => $history,
+            'total' => count($room->move_history ?? []),
+        ]);
+    }
+
+    protected function decodeMovePayload(?string $payload): ?array
+    {
+        if ($payload === null || $payload === '') {
+            return null;
+        }
+
+        $decoded = json_decode($payload, true);
+
+        return is_array($decoded) ? $decoded : null;
+    }
+
+    protected function buildMoveEntry(array $moveData, string $fen, Collection $history): ?array
+    {
+        $lastEntry = $history->last();
+        $lastFen = $lastEntry['fen'] ?? null;
+
+        if ($lastFen !== null && $lastFen === $fen) {
+            return null;
+        }
+
+        $from = $moveData['from'] ?? null;
+        $to = $moveData['to'] ?? null;
+        $iccs = $moveData['iccs'] ?? (($from && $to) ? $from.$to : null);
+        $fenBefore = $moveData['fen_before'] ?? ($lastEntry['fen'] ?? env('INITIAL_FEN'));
+
+        return [
+            'ply' => (int) ($moveData['ply'] ?? ($history->count() + 1)),
+            'san' => $moveData['san'] ?? null,
+            'iccs' => $iccs,
+            'from' => $from,
+            'to' => $to,
+            'piece' => $moveData['piece'] ?? null,
+            'captured' => $moveData['captured'] ?? null,
+            'color' => $moveData['color'] ?? null,
+            'flags' => $moveData['flags'] ?? null,
+            'fen_before' => $fenBefore,
+            'fen' => $fen,
+            'created_at' => now()->toIso8601String(),
+        ];
+    }
+
+    public function roomComments(Request $request, string $code)
+    {
+        $room = $this->getRoomOrFail($code);
+
+        $columns = ['id', 'room_code', 'parent_id', 'author_name', 'content', 'likes_count', 'created_at'];
+
+        $comments = $room->comments()
+            ->where('is_public', true)
+            ->whereNull('parent_id')
+            ->with(['replies' => function ($query) use ($columns) {
+                $query->where('is_public', true)
+                    ->select($columns);
+            }])
+            ->latest()
+            ->get($columns);
+
+        return response()->json([
+            'comments' => $comments->map(fn(RoomComment $comment) => $this->transformRoomComment($comment)),
+        ]);
+    }
+
+    public function addRoomComment(Request $request, string $code)
+    {
+        $room = $this->getRoomOrFail($code);
+
+        $data = $request->validate([
+            'author_name' => 'nullable|string|max:120',
+            'content' => 'required|string|max:1000',
+            'parent_id' => 'nullable|integer|exists:room_comments,id',
+        ]);
+
+        $parentId = $data['parent_id'] ?? null;
+
+        if ($parentId) {
+            $parentExists = RoomComment::where('id', $parentId)
+                ->where('room_code', $room->code)
+                ->exists();
+
+            if (!$parentExists) {
+                return response()->json([
+                    'message' => 'Bình luận gốc không tồn tại.',
+                ], 422);
+            }
+        }
+
+        $author = $data['author_name'] ?? (Auth::check() ? Auth::user()->name : null);
+        $author = $author ? Str::limit(strip_tags($author), 120, '') : null;
+        $content = trim(strip_tags($data['content']));
+
+        if ($content === '') {
+            return response()->json([
+                'message' => 'Nội dung bình luận không được để trống.',
+            ], 422);
+        }
+
+        $comment = $room->comments()->create([
+            'user_id' => Auth::id(),
+            'parent_id' => $parentId,
+            'author_name' => $author,
+            'content' => $content,
+            'is_public' => true,
+            'ip_address' => $request->ip(),
+        ]);
+
+        return response()->json([
+            'comment' => $this->transformRoomComment($comment->load('replies')),
+        ], 201);
+    }
+
+    public function likeRoomComment(Request $request, string $code, RoomComment $comment)
+    {
+        $room = $this->getRoomOrFail($code);
+
+        if ((string) $comment->room_code !== (string) $room->code || !$comment->is_public) {
+            abort(404);
+        }
+
+        if (!Schema::hasTable('room_comment_likes')) {
+            return response()->json([
+                'message' => 'Tính năng thích bình luận chưa được kích hoạt. Vui lòng thử lại sau.',
+            ], 503);
+        }
+
+        $identifier = $this->buildRoomCommentLikeIdentifier($request);
+        $wasCreated = false;
+
+        DB::transaction(function () use ($comment, $identifier, $request, &$wasCreated) {
+            $like = RoomCommentLike::firstOrCreate(
+                [
+                    'room_comment_id' => $comment->id,
+                    'identifier' => $identifier,
+                ],
+                [
+                    'user_id' => Auth::id(),
+                    'ip_address' => $request->ip(),
+                ]
+            );
+
+            if ($like->wasRecentlyCreated) {
+                $comment->increment('likes_count');
+                $wasCreated = true;
+            }
+        });
+
+        $comment->refresh();
+
+        return response()->json([
+            'likes_count' => (int) $comment->likes_count,
+            'already_liked' => !$wasCreated,
+        ]);
+    }
+
+    protected function transformRoomComment(RoomComment $comment): array
+    {
+        $replies = $comment->relationLoaded('replies')
+            ? $comment->replies
+            : $comment->replies()->where('is_public', true)->orderBy('created_at')->get();
+
+        return [
+            'id' => $comment->id,
+            'parent_id' => $comment->parent_id,
+            'author_name' => $comment->author_name,
+            'content' => $comment->content,
+            'likes_count' => (int) ($comment->likes_count ?? 0),
+            'created_at' => $comment->created_at,
+            'replies' => $replies->map(fn(RoomComment $reply) => $this->transformRoomComment($reply))->values(),
+        ];
+    }
+
+    protected function getRoomOrFail(string $code): Room
+    {
+        return Room::where('code', $code)->firstOrFail();
+    }
+
+    protected function buildRoomCommentLikeIdentifier(Request $request): string
+    {
+        if (Auth::check()) {
+            return 'user:' . Auth::id();
+        }
+
+        $ip = (string) $request->ip();
+        $agent = (string) $request->userAgent();
+
+        return 'guest:' . hash('sha256', $ip . '|' . $agent);
+    }
+
     public function startTimer($roomCode, $player)
     {
         $room = Room::where('code', $roomCode)->first();
@@ -1593,4 +1855,3 @@ class RoomController extends Controller
         ]);
     }
 }
-

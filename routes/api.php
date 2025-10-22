@@ -158,6 +158,22 @@ Route::get('/readFEN/{code}', [
     "uses" => 'RoomController@show',
     "as" => 'show'
 ]);
+Route::get('/rooms/{code}/moves', [
+    "uses" => 'RoomController@moveHistory',
+    "as" => 'rooms.moves'
+]);
+Route::get('/rooms/{code}/comments', [
+    "uses" => 'RoomController@roomComments',
+    "as" => 'rooms.comments.index'
+]);
+Route::post('/rooms/{code}/comments', [
+    "uses" => 'RoomController@addRoomComment',
+    "as" => 'rooms.comments.store'
+]);
+Route::post('/rooms/{code}/comments/{comment}/like', [
+    "uses" => 'RoomController@likeRoomComment',
+    "as" => 'rooms.comments.like'
+]);
 Route::get('/getFEN/{code}', [
     "uses" => 'RoomController@getEventStream',
     "as" => 'getEventStream'

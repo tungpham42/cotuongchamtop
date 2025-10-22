@@ -104,6 +104,50 @@
     background: rgba(15, 23, 42, 0.45);
     font-size: 0.68rem;
   }
+  .puzzle-share-card {
+    background: rgba(15, 23, 42, 0.85);
+    border-radius: 0.85rem;
+    padding: 1rem 1.2rem;
+    color: #e2e8f0;
+    margin-top: 1.25rem;
+  }
+  .puzzle-share-card h6 {
+    font-weight: 600;
+  }
+  .puzzle-share-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .puzzle-share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.1rem;
+    border-radius: 999px;
+    font-weight: 600;
+    color: #fff;
+    border: none;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .puzzle-share-btn:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+    text-decoration: none;
+    color: #fff;
+  }
+  .puzzle-share-btn i {
+    font-size: 1.05rem;
+  }
+  .puzzle-share-btn.facebook { background: #1773EA; }
+  .puzzle-share-btn.twitter { background: #1DA1F2; }
+  .puzzle-share-btn.zalo { background: #0068FF; }
+  .puzzle-share-btn.copy { background: #6c757d; }
+  .puzzle-share-feedback {
+    margin-top: 0.65rem;
+    font-size: 0.85rem;
+    display: none;
+  }
   .puzzle-comment-feed {
     background-color: #222222;
     border-radius: 0.85rem;
@@ -334,6 +378,25 @@
   <div class="puzzle-comment-feed">
     <h6 class="mb-3"><i class="fas fa-comment-dots text-danger"></i> Dòng thảo luận</h6>
     <div id="puzzle-comment-list" class="puzzle-comments"></div>
+  </div>
+
+  <div class="puzzle-share-card">
+    <h6 class="mb-3"><i class="fas fa-share-alt text-danger"></i> Chia sẻ thế cờ này</h6>
+    <div class="puzzle-share-actions">
+      <a href="javascript:void(0);" class="puzzle-share-btn facebook" data-share="facebook">
+        <i class="fab fa-facebook-f"></i> Facebook
+      </a>
+      <a href="javascript:void(0);" class="puzzle-share-btn twitter" data-share="twitter">
+        <i class="fab fa-x-twitter"></i> Twitter / X
+      </a>
+      <a href="javascript:void(0);" class="puzzle-share-btn zalo" data-share="zalo">
+        <i class="fas fa-comment-alt"></i> Zalo
+      </a>
+      <a href="javascript:void(0);" class="puzzle-share-btn copy" data-share="copy">
+        <i class="far fa-copy"></i> Sao chép link
+      </a>
+    </div>
+    <div class="puzzle-share-feedback" id="puzzle-share-feedback"></div>
   </div>
 </div>
 @endsection
@@ -1042,6 +1105,80 @@ function solvePuzzle(fenCode) {
     window.location.href = '{{ url('/giai-co-the') }}/' + fenCode + ' r - - 0 1';
   }
 }
+
+const puzzleShareConfig = {
+  url: '{{ url('/the-co/'.$slug) }}',
+  title: {!! json_encode($name ?? 'Thế cờ đặc sắc trên Cotuong.top') !!},
+  summary: {!! json_encode(\Illuminate\Support\Str::limit($description ?? 'Thế cờ đặc sắc được chia sẻ từ Cotuong.top', 150)) !!}
+};
+
+function openShareWindow(url) {
+  const width = 680;
+  const height = 480;
+  const left = (window.screen.width / 2) - (width / 2);
+  const top = (window.screen.height / 2) - (height / 2);
+  window.open(url, 'puzzle-share', `width=${width},height=${height},left=${left},top=${top},noopener`);
+}
+
+$('.puzzle-share-btn').on('click', function() {
+  const action = $(this).data('share');
+  const shareUrl = encodeURIComponent(puzzleShareConfig.url);
+  const shareTitle = encodeURIComponent(puzzleShareConfig.title);
+  const shareSummary = encodeURIComponent(puzzleShareConfig.summary);
+  const feedback = $('#puzzle-share-feedback');
+
+  feedback.hide().text('');
+
+  switch (action) {
+    case 'facebook':
+      openShareWindow(`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`);
+      break;
+    case 'twitter':
+      openShareWindow(`https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareTitle}`);
+      break;
+    case 'zalo':
+      openShareWindow(`https://zalo.me/share/article?url=${shareUrl}&title=${shareTitle}`);
+      break;
+    case 'copy':
+      const clipboardText = puzzleShareConfig.url;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(clipboardText).then(function() {
+          feedback.text('Đã sao chép liên kết vào bộ nhớ tạm.').css('color', '#17d39e').fadeIn();
+          setTimeout(function() {
+            feedback.fadeOut();
+          }, 2500);
+        }).catch(function() {
+          feedback.text('Không thể sao chép liên kết, vui lòng thử lại.').css('color', '#ffc107').fadeIn();
+        });
+      } else {
+        const tempInput = $('<input type="text" style="position:absolute;left:-9999px;">');
+        $('body').append(tempInput);
+        tempInput.val(clipboardText).select();
+        try {
+          document.execCommand('copy');
+          feedback.text('Đã sao chép liên kết vào bộ nhớ tạm.').css('color', '#17d39e').fadeIn();
+          setTimeout(function() {
+            feedback.fadeOut();
+          }, 2500);
+        } catch (error) {
+          feedback.text('Không thể sao chép liên kết, vui lòng thử lại.').css('color', '#ffc107').fadeIn();
+        }
+        tempInput.remove();
+      }
+      break;
+    default:
+      if (navigator.share) {
+        navigator.share({
+          title: puzzleShareConfig.title,
+          text: puzzleShareConfig.summary,
+          url: puzzleShareConfig.url
+        }).catch(function() { /* user canceled share */ });
+      } else {
+        feedback.text('Thiết bị không hỗ trợ chia sẻ trực tiếp. Hãy dùng các nút bên cạnh nhé!').css('color', '#ffc107').fadeIn();
+      }
+      break;
+  }
+});
 </script>
 {{-- @include('layout.partials.userPuzzlesWrapper') --}}
 @include('layout.partials.players')

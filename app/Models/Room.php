@@ -26,6 +26,17 @@ class Room extends Model
         'guest_session',
         'pass',
         'modified_at',
+        'move_history',
+        'game_started_at',
+        'game_finished_at',
+        'last_move_at',
+    ];
+
+    protected $casts = [
+        'move_history' => 'array',
+        'game_started_at' => 'datetime',
+        'game_finished_at' => 'datetime',
+        'last_move_at' => 'datetime',
     ];
 
     public function user()
@@ -41,6 +52,11 @@ class Room extends Model
     public function guest()
     {
         return $this->belongsTo(User::class, 'guest_id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(RoomComment::class, 'room_code', 'code');
     }
 
     public function hostTimeRemaining($seconds)
