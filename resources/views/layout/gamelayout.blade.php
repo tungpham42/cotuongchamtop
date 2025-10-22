@@ -59,11 +59,11 @@
           </div>
           @if ( $roomCode == '' )
           <div class="puzzle-layout-wrapper">
-            <div class="puzzle-layout-board my-1">
+            <div class="puzzle-layout-board">
               <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
               @yield('belowBoardExtras')
             </div>
-            <div class="puzzle-layout-panel my-auto">
+            <div class="puzzle-layout-panel">
               @yield('rightSide')
             </div>
           </div>

@@ -25,8 +25,6 @@
   @media (min-width: 992px) {
     .puzzle-side-panel {
       position: sticky;
-      top: 0.75rem;
-      max-height: calc(100vh - 110px);
       overflow-y: auto;
       padding-right: 0.5rem;
     }
@@ -45,6 +43,16 @@
   #puzzle-note-block {
     width: 100%;
     margin: 1rem 0 0 auto;
+  }
+  @media (max-width: 768px) {
+    #puzzle-note-block {
+      max-width: 100% !important;
+    }
+  }
+  @media (min-width: 992px) {
+    .puzzle-layout-board {
+      max-width: 380px !important;
+    }
   }
   .puzzle-side-card {
     background: #222222;
@@ -237,7 +245,7 @@
     box-shadow: 0 0 0 0.2rem rgba(248, 113, 113, 0.25);
   }
 </style>
-<div id="puzzle-note-block" class="puzzle-side-card mr-lg-0 mx-md-auto">
+<div id="puzzle-note-block" class="puzzle-side-card mr-lg-0 mx-md-auto mw-md-100">
   <div class="card-body">
     <h5 class="mb-2 text-left"><i class="fas fa-info-circle text-danger"></i> Ghi chú thế cờ</h5>
     @if (!empty($puzzleDescription))
@@ -973,6 +981,40 @@ $('#puzzle-comment-list').on('submit', '.comment-reply-form', function(e) {
 
 loadReactions();
 loadComments();
+document.addEventListener('DOMContentLoaded', function() {
+  function setPanelHeight() {
+    const board = document.querySelector('.puzzle-layout-board');
+    const panel = document.querySelector('.puzzle-layout-panel');
+    const sidePanel = document.querySelector('.puzzle-side-panel');
+
+    if (board && panel) {
+      if (window.innerWidth > 768) {
+        // For larger screens: match heights
+        const boardHeight = board.offsetHeight;
+        panel.style.height = boardHeight + 'px';
+        // Also update side panel height
+        if (sidePanel) {
+          sidePanel.style.height = boardHeight + 'px';
+        }
+      } else {
+        // For smaller screens: reset to auto
+        panel.style.height = 'auto';
+        if (sidePanel) {
+          sidePanel.style.height = 'auto';
+        }
+      }
+    }
+  }
+
+  // Run on DOM ready
+  setPanelHeight();
+
+  // Run on window resize
+  window.addEventListener('resize', setPanelHeight);
+
+  // Handle images loading
+  window.addEventListener('load', setPanelHeight);
+});
 $('#reset').on('click', function() {
   board.position('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR');
   game.load('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1');
