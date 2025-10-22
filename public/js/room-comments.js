@@ -229,7 +229,7 @@
       card.append(replyForm);
 
       if (Array.isArray(comment.replies) && comment.replies.length) {
-        var childrenWrapper = $('<div class="puzzle-comment-children"></div>');
+        var childrenWrapper = $('<div class="room-comment-children"></div>');
         comment.replies.forEach(function (reply) {
           childrenWrapper.append(buildCommentCard(reply, level + 1));
         });
@@ -242,7 +242,7 @@
     function renderComments(comments) {
       commentList.empty();
       if (!comments || !comments.length) {
-        commentList.append('<div class="room-comment-empty">' + $('<div>').text(emptyState).html() + '</div>');
+        commentList.append('<div class="room-empty-comment">' + $('<div>').text(emptyState).html() + '</div>');
         return;
       }
       comments.forEach(function (comment) {
@@ -257,7 +257,7 @@
           renderComments(payload);
         })
         .fail(function () {
-          commentList.empty().append('<div class="room-comment-empty error">' + $('<div>').text(errorLoad).html() + '</div>');
+          commentList.empty().append('<div class="room-empty-comment error">' + $('<div>').text(errorLoad).html() + '</div>');
         });
     }
 

@@ -34,16 +34,199 @@ $strings = array_merge($defaults, $translations ?? []);
 @if (!empty($roomCode ?? null))
     <style>
     .room-comment-wrapper {
-        background-color: rgba(23, 25, 27, 0.85);
-        border-radius: 12px;
-        padding: 16px;
-        color: #f8f9fa;
-        margin-bottom: 20px;
+        background: #222222;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        color: #e5e7eb;
+        margin-bottom: 1.25rem;
+        box-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(34, 34, 34, 0.8);
+    }
+    
+    .room-comment-form-card {
+        background: #222222;
+        color: #f8fafc;
+        border-radius: 0.75rem;
+        box-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(34, 34, 34, 0.8);
+        margin-bottom: 1rem;
+    }
+    
+    .room-comment-form-card .card-body {
+        padding: 1rem 1.2rem;
+    }
+    
+    .room-comment-form-card h5 {
+        color: #e2e8f0;
+        font-weight: 600;
+    }
+    
+    .room-comment-form-card label {
+        color: #cbd5f5;
+    }
+    
+    .room-comment-form-card .form-control {
+        background-color: rgba(34, 34, 34, 0.8);
+        border-radius: 0.65rem;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        color: rgba(84, 84, 84, 1) !important;
+    }
+    
+    .room-comment-form-card .form-control::placeholder {
+        color: rgba(84, 84, 84, 0.8) !important;
+    }
+    
+    .room-comment-form-card .form-control:focus {
+        background-color: rgba(34, 34, 34, 0.95);
+        border-color: #f87171;
+        box-shadow: 0 0 0 0.2rem rgba(248, 113, 113, 0.25);
+        color: rgba(84, 84, 84, 1) !important;
+    }
+    
+    .room-comment-feed {
+        background-color: #222222;
+        border-radius: 0.85rem;
+        padding: 1rem;
+        color: #e5e7eb;
+    }
+    
+    .room-comment-feed h6 {
+        color: #f3f4f6;
+        font-weight: 600;
+    }
+    
+    .room-comments {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .room-comment-card {
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 0.75rem;
+        padding: 0.85rem 1rem;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+    
+    .room-comment-card .comment-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.6rem;
+    }
+    
+    .room-comment-card .comment-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: #111827;
+        background: linear-gradient(135deg, #f87171, #fbbf24);
+    }
+    
+    .room-comment-card .comment-body {
+        color: #f9fafb;
+        line-height: 1.45;
+    }
+    
+    .room-comment-card .comment-meta {
+        font-size: 0.8rem;
+        color: rgba(229, 231, 235, 0.75);
+    }
+    
+    .room-comment-card .comment-actions {
+        display: flex;
+        gap: 1.25rem;
+        margin-top: 0.5rem;
+        font-size: 0.82rem;
+        color: rgba(229, 231, 235, 0.75);
+    }
+    
+    .room-comment-card .comment-actions .comment-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        cursor: pointer;
+        transition: color 0.15s ease;
+    }
+    
+    .room-comment-card .comment-actions .comment-action:hover {
+        color: #f87171;
+    }
+    
+    .room-comment-card .comment-actions .comment-action .comment-like-count {
+        padding: 0.05rem 0.45rem;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.5);
+        font-size: 0.72rem;
+        line-height: 1;
+    }
+    
+    .room-comment-card .comment-actions .comment-action.liked {
+        color: #f87171;
+        font-weight: 600;
+        cursor: default;
+    }
+    
+    .room-comment-card .comment-actions .comment-action.disabled,
+    .room-comment-card .comment-actions .comment-action.loading {
+        pointer-events: none;
+        opacity: 0.6;
+    }
+    
+    .room-empty-comment {
+        background: rgba(34, 34, 34, 0.85);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        text-align: center;
+        color: rgba(229, 231, 235, 0.85);
+    }
+    
+    .room-empty-comment.error {
+        color: #f87171;
+    }
+    
+    .comment-reply-form {
+        background: rgba(34, 34, 34, 0.85);
+        border-radius: 0.65rem;
+        padding: 0.75rem;
+        margin-top: 0.75rem;
+    }
+    
+    .comment-reply-form .form-control {
+        background-color: rgba(17, 24, 39, 0.8);
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        color: #e2e8f0;
+    }
+    
+    .comment-reply-form .form-control::placeholder {
+        color: rgba(148, 163, 184, 0.8) !important;
+    }
+    
+    .comment-reply-form .form-control:focus {
+        background-color: rgba(17, 24, 39, 0.95);
+        border-color: #f87171;
+        box-shadow: 0 0 0 0.2rem rgba(248, 113, 113, 0.25);
+    }
+    
+    .room-comment-card.reply {
+        margin-left: 1.5rem;
+        background: rgba(34, 34, 34, 0.65);
+    }
+    
+    .room-comment-children {
+        margin-top: 0.75rem;
+        border-left: 1px solid rgba(148, 163, 184, 0.2);
+        padding-left: 1rem;
     }
     
     .social-share-section {
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         padding-bottom: 16px;
+        margin-bottom: 1rem;
     }
     
     .social-share-buttons .btn {
