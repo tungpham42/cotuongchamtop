@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Room;
 use App\Models\Puzzle;
+use App\Models\PuzzleComment;
 use App\Models\User;
 use Illuminate\Console\Command;
 
@@ -38,12 +39,18 @@ class DeleteBadWordsCommand extends Command
         foreach ($badWords as $word) {
             Room::where('name', 'LIKE', "{$word}%")->delete();
             Puzzle::where('name', 'LIKE', "{$word}%")->delete();
+            PuzzleComment::where('author_name', 'LIKE', "{$word}%")->delete();
+            PuzzleComment::where('content', 'LIKE', "{$word}%")->delete();
             User::where('name', 'LIKE', "{$word}%")->delete();
             Room::where('name', 'LIKE', "%{$word}")->delete();
             Puzzle::where('name', 'LIKE', "%{$word}")->delete();
+            PuzzleComment::where('author_name', 'LIKE', "%{$word}")->delete();
+            PuzzleComment::where('content', 'LIKE', "%{$word}")->delete();
             User::where('name', 'LIKE', "%{$word}")->delete();
             Room::where('name', 'LIKE', "%{$word}%")->delete();
             Puzzle::where('name', 'LIKE', "%{$word}%")->delete();
+            PuzzleComment::where('author_name', 'LIKE', "%{$word}%")->delete();
+            PuzzleComment::where('content', 'LIKE', "%{$word}%")->delete();
             User::where('name', 'LIKE', "%{$word}%")->delete();
         }
 

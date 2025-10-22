@@ -193,10 +193,10 @@
     color: #cbd5f5;
   }
   .puzzle-side-panel .form-control {
-    color: #e2e8f0 !important;
+    color: rgba(84, 84, 84, 1) !important;
   }
   .puzzle-side-panel .form-control::placeholder {
-    color: rgba(148, 163, 184, 0.8) !important;
+    color: rgba(84, 84, 84, 0.8) !important;
   }
   .puzzle-side-panel .form-control {
     background-color: rgba(34, 34, 34, 0.8);
