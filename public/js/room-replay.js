@@ -358,8 +358,75 @@
     if (!move) {
       return '';
     }
-    const display = move.san || move.iccs || (move.from && move.to ? move.from + '-' + move.to : '');
+    
+    // Chuyển đổi sang ký hiệu cờ tướng truyền thống
+    const xiangqiNotation = convertToXiangqiNotation(move);
+    const display = xiangqiNotation || move.san || move.iccs || (move.from && move.to ? move.from + '-' + move.to : '');
     return display ? (idx + 1) + '. ' + display : (idx + 1) + '.';
+  }
+
+  function convertToXiangqiNotation(move) {
+    if (!move.from || !move.to) {
+      return null;
+    }
+
+    // Bản đồ quân cờ viết tắt tiếng Việt
+    const pieceSymbols = {
+      'r': 'X', 'R': 'X', // Xe
+      'h': 'M', 'H': 'M', 'n': 'M', 'N': 'M', // Mã
+      'b': 'T', 'B': 'T', 'e': 'T', 'E': 'T', // Tượng/Tịnh
+      'a': 'S', 'A': 'S', // Sĩ
+      'k': 'G', 'K': 'G', // Tướng (General)
+      'c': 'P', 'C': 'P', // Pháo
+      'p': 'C', 'P': 'C'  // Chốt/Tốt
+    };
+
+    // Chuyển đổi vị trí từ ký hiệu sang số
+    function parsePosition(pos) {
+      const file = pos.charCodeAt(0) - 97; // a=0, b=1, etc
+      const rank = parseInt(pos[1]) - 1;
+      return { file, rank };
+    }
+
+    const fromPos = parsePosition(move.from);
+    const toPos = parsePosition(move.to);
+    
+    const piece = pieceSymbols[move.piece] || move.piece || '';
+    const isRed = move.color === 'r';
+    
+    // Tính toán hướng di chuyển
+    const fileDiff = toPos.file - fromPos.file;
+    const rankDiff = toPos.rank - fromPos.rank;
+    
+    let directionSymbol = '';
+    let target = '';
+    
+    if (rankDiff === 0) {
+      // Di chuyển ngang (bình)
+      directionSymbol = '.';
+      target = 9 - toPos.file; // Cột đích
+    } else if (fileDiff === 0) {
+      // Di chuyển thẳng
+      if ((isRed && rankDiff > 0) || (!isRed && rankDiff < 0)) {
+        directionSymbol = '+'; // Tiến
+      } else {
+        directionSymbol = '-'; // Thoái
+      }
+      target = Math.abs(rankDiff); // Số ô di chuyển
+    } else {
+      // Di chuyển chéo (Tượng, Mã)
+      if ((isRed && rankDiff > 0) || (!isRed && rankDiff < 0)) {
+        directionSymbol = '+'; // Tiến
+      } else {
+        directionSymbol = '-'; // Thoái
+      }
+      target = 9 - toPos.file; // Cột đích
+    }
+
+    // Số cột xuất phát (1-9 từ trái qua phải)
+    const fromColumn = 9 - fromPos.file;
+    
+    return `${piece}${fromColumn}${directionSymbol}${target}`;
   }
 
   function renderMoveList() {
