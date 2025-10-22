@@ -66,7 +66,14 @@ $strings = array_merge($defaults, $translations ?? []);
             position: sticky;
             overflow-y: auto;
             padding-right: 0.5rem;
-            max-height: 600px;
+            max-height: 650px;
+        }
+    }
+    
+    @media (max-width: 991px) {
+        .room-comment-wrapper {
+            max-height: 500px;
+            overflow-y: auto;
         }
     }
     
@@ -84,32 +91,17 @@ $strings = array_merge($defaults, $translations ?? []);
         border-radius: 999px;
     }
     
-    .room-comment-form-card {
+        .room-comment-form-card {
         background: #222222;
         color: #f8fafc;
         border-radius: 0.75rem;
         box-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.25);
         border: 1px solid rgba(34, 34, 34, 0.8);
         margin-bottom: 1rem;
-        max-height: 300px;
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: rgba(100, 116, 139, 0.5) #1a1a1a;
+        flex-shrink: 0;
     }
     
-    .room-comment-form-card::-webkit-scrollbar {
-        width: 6px;
-    }
-    
-    .room-comment-form-card::-webkit-scrollbar-track {
-        background: #1a1a1a;
-        border-radius: 999px;
-    }
-    
-    .room-comment-form-card::-webkit-scrollbar-thumb {
-        background-color: rgba(100, 116, 139, 0.7);
-        border-radius: 999px;
-    }
+
     
     .room-comment-form-card .card-body {
         padding: 1rem 1.2rem;
@@ -147,25 +139,11 @@ $strings = array_merge($defaults, $translations ?? []);
         border-radius: 0.85rem;
         padding: 1rem;
         color: #e5e7eb;
-        max-height: 400px;
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: rgba(100, 116, 139, 0.5) #1a1a1a;
+        flex: 1;
+        min-height: 0;
     }
     
-    .room-comment-feed::-webkit-scrollbar {
-        width: 6px;
-    }
-    
-    .room-comment-feed::-webkit-scrollbar-track {
-        background: #1a1a1a;
-        border-radius: 999px;
-    }
-    
-    .room-comment-feed::-webkit-scrollbar-thumb {
-        background-color: rgba(100, 116, 139, 0.7);
-        border-radius: 999px;
-    }
+
     
     .room-comment-feed h6 {
         color: #f3f4f6;
@@ -176,7 +154,7 @@ $strings = array_merge($defaults, $translations ?? []);
     .room-comments {
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 0.75rem;
         padding-right: 0.5rem;
     }
     
@@ -185,6 +163,7 @@ $strings = array_merge($defaults, $translations ?? []);
         border-radius: 0.75rem;
         padding: 0.85rem 1rem;
         box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+        margin-bottom: 1rem;
     }
     
     .room-comment-card .comment-header {
