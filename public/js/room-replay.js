@@ -171,7 +171,7 @@
       return;
     }
 
-    // Kiểm tra xem có thể hiển thị kỳ phổ không
+    // Chỉ hiển thị kỳ phổ khi ván đấu đã kết thúc hoàn toàn
     const gameOverVisible = $('#game-over:visible').length > 0;
     const gameResultVisible = $('.game-result:visible').length > 0;
     const statusText = $('#game-status').text().toLowerCase();
@@ -179,15 +179,11 @@
                           statusText.includes('thua') || 
                           statusText.includes('hòa') || 
                           statusText.includes('kết thúc');
-    const hasHistory = state.history && state.history.length > 0;
-    const isReplayMode = window.location.pathname.includes('/replay') || 
-                        window.location.search.includes('replay=1') ||
-                        hasHistory;
     
-    const canShowReplay = gameOverVisible || 
-                         gameResultVisible || 
-                         hasWinLoseText || 
-                         (isReplayMode && hasHistory);
+    // Chỉ cho phép hiển thị khi game đã kết thúc rõ ràng
+    const gameDefinitelyOver = gameOverVisible || gameResultVisible || hasWinLoseText;
+    
+    const canShowReplay = gameDefinitelyOver;
 
     const panel = $(`
       <section id="room-replay-panel" style="${canShowReplay ? '' : 'display: none;'}">
@@ -208,9 +204,9 @@
 
     $('#ban-co').after(panel);
 
-    // Thêm nút toggle kỳ phổ
+    // Thêm nút toggle kỳ phổ - chỉ hiện khi game đã kết thúc
     const toggleButton = $(`
-      <div class="text-center mt-2">
+      <div class="text-center mt-2" id="toggle-replay-container" style="${canShowReplay ? '' : 'display: none;'}">
         <button type="button" class="btn btn-sm btn-outline-secondary" id="toggle-replay-panel">
           <i class="fal fa-book-open"></i> <span class="toggle-text">${canShowReplay ? 'Ẩn' : 'Hiện'} Kỳ phổ</span>
         </button>
@@ -589,7 +585,7 @@
   function watchGameStatus($) {
     // Theo dõi các thay đổi trong DOM để phát hiện khi game kết thúc
     const checkGameStatus = function() {
-      // Kiểm tra nhiều điều kiện để xác định game đã kết thúc
+      // Chỉ kiểm tra các dấu hiệu game đã kết thúc rõ ràng
       const gameOverVisible = $('#game-over:visible').length > 0;
       const gameResultVisible = $('.game-result:visible').length > 0;
       const statusText = $('#game-status').text().toLowerCase();
@@ -598,34 +594,27 @@
                             statusText.includes('hòa') || 
                             statusText.includes('kết thúc');
       
-      // Kiểm tra nếu có lịch sử nước đi (nghĩa là ván đã được chơi)
-      const hasHistory = state.history && state.history.length > 0;
-      
-      // Kiểm tra URL có chứa từ khóa xem lại không
-      const isReplayMode = window.location.pathname.includes('/replay') || 
-                          window.location.search.includes('replay=1') ||
-                          hasHistory; // Nếu có history thì có thể xem replay
-      
-      // Game được coi là "có thể replay" nếu:
-      // 1. Đã kết thúc rõ ràng (game-over visible hoặc có text kết thúc)
-      // 2. Hoặc đang ở chế độ xem lại và có history
-      const canShowReplay = gameOverVisible || 
-                           gameResultVisible || 
-                           hasWinLoseText || 
-                           (isReplayMode && hasHistory);
+      // Chỉ hiển thị kỳ phổ khi game đã kết thúc hoàn toàn
+      // Không dựa vào history hay URL để tránh hiện sai lúc
+      const canShowReplay = gameOverVisible || gameResultVisible || hasWinLoseText;
       
       const panel = $('#room-replay-panel');
       const toggleButton = $('#toggle-replay-panel .toggle-text');
+      const toggleContainer = $('#toggle-replay-container');
       
       if (panel.length) {
         if (canShowReplay) {
+          // Game đã kết thúc - hiện kỳ phổ và nút toggle
           panel.slideDown(300);
+          toggleContainer.slideDown(300);
           if (toggleButton.length) {
             toggleButton.text('Ẩn Kỳ phổ');
           }
-          console.log('Showing replay panel - Game can be replayed');
+          console.log('Showing replay panel - Game finished');
         } else {
+          // Game đang diễn ra - ẩn kỳ phổ và nút toggle
           panel.slideUp(300);
+          toggleContainer.slideUp(300);
           if (toggleButton.length) {
             toggleButton.text('Hiện Kỳ phổ');
           }
