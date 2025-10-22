@@ -41,6 +41,47 @@ $strings = array_merge($defaults, $translations ?? []);
         margin-bottom: 1.25rem;
         box-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.25);
         border: 1px solid rgba(34, 34, 34, 0.8);
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(100, 116, 139, 0.5) #1a1a1a;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    
+    /* Mobile responsiveness improvements */
+    @media (max-width: 576px) {
+        .room-comment-wrapper {
+            margin-left: -15px;
+            margin-right: -15px;
+            border-radius: 0;
+            padding: 0.75rem;
+        }
+    }
+    
+    @media (min-width: 992px) {
+        .room-comment-wrapper {
+            position: sticky;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+            max-height: 600px;
+        }
+    }
+    
+    .room-comment-wrapper::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .room-comment-wrapper::-webkit-scrollbar-track {
+        background: #1a1a1a;
+        border-radius: 999px;
+    }
+    
+    .room-comment-wrapper::-webkit-scrollbar-thumb {
+        background-color: rgba(100, 116, 139, 0.7);
+        border-radius: 999px;
     }
     
     .room-comment-form-card {
@@ -50,6 +91,24 @@ $strings = array_merge($defaults, $translations ?? []);
         box-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.25);
         border: 1px solid rgba(34, 34, 34, 0.8);
         margin-bottom: 1rem;
+        max-height: 300px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(100, 116, 139, 0.5) #1a1a1a;
+    }
+    
+    .room-comment-form-card::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .room-comment-form-card::-webkit-scrollbar-track {
+        background: #1a1a1a;
+        border-radius: 999px;
+    }
+    
+    .room-comment-form-card::-webkit-scrollbar-thumb {
+        background-color: rgba(100, 116, 139, 0.7);
+        border-radius: 999px;
     }
     
     .room-comment-form-card .card-body {
@@ -88,17 +147,37 @@ $strings = array_merge($defaults, $translations ?? []);
         border-radius: 0.85rem;
         padding: 1rem;
         color: #e5e7eb;
+        max-height: 400px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(100, 116, 139, 0.5) #1a1a1a;
+    }
+    
+    .room-comment-feed::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .room-comment-feed::-webkit-scrollbar-track {
+        background: #1a1a1a;
+        border-radius: 999px;
+    }
+    
+    .room-comment-feed::-webkit-scrollbar-thumb {
+        background-color: rgba(100, 116, 139, 0.7);
+        border-radius: 999px;
     }
     
     .room-comment-feed h6 {
         color: #f3f4f6;
         font-weight: 600;
+        margin-bottom: 1rem;
     }
     
     .room-comments {
         display: flex;
         flex-direction: column;
         gap: 1rem;
+        padding-right: 0.5rem;
     }
     
     .room-comment-card {
@@ -229,6 +308,11 @@ $strings = array_merge($defaults, $translations ?? []);
         margin-bottom: 1rem;
     }
     
+    .social-share-buttons {
+        flex-wrap: wrap;
+        gap: 0.5rem !important;
+    }
+    
     .social-share-buttons .btn {
         width: 36px;
         height: 36px;
@@ -241,6 +325,19 @@ $strings = array_merge($defaults, $translations ?? []);
         text-decoration: none;
         transition: all 0.2s ease;
         border: none;
+        flex-shrink: 0;
+    }
+    
+    @media (max-width: 576px) {
+        .social-share-buttons .btn {
+            width: 32px;
+            height: 32px;
+            font-size: 14px;
+        }
+        
+        .btn-twitter {
+            font-size: 16px !important;
+        }
     }
     
     .btn-facebook {
@@ -304,6 +401,96 @@ $strings = array_merge($defaults, $translations ?? []);
     .btn-copy.copied {
         background-color: #28a745;
         border-color: #28a745;
+    }
+    
+    /* Fix for responsive layout and floating elements */
+    .container-fluid {
+        overflow-x: hidden;
+    }
+    
+    /* Button responsive fixes */
+    @media (max-width: 768px) {
+        .btn-lg {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+        }
+        
+        .w-25 {
+            width: 45% !important;
+            margin: 0.25rem !important;
+        }
+        
+        /* Room code styling for mobile */
+        #room-code span {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+        }
+        
+        /* Volume and tour buttons */
+        #volumeSwitch, #tourBtn {
+            width: 50px !important;
+            margin: 0.25rem !important;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .w-25 {
+            width: 100% !important;
+            margin: 0.25rem 0 !important;
+        }
+        
+        .btn-lg {
+            padding: 0.75rem;
+            font-size: 0.95rem;
+        }
+        
+        /* Stack buttons vertically on very small screens */
+        .rooms-list {
+            display: block !important;
+            width: 100% !important;
+            margin-bottom: 0.5rem !important;
+        }
+        
+        #volumeSwitch, #tourBtn {
+            width: 45px !important;
+            margin: 0.25rem 0.125rem !important;
+        }
+        
+        /* Prevent horizontal overflow */
+        .col-12 p {
+            overflow-x: hidden;
+        }
+        
+        /* Room code mobile styling */
+        #room-code {
+            padding: 0 0.5rem;
+        }
+        
+        #room-code span {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+            display: inline-block;
+            max-width: 100%;
+            word-break: break-all;
+        }
+    }
+    
+    /* Prevent content from overflowing */
+    .text-center {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    /* Fix for puzzle sections on mobile */
+    @media (max-width: 576px) {
+        .puzzle-div {
+            margin-bottom: 1rem;
+        }
+        
+        .xiangqiboard-8ddcb {
+            max-width: 100%;
+            overflow: hidden;
+        }
     }
     </style>
 
