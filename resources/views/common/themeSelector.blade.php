@@ -272,6 +272,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
+  // Load guest theme preferences first (if not logged in)
+  @if (!auth()->check())
+  const savedBoardTheme = localStorage.getItem('guest_board_theme');
+  const savedPiecesTheme = localStorage.getItem('guest_pieces_theme');
+  
+  if (savedBoardTheme) {
+    const boardInput = document.getElementById('boardTheme');
+    if (boardInput) boardInput.value = savedBoardTheme;
+  }
+  
+  if (savedPiecesTheme) {
+    const piecesInput = document.getElementById('piecesTheme');
+    if (piecesInput) piecesInput.value = savedPiecesTheme;
+  }
+  @endif
+  
   // Set active theme on page load
   updateActiveThemes();
   
@@ -350,7 +366,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2000);
       });
       @else
-      // Guest user - chỉ apply local, không save
+      // Guest user - save to localStorage và apply
+      localStorage.setItem('guest_board_theme', selectedBoardTheme);
+      localStorage.setItem('guest_pieces_theme', selectedPiecesTheme);
+      
+      // Apply themes immediately
       applyTheme('board', selectedBoardTheme);
       applyTheme('pieces', selectedPiecesTheme);
       
@@ -407,18 +427,85 @@ document.addEventListener('DOMContentLoaded', function() {
   function applyTheme(themeType, themeName) {
     console.log('Applying theme:', themeType, '=', themeName);
     
-    // Force update board theme with new values
+    // For guest users, we need to be more aggressive since no page reload
+    @if (!auth()->check())
+    // Force immediate board recreation for guests
+    console.log('Guest user - forcing immediate theme apply');
+    
+    setTimeout(() => {
+      try {
+        // Try to get board instance
+        let boardInstance = null;
+        if (typeof board !== 'undefined') {
+          boardInstance = board;
+        } else if (typeof window.board !== 'undefined') {
+          boardInstance = window.board;
+        }
+        
+        if (boardInstance) {
+          // Get current position
+          const currentPos = typeof boardInstance.position === 'function' ? 
+            boardInstance.position() : 'start';
+          
+          console.log('Current position:', currentPos);
+          
+          // Destroy and recreate board with new theme
+          if (typeof boardInstance.destroy === 'function') {
+            boardInstance.destroy();
+          }
+          
+          // Wait then recreate
+          setTimeout(() => {
+            try {
+              const boardElement = document.getElementById('ban-co');
+              if (boardElement && typeof Xiangqiboard === 'function') {
+                // Create new board instance with updated theme values
+                if (typeof window.board !== 'undefined') {
+                  delete window.board;
+                }
+                
+                window.board = Xiangqiboard('ban-co', {
+                  draggable: true,
+                  position: currentPos,
+                  showNotation: false
+                });
+                
+                // Update global board reference if needed
+                if (typeof board === 'undefined') {
+                  window.board = window.board;
+                }
+                
+                console.log('Board recreated for guest with new theme');
+              }
+            } catch (error) {
+              console.log('Board recreation failed:', error);
+              // Last resort: reload page
+              location.reload();
+            }
+          }, 200);
+        } else {
+          console.log('Board instance not found for guest, reloading page');
+          location.reload();
+        }
+      } catch (error) {
+        console.log('Guest theme apply error:', error);
+        location.reload();
+      }
+    }, 100);
+    
+    @else
+    // Logged users - use theme manager or reload
     if (typeof window.updateBoardTheme === 'function') {
       setTimeout(() => {
         window.updateBoardTheme();
       }, 300);
     } else {
-      // Fallback: reload page to apply theme
       console.log('Theme manager not found, reloading page to apply theme');
       setTimeout(() => {
         location.reload();
       }, 500);
     }
+    @endif
     
     console.log('Theme apply triggered for:', themeType, '=', themeName);
   }
