@@ -102,6 +102,7 @@
     hookAjax($);
     hookFenPolling($);
     updateStatusUI();
+    watchGameStatus($);
   }
 
   function prepareState() {
@@ -177,8 +178,16 @@
       return;
     }
 
+    // Kiểm tra xem ván đấu có đang diễn ra không
+    // Nếu có element game-over hoặc result, có nghĩa là ván đã kết thúc
+    const gameOver = $('#game-over:visible').length > 0 || 
+                     $('.game-result:visible').length > 0 ||
+                     $('#game-status').text().toLowerCase().includes('thắng') ||
+                     $('#game-status').text().toLowerCase().includes('thua') ||
+                     $('#game-status').text().toLowerCase().includes('hòa');
+
     const panel = $(`
-      <section id="room-replay-panel">
+      <section id="room-replay-panel" style="${gameOver ? '' : 'display: none;'}">
         <div class="room-replay-header">
           <span><i class="fad fa-book-open"></i> Kỳ phổ</span>
           <span id="room-replay-status" class="small text-muted"></span>
@@ -541,6 +550,52 @@
       .always(function () {
         state.fetching = false;
       });
+  }
+
+  function watchGameStatus($) {
+    // Theo dõi các thay đổi trong DOM để phát hiện khi game kết thúc
+    const checkGameStatus = function() {
+      const gameOver = $('#game-over:visible').length > 0 || 
+                       $('.game-result:visible').length > 0 ||
+                       $('#game-status').text().toLowerCase().includes('thắng') ||
+                       $('#game-status').text().toLowerCase().includes('thua') ||
+                       $('#game-status').text().toLowerCase().includes('hòa') ||
+                       $('#game-status').text().toLowerCase().includes('kết thúc');
+      
+      const panel = $('#room-replay-panel');
+      if (panel.length) {
+        if (gameOver) {
+          panel.slideDown(300);
+        } else {
+          panel.slideUp(300);
+        }
+      }
+    };
+
+    // Kiểm tra ngay lập tức
+    setTimeout(checkGameStatus, 500);
+    
+    // Theo dõi thay đổi trong game-status
+    if ($('#game-status').length) {
+      const observer = new MutationObserver(checkGameStatus);
+      observer.observe($('#game-status')[0], {
+        childList: true,
+        subtree: true,
+        characterData: true
+      });
+    }
+
+    // Theo dõi thay đổi trong game-over
+    if ($('#game-over').length) {
+      const observer = new MutationObserver(checkGameStatus);
+      observer.observe($('#game-over')[0], {
+        attributes: true,
+        attributeFilter: ['style', 'class']
+      });
+    }
+
+    // Kiểm tra định kỳ mỗi 3 giây
+    setInterval(checkGameStatus, 3000);
   }
 
   waitForDependencies(0);
