@@ -104,6 +104,88 @@
     background: rgba(15, 23, 42, 0.45);
     font-size: 0.68rem;
   }
+  
+  /* Social Share Buttons */
+  .social-share-buttons .btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: none;
+  }
+  
+  .btn-facebook {
+    background-color: #1877f2;
+    border-color: #1877f2;
+    color: white;
+  }
+  .btn-facebook:hover {
+    background-color: #166fe5;
+    border-color: #166fe5;
+    color: white;
+    transform: scale(1.05);
+  }
+  
+  .btn-twitter {
+    background-color: #000000;
+    border-color: #000000;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .btn-twitter:hover {
+    background-color: #333333;
+    border-color: #333333;
+    color: white;
+    transform: scale(1.05);
+  }
+  
+  .btn-zalo {
+    background-color: #0068ff;
+    border-color: #0068ff;
+    color: white;
+  }
+  .btn-zalo:hover {
+    background-color: #0056d6;
+    border-color: #0056d6;
+    color: white;
+    transform: scale(1.05);
+  }
+  
+  .btn-telegram {
+    background-color: #0088cc;
+    border-color: #0088cc;
+    color: white;
+  }
+  .btn-telegram:hover {
+    background-color: #0077b3;
+    border-color: #0077b3;
+    color: white;
+    transform: scale(1.05);
+  }
+  
+  .btn-copy {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+  }
+  .btn-copy:hover {
+    background-color: #5a6268;
+    border-color: #5a6268;
+    color: white;
+    transform: scale(1.05);
+  }
+  
+  .btn-copy.copied {
+    background-color: #28a745;
+    border-color: #28a745;
+  }
   .puzzle-share-card {
     background: rgba(15, 23, 42, 0.85);
     border-radius: 0.85rem;
@@ -355,6 +437,30 @@
     </div>
   </div>
 
+  <!-- Social Share Section -->
+  <div class="puzzle-side-card">
+    <div class="card-body">
+      <h6 class="mb-3"><i class="fas fa-share-alt text-primary"></i> Chia sẻ thế cờ</h6>
+      <div class="social-share-buttons d-flex gap-2 justify-content-center">
+        <button type="button" class="btn btn-facebook" onclick="shareToFacebook()" title="Chia sẻ lên Facebook" data-bs-toggle="tooltip" data-bs-placement="top">
+          <i class="fab fa-facebook-f"></i>
+        </button>
+        <button type="button" class="btn btn-twitter" onclick="shareToTwitter()" title="Chia sẻ lên X (Twitter)" data-bs-toggle="tooltip" data-bs-placement="top">
+          <strong>𝕏</strong>
+        </button>
+        <button type="button" class="btn btn-zalo" onclick="shareToZalo()" title="Chia sẻ qua Zalo" data-bs-toggle="tooltip" data-bs-placement="top">
+          <i class="fas fa-comments"></i>
+        </button>
+        <button type="button" class="btn btn-telegram" onclick="shareToTelegram()" title="Chia sẻ qua Telegram" data-bs-toggle="tooltip" data-bs-placement="top">
+          <i class="fab fa-telegram-plane"></i>
+        </button>
+        <button type="button" class="btn btn-copy" onclick="copyToClipboard()" title="Copy link" data-bs-toggle="tooltip" data-bs-placement="top">
+          <i class="fas fa-copy"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="puzzle-side-card">
     <div class="card-body">
       <h5 class="mb-3"><i class="fas fa-comments text-danger"></i> Bình luận &amp; góp ý</h5>
@@ -379,25 +485,6 @@
     <h6 class="mb-3"><i class="fas fa-comment-dots text-danger"></i> Dòng thảo luận</h6>
     <div id="puzzle-comment-list" class="puzzle-comments"></div>
   </div>
-
-  <div class="puzzle-share-card">
-    <h6 class="mb-3"><i class="fas fa-share-alt text-danger"></i> Chia sẻ thế cờ này</h6>
-    <div class="puzzle-share-actions">
-      <a href="javascript:void(0);" class="puzzle-share-btn facebook" data-share="facebook">
-        <i class="fab fa-facebook-f"></i> Facebook
-      </a>
-      <a href="javascript:void(0);" class="puzzle-share-btn twitter" data-share="twitter">
-        <i class="fab fa-x-twitter"></i> Twitter / X
-      </a>
-      <a href="javascript:void(0);" class="puzzle-share-btn zalo" data-share="zalo">
-        <i class="fas fa-comment-alt"></i> Zalo
-      </a>
-      <a href="javascript:void(0);" class="puzzle-share-btn copy" data-share="copy">
-        <i class="far fa-copy"></i> Sao chép link
-      </a>
-    </div>
-    <div class="puzzle-share-feedback" id="puzzle-share-feedback"></div>
-  </div>
 </div>
 @endsection
 @section('belowContent')
@@ -420,7 +507,148 @@ document.addEventListener('DOMContentLoaded', function () {
     setTimeout(syncNoteBlockWidth, 300);
     window.addEventListener('resize', syncNoteBlockWidth);
   }
+
+  // Initialize tooltips
+  if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  } else if (typeof $ !== 'undefined' && $.fn.tooltip) {
+    $('[data-bs-toggle="tooltip"]').tooltip();
+  }
 });
+
+// Social Share Functions
+function getCurrentPageUrl() {
+  return window.location.href;
+}
+
+function getShareTitle() {
+  return document.title || 'Thế cờ hay - CoTuongChamTop.com';
+}
+
+function shareToFacebook() {
+  const url = encodeURIComponent(getCurrentPageUrl());
+  const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+  window.open(shareUrl, 'facebook-share', 'width=600,height=400,scrollbars=yes,resizable=yes');
+  
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'share', {
+      method: 'facebook',
+      content_type: 'xiangqi_puzzle',
+      item_id: '{{ $slug }}'
+    });
+  }
+}
+
+function shareToTwitter() {
+  const url = encodeURIComponent(getCurrentPageUrl());
+  const text = encodeURIComponent(getShareTitle() + ' #thếcờ #cờtướng #xiangqi');
+  const shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
+  window.open(shareUrl, 'x-share', 'width=600,height=400,scrollbars=yes,resizable=yes');
+  
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'share', {
+      method: 'x_twitter',
+      content_type: 'xiangqi_puzzle',
+      item_id: '{{ $slug }}'
+    });
+  }
+}
+
+function shareToZalo() {
+  const url = encodeURIComponent(getCurrentPageUrl());
+  if (navigator.share && /mobile|android|iphone|ipad/i.test(navigator.userAgent)) {
+    navigator.share({
+      title: getShareTitle(),
+      url: getCurrentPageUrl()
+    }).catch(() => {
+      copyToClipboard();
+    });
+  } else {
+    copyToClipboard();
+  }
+  
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'share', {
+      method: 'zalo',
+      content_type: 'xiangqi_puzzle',
+      item_id: '{{ $slug }}'
+    });
+  }
+}
+
+function shareToTelegram() {
+  const url = encodeURIComponent(getCurrentPageUrl());
+  const text = encodeURIComponent(getShareTitle());
+  const shareUrl = `https://t.me/share/url?url=${url}&text=${text}`;
+  window.open(shareUrl, 'telegram-share', 'width=600,height=400,scrollbars=yes,resizable=yes');
+  
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'share', {
+      method: 'telegram',
+      content_type: 'xiangqi_puzzle',
+      item_id: '{{ $slug }}'
+    });
+  }
+}
+
+function copyToClipboard() {
+  const url = getCurrentPageUrl();
+  const button = event.target.closest('.btn-copy');
+  
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(url).then(() => {
+      showCopySuccess(button);
+    }).catch(() => {
+      fallbackCopyTextToClipboard(url, button);
+    });
+  } else {
+    fallbackCopyTextToClipboard(url, button);
+  }
+  
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'share', {
+      method: 'copy_link',
+      content_type: 'xiangqi_puzzle',
+      item_id: '{{ $slug }}'
+    });
+  }
+}
+
+function fallbackCopyTextToClipboard(text, button) {
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
+  textArea.style.top = "0";
+  textArea.style.left = "0";
+  textArea.style.position = "fixed";
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  
+  try {
+    document.execCommand('copy');
+    showCopySuccess(button);
+  } catch (err) {
+    console.error('Fallback: Could not copy text: ', err);
+    alert('Không thể copy link. Vui lòng copy thủ công: ' + text);
+  }
+  
+  document.body.removeChild(textArea);
+}
+
+function showCopySuccess(button) {
+  if (!button) return;
+  const originalHtml = button.innerHTML;
+  button.innerHTML = '<i class="fas fa-check"></i>';
+  button.classList.add('copied');
+  
+  setTimeout(() => {
+    button.innerHTML = originalHtml;
+    button.classList.remove('copied');
+  }, 2000);
+}
 </script>
 <p class="w-100 text-center mt-0 mb-1">
   <a data-step="2" data-intro="Ấn vào đây để xếp thế cờ mới" id="setup" class="w-25 btn btn-dark btn-lg" href="{{ url('/') }}/co-the"><i class="fad fa-plus-hexagon"></i> Xếp ván mới</a>
