@@ -169,6 +169,59 @@
   function setupReplayBoard() {
     if (!state.history || !state.history.length) {
       console.log('No game history available for replay');
+      
+      // Vẫn tạo panel kỳ phổ nhưng với thông báo thân thiện
+      const panel = $(`
+        <section id="room-replay-panel" style="">
+          <div class="room-replay-header">
+            <span><i class="fad fa-book-open"></i> Kỳ phổ</span>
+            <span id="room-replay-status" class="small text-muted">Không khả dụng</span>
+          </div>
+          <div class="room-replay-move-list mt-2" id="room-replay-move-list">
+            <div class="room-replay-empty text-center py-4">
+              <div class="mb-3">
+                <i class="fal fa-clock-rotate-left text-muted" style="font-size: 3rem;"></i>
+              </div>
+              <div class="text-muted">
+                <h6>Kỳ phổ không khả dụng</h6>
+                <p class="small mb-0">
+                  Trận đấu này được chơi trước khi có tính năng ghi lại kỳ phổ.<br>
+                  Các trận đấu mới sẽ tự động lưu kỳ phổ để bạn có thể xem lại.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      `);
+
+      $('#ban-co').after(panel);
+
+      // Thêm nút toggle nhưng với chức năng hạn chế
+      const toggleButton = $(`
+        <div class="text-center mt-2" id="toggle-replay-container">
+          <button type="button" class="btn btn-sm btn-outline-secondary" id="toggle-replay-panel">
+            <i class="fal fa-book-open"></i> <span class="toggle-text">Ẩn Kỳ phổ</span>
+          </button>
+        </div>
+      `);
+      
+      $('#ban-co').after(toggleButton);
+      
+      // Sự kiện click cho nút toggle
+      $('#toggle-replay-panel').on('click', function() {
+        const panel = $('#room-replay-panel');
+        const button = $(this);
+        const text = button.find('.toggle-text');
+        
+        if (panel.is(':visible')) {
+          panel.slideUp(300);
+          text.text('Hiện Kỳ phổ');
+        } else {
+          panel.slideDown(300);
+          text.text('Ẩn Kỳ phổ');
+        }
+      });
+
       return;
     }
 
@@ -267,6 +320,7 @@
     renderMoveList();
     setIndex(state.history.length, { silent: true });
     syncReplayBoard();
+    updateControlButtons(); // Thiết lập trạng thái ban đầu cho các nút
   }
 
   function handleControlClick(event) {
@@ -325,6 +379,7 @@
       syncReplayBoard();
     }
     updateStatusUI();
+    updateControlButtons();
     highlightActiveMove();
   }
 
@@ -437,7 +492,19 @@
     listEl.empty();
 
     if (!state.history.length) {
-      listEl.append('<span class="room-replay-empty">Chưa có nước đi nào.</span>');
+      const emptyMessage = $(`
+        <div class="room-replay-empty text-center py-3">
+          <div class="mb-2">
+            <i class="fal fa-info-circle text-muted" style="font-size: 2rem;"></i>
+          </div>
+          <div class="text-muted">
+            <strong>Kỳ phổ không khả dụng</strong><br>
+            <small>Trận đấu này được tạo trước khi có tính năng ghi kỳ phổ.<br>
+            Chỉ các trận đấu mới sẽ có thể xem lại kỳ phổ.</small>
+          </div>
+        </div>
+      `);
+      listEl.append(emptyMessage);
       return;
     }
 
@@ -473,6 +540,40 @@
     const active = state.elements.moveList.find('[data-move-index="' + state.currentIndex + '"]');
     active.addClass('active');
     ensureMoveVisible(active);
+  }
+
+  function updateControlButtons() {
+    const panel = $('#room-replay-panel');
+    if (!panel.length) {
+      return;
+    }
+
+    const isAtStart = state.currentIndex === 0;
+    const isAtEnd = state.currentIndex >= state.history.length;
+    
+    // Nút "Về đầu" và "Lùi 1 nước"
+    const firstBtn = panel.find('[data-replay-action="first"]');
+    const prevBtn = panel.find('[data-replay-action="prev"]');
+    
+    if (isAtStart) {
+      firstBtn.addClass('disabled').attr('disabled', true).removeClass('btn-outline-light').addClass('btn-outline-secondary');
+      prevBtn.addClass('disabled').attr('disabled', true).removeClass('btn-outline-light').addClass('btn-outline-secondary');
+    } else {
+      firstBtn.removeClass('disabled').attr('disabled', false).removeClass('btn-outline-secondary').addClass('btn-outline-light');
+      prevBtn.removeClass('disabled').attr('disabled', false).removeClass('btn-outline-secondary').addClass('btn-outline-light');
+    }
+    
+    // Nút "Tiến 1 nước" và "Đến cuối"
+    const nextBtn = panel.find('[data-replay-action="next"]');
+    const lastBtn = panel.find('[data-replay-action="last"]');
+    
+    if (isAtEnd) {
+      nextBtn.addClass('disabled').attr('disabled', true).removeClass('btn-outline-light').addClass('btn-outline-secondary');
+      lastBtn.addClass('disabled').attr('disabled', true).removeClass('btn-outline-light').addClass('btn-outline-secondary');
+    } else {
+      nextBtn.removeClass('disabled').attr('disabled', false).removeClass('btn-outline-secondary').addClass('btn-outline-light');
+      lastBtn.removeClass('disabled').attr('disabled', false).removeClass('btn-outline-secondary').addClass('btn-outline-light');
+    }
   }
 
   function ensureMoveVisible($element) {
