@@ -15,6 +15,7 @@ class PuzzleComment extends Model
         'user_id',
         'author_name',
         'content',
+        'likes_count',
         'is_public',
         'ip_address',
     ];
@@ -41,5 +42,10 @@ class PuzzleComment extends Model
     public function replies()
     {
         return $this->hasMany(self::class, 'parent_id')->orderBy('created_at');
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(PuzzleCommentLike::class, 'puzzle_comment_id');
     }
 }

@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Puzzle;
 use App\Models\PuzzleComment;
+use App\Models\PuzzleCommentLike;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use DataTables;
@@ -305,15 +308,23 @@ class PuzzleController extends Controller
     {
         $puzzle = $this->getPuzzleOrFail($slug);
 
+        $selectColumns = ['id', 'puzzle_id', 'parent_id', 'author_name', 'content', 'created_at'];
+        $replyColumns = ['id', 'puzzle_id', 'parent_id', 'author_name', 'content', 'created_at'];
+
+        if (Schema::hasColumn('puzzle_comments', 'likes_count')) {
+            $selectColumns[] = 'likes_count';
+            $replyColumns[] = 'likes_count';
+        }
+
         $comments = $puzzle->comments()
             ->where('is_public', true)
             ->whereNull('parent_id')
-            ->with(['replies' => function ($query) {
+            ->with(['replies' => function ($query) use ($replyColumns) {
                 $query->where('is_public', true)
-                    ->select('id', 'puzzle_id', 'parent_id', 'author_name', 'content', 'created_at');
+                    ->select($replyColumns);
             }])
             ->latest()
-            ->get(['id', 'puzzle_id', 'parent_id', 'author_name', 'content', 'created_at']);
+            ->get($selectColumns);
 
         return response()->json([
             'comments' => $comments->map(fn($comment) => $this->transformComment($comment)),
@@ -369,6 +380,49 @@ class PuzzleController extends Controller
         ], 201);
     }
 
+    public function likeComment(Request $request, string $slug, PuzzleComment $comment)
+    {
+        $puzzle = $this->getPuzzleOrFail($slug);
+
+        if (!Schema::hasColumn('puzzle_comments', 'likes_count') || !Schema::hasTable('puzzle_comment_likes')) {
+            return response()->json([
+                'message' => 'Tính năng thích bình luận chưa được kích hoạt. Vui lòng thử lại sau.',
+            ], 503);
+        }
+
+        if ((int) $comment->puzzle_id !== (int) $puzzle->id || !$comment->is_public) {
+            abort(404);
+        }
+
+        $identifier = $this->buildCommentLikeIdentifier($request);
+        $wasCreated = false;
+
+        DB::transaction(function () use ($comment, $identifier, $request, &$wasCreated) {
+            $like = PuzzleCommentLike::firstOrCreate(
+                [
+                    'puzzle_comment_id' => $comment->id,
+                    'identifier' => $identifier,
+                ],
+                [
+                    'user_id' => Auth::id(),
+                    'ip_address' => $request->ip(),
+                ]
+            );
+
+            if ($like->wasRecentlyCreated) {
+                $comment->increment('likes_count');
+                $wasCreated = true;
+            }
+        });
+
+        $comment->refresh();
+
+        return response()->json([
+            'likes_count' => (int) $comment->likes_count,
+            'already_liked' => !$wasCreated,
+        ]);
+    }
+
     protected function transformComment(PuzzleComment $comment)
     {
         $replies = $comment->relationLoaded('replies')
@@ -380,6 +434,7 @@ class PuzzleController extends Controller
             'parent_id' => $comment->parent_id,
             'author_name' => $comment->author_name,
             'content' => $comment->content,
+            'likes_count' => (int) ($comment->likes_count ?? 0),
             'created_at' => $comment->created_at,
             'replies' => $replies->map(fn($reply) => $this->transformComment($reply))->values(),
         ];
@@ -392,6 +447,18 @@ class PuzzleController extends Controller
         }
 
         return Puzzle::where('slug', $slug)->firstOrFail();
+    }
+
+    protected function buildCommentLikeIdentifier(Request $request): string
+    {
+        if (Auth::check()) {
+            return 'user:' . Auth::id();
+        }
+
+        $ip = (string) $request->ip();
+        $agent = (string) $request->userAgent();
+
+        return 'guest:' . hash('sha256', $ip . '|' . $agent);
     }
     /**
      * Show the form for editing the specified resource.

@@ -215,3 +215,4 @@ Route::get('/puzzles/{slug}/reactions', [PuzzleController::class, 'getReactions'
 Route::post('/puzzles/{slug}/reactions', [PuzzleController::class, 'react'])->name('puzzles.reactions.store');
 Route::get('/puzzles/{slug}/comments', [PuzzleController::class, 'comments'])->name('puzzles.comments.index');
 Route::post('/puzzles/{slug}/comments', [PuzzleController::class, 'addComment'])->name('puzzles.comments.store');
+Route::post('/puzzles/{slug}/comments/{comment}/like', [PuzzleController::class, 'likeComment'])->name('puzzles.comments.like');

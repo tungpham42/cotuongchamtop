@@ -148,10 +148,33 @@
     margin-top: 0.5rem;
     font-size: 0.82rem;
     color: rgba(229, 231, 235, 0.75);
-    cursor: pointer;
   }
-  .puzzle-comment-card .comment-actions span:hover {
+  .puzzle-comment-card .comment-actions .comment-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+  .puzzle-comment-card .comment-actions .comment-action:hover {
     color: #f87171;
+  }
+  .puzzle-comment-card .comment-actions .comment-action .comment-like-count {
+    padding: 0.05rem 0.45rem;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.5);
+    font-size: 0.72rem;
+    line-height: 1;
+  }
+  .puzzle-comment-card .comment-actions .comment-action.liked {
+    color: #f87171;
+    font-weight: 600;
+    cursor: default;
+  }
+  .puzzle-comment-card .comment-actions .comment-action.disabled,
+  .puzzle-comment-card .comment-actions .comment-action.loading {
+    pointer-events: none;
+    opacity: 0.6;
   }
   .puzzle-empty-comment {
     background: rgba(34, 34, 34, 0.85);
@@ -580,6 +603,61 @@ const reactionEndpoints = {
   react: '{{ url('/api/puzzles/'.$slug.'/reactions') }}'
 };
 const commentsEndpoint = '{{ url('/api/puzzles/'.$slug.'/comments') }}';
+const commentLikeBaseEndpoint = commentsEndpoint;
+const commentLikeStorageKey = 'puzzle_comment_likes_{{ $slug }}';
+
+function loadStoredLikedComments() {
+  if (typeof localStorage === 'undefined') {
+    return [];
+  }
+  try {
+    const raw = localStorage.getItem(commentLikeStorageKey);
+    if (!raw) {
+      return [];
+    }
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+    const numericIds = parsed
+      .map(function(id) { return parseInt(id, 10); })
+      .filter(function(id) { return !Number.isNaN(id); });
+    return Array.from(new Set(numericIds));
+  } catch (error) {
+    return [];
+  }
+}
+
+let likedCommentIds = loadStoredLikedComments();
+
+function hasLikedComment(id) {
+  const numericId = Number(id);
+  if (Number.isNaN(numericId)) {
+    return false;
+  }
+  return likedCommentIds.includes(numericId);
+}
+
+function persistLikedComments() {
+  if (typeof localStorage === 'undefined') {
+    return;
+  }
+  try {
+    localStorage.setItem(commentLikeStorageKey, JSON.stringify(likedCommentIds));
+  } catch (error) {
+    // localStorage might be unavailable (privacy modes, etc.)
+  }
+}
+
+function rememberLikedComment(id) {
+  const numericId = Number(id);
+  if (Number.isNaN(numericId) || hasLikedComment(numericId)) {
+    return;
+  }
+  likedCommentIds.push(numericId);
+  likedCommentIds = Array.from(new Set(likedCommentIds));
+  persistLikedComments();
+}
 
 function renderReactions(data) {
   const like = parseInt(data.likes ?? 0, 10);
@@ -648,10 +726,15 @@ function buildCommentCard(comment, level = 0) {
   const createdAt = comment.created_at ? formatCommentDate(comment.created_at) : '';
   const initials = author.trim().length ? author.trim().charAt(0).toUpperCase() : 'Ẩ';
   const contentHtml = $('<div>').text(comment.content || '').html().replace(/\n/g, '<br>');
+  const commentId = Number(comment.id);
+  const likeCount = Math.max(parseInt(comment.likes_count ?? 0, 10) || 0, 0);
 
   const card = $('<div class="puzzle-comment-card"></div>');
   if (level > 0) {
     card.addClass('reply');
+  }
+  if (!Number.isNaN(commentId)) {
+    card.attr('data-comment-id', commentId);
   }
 
   const header = $('<div class="comment-header"></div>');
@@ -667,11 +750,32 @@ function buildCommentCard(comment, level = 0) {
   card.append('<div class="comment-body">' + contentHtml + '</div>');
 
   const actions = $('<div class="comment-actions"></div>');
-  actions.append('<span class="comment-action"><i class="far fa-thumbs-up"></i> Thích</span>');
-  actions.append('<span class="comment-action comment-reply-toggle" data-comment-id="' + comment.id + '"><i class="far fa-comment"></i> Trả lời</span>');
+  const likeAction = $('<span class="comment-action comment-like"></span>');
+  if (!Number.isNaN(commentId)) {
+    likeAction.attr('data-comment-id', commentId);
+  }
+  likeAction.append('<i class="far fa-thumbs-up"></i>');
+  likeAction.append(' <span class="like-label">Thích</span>');
+  likeAction.append(' <span class="comment-like-count">' + likeCount + '</span>');
+  if (hasLikedComment(commentId)) {
+    likeAction.addClass('liked');
+  }
+  actions.append(likeAction);
+
+  const replyAction = $('<span class="comment-action comment-reply-toggle"></span>');
+  if (!Number.isNaN(commentId)) {
+    replyAction.attr('data-comment-id', commentId);
+  }
+  replyAction.append('<i class="far fa-comment"></i>');
+  replyAction.append(' Trả lời');
+  actions.append(replyAction);
+
   card.append(actions);
 
-  const replyForm = $('<form class="comment-reply-form d-none" data-comment-id="' + comment.id + '"></form>');
+  const replyForm = $('<form class="comment-reply-form d-none"></form>');
+  if (!Number.isNaN(commentId)) {
+    replyForm.attr('data-comment-id', commentId);
+  }
   replyForm.append('<div class="form-group mb-2"><input type="text" class="form-control form-control-sm reply-author" maxlength="120" placeholder="Tên bạn (không bắt buộc)"></div>');
   replyForm.append('<div class="form-group mb-2"><textarea class="form-control form-control-sm reply-content" rows="2" maxlength="1000" placeholder="Phản hồi của bạn..." required></textarea></div>');
   replyForm.append('<small class="reply-feedback d-none"></small>');
@@ -681,7 +785,7 @@ function buildCommentCard(comment, level = 0) {
   replyForm.append(replyActions);
   card.append(replyForm);
 
-  if (comment.replies && comment.replies.length) {
+  if (Array.isArray(comment.replies) && comment.replies.length) {
     const childrenWrapper = $('<div class="puzzle-comment-children"></div>');
     comment.replies.forEach(function(reply) {
       childrenWrapper.append(buildCommentCard(reply, level + 1));
@@ -762,6 +866,46 @@ $('#puzzle-comment-form').on('submit', function(e) {
     feedback.removeClass('d-none text-success').addClass('text-danger').text(message);
   }).always(function() {
     submitBtn.prop('disabled', false).html('<i class="fas fa-paper-plane"></i> Gửi bình luận');
+  });
+});
+
+$('#puzzle-comment-list').on('click', '.comment-like', function() {
+  const $btn = $(this);
+  if ($btn.hasClass('loading') || $btn.hasClass('liked')) {
+    return;
+  }
+  const commentId = Number($btn.data('comment-id'));
+  if (Number.isNaN(commentId) || commentId <= 0) {
+    return;
+  }
+
+  $btn.addClass('loading');
+
+  $.ajax({
+    url: commentLikeBaseEndpoint + '/' + commentId + '/like',
+    method: 'POST',
+    headers: {
+      'X-CSRF-TOKEN': '{{ csrf_token() }}'
+    }
+  }).done(function(response) {
+    const likesCount = Math.max(parseInt(response.likes_count ?? 0, 10) || 0, 0);
+    $btn.find('.comment-like-count').text(likesCount);
+    $btn.addClass('liked');
+    rememberLikedComment(commentId);
+  }).fail(function(xhr) {
+    let message = 'Không thể thích bình luận, vui lòng thử lại.';
+    if (xhr.responseJSON && xhr.responseJSON.message) {
+      message = xhr.responseJSON.message;
+    }
+    bootbox.alert({
+      message: message,
+      locale: 'vi',
+      centerVertical: true,
+      closeButton: false,
+      size: 'small'
+    });
+  }).always(function() {
+    $btn.removeClass('loading');
   });
 });
 
