@@ -85,8 +85,9 @@
               @include('common.themeSelector')
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-4 mt-sm-4 mt-xs-4">
+              @include('layout.partials.roomChat')
+              @include('common.ads')
               @include('layout.partials.comments')
-              @include('common.sideAds')
             </div>
           </div>
           @endif
