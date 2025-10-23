@@ -54,8 +54,8 @@ $strings = array_merge($defaults, $translations ?? []);
     /* Mobile responsiveness improvements */
     @media (max-width: 576px) {
         .room-comment-wrapper {
-            margin-left: -15px;
-            margin-right: -15px;
+            /* margin-left: -15px;
+            margin-right: -15px; */
             border-radius: 0;
             padding: 0.75rem;
         }
