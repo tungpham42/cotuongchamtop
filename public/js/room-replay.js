@@ -274,7 +274,18 @@
         );
         if (!state.history || state.history.length === 0) {
             console.log("🌐 No move history available for replay.");
-            $("#ban-co").after(t.noHistoryAlert);
+            const noHistoryPanel = $(`
+        <section id="room-no-history" style="background-color: rgba(24, 26, 27, 0.65); border-radius: 12px; padding: 12px; margin-top: 16px; color: #f8f9fa;">
+          <div class="room-replay-header d-flex justify-content-between align-items-center mb-2">
+            <span><i class="fal fa-info-circle"></i> ${t.bookTitle}</span>
+          </div>
+          <div class="text-center py-3 text-muted">
+            <i class="fal fa-info-circle mb-2" style="font-size: 1.8rem;"></i>
+            <div>${t.noHistoryAlert}</div>
+          </div>
+        </section>
+      `);
+            noHistoryPanel.hide().insertAfter("#ban-co").fadeIn(400);
         }
         const panel = $(`
       <section id="room-replay-panel" style="">
