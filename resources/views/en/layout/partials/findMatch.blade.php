@@ -43,10 +43,42 @@
             })
                 .then(response => {
                     if (response.data.status === 'matched') {
-                        clearInterval(poll);
-                        document.getElementById('match-status').innerText = `Match found! Go to room "${response.data.room_name}" with ${response.data.color} side.`;
-                        // Redirect to the room
-                        window.location.href = `/room/${response.data.room_code}/${response.data.side}`;
+                        let countdown = 5;
+                        const countdownModal = `
+                        <div class="modal fade" id="countdownModal" tabindex="-1" role="dialog" aria-labelledby="countdownLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content text-center p-4" style="background-color: #E1BF85; border-radius: 15px;">
+                                    <h4 class="mb-3 text-danger">
+                                        <img width="42" height="42" src="/img/xiangqipieces/wiki/rK.svg" alt="Chinese Chess" class="mr-2">Opponent Found!
+                                    </h4>
+                                    <p class="fs-5 mb-3">The game will start in:</p>
+                                    <div class="display-4 fw-bold text-danger" id="countdownNumber">${countdown}</div>
+                                    <p class="mt-3" style="color: #413E3C;"><i class="fas fa-clock"></i> Get ready...</p>
+                                </div>
+                            </div>
+                        </div>
+                        `;
+                        if (!document.getElementById("countdownModal")) {
+                            document.body.insertAdjacentHTML("beforeend", countdownModal);
+                        }
+                        const tickSound = new Audio("/sound/tick.mp3");
+                        const modalEl = new bootstrap.Modal(document.getElementById('countdownModal'));
+                        modalEl.show();
+
+                        const countdownInterval = setInterval(() => {
+                            countdown--;
+                            document.getElementById("countdownNumber").textContent = countdown;
+                            tickSound.currentTime = 0;
+                            tickSound.play().catch(() => {});
+                            if (countdown <= 0) {
+                                clearInterval(countdownInterval);
+                                modalEl.hide();
+                                clearInterval(poll);
+                                document.getElementById('match-status').innerText = `Match found! Go to room "${response.data.room_name}" with ${response.data.color} side.`;
+                                // Redirect to the room
+                                window.location.href = `/room/${response.data.room_code}/${response.data.side}`;
+                            }
+                        }, 1000);
                     } else if (response.data.status === 'error') {
                         clearInterval(poll);
                         document.getElementById('match-status').innerText = response.data.message;
