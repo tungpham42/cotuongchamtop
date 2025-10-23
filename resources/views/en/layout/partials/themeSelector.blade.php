@@ -45,42 +45,42 @@
       <div class="theme-options piece-themes">
         <button class="theme-option" data-theme-type="pieces" data-theme="wiki" title="Default pieces">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/wiki/rk.svg" alt="Default pieces" />
+            <img src="{{ url('/') }}/img/xiangqipieces/wiki/rK.svg" alt="Default pieces" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="tung" title="Special">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/tung/rk.svg" alt="Special" />
+            <img src="{{ url('/') }}/img/xiangqipieces/tung/rK.svg" alt="Special" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="do-den" title="Red & Black">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/do-den/rk.svg" alt="Red & Black" />
+            <img src="{{ url('/') }}/img/xiangqipieces/do-den/rK.svg" alt="Red & Black" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="graphic" title="Western">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/graphic/rk.svg" alt="Western" />
+            <img src="{{ url('/') }}/img/xiangqipieces/graphic/rK.svg" alt="Western" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="co" title="Orange">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/co/rk.svg" alt="Orange" />
+            <img src="{{ url('/') }}/img/xiangqipieces/co/rK.svg" alt="Orange" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="wikimedia" title="Dark yellow">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/wikimedia/rk.svg" alt="Dark yellow" />
+            <img src="{{ url('/') }}/img/xiangqipieces/wikimedia/rK.svg" alt="Dark yellow" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="quan" title="Light">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/quan/rk.svg" alt="Light" />
+            <img src="{{ url('/') }}/img/xiangqipieces/quan/rK.svg" alt="Light" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="traditional" title="Traditional">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/traditional/rk.svg" alt="Traditional" />
+            <img src="{{ url('/') }}/img/xiangqipieces/traditional/rK.svg" alt="Traditional" />
           </div>
         </button>
       </div>

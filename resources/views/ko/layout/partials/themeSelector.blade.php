@@ -45,42 +45,42 @@
       <div class="theme-options piece-themes">
         <button class="theme-option" data-theme-type="pieces" data-theme="wiki" title="기본 기물">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/wiki/rk.svg" alt="기본 기물" />
+            <img src="{{ url('/') }}/img/xiangqipieces/wiki/rK.svg" alt="기본 기물" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="tung" title="스페셜">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/tung/rk.svg" alt="스페셜" />
+            <img src="{{ url('/') }}/img/xiangqipieces/tung/rK.svg" alt="스페셜" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="do-den" title="레드 & 블랙">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/do-den/rk.svg" alt="레드 & 블랙" />
+            <img src="{{ url('/') }}/img/xiangqipieces/do-den/rK.svg" alt="레드 & 블랙" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="graphic" title="서양식">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/graphic/rk.svg" alt="서양식" />
+            <img src="{{ url('/') }}/img/xiangqipieces/graphic/rK.svg" alt="서양식" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="co" title="오렌지">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/co/rk.svg" alt="오렌지" />
+            <img src="{{ url('/') }}/img/xiangqipieces/co/rK.svg" alt="오렌지" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="wikimedia" title="어두운 노란색">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/wikimedia/rk.svg" alt="어두운 노란색" />
+            <img src="{{ url('/') }}/img/xiangqipieces/wikimedia/rK.svg" alt="어두운 노란색" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="quan" title="라이트">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/quan/rk.svg" alt="라이트" />
+            <img src="{{ url('/') }}/img/xiangqipieces/quan/rK.svg" alt="라이트" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="traditional" title="전통">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/traditional/rk.svg" alt="전통" />
+            <img src="{{ url('/') }}/img/xiangqipieces/traditional/rK.svg" alt="전통" />
           </div>
         </button>
       </div>

@@ -45,42 +45,42 @@
       <div class="theme-options piece-themes">
         <button class="theme-option" data-theme-type="pieces" data-theme="wiki" title="默认棋子">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/wiki/rk.svg" alt="默认棋子" />
+            <img src="{{ url('/') }}/img/xiangqipieces/wiki/rK.svg" alt="默认棋子" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="tung" title="特别版">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/tung/rk.svg" alt="特别版" />
+            <img src="{{ url('/') }}/img/xiangqipieces/tung/rK.svg" alt="特别版" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="do-den" title="红黑">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/do-den/rk.svg" alt="红黑" />
+            <img src="{{ url('/') }}/img/xiangqipieces/do-den/rK.svg" alt="红黑" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="graphic" title="西式">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/graphic/rk.svg" alt="西式" />
+            <img src="{{ url('/') }}/img/xiangqipieces/graphic/rK.svg" alt="西式" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="co" title="橙色">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/co/rk.svg" alt="橙色" />
+            <img src="{{ url('/') }}/img/xiangqipieces/co/rK.svg" alt="橙色" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="wikimedia" title="暗黄色">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/wikimedia/rk.svg" alt="暗黄色" />
+            <img src="{{ url('/') }}/img/xiangqipieces/wikimedia/rK.svg" alt="暗黄色" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="quan" title="浅色">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/quan/rk.svg" alt="浅色" />
+            <img src="{{ url('/') }}/img/xiangqipieces/quan/rK.svg" alt="浅色" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="traditional" title="传统">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/traditional/rk.svg" alt="传统" />
+            <img src="{{ url('/') }}/img/xiangqipieces/traditional/rK.svg" alt="传统" />
           </div>
         </button>
       </div>

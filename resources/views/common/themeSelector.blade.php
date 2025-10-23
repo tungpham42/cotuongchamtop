@@ -46,42 +46,42 @@
       <div class="theme-options piece-themes">
         <button class="theme-option" data-theme-type="pieces" data-theme="wiki" title="Quân cờ mặc định">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/wiki/rk.svg" alt="Quân cờ mặc định" />
+            <img src="{{ url('/') }}/img/xiangqipieces/wiki/rK.svg" alt="Quân cờ mặc định" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="tung" title="Đặc biệt">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/tung/rk.svg" alt="Đặc biệt" />
+            <img src="{{ url('/') }}/img/xiangqipieces/tung/rK.svg" alt="Đặc biệt" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="do-den" title="Đỏ đen">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/do-den/rk.svg" alt="Đỏ đen" />
+            <img src="{{ url('/') }}/img/xiangqipieces/do-den/rK.svg" alt="Đỏ đen" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="graphic" title="Phương Tây">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/graphic/rk.svg" alt="Phương Tây" />
+            <img src="{{ url('/') }}/img/xiangqipieces/graphic/rK.svg" alt="Phương Tây" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="co" title="Cam">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/co/rk.svg" alt="Cam" />
+            <img src="{{ url('/') }}/img/xiangqipieces/co/rK.svg" alt="Cam" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="wikimedia" title="Vàng đậm">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/wikimedia/rk.svg" alt="Vàng đậm" />
+            <img src="{{ url('/') }}/img/xiangqipieces/wikimedia/rK.svg" alt="Vàng đậm" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="quan" title="Sáng">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/quan/rk.svg" alt="Sáng" />
+            <img src="{{ url('/') }}/img/xiangqipieces/quan/rK.svg" alt="Sáng" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="traditional" title="Truyền thống">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/traditional/rk.svg" alt="Truyền thống" />
+            <img src="{{ url('/') }}/img/xiangqipieces/traditional/rK.svg" alt="Truyền thống" />
           </div>
         </button>
       </div>
