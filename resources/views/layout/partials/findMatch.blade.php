@@ -43,10 +43,42 @@
             })
                 .then(response => {
                     if (response.data.status === 'matched') {
-                        clearInterval(poll);
-                        document.getElementById('match-status').innerText = `Đã tìm thấy! Vào phòng "${response.data.room_name}" với quân ${response.data.color}.`;
-                        // Redirect to the room
-                        window.location.href = `/phong/${response.data.room_code}/${response.data.side}`;
+                        let countdown = 5;
+                        const countdownModal = `
+                        <div class="modal fade" id="countdownModal" tabindex="-1" role="dialog" aria-labelledby="countdownLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content text-center p-4" style="background-color: #E1BF85; border-radius: 15px;">
+                                    <h4 class="mb-3 text-danger">
+                                        <img width="42" height="42" src="/img/xiangqipieces/wiki/rK.svg" alt="Cờ tướng" class="mr-2">Đã tìm thấy đối thủ!
+                                    </h4>
+                                    <p class="fs-5 mb-3">Ván cờ sẽ bắt đầu sau:</p>
+                                    <div class="display-4 fw-bold text-danger" id="countdownNumber">${countdown}</div>
+                                    <p class="mt-3" style="color: #413E3C;"><i class="fas fa-clock"></i> Chuẩn bị sẵn sàng...</p>
+                                </div>
+                            </div>
+                        </div>
+                        `;
+                        if (!document.getElementById("countdownModal")) {
+                            document.body.insertAdjacentHTML("beforeend", countdownModal);
+                        }
+                        const tickSound = new Audio("/sound/tick.mp3");
+                        const modalEl = new bootstrap.Modal(document.getElementById('countdownModal'));
+                        modalEl.show();
+
+                        const countdownInterval = setInterval(() => {
+                            countdown--;
+                            document.getElementById("countdownNumber").textContent = countdown;
+                            tickSound.currentTime = 0;
+                            tickSound.play().catch(() => {});
+                            if (countdown <= 0) {
+                                clearInterval(countdownInterval);
+                                modalEl.hide();
+                                clearInterval(poll);
+                                document.getElementById('match-status').innerText = `Đã tìm thấy! Vào phòng "${response.data.room_name}" với quân ${response.data.color}.`;
+                                // Redirect to the room
+                                window.location.href = `/phong/${response.data.room_code}/${response.data.side}`;
+                            }
+                        }, 1000);
                     } else if (response.data.status === 'error') {
                         clearInterval(poll);
                         document.getElementById('match-status').innerText = response.data.message;
