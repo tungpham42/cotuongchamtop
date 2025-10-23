@@ -1,20 +1,20 @@
 @extends('layout.gamelayout')
 @section('aboveBoard')
-<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="Tăng kỹ năng chơi cờ">Bạn đang chơi một mình<span id="puzzle-title"></span></h5>
+<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __('app.game.skill_improvement') }}">{{ __('app.game.playing_alone') }}<span id="puzzle-title"></span></h5>
 @endsection
 @section('rightSide')
 <p class="w-100 text-center m-0">
   <span class="rounded p-0 d-block" id="game-status"></span>
 </p>
 <p class="w-100 text-center mx-0 mb-0 mt-2">
-  <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> HẾT TRẬN</span>
+  <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> {{ __('app.game.game_over') }}</span>
 </p>
 <div class="sharethis-inline-reaction-buttons"></div>
 <div class="dropup mx-auto text-center my-1">
   <button class="btn btn-danger btn-lg dropdown-toggle" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <span data-toggle="tooltip" data-placement="top" title="Đấu với bạn bè trong phòng"><i class="fad fa-gamepad-alt"></i> Chơi online</span>
+    <span data-toggle="tooltip" data-placement="top" title="{{ __('app.game.play_with_friends') }}"><i class="fad fa-gamepad-alt"></i> {{ __('app.game.play_online') }}</span>
   </button>
-  <a id="switch" class="btn btn-dark btn-lg mx-auto"><i class="fad fa-sync"></i> Đổi bên</a>
+  <a id="switch" class="btn btn-dark btn-lg mx-auto"><i class="fad fa-sync"></i> {{ __('app.game.switch_side') }}</a>
   @include('common.volumeBtn')
   @include('common.tourBtn')
   <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/') }}/phong/{{ md5(time()) }}">

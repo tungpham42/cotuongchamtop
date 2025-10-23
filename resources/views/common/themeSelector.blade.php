@@ -3,12 +3,12 @@
   <div class="theme-selector-panel">
     <div class="theme-section">
       <h6 class="theme-title">
-        <i class="fas fa-chess-board"></i> Màu bàn cờ
+        <i class="fas fa-chess-board"></i> {{ __('app.navigation.board_color') }}
       </h6>
       <div class="theme-options board-themes">
-        <button class="theme-option" data-theme-type="board" data-theme="xiangqi-board" title="Bàn cờ mặc định">
+        <button class="theme-option" data-theme-type="board" data-theme="xiangqi-board" title="{{ __('app.navigation.default_board') }}">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/xiangqi-board.svg" alt="Bàn cờ mặc định" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-default')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/xiangqi-board.svg" alt="{{ __('app.navigation.default_board') }}" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-default')" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="board" data-theme="ban-co-go" title="Gỗ nhạt">

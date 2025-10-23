@@ -84,6 +84,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Available Locales
+    |--------------------------------------------------------------------------
+    |
+    | This array contains all the locales supported by your application.
+    | This will be used by the locale middleware to validate locale codes.
+    |
+    */
+
+    'available_locales' => ['vi', 'en', 'ko', 'ja', 'zh'],
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Fallback Locale
     |--------------------------------------------------------------------------
     |

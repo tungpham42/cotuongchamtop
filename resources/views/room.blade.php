@@ -1,7 +1,10 @@
-@extends('layout.gamelayout')
+@exte@if ($request->is('phong/{roomCode}'))
+<p class="w-100 text-center mt-2">
+  <a class="w-25 mx-auto btn btn-success btn-sm" target="_blank" href="/phong/{{ $roomCode }}/duoc-moi"><i class="fad fa-external-link-alt"></i> {{ __('app.game.invite_friends') }}</a>
+</p>'layout.gamelayout')
 @section('aboveContent')
 <p id="room-code" class="w-100 text-center mt-2">
-  <span class="alert alert-info d-inline-block" role="alert"><i class="fad fa-trophy-alt"></i> Mã phòng: {{ $roomCode }}</span>
+  <span class="alert alert-info d-inline-block" role="alert"><i class="fad fa-trophy-alt"></i> {{ __('app.game.room_code_label') }} {{ $roomCode }}</span>
 </p>
 @if ($request->is('phong/{roomCode}'))
 <p class="w-100 text-center mt-2">
@@ -14,29 +17,29 @@
   <input type="text" class="form-control" id="url" aria-describedby="url-addon" value="https://cotuong.top/phong/{{ $roomCode }}/duoc-moi" />
 </div>
 <p class="w-100 text-center mt-2">
-  <span class="side-color red">QUÂN ĐỎ</span>
+  <span class="side-color red">{{ __('app.game.red_player') }}</span>
 </p>
 @elseif ($request->is('phong/{roomCode}/duoc-moi'))
 <p class="w-100 text-center mt-2">
-  <span class="alert alert-success d-inline-block" role="alert">Đã được mời</span>
-  <span class="side-color black">QUÂN ĐEN</span>
+  <span class="alert alert-success d-inline-block" role="alert">{{ __('app.game.invited_success') }}</span>
+  <span class="side-color black">{{ __('app.game.black_player') }}</span>
 </p>
 @elseif ($request->is('phong/{roomCode}/{color}'))
   @if (color == 'do')
 <p class="w-100 text-center mt-2">
-  <span class="side-color red">QUÂN ĐỎ</span>
+  <span class="side-color red">{{ __('app.game.red_player') }}</span>
 </p>
   @elseif (color == 'den')
 <p class="w-100 text-center mt-2">
-  <span class="side-color black">QUÂN ĐEN</span>
+  <span class="side-color black">{{ __('app.game.black_player') }}</span>
 </p>
   @endif
 @endif
 @endsection
 @section('belowContent')
 <p class="w-100 text-center mt-4">
-  <a class="w-25 btn btn-danger btn-lg" href="/phong/{{ $roomCode }}/do"><i class="fad fa-chess-clock-alt"></i> Bên ĐỎ</a>
-  <a class="w-25 btn btn-dark btn-lg" href="/phong/{{ $roomCode }}/den"><i class="fad fa-chess-clock"></i> Bên ĐEN</a>
+  <a class="w-25 btn btn-danger btn-lg" href="/phong/{{ $roomCode }}/do"><i class="fad fa-chess-clock-alt"></i> {{ __('app.game.red_side') }}</a>
+  <a class="w-25 btn btn-dark btn-lg" href="/phong/{{ $roomCode }}/den"><i class="fad fa-chess-clock"></i> {{ __('app.game.black_side') }}</a>
 </p>
 <script>
 let board = null;
@@ -76,9 +79,9 @@ function manipulateRoom(roomCode) {
       }
     }
     if (gameTurn === 'r') {
-      $('#game-status').removeClass('black').addClass('red').html('<i class="fal fa-chess-clock-alt"></i> Tới lượt ĐỎ');
+      $('#game-status').removeClass('black').addClass('red').html('<i class="fal fa-chess-clock-alt"></i> {{ __('app.game.red_turn') }}');
     } else if (gameTurn === 'b') {
-      $('#game-status').removeClass('red').addClass('black').html('<i class="fal fa-chess-clock"></i> Tới lượt ĐEN');
+      $('#game-status').removeClass('red').addClass('black').html('<i class="fal fa-chess-clock"></i> {{ __('app.game.black_turn') }}');
     }
   });
 }
@@ -168,9 +171,9 @@ let config = {
 };
 board = Xiangqiboard('ban-co', config);
 if (game.turn() === 'r') {
-  $('#game-status').removeClass('black').addClass('red').html('<i class="fal fa-chess-clock-alt"></i> Tới lượt ĐỎ');
+  $('#game-status').removeClass('black').addClass('red').html('<i class="fal fa-chess-clock-alt"></i> {{ __('app.game.red_turn') }}');
 } else if (game.turn() === 'b') {
-  $('#game-status').removeClass('red').addClass('black').html('<i class="fal fa-chess-clock"></i> Tới lượt ĐEN');
+  $('#game-status').removeClass('red').addClass('black').html('<i class="fal fa-chess-clock"></i> {{ __('app.game.black_turn') }}');
 }
 function updateRoom() {
   manipulateRoom('{{ $roomCode }}');

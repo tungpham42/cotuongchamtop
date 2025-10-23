@@ -17,6 +17,159 @@ use Spatie\Sitemap\Sitemap;
 
 /*
 |--------------------------------------------------------------------------
+| Localized Routes - New Laravel Translation System
+|--------------------------------------------------------------------------
+|
+| Routes with locale prefixes for the new translation system
+| This will eventually replace the hardcoded language routes below
+|
+*/
+
+// Default routes (Vietnamese) - no prefix
+Route::middleware(['setlocale'])->group(function () {
+    // Home route
+    Route::get('/', function () {
+        return view('human', [
+            'headTitle' => __('app.meta.site_title'),
+            'bodyClass' => 'home',
+            'randomRoom' => RoomController::getRandomRoom(),
+            'roomCode' => '',
+            'cdnUrl' => URL::to(''),
+            'canonicalUrl' => '/',
+            'langViUrl' => '/',
+            'langEnUrl' => '/en',
+            'langJaUrl' => '/ja',
+            'langKoUrl' => '/ko',
+            'langZhUrl' => '/zh',
+            'currentLocale' => app()->getLocale(),
+            'availableLocales' => config('app.available_locales', ['vi', 'en', 'ko', 'ja', 'zh']),
+            'userPuzzles' => PuzzleController::getUserPuzzles(),
+            'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(),
+            'boards' => RoomController::getBoards(),
+            'firstPageBoards' => RoomController::getFirstPageBoards(),
+            'playedBoards' => RoomController::getPlayedBoards(),
+            'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(),
+            'players' => UserController::getPlayers(),
+            'firstPagePlayers' => UserController::getFirstPagePlayers()
+        ]);
+    });
+    
+    // Room routes - will be migrated to use translations
+    Route::match(['get', 'post'], '/phong/{code}', function($code) {
+        $room = Room::where('room_code', $code)->first();
+        return view('room', [
+            'headTitle' => ((null !== RoomController::getHostIdRoute($code)) ? __('app.game.tournament') . ' - ' : '') . __('app.game.room_host') . ' - ' . __('app.game.room_title') . ': ' . RoomController::getRoomName($code),
+            'bodyClass' => 'room',
+            'randomRoom' => RoomController::getRandomRoom(),
+            'roomCode' => $code,
+            'room' => $room,
+            'cdnUrl' => URL::to(''),
+            'canonicalUrl' => '/phong/' . $code,
+            'langViUrl' => '/phong/' . $code,
+            'langEnUrl' => '/en/room/' . $code,
+            'langJaUrl' => '/ja/rumu/' . $code,
+            'langKoUrl' => '/ko/bang/' . $code,
+            'langZhUrl' => '/zh/fangjian/' . $code,
+            'currentLocale' => app()->getLocale(),
+            'availableLocales' => config('app.available_locales', ['vi', 'en', 'ko', 'ja', 'zh'])
+        ]);
+    });
+});
+
+// Localized routes with prefixes  
+Route::prefix('{locale}')->middleware(['setlocale'])->where(['locale' => 'en|ko|ja|zh'])->group(function () {
+    // Home route
+    Route::get('/', function () {
+        return view('human', [
+            'headTitle' => __('app.meta.site_title'),
+            'bodyClass' => 'home', 
+            'randomRoom' => RoomController::getRandomRoom(),
+            'roomCode' => '',
+            'cdnUrl' => URL::to(''),
+            'canonicalUrl' => '/' . app()->getLocale(),
+            'langViUrl' => '/',
+            'langEnUrl' => '/en',
+            'langJaUrl' => '/ja',
+            'langKoUrl' => '/ko',
+            'langZhUrl' => '/zh',
+            'currentLocale' => app()->getLocale(),
+            'availableLocales' => config('app.available_locales', ['vi', 'en', 'ko', 'ja', 'zh']),
+            'userPuzzles' => PuzzleController::getUserPuzzles(),
+            'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(),
+            'boards' => RoomController::getBoards(),
+            'firstPageBoards' => RoomController::getFirstPageBoards(),
+            'playedBoards' => RoomController::getPlayedBoards(),
+            'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(),
+            'players' => UserController::getPlayers(),
+            'firstPagePlayers' => UserController::getFirstPagePlayers()
+        ]);
+    });
+    
+    // Room routes - translated URLs
+    Route::match(['get', 'post'], '/room/{code}', function($code) {
+        $room = Room::where('room_code', $code)->first();
+        return view('room', [
+            'headTitle' => ((null !== RoomController::getHostIdRoute($code)) ? __('app.game.tournament') . ' - ' : '') . __('app.game.room_host') . ' - ' . __('app.game.room_title') . ': ' . RoomController::getRoomName($code),
+            'bodyClass' => 'room',
+            'randomRoom' => RoomController::getRandomRoom(),
+            'roomCode' => $code,
+            'room' => $room,
+            'cdnUrl' => URL::to(''),
+            'canonicalUrl' => '/' . app()->getLocale() . '/room/' . $code
+        ]);
+    })->where('locale', 'en');
+    
+    // Korean room route
+    Route::match(['get', 'post'], '/bang/{code}', function($code) {
+        $room = Room::where('room_code', $code)->first();  
+        return view('room', [
+            'headTitle' => ((null !== RoomController::getHostIdRoute($code)) ? __('app.game.tournament') . ' - ' : '') . __('app.game.room_host') . ' - ' . __('app.game.room_title') . ': ' . RoomController::getRoomName($code),
+            'bodyClass' => 'room',
+            'randomRoom' => RoomController::getRandomRoom(),
+            'roomCode' => $code,
+            'room' => $room,
+            'cdnUrl' => URL::to(''),
+            'canonicalUrl' => '/ko/bang/' . $code
+        ]);
+    })->where('locale', 'ko');
+    
+    // Japanese room route  
+    Route::match(['get', 'post'], '/rumu/{code}', function($code) {
+        $room = Room::where('room_code', $code)->first();
+        return view('room', [
+            'headTitle' => ((null !== RoomController::getHostIdRoute($code)) ? __('app.game.tournament') . ' - ' : '') . __('app.game.room_host') . ' - ' . __('app.game.room_title') . ': ' . RoomController::getRoomName($code),
+            'bodyClass' => 'room',
+            'randomRoom' => RoomController::getRandomRoom(),
+            'roomCode' => $code,
+            'room' => $room,
+            'cdnUrl' => URL::to(''),
+            'canonicalUrl' => '/ja/rumu/' . $code
+        ]);
+    })->where('locale', 'ja');
+    
+    // Chinese room route
+    Route::match(['get', 'post'], '/fangjian/{code}', function($code) {
+        $room = Room::where('room_code', $code)->first();
+        return view('room', [
+            'headTitle' => ((null !== RoomController::getHostIdRoute($code)) ? __('app.game.tournament') . ' - ' : '') . __('app.game.room_host') . ' - ' . __('app.game.room_title') . ': ' . RoomController::getRoomName($code),
+            'bodyClass' => 'room',
+            'randomRoom' => RoomController::getRandomRoom(),
+            'roomCode' => $code,
+            'room' => $room,
+            'cdnUrl' => URL::to(''),
+            'canonicalUrl' => '/zh/fangjian/' . $code
+        ]);
+    })->where('locale', 'zh');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Legacy Routes - Will be gradually migrated
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 |
