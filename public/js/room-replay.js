@@ -105,6 +105,21 @@
         state.initialized = true;
         injectStyles();
         prepareState();
+        if (!state.history || state.history.length === 0) {
+            const lang = getLangFromPath();
+            const t = i18n(lang);
+            setTimeout(() => {
+                if (typeof bootbox !== "undefined") {
+                    bootbox.alert({
+                        message: `<i class="fas fa-info-circle text-info"></i> ${t.noHistoryAlert}`,
+                        backdrop: true,
+                        centerVertical: true,
+                    });
+                } else {
+                    alert(t.noHistoryAlert); // fallback
+                }
+            }, 800);
+        }
         setupReplayBoard($);
         hookGameMove(game);
         hookAjax($);
@@ -198,6 +213,7 @@
                 emptyText:
                     "Chưa có nước đi nào — kỳ phổ sẽ cập nhật sau khi bạn đi nước đầu tiên.",
                 statusText: (cur, total) => `${cur} / ${total} nước`,
+                noHistoryAlert: "Trận đấu này chưa có kỳ phổ để xem lại.",
             },
             en: {
                 bookTitle: "Move List",
@@ -211,6 +227,8 @@
                 emptyText:
                     "No moves yet — the move list will appear after your first move.",
                 statusText: (cur, total) => `${cur} / ${total} moves`,
+                noHistoryAlert:
+                    "This room has no move history available for replay.",
             },
             ja: {
                 bookTitle: "棋譜",
@@ -224,6 +242,7 @@
                 emptyText:
                     "まだ着手がありません。最初の手を指すと自動で表示されます。",
                 statusText: (cur, total) => `${cur} / ${total} 手`,
+                noHistoryAlert: "この部屋には再生可能な棋譜がありません。",
             },
             ko: {
                 bookTitle: "기보",
@@ -237,6 +256,7 @@
                 emptyText:
                     "아직 착수가 없습니다. 첫 수를 두면 자동으로 표시됩니다.",
                 statusText: (cur, total) => `${cur} / ${total} 수`,
+                noHistoryAlert: "이 방에는 재생할 수 있는 기보가 없습니다.",
             },
             zh: {
                 bookTitle: "棋谱",
@@ -249,9 +269,10 @@
                 autoPlayTip: "自动播放",
                 emptyText: "暂无走子记录——下第一步后会自动显示。",
                 statusText: (cur, total) => `${cur} / ${total} 步`,
+                noHistoryAlert: "此房间暂无可回放的棋谱记录。",
             },
         };
-        return dict[lang] || dict.en;
+        return dict[lang] || dict.vi;
     }
 
     function setupReplayBoard() {
