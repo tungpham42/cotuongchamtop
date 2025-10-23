@@ -17,18 +17,8 @@ class ChatController extends Controller
             $text = htmlspecialchars($text);
             $text = AutolinkStatic::convert($text);
             $text = AutolinkStatic::convertEmail($text);
-            
-            // Save to database instead of file
-            ChatMessage::addMessage(
-                $roomCode, 
-                $_SESSION['name'], 
-                stripslashes($text), 
-                'message', 
-                $request->ip()
-            );
-            
-            // Clean old messages periodically
-            ChatMessage::cleanOldMessages($roomCode);
+            $text_message = "<div class='msgln'><span class='chat-time'>".date("Y-m-d | H:i:s")."</span> <b class='user-name'>".$_SESSION['name']."</b> ".stripslashes($text)."<br></div>";
+            file_put_contents( public_path().'/phongChatLog/'.$roomCode.'-phongchatlog.html' , $text_message, FILE_APPEND | LOCK_EX);
         }
     }
 
