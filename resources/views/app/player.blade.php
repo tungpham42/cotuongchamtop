@@ -53,9 +53,9 @@
                     <h5>Tổng số trận đã đấu xong: <span id="totalPoints">{!! app('App\Http\Controllers\UserController')::renderTotalMatchPoints($player->id) !!}</span></h5>
                     @if ($player->id == auth()->id() && !str_contains(url()->current(), url('/ky-thu').'/'))
                     <p class="w-100 text-left">
-                        <a href="{{ url('/doi-ten') }}" class="btn btn-lg btn-dark showPromotion"><i class="fad fa-user-edit"></i> Đổi tên</a>
-                        <a href="{{ url('/doi-mat-khau') }}" class="btn btn-lg btn-dark showPromotion"><i class="fad fa-lock-alt"></i> Đổi mật khẩu</a>
-                        <a href="{{ url('/doi-giao-dien') }}" class="btn btn-lg btn-dark showPromotion"><i class="fad fa-palette"></i> Đổi giao diện</a>
+                        <a href="{{ url('/doi-ten') }}" class="btn btn-lg btn-dark haltPromotion"><i class="fad fa-user-edit"></i> Đổi tên</a>
+                        <a href="{{ url('/doi-mat-khau') }}" class="btn btn-lg btn-dark haltPromotion"><i class="fad fa-lock-alt"></i> Đổi mật khẩu</a>
+                        <a href="{{ url('/doi-giao-dien') }}" class="btn btn-lg btn-dark haltPromotion"><i class="fad fa-palette"></i> Đổi giao diện</a>
                     </p>
                     @endif
                     @if (auth()->check())
@@ -207,7 +207,7 @@
                                 {{ $playerRooms->links('vendor.pagination.match') }}
                                 @foreach($playerRooms as $room)
                                 <tr data-code="{{ $room->code }}" data-fen="{{ $room->fen }}">
-                                    <th scope="row" class="roomCode"><a class="text-danger showPromotion animate" href="{{ url('/phong/') }}/{{ $room->code }}/theo-doi">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></th>
+                                    <th scope="row" class="roomCode"><a class="text-danger haltPromotion animate" href="{{ url('/phong/') }}/{{ $room->code }}/theo-doi">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></th>
                                     <td class="host-name">
                                         {!! app('App\Http\Controllers\UserController')::renderPlayerName($room->host_id) !!}
                                     </td>
@@ -242,9 +242,9 @@
                                                 @endif
                                             @else
                                                 @if (isset($room->guest_id))
-                                                <a class="btn btn-sm btn-dark showPromotion" href="{{ url('/dang-nhap') }}"><i class="fad fa-sign-in"></i> Đăng nhập</a>
+                                                <a class="btn btn-sm btn-dark haltPromotion" href="{{ url('/dang-nhap') }}"><i class="fad fa-sign-in"></i> Đăng nhập</a>
                                                 @else
-                                                <a class="btn btn-sm btn-danger pulse-red showPromotion" href="{{ url('/dang-nhap') }}"><i class="fad fa-sign-in"></i> Đăng nhập</a>
+                                                <a class="btn btn-sm btn-danger pulse-red haltPromotion" href="{{ url('/dang-nhap') }}"><i class="fad fa-sign-in"></i> Đăng nhập</a>
                                                 @endif
                                             @endif
                                         @else

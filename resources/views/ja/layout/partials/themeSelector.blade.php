@@ -1,39 +1,38 @@
-<!-- Theme Selector -->
 <div class="theme-selector-wrapper mt-2">
   <div class="theme-selector-panel">
     <div class="theme-section">
       <h6 class="theme-title">
-        <i class="fas fa-chess-board"></i> Màu bàn cờ
+        <i class="fas fa-chess-board"></i> 盤面のテーマ
       </h6>
       <div class="theme-options board-themes">
-        <button class="theme-option" data-theme-type="board" data-theme="xiangqi-board" title="Bàn cờ mặc định">
+        <button class="theme-option" data-theme-type="board" data-theme="xiangqi-board" title="デフォルトの盤面">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/xiangqi-board.svg" alt="Bàn cờ mặc định" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-default')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/xiangqi-board.svg" alt="デフォルトの盤面" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-default')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="ban-co-go" title="Gỗ nhạt">
+        <button class="theme-option" data-theme-type="board" data-theme="ban-co-go" title="ライトウッド">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/ban-co-go.svg" alt="Gỗ nhạt" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-light')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/ban-co-go.svg" alt="ライトウッド" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-light')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="wood-board" title="Gỗ đậm">
+        <button class="theme-option" data-theme-type="board" data-theme="wood-board" title="ダークウッド">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/wood-board.svg" alt="Gỗ đậm" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-dark')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/wood-board.svg" alt="ダークウッド" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-dark')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="ban-co" title="Vàng chói">
+        <button class="theme-option" data-theme-type="board" data-theme="ban-co" title="ブライトイエロー">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/ban-co.svg" alt="Vàng chói" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-yellow')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/ban-co.svg" alt="ブライトイエロー" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-yellow')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="banco" title="Sáng">
+        <button class="theme-option" data-theme-type="board" data-theme="banco" title="ライト">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/banco.svg" alt="Sáng" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-light')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/banco.svg" alt="ライト" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-light')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="chess-board" title="Cam nhạt">
+        <button class="theme-option" data-theme-type="board" data-theme="chess-board" title="ライトオレンジ">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/chess-board.svg" alt="Cam nhạt" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-orange')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/chess-board.svg" alt="ライトオレンジ" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-orange')" />
           </div>
         </button>
       </div>
@@ -41,47 +40,47 @@
 
     <div class="theme-section">
       <h6 class="theme-title">
-        <i class="fas fa-chess-knight"></i> Kiểu quân cờ
+        <i class="fas fa-chess-knight"></i> 駒のセット
       </h6>
       <div class="theme-options piece-themes">
-        <button class="theme-option" data-theme-type="pieces" data-theme="wiki" title="Quân cờ mặc định">
+        <button class="theme-option" data-theme-type="pieces" data-theme="wiki" title="デフォルトの駒">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/wiki/rk.svg" alt="Quân cờ mặc định" />
+            <img src="{{ url('/') }}/img/xiangqipieces/wiki/rk.svg" alt="デフォルトの駒" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="tung" title="Đặc biệt">
+        <button class="theme-option" data-theme-type="pieces" data-theme="tung" title="スペシャル">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/tung/rk.svg" alt="Đặc biệt" />
+            <img src="{{ url('/') }}/img/xiangqipieces/tung/rk.svg" alt="スペシャル" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="do-den" title="Đỏ đen">
+        <button class="theme-option" data-theme-type="pieces" data-theme="do-den" title="赤と黒">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/do-den/rk.svg" alt="Đỏ đen" />
+            <img src="{{ url('/') }}/img/xiangqipieces/do-den/rk.svg" alt="赤と黒" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="graphic" title="Phương Tây">
+        <button class="theme-option" data-theme-type="pieces" data-theme="graphic" title="西洋風">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/graphic/rk.svg" alt="Phương Tây" />
+            <img src="{{ url('/') }}/img/xiangqipieces/graphic/rk.svg" alt="西洋風" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="co" title="Cam">
+        <button class="theme-option" data-theme-type="pieces" data-theme="co" title="オレンジ">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/co/rk.svg" alt="Cam" />
+            <img src="{{ url('/') }}/img/xiangqipieces/co/rk.svg" alt="オレンジ" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="wikimedia" title="Vàng đậm">
+        <button class="theme-option" data-theme-type="pieces" data-theme="wikimedia" title="ダークイエロー">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/wikimedia/rk.svg" alt="Vàng đậm" />
+            <img src="{{ url('/') }}/img/xiangqipieces/wikimedia/rk.svg" alt="ダークイエロー" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="quan" title="Sáng">
+        <button class="theme-option" data-theme-type="pieces" data-theme="quan" title="ライト">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/quan/rk.svg" alt="Sáng" />
+            <img src="{{ url('/') }}/img/xiangqipieces/quan/rk.svg" alt="ライト" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="traditional" title="Truyền thống">
+        <button class="theme-option" data-theme-type="pieces" data-theme="traditional" title="伝統">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/traditional/rk.svg" alt="Truyền thống" />
+            <img src="{{ url('/') }}/img/xiangqipieces/traditional/rk.svg" alt="伝統" />
           </div>
         </button>
       </div>
@@ -90,7 +89,7 @@
     <div class="theme-section mt-3">
       <div class="text-center">
         <button type="button" class="btn btn-danger btn-sm px-4" id="apply-theme-btn">
-          <i class="fas fa-check"></i> Áp dụng Theme
+          <i class="fas fa-check"></i> テーマを適用
         </button>
       </div>
     </div>
@@ -98,11 +97,12 @@
 
   <button class="theme-toggle-btn" id="theme-toggle-btn">
     <i class="fas fa-palette"></i>
-    <span class="theme-toggle-text">Tùy chỉnh</span>
+    <span class="theme-toggle-text">カスタマイズ</span>
   </button>
 </div>
 
 <style>
+/* Styles remain the same */
 .theme-selector-wrapper {
   position: relative;
   display: flex;
@@ -291,18 +291,18 @@ document.addEventListener('DOMContentLoaded', function() {
   // Set active theme on page load
   updateActiveThemes();
 
-  // Handle theme selection (chỉ update preview, chưa apply)
+  // Handle theme selection (updates preview only, does not apply yet)
   themeOptions.forEach(option => {
     option.addEventListener('click', function() {
       // Update active state for visual feedback
       handleThemeClick(this);
 
-      // Highlight apply button để user biết cần confirm
+      // Highlight apply button to let the user know confirmation is needed
       const applyBtn = document.getElementById('apply-theme-btn');
       if (applyBtn) {
         applyBtn.classList.add('btn-primary');
         applyBtn.classList.remove('btn-danger');
-        applyBtn.innerHTML = '<i class="fas fa-circle"></i> Áp dụng Theme';
+        applyBtn.innerHTML = '<i class="fas fa-circle"></i> テーマを適用';
       }
     });
   });
@@ -325,10 +325,10 @@ document.addEventListener('DOMContentLoaded', function() {
       // Show loading state
       this.classList.remove('btn-warning');
       this.classList.add('btn-info');
-      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang áp dụng...';
+      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 適用中...';
       this.disabled = true;
 
-      // Save to server (sẽ reload page như system cũ)
+      // Save to server (will reload the page like the old system)
       @if(auth()->check())
       const formData = new FormData();
       formData.append('_token', '{{ csrf_token() }}');
@@ -336,37 +336,37 @@ document.addEventListener('DOMContentLoaded', function() {
       formData.append('board_theme', selectedBoardTheme);
       formData.append('pieces_theme', selectedPiecesTheme);
 
-      fetch('{{ url('/doi-giao-dien') }}', {
+      fetch('{{ url('/doi-giao-dien') }}', { // Note: URL endpoint is unchanged
         method: 'POST',
         body: formData
       }).then(response => {
         if (response.ok) {
-          // Success - system cũ sẽ redirect, ta cũng reload để consistent
+          // Success - old system would redirect, so we'll reload too for consistency
           this.classList.remove('btn-info');
           this.classList.add('btn-success');
-          this.innerHTML = '<i class="fas fa-check"></i> Thành công!';
+          this.innerHTML = '<i class="fas fa-check"></i> 成功しました!';
 
           setTimeout(() => {
-            location.reload(); // Reload để apply theme như system cũ
+            location.reload(); // Reload to apply the theme like the old system
           }, 800);
         } else {
-          throw new Error('Save failed');
+          throw new Error('保存に失敗しました');
         }
       }).catch(error => {
-        console.log('Save error:', error);
+        console.log('保存エラー:', error);
         this.classList.remove('btn-info');
         this.classList.add('btn-danger');
-        this.innerHTML = '<i class="fas fa-times"></i> Lỗi!';
+        this.innerHTML = '<i class="fas fa-times"></i> エラー!';
         this.disabled = false;
 
         setTimeout(() => {
           this.classList.remove('btn-danger');
           this.classList.add('btn-warning');
-          this.innerHTML = '<i class="fas exclamation-triangle"></i> Áp dụng Theme';
+          this.innerHTML = '<i class="fas exclamation-triangle"></i> テーマを適用';
         }, 2000);
       });
       @else
-      // Guest user - save to localStorage và apply
+      // Guest user - save to localStorage and apply
       localStorage.setItem('guest_board_theme', selectedBoardTheme);
       localStorage.setItem('guest_pieces_theme', selectedPiecesTheme);
 
@@ -376,13 +376,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
       this.classList.remove('btn-info');
       this.classList.add('btn-success');
-      this.innerHTML = '<i class="fas fa-check"></i> Đã áp dụng!';
+      this.innerHTML = '<i class="fas fa-check"></i> 適用しました!';
       this.disabled = false;
 
       setTimeout(() => {
         this.classList.remove('btn-success');
         this.classList.add('btn-danger');
-        this.innerHTML = '<i class="fas fa-check"></i> Áp dụng Theme';
+        this.innerHTML = '<i class="fas fa-check"></i> テーマを適用';
         panel.classList.remove('show');
       }, 2000);
       @endif
@@ -425,12 +425,12 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function applyTheme(themeType, themeName) {
-    console.log('Applying theme:', themeType, '=', themeName);
+    console.log('テーマを適用中:', themeType, '=', themeName);
 
     // For guest users, we need to be more aggressive since no page reload
     @if (!auth()->check())
     // Force immediate board recreation for guests
-    console.log('Guest user - forcing immediate theme apply');
+    console.log('ゲストユーザー - テーマを強制的に即時適用します');
 
     setTimeout(() => {
       try {
@@ -447,7 +447,7 @@ document.addEventListener('DOMContentLoaded', function() {
           const currentPos = typeof boardInstance.position === 'function' ?
             boardInstance.position() : 'start';
 
-          console.log('Current position:', currentPos);
+          console.log('現在の局面:', currentPos);
 
           // Destroy and recreate board with new theme
           if (typeof boardInstance.destroy === 'function') {
@@ -475,20 +475,20 @@ document.addEventListener('DOMContentLoaded', function() {
                   window.board = window.board;
                 }
 
-                console.log('Board recreated for guest with new theme');
+                console.log('ゲスト用に新しいテーマで盤面を再作成しました');
               }
             } catch (error) {
-              console.log('Board recreation failed:', error);
+              console.log('盤面の再作成に失敗しました:', error);
               // Last resort: reload page
               location.reload();
             }
           }, 200);
         } else {
-          console.log('Board instance not found for guest, reloading page');
+          console.log('ゲストの盤面インスタンスが見つかりません。ページをリロードします');
           location.reload();
         }
       } catch (error) {
-        console.log('Guest theme apply error:', error);
+        console.log('ゲストのテーマ適用エラー:', error);
         location.reload();
       }
     }, 100);
@@ -500,14 +500,14 @@ document.addEventListener('DOMContentLoaded', function() {
         window.updateBoardTheme();
       }, 300);
     } else {
-      console.log('Theme manager not found, reloading page to apply theme');
+      console.log('テーママネージャーが見つかりません。テーマを適用するためにページをリロードします');
       setTimeout(() => {
         location.reload();
       }, 500);
     }
     @endif
 
-    console.log('Theme apply triggered for:', themeType, '=', themeName);
+    console.log('テーマ適用がトリガーされました:', themeType, '=', themeName);
   }
 
 

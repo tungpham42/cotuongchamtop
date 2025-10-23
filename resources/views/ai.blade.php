@@ -72,7 +72,7 @@ switch ($levelTxt) {
   <a data-step="3" data-intro="Ấn vào đây để quay lại nước trước đó" id="undo" class="w-25 btn btn-dark btn-lg"><i class="fad fa-undo-alt"></i> Đi lại</a>
 </p>
 <p class="w-100 text-center mt-0 mb-1">
-  <a data-step="5" data-intro="Nơi luyện tập với chính mình nhé" class="w-25 btn btn-dark btn-lg showPromotion" href="{{ url('/choi-mot-minh') }}"><i class="fad fa-user"></i> Một mình</a>
+  <a data-step="5" data-intro="Nơi luyện tập với chính mình nhé" class="w-25 btn btn-dark btn-lg haltPromotion" href="{{ url('/choi-mot-minh') }}"><i class="fad fa-user"></i> Một mình</a>
   <a data-step="4" data-intro="Ấn vào đây để chơi lại từ đầu" id="reset" class="w-25 btn btn-dark btn-lg"><i class="fad fa-redo-alt"></i> Chơi lại</a>
 </p>
 <script>

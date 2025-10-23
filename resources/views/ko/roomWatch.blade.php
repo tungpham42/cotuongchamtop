@@ -16,9 +16,9 @@
 @if (!isset($room->host_id) && !isset($room->result))
 <p class="w-100 text-center">
   @if (str_contains($room->fen, ' r '))
-  <a data-step="2" data-intro="사용 가능한 경우 여기를 클릭하여 방에 입장하세요" id="join-link" class="btn btn-danger text-light btn-lg showPromotion" href="{{ url('/') }}/bang/{{ $roomCode }}" data-toggle="tooltip" data-placement="top" title="이번에는 당신 차례예요"><i class="fad fa-sign-in-alt"></i> 게임에 참여하세요</a>
+  <a data-step="2" data-intro="사용 가능한 경우 여기를 클릭하여 방에 입장하세요" id="join-link" class="btn btn-danger text-light btn-lg haltPromotion" href="{{ url('/') }}/bang/{{ $roomCode }}" data-toggle="tooltip" data-placement="top" title="이번에는 당신 차례예요"><i class="fad fa-sign-in-alt"></i> 게임에 참여하세요</a>
   @elseif (str_contains($room->fen, ' b '))
-  <a data-step="2" data-intro="사용 가능한 경우 여기를 클릭하여 방에 입장하세요" id="join-link" class="btn btn-dark text-light btn-lg showPromotion" href="{{ url('/') }}/bang/{{ $roomCode }}/bangmun" data-toggle="tooltip" data-placement="top" title="이번에는 당신 차례예요"><i class="fad fa-sign-in-alt"></i> 게임에 참여하세요</a>
+  <a data-step="2" data-intro="사용 가능한 경우 여기를 클릭하여 방에 입장하세요" id="join-link" class="btn btn-dark text-light btn-lg haltPromotion" href="{{ url('/') }}/bang/{{ $roomCode }}/bangmun" data-toggle="tooltip" data-placement="top" title="이번에는 당신 차례예요"><i class="fad fa-sign-in-alt"></i> 게임에 참여하세요</a>
   @endif
 </p>
 @else

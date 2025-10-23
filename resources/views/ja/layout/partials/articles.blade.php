@@ -8,7 +8,7 @@
                 <div class="card shadow-lg rounded border-dark">
                     <a class="showPromotion" target="_blank" href="{{ url('/') }}/tin-tuc/{{ $article->post_name }}"><img class="card-img-top" src="{{ $article->getImageAttribute() }}" alt="{{ $article->post_title }}"></a>
                     <div class="card-body bg-dark p-2">
-                        <a class="text-light showPromotion" target="_blank" href="{{ url('/') }}/tin-tuc/{{ $article->post_name }}"><h5 class="card-title text-light m-0 font-weight-light">{{ $article->post_title }}</h5></a>
+                        <a class="text-light haltPromotion" target="_blank" href="{{ url('/') }}/tin-tuc/{{ $article->post_name }}"><h5 class="card-title text-light m-0 font-weight-light">{{ $article->post_title }}</h5></a>
                         <p class="card-text">{{ $article->post_excerpt }}</p>
                     </div>
                 </div>

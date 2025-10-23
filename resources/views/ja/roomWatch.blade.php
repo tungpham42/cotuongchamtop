@@ -16,9 +16,9 @@
 @if (!isset($room->host_id) && !isset($room->result))
 <p class="w-100 text-center">
   @if (str_contains($room->fen, ' r '))
-  <a data-step="2" data-intro="利用可能になった時にはここをクリックして部屋に入ってください" id="join-link" class="btn btn-danger text-light btn-lg showPromotion" href="{{ url('/') }}/rumu/{{ $roomCode }}" data-toggle="tooltip" data-placement="top" title="あなたの番です"><i class="fad fa-sign-in-alt"></i> ゲームに参加する</a>
+  <a data-step="2" data-intro="利用可能になった時にはここをクリックして部屋に入ってください" id="join-link" class="btn btn-danger text-light btn-lg haltPromotion" href="{{ url('/') }}/rumu/{{ $roomCode }}" data-toggle="tooltip" data-placement="top" title="あなたの番です"><i class="fad fa-sign-in-alt"></i> ゲームに参加する</a>
   @elseif (str_contains($room->fen, ' b '))
-  <a data-step="2" data-intro="利用可能になった時にはここをクリックして部屋に入ってください" id="join-link" class="btn btn-dark text-light btn-lg showPromotion" href="{{ url('/') }}/rumu/{{ $roomCode }}/geesuto" data-toggle="tooltip" data-placement="top" title="あなたの番です"><i class="fad fa-sign-in-alt"></i> ゲームに参加する</a>
+  <a data-step="2" data-intro="利用可能になった時にはここをクリックして部屋に入ってください" id="join-link" class="btn btn-dark text-light btn-lg haltPromotion" href="{{ url('/') }}/rumu/{{ $roomCode }}/geesuto" data-toggle="tooltip" data-placement="top" title="あなたの番です"><i class="fad fa-sign-in-alt"></i> ゲームに参加する</a>
   @endif
 </p>
 @else

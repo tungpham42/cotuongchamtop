@@ -5,19 +5,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <header class="site-header shadow-lg sticky-top">
   <div class="container mx-auto">
     <div class="row align-items-center">
-      <a class="navbar-brand small mr-auto my-0 showPromotion" href="{{ url('') }}"><img src="{{ url('/') }}/img/app-icons/logo.png" class="xiangqi-logo" alt="xiangqi logo"><h1 class="d-inline" style="font-size: inherit !important;"><strong>Cờ tướng</strong></h1><span id="header-status"></span></a>
+      <a class="navbar-brand small mr-auto my-0 haltPromotion" href="{{ url('') }}"><img src="{{ url('/') }}/img/app-icons/logo.png" class="xiangqi-logo" alt="xiangqi logo"><h1 class="d-inline" style="font-size: inherit !important;"><strong>Cờ tướng</strong></h1><span id="header-status"></span></a>
       <div class="menu-toggle open" title="Trình đơn"></div>
       <nav class="navbar py-0">
         <ul class="nav navbar-nav">
           <li class="nav-item">
-            <a class="home showPromotion" href="{{ url('') }}"><i class="far fa-house"></i> Trang chủ</a>
+            <a class="home haltPromotion" href="{{ url('') }}"><i class="far fa-house"></i> Trang chủ</a>
           </li>
           <li class="dropdown">
             <a id="dashboardDropdown" class="dashboard room trophy thi-dau dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false"><i class="far fa-trophy-alt"></i> Thi đấu</a>
             <div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="dashboardDropdown">
-              <a class="rooms-list showPromotion dropdown-item{{ url()->current() == url('/sanh-cho') ? ' active disabled' : '' }}" href="{{ url('/sanh-cho') }}"><i class="far fa-list-alt"></i> Sảnh chờ</a>
+              <a class="rooms-list haltPromotion dropdown-item{{ url()->current() == url('/sanh-cho') ? ' active disabled' : '' }}" href="{{ url('/sanh-cho') }}"><i class="far fa-list-alt"></i> Sảnh chờ</a>
               <a class="showPromotion dropdown-item{{ url()->current() == url('/thanh-vien') ? ' active disabled' : '' }}" href="{{ url('/thanh-vien') }}"><i class="far fa-users"></i> Thành viên</a>
-              <a class="setup puzzle showPromotion dropdown-item{{ url()->current() == url('/tat-ca-the-co') ? ' active disabled' : '' }}" href="{{ url('/tat-ca-the-co') }}"><i class="far fa-puzzle-piece"></i> Cờ thế</a>
+              <a class="setup puzzle haltPromotion dropdown-item{{ url()->current() == url('/tat-ca-the-co') ? ' active disabled' : '' }}" href="{{ url('/tat-ca-the-co') }}"><i class="far fa-puzzle-piece"></i> Cờ thế</a>
               <a class="showPromotion dropdown-item{{ url()->current() == url('/thi-dau') ? ' active disabled' : '' }}" href="{{ url('/thi-dau') }}"><i class="far fa-list"></i> Đang thi đấu</a>
               <a class="showPromotion dropdown-item{{ url()->current() == url('/bang-xep-hang') ? ' active disabled' : '' }}" href="{{ url('/bang-xep-hang') }}"><i class="far fa-star"></i> Bảng xếp hạng</a>
               <a class="showPromotion dropdown-item{{ url()->current() == url('/tim-kiem') ? ' active disabled' : '' }}" href="{{ url('/tim-kiem') }}"><i class="far fa-search"></i> Tìm kiếm kỳ thủ</a>
@@ -67,11 +67,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <li class="dropdown language-switcher">
             <a class="lang dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false"><i class="far fa-language"></i> Tiếng Việt</a>
             <div class="dropdown-menu dropdown-menu-right shadow">
-              <a class="dropdown-item showPromotion active disabled" href="{{ url('/') }}"><span class="shadow-sm fi fi-vn"></span> Tiếng Việt</a>
-              <a class="dropdown-item showPromotion" href="{{ url('/en') }}"><span class="shadow-sm fi fi-us"></span> English</a>
-              <a class="dropdown-item showPromotion" href="{{ url('/ja') }}"><span class="shadow-sm fi fi-jp"></span> 日本語</a>
-              <a class="dropdown-item showPromotion" href="{{ url('/ko') }}"><span class="shadow-sm fi fi-kr"></span> 한국어</a>
-              <a class="dropdown-item showPromotion" href="{{ url('/zh') }}"><span class="shadow-sm fi fi-cn"></span> 中文</a>
+              <a class="dropdown-item haltPromotion active disabled" href="{{ url('/') }}"><span class="shadow-sm fi fi-vn"></span> Tiếng Việt</a>
+              <a class="dropdown-item haltPromotion" href="{{ url('/en') }}"><span class="shadow-sm fi fi-us"></span> English</a>
+              <a class="dropdown-item haltPromotion" href="{{ url('/ja') }}"><span class="shadow-sm fi fi-jp"></span> 日本語</a>
+              <a class="dropdown-item haltPromotion" href="{{ url('/ko') }}"><span class="shadow-sm fi fi-kr"></span> 한국어</a>
+              <a class="dropdown-item haltPromotion" href="{{ url('/zh') }}"><span class="shadow-sm fi fi-cn"></span> 中文</a>
             </div>
           </li>
         </ul>

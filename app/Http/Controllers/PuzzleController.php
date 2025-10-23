@@ -36,14 +36,14 @@ class PuzzleController extends Controller
                     return $puzzleRank;
                 })
                 ->addColumn('name', function($row){
-                    $puzzleName = '<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.URL::to('/').'/the-co/'.$row->slug.'">'.$row->name.'</a>';
+                    $puzzleName = '<a class="text-danger animate haltPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.URL::to('/').'/the-co/'.$row->slug.'">'.$row->name.'</a>';
                     return $puzzleName;
                 })
                 ->addColumn('rating', function($row){
                     return (int) $row->likes_count;
                 })
                 ->addColumn('action', function($row){
-                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 140px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.URL::to('/').'/giai-co-the/'.$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> Giải cờ thế</a>';
+                    $actionBtn = '<a class="btn btn-danger text-light mr-1 haltPromotion" style="width: 140px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.URL::to('/').'/giai-co-the/'.$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> Giải cờ thế</a>';
                     $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> Xem trước</a>';
                     return $actionBtn;
                 })
@@ -113,25 +113,25 @@ class PuzzleController extends Controller
             ->orderByDesc('comments_count')
             ->orderByDesc('last_activity_at')
             ->orderByDesc('likes_count');
-    }    
+    }
 
     public static function getUserPuzzles()
     {
         return self::puzzleListQuery()
             ->paginate(6);
-    } 
+    }
 
     public static function getFirstUserPuzzles()
     {
         return self::puzzleListQuery()
             ->paginate(6, ['*'], 'page', 1);
-    }    
+    }
 
     public static function getSitemapPuzzles()
     {
         return self::puzzleListQuery()
             ->paginate(4096);
-    }    
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -180,7 +180,7 @@ class PuzzleController extends Controller
             'slug' => $puzzle->slug,
             'url' => URL::to('/').'/the-co/'.$puzzle->slug,
         ], 201);
-    }    
+    }
 
     public function checkUniqueName(Request $request)
     {
@@ -237,17 +237,17 @@ class PuzzleController extends Controller
     {
         return Puzzle::where('name', $name)->value('fen');
     }
-    
+
     public static function findBySlug(string $slug): ?Puzzle
     {
         return Puzzle::where('slug', $slug)->first();
     }
-    
+
     public static function getFen($slug)
     {
         return optional(self::findBySlug($slug))->fen;
     }
-    
+
     public static function getName($slug)
     {
         return optional(self::findBySlug($slug))->name;
@@ -257,7 +257,7 @@ class PuzzleController extends Controller
     {
         $slug = $request->input('slug');
         return $this->react($request, $slug ?? '');
-    }    
+    }
 
     public function downvote(Request $request)
     {

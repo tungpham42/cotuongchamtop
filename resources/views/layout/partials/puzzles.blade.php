@@ -16,12 +16,12 @@
                         <div class="row mx-0">
                             <a class="col-4 btn btn-dark btn-sm text-light setup-puzzle-btn" href="javascript:backToPuzzle('{{ $puzzle->post_excerpt }}')" data-toggle="tooltip" data-placement="top" title='Xếp thế cờ "{{ $puzzle->post_title }}"'><i class="fad fa-puzzle-piece"></i></a>
                             <a class="col-4 btn btn-dark btn-sm text-light solve-puzzle-btn" href="javascript:solvePuzzle('{{ $puzzle->post_excerpt }}')" data-toggle="tooltip" data-placement="top" title='Giải thế cờ "{{ $puzzle->post_title }}"'><i class="fad fa-abacus"></i></a>
-                            <a class="col-4 btn btn-dark btn-sm text-light stopPromotion puzzle-hint-btn" target="_blank" href="https://blog.cotuong.top/the-co-dac-sac/{{ $puzzle->post_name }}" data-toggle="tooltip" data-placement="top" title='Lời giải của thế cờ "{{ $puzzle->post_title }}"'><i class="fad fa-info-square"></i></a>
+                            <a class="col-4 btn btn-dark btn-sm text-light haltPromotion puzzle-hint-btn" target="_blank" href="https://blog.cotuong.top/the-co-dac-sac/{{ $puzzle->post_name }}" data-toggle="tooltip" data-placement="top" title='Lời giải của thế cờ "{{ $puzzle->post_title }}"'><i class="fad fa-info-square"></i></a>
                         </div>
                     @else
                         <a class="stopPromotion" target="_blank" href="https://blog.cotuong.top/the-co-dac-sac/{{ $puzzle->post_name }}"><img class="card-img-top" src="{{ $puzzle->getImageAttribute() }}" alt="{{ $puzzle->post_title }}"></a>
                         <div class="card-body bg-dark p-2">
-                            <a class="text-light stopPromotion" target="_blank" href="https://blog.cotuong.top/the-co-dac-sac/{{ $puzzle->post_name }}"><h5 class="card-title text-light m-0 font-weight-light text-center">{{ $puzzle->post_title }}</h5></a>
+                            <a class="text-light haltPromotion" target="_blank" href="https://blog.cotuong.top/the-co-dac-sac/{{ $puzzle->post_name }}"><h5 class="card-title text-light m-0 font-weight-light text-center">{{ $puzzle->post_title }}</h5></a>
                         </div>
                     @endif
                 </div>
@@ -125,12 +125,12 @@
                             <div class="row mx-0">
                                 <a class="col-4 btn btn-dark btn-sm text-light setup-puzzle-btn" href="javascript:backToPuzzle('{{ $puzzle->post_excerpt }}')" data-toggle="tooltip" data-placement="top" title='Xếp thế cờ "{{ $puzzle->post_title }}"'><i class="fad fa-puzzle-piece"></i></a>
                                 <a class="col-4 btn btn-dark btn-sm text-light solve-puzzle-btn" href="javascript:solvePuzzle('{{ $puzzle->post_excerpt }}')" data-toggle="tooltip" data-placement="top" title='Giải thế cờ "{{ $puzzle->post_title }}"'><i class="fad fa-abacus"></i></a>
-                                <a class="col-4 btn btn-dark btn-sm text-light stopPromotion puzzle-hint-btn" target="_blank" href="https://blog.cotuong.top/the-co-dac-sac/{{ $puzzle->post_name }}" data-toggle="tooltip" data-placement="top" title='Lời giải của thế cờ "{{ $puzzle->post_title }}"'><i class="fad fa-info-square"></i></a>
+                                <a class="col-4 btn btn-dark btn-sm text-light haltPromotion puzzle-hint-btn" target="_blank" href="https://blog.cotuong.top/the-co-dac-sac/{{ $puzzle->post_name }}" data-toggle="tooltip" data-placement="top" title='Lời giải của thế cờ "{{ $puzzle->post_title }}"'><i class="fad fa-info-square"></i></a>
                             </div>
                         @else
                             <a class="stopPromotion" target="_blank" href="https://blog.cotuong.top/the-co-dac-sac/{{ $puzzle->post_name }}"><img class="card-img-top" src="{{ $puzzle->getImageAttribute() }}" alt="{{ $puzzle->post_title }}"></a>
                             <div class="card-body bg-dark p-2">
-                                <a class="text-light stopPromotion" target="_blank" href="https://blog.cotuong.top/the-co-dac-sac/{{ $puzzle->post_name }}"><h5 class="card-title text-light m-0 font-weight-light text-center">{{ $puzzle->post_title }}</h5></a>
+                                <a class="text-light haltPromotion" target="_blank" href="https://blog.cotuong.top/the-co-dac-sac/{{ $puzzle->post_name }}"><h5 class="card-title text-light m-0 font-weight-light text-center">{{ $puzzle->post_title }}</h5></a>
                             </div>
                         @endif
                     </div>

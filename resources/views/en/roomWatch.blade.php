@@ -16,9 +16,9 @@
 @if (!isset($room->host_id) && !isset($room->result))
 <p class="w-100 text-center">
   @if (str_contains($room->fen, ' r '))
-  <a data-step="2" data-intro="Click here to enter the room when it is available" id="join-link" class="btn btn-danger text-light btn-lg showPromotion" href="{{ url('/') }}/room/{{ $roomCode }}" data-toggle="tooltip" data-placement="top" title="It's your turn"><i class="fad fa-sign-in-alt"></i> Join the game</a>
+  <a data-step="2" data-intro="Click here to enter the room when it is available" id="join-link" class="btn btn-danger text-light btn-lg haltPromotion" href="{{ url('/') }}/room/{{ $roomCode }}" data-toggle="tooltip" data-placement="top" title="It's your turn"><i class="fad fa-sign-in-alt"></i> Join the game</a>
   @elseif (str_contains($room->fen, ' b '))
-  <a data-step="2" data-intro="Click here to enter the room when it is available" id="join-link" class="btn btn-dark text-light btn-lg showPromotion" href="{{ url('/') }}/room/{{ $roomCode }}/guest" data-toggle="tooltip" data-placement="top" title="It's your turn"><i class="fad fa-sign-in-alt"></i> Join the game</a>
+  <a data-step="2" data-intro="Click here to enter the room when it is available" id="join-link" class="btn btn-dark text-light btn-lg haltPromotion" href="{{ url('/') }}/room/{{ $roomCode }}/guest" data-toggle="tooltip" data-placement="top" title="It's your turn"><i class="fad fa-sign-in-alt"></i> Join the game</a>
   @endif
 </p>
 @else

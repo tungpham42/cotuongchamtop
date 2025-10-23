@@ -3,65 +3,65 @@
     <div class="row py-5 px-0">
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3 vcard">
         <p>連絡先メールアドレス</p>
-        <a class="w-100 email stopPromotion" href="mailto:tung.42@gmail.com">tung.42@gmail.com</a>
-        <p class="mt-3">著作権 <i class="fal fa-copyright"></i> {{ date('Y') }} <a class="url fn h-card stopPromotion" target="_blank" href="https://tungpham42.github.io/">Tung Pham</a></p>
+        <a class="w-100 email haltPromotion" href="mailto:tung.42@gmail.com">tung.42@gmail.com</a>
+        <p class="mt-3">著作権 <i class="fal fa-copyright"></i> {{ date('Y') }} <a class="url fn h-card haltPromotion" target="_blank" href="https://tungpham42.github.io/">Tung Pham</a></p>
         <div class="bg-white p-1" style="width: fit-content; border-radius: 0.5rem;"><a href="https://soft.io.vn" target="_blank"><img alt="Logo Soft" height="40" class="me-2" src="{{ url('') }}/img/soft-logo.webp"></a></div>
       </div>
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
         <ul class="list-unstyled">
           <li>
-            <a class="home stopPromotion" href="{{ url('/ja') }}"><i class="fal fa-home-lg-alt"></i> ホームページ</a>
+            <a class="home haltPromotion" href="{{ url('/ja') }}"><i class="fal fa-home-lg-alt"></i> ホームページ</a>
           </li>
           <li>
-            <a class="room stopPromotion rooms-list" href="{{ url('/heya-ichiran') }}"><i class="fal fa-list-alt"></i> 部屋一覧</a>
+            <a class="room haltPromotion rooms-list" href="{{ url('/heya-ichiran') }}"><i class="fal fa-list-alt"></i> 部屋一覧</a>
           </li>
           <li>
-            <a class="setup puzzle stopPromotion" href="{{ url('/pazuru') }}"><i class="fal fa-puzzle-piece"></i> パズル</a>
+            <a class="setup puzzle haltPromotion" href="{{ url('/pazuru') }}"><i class="fal fa-puzzle-piece"></i> パズル</a>
           </li>
           <li>
-            <a class="about stopPromotion" href="{{ url('/yaku') }}"><i class="fal fa-info-square"></i> 約</a>
+            <a class="about haltPromotion" href="{{ url('/yaku') }}"><i class="fal fa-info-square"></i> 約</a>
           </li>
           <li>
-            <a class="contact stopPromotion" href="{{ url('/kontakuto') }}"><i class="fal fa-envelope"></i> コンタクト</a>
+            <a class="contact haltPromotion" href="{{ url('/kontakuto') }}"><i class="fal fa-envelope"></i> コンタクト</a>
           </li>
           <li>
-            <a target="_blank" class="game stopPromotion" href="https://game.cotuong.top"><i class="fal fa-gamepad-alt"></i> ゲーム</a>
+            <a target="_blank" class="game haltPromotion" href="https://game.cotuong.top"><i class="fal fa-gamepad-alt"></i> ゲーム</a>
           </li>
           <li>
-            <a target="_blank" class="chat stopPromotion" href="https://chat.cotuong.top"><i class="fal fa-comment-lines"></i> チャットボックス</a>
+            <a target="_blank" class="chat haltPromotion" href="https://chat.cotuong.top"><i class="fal fa-comment-lines"></i> チャットボックス</a>
           </li>
           <li>
-            <a target="_blank" class="buy stopPromotion" href="https://www.codester.com/items/41601/multilingual-chinese-chess-game-with-many-options?ref=tungpham"><i class="fal fa-shopping-cart"></i> 買う</a>
+            <a target="_blank" class="buy haltPromotion" href="https://www.codester.com/items/41601/multilingual-chinese-chess-game-with-many-options?ref=tungpham"><i class="fal fa-shopping-cart"></i> 買う</a>
           </li>
           <li>
-            <a target="_blank" class="2048 stopPromotion" href="https://nhipsinhhoc.vn/ja/"><i class="fal fa-head-side-medical"></i> バイオリズム</a>
+            <a target="_blank" class="2048 haltPromotion" href="https://nhipsinhhoc.vn/ja/"><i class="fal fa-head-side-medical"></i> バイオリズム</a>
           </li>
           <li>
-            <a class="lang stopPromotion" href="{{ url($langViUrl) }}"><span class="fi fi-vn"></span> Tiếng Việt</a>
+            <a class="lang haltPromotion" href="{{ url($langViUrl) }}"><span class="fi fi-vn"></span> Tiếng Việt</a>
           </li>
           <li>
-            <a class="lang stopPromotion" href="{{ url($langEnUrl) }}"><span class="fi fi-us"></span> English</a>
+            <a class="lang haltPromotion" href="{{ url($langEnUrl) }}"><span class="fi fi-us"></span> English</a>
           </li>
           <li>
-            <a class="lang stopPromotion" href="{{ url($langKoUrl) }}"><span class="fi fi-kr"></span> 한국어</a>
+            <a class="lang haltPromotion" href="{{ url($langKoUrl) }}"><span class="fi fi-kr"></span> 한국어</a>
           </li>
           <li>
-            <a class="lang stopPromotion" href="{{ url($langZhUrl) }}"><span class="fi fi-cn"></span> 中文</a>
+            <a class="lang haltPromotion" href="{{ url($langZhUrl) }}"><span class="fi fi-cn"></span> 中文</a>
           </li>
         </ul>
       </div>
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
         <p>ソーシャルメディアで私たちを見つけてください</p>
-        <a class="w-100 mr-2 display-4 stopPromotion" target="_blank" href="https://www.youtube.com/@CoTuongVlog/videos"><i class="fab fa-youtube"></i></a>
-        <a class="w-100 mr-2 display-4 stopPromotion" target="_blank" href="https://www.facebook.com/CoTuongPage/"><i class="fab fa-facebook-square rounded"></i></a>
-        <a class="w-100 mr-2 display-4 stopPromotion" target="_blank" href="https://www.linkedin.com/company/cotuong/"><i class="fab fa-linkedin rounded"></i></a>
+        <a class="w-100 mr-2 display-4 haltPromotion" target="_blank" href="https://www.youtube.com/@CoTuongVlog/videos"><i class="fab fa-youtube"></i></a>
+        <a class="w-100 mr-2 display-4 haltPromotion" target="_blank" href="https://www.facebook.com/CoTuongPage/"><i class="fab fa-facebook-square rounded"></i></a>
+        <a class="w-100 mr-2 display-4 haltPromotion" target="_blank" href="https://www.linkedin.com/company/cotuong/"><i class="fab fa-linkedin rounded"></i></a>
       </div>
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
         <p>HTML5 および CSS3 で検証済み</p>
-        <a title="Valid HTML5" class="w-100 mr-2 display-4 text-decoration-none stopPromotion" target="_blank" href="https://validator.w3.org/check?uri=referer">
+        <a title="Valid HTML5" class="w-100 mr-2 display-4 text-decoration-none haltPromotion" target="_blank" href="https://validator.w3.org/check?uri=referer">
           <i class="fab fa-html5"></i>
         </a>
-        <a title="Valid CSS3" class="w-100 mr-2 display-4 text-decoration-none stopPromotion" target="_blank" href="https://jigsaw.w3.org/css-validator/check/referer">
+        <a title="Valid CSS3" class="w-100 mr-2 display-4 text-decoration-none haltPromotion" target="_blank" href="https://jigsaw.w3.org/css-validator/check/referer">
           <i class="fab fa-css3-alt"></i>
         </a>
       </div>

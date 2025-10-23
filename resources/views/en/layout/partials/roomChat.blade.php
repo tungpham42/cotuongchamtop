@@ -1,18 +1,22 @@
 @php
 use App\Models\ChatMessage;
 
+// NOTE: session_start() should typically be handled by Laravel's session middleware,
+// but it is included here as it was in the original file.
 session_name('CoTuong-'.$roomCode);
 session_start();
 
 // Initialize room messages if first time
 $messagesCount = ChatMessage::where('room_code', $roomCode)->count();
 if ($messagesCount == 0) {
-    ChatMessage::addMessage($roomCode, 'System', 'Phòng được tạo', 'system');
+    // Translation: 'Phòng được tạo' -> 'Room created'
+    ChatMessage::addMessage($roomCode, 'System', 'Room created', 'system');
 }
 
 if (isset($_GET['logout'])) {
     if (isset($_SESSION['name'])) {
-        ChatMessage::addMessage($roomCode, $_SESSION['name'], 'đã rời khỏi phòng chat', 'leave');
+        // Translation: 'đã rời khỏi phòng chat' -> 'has left the chat room'
+        ChatMessage::addMessage($roomCode, $_SESSION['name'], 'has left the chat room', 'leave');
         $_SESSION = [];
         setcookie('cotuong_name', '', time() - 3600, "/");
     }
@@ -22,7 +26,8 @@ if (isset($_POST['enter'])) {
     if ($_POST['name'] != "") {
         $_SESSION['name'] = stripslashes(htmlspecialchars($_POST['name']));
         setcookie('cotuong_name', $_SESSION['name'], time() + (86400 * 30), "/");
-        ChatMessage::addMessage($roomCode, $_SESSION['name'], 'đã vào phòng chat', 'enter');
+        // Translation: 'đã vào phòng chat' -> 'has entered the chat room'
+        ChatMessage::addMessage($roomCode, $_SESSION['name'], 'has entered the chat room', 'enter');
     }
 }
 
@@ -187,12 +192,12 @@ if (!isset($_SESSION['name'])) {
 @endphp
 <div id="chat-wrapper">
     <div id="loginform">
-        <p>Nhập tên của bạn để chat!</p>
+        <p>Enter your name to chat!</p> {{-- 'Nhập tên của bạn để chat!' -> 'Enter your name to chat!' --}}
         <form id="login-form" method="post" action="{{ url()->current() }}">
             @csrf
-            <label for="name">Tên &#58;</label>
+            <label for="name">Name :</label> {{-- 'Tên &#58;' -> 'Name :' --}}
             <input type="text" name="name" id="name" value="{{ isset($_COOKIE['cotuong_name']) ? $_COOKIE['cotuong_name'] : '' }}" />
-            <input type="submit" name="enter" id="enter" value="Vào" />
+            <input type="submit" name="enter" id="enter" value="Enter" /> {{-- 'Vào' -> 'Enter' --}}
         </form>
         <div id="login-error" class="error"></div>
     </div>
@@ -203,9 +208,9 @@ if (!isset($_SESSION['name'])) {
                 @if($msg->type == 'system')
                     <span class='welcome-info'>{{ $msg->message }}</span>
                 @elseif($msg->type == 'enter')
-                    <span class='enter-info'>Người dùng <b class='user-name-enter'>{{ $msg->username }}</b> {{ $msg->message }}</span>
+                    <span class='enter-info'>User <b class='user-name-enter'>{{ $msg->username }}</b> {{ $msg->message }}</span> {{-- 'Người dùng' -> 'User' --}}
                 @elseif($msg->type == 'leave')
-                    <span class='left-info'>Người dùng <b class='user-name-left'>{{ $msg->username }}</b> {{ $msg->message }}</span>
+                    <span class='left-info'>User <b class='user-name-left'>{{ $msg->username }}</b> {{ $msg->message }}</span> {{-- 'Người dùng' -> 'User' --}}
                 @else
                     <b class='user-name'>{{ $msg->username }}</b>: {{ $msg->message }}
                 @endif
@@ -219,8 +224,8 @@ if (!isset($_SESSION['name'])) {
 @endphp
 <div id="chat-wrapper">
     <div id="menu">
-        <p class="welcome">Chào, <b>@php echo $_SESSION['name']; @endphp</b></p>
-        <p class="logout"><a id="exit" href="javascript:void(0);">Thoát chat</a></p>
+        <p class="welcome">Hello, <b>@php echo $_SESSION['name']; @endphp</b></p> {{-- 'Chào,' -> 'Hello,' --}}
+        <p class="logout"><a id="exit" href="javascript:void(0);">Exit chat</a></p> {{-- 'Thoát chat' -> 'Exit chat' --}}
     </div>
     <div id="chatbox">
         @foreach($chatMessages as $msg)
@@ -229,9 +234,9 @@ if (!isset($_SESSION['name'])) {
                 @if($msg->type == 'system')
                     <span class='welcome-info'>{{ $msg->message }}</span>
                 @elseif($msg->type == 'enter')
-                    <span class='enter-info'>Người dùng <b class='user-name-enter'>{{ $msg->username }}</b> {{ $msg->message }}</span>
+                    <span class='enter-info'>User <b class='user-name-enter'>{{ $msg->username }}</b> {{ $msg->message }}</span> {{-- 'Người dùng' -> 'User' --}}
                 @elseif($msg->type == 'leave')
-                    <span class='left-info'>Người dùng <b class='user-name-left'>{{ $msg->username }}</b> {{ $msg->message }}</span>
+                    <span class='left-info'>User <b class='user-name-left'>{{ $msg->username }}</b> {{ $msg->message }}</span> {{-- 'Người dùng' -> 'User' --}}
                 @else
                     <b class='user-name'>{{ $msg->username }}</b>: {{ $msg->message }}
                 @endif
@@ -240,8 +245,8 @@ if (!isset($_SESSION['name'])) {
         @endforeach
     </div>
     <form name="message" id="message-form">
-        <input name="usermsg" type="text" id="usermsg" required="required" placeholder="Nhập tin nhắn..." />
-        <input name="submitmsg" type="submit" id="submitmsg" value="Gửi" />
+        <input name="usermsg" type="text" id="usermsg" required="required" placeholder="Enter message..." /> {{-- 'Nhập tin nhắn...' -> 'Enter message...' --}}
+        <input name="submitmsg" type="submit" id="submitmsg" value="Send" /> {{-- 'Gửi' -> 'Send' --}}
     </form>
 </div>
 @php
@@ -267,21 +272,22 @@ $(document).ready(function () {
 
         const name = $("#name").val().trim();
         if (name === "") {
-            $("#login-error").text("Vui lòng nhập tên");
+            // Translation: 'Vui lòng nhập tên' -> 'Please enter a name'
+            $("#login-error").text("Please enter a name");
             return false;
         }
 
-        // Update UI immediately
+        // Update UI immediately (with English text)
         currentUser = name;
         $("#chat-wrapper").html(`
             <div id="menu">
-                <p class="welcome">Chào, <b>${name}</b></p>
-                <p class="logout"><a id="exit" href="javascript:void(0);">Thoát chat</a></p>
+                <p class="welcome">Hello, <b>${name}</b></p>
+                <p class="logout"><a id="exit" href="javascript:void(0);">Exit chat</a></p>
             </div>
             <div id="chatbox"></div>
             <form name="message" id="message-form">
-                <input name="usermsg" type="text" id="usermsg" required="required" placeholder="Nhập tin nhắn..." />
-                <input name="submitmsg" type="submit" id="submitmsg" value="Gửi" />
+                <input name="usermsg" type="text" id="usermsg" required="required" placeholder="Enter message..." />
+                <input name="submitmsg" type="submit" id="submitmsg" value="Send" />
             </form>
         `);
 
@@ -292,7 +298,7 @@ $(document).ready(function () {
             data: {
                 _token: "{{ csrf_token() }}",
                 name: name,
-                enter: "Vào"
+                enter: "Enter"
             },
             success: function (response) {
                 console.log("Login successful:", response);
@@ -300,18 +306,19 @@ $(document).ready(function () {
             },
             error: function (xhr, status, error) {
                 console.error("Login error:", xhr, status, error);
-                $("#login-error").text("Lỗi khi đăng nhập. Vui lòng thử lại.");
-                // Revert UI if login fails
+                // Translation: 'Lỗi khi đăng nhập. Vui lòng thử lại.' -> 'Error during login. Please try again.'
+                $("#login-error").text("Error during login. Please try again.");
+                // Revert UI if login fails (with English text)
                 $("#chat-wrapper").html(`
                     <div id="loginform">
-                        <p>Nhập tên của bạn để chat!</p>
+                        <p>Enter your name to chat!</p>
                         <form id="login-form" method="post">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <label for="name">Tên &#58;</label>
+                            <label for="name">Name :</label>
                             <input type="text" name="name" id="name" value="${name}" />
-                            <input type="submit" name="enter" id="enter" value="Vào" />
+                            <input type="submit" name="enter" id="enter" value="Enter" />
                         </form>
-                        <div id="login-error" class="error">Lỗi khi đăng nhập. Vui lòng thử lại.</div>
+                        <div id="login-error" class="error">Error during login. Please try again.</div>
                     </div>
                     <div id="chatbox"></div>
                 `);
@@ -326,11 +333,12 @@ $(document).ready(function () {
         e.preventDefault();
         const clientmsg = $("#usermsg").val().trim();
         if (clientmsg === "") {
+            // Translation: 'Vui lòng nhập tin nhắn.' -> 'Please enter a message.'
             bootbox.alert({
-                message: "Vui lòng nhập tin nhắn.",
+                message: "Please enter a message.",
                 size: 'small',
                 centerVertical: true,
-                locale: 'vi',
+                locale: 'en', // Set locale to English for Bootbox
                 closeButton: false,
                 buttons: {
                     ok: {
@@ -361,33 +369,36 @@ $(document).ready(function () {
     // Handle logout
     $("#chat-wrapper").on("click", "#exit", function (e) {
         e.preventDefault();
+        // Translation: 'Kết thúc phiên chat này?' -> 'End this chat session?'
         bootbox.confirm({
-            message: "Kết thúc phiên chat này?",
+            message: "End this chat session?",
             centerVertical: true,
-            locale: 'vi',
+            locale: 'en', // Set locale to English for Bootbox
             closeButton: false,
             buttons: {
                 confirm: {
-                    label: '<i class="fas fa-check"></i> Thoát',
+                    // Translation: 'Thoát' -> 'Exit'
+                    label: '<i class="fas fa-check"></i> Exit',
                     className: 'btn-danger pulse-red'
                 },
                 cancel: {
-                    label: '<i class="fas fa-times"></i> Hủy',
+                    // Translation: 'Hủy' -> 'Cancel'
+                    label: '<i class="fas fa-times"></i> Cancel',
                     className: 'btn-dark text-light'
                 }
             },
             callback: function (result) {
                 if (result) {
-                    // Update UI immediately
+                    // Update UI immediately (with English text)
                     currentUser = "";
                     $("#chat-wrapper").html(`
                         <div id="loginform">
-                            <p>Nhập tên của bạn để chat!</p>
+                            <p>Enter your name to chat!</p>
                             <form id="login-form" method="post">
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                <label for="name">Tên &#58;</label>
+                                <label for="name">Name :</label>
                                 <input type="text" name="name" id="name" value="" />
-                                <input type="submit" name="enter" id="enter" value="Vào" />
+                                <input type="submit" name="enter" id="enter" value="Enter" />
                             </form>
                             <div id="login-error" class="error"></div>
                         </div>
@@ -408,7 +419,8 @@ $(document).ready(function () {
                         },
                         error: function (xhr, status, error) {
                             console.error("Logout error:", xhr, status, error);
-                            $("#login-error").text("Lỗi khi thoát. Vui lòng thử lại.");
+                            // Translation: 'Lỗi khi thoát. Vui lòng thử lại.' -> 'Error during exit. Please try again.'
+                            $("#login-error").text("Error during exit. Please try again.");
                         }
                     });
                 }
@@ -437,9 +449,11 @@ $(document).ready(function () {
                         if (msg.type === 'system') {
                             html += "<span class='welcome-info'>" + msg.message + "</span>";
                         } else if (msg.type === 'enter') {
-                            html += "<span class='enter-info'>Người dùng <b class='user-name-enter'>" + msg.username + "</b> " + msg.message + "</span>";
+                            // Translation: 'Người dùng' -> 'User'
+                            html += "<span class='enter-info'>User <b class='user-name-enter'>" + msg.username + "</b> " + msg.message + "</span>";
                         } else if (msg.type === 'leave') {
-                            html += "<span class='left-info'>Người dùng <b class='user-name-left'>" + msg.username + "</b> " + msg.message + "</span>";
+                            // Translation: 'Người dùng' -> 'User'
+                            html += "<span class='left-info'>User <b class='user-name-left'>" + msg.username + "</b> " + msg.message + "</span>";
                         } else {
                             html += "<b class='user-name'>" + msg.username + "</b>: " + msg.message;
                         }
@@ -459,6 +473,7 @@ $(document).ready(function () {
         });
     }
 
+    // Poll for new messages every 1 second
     setInterval(loadLog, 1000);
 });
 </script>

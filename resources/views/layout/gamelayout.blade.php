@@ -61,7 +61,7 @@
           <div class="row">
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-1">
               <div id="ban-co" class="mx-auto h-auto"></div>
-              @include('common.themeSelector')
+              @include('layout.partials.themeSelector')
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-auto">
               @yield('rightSide')
@@ -71,7 +71,7 @@
           <div class="puzzle-layout-wrapper">
             <div class="puzzle-layout-board">
               <div id="ban-co" class="mx-auto h-auto"></div>
-              @include('common.themeSelector')
+              @include('layout.partials.themeSelector')
               @yield('belowBoardExtras')
             </div>
             <div class="puzzle-layout-panel">
@@ -82,7 +82,7 @@
           <div class="row">
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
               <div id="ban-co" class="mx-auto h-auto"></div>
-              @include('common.themeSelector')
+              @include('layout.partials.themeSelector')
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-4 mt-sm-4 mt-xs-4">
               @include('layout.partials.roomChat')
@@ -97,7 +97,7 @@
               <p class="w-100 text-center my-3">
                 @if (!isset($room->result) && isset($room->host_id))
                   @if (auth()->check())
-                  <a id="choi" class="btn btn-danger text-light btn-lg showPromotion mx-auto" href="javascript:joinMatch('{{ $roomCode }}')"><i class="fad fa-mouse"></i> Chơi</a>
+                  <a id="choi" class="btn btn-danger text-light btn-lg haltPromotion mx-auto" href="javascript:joinMatch('{{ $roomCode }}')"><i class="fad fa-mouse"></i> Chơi</a>
                   <script>
                     function joinMatch(roomCode) {
                       var hostId = '';
@@ -175,10 +175,10 @@
                     }
                   </script>
                   @else
-                  <a class="btn btn-danger text-light btn-lg showPromotion thi-dau" href="{{ url('/dang-nhap') }}" data-toggle="tooltip" data-placement="top" title="Đăng nhập để thi đấu"><i class="fad fa-sign-in"></i> Đăng nhập</a>
+                  <a class="btn btn-danger text-light btn-lg haltPromotion thi-dau" href="{{ url('/dang-nhap') }}" data-toggle="tooltip" data-placement="top" title="Đăng nhập để thi đấu"><i class="fad fa-sign-in"></i> Đăng nhập</a>
                   @endif
                 @else
-                <a class="btn btn-danger text-light btn-lg showPromotion mx-auto rooms-list" href="{{ URL::to('/sanh-cho') }}"><i class="fad fa-chevron-circle-left"></i> Quay lại sảnh chờ</a>
+                <a class="btn btn-danger text-light btn-lg haltPromotion mx-auto rooms-list" href="{{ URL::to('/sanh-cho') }}"><i class="fad fa-chevron-circle-left"></i> Quay lại sảnh chờ</a>
                 @endif
                 @include('common.volumeBtn')
                 @include('common.tourBtn')

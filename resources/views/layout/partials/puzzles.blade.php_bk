@@ -8,7 +8,7 @@
                 <div class="card shadow-lg rounded border-dark">
                     <a class="stopPromotion" target="_blank" href="{{ url('/') }}/tin-tuc/{{ $puzzle->post_name }}"><img class="card-img-top" src="{{ $puzzle->getImageAttribute() }}" alt="{{ $puzzle->post_title }}"></a>
                     <div class="card-body bg-dark p-2">
-                        <a class="text-light stopPromotion" target="_blank" href="{{ url('/') }}/tin-tuc/{{ $puzzle->post_name }}"><h5 class="card-title text-light m-0 font-weight-light">{{ $puzzle->post_title }}</h5></a>
+                        <a class="text-light haltPromotion" target="_blank" href="{{ url('/') }}/tin-tuc/{{ $puzzle->post_name }}"><h5 class="card-title text-light m-0 font-weight-light">{{ $puzzle->post_title }}</h5></a>
                         <p class="card-text">{{ $puzzle->post_excerpt }}</p>
                     </div>
                 </div>

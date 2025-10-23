@@ -38,7 +38,7 @@
   <a data-step="2" data-intro="Ấn vào đây để quay lại nước trước đó" id="undo" class="w-25 btn btn-dark btn-lg"><i class="fad fa-undo-alt"></i> Đi lại</a>
 </p>
 <p class="w-100 text-center mt-0 mb-1">
-  <a data-step="3" data-intro="Ấn vào đây để đánh với máy" class="w-25 btn btn-dark btn-lg showPromotion" href="{{ url('') }}"><i class="fad fa-desktop"></i> Với máy</a>
+  <a data-step="3" data-intro="Ấn vào đây để đánh với máy" class="w-25 btn btn-dark btn-lg haltPromotion" href="{{ url('') }}"><i class="fad fa-desktop"></i> Với máy</a>
   <a data-step="4" data-intro="Ấn vào đây để chơi lại từ đầu" id="reset" class="w-25 btn btn-dark btn-lg"><i class="fad fa-redo-alt"></i> Chơi lại</a>
 </p>
 <script>

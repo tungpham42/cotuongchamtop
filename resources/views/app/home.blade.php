@@ -69,7 +69,7 @@
                                 {{ $playingRooms->links('vendor.pagination.match') }}
                                 @foreach($playingRooms as $room)
                                 <tr data-code="{{ $room->code }}" data-fen="{{ $room->fen }}" data-name="{{ $room->name }}">
-                                    <th scope="row" class="roomCode"><a class="text-danger showPromotion animate" href="{{ url('/phong/') }}/{{ $room->code }}/theo-doi">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></th>
+                                    <th scope="row" class="roomCode"><a class="text-danger haltPromotion animate" href="{{ url('/phong/') }}/{{ $room->code }}/theo-doi">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></th>
                                     <td class="host-name">
                                         {!! app('App\Http\Controllers\UserController')::renderPlayerName($room->host_id) !!}
                                     </td>
@@ -93,9 +93,9 @@
                                                 @endif
                                             @else
                                                 @if (isset($room->guest_id))
-                                                <a class="btn btn-sm btn-dark showPromotion" href="{{ url('/dang-nhap') }}"><i class="fad fa-sign-in"></i> Đăng nhập</a>
+                                                <a class="btn btn-sm btn-dark haltPromotion" href="{{ url('/dang-nhap') }}"><i class="fad fa-sign-in"></i> Đăng nhập</a>
                                                 @else
-                                                <a class="btn btn-sm btn-danger pulse-red showPromotion" href="{{ url('/dang-nhap') }}"><i class="fad fa-sign-in"></i> Đăng nhập</a>
+                                                <a class="btn btn-sm btn-danger pulse-red haltPromotion" href="{{ url('/dang-nhap') }}"><i class="fad fa-sign-in"></i> Đăng nhập</a>
                                                 @endif
                                             @endif
                                         @else

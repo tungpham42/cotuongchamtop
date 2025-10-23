@@ -34,22 +34,22 @@
           </div>
           @if ( $roomCode == '' )
           <div class="row">
-            <div class="puzzle-layout-wrapper">
-              <div class="puzzle-layout-board">
-                <div id="ban-co" class="mx-auto h-auto"></div>
-                @include('common.themeSelector')
-                @yield('belowBoardExtras')
-              </div>
+            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-1">
+              <div id="ban-co" class="mx-auto h-auto"></div>
+              @include('zh.layout.partials.themeSelector')
+            </div>
+            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-auto">
+              @yield('rightSide')
             </div>
           </div>
           @else
           <div class="row">
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
               <div id="ban-co" class="mx-auto h-auto"></div>
-              @include('common.themeSelector')
+              @include('zh.layout.partials.themeSelector')
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-4 mt-sm-4 mt-xs-4">
-              @include('layout.partials.roomChat')
+              @include('zh.layout.partials.roomChat')
               @include('zh.layout.partials.comments')
               @include('common.sideAds')
             </div>
@@ -58,13 +58,12 @@
           <div class="row">
             <div class="col-12">
               @if ( !isset($board) && $roomCode == '' )
-              <div class="dropup mx-auto text-center my-3">
+              {{-- <div class="dropup mx-auto text-center my-3">
                 <button class="btn btn-danger btn-lg dropdown-toggle pulse-red" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span data-toggle="tooltip" data-placement="top" title="在房间里和某人玩"><i class="fad fa-gamepad-alt"></i> 在线下棋</span>
                 </button>
                 @include('common.volumeBtn')
                 @include('common.tourBtn')
-                {{-- <a class="btn btn-dark text-light btn-lg stopPromotion shopee-link" href="https://shopee.vn/tungpham42" target="_blank"><i class="fad fa-shopping-cart"></i> 商店</a> --}}
                 <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/') }}/fangjian/{{ md5(time()) }}">
                   <a data-toggle="tooltip" data-placement="bottom" title="玩密码" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> 私有的</a>
                   @if ($randomRoom != null)
@@ -72,21 +71,21 @@
                   <a data-toggle="tooltip" data-placement="bottom" title="等候名单" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ URL::to('/fangjianliebiao') }}"><i class="fas fa-list-alt text-dark"></i> 房间列表</a>
                   @endif
                 </div>
-              </div>
+              </div> --}}
               @elseif ( $roomCode != '' )
               <p class="w-100 text-center my-3">
-                <a class="btn btn-danger text-light btn-lg stopPromotion mx-auto pulse-red rooms-list" href="{{ URL::to('/fangjianliebiao') }}"><i class="fad fa-chevron-circle-left"></i> 返回文件室列表</a>
+                <a class="btn btn-danger text-light btn-lg haltPromotion mx-auto pulse-red rooms-list" href="{{ URL::to('/fangjianliebiao') }}"><i class="fad fa-chevron-circle-left"></i> 返回文件室列表</a>
                 @include('common.volumeBtn')
                 @include('common.tourBtn')
               </p>
               @endif
-              <p class="w-100 text-center m-0">
+              {{-- <p class="w-100 text-center m-0">
                 <span class="rounded p-0" id="game-status"></span>
               </p>
               <p class="w-100 text-center mx-0 mb-0 mt-2">
                 <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> 游戏结束了</span>
               </p>
-              <div class="sharethis-inline-reaction-buttons"></div>
+              <div class="sharethis-inline-reaction-buttons"></div> --}}
               @include('common.ads')
               @yield('aboveContent')
               <div class="row">

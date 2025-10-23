@@ -1,39 +1,38 @@
-<!-- Theme Selector -->
 <div class="theme-selector-wrapper mt-2">
   <div class="theme-selector-panel">
     <div class="theme-section">
       <h6 class="theme-title">
-        <i class="fas fa-chess-board"></i> Màu bàn cờ
+        <i class="fas fa-chess-board"></i> Board Theme
       </h6>
       <div class="theme-options board-themes">
-        <button class="theme-option" data-theme-type="board" data-theme="xiangqi-board" title="Bàn cờ mặc định">
+        <button class="theme-option" data-theme-type="board" data-theme="xiangqi-board" title="Default board">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/xiangqi-board.svg" alt="Bàn cờ mặc định" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-default')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/xiangqi-board.svg" alt="Default board" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-default')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="ban-co-go" title="Gỗ nhạt">
+        <button class="theme-option" data-theme-type="board" data-theme="ban-co-go" title="Light wood">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/ban-co-go.svg" alt="Gỗ nhạt" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-light')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/ban-co-go.svg" alt="Light wood" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-light')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="wood-board" title="Gỗ đậm">
+        <button class="theme-option" data-theme-type="board" data-theme="wood-board" title="Dark wood">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/wood-board.svg" alt="Gỗ đậm" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-dark')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/wood-board.svg" alt="Dark wood" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-dark')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="ban-co" title="Vàng chói">
+        <button class="theme-option" data-theme-type="board" data-theme="ban-co" title="Bright yellow">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/ban-co.svg" alt="Vàng chói" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-yellow')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/ban-co.svg" alt="Bright yellow" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-yellow')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="banco" title="Sáng">
+        <button class="theme-option" data-theme-type="board" data-theme="banco" title="Light">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/banco.svg" alt="Sáng" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-light')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/banco.svg" alt="Light" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-light')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="chess-board" title="Cam nhạt">
+        <button class="theme-option" data-theme-type="board" data-theme="chess-board" title="Light orange">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/chess-board.svg" alt="Cam nhạt" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-orange')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/chess-board.svg" alt="Light orange" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-orange')" />
           </div>
         </button>
       </div>
@@ -41,47 +40,47 @@
 
     <div class="theme-section">
       <h6 class="theme-title">
-        <i class="fas fa-chess-knight"></i> Kiểu quân cờ
+        <i class="fas fa-chess-knight"></i> Piece Set
       </h6>
       <div class="theme-options piece-themes">
-        <button class="theme-option" data-theme-type="pieces" data-theme="wiki" title="Quân cờ mặc định">
+        <button class="theme-option" data-theme-type="pieces" data-theme="wiki" title="Default pieces">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/wiki/rk.svg" alt="Quân cờ mặc định" />
+            <img src="{{ url('/') }}/img/xiangqipieces/wiki/rk.svg" alt="Default pieces" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="tung" title="Đặc biệt">
+        <button class="theme-option" data-theme-type="pieces" data-theme="tung" title="Special">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/tung/rk.svg" alt="Đặc biệt" />
+            <img src="{{ url('/') }}/img/xiangqipieces/tung/rk.svg" alt="Special" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="do-den" title="Đỏ đen">
+        <button class="theme-option" data-theme-type="pieces" data-theme="do-den" title="Red & Black">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/do-den/rk.svg" alt="Đỏ đen" />
+            <img src="{{ url('/') }}/img/xiangqipieces/do-den/rk.svg" alt="Red & Black" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="graphic" title="Phương Tây">
+        <button class="theme-option" data-theme-type="pieces" data-theme="graphic" title="Western">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/graphic/rk.svg" alt="Phương Tây" />
+            <img src="{{ url('/') }}/img/xiangqipieces/graphic/rk.svg" alt="Western" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="co" title="Cam">
+        <button class="theme-option" data-theme-type="pieces" data-theme="co" title="Orange">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/co/rk.svg" alt="Cam" />
+            <img src="{{ url('/') }}/img/xiangqipieces/co/rk.svg" alt="Orange" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="wikimedia" title="Vàng đậm">
+        <button class="theme-option" data-theme-type="pieces" data-theme="wikimedia" title="Dark yellow">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/wikimedia/rk.svg" alt="Vàng đậm" />
+            <img src="{{ url('/') }}/img/xiangqipieces/wikimedia/rk.svg" alt="Dark yellow" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="quan" title="Sáng">
+        <button class="theme-option" data-theme-type="pieces" data-theme="quan" title="Light">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/quan/rk.svg" alt="Sáng" />
+            <img src="{{ url('/') }}/img/xiangqipieces/quan/rk.svg" alt="Light" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="traditional" title="Truyền thống">
+        <button class="theme-option" data-theme-type="pieces" data-theme="traditional" title="Traditional">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/traditional/rk.svg" alt="Truyền thống" />
+            <img src="{{ url('/') }}/img/xiangqipieces/traditional/rk.svg" alt="Traditional" />
           </div>
         </button>
       </div>
@@ -90,7 +89,7 @@
     <div class="theme-section mt-3">
       <div class="text-center">
         <button type="button" class="btn btn-danger btn-sm px-4" id="apply-theme-btn">
-          <i class="fas fa-check"></i> Áp dụng Theme
+          <i class="fas fa-check"></i> Apply Theme
         </button>
       </div>
     </div>
@@ -98,11 +97,12 @@
 
   <button class="theme-toggle-btn" id="theme-toggle-btn">
     <i class="fas fa-palette"></i>
-    <span class="theme-toggle-text">Tùy chỉnh</span>
+    <span class="theme-toggle-text">Customize</span>
   </button>
 </div>
 
 <style>
+/* Styles remain the same */
 .theme-selector-wrapper {
   position: relative;
   display: flex;
@@ -291,18 +291,18 @@ document.addEventListener('DOMContentLoaded', function() {
   // Set active theme on page load
   updateActiveThemes();
 
-  // Handle theme selection (chỉ update preview, chưa apply)
+  // Handle theme selection (updates preview only, does not apply yet)
   themeOptions.forEach(option => {
     option.addEventListener('click', function() {
       // Update active state for visual feedback
       handleThemeClick(this);
 
-      // Highlight apply button để user biết cần confirm
+      // Highlight apply button to let the user know confirmation is needed
       const applyBtn = document.getElementById('apply-theme-btn');
       if (applyBtn) {
         applyBtn.classList.add('btn-primary');
         applyBtn.classList.remove('btn-danger');
-        applyBtn.innerHTML = '<i class="fas fa-circle"></i> Áp dụng Theme';
+        applyBtn.innerHTML = '<i class="fas fa-circle"></i> Apply Theme';
       }
     });
   });
@@ -325,10 +325,10 @@ document.addEventListener('DOMContentLoaded', function() {
       // Show loading state
       this.classList.remove('btn-warning');
       this.classList.add('btn-info');
-      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang áp dụng...';
+      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Applying...';
       this.disabled = true;
 
-      // Save to server (sẽ reload page như system cũ)
+      // Save to server (will reload the page like the old system)
       @if(auth()->check())
       const formData = new FormData();
       formData.append('_token', '{{ csrf_token() }}');
@@ -336,18 +336,18 @@ document.addEventListener('DOMContentLoaded', function() {
       formData.append('board_theme', selectedBoardTheme);
       formData.append('pieces_theme', selectedPiecesTheme);
 
-      fetch('{{ url('/doi-giao-dien') }}', {
+      fetch('{{ url('/doi-giao-dien') }}', { // Note: URL endpoint is unchanged
         method: 'POST',
         body: formData
       }).then(response => {
         if (response.ok) {
-          // Success - system cũ sẽ redirect, ta cũng reload để consistent
+          // Success - old system would redirect, so we'll reload too for consistency
           this.classList.remove('btn-info');
           this.classList.add('btn-success');
-          this.innerHTML = '<i class="fas fa-check"></i> Thành công!';
+          this.innerHTML = '<i class="fas fa-check"></i> Success!';
 
           setTimeout(() => {
-            location.reload(); // Reload để apply theme như system cũ
+            location.reload(); // Reload to apply the theme like the old system
           }, 800);
         } else {
           throw new Error('Save failed');
@@ -356,17 +356,17 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Save error:', error);
         this.classList.remove('btn-info');
         this.classList.add('btn-danger');
-        this.innerHTML = '<i class="fas fa-times"></i> Lỗi!';
+        this.innerHTML = '<i class="fas fa-times"></i> Error!';
         this.disabled = false;
 
         setTimeout(() => {
           this.classList.remove('btn-danger');
           this.classList.add('btn-warning');
-          this.innerHTML = '<i class="fas exclamation-triangle"></i> Áp dụng Theme';
+          this.innerHTML = '<i class="fas exclamation-triangle"></i> Apply Theme';
         }, 2000);
       });
       @else
-      // Guest user - save to localStorage và apply
+      // Guest user - save to localStorage and apply
       localStorage.setItem('guest_board_theme', selectedBoardTheme);
       localStorage.setItem('guest_pieces_theme', selectedPiecesTheme);
 
@@ -376,13 +376,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
       this.classList.remove('btn-info');
       this.classList.add('btn-success');
-      this.innerHTML = '<i class="fas fa-check"></i> Đã áp dụng!';
+      this.innerHTML = '<i class="fas fa-check"></i> Applied!';
       this.disabled = false;
 
       setTimeout(() => {
         this.classList.remove('btn-success');
         this.classList.add('btn-danger');
-        this.innerHTML = '<i class="fas fa-check"></i> Áp dụng Theme';
+        this.innerHTML = '<i class="fas fa-check"></i> Apply Theme';
         panel.classList.remove('show');
       }, 2000);
       @endif

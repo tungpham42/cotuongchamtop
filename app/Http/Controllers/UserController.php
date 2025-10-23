@@ -32,7 +32,7 @@ class UserController extends Controller
                 ->addColumn('name', function($row){
                     $onlineStatus = self::onlineStatus($row->id);
                     $avatar = Avatar::create($row->name)->setDimension(28)->setFontSize(14);
-                    $userName = '<img src="' . $avatar . '" />&nbsp;<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" href="'.URL::to('/').'/ky-thu/'.$row->id.'">'.$row->name.'</a>&nbsp;' . $onlineStatus;
+                    $userName = '<img src="' . $avatar . '" />&nbsp;<a class="text-danger animate haltPromotion" style="cursor: pointer !important; text-decoration: none !important;" href="'.URL::to('/').'/ky-thu/'.$row->id.'">'.$row->name.'</a>&nbsp;' . $onlineStatus;
                     return $userName;
                 })
                 ->addColumn('elo', function($row){
@@ -124,16 +124,16 @@ class UserController extends Controller
     public static function updatePlayersStatus(Request $request)
     {
         $code = $request->input('ma-phong');
-    
+
         $roomData = Room::select('host_id', 'guest_id')
             ->where('code', '=', $code)
             ->first();
-    
+
         if ($roomData) {
             self::updatePlayerStatus($roomData->host_id);
             self::updatePlayerStatus($roomData->guest_id);
         }
-    }    
+    }
 
     public static function onlineStatus($id)
     {
@@ -185,7 +185,7 @@ class UserController extends Controller
             'new_confirm_password.required' => 'Mật khẩu lặp lại bắt buộc điền',
             'new_confirm_password.same' => 'Mật khẩu lặp lại và mật khẩu mới phải giống nhau.',
         ]);
-        
+
         $oldId = $request->input('current_id');
         $user = User::find($oldId);
 
@@ -240,7 +240,7 @@ class UserController extends Controller
         $user->board_theme = $request->input('board_theme');
         $user->pieces_theme = $request->input('pieces_theme');
         $user->save();
-    
+
         // return redirect('/thi-dau')->with('success', 'Bạn đã thay đổi giao diện thành công!');
         $previousUrl = Session::get('previousUrl');
 
@@ -251,13 +251,13 @@ class UserController extends Controller
     public static function renderName($id)
     {
         $user = User::find($id);
-    
+
         if ($user) {
             $onlineStatus = self::onlineStatus($id);
             $avatar = Avatar::create($user->name)->setDimension(38)->setFontSize(19);
             $profileLink = URL::to('/ky-thu/') . '/' . $id;
-    
-            return '<img src="' . $avatar . '" />&nbsp;<a class="text-light showPromotion animate-light" href="' . $profileLink . '">' . $user->name . '</a>&nbsp;' . $onlineStatus;
+
+            return '<img src="' . $avatar . '" />&nbsp;<a class="text-light haltPromotion animate-light" href="' . $profileLink . '">' . $user->name . '</a>&nbsp;' . $onlineStatus;
         } else {
             return '<span class="waitingIndicator">
                         <span class="indicator bg-danger"></span>
@@ -267,18 +267,18 @@ class UserController extends Controller
                         <span class="indicator bg-danger"></span>
                     </span>';
         }
-    }    
+    }
 
     public static function renderPlayerName($id)
     {
         $user = User::find($id);
-    
+
         if ($user) {
             $onlineStatus = self::onlineStatus($id);
             $avatar = Avatar::create($user->name)->setDimension(38)->setFontSize(19);
             $profileLink = URL::to('/ky-thu/') . '/' . $id;
-    
-            return '<img src="' . $avatar . '" />&nbsp;<a class="text-danger showPromotion animate" href="' . $profileLink . '">' . '# ' . $id . '  ' . $user->name . '</a>&nbsp;' . $onlineStatus;
+
+            return '<img src="' . $avatar . '" />&nbsp;<a class="text-danger haltPromotion animate" href="' . $profileLink . '">' . '# ' . $id . '  ' . $user->name . '</a>&nbsp;' . $onlineStatus;
         } else {
             return '<span class="waitingIndicator">
                         <span class="indicator bg-danger"></span>
@@ -288,7 +288,7 @@ class UserController extends Controller
                         <span class="indicator bg-danger"></span>
                     </span>';
         }
-    }    
+    }
 
     public static function renderPlayerRank($id)
     {
@@ -327,19 +327,19 @@ class UserController extends Controller
     {
         $user = User::find($id);
 
-        return '<a class="text-danger showPromotion animate" href="mailto:'.$user->email.'">'.$user->email.'</a>';
+        return '<a class="text-danger haltPromotion animate" href="mailto:'.$user->email.'">'.$user->email.'</a>';
     }
 
     public static function renderPlayerNameRoom($id)
     {
         $user = User::find($id);
-    
+
         if ($user) {
             $onlineStatus = self::onlineStatus($id);
             $avatar = Avatar::create($user->name)->setDimension(28)->setFontSize(14);
             $profileLink = URL::to('/ky-thu/') . '/' . $id;
-    
-            return '<img alt="' . $user->name . '" src="' . $avatar . '">&nbsp;<a class="text-light showPromotion animate-light" href="' . $profileLink . '">' . '# ' . $id . '  ' . $user->name . '</a>&nbsp;' . $onlineStatus;
+
+            return '<img alt="' . $user->name . '" src="' . $avatar . '">&nbsp;<a class="text-light haltPromotion animate-light" href="' . $profileLink . '">' . '# ' . $id . '  ' . $user->name . '</a>&nbsp;' . $onlineStatus;
         } else {
             return '<span class="waitingIndicator">
                         <span class="indicator bg-light"></span>
@@ -349,96 +349,96 @@ class UserController extends Controller
                         <span class="indicator bg-light"></span>
                     </span>';
         }
-    }    
+    }
 
     public static function renderPlayersTitle(Request $request)
     {
         $code = $request->input('ma-phong');
-    
+
         $roomData = Room::select('host_id', 'guest_id')
             ->where('code', '=', $code)
             ->first();
-    
+
         if ($roomData) {
             $hostTitle = self::renderPlayerNameRoom($roomData->host_id);
             $guestTitle = self::renderPlayerNameRoom($roomData->guest_id);
-    
+
             return '<span class="host-title">' . $hostTitle . '</span> <span class="guest-title">' . $guestTitle . '</span>';
         }
-    
+
         return '';
-    }    
+    }
 
     public static function getUserName($id)
     {
         $user = User::find($id);
-    
+
         if ($user) {
             return $user->name;
         }
-    
+
         return null;
-    }    
+    }
 
     public static function getUserEmail($id)
     {
         $user = User::find($id);
-    
+
         if ($user) {
             return $user->email;
         }
-    
+
         return null;
-    }    
+    }
 
     public static function getName(Request $request)
     {
         $id = $request->input('id');
         $user = User::find($id);
-    
+
         if ($user) {
             return $user->name;
         }
-    
+
         return null;
-    }    
+    }
 
     public static function getEmail(Request $request)
     {
         $id = $request->input('id');
         $user = User::find($id);
-    
+
         if ($user) {
             return $user->email;
         }
-    
+
         return null;
-    }    
+    }
 
     public static function getNameEmail(Request $request)
     {
         $id = $request->input('id');
         $user = User::find($id);
-    
+
         if ($user) {
             return [
                 'name' => $user->name,
                 'email' => $user->email,
             ];
         }
-    
+
         return null;
-    }    
+    }
 
     public static function getPoints(Request $request)
     {
         $id = $request->input('id');
         $user = User::find($id);
-    
+
         if ($user) {
             return $user->points;
         }
-    
+
         return null;
     }
 
@@ -483,7 +483,7 @@ class UserController extends Controller
                 ->count();
 
         $winMatchPoints = $winHostMatchPoints + $winGuestMatchPoints;
-        
+
         return $winMatchPoints;
     }
 
@@ -500,7 +500,7 @@ class UserController extends Controller
                 ->count();
 
         $loseMatchPoints = $loseHostMatchPoints + $loseGuestMatchPoints;
-        
+
         return $loseMatchPoints;
     }
 
@@ -527,7 +527,7 @@ class UserController extends Controller
                 ->count();
 
         $drawMatchPoints = $drawHostMatchPoints + $drawGuestMatchPoints;
-        
+
         return $drawMatchPoints;
     }
 
@@ -623,11 +623,11 @@ class UserController extends Controller
         // $users = DB::table('users')
         //         ->select('id')
         //         ->get();
-        
+
         // foreach ($users as $user) {
         //     self::updatePlayerPoints($user->id);
         // }
-        
+
         $data = User::select('id', 'email', 'name', 'elo', 'last_seen_at', 'created_at')
                 ->orderBy('elo', 'desc')
                 ->paginate(10);
@@ -640,7 +640,7 @@ class UserController extends Controller
         //         ->select('id')
         //         ->limit(10)
         //         ->get();
-        
+
         // foreach ($users as $user) {
         //     self::updatePlayerPoints($user->id);
         // }
@@ -657,7 +657,7 @@ class UserController extends Controller
         // $users = DB::table('users')
         //         ->select('id')
         //         ->get();
-        
+
         // foreach ($users as $user) {
         //     self::updatePlayerPoints($user->id);
         // }
@@ -670,31 +670,31 @@ class UserController extends Controller
     public static function renderPoints($id)
     {
         self::updatePlayerPoints($id);
-    
+
         $user = User::find($id);
-    
+
         if ($user) {
             return $user->points;
         }
-    
+
         return null;
     }
 
     public static function renderElo($id)
     {
         $user = User::find($id);
-    
+
         if ($user) {
             return ceil($user->elo);
         }
-    
+
         return null;
     }
 
     public static function renderWinMatchPoints($id)
     {
         self::updatePlayerPoints($id);
-        
+
         $winHostMatchPoints = Room::where('host_id', '=', $id)
                 ->where('result', '=', '1')
                 ->count();
@@ -704,14 +704,14 @@ class UserController extends Controller
                 ->count();
 
         $winMatchPoints = $winHostMatchPoints + $winGuestMatchPoints;
-        
+
         return $winMatchPoints;
     }
 
     public static function renderLoseMatchPoints($id)
     {
         self::updatePlayerPoints($id);
-        
+
         $loseHostMatchPoints = Room::where('guest_id', '=', $id)
                 ->where('result', '=', '1')
                 ->count();
@@ -721,14 +721,14 @@ class UserController extends Controller
                 ->count();
 
         $loseMatchPoints = $loseHostMatchPoints + $loseGuestMatchPoints;
-        
+
         return $loseMatchPoints;
     }
 
     public static function renderDrawMatchPoints($id)
     {
         self::updatePlayerPoints($id);
-        
+
         $drawHostMatchPoints = Room::where('host_id', '=', $id)
                 ->where('result', '=', '0')
                 ->count();
@@ -738,14 +738,14 @@ class UserController extends Controller
                 ->count();
 
         $drawMatchPoints = $drawHostMatchPoints + $drawGuestMatchPoints;
-        
+
         return $drawMatchPoints;
     }
 
     public static function renderTotalMatchPoints($id)
     {
         self::updatePlayerPoints($id);
-        
+
         $winHostMatchPoints = Room::where('host_id', '=', $id)
                 ->where('result', '=', '1')
                 ->count();

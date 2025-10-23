@@ -1,18 +1,22 @@
 @php
 use App\Models\ChatMessage;
 
+// NOTE: session_start() should typically be handled by Laravel's session middleware,
+// but it is included here as it was in the original file.
 session_name('CoTuong-'.$roomCode);
 session_start();
 
 // Initialize room messages if first time
 $messagesCount = ChatMessage::where('room_code', $roomCode)->count();
 if ($messagesCount == 0) {
-    ChatMessage::addMessage($roomCode, 'System', 'Phòng được tạo', 'system');
+    // Translation: 'Phòng được tạo' -> 'ルームが作成されました'
+    ChatMessage::addMessage($roomCode, 'System', 'ルームが作成されました', 'system');
 }
 
 if (isset($_GET['logout'])) {
     if (isset($_SESSION['name'])) {
-        ChatMessage::addMessage($roomCode, $_SESSION['name'], 'đã rời khỏi phòng chat', 'leave');
+        // Translation: 'đã rời khỏi phòng chat' -> 'チャットルームから退室しました'
+        ChatMessage::addMessage($roomCode, $_SESSION['name'], 'チャットルームから退室しました', 'leave');
         $_SESSION = [];
         setcookie('cotuong_name', '', time() - 3600, "/");
     }
@@ -22,7 +26,8 @@ if (isset($_POST['enter'])) {
     if ($_POST['name'] != "") {
         $_SESSION['name'] = stripslashes(htmlspecialchars($_POST['name']));
         setcookie('cotuong_name', $_SESSION['name'], time() + (86400 * 30), "/");
-        ChatMessage::addMessage($roomCode, $_SESSION['name'], 'đã vào phòng chat', 'enter');
+        // Translation: 'đã vào phòng chat' -> 'チャットルームに入室しました'
+        ChatMessage::addMessage($roomCode, $_SESSION['name'], 'チャットルームに入室しました', 'enter');
     }
 }
 
@@ -187,12 +192,12 @@ if (!isset($_SESSION['name'])) {
 @endphp
 <div id="chat-wrapper">
     <div id="loginform">
-        <p>Nhập tên của bạn để chat!</p>
+        <p>チャットするために名前を入力してください！</p> {{-- 'Nhập tên của bạn để chat!' -> 'チャットするために名前を入力してください！' --}}
         <form id="login-form" method="post" action="{{ url()->current() }}">
             @csrf
-            <label for="name">Tên &#58;</label>
+            <label for="name">名前：</label> {{-- 'Tên &#58;' -> '名前：' --}}
             <input type="text" name="name" id="name" value="{{ isset($_COOKIE['cotuong_name']) ? $_COOKIE['cotuong_name'] : '' }}" />
-            <input type="submit" name="enter" id="enter" value="Vào" />
+            <input type="submit" name="enter" id="enter" value="入室" /> {{-- 'Vào' -> '入室' --}}
         </form>
         <div id="login-error" class="error"></div>
     </div>
@@ -203,9 +208,9 @@ if (!isset($_SESSION['name'])) {
                 @if($msg->type == 'system')
                     <span class='welcome-info'>{{ $msg->message }}</span>
                 @elseif($msg->type == 'enter')
-                    <span class='enter-info'>Người dùng <b class='user-name-enter'>{{ $msg->username }}</b> {{ $msg->message }}</span>
+                    <span class='enter-info'>ユーザー <b class='user-name-enter'>{{ $msg->username }}</b> {{ $msg->message }}</span> {{-- 'Người dùng' -> 'ユーザー' --}}
                 @elseif($msg->type == 'leave')
-                    <span class='left-info'>Người dùng <b class='user-name-left'>{{ $msg->username }}</b> {{ $msg->message }}</span>
+                    <span class='left-info'>ユーザー <b class='user-name-left'>{{ $msg->username }}</b> {{ $msg->message }}</span> {{-- 'Người dùng' -> 'ユーザー' --}}
                 @else
                     <b class='user-name'>{{ $msg->username }}</b>: {{ $msg->message }}
                 @endif
@@ -219,8 +224,8 @@ if (!isset($_SESSION['name'])) {
 @endphp
 <div id="chat-wrapper">
     <div id="menu">
-        <p class="welcome">Chào, <b>@php echo $_SESSION['name']; @endphp</b></p>
-        <p class="logout"><a id="exit" href="javascript:void(0);">Thoát chat</a></p>
+        <p class="welcome">ようこそ、<b>@php echo $_SESSION['name']; @endphp</b></p> {{-- 'Chào,' -> 'ようこそ、' --}}
+        <p class="logout"><a id="exit" href="javascript:void(0);">チャットを終了</a></p> {{-- 'Thoát chat' -> 'チャットを終了' --}}
     </div>
     <div id="chatbox">
         @foreach($chatMessages as $msg)
@@ -229,9 +234,9 @@ if (!isset($_SESSION['name'])) {
                 @if($msg->type == 'system')
                     <span class='welcome-info'>{{ $msg->message }}</span>
                 @elseif($msg->type == 'enter')
-                    <span class='enter-info'>Người dùng <b class='user-name-enter'>{{ $msg->username }}</b> {{ $msg->message }}</span>
+                    <span class='enter-info'>ユーザー <b class='user-name-enter'>{{ $msg->username }}</b> {{ $msg->message }}</span> {{-- 'Người dùng' -> 'ユーザー' --}}
                 @elseif($msg->type == 'leave')
-                    <span class='left-info'>Người dùng <b class='user-name-left'>{{ $msg->username }}</b> {{ $msg->message }}</span>
+                    <span class='left-info'>ユーザー <b class='user-name-left'>{{ $msg->username }}</b> {{ $msg->message }}</span> {{-- 'Người dùng' -> 'ユーザー' --}}
                 @else
                     <b class='user-name'>{{ $msg->username }}</b>: {{ $msg->message }}
                 @endif
@@ -240,8 +245,8 @@ if (!isset($_SESSION['name'])) {
         @endforeach
     </div>
     <form name="message" id="message-form">
-        <input name="usermsg" type="text" id="usermsg" required="required" placeholder="Nhập tin nhắn..." />
-        <input name="submitmsg" type="submit" id="submitmsg" value="Gửi" />
+        <input name="usermsg" type="text" id="usermsg" required="required" placeholder="メッセージを入力..." /> {{-- 'Nhập tin nhắn...' -> 'メッセージを入力...' --}}
+        <input name="submitmsg" type="submit" id="submitmsg" value="送信" /> {{-- 'Gửi' -> '送信' --}}
     </form>
 </div>
 @php
@@ -267,7 +272,8 @@ $(document).ready(function () {
 
         const name = $("#name").val().trim();
         if (name === "") {
-            $("#login-error").text("Vui lòng nhập tên");
+            // Translation: 'Vui lòng nhập tên' -> '名前を入力してください'
+            $("#login-error").text("名前を入力してください");
             return false;
         }
 
@@ -275,13 +281,13 @@ $(document).ready(function () {
         currentUser = name;
         $("#chat-wrapper").html(`
             <div id="menu">
-                <p class="welcome">Chào, <b>${name}</b></p>
-                <p class="logout"><a id="exit" href="javascript:void(0);">Thoát chat</a></p>
+                <p class="welcome">ようこそ、<b>${name}</b></p>
+                <p class="logout"><a id="exit" href="javascript:void(0);">チャットを終了</a></p>
             </div>
             <div id="chatbox"></div>
             <form name="message" id="message-form">
-                <input name="usermsg" type="text" id="usermsg" required="required" placeholder="Nhập tin nhắn..." />
-                <input name="submitmsg" type="submit" id="submitmsg" value="Gửi" />
+                <input name="usermsg" type="text" id="usermsg" required="required" placeholder="メッセージを入力..." />
+                <input name="submitmsg" type="submit" id="submitmsg" value="送信" />
             </form>
         `);
 
@@ -292,7 +298,7 @@ $(document).ready(function () {
             data: {
                 _token: "{{ csrf_token() }}",
                 name: name,
-                enter: "Vào"
+                enter: "入室" // Japanese text sent to server (if needed)
             },
             success: function (response) {
                 console.log("Login successful:", response);
@@ -300,18 +306,19 @@ $(document).ready(function () {
             },
             error: function (xhr, status, error) {
                 console.error("Login error:", xhr, status, error);
-                $("#login-error").text("Lỗi khi đăng nhập. Vui lòng thử lại.");
-                // Revert UI if login fails
+                // Translation: 'Lỗi khi đăng nhập. Vui lòng thử lại.' -> 'ログインエラーです。やり直してください。'
+                $("#login-error").text("ログインエラーです。やり直してください。");
+                // Revert UI if login fails (with Japanese text)
                 $("#chat-wrapper").html(`
                     <div id="loginform">
-                        <p>Nhập tên của bạn để chat!</p>
+                        <p>チャットするために名前を入力してください！</p>
                         <form id="login-form" method="post">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <label for="name">Tên &#58;</label>
+                            <label for="name">名前：</label>
                             <input type="text" name="name" id="name" value="${name}" />
-                            <input type="submit" name="enter" id="enter" value="Vào" />
+                            <input type="submit" name="enter" id="enter" value="入室" />
                         </form>
-                        <div id="login-error" class="error">Lỗi khi đăng nhập. Vui lòng thử lại.</div>
+                        <div id="login-error" class="error">ログインエラーです。やり直してください。</div>
                     </div>
                     <div id="chatbox"></div>
                 `);
@@ -326,11 +333,12 @@ $(document).ready(function () {
         e.preventDefault();
         const clientmsg = $("#usermsg").val().trim();
         if (clientmsg === "") {
+            // Translation: 'Vui lòng nhập tin nhắn.' -> 'メッセージを入力してください。'
             bootbox.alert({
-                message: "Vui lòng nhập tin nhắn.",
+                message: "メッセージを入力してください。",
                 size: 'small',
                 centerVertical: true,
-                locale: 'vi',
+                locale: 'ja', // Set locale to Japanese for Bootbox
                 closeButton: false,
                 buttons: {
                     ok: {
@@ -361,33 +369,36 @@ $(document).ready(function () {
     // Handle logout
     $("#chat-wrapper").on("click", "#exit", function (e) {
         e.preventDefault();
+        // Translation: 'Kết thúc phiên chat này?' -> 'このチャットセッションを終了しますか？'
         bootbox.confirm({
-            message: "Kết thúc phiên chat này?",
+            message: "このチャットセッションを終了しますか？",
             centerVertical: true,
-            locale: 'vi',
+            locale: 'ja', // Set locale to Japanese for Bootbox
             closeButton: false,
             buttons: {
                 confirm: {
-                    label: '<i class="fas fa-check"></i> Thoát',
+                    // Translation: 'Thoát' -> '退出'
+                    label: '<i class="fas fa-check"></i> 退出',
                     className: 'btn-danger pulse-red'
                 },
                 cancel: {
-                    label: '<i class="fas fa-times"></i> Hủy',
+                    // Translation: 'Hủy' -> 'キャンセル'
+                    label: '<i class="fas fa-times"></i> キャンセル',
                     className: 'btn-dark text-light'
                 }
             },
             callback: function (result) {
                 if (result) {
-                    // Update UI immediately
+                    // Update UI immediately (with Japanese text)
                     currentUser = "";
                     $("#chat-wrapper").html(`
                         <div id="loginform">
-                            <p>Nhập tên của bạn để chat!</p>
+                            <p>チャットするために名前を入力してください！</p>
                             <form id="login-form" method="post">
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                <label for="name">Tên &#58;</label>
+                                <label for="name">名前：</label>
                                 <input type="text" name="name" id="name" value="" />
-                                <input type="submit" name="enter" id="enter" value="Vào" />
+                                <input type="submit" name="enter" id="enter" value="入室" />
                             </form>
                             <div id="login-error" class="error"></div>
                         </div>
@@ -408,7 +419,8 @@ $(document).ready(function () {
                         },
                         error: function (xhr, status, error) {
                             console.error("Logout error:", xhr, status, error);
-                            $("#login-error").text("Lỗi khi thoát. Vui lòng thử lại.");
+                            // Translation: 'Lỗi khi thoát. Vui lòng thử lại.' -> '退室エラーです。やり直してください。'
+                            $("#login-error").text("退室エラーです。やり直してください。");
                         }
                     });
                 }
@@ -437,9 +449,11 @@ $(document).ready(function () {
                         if (msg.type === 'system') {
                             html += "<span class='welcome-info'>" + msg.message + "</span>";
                         } else if (msg.type === 'enter') {
-                            html += "<span class='enter-info'>Người dùng <b class='user-name-enter'>" + msg.username + "</b> " + msg.message + "</span>";
+                            // Translation: 'Người dùng' -> 'ユーザー'
+                            html += "<span class='enter-info'>ユーザー <b class='user-name-enter'>" + msg.username + "</b> " + msg.message + "</span>";
                         } else if (msg.type === 'leave') {
-                            html += "<span class='left-info'>Người dùng <b class='user-name-left'>" + msg.username + "</b> " + msg.message + "</span>";
+                            // Translation: 'Người dùng' -> 'ユーザー'
+                            html += "<span class='left-info'>ユーザー <b class='user-name-left'>" + msg.username + "</b> " + msg.message + "</span>";
                         } else {
                             html += "<b class='user-name'>" + msg.username + "</b>: " + msg.message;
                         }
@@ -459,6 +473,7 @@ $(document).ready(function () {
         });
     }
 
+    // Poll for new messages every 1 second
     setInterval(loadLog, 1000);
 });
 </script>

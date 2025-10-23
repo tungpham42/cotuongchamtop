@@ -42,7 +42,7 @@
                                 {{ $playedRooms->links('vendor.pagination.match') }}
                                 @foreach($playedRooms as $room)
                                 <tr data-code="{{ $room->code }}" data-fen="{{ $room->fen }}">
-                                    <th scope="row" class="roomCode"><a class="text-danger showPromotion animate" href="{{ url('/phong/') }}/{{ $room->code }}/theo-doi">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></th>
+                                    <th scope="row" class="roomCode"><a class="text-danger haltPromotion animate" href="{{ url('/phong/') }}/{{ $room->code }}/theo-doi">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></th>
                                     <td class="host-name">
                                         {!! app('App\Http\Controllers\UserController')::renderPlayerName($room->host_id) !!}
                                     </td>

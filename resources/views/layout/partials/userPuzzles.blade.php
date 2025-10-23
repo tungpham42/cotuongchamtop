@@ -3,7 +3,7 @@
 <div style="background-color: transparent" class="container-fluid userPuzzles puzzles px-0">
     <div class="container mx-auto px-3 pt-0">
         <div id="user-puzzles" class="row my-0">
-            <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-puzzle-piece"></i> {{ $firstUserPuzzles->total() }} <a class="text-light animate-light showPromotion" href="{{ url('/') }}/tat-ca-the-co">thế cờ</a>, <a class="text-light animate-light showPromotion" href="{{ url('/') }}/co-the">tạo mới ngay</a></h2>
+            <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-puzzle-piece"></i> {{ $firstUserPuzzles->total() }} <a class="text-light animate-light haltPromotion" href="{{ url('/') }}/tat-ca-the-co">thế cờ</a>, <a class="text-light animate-light haltPromotion" href="{{ url('/') }}/co-the">tạo mới ngay</a></h2>
             {{ $firstUserPuzzles->links('vendor.pagination.userVi') }}
             @foreach($firstUserPuzzles as $userPuzzle)
             @php
@@ -59,7 +59,7 @@
     <div style="background-color: transparent" class="container-fluid userPuzzles puzzles px-0">
         <div class="container mx-auto px-3 pt-0">
             <div id="user-puzzles" class="row my-0">
-                <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-puzzle-piece"></i> {{ $userPuzzles->total() }} <a class="text-light animate-light showPromotion" href="{{ url('/') }}/tat-ca-the-co">thế cờ</a>, <a class="text-light animate-light showPromotion" href="{{ url('/') }}/co-the">tạo mới ngay</a></h2>
+                <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-puzzle-piece"></i> {{ $userPuzzles->total() }} <a class="text-light animate-light haltPromotion" href="{{ url('/') }}/tat-ca-the-co">thế cờ</a>, <a class="text-light animate-light haltPromotion" href="{{ url('/') }}/co-the">tạo mới ngay</a></h2>
                 {{ $userPuzzles->links('vendor.pagination.userVi') }}
                 @foreach($userPuzzles as $userPuzzle)
                 @php

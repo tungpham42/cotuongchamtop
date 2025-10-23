@@ -4,7 +4,7 @@
     <div class="container mx-auto px-3 pt-0">
         <div class="row my-0">
             <h2 class="d-block w-100 text-light ml-3 mb-4">
-                <i class="fas fa-trophy-alt"></i> {{ $firstPageBoards->total() }} ván cờ <a class="text-light animate-light showPromotion" href="{{ url('/thanh-vien') }}">đang thi đấu</a>
+                <i class="fas fa-trophy-alt"></i> {{ $firstPageBoards->total() }} ván cờ <a class="text-light animate-light haltPromotion" href="{{ url('/thanh-vien') }}">đang thi đấu</a>
             </h2>
             {{ $firstPageBoards->links('vendor.pagination.boardVi') }}
             @foreach($firstPageBoards as $board)
@@ -12,7 +12,7 @@
                 <div id="board-{{ $board->code }}" class="card shadow-lg rounded border-dark" style="cursor: pointer;background-color: transparent;">
                 </div>
                 <div class="bg-dark p-2 text-center">
-                    <a href="{{ url('/phong/') }}/{{ $board->code }}/theo-doi" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                    <a href="{{ url('/phong/') }}/{{ $board->code }}/theo-doi" target="_blank" class="py-1 text-light animate-light w-100 text-center haltPromotion">{{ $board->name }}</a>
                 </div>
                 <div class="bg-dark row mx-0">
                     <span class="py-1 col-12 text-light text-center host-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->host_id) !!}</span>
@@ -71,7 +71,7 @@
         <div class="container mx-auto px-3 pt-0">
             <div class="row my-0">
                 <h2 class="d-block w-100 text-light ml-3 mb-4">
-                    <i class="fas fa-trophy-alt"></i> {{ $boards->total() }} ván cờ <a class="text-light animate-light showPromotion" href="{{ url('/thanh-vien') }}">đang thi đấu</a>
+                    <i class="fas fa-trophy-alt"></i> {{ $boards->total() }} ván cờ <a class="text-light animate-light haltPromotion" href="{{ url('/thanh-vien') }}">đang thi đấu</a>
                 </h2>
                 {{ $boards->links('vendor.pagination.boardVi') }}
                 @foreach($boards as $board)
@@ -79,7 +79,7 @@
                     <div id="board-{{ $board->code }}" class="card shadow-lg rounded border-dark" style="cursor: pointer;background-color: transparent;">
                     </div>
                     <div class="bg-dark p-2 text-center">
-                        <a href="{{ url('/phong/') }}/{{ $board->code }}/theo-doi" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                        <a href="{{ url('/phong/') }}/{{ $board->code }}/theo-doi" target="_blank" class="py-1 text-light animate-light w-100 text-center haltPromotion">{{ $board->name }}</a>
                     </div>
                     <div class="bg-dark row mx-0">
                         <span class="py-1 col-12 text-light text-center host-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->host_id) !!}</span>

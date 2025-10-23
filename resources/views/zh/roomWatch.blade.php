@@ -16,9 +16,9 @@
 @if (!isset($room->host_id) && !isset($room->result))
 <p class="w-100 text-center">
   @if (str_contains($room->fen, ' r '))
-  <a data-step="2" data-intro="当房间可用时，请点击此处进入房间" id="join-link" class="btn btn-danger text-light btn-lg showPromotion" href="{{ url('/') }}/fangjian/{{ $roomCode }}" data-toggle="tooltip" data-placement="top" title="轮到你了"><i class="fad fa-sign-in-alt"></i> 参加</a>
+  <a data-step="2" data-intro="当房间可用时，请点击此处进入房间" id="join-link" class="btn btn-danger text-light btn-lg haltPromotion" href="{{ url('/') }}/fangjian/{{ $roomCode }}" data-toggle="tooltip" data-placement="top" title="轮到你了"><i class="fad fa-sign-in-alt"></i> 参加</a>
   @elseif (str_contains($room->fen, ' b '))
-  <a data-step="2" data-intro="当房间可用时，请点击此处进入房间" id="join-link" class="btn btn-dark text-light btn-lg showPromotion" href="{{ url('/') }}/fangjian/{{ $roomCode }}/zhuke" data-toggle="tooltip" data-placement="top" title="轮到你了"><i class="fad fa-sign-in-alt"></i> 参加</a>
+  <a data-step="2" data-intro="当房间可用时，请点击此处进入房间" id="join-link" class="btn btn-dark text-light btn-lg haltPromotion" href="{{ url('/') }}/fangjian/{{ $roomCode }}/zhuke" data-toggle="tooltip" data-placement="top" title="轮到你了"><i class="fad fa-sign-in-alt"></i> 参加</a>
   @endif
 </p>
 @else
