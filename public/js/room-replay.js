@@ -105,21 +105,6 @@
         state.initialized = true;
         injectStyles();
         prepareState();
-        if (!state.history || state.history.length === 0) {
-            const lang = getLangFromPath();
-            const t = i18n(lang);
-            setTimeout(() => {
-                if (typeof bootbox !== "undefined") {
-                    bootbox.alert({
-                        message: `<i class="fas fa-info-circle text-info"></i> ${t.noHistoryAlert}`,
-                        backdrop: true,
-                        centerVertical: true,
-                    });
-                } else {
-                    alert(t.noHistoryAlert); // fallback
-                }
-            }, 800);
-        }
         setupReplayBoard($);
         hookGameMove(game);
         hookAjax($);
@@ -287,7 +272,10 @@
             "hasHistory:",
             hasHistory
         );
-
+        if (!state.history || state.history.length === 0) {
+            console.log("🌐 No move history available for replay.");
+            $("#ban-co").after(t.noHistoryAlert);
+        }
         const panel = $(`
       <section id="room-replay-panel" style="">
         <div class="room-replay-header">
