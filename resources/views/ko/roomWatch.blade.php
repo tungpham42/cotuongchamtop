@@ -192,6 +192,7 @@ function updateStatus () {
     clearInterval(updateBoard);
   }
   if (game.fen().includes('resign') && !resignAlertShown) {
+    resignAlertShown = true;
     $('#header-status').html(': '+status+' - 사임');
     bootbox.alert({
       message: '<i class="fad fa-flag-checkered"></i> 사임',

@@ -190,6 +190,7 @@ function updateStatus () {
     clearInterval(updateBoard);
   }
   if (game.fen().includes('resign') && !resignAlertShown) {
+    resignAlertShown = true;
     $('#header-status').html(': '+status+' - 辞任');
     bootbox.alert({
       message: '<i class="fad fa-flag-checkered"></i> 辞任',

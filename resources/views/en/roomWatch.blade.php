@@ -192,6 +192,7 @@ function updateStatus () {
     clearInterval(updateBoard);
   }
   if (game.fen().includes('resign') && !resignAlertShown) {
+    resignAlertShown = true;
     $('#header-status').html(': '+status+' - Resigned');
     bootbox.alert({
       message: '<i class="fad fa-flag-checkered"></i> Resigned',

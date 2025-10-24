@@ -335,6 +335,7 @@ function updateStatus () {
     clearInterval(updateBoard);
   }
   if (game.fen().includes('resign') && !resignAlertShown) {
+    resignAlertShown = true;
     $('#header-status').html(': '+status+' - Resigned');
 
     // Determine who resigned based on whose turn it is now

@@ -290,6 +290,7 @@ function updateStatus () {
     clearInterval(updateBoard);
   }
   if (game.fen().includes('resign') && !resignAlertShown) {
+    resignAlertShown = true;
     $('#header-status').html(': '+status+' - 사임');
 
     // Determine who resigned based on whose turn it is now
