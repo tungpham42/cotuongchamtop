@@ -43,7 +43,7 @@
             })
                 .then(response => {
                     if (response.data.status === 'matched') {
-                        let countdown = 5;
+                        let countdown = 10;
                         const countdownModal = `
                         <div class="modal fade" id="countdownModal" tabindex="-1" role="dialog" aria-labelledby="countdownLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered" role="document">
