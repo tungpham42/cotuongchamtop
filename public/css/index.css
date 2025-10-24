@@ -1823,3 +1823,14 @@ table th.no-sort::after {
     opacity: 0.7;
     cursor: not-allowed;
 }
+.fa-spinner {
+    margin-left: 5px;
+}
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+.highlight {
+    background-color: #ffeb3b !important;
+    opacity: 0.6;
+}

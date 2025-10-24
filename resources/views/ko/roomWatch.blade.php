@@ -35,6 +35,7 @@
 let board = null;
 let game = new Xiangqi();
 let currentFEN = game.fen();
+let hasGameOverSound = false;
 
 function updateFenCode(roomCode) {
   board.position(game.fen(), true);
@@ -181,7 +182,10 @@ function updateStatus () {
   $('#game-status').html(status);
   $('#header-status').html(': '+status);
   if (game.game_over()) {
-    hetTran.play();
+    if (!hasGameOverSound) {
+      hasGameOverSound = true;
+      hetTran.play();
+    }
     $('#header-status').html(': '+status+' - 게임 오버');
     $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> 게임 오버');
     // evtSource.close();

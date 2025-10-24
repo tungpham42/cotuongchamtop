@@ -125,6 +125,7 @@ let board = null;
 let game = new Xiangqi();
 let currentFEN = game.fen();
 let alertShown = false;
+let hasGameOverSound = false;
 let resignAlertShown = false;
 
 function updateFenCode(roomCode) {
@@ -324,7 +325,10 @@ function updateStatus () {
   $('#game-status').html(status);
   $('#header-status').html(': '+status);
   if (game.game_over()) {
-    hetTran.play();
+    if (!hasGameOverSound) {
+      hasGameOverSound = true;
+      hetTran.play();
+    }
     $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> 游戏结束了');
     $('#header-status').html(': '+status+' - 游戏结束了');
     // evtSource.close();
