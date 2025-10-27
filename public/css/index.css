@@ -953,7 +953,7 @@ a.animate-light:hover {
     touch-action: none !important;
     pointer-events: all;
     width: 100%;
-    max-width: 520px;
+    max-width: 380px;
     margin: 0 auto !important;
 }
 #ban-co:has(.notation-8c7a2) {
