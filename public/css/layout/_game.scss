@@ -10,7 +10,9 @@
 #ban-co {
   touch-action: none !important;
   pointer-events: all;
-  width: 380px;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto !important;
   &:has(.notation-8c7a2) {
     padding: 21px 0 !important;
     background-color: #dfbd85 !important;
@@ -20,7 +22,7 @@
   }
 }
 body.setup #ban-co {
-  width: 310px !important;
+  max-width: 310px !important;
 }
 #copy-url,
 #url,
