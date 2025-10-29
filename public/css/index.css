@@ -541,14 +541,6 @@ input:-internal-autofill-selected:focus {
         background-attachment: scroll !important;
     }
 }
-.container-fluid.about *,
-.container-fluid.bmi *,
-.container-fluid.game *,
-.container-fluid.news *,
-.container-fluid.contact * {
-    color: beige;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
-}
 .container-fluid.bmi-explanation,
 .container-fluid.game-explanation {
     background-color: #f5e5b5;
