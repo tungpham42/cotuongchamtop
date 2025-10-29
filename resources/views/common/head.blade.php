@@ -30,7 +30,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 <!-- End Google Fonts -->
-<link href="{{ url('/') }}/css/index.css?v=311" rel="stylesheet">
+<link href="{{ url('/') }}/css/index.css?v=316" rel="stylesheet">
 <link rel="manifest" href="{{ URL::to('/') }}/manifest.webmanifest?v=2">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3585118770961536" crossorigin="anonymous"></script>
 <!-- Global site tag (gtag.js) - Google Analytics -->

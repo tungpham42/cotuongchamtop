@@ -529,6 +529,25 @@ input:-internal-autofill-selected:focus {
     background-size: cover !important;
     background-color: #312e2b !important;
     color: beige;
+    isolation: isolate !important;
+    position: relative !important;
+}
+@media (max-width: 767.98px) {
+    .container-fluid.about,
+    .container-fluid.bmi,
+    .container-fluid.game,
+    .container-fluid.news,
+    .container-fluid.contact {
+        background-attachment: scroll !important;
+    }
+}
+.container-fluid.about *,
+.container-fluid.bmi *,
+.container-fluid.game *,
+.container-fluid.news *,
+.container-fluid.contact * {
+    color: beige;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
 }
 .container-fluid.bmi-explanation,
 .container-fluid.game-explanation {
