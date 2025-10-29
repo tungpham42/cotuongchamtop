@@ -28,17 +28,26 @@
           </div>
           <div class="row">
             <div class="col-12 text-center">
-              @include('common.topAds')
+              {{-- @include('common.topAds') --}}
               @yield('aboveBoard')
             </div>
           </div>
           @if ( $roomCode == '' )
           <div class="row">
+            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-1">
+              <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
+              @include('en.layout.partials.themeSelector')
+            </div>
+            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-auto">
+              @yield('rightSide')
+            </div>
+          </div>
+          {{-- <div class="row">
             <div class="col-12">
               <div id="ban-co" class="mx-auto h-auto"></div>
               @include('en.layout.partials.themeSelector')
             </div>
-          </div>
+          </div> --}}
           @else
           <div class="row">
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
@@ -54,13 +63,12 @@
           <div class="row">
             <div class="col-12">
               @if ( !isset($board) && $roomCode == '' )
-              <div class="dropup mx-auto text-center my-3">
+              {{-- <div class="dropup mx-auto text-center my-3">
                 <button class="btn btn-danger btn-lg dropdown-toggle pulse-red" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span data-toggle="tooltip" data-placement="top" title="Play with someone in a room"><i class="fad fa-gamepad-alt"></i> Play online</span>
                 </button>
                 @include('common.volumeBtn')
                 @include('common.tourBtn')
-                {{-- <a class="btn btn-dark text-light btn-lg stopPromotion shopee-link" href="https://shopee.vn/tungpham42" target="_blank"><i class="fad fa-shopping-cart"></i> Shop</a> --}}
                 <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/') }}/room/{{ md5(time()) }}">
                   <a data-toggle="tooltip" data-placement="bottom" title="Play with password" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> Private</a>
                   @if ($randomRoom != null)
@@ -68,7 +76,7 @@
                   <a data-toggle="tooltip" data-placement="bottom" title="Waiting list" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ URL::to('/rooms') }}"><i class="fas fa-list-alt text-dark"></i> Rooms list</a>
                   @endif
                 </div>
-              </div>
+              </div> --}}
               @elseif ( $roomCode != '' )
               <p class="w-100 text-center my-3">
                 <a class="btn btn-danger text-light btn-lg stopPromotion mx-auto pulse-red rooms-list" href="{{ URL::to('/rooms') }}"><i class="fad fa-chevron-circle-left"></i> Back to room's list</a>
@@ -76,13 +84,13 @@
                 @include('common.tourBtn')
               </p>
               @endif
-              <p class="w-100 text-center m-0">
-                <span class="rounded p-0" id="game-status"></span>
+              {{-- <p class="w-100 text-center m-0">
+                <span class="rounded p-0 d-block" id="game-status"></span>
               </p>
               <p class="w-100 text-center mx-0 mb-0 mt-2">
                 <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> GAME OVER</span>
               </p>
-              <div class="sharethis-inline-reaction-buttons"></div>
+              <div class="sharethis-inline-reaction-buttons"></div> --}}
               @include('common.ads')
               @yield('aboveContent')
               <div class="row">

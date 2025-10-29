@@ -38,7 +38,7 @@
 @endsection
 @section('belowContent')
 <div class="text-center mx-auto" style="width: fit-content;" data-step="3" data-intro="Open this page on mobile">
-@include('common.qrCode')
+{{-- @include('common.qrCode') --}}
 </div>
 <div class="modal fade" id="HoveredBoardModal" tabindex="-1" role="dialog" aria-label="HoveredBoard" aria-hidden="true" data-backdrop="static" data-keyboard="false" data-url="">
   <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 320px; margin: auto;">
@@ -119,7 +119,7 @@ $(document).ready(function () {
       $('[data-toggle="tooltip"]').tooltip(function() {
         html : true
       });
-      $('#danh-sach-phong .showPromotion').each(function(){
+      $('#danh-sach-phong .displayPromotion').each(function(){
         $(this).on('click auxclick', function(e){
           e.preventDefault();
           $('#AdSenseModal').attr('data-url', $(this).attr('href')).modal('show');
@@ -138,7 +138,7 @@ $(document).ready(function () {
             var boardDiv = $('<div class="innerBoard">').attr('id', boardId);
             container.html(boardDiv);
             let boardConfig = {
-              position: fenCode              
+              position: fenCode
             };
             if (fenCode.includes(' r ')) {
               boardConfig.orientation = 'red';

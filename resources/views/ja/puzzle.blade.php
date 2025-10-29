@@ -10,17 +10,41 @@
   @include('common.tourBtn')
 </p>
 @endsection
+@section('rightSide')
+<p class="w-100 text-center m-0">
+  <span class="rounded p-0 d-block" id="game-status"></span>
+</p>
+<p class="w-100 text-center mx-0 mb-0 mt-2">
+  <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> ゲームオーバー</span>
+</p>
+<div class="sharethis-inline-reaction-buttons"></div>
+<div class="dropup mx-auto text-center my-3">
+  <button class="btn btn-danger btn-lg dropdown-toggle pulse-red" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span data-toggle="tooltip" data-placement="top" title="部屋で誰かと遊ぶ"><i class="fad fa-gamepad-alt"></i> オンラインでプレイ</span>
+  </button>
+  <a id="switch" class="btn btn-dark btn-lg mx-auto"><i class="fad fa-sync"></i> スイッチ</a>
+  @include('common.volumeBtn')
+  @include('common.tourBtn')
+  <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/') }}/rumu/{{ md5(time()) }}">
+    <a data-toggle="tooltip" data-placement="bottom" title="パスワードで遊ぶ" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> 民間</a>
+    @if ($randomRoom != null)
+    <a data-toggle="tooltip" data-placement="bottom" title="ランダムな公開ルームでプレイ" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ URL::to('/') }}/rumu/{{ $randomRoom['code'] }}/randamu"><i class="fas fa-random text-dark"></i> ランダム</a>
+    <a data-toggle="tooltip" data-placement="bottom" title="順番待ちリスト" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ URL::to('/heya-ichiran') }}"><i class="fas fa-list-alt text-dark"></i> 部屋一覧</a>
+    @endif
+  </div>
+</div>
+@endsection
 @section('belowContent')
 <p class="w-100 text-center mt-0 mb-1">
   <a data-step="2" data-intro="パズルを解くにはここをクリックしてください" id="solve-puzzle" class="btn btn-danger btn-lg pulse-red" href="{{ url('/pazuru-o-toku') }}"><i class="fad fa-abacus"></i> パズルを解く</a>
-  @include('common.volumeBtn')
+  {{-- @include('common.volumeBtn') --}}
 </p>
 <p class="w-100 text-center mt-0 mb-1">
   <a data-step="3" data-intro="パズルボードを保存するにはここをクリックしてください" id="new-board" class="w-25 btn btn-dark btn-lg"><i class="fad fa-save"></i> ボードを保存</a>
   <a data-step="4" data-intro="前の手に戻りたい場合はここをクリックしてください" id="undo" class="w-25 btn btn-dark btn-lg"><i class="fad fa-undo"></i> 元に戻す</a>
 </p>
 <div class="text-center mx-auto" style="width: fit-content;" data-step="5" data-intro="このページをモバイルで開いてください">
-@include('common.qrCode')
+{{-- @include('common.qrCode') --}}
 </div>
 @if ($board != '')
 <p class="w-100 text-center mt-0 mb-1">
@@ -111,6 +135,7 @@ $('#new-board').on('click auxclick', function(e){
     }
   }
 });
+$('#switch').on('click', board.flip);
 $('#undo').on('click', undo);
 $("#capture").on('click', function() {
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
@@ -144,7 +169,7 @@ $("#capture").on('click', function() {
         context.fillText('COTUONG.TOP', canvas.width / 2, canvas.height / 2);
 
         canvas.toBlob(function(blob) {
-          saveAs(blob, "ban-co-{{ date('Y-m-d h:i:s A') }}.png"); 
+          saveAs(blob, "ban-co-{{ date('Y-m-d h:i:s A') }}.png");
         });
       }
     });

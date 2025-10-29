@@ -19,7 +19,7 @@
   <input type="hidden" id="room-code-input" value="{{ $roomCode }}">
 </p>
 <div class="text-center mx-auto" style="width: fit-content;" data-step="5" data-intro="Open this page on mobile">
-@include('common.qrCode')
+{{-- @include('common.qrCode') --}}
 </div>
 @if ($room['pass'] != null)
 <div data-step="2" data-intro="Click here to change room's password" id="change-pass" class="input-group my-1 w-50 mx-auto">

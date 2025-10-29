@@ -43,7 +43,7 @@ $('#copy-url').on('click', function() {
   <a data-step="5" data-intro="最初からやり直したい場合はここをクリックしてください" id="reset" class="w-25 btn btn-dark btn-lg"><i class="fad fa-redo-alt"></i> 再起動</a>
 </p>
 <div class="text-center mx-auto" style="width: fit-content;" data-step="7" data-intro="このページをモバイルで開いてください">
-  @include('common.qrCode')
+  {{-- @include('common.qrCode') --}}
 </div>
 <script>
 let board = null;

@@ -29,7 +29,7 @@
   @endif
 @endif
 <div class="text-center mx-auto" style="width: fit-content;" data-step="3" data-intro="이 페이지를 모바일에서 열어주세요">
-@include('common.qrCode')
+{{-- @include('common.qrCode') --}}
 </div>
 <script>
 let board = null;

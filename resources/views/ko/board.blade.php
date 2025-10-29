@@ -16,6 +16,29 @@
   </div>
 </div> --}}
 @endsection
+@section('rightSide')
+<p class="w-100 text-center m-0">
+  <span class="rounded p-0 d-block" id="game-status"></span>
+</p>
+<p class="w-100 text-center mx-0 mb-0 mt-2">
+  <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> 게임 오버</span>
+</p>
+<div class="sharethis-inline-reaction-buttons"></div>
+<div class="dropup mx-auto text-center my-3">
+<button class="btn btn-danger btn-lg dropdown-toggle pulse-red" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <span data-toggle="tooltip" data-placement="top" title="방에서 누군가와 놀기"><i class="fad fa-gamepad-alt"></i> 온라인으로 재생</span>
+</button>
+@include('common.volumeBtn')
+@include('common.tourBtn')
+<div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/') }}/bang/{{ md5(time()) }}">
+  <a data-toggle="tooltip" data-placement="bottom" title="암호로 재생" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> 사적인</a>
+  @if ($randomRoom != null)
+  <a data-toggle="tooltip" data-placement="bottom" title="임의의 공용 룸에서 재생" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ URL::to('/') }}/bang/{{ $randomRoom['code'] }}/mujag-wiui"><i class="fas fa-random text-dark"></i> 무작위의</a>
+  <a data-toggle="tooltip" data-placement="bottom" title="대기자 명단" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ URL::to('/bang-moglog') }}"><i class="fas fa-list-alt text-dark"></i> 방 목록</a>
+  @endif
+</div>
+</div>
+@endsection
 @section('belowContent')
 <p class="w-100 text-center mt-0 mb-1">
   <i class="fad fa-external-link-alt"></i> 아래 링크를 전송하여 친구를 초대하여 게임을 진행합니다.
@@ -38,7 +61,7 @@ $('#copy-url').on('click', function() {
   <a data-step="4" data-intro="이전 동작으로 돌아가고 싶으면 여기를 클릭하세요" id="undo" class="w-25 btn btn-dark btn-lg"><i class="fad fa-undo"></i> 실행 취소</a>
 </p>
 <div class="text-center mx-auto" style="width: fit-content;" data-step="5" data-intro="이 페이지를 모바일에서 열어주세요">
-@include('common.qrCode')
+{{-- @include('common.qrCode') --}}
 </div>
 <script>
 let board = null;

@@ -89,7 +89,7 @@ if (!$('#topAds').find('ins').attr('data-ad-status')) {
 if (!$('#sideAds').find('ins').attr('data-ad-status')) {
   $('#sideAds').find('ins').attr('data-ad-status', 'unfilled');
 }
-$('.showPromotion').each(function(){
+$('.displayPromotion').each(function(){
   $(this).on('click auxclick', function(e){
     if (removeTrailingSlash($(this).attr('href')) !== removeTrailingSlash(window.location.href)) {
       e.preventDefault();

@@ -15,7 +15,7 @@
   <a data-step="1" data-intro="Click here if you are out of clues" id="resign" class="btn btn-dark btn-lg"><i class="fad fa-flag"></i> Resign</a>
 </p>
 <div class="text-center mx-auto" style="width: fit-content;" data-step="3" data-intro="Open this page on mobile">
-@include('common.qrCode')
+{{-- @include('common.qrCode') --}}
 </div>
 <script>
 @if ($room['pass'] != null)

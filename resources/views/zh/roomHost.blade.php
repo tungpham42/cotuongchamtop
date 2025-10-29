@@ -15,7 +15,7 @@
   <input data-step="1" data-intro="请点击这里复制链接并邀请朋友一起玩" type="text" class="form-control" id="url-black" value="{{ url('/') }}/fangjian/{{ $roomCode }}/zhuke">
 </div>
 <div class="text-center mx-auto" style="width: fit-content;" data-step="5" data-intro="请在手机上打开这个页面">
-@include('common.qrCode')
+{{-- @include('common.qrCode') --}}
 </div>
 <p id="room-code" class="w-100 text-center mt-0 mb-1">
   <span data-step="4" data-intro="使用此房间代码进行匹配搜索" class="alert alert-dark d-inline-block" role="alert" data-toggle="tooltip" data-placement="bottom" data-original-title="复制这个房间代码"><i class="fad fa-trophy-alt"></i> 房间代码：<strong style="cursor: pointer;">{{ $roomCode }}</strong></span>

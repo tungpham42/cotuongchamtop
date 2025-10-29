@@ -10,7 +10,7 @@
   <input type="hidden" id="room-code-input" value="{{ $roomCode }}">
 </p>
 <div class="text-center mx-auto" style="width: fit-content;" data-step="3" data-intro="Open this page on mobile">
-@include('common.qrCode')
+{{-- @include('common.qrCode') --}}
 </div>
 @endsection
 @section('belowContent')

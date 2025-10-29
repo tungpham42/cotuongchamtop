@@ -3,6 +3,16 @@
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="チェスのスキルを向上させる">パソコンでトレーニング中です</h5>
 @endsection
 @section('aboveContent')
+
+@endsection
+@section('rightSide')
+<p class="w-100 text-center m-0">
+  <span class="rounded p-0 d-block" id="game-status"></span>
+</p>
+<p class="w-100 text-center mx-0 mb-0 mt-2">
+  <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> ゲームオーバー</span>
+</p>
+<div class="sharethis-inline-reaction-buttons"></div>
 <h5 class="text-center my-1">レベル：{{ $levelTxt }}</h5>
 <div class="level dropup mx-auto text-center my-1">
   <button class="btn btn-lg btn-dark dropdown-toggle" type="button" id="levelDropdown" data-toggle="dropdown" aria-haspopup="true" data-step="1" data-intro="私の適切なレベルを選びましょう" aria-expanded="false">
@@ -16,6 +26,20 @@
     <a class="dropdown-item{{ $levelTxt === '最も難しい' ? ' active disabled' : '' }}" href="{{ url('/mottomo-muzukashi') }}" style="cursor: pointer !important;">最も難しい</a>
   </div>
 </div>
+<div class="dropup mx-auto text-center my-3">
+  <button class="btn btn-danger btn-lg dropdown-toggle pulse-red" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span data-toggle="tooltip" data-placement="top" title="部屋で誰かと遊ぶ"><i class="fad fa-gamepad-alt"></i> オンラインでプレイ</span>
+  </button>
+  @include('common.volumeBtn')
+  @include('common.tourBtn')
+  <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/') }}/rumu/{{ md5(time()) }}">
+    <a data-toggle="tooltip" data-placement="bottom" title="パスワードで遊ぶ" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> 民間</a>
+    @if ($randomRoom != null)
+    <a data-toggle="tooltip" data-placement="bottom" title="ランダムな公開ルームでプレイ" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ URL::to('/') }}/rumu/{{ $randomRoom['code'] }}/randamu"><i class="fas fa-random text-dark"></i> ランダム</a>
+    <a data-toggle="tooltip" data-placement="bottom" title="順番待ちリスト" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ URL::to('/heya-ichiran') }}"><i class="fas fa-list-alt text-dark"></i> 部屋一覧</a>
+    @endif
+  </div>
+</div>
 @endsection
 @section('belowContent')
 <p class="w-100 text-center mt-0 mb-1">
@@ -27,7 +51,7 @@
   <a data-step="4" data-intro="最初からやり直したい場合はここをクリックしてください" id="reset" class="w-25 btn btn-dark btn-lg"><i class="fad fa-redo-alt"></i> 再起動</a>
 </p>
 <div class="text-center mx-auto" style="width: fit-content;" data-step="6" data-intro="このページをモバイルで開いてください">
-@include('common.qrCode')
+{{-- @include('common.qrCode') --}}
 </div>
 <script>
 let board = null;
@@ -56,7 +80,7 @@ async function makeBestMove() {
   if (isComputerThinking || game.game_over()) return;
 
   isComputerThinking = true;
-  $('#game-status').html('Máy đang suy nghĩ... <i class="fas fa-spinner fa-spin"></i>');
+  $('#game-status').html('考え... <i class="fas fa-spinner fa-spin"></i>');
 
   try {
     const response = await fetch('/api/xiangqi/best-move', {

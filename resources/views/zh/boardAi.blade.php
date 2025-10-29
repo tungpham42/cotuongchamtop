@@ -43,7 +43,7 @@ $('#copy-url').on('click', function() {
   <a data-step="5" data-intro="如果您想重新开始，请点击这里" id="reset" class="w-25 btn btn-dark btn-lg"><i class="fad fa-redo-alt"></i> 重新启动</a>
 </p>
 <div class="text-center mx-auto" style="width: fit-content;" data-step="7" data-intro="请在手机上打开这个页面">
-  @include('common.qrCode')
+  {{-- @include('common.qrCode') --}}
 </div>
 <script>
 let board = null;

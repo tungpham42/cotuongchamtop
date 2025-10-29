@@ -15,7 +15,7 @@
   <a data-step="1" data-intro="手掛かりが尽きた場合はここをクリックしてください" id="resign" class="btn btn-dark btn-lg"><i class="fad fa-flag"></i> 辞任</a>
 </p>
 <div class="text-center mx-auto" style="width: fit-content;" data-step="3" data-intro="このページをモバイルで開いてください">
-@include('common.qrCode')
+{{-- @include('common.qrCode') --}}
 </div>
 <script>
 @if ($room['pass'] != null)

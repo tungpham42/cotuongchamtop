@@ -2,6 +2,30 @@
 @section('aboveBoard')
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="チェスのスキルを向上させる">あなたは一人で練習しています</h5>
 @endsection
+@section('rightSide')
+<p class="w-100 text-center m-0">
+  <span class="rounded p-0 d-block" id="game-status"></span>
+</p>
+<p class="w-100 text-center mx-0 mb-0 mt-2">
+  <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> ゲームオーバー</span>
+</p>
+<div class="sharethis-inline-reaction-buttons"></div>
+<div class="dropup mx-auto text-center my-3">
+  <button class="btn btn-danger btn-lg dropdown-toggle pulse-red" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span data-toggle="tooltip" data-placement="top" title="部屋で誰かと遊ぶ"><i class="fad fa-gamepad-alt"></i> オンラインでプレイ</span>
+  </button>
+  <a id="switch" class="btn btn-dark btn-lg mx-auto"><i class="fad fa-sync"></i> スイッチ</a>
+  @include('common.volumeBtn')
+  @include('common.tourBtn')
+  <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/') }}/rumu/{{ md5(time()) }}">
+    <a data-toggle="tooltip" data-placement="bottom" title="パスワードで遊ぶ" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> 民間</a>
+    @if ($randomRoom != null)
+    <a data-toggle="tooltip" data-placement="bottom" title="ランダムな公開ルームでプレイ" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ URL::to('/') }}/rumu/{{ $randomRoom['code'] }}/randamu"><i class="fas fa-random text-dark"></i> ランダム</a>
+    <a data-toggle="tooltip" data-placement="bottom" title="順番待ちリスト" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ URL::to('/heya-ichiran') }}"><i class="fas fa-list-alt text-dark"></i> 部屋一覧</a>
+    @endif
+  </div>
+</div>
+@endsection
 @section('belowContent')
 <p class="w-100 text-center mt-0 mb-1">
   <a data-step="1" data-intro="手掛かりが尽きた場合はここをクリックしてください" id="resign" class="w-25 btn btn-dark btn-lg"><i class="fad fa-flag"></i> 辞任</a>
@@ -12,7 +36,7 @@
   <a data-step="4" data-intro="最初からやり直したい場合はここをクリックしてください" id="reset" class="w-25 btn btn-dark btn-lg"><i class="fad fa-redo-alt"></i> 再起動</a>
 </p>
 <div class="text-center mx-auto" style="width: fit-content;" data-step="5" data-intro="このページをモバイルで開いてください">
-@include('common.qrCode')
+{{-- @include('common.qrCode') --}}
 </div>
 <script>
 let board = null;
@@ -189,6 +213,7 @@ $('#undo').on('click', function(){
   nuocCo.play();
   updateStatus();
 });
+$('#switch').on('click', board.flip);
 $('#reset').on('click', function() {
   board.position('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR');
   game.load('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1');

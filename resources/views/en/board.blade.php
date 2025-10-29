@@ -16,6 +16,29 @@
   </div>
 </div> --}}
 @endsection
+@section('rightSide')
+<p class="w-100 text-center m-0">
+  <span class="rounded p-0 d-block" id="game-status"></span>
+</p>
+<p class="w-100 text-center mx-0 mb-0 mt-2">
+  <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> GAME OVER</span>
+</p>
+<div class="sharethis-inline-reaction-buttons"></div>
+<div class="dropup mx-auto text-center my-3">
+  <button class="btn btn-danger btn-lg dropdown-toggle pulse-red" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span data-toggle="tooltip" data-placement="top" title="Play with someone in a room"><i class="fad fa-gamepad-alt"></i> Play online</span>
+  </button>
+  @include('common.volumeBtn')
+  @include('common.tourBtn')
+  <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/') }}/room/{{ md5(time()) }}">
+    <a data-toggle="tooltip" data-placement="bottom" title="Play with password" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> Private</a>
+    @if ($randomRoom != null)
+    <a data-toggle="tooltip" data-placement="bottom" title="Play in random Public room" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ URL::to('/') }}/room/{{ $randomRoom['code'] }}/random"><i class="fas fa-random text-dark"></i> Random</a>
+    <a data-toggle="tooltip" data-placement="bottom" title="Waiting list" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ URL::to('/rooms') }}"><i class="fas fa-list-alt text-dark"></i> Rooms list</a>
+    @endif
+  </div>
+</div>
+@endsection
 @section('belowContent')
 <p class="w-100 text-center mt-0 mb-1">
   <i class="fad fa-external-link-alt"></i> Inviting friend to play by sending the link below.
@@ -38,7 +61,7 @@ $('#copy-url').on('click', function() {
   <a data-step="4" data-intro="Click here if you want to go back to previous move" id="undo" class="w-25 btn btn-dark btn-lg"><i class="fad fa-undo"></i> Undo</a>
 </p>
 <div class="text-center mx-auto" style="width: fit-content;" data-step="5" data-intro="Open this page on mobile">
-@include('common.qrCode')
+{{-- @include('common.qrCode') --}}
 </div>
 <script>
 let board = null;

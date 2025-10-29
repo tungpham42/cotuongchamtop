@@ -2,6 +2,29 @@
 @section('aboveBoard')
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="你正在用计算机解黑板">你正在用计算机解黑板</h5>
 @endsection
+@section('rightSide')
+<p class="w-100 text-center m-0">
+  <span class="rounded p-0 d-block" id="game-status"></span>
+</p>
+<p class="w-100 text-center mx-0 mb-0 mt-2">
+  <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> 游戏结束了</span>
+</p>
+<div class="sharethis-inline-reaction-buttons"></div>
+<div class="dropup mx-auto text-center my-3">
+  <button class="btn btn-danger btn-lg dropdown-toggle pulse-red" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span data-toggle="tooltip" data-placement="top" title="Play with someone in a room"><i class="fad fa-gamepad-alt"></i> 在线下棋</span>
+  </button>
+  @include('common.volumeBtn')
+  @include('common.tourBtn')
+  <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/') }}/fangjian/{{ md5(time()) }}">
+    <a data-toggle="tooltip" data-placement="bottom" title="玩密码" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> 私有的</a>
+    @if ($randomRoom != null)
+    <a data-toggle="tooltip" data-placement="bottom" title="在随机公共房间玩" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ URL::to('/') }}/fangjian/{{ $randomRoom['code'] }}/suijide"><i class="fas fa-random text-dark"></i> 随机房间</a>
+    <a data-toggle="tooltip" data-placement="bottom" title="等候名单" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ URL::to('/fangjianliebiao') }}"><i class="fas fa-list-alt text-dark"></i> 房间列表</a>
+    @endif
+  </div>
+</div>
+@endsection
 @section('belowContent')
 <p class="w-100 text-center mt-0 mb-1">
   <a data-step="1" data-intro="如果您没有线索，请点击这里" id="resign" class="w-25 btn btn-dark btn-lg"><i class="fad fa-flag"></i> 辞职</a>
@@ -12,7 +35,7 @@
   <a data-step="4" data-intro="如果您想重新开始，请点击这里" id="reset" class="w-25 btn btn-dark btn-lg"><i class="fad fa-redo-alt"></i> 重新启动</a>
 </p>
 <div class="text-center mx-auto" style="width: fit-content;" data-step="5" data-intro="请在手机上打开这个页面">
-@include('common.qrCode')
+{{-- @include('common.qrCode') --}}
 </div>
 <p class="w-100 text-center mt-0 mb-1">
   <i class="fad fa-external-link-alt"></i> 通过发送下面的链接邀请朋友玩。
@@ -57,7 +80,7 @@ async function makeBestMove() {
   if (isComputerThinking || game.game_over()) return;
 
   isComputerThinking = true;
-  $('#game-status').html('Máy đang suy nghĩ... <i class="fas fa-spinner fa-spin"></i>');
+  $('#game-status').html('思维... <i class="fas fa-spinner fa-spin"></i>');
 
   try {
     const response = await fetch('/api/xiangqi/best-move', {

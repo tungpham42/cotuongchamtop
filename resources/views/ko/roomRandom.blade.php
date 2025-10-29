@@ -15,7 +15,7 @@
   <a data-step="1" data-intro="단서가 부족한 경우 여기를 클릭하세요"  id="resign" class="btn btn-dark btn-lg"><i class="fad fa-flag"></i> 사직하다</a>
 </p>
 <div class="text-center mx-auto" style="width: fit-content;" data-step="3" data-intro="이 페이지를 모바일에서 열어주세요">
-@include('common.qrCode')
+{{-- @include('common.qrCode') --}}
 </div>
 <script>
 @if ($room['pass'] != null)

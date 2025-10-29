@@ -15,7 +15,7 @@
   <a data-step="1" data-intro="如果您没有线索，请点击这里" id="resign" class="btn btn-dark btn-lg"><i class="fad fa-flag"></i> 辞职</a>
 </p>
 <div class="text-center mx-auto" style="width: fit-content;" data-step="3" data-intro="请在手机上打开这个页面">
-@include('common.qrCode')
+{{-- @include('common.qrCode') --}}
 </div>
 <script>
 @if ($room['pass'] != null)
