@@ -538,7 +538,7 @@ input:-internal-autofill-selected:focus {
     .container-fluid.game,
     .container-fluid.news,
     .container-fluid.contact {
-        background-attachment: scroll !important;
+        background-image: none !important;
     }
 }
 .container-fluid.bmi-explanation,
