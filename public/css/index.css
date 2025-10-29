@@ -522,7 +522,12 @@ input:-internal-autofill-selected:focus {
 .container-fluid.game,
 .container-fluid.news,
 .container-fluid.contact {
-    background-color: #312e2b;
+    background-image: url(/img/cotuong-bg.jpg) !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+    background-size: cover !important;
+    background-color: #312e2b !important;
     color: beige;
 }
 .container-fluid.bmi-explanation,
