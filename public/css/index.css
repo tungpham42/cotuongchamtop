@@ -522,7 +522,7 @@ input:-internal-autofill-selected:focus {
 .container-fluid.game,
 .container-fluid.news,
 .container-fluid.contact {
-    background-image: url(/img/cotuong-bg.jpg) !important;
+    background-image: url(/img/cotuong-bg.png) !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
     background-attachment: fixed !important;
