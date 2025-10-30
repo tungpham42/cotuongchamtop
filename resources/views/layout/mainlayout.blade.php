@@ -37,7 +37,6 @@
     @endif
     <main>
       @include('common.adsenseBanner')
-      @include('layout.partials.adsense')
       @yield('aboveContent')
       <div class="sharethis-inline-reaction-buttons"></div>
       @include('common.ads')

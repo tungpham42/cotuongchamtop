@@ -140,7 +140,7 @@ $(document).ready(function () {
             var boardDiv = $('<div class="innerBoard">').attr('id', boardId);
             container.html(boardDiv);
             let boardConfig = {
-              position: fenCode              
+              position: fenCode
             };
             if (fenCode.includes(' r ')) {
               boardConfig.orientation = 'red';
