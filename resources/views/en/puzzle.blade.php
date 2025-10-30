@@ -96,7 +96,7 @@ const board = Xiangqiboard('ban-co', {
   @if ($board != '')
   position: '{{ $board }}',
   @endif
-  showNotation: false,
+  showNotation: true,
   onSnapEnd: onSnapEnd
 });
 const ratio = $('#ban-co').height() / $('#ban-co').width();

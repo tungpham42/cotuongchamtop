@@ -538,16 +538,16 @@ Route::match(['get', 'post'], '/co-the', function () {
 return view('puzzle', ['headTitle' => 'Xếp bàn cờ thế', 'bodyClass' => 'puzzle setup', 'board' => '', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/co-the', 'langEnUrl' => '/puzzle', 'langJaUrl' => '/pazuru', 'langKoUrl' => '/peojeul', 'langZhUrl' => '/mi', 'canonicalUrl' => '/co-the', 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
 });
 Route::match(['get', 'post'], '/puzzle', function () {
-return view('en/puzzle', ['headTitle' => 'Set up the puzzle', 'bodyClass' => 'puzzle', 'board' => '', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/co-the', 'langEnUrl' => '/puzzle', 'langJaUrl' => '/pazuru', 'langKoUrl' => '/peojeul', 'langZhUrl' => '/mi', 'canonicalUrl' => '/puzzle']);
+return view('en/puzzle', ['headTitle' => 'Set up the puzzle', 'bodyClass' => 'puzzle setup', 'board' => '', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/co-the', 'langEnUrl' => '/puzzle', 'langJaUrl' => '/pazuru', 'langKoUrl' => '/peojeul', 'langZhUrl' => '/mi', 'canonicalUrl' => '/puzzle']);
 });
 Route::match(['get', 'post'], '/pazuru', function () {
-return view('ja/puzzle', ['headTitle' => 'パズルを組み立てる', 'bodyClass' => 'puzzle', 'board' => '', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/co-the', 'langEnUrl' => '/puzzle', 'langJaUrl' => '/pazuru', 'langKoUrl' => '/peojeul', 'langZhUrl' => '/mi', 'canonicalUrl' => '/pazuru']);
+return view('ja/puzzle', ['headTitle' => 'パズルを組み立てる', 'bodyClass' => 'puzzle setup', 'board' => '', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/co-the', 'langEnUrl' => '/puzzle', 'langJaUrl' => '/pazuru', 'langKoUrl' => '/peojeul', 'langZhUrl' => '/mi', 'canonicalUrl' => '/pazuru']);
 });
 Route::match(['get', 'post'], '/peojeul', function () {
-return view('ko/puzzle', ['headTitle' => '퍼즐', 'bodyClass' => 'puzzle', 'board' => '', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/co-the', 'langEnUrl' => '/puzzle', 'langJaUrl' => '/pazuru', 'langKoUrl' => 'peojeul', 'langZhUrl' => '/mi', 'canonicalUrl' => '/peojeul']);
+return view('ko/puzzle', ['headTitle' => '퍼즐', 'bodyClass' => 'puzzle setup', 'board' => '', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/co-the', 'langEnUrl' => '/puzzle', 'langJaUrl' => '/pazuru', 'langKoUrl' => 'peojeul', 'langZhUrl' => '/mi', 'canonicalUrl' => '/peojeul']);
 });
 Route::match(['get', 'post'], '/mi', function () {
-return view('zh/puzzle', ['headTitle' => '谜', 'bodyClass' => 'puzzle', 'board' => '', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/co-the', 'langEnUrl' => '/puzzle', 'langJaUrl' => '/pazuru', 'langKoUrl' => '/peojeul', 'langZhUrl' => '/mi', 'canonicalUrl' => '/mi']);
+return view('zh/puzzle', ['headTitle' => '谜', 'bodyClass' => 'puzzle setup', 'board' => '', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/co-the', 'langEnUrl' => '/puzzle', 'langJaUrl' => '/pazuru', 'langKoUrl' => '/peojeul', 'langZhUrl' => '/mi', 'canonicalUrl' => '/mi']);
 });
 
 Route::match(['get', 'post'], '/thach-dau/{board}', function ($board) {

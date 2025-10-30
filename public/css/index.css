@@ -532,12 +532,24 @@ input:-internal-autofill-selected:focus {
     isolation: isolate !important;
     position: relative !important;
 }
+body.dashboard main,
+body.login main,
+body.register main {
+    background-image: url(/img/cotuong-bg.png) !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+    background-size: cover !important;
+}
 @media (max-width: 767.98px) {
     .container-fluid.about,
     .container-fluid.bmi,
     .container-fluid.game,
     .container-fluid.news,
-    .container-fluid.contact {
+    .container-fluid.contact,
+    body.dashboard main,
+    body.login main,
+    body.register main {
         background-image: none !important;
     }
 }
