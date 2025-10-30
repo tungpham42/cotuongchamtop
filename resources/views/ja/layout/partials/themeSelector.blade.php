@@ -467,10 +467,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (typeof window.board !== 'undefined') {
                   delete window.board;
                 }
-
+                const isPuzzlePage = window.location.pathname === '/pazuru';
                 window.board = Xiangqiboard('ban-co', {
                   draggable: true,
                   position: currentPos,
+                  sparePieces: isPuzzlePage,
                   showNotation: true
                 });
 
