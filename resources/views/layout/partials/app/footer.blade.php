@@ -34,13 +34,7 @@
             <a target="_blank" class="game showPromotion" href="https://game.cotuong.top"><i class="fal fa-gamepad-alt"></i> Trò chơi</a>
           </li>
           <li>
-            <a target="_blank" class="chat showPromotion" href="https://chat.cotuong.top"><i class="fal fa-comment-lines"></i> Chatbox</a>
-          </li>
-          <li>
             <a target="_blank" class="buy showPromotion" href="https://www.codester.com/items/41601/multilingual-chinese-chess-game-with-many-options?ref=tungpham"><i class="fal fa-shopping-cart"></i> Mua mã nguồn</a>
-          </li>
-          <li>
-            <a target="_blank" class="2048 showPromotion" href="https://nhipsinhhoc.vn/"><i class="fal fa-head-side-medical"></i> Nhịp Sinh học</a>
           </li>
           <li>
             <a target="_blank" class="hololab showPromotion" href="https://hololab.vn/"><i class="fal fa-cube"></i> Hologram</a>

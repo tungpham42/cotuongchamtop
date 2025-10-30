@@ -28,13 +28,7 @@
             <a target="_blank" class="game stopPromotion" href="https://game.cotuong.top"><i class="fal fa-gamepad-alt"></i> ゲーム</a>
           </li>
           <li>
-            <a target="_blank" class="chat stopPromotion" href="https://chat.cotuong.top"><i class="fal fa-comment-lines"></i> チャットボックス</a>
-          </li>
-          <li>
             <a target="_blank" class="buy stopPromotion" href="https://www.codester.com/items/41601/multilingual-chinese-chess-game-with-many-options?ref=tungpham"><i class="fal fa-shopping-cart"></i> 買う</a>
-          </li>
-          <li>
-            <a target="_blank" class="2048 stopPromotion" href="https://nhipsinhhoc.vn/ja/"><i class="fal fa-head-side-medical"></i> バイオリズム</a>
           </li>
           <li>
             <a class="lang stopPromotion" href="{{ url($langViUrl) }}"><span class="fi fi-vn"></span> Tiếng Việt</a>
