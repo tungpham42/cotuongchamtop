@@ -36,13 +36,14 @@
       </div>
     @endif
     <main>
+      @include('common.adsenseBanner')
       @include('layout.partials.adsense')
       @yield('aboveContent')
       <div class="sharethis-inline-reaction-buttons"></div>
       @include('common.ads')
       @include('layout.partials.scripts')
       @yield('belowContent')
-      @include('layout.partials.adsense')
+      @include('common.adsenseBanner')
       @desktop
         @include('layout.partials.fb')
       @enddesktop

@@ -11,12 +11,13 @@
     @include('en.layout.partials.adsenseModal')
     @include('en.layout.partials.shopeeModal')
     <main>
+      @include('common.adsenseBanner')
       @yield('aboveContent')
       <div class="sharethis-inline-reaction-buttons"></div>
       @include('common.ads')
       @include('en.layout.partials.scripts')
       @yield('belowContent')
-      @include('en.layout.partials.adsense')
+      @include('common.adsenseBanner')
       @desktop
         @include('en.layout.partials.fb')
       @enddesktop

@@ -11,6 +11,7 @@
     @include('ja.layout.partials.adsenseModal')
     @include('ja.layout.partials.shopeeModal')
     <main>
+      @include('common.adsenseBanner')
       <div class="container-fluid game px-0" itemscope itemtype="http://schema.org/Game">
         <div class="container {{ isset($board) ? 'px-3 pb-0 pt-3' : 'p-3' }}">
           <audio id="nuoc-co">
