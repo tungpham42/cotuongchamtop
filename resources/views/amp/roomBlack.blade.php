@@ -127,7 +127,7 @@ function onDragStart (source, piece) {
       (game.turn() === 'b' && piece.search(/^r/) !== -1)) {
     return false;
   }
-  
+
   if ((board.orientation() == 'red' && game.turn() === 'b') || (board.orientation() == 'black' && game.turn() === 'r')) {
     return false;
   }
@@ -226,6 +226,7 @@ let config = {
   onMouseoutSquare: onMouseoutSquare,
   onMouseoverSquare: onMouseoverSquare,
   onSnapEnd: onSnapEnd,
+  showNotation: true,
   orientation: "black"
   //pieceTheme: '/static/img/xiangqipieces/traditional/{piece}.svg'
 

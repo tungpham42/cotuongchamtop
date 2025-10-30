@@ -303,6 +303,7 @@ let config = {
   onMouseoutSquare: onMouseoutSquare,
   onMouseoverSquare: onMouseoverSquare,
   onSnapEnd: onSnapEnd,
+  showNotation: true
   //pieceTheme: '/static/img/xiangqipieces/traditional/{piece}.svg'
 };
 board = Xiangqiboard('ban-co', config);

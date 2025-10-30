@@ -198,7 +198,8 @@ let config = {
   onMouseoutSquare: onMouseoutSquare,
   onMouseoverSquare: onMouseoverSquare,
   onSnapEnd: onSnapEnd,
-  onMoveEnd: onMoveEnd
+  onMoveEnd: onMoveEnd,
+  showNotation: true
 };
 board = Xiangqiboard('ban-co', config);
 $(window).resize(board.resize);

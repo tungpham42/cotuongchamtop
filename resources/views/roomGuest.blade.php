@@ -408,8 +408,8 @@ let config = {
   onMouseoutSquare: onMouseoutSquare,
   onMouseoverSquare: onMouseoverSquare,
   onSnapEnd: onSnapEnd,
+  showNotation: true,
   orientation: "black",
-  showNotation: true
   //pieceTheme: '/static/img/xiangqipieces/traditional/{piece}.svg'
 
 };

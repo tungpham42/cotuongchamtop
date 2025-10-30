@@ -471,7 +471,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.board = Xiangqiboard('ban-co', {
                   draggable: true,
                   position: currentPos,
-                  showNotation: false
+                  showNotation: true
                 });
 
                 // Update global board reference if needed

@@ -339,6 +339,7 @@ let config = {
   onMouseoutSquare: onMouseoutSquare,
   onMouseoverSquare: onMouseoverSquare,
   onSnapEnd: onSnapEnd,
+  showNotation: true,
   orientation: "red"
   //pieceTheme: '/static/img/xiangqipieces/traditional/{piece}.svg'
 

@@ -204,6 +204,7 @@ let config = {
   onMouseoutSquare: onMouseoutSquare,
   onMouseoverSquare: onMouseoverSquare,
   onSnapEnd: onSnapEnd,
+  showNotation: true
   // onMoveEnd: onMoveEnd
   //pieceTheme: '/static/img/xiangqipieces/traditional/{piece}.svg'
 };
