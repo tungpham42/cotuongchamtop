@@ -11,13 +11,13 @@
     @include('ko.layout.partials.adsenseModal')
     @include('ko.layout.partials.shopeeModal')
     <main>
-      @include('common.adsenseBanner')
+      @include('common.xiangqiBanner')
       @yield('aboveContent')
       <div class="sharethis-inline-reaction-buttons"></div>
       @include('common.ads')
       @include('ko.layout.partials.scripts')
       @yield('belowContent')
-      @include('common.adsenseBanner')
+      @include('common.xiangqiBanner')
       @desktop
         @include('ko.layout.partials.fb')
       @enddesktop
