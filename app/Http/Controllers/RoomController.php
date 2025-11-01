@@ -17,6 +17,7 @@ use App\Jobs\QuickMatchJob;
 use App\Jobs\AnonymousQuickMatchJob;
 use Illuminate\Support\Str;
 use Atrox\Haikunator;
+use Illuminate\Support\Collection;
 
 class RoomController extends Controller
 {
@@ -709,6 +710,10 @@ class RoomController extends Controller
                 'red_time'      => 600,
                 'active_player' => null,
                 'last_update'   => null,
+                'move_history'  => [],
+                'game_started_at' => null,
+                'game_finished_at' => null,
+                'last_move_at'    => null,
             ]
         );
 
@@ -756,10 +761,48 @@ class RoomController extends Controller
     {
         $code = $request->input('ma-phong');
         $fen = $request->input('FEN');
-        Room::updateOrInsert(
-            ['code' => $code],
-            ['fen' => $fen, 'modified_at' => date('Y-m-d H:i:s')]
-        );
+        if (!$code || !$fen) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Thiếu mã phòng hoặc FEN.',
+            ], 422);
+        }
+
+        $room = Room::firstOrNew(['code' => $code]);
+        $history = collect($room->move_history ?? []);
+        $movePayload = $this->decodeMovePayload($request->input('move'));
+
+        if ($movePayload) {
+            $lastFen = $history->last()['fen'] ?? null;
+            $fenBefore = $movePayload['fen_before'] ?? $lastFen ?? env('INITIAL_FEN');
+
+            if ($history->isNotEmpty() && $lastFen !== null && $fenBefore !== $lastFen) {
+                $history = collect();
+                $room->game_started_at = null;
+                $room->game_finished_at = null;
+            }
+
+            $entry = $this->buildMoveEntry($movePayload, $fen, $history);
+
+            if ($entry !== null) {
+                $history->push($entry);
+                $room->last_move_at = now();
+                if (is_null($room->game_started_at)) {
+                    $room->game_started_at = now();
+                }
+                $room->game_finished_at = null;
+            }
+        }
+
+        $room->fen = $fen;
+        $room->move_history = $history->values()->all();
+        $room->modified_at = now();
+        $room->save();
+
+        return response()->json([
+            'success' => true,
+            'moves' => $room->move_history,
+        ]);
     }
 
     public function join(Request $request)
@@ -1131,6 +1174,71 @@ class RoomController extends Controller
         $fen = Room::where('code', $code)->value('fen');
 
         return $fen;
+    }
+
+    public function moveHistory(Request $request, string $code)
+    {
+        $after = max(0, (int) $request->query('after', 0));
+        $room = Room::where('code', $code)->first();
+
+        if (!$room) {
+            return response()->json([
+                'moves' => [],
+                'total' => 0,
+            ]);
+        }
+
+        $history = collect($room->move_history ?? []);
+
+        if ($after > 0) {
+            $history = $history->slice($after)->values();
+        }
+
+        return response()->json([
+            'moves' => $history,
+            'total' => count($room->move_history ?? []),
+        ]);
+    }
+
+    protected function decodeMovePayload(?string $payload): ?array
+    {
+        if ($payload === null || $payload === '') {
+            return null;
+        }
+
+        $decoded = json_decode($payload, true);
+
+        return is_array($decoded) ? $decoded : null;
+    }
+
+    protected function buildMoveEntry(array $moveData, string $fen, Collection $history): ?array
+    {
+        $lastEntry = $history->last();
+        $lastFen = $lastEntry['fen'] ?? null;
+
+        if ($lastFen !== null && $lastFen === $fen) {
+            return null;
+        }
+
+        $from = $moveData['from'] ?? null;
+        $to = $moveData['to'] ?? null;
+        $iccs = $moveData['iccs'] ?? (($from && $to) ? $from.$to : null);
+        $fenBefore = $moveData['fen_before'] ?? ($lastEntry['fen'] ?? env('INITIAL_FEN'));
+
+        return [
+            'ply' => (int) ($moveData['ply'] ?? ($history->count() + 1)),
+            'san' => $moveData['san'] ?? null,
+            'iccs' => $iccs,
+            'from' => $from,
+            'to' => $to,
+            'piece' => $moveData['piece'] ?? null,
+            'captured' => $moveData['captured'] ?? null,
+            'color' => $moveData['color'] ?? null,
+            'flags' => $moveData['flags'] ?? null,
+            'fen_before' => $fenBefore,
+            'fen' => $fen,
+            'created_at' => now()->toIso8601String(),
+        ];
     }
 
     /**
@@ -1593,4 +1701,3 @@ class RoomController extends Controller
         ]);
     }
 }
-

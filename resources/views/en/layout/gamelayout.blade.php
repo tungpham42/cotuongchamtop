@@ -133,6 +133,16 @@
         </div>
       </div>
       @include('en.layout.partials.fb')
+      @isset($roomCode)
+        <script>
+          window.__ROOM_REPLAY_CONFIG__ = {
+              'code': @json($roomCode),
+              'initialFen': @json(env('INITIAL_FEN')),
+              'history': @json(optional($room ?? null)->move_history ?? [])
+          };
+        </script>
+        <script src="{{ asset('js/room-replay.js') }}" defer></script>
+      @endisset
     </main>
     @include('en.layout.partials.footer')
     @include('common.adcash')
