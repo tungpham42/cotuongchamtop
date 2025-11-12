@@ -81,7 +81,7 @@ class PuzzleController extends Controller
         return Puzzle::public()
                 ->where('likes_count', '>', $likes)
                 ->count() + 1;
-    }    
+    }
 
     public static function getUserPuzzles()
     {
@@ -89,7 +89,7 @@ class PuzzleController extends Controller
                         ->select('name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'description', 'updated_at')
                         ->orderByDesc('updated_at')
                         ->paginate(6);
-    } 
+    }
 
     public static function getFirstUserPuzzles()
     {
@@ -97,7 +97,7 @@ class PuzzleController extends Controller
                         ->select('name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'description', 'updated_at')
                         ->orderByDesc('updated_at')
                         ->paginate(6, ['*'], 'page', 1);
-    }    
+    }
 
     public static function getSitemapPuzzles()
     {
@@ -105,7 +105,7 @@ class PuzzleController extends Controller
                         ->select('name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'description', 'updated_at')
                         ->orderByDesc('updated_at')
                         ->paginate(4096);
-    }    
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -154,7 +154,7 @@ class PuzzleController extends Controller
             'slug' => $puzzle->slug,
             'url' => URL::to('/').'/the-co/'.$puzzle->slug,
         ], 201);
-    }    
+    }
 
     public function checkUniqueName(Request $request)
     {
@@ -211,17 +211,17 @@ class PuzzleController extends Controller
     {
         return Puzzle::where('name', $name)->value('fen');
     }
-    
+
     public static function findBySlug(string $slug): ?Puzzle
     {
         return Puzzle::where('slug', $slug)->first();
     }
-    
+
     public static function getFen($slug)
     {
         return optional(self::findBySlug($slug))->fen;
     }
-    
+
     public static function getName($slug)
     {
         return optional(self::findBySlug($slug))->name;
@@ -231,7 +231,7 @@ class PuzzleController extends Controller
     {
         $slug = $request->input('slug');
         return $this->react($request, $slug ?? '');
-    }    
+    }
 
     public function downvote(Request $request)
     {
