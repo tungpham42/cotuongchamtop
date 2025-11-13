@@ -41,7 +41,7 @@ class Puzzle extends Model
         return $query->where('is_public', true);
     }
 
-   public static function makeUniqueSlug(string $name, ?string $preferred = null): string
+    public static function makeUniqueSlug(string $name, ?string $preferred = null): string
     {
         // Try preferred slug first if provided
         if ($preferred) {
