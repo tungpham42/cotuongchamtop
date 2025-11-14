@@ -1,6 +1,11 @@
 @extends('ko.layout.gamelayout')
+@php
+  $puzzleName = App\Http\Controllers\PuzzleController::getNameByFen($fen);
+@endphp
 @section('aboveBoard')
-<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="게임 기술 향상">너는 컴퓨터로 퍼즐을 풀고 있다</h5>
+<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="컴퓨터와 함께 체스 퍼즐을 풀고 있습니다">
+  현재 @if($puzzleName) "{{ $puzzleName }}" @else 장기 퍼즐 @endif 을(를) 풀고 있습니다
+</h5>
 @endsection
 @section('rightSide')
 <p class="w-100 text-center m-0">

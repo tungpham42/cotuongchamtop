@@ -1,4 +1,7 @@
 @extends('ja.layout.gamelayout')
+@php
+  $puzzleName = App\Http\Controllers\PuzzleController::getNameByFen($fen);
+@endphp
 @section('aboveBoard')
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="チェスのスキルを向上させる">あなたはコンピューターでパズルを解いています</h5>
 @endsection

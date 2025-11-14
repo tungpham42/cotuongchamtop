@@ -460,6 +460,22 @@ class PuzzleController extends Controller
 
         return 'guest:' . hash('sha256', $ip . '|' . $agent);
     }
+
+    public static function getNameByFen(string $fen): ?string
+    {
+        // Remove any trailing move/turn information to get the pure position
+        $fenBase = trim(explode(' ', $fen)[0]);
+
+        // Also try the full FEN in case it's stored that way
+        $puzzle = Puzzle::where('fen', $fenBase)->first();
+
+        if (!$puzzle) {
+            // Try with the full FEN
+            $puzzle = Puzzle::where('fen', $fen)->first();
+        }
+
+        return $puzzle ? $puzzle->name : null;
+    }
     /**
      * Show the form for editing the specified resource.
      *
