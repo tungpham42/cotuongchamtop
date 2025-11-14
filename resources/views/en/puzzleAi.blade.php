@@ -3,8 +3,8 @@
   $puzzleName = App\Http\Controllers\PuzzleController::getNameByFen($fen);
 @endphp
 @section('aboveBoard')
-<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="コンピューターと対戦中です">
-  現在 @if($puzzleName) "{{ $puzzleName }}" @else 詰将棋 @endif を解いています
+<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="You are solving a puzzle with the computer">
+  You are solving @if($puzzleName) "{{ $puzzleName }}" @else a puzzle @endif
 </h5>
 @endsection
 @section('rightSide')
