@@ -527,7 +527,7 @@ input:-internal-autofill-selected:focus {
     background-repeat: no-repeat !important;
     background-attachment: fixed !important;
     background-size: cover !important;
-    background-color: #312e2b !important;
+    background-color: transparent !important;
     color: beige;
     isolation: isolate !important;
     position: relative !important;
@@ -541,7 +541,7 @@ body.register main {
     background-attachment: fixed !important;
     background-size: cover !important;
 }
-@media (max-width: 767.98px) {
+/* @media (max-width: 767.98px) {
     .container-fluid.about,
     .container-fluid.bmi,
     .container-fluid.game,
@@ -550,9 +550,9 @@ body.register main {
     body.dashboard main,
     body.login main,
     body.register main {
-        background-attachment: scroll !important;
+        background-image: none !important;
     }
-}
+} */
 .container-fluid.bmi-explanation,
 .container-fluid.game-explanation {
     background-color: #f5e5b5;
