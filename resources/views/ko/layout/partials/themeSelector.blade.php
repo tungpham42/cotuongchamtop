@@ -20,19 +20,9 @@
             <img src="{{ url('/') }}/img/xiangqiboards/wood-board.svg" alt="어두운 나무" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-dark')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="ban-co" title="밝은 노란색">
-          <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/ban-co.svg" alt="밝은 노란색" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-yellow')" />
-          </div>
-        </button>
         <button class="theme-option" data-theme-type="board" data-theme="banco" title="라이트">
           <div class="theme-preview board-preview">
             <img src="{{ url('/') }}/img/xiangqiboards/banco.svg" alt="라이트" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-light')" />
-          </div>
-        </button>
-        <button class="theme-option" data-theme-type="board" data-theme="chess-board" title="밝은 주황색">
-          <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/chess-board.svg" alt="밝은 주황색" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-orange')" />
           </div>
         </button>
       </div>
