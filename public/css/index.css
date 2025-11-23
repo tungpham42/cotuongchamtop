@@ -541,7 +541,7 @@ body.register main {
     background-attachment: fixed !important;
     background-size: cover !important;
 }
-@media (max-width: 767.98px) {
+/* @media (max-width: 767.98px) {
     .container-fluid.about,
     .container-fluid.bmi,
     .container-fluid.game,
@@ -552,7 +552,7 @@ body.register main {
     body.register main {
         background-image: none !important;
     }
-}
+} */
 .container-fluid.bmi-explanation,
 .container-fluid.game-explanation {
     background-color: #f5e5b5;
