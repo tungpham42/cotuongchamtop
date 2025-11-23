@@ -77,7 +77,7 @@ function onDrop (source, target) {
   });
   // illegal move
   if (move === null) return 'snapback';
-  
+
   if (move.color === 'r') {
     removeHighlights('red');
     $board.find('.square-' + source).addClass('highlight-red');
@@ -153,6 +153,11 @@ function updateStatus () {
     // check?
     if (game.in_check()) {
       status += ', ' + moveColor + ' is in check'
+      if ((board.orientation() == 'red' && game.turn() === 'r') || (board.orientation() == 'black' && game.turn() === 'b')) {
+        $('#checkmateText').show();
+      }
+    } else {
+      $('#checkmateText').hide();
     }
   }
   if (game.turn() === 'r') {
