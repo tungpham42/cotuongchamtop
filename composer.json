@@ -36,6 +36,7 @@
     "spatie/laravel-cookie-consent": "^3.1",
     "spatie/laravel-sitemap": "^6.3",
     "spatie/schema-org": "^3.14",
+    "stevebauman/location": "^7.6",
     "swooletw/laravel-swoole": "^2.12",
     "symfony/mailer": "^6.0",
     "symfony/process": "^6.4",

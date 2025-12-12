@@ -23,7 +23,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrackUserOnlineStatus::class,
         // \App\Http\Middleware\ContentSecurityPolicy::class,
-        
+
         \RenatoMarinho\LaravelPageSpeed\Middleware\InlineCss::class,
         // \RenatoMarinho\LaravelPageSpeed\Middleware\ElideAttributes::class,
         \RenatoMarinho\LaravelPageSpeed\Middleware\InsertDNSPrefetch::class,
@@ -32,6 +32,7 @@ class Kernel extends HttpKernel
         // \RenatoMarinho\LaravelPageSpeed\Middleware\RemoveQuotes::class,
         // \RenatoMarinho\LaravelPageSpeed\Middleware\CollapseWhitespace::class, // Note: This middleware invokes "RemoveComments::class" before it runs.
         // \RenatoMarinho\LaravelPageSpeed\Middleware\DeferJavascript::class,
+        \App\Http\Middleware\BlockCountry::class,
     ];
 
     /**
