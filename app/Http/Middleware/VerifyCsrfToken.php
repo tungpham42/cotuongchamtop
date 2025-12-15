@@ -18,6 +18,7 @@ class VerifyCsrfToken extends Middleware
         '/processMail',
         '/xulyMail',
         '/updateFEN',
+        '/payos/webhook',
         '/test-*'  // Allow all test routes
     ];
 

@@ -1,3 +1,4 @@
+@if ($showAds ?? true)
 <div style="background-color: #302E2B" class="container-fluid adsense px-0">
   <div class="row w-100 mx-auto">
     <h2 class="d-none mb-4 mx-auto w-100 text-light text-center"><i class="fas fa-ad"></i> Quảng cáo</h2>
@@ -14,3 +15,4 @@
     </script>
   </div>
 </div>
+@endif

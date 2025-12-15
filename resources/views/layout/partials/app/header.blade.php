@@ -48,6 +48,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               </a>
 
               <div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="navbarDropdown">
+                @if (Auth::user()->isStandard())
+                  <span class="dropdown-item text-success"><i class="far fa-crown"></i> Standard (ẩn quảng cáo)</span>
+                @else
+                  <a href="{{ url('/ho-so-cua-toi') }}#standard-plan" class="showPromotion dropdown-item text-danger">
+                    <i class="far fa-crown"></i> Nâng cấp Standard
+                  </a>
+                @endif
                 <a href="{{ url('/ho-so-cua-toi') }}" class="showPromotion dropdown-item{{ url()->current() == url('/ho-so-cua-toi') ? ' active disabled' : '' }}"><i class="far fa-id-card"></i> Hồ sơ của tôi</a>
                 <a href="{{ url('/doi-ten') }}" class="showPromotion dropdown-item{{ url()->current() == url('/doi-ten') ? ' active disabled' : '' }}"><i class="far fa-user-edit"></i> Đổi tên</a>
                 <a href="{{ url('/doi-giao-dien') }}" class="showPromotion dropdown-item{{ url()->current() == url('/doi-giao-dien') ? ' active disabled' : '' }}"><i class="far fa-palette"></i> Đổi giao diện</a>

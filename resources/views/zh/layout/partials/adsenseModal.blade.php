@@ -1,3 +1,4 @@
+@if ($showAds ?? true)
 <div class="modal fade" id="AdSenseModal" tabindex="-1" role="dialog" aria-label="AdSense" aria-hidden="true" data-backdrop="static" data-keyboard="false" data-url="">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content shadow-lg">
@@ -21,3 +22,4 @@
     </div>
   </div>
 </div>
+@endif

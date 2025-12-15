@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="container">
+    @if ($showAds ?? true)
     <div class="row justify-content-center text-center mb-4">
         <div class="col-12">
             <!-- CO_res -->
@@ -16,6 +17,7 @@
             </script>
         </div>
     </div>
+    @endif
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">

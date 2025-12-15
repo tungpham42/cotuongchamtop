@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="container">
+    @if ($showAds ?? true)
     <div class="row justify-content-center text-center mb-4">
         <div class="col-12">
             <!-- CO_res -->
@@ -16,6 +17,7 @@
             </script>
         </div>
     </div>
+    @endif
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
@@ -51,6 +53,36 @@
                     <h5>Số trận hòa: <span id="drawPoints">{!! app('App\Http\Controllers\UserController')::renderDrawMatchPoints($player->id) !!}</span></h5>
                     <h5>Số trận thua: <span id="losePoints">{!! app('App\Http\Controllers\UserController')::renderLoseMatchPoints($player->id) !!}</span></h5>
                     <h5>Tổng số trận đã đấu xong: <span id="totalPoints">{!! app('App\Http\Controllers\UserController')::renderTotalMatchPoints($player->id) !!}</span></h5>
+                    @if (auth()->check() && $player->id === auth()->id())
+                    <div id="standard-plan" class="alert alert-warning d-flex align-items-center justify-content-between mt-3">
+                        <div class="text-left">
+                            <strong>Gói hiện tại:</strong>
+                            @if (auth()->user()->isStandard())
+                                Standard (đã ẩn quảng cáo)
+                                @if (auth()->user()->subscription_started_at)
+                                    <small class="text-muted">(kích hoạt {{ auth()->user()->subscription_started_at->format('d/m/Y H:i') }})</small>
+                                @endif
+                            @else
+                                Miễn phí (đang hiển thị quảng cáo)
+                                @php $latestPayment = auth()->user()->payosPayments()->latest()->first(); @endphp
+                                @if ($latestPayment && $latestPayment->status !== 'paid')
+                                    <br><small class="text-muted">Giao dịch gần nhất: {{ $latestPayment->status }} - mã {{ $latestPayment->order_code }}</small>
+                                @endif
+                            @endif
+                        </div>
+                        @if (!auth()->user()->isStandard())
+                        <form method="POST" action="{{ route('payos.standard') }}" class="mb-0">
+                            @csrf
+                            <button type="submit" class="btn btn-danger">
+                                <i class="far fa-crown"></i>
+                                Nâng cấp Standard - {{ number_format(config('payos.standard_amount', 100000), 0, ',', '.') }}đ
+                            </button>
+                        </form>
+                        @else
+                        <span class="badge badge-success p-2">Ads Free</span>
+                        @endif
+                    </div>
+                    @endif
                     @if ($player->id == auth()->id() && !str_contains(url()->current(), url('/ky-thu').'/'))
                     <p class="w-100 text-left">
                         <a href="{{ url('/doi-ten') }}" class="btn btn-lg btn-dark showPromotion"><i class="fad fa-user-edit"></i> Đổi tên</a>

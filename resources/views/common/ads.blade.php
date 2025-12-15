@@ -1,3 +1,4 @@
+@if ($showAds ?? true)
 <div id="ads" class="w-100 mx-auto d-block text-center">
 {{-- <iframe style='border:none' src='https://smartlink.adpia.vn/adpia-banner.php?width=320&height=100&cate=A&m_id=lazadacc&a_id=A100108852&u_id=A100108852' height='100' width='320'></iframe> --}}
 <script>
@@ -5,3 +6,4 @@
 // var link=document.createElement("a");link.href="https://stvkr.com/v2/click-bKm7y-Mz4Y1j-aDzqa-a225e247?tl=1";link.style.borderRadius="50%";link.style.background="url('https://i.imgur.com/VMDatH1.png') no-repeat";link.innerText="";link.style.position="fixed";link.style.top="40%";link.style.right="10px";link.style.color="white";link.style.fontSize="30px";link.style.textDecoration="none";link.style.width="100px";link.style.height="100px";link.style.display="flex";link.style.alignItems='center';link.style.justifyContent='center';link.style.backgroundSize='cover';link.classList.add("hidden");document.body.appendChild(link);var styleSheet=document.styleSheets[0]||document.head.appendChild(document.createElement("style")).sheet;styleSheet.insertRule(".hidden { display: none !important; }",styleSheet.cssRules.length);window.addEventListener('scroll',function(){var scrollPosition=window.scrollY;if(scrollPosition>200){link.classList.remove('hidden');}else{link.classList.add('hidden');}});
 </script>
 </div>
+@endif

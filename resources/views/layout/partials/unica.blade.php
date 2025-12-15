@@ -1,3 +1,4 @@
+@if ($showAds ?? true)
 <div class="container-fluid adsense px-0 border-top">
   <div class="container mx-auto px-0">
     <div class="row w-100 mx-auto py-5 px-0">
@@ -7,3 +8,4 @@
     </div>
   </div>
 </div>
+@endif

@@ -31,8 +31,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 <!-- End Google Fonts -->
 <link href="{{ url('/') }}/css/index.css?v=320" rel="stylesheet">
+@if (!($showAds ?? true))
+<style>
+  .adsense,
+  .adsbygoogle,
+  #ads,
+  .aff-link,
+  .hoc-link {
+    display: none !important;
+  }
+</style>
+@endif
 <link rel="manifest" href="{{ URL::to('/') }}/manifest.webmanifest?v=2">
+@if ($showAds ?? true)
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3585118770961536" crossorigin="anonymous"></script>
+@endif
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-QEW6K9YPY7"></script>
 <script>
@@ -50,5 +63,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-WM9GZXN');</script>
 <!-- End Google Tag Manager -->
 @include('common.schemaOrg')
+@if ($showAds ?? true)
 <script type="text/javascript" src="{{ url('/') }}/js/aclib.js"></script>
+@endif
 <script type="text/javascript" src="{{ url('/') }}/js/theme-manager.js?v=1"></script>

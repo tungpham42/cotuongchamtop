@@ -10,6 +10,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PuzzleController;
 use App\Http\Controllers\TimerController;
+use App\Http\Controllers\PayOSController;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Spatie\Sitemap\SitemapGenerator;
@@ -488,6 +489,11 @@ Route::get('tao-mat-khau', 'Auth\ForgotPasswordController@showLinkRequestForm')-
 Route::post('gui-duong-dan-tao-mat-khau', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
 Route::get('dat-lai-mat-khau/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
 Route::post('quen-mat-khau', 'Auth\ResetPasswordController@reset')->name('password.update');
+
+Route::middleware('auth')->post('/payos/standard', [PayOSController::class, 'createStandard'])->name('payos.standard');
+Route::get('/payos/return', [PayOSController::class, 'handleReturn'])->name('payos.return');
+Route::get('/payos/cancel', [PayOSController::class, 'handleCancel'])->name('payos.cancel');
+Route::post('/payos/webhook', [PayOSController::class, 'webhook'])->name('payos.webhook');
 
 Route::post('doi-mat-khau', [UserController::class, 'changePassword'])->name('change.password');
 Route::post('doi-ten', [UserController::class, 'changeName'])->name('change.name');
