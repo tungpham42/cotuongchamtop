@@ -6,9 +6,11 @@
         "watch": "mix watch",
         "hot": "mix watch --hot",
         "prod": "npm run production",
-        "production": "mix --production"
+        "production": "mix --production",
+        "test:e2e": "npx playwright test"
     },
     "devDependencies": {
+        "@playwright/test": "^1.57.0",
         "@popperjs/core": "^2.11.6",
         "axios": "^0.21.1",
         "bootstrap": "^5.2.3",
