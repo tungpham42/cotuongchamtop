@@ -6,6 +6,7 @@ use App\Models\PayosPayment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use PayOS\Exceptions\WebhookException;
 use PayOS\Models\V2\PaymentRequests\CreatePaymentLinkRequest;
 use PayOS\Models\V2\PaymentRequests\PaymentLinkStatus;
@@ -32,7 +33,8 @@ class PayOSController extends Controller
         }
 
         $orderCode = $this->generateOrderCode();
-        $description = 'Nâng cấp Standard - ' . ($user->email ?: $user->name);
+        $baseDescription = 'Standard-' . ($user->email ?: $user->name);
+        $description = Str::limit($baseDescription, 25, ''); // PayOS giới hạn 25 ký tự
 
         try {
             $paymentRequest = new CreatePaymentLinkRequest(
@@ -181,7 +183,8 @@ class PayOSController extends Controller
     private function generateOrderCode(): int
     {
         do {
-            $candidate = (int) (now()->format('YmdHis') . random_int(100, 999));
+            // PayOS yêu cầu order_code <= 9007199254740991, nên chỉ dùng timestamp (10 số) + 3 số ngẫu nhiên
+            $candidate = (int) (now()->timestamp . random_int(100, 999));
         } while (PayosPayment::where('order_code', $candidate)->exists());
 
         return $candidate;
