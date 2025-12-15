@@ -1,6 +1,11 @@
 @extends('zh.layout.gamelayout')
+@php
+  $puzzleName = App\Http\Controllers\PuzzleController::getNameByFen($fen);
+@endphp
 @section('aboveBoard')
-<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="你正在用计算机解黑板">你正在用计算机解黑板</h5>
+<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="您正在与电脑解象棋残局">
+  您正在解 @if($puzzleName) "{{ $puzzleName }}" @else 象棋残局 @endif
+</h5>
 @endsection
 @section('rightSide')
 <p class="w-100 text-center m-0">

@@ -11,13 +11,13 @@
     @include('zh.layout.partials.adsenseModal')
     @include('zh.layout.partials.shopeeModal')
     <main>
-      @include('common.adsenseBanner')
+      @include('common.xiangqiBanner')
       @yield('aboveContent')
       <div class="sharethis-inline-reaction-buttons"></div>
       @include('common.ads')
       @include('zh.layout.partials.scripts')
       @yield('belowContent')
-      @include('common.adsenseBanner')
+      @include('common.xiangqiBanner')
       @desktop
         @include('zh.layout.partials.fb')
       @enddesktop

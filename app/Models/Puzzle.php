@@ -10,7 +10,7 @@ class Puzzle extends Model
 {
     use HasFactory;
     protected $primaryKey = 'id';
-    
+
     public $fillable = [
         'name',
         'slug',
@@ -43,19 +43,18 @@ class Puzzle extends Model
 
     public static function makeUniqueSlug(string $name, ?string $preferred = null): string
     {
-        $candidate = Str::slug((string) $preferred);
-        if ($candidate && !static::where('slug', $candidate)->exists()) {
-            return Str::limit($candidate, 255, '');
+        // Try preferred slug first if provided
+        if ($preferred) {
+            $candidate = Str::slug($preferred);
+            if ($candidate && !static::where('slug', $candidate)->exists()) {
+                return Str::limit($candidate, 255, '');
+            }
         }
 
-        $base = Str::slug($name) ?: 'the-co';
-        $base = Str::limit($base, 190, '');
+        // Generate slug from name using Laravel's built-in methods
+        $slug = Str::transliterate($name);
+        $slug = Str::slug($slug);
 
-        do {
-            $prefix = str_pad((string) random_int(0, 9999), 4, '0', STR_PAD_LEFT);
-            $candidate = Str::limit($prefix.'-'.$base, 255, '');
-        } while (static::where('slug', $candidate)->exists());
-
-        return $candidate;
+        return Str::limit($slug, 255, '');
     }
 }

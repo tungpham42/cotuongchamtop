@@ -20,19 +20,9 @@
             <img src="{{ url('/') }}/img/xiangqiboards/wood-board.svg" alt="ダークウッド" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-dark')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="ban-co" title="ブライトイエロー">
-          <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/ban-co.svg" alt="ブライトイエロー" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-yellow')" />
-          </div>
-        </button>
         <button class="theme-option" data-theme-type="board" data-theme="banco" title="ライト">
           <div class="theme-preview board-preview">
             <img src="{{ url('/') }}/img/xiangqiboards/banco.svg" alt="ライト" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-light')" />
-          </div>
-        </button>
-        <button class="theme-option" data-theme-type="board" data-theme="chess-board" title="ライトオレンジ">
-          <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/chess-board.svg" alt="ライトオレンジ" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-orange')" />
           </div>
         </button>
       </div>

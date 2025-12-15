@@ -11,17 +11,17 @@
 @if (!auth()->check())
 // Immediate script - run as soon as possible
 (function() {
-  const savedBoardTheme = localStorage.getItem('guest_board_theme');  
+  const savedBoardTheme = localStorage.getItem('guest_board_theme');
   const savedPiecesTheme = localStorage.getItem('guest_pieces_theme');
-  
+
   if (savedBoardTheme || savedPiecesTheme) {
     console.log('Guest themes found:', savedBoardTheme, savedPiecesTheme);
-    
+
     // Set up a watcher for when inputs are created
     const checkAndSetInputs = function() {
       const boardInput = document.getElementById('boardTheme');
       const piecesInput = document.getElementById('piecesTheme');
-      
+
       if (boardInput && piecesInput) {
         if (savedBoardTheme) boardInput.value = savedBoardTheme;
         if (savedPiecesTheme) piecesInput.value = savedPiecesTheme;
@@ -30,7 +30,7 @@
       }
       return false;
     };
-    
+
     // Try immediately
     if (!checkAndSetInputs()) {
       // If not ready, wait for DOM

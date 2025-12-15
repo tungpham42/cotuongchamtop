@@ -21,19 +21,9 @@
             <img src="{{ url('/') }}/img/xiangqiboards/wood-board.svg" alt="Gỗ đậm" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-dark')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="ban-co" title="Vàng chói">
-          <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/ban-co.svg" alt="Vàng chói" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-yellow')" />
-          </div>
-        </button>
         <button class="theme-option" data-theme-type="board" data-theme="banco" title="Sáng">
           <div class="theme-preview board-preview">
             <img src="{{ url('/') }}/img/xiangqiboards/banco.svg" alt="Sáng" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-light')" />
-          </div>
-        </button>
-        <button class="theme-option" data-theme-type="board" data-theme="chess-board" title="Cam nhạt">
-          <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/chess-board.svg" alt="Cam nhạt" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-orange')" />
           </div>
         </button>
       </div>

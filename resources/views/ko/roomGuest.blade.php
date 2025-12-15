@@ -274,6 +274,11 @@ function updateStatus () {
     // check?
     if (game.in_check()) {
       status += ', ' + moveColor + '이 체크되어 있다'
+      if ((board.orientation() == 'red' && game.turn() === 'r') || (board.orientation() == 'black' && game.turn() === 'b')) {
+        $('#checkmateText').show();
+      }
+    } else {
+      $('#checkmateText').hide();
     }
   }
   if (game.turn() === 'r') {

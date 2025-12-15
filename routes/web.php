@@ -643,7 +643,9 @@ Route::match(['get', 'post'], '/ban-co-kho-nhat/{fen}', function ($fen) {
 return view('boardAi', ['headTitle' => 'Bàn cờ khó nhất', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '4', 'levelTxt' => 'Khó nhất', 'cdnUrl' => URL::to(''), 'langViUrl' => '/ban-co-kho-nhat/'.$fen, 'langEnUrl' => '/hardest-board/'.$fen, 'langJaUrl' => '/mottomo-muzukashi-bodo/'.$fen, 'langKoUrl' => '/gajang-dandanhan-bodeu/'.$fen, 'langZhUrl' => '/zuiyingban/'.$fen, 'canonicalUrl' => '/ban-co-kho-nhat/'.$fen, 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
 })->where(['fen' => $fenRegex]);
 Route::match(['get', 'post'], '/giai-co-the/{fen}', function ($fen) {
-return view('puzzleAi', ['headTitle' => 'Giải cờ thế', 'bodyClass' => 'puzzle', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '5', 'levelTxt' => 'Khó nhất', 'cdnUrl' => URL::to(''), 'langViUrl' => '/giai-co-the/'.$fen, 'langEnUrl' => '/solve-puzzle/'.$fen, 'langJaUrl' => '/pazuru-o-toku/'.$fen, 'langKoUrl' => '/pojeureul-pulda/'.$fen, 'langZhUrl' => '/jiejuenanti/'.$fen, 'canonicalUrl' => '/giai-co-the/'.$fen, 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
+    $puzzleName = PuzzleController::getNameByFen($fen);
+    $headTitle = $puzzleName ? 'Giải cờ thế "' . $puzzleName . '"' : 'Giải cờ thế';
+return view('puzzleAi', ['headTitle' => $headTitle, 'bodyClass' => 'puzzle', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '5', 'levelTxt' => 'Khó nhất', 'cdnUrl' => URL::to(''), 'langViUrl' => '/giai-co-the/'.$fen, 'langEnUrl' => '/solve-puzzle/'.$fen, 'langJaUrl' => '/pazuru-o-toku/'.$fen, 'langKoUrl' => '/pojeureul-pulda/'.$fen, 'langZhUrl' => '/jiejuenanti/'.$fen, 'canonicalUrl' => '/giai-co-the/'.$fen, 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
 })->where(['fen' => $fenRegex]);
 
 Route::match(['get', 'post'], '/board/{fen}', function ($fen) {
@@ -669,7 +671,9 @@ Route::match(['get', 'post'], '/hardest-board/{fen}', function ($fen) {
 return view('en/boardAi', ['headTitle' => 'Hardest board', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '4', 'levelTxt' => 'Hardest', 'cdnUrl' => URL::to(''), 'langViUrl' => '/ban-co-kho-nhat/'.$fen, 'langEnUrl' => '/hardest-board/'.$fen, 'langJaUrl' => '/mottomo-muzukashi-bodo/'.$fen, 'langKoUrl' => '/gajang-dandanhan-bodeu/'.$fen, 'langZhUrl' => '/zuiyingban/'.$fen, 'canonicalUrl' => '/hardest-board/'.$fen]);
 })->where(['fen' => $fenRegex]);
 Route::match(['get', 'post'], '/solve-puzzle/{fen}', function ($fen) {
-return view('en/puzzleAi', ['headTitle' => 'Solve puzzle', 'bodyClass' => 'puzzle', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '5', 'levelTxt' => 'Hardest', 'cdnUrl' => URL::to(''), 'langViUrl' => '/giai-co-the/'.$fen, 'langEnUrl' => '/solve-puzzle/'.$fen, 'langJaUrl' => '/pazuru-o-toku/'.$fen, 'langKoUrl' => '/pojeureul-pulda/'.$fen, 'langZhUrl' => '/jiejuenanti/'.$fen, 'canonicalUrl' => '/solve-puzzle/'.$fen]);
+    $puzzleName = PuzzleController::getNameByFen($fen);
+    $headTitle = $puzzleName ? 'Solve puzzle "' . $puzzleName . '"' : 'Solve puzzle';
+return view('en/puzzleAi', ['headTitle' => $headTitle, 'bodyClass' => 'puzzle', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '5', 'levelTxt' => 'Hardest', 'cdnUrl' => URL::to(''), 'langViUrl' => '/giai-co-the/'.$fen, 'langEnUrl' => '/solve-puzzle/'.$fen, 'langJaUrl' => '/pazuru-o-toku/'.$fen, 'langKoUrl' => '/pojeureul-pulda/'.$fen, 'langZhUrl' => '/jiejuenanti/'.$fen, 'canonicalUrl' => '/solve-puzzle/'.$fen]);
 })->where(['fen' => $fenRegex]);
 
 Route::match(['get', 'post'], '/bodo/{fen}', function ($fen) {
@@ -695,7 +699,9 @@ Route::match(['get', 'post'], '/mottomo-muzukashi-bodo/{fen}', function ($fen) {
 return view('ja/boardAi', ['headTitle' => '最も難しいボード', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '4', 'levelTxt' => '最も難しい', 'cdnUrl' => URL::to(''), 'langViUrl' => '/ban-co-kho-nhat/'.$fen, 'langEnUrl' => '/hardest-board/'.$fen, 'langJaUrl' => '/mottomo-muzukashi-bodo/'.$fen, 'langKoUrl' => '/gajang-dandanhan-bodeu/'.$fen, 'langZhUrl' => '/zuiyingban/'.$fen, 'canonicalUrl' => '/mottomo-muzukashi-bodo/'.$fen]);
 })->where(['fen' => $fenRegex]);
 Route::match(['get', 'post'], '/pazuru-o-toku/{fen}', function ($fen) {
-return view('ja/puzzleAi', ['headTitle' => 'パズルを解く', 'bodyClass' => 'puzzle', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '5', 'levelTxt' => '最も難しい', 'cdnUrl' => URL::to(''), 'langViUrl' => '/giai-co-the/'.$fen, 'langEnUrl' => '/solve-puzzle/'.$fen, 'langJaUrl' => '/pazuru-o-toku/'.$fen, 'langKoUrl' => '/pojeureul-pulda/'.$fen, 'langZhUrl' => '/jiejuenanti/'.$fen, 'canonicalUrl' => '/pazuru-o-toku/'.$fen]);
+    $puzzleName = PuzzleController::getNameByFen($fen);
+    $headTitle = $puzzleName ? 'パズルを解く "' . $puzzleName . '"' : 'パズルを解く';
+return view('ja/puzzleAi', ['headTitle' => $headTitle, 'bodyClass' => 'puzzle', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '5', 'levelTxt' => '最も難しい', 'cdnUrl' => URL::to(''), 'langViUrl' => '/giai-co-the/'.$fen, 'langEnUrl' => '/solve-puzzle/'.$fen, 'langJaUrl' => '/pazuru-o-toku/'.$fen, 'langKoUrl' => '/pojeureul-pulda/'.$fen, 'langZhUrl' => '/jiejuenanti/'.$fen, 'canonicalUrl' => '/pazuru-o-toku/'.$fen]);
 })->where(['fen' => $fenRegex]);
 
 Route::match(['get', 'post'], '/bodeu/{fen}', function ($fen) {
@@ -721,7 +727,9 @@ Route::match(['get', 'post'], '/gajang-dandanhan-bodeu/{fen}', function ($fen) {
 return view('ko/boardAi', ['headTitle' => '가장 단단한 보드', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '4', 'levelTxt' => '가장 단단한', 'cdnUrl' => URL::to(''), 'langViUrl' => '/ban-co-kho-nhat/'.$fen, 'langEnUrl' => '/hardest-board/'.$fen, 'langJaUrl' => '/mottomo-muzukashi-bodo/'.$fen, 'langKoUrl' => '/gajang-dandanhan-bodeu/'.$fen, 'langZhUrl' => '/zuiyingban/'.$fen, 'canonicalUrl' => '/gajang-dandanhan-bodeu/'.$fen]);
 })->where(['fen' => $fenRegex]);
 Route::match(['get', 'post'], '/pojeureul-pulda/{fen}', function ($fen) {
-return view('ko/puzzleAi', ['headTitle' => '퍼즐을 풀다', 'bodyClass' => 'puzzle', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '5', 'levelTxt' => '가장 단단한', 'cdnUrl' => URL::to(''), 'langViUrl' => '/giai-co-the/'.$fen, 'langEnUrl' => '/solve-puzzle/'.$fen, 'langJaUrl' => '/pazuru-o-toku/'.$fen, 'langKoUrl' => '/pojeureul-pulda/'.$fen, 'langZhUrl' => '/jiejuenanti/'.$fen, 'canonicalUrl' => '/pojeureul-pulda/'.$fen]);
+    $puzzleName = PuzzleController::getNameByFen($fen);
+    $headTitle = $puzzleName ? '퍼즐을 풀다 "' . $puzzleName . '"' : '퍼즐을 풀다';
+return view('ko/puzzleAi', ['headTitle' => $headTitle, 'bodyClass' => 'puzzle', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '5', 'levelTxt' => '가장 단단한', 'cdnUrl' => URL::to(''), 'langViUrl' => '/giai-co-the/'.$fen, 'langEnUrl' => '/solve-puzzle/'.$fen, 'langJaUrl' => '/pazuru-o-toku/'.$fen, 'langKoUrl' => '/pojeureul-pulda/'.$fen, 'langZhUrl' => '/jiejuenanti/'.$fen, 'canonicalUrl' => '/pojeureul-pulda/'.$fen]);
 })->where(['fen' => $fenRegex]);
 
 Route::match(['get', 'post'], '/ban/{fen}', function ($fen) {
@@ -747,7 +755,9 @@ Route::match(['get', 'post'], '/zuiyingban/{fen}', function ($fen) {
 return view('zh/boardAi', ['headTitle' => '最难的', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '4', 'levelTxt' => '最难的', 'cdnUrl' => URL::to(''), 'langViUrl' => '/ban-co-kho-nhat/'.$fen, 'langEnUrl' => '/hardest-board/'.$fen, 'langJaUrl' => '/mottomo-muzukashi-bodo/'.$fen, 'langKoUrl' => '/gajang-dandanhan-bodeu/'.$fen, 'langZhUrl' => '/zuiyingban/'.$fen, 'canonicalUrl' => '/zuiyingban/'.$fen]);
 })->where(['fen' => $fenRegex]);
 Route::match(['get', 'post'], '/jiejuenanti/{fen}', function ($fen) {
-return view('zh/puzzleAi', ['headTitle' => '解决难题', 'bodyClass' => 'puzzle', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '5', 'levelTxt' => '最难的', 'cdnUrl' => URL::to(''), 'langViUrl' => '/giai-co-the/'.$fen, 'langEnUrl' => '/solve-puzzle/'.$fen, 'langJaUrl' => '/pazuru-o-toku/'.$fen, 'langKoUrl' => '/pojeureul-pulda/'.$fen, 'langZhUrl' => '/jiejuenanti/'.$fen, 'canonicalUrl' => '/jiejuenanti/'.$fen]);
+    $puzzleName = PuzzleController::getNameByFen($fen);
+    $headTitle = $puzzleName ? '解决难题 "' . $puzzleName . '"' : '解决难题';
+return view('zh/puzzleAi', ['headTitle' => $headTitle, 'bodyClass' => 'puzzle', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '5', 'levelTxt' => '最难的', 'cdnUrl' => URL::to(''), 'langViUrl' => '/giai-co-the/'.$fen, 'langEnUrl' => '/solve-puzzle/'.$fen, 'langJaUrl' => '/pazuru-o-toku/'.$fen, 'langKoUrl' => '/pojeureul-pulda/'.$fen, 'langZhUrl' => '/jiejuenanti/'.$fen, 'canonicalUrl' => '/jiejuenanti/'.$fen]);
 })->where(['fen' => $fenRegex]);
 
 Route::match(['get', 'post'], '', function () {

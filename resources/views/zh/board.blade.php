@@ -181,6 +181,11 @@ function updateStatus () {
     // check?
     if (game.in_check()) {
       status += ',' + moveColor + '在检查中'
+      if ((board.orientation() == 'red' && game.turn() === 'r') || (board.orientation() == 'black' && game.turn() === 'b')) {
+        $('#checkmateText').show();
+      }
+    } else {
+      $('#checkmateText').hide();
     }
   }
   if (game.turn() === 'r') {

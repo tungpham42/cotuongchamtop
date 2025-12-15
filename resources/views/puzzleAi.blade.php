@@ -1,6 +1,11 @@
 @extends('layout.gamelayout')
+@php
+  $puzzleName = App\Http\Controllers\PuzzleController::getNameByFen($fen);
+@endphp
 @section('aboveBoard')
-<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="Bạn đang giải cờ thế với máy">Bạn đang giải<span id="puzzle-title"></span></h5>
+<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="Bạn đang giải cờ thế với máy">
+    Bạn đang giải @if($puzzleName) "{{ $puzzleName }}" @else cờ thế @endif
+</h5>
 @endsection
 @section('rightSide')
 <p class="w-100 text-center m-0">
