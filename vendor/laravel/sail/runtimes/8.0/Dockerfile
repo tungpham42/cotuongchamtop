@@ -3,8 +3,8 @@ FROM ubuntu:24.04
 LABEL maintainer="Taylor Otwell"
 
 ARG WWWGROUP
-ARG NODE_VERSION=22
-ARG POSTGRES_VERSION=17
+ARG NODE_VERSION=24
+ARG POSTGRES_VERSION=18
 
 WORKDIR /var/www/html
 
@@ -25,7 +25,7 @@ RUN apt-get update && apt-get upgrade -y \
     && curl -sS 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xb8dc7e53946656efbce4c1dd71daeaab4ad4cab6' | gpg --dearmor | tee /usr/share/keyrings/ppa_ondrej_php.gpg > /dev/null \
     && echo "deb [signed-by=/usr/share/keyrings/ppa_ondrej_php.gpg] https://ppa.launchpadcontent.net/ondrej/php/ubuntu noble main" > /etc/apt/sources.list.d/ppa_ondrej_php.list \
     && apt-get update \
-    && apt-get install -y php8.0-cli php8.0-dev \
+    && apt-get install -y libgd3 php8.0-cli php8.0-dev \
        php8.0-pgsql php8.0-sqlite3 php8.0-gd php8.0-imagick \
        php8.0-curl php8.0-memcached php8.0-mongodb \
        php8.0-imap php8.0-mysql php8.0-mbstring \
@@ -59,6 +59,7 @@ RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.0
 RUN userdel -r ubuntu
 RUN groupadd --force -g $WWWGROUP sail
 RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 sail
+RUN git config --global --add safe.directory /var/www/html
 
 COPY start-container /usr/local/bin/start-container
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
