@@ -62,6 +62,10 @@ class AnonymousQuickMatchJob implements ShouldQueue
             'host_id' => null,
             'guest_id' => null,
             'pass' => null,
+            'red_time' => 600,
+            'black_time' => 600,
+            'active_player' => null,
+            'last_update' => null,
             'modified_at' => now(),
         ]);
     }
