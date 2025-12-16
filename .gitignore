@@ -163,3 +163,7 @@ pip-log.txt
 .DS_Store
 
 .env
+node_modules/
+playwright-report/
+test-results/
+blob-report/

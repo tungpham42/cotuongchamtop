@@ -25,6 +25,10 @@ class Room extends Model
         'host_session',
         'guest_session',
         'pass',
+        'red_time',
+        'black_time',
+        'active_player',
+        'last_update',
         'modified_at',
     ];
 
