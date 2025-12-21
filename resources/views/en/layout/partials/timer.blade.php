@@ -59,6 +59,12 @@
     let saveInterval = null;
     let tickInterval = null; // Interval for local ticking
     let isGameOver = false;
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    const defaultHeaders = {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': csrfToken || '',
+        'X-Requested-With': 'XMLHttpRequest',
+    };
 
     // --- Time Ticking Logic ---
 
@@ -90,7 +96,8 @@
 
             await fetch(`/saveTime/${roomCode}`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: defaultHeaders,
+                credentials: 'same-origin',
                 body: JSON.stringify({ red_time: redTime, black_time: blackTime }),
             });
         }, 5000); // Save every 5 seconds
@@ -102,7 +109,7 @@
 
     async function pauseTimer(roomCode, player) {
         try {
-            const response = await fetch(`/pauseTimer/${roomCode}/${player}`, { method: "POST" });
+            const response = await fetch(`/pauseTimer/${roomCode}/${player}`, { method: "POST", headers: defaultHeaders, credentials: 'same-origin' });
             if (!response.ok) throw new Error('Failed to pause timer');
             return response.json();
         } catch (err) {
@@ -112,7 +119,7 @@
 
     async function startTimer(roomCode, player) {
         try {
-            const response = await fetch(`/startTimer/${roomCode}/${player}`, { method: "POST" });
+            const response = await fetch(`/startTimer/${roomCode}/${player}`, { method: "POST", headers: defaultHeaders, credentials: 'same-origin' });
             if (!response.ok) throw new Error('Failed to start timer');
             return response.json();
         } catch (err) {
@@ -123,22 +130,33 @@
     async function switchTurn(roomCode, currentPlayer) {
         stopLocalTick();
         stopRealtimeSave();
-        const nextPlayer = currentPlayer === "red" ? "black" : "red";
+        try {
+            const res = await fetch(`/switchTurn/${roomCode}`, {
+                method: "POST",
+                headers: defaultHeaders,
+                credentials: 'same-origin',
+                body: JSON.stringify({ current_player: currentPlayer }),
+            });
 
-        await pauseTimer(roomCode, currentPlayer);
-        await startTimer(roomCode, nextPlayer);
+            if (!res.ok) throw new Error('Failed to switch turn');
+            const data = await res.json();
 
-        console.log(`Turn switched: ${currentPlayer} → ${nextPlayer}`);
+            redTime = data.red_time;
+            blackTime = data.black_time;
+            activePlayer = data.active_player;
+            updateClockDisplay();
 
-        await fetchTime();
-        startLocalTick();
-        startRealtimeSave();
+            startLocalTick();
+            startRealtimeSave();
+        } catch (err) {
+            console.error("Error switching turn:", err);
+        }
     }
 
     async function fetchTime() {
         if (isGameOver) return;
         try {
-            const res = await fetch(`/getTime/${roomCode}`);
+            const res = await fetch(`/getTime/${roomCode}`, { credentials: 'same-origin' });
             if (!res.ok) throw new Error('Failed to fetch time');
             const data = await res.json();
 

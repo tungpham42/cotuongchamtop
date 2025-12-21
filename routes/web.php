@@ -102,6 +102,7 @@ Route::get('/sitemap-the-co.xml', function() {
 
 Route::post('/startTimer/{roomCode}/{player}', [RoomController::class, 'startTimer']);
 Route::post('/pauseTimer/{roomCode}/{player}', [RoomController::class, 'pauseTimer']);
+Route::post('/switchTurn/{roomCode}', [RoomController::class, 'switchTurn']);
 Route::get('/getTime/{roomCode}', [RoomController::class, 'getTime']);
 Route::post('/saveTime/{roomCode}', [RoomController::class, 'saveTime']);
 
