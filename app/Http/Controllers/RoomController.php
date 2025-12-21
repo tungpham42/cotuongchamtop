@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use DB;
 use App\Models\Room;
 use App\Models\User;
+use App\Events\RoomUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
@@ -756,10 +757,20 @@ class RoomController extends Controller
     {
         $code = $request->input('ma-phong');
         $fen = $request->input('FEN');
-        Room::updateOrInsert(
+        $room = Room::updateOrCreate(
             ['code' => $code],
-            ['fen' => $fen, 'modified_at' => date('Y-m-d H:i:s')]
+            [
+                'fen'         => $fen,
+                'modified_at' => now(),
+            ]
         );
+
+        // Push realtime update để hạn chế polling
+        broadcast(new RoomUpdated($room->fresh()));
+
+        return response()->json([
+            'success' => true,
+        ]);
     }
 
     public function join(Request $request)
@@ -1609,6 +1620,49 @@ class RoomController extends Controller
         return $this->checkAnonymousMatchStatusHelper($request, ['hongse', 'heise'], ['红色的', '黑色的']);
     }
 
+    public function switchTurn(Request $request, $roomCode)
+    {
+        $currentPlayer = $request->input('current_player');
+
+        if (!in_array($currentPlayer, ['red', 'black'])) {
+            return response()->json(['error' => 'Invalid player'], 422);
+        }
+
+        $room = Room::where('code', $roomCode)->first();
+        if (!$room) {
+            return response()->json(['error' => 'Room not found'], 404);
+        }
+
+        $now = now();
+        $lastUpdate = $room->last_update ?: $now;
+        $elapsed = $now->diffInSeconds($lastUpdate);
+
+        // Trừ thời gian của người vừa đi
+        if ($elapsed > 0) {
+            if ($currentPlayer === 'red') {
+                $room->red_time = max(0, ($room->red_time ?? 0) - $elapsed);
+            } else {
+                $room->black_time = max(0, ($room->black_time ?? 0) - $elapsed);
+            }
+        }
+
+        $room->active_player = $currentPlayer === 'red' ? 'black' : 'red';
+        $room->last_update = $now;
+        $room->modified_at = $now;
+        $room->save();
+
+        $freshRoom = $room->fresh();
+        broadcast(new RoomUpdated($freshRoom));
+
+        return response()->json([
+            'success'       => true,
+            'red_time'      => $freshRoom->red_time,
+            'black_time'    => $freshRoom->black_time,
+            'active_player' => $freshRoom->active_player,
+            'last_update'   => optional($freshRoom->last_update)->toDateTimeString(),
+        ]);
+    }
+
     public function startTimer($roomCode, $player)
     {
         $room = Room::where('code', $roomCode)->first();
@@ -1629,7 +1683,8 @@ class RoomController extends Controller
 
         if ($room->active_player === $player) {
             // Tính thời gian đã chạy
-            $elapsed = now()->diffInSeconds($room->last_update);
+            $lastUpdate = $room->last_update ?: now();
+            $elapsed = now()->diffInSeconds($lastUpdate);
 
             if ($player === 'red') {
                 $room->red_time = max(0, $room->red_time - $elapsed);
@@ -1652,7 +1707,8 @@ class RoomController extends Controller
 
         // Nếu có player đang chạy → tính realtime
         if ($room->active_player) {
-            $elapsed = now()->diffInSeconds($room->last_update);
+            $lastUpdate = $room->last_update ?: now();
+            $elapsed = now()->diffInSeconds($lastUpdate);
 
             $redTime = $room->red_time;
             $blackTime = $room->black_time;
