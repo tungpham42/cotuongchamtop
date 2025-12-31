@@ -6,6 +6,7 @@ use App\Models\Puzzle;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PuzzleController;
@@ -501,6 +502,8 @@ Route::post('doi-ten', [UserController::class, 'changeName'])->name('change.name
 Route::post('doi-giao-dien', [UserController::class, 'changeUserInterface'])->name('change.ui');
 
 Route::get('tim-kiem', 'UserController@searchPlayers')->name('searchPlayers');
+
+Route::post('auth/google/onetap', [AuthController::class, 'handleOneTapCallback'])->name('login.google.onetap');
 
 Route::get('/auth/facebook', 'Auth\LoginController@redirectToFacebook');
 Route::get('/auth/facebook/callback', 'Auth\LoginController@handleFacebookCallback');
