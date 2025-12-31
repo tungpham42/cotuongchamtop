@@ -46,7 +46,7 @@ class AuthController extends Controller
                 Auth::login($user);
 
                 // 6. Redirect back to home/game
-                return redirect()->intended('/')->with('success', 'Logged in successfully!');
+                return redirect()->intended('/')->with('success', 'Bạn đã đăng nhập bằng Google thành công!');
             } else {
                 return redirect('/')->with('error', 'Invalid Google Token.');
             }
