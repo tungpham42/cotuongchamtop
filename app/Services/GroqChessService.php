@@ -50,7 +50,8 @@ class GroqChessService
             "}";
 
         // User prompt chỉ cần kích hoạt nhiệm vụ
-        $userPrompt = "Hãy phân tích thế cờ FEN đã cung cấp trong hệ thống.";
+        $userPrompt = "Đây là mã FEN của thế cờ hiện tại: " . $fen . "\n\n" .
+                      "Hãy phân tích thế cờ này theo đúng định dạng JSON và quy ước ký hiệu Tiếng Việt đã yêu cầu.";
 
         try {
             $response = Http::withToken($this->apiKey)
@@ -99,7 +100,8 @@ class GroqChessService
             "- Giữ câu trả lời dưới 100 từ.";
 
         // User Prompt chỉ chứa câu hỏi, tránh lặp lại FEN gây nhiễu
-        $userPrompt = "Câu hỏi của tôi: $userQuestion";
+        $userPrompt = "Dữ liệu thế cờ hiện tại (FEN): " . $fen . "\n\n" .
+                      "Câu hỏi của tôi: " . $userQuestion;
 
         try {
             $response = Http::withToken($this->apiKey)
