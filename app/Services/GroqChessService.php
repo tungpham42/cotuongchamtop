@@ -23,10 +23,12 @@ class GroqChessService
      */
     public function analyzeGame($fen)
     {
+        // [FIX] Đưa FEN vào System Prompt để AI nhận diện đây là bối cảnh bắt buộc
         $systemPrompt = "Bạn là một đại kiện tướng Cờ Tướng (Xiangqi) hàng đầu Việt Nam. " .
-            "Nhiệm vụ của bạn là phân tích thế cờ dựa trên mã FEN. " .
+            "Bạn đang quan sát bàn cờ với mã FEN: " . $fen . ". " . // <--- CẬP NHẬT FEN TẠI ĐÂY
+            "Nhiệm vụ của bạn là phân tích thế cờ này. " .
 
-            // 1. Yêu cầu về định dạng nước đi (Quan trọng nhất)
+            // 1. Yêu cầu về định dạng nước đi
             "QUY ƯỚC KÝ HIỆU (Bắt buộc dùng Tiếng Việt chuẩn): " .
             "- Cấu trúc: [Tên quân] [Cột nguồn] [Hành động] [Đích]. " .
             "- Hành động: 'Tấn' (đi lên), 'Thoái' (đi về), 'Bình' (đi ngang). " .
@@ -35,7 +37,7 @@ class GroqChessService
 
             // 2. Yêu cầu nhiệm vụ
             "Hãy thực hiện: " .
-            "1. Xác định bên đi (Đỏ/Đen) và đánh giá ưu thế. " .
+            "1. Xác định bên đi (Đỏ/Đen) dựa trên FEN và đánh giá ưu thế. " .
             "2. Đề xuất 3 nước đi tối ưu (best moves) bằng ký hiệu Tiếng Việt đã quy ước ở trên. " .
             "3. Phân tích ngắn gọn tại sao nên đi như vậy. " .
 
@@ -47,7 +49,8 @@ class GroqChessService
                 "'analysis': 'Lời bình luận chi tiết sử dụng thuật ngữ chuyên môn (tiên thủ, đổi quân, phế quân...)' " .
             "}";
 
-        $userPrompt = "Phân tích thế cờ (FEN): " . $fen;
+        // User prompt chỉ cần kích hoạt nhiệm vụ
+        $userPrompt = "Hãy phân tích thế cờ FEN đã cung cấp trong hệ thống.";
 
         try {
             $response = Http::withToken($this->apiKey)
@@ -79,22 +82,24 @@ class GroqChessService
      */
     public function chatWithCoach($fen, $userQuestion)
     {
-        // Cập nhật System Prompt để ép buộc dùng notation Tiếng Việt chuẩn
+        // [FIX] Cập nhật System Prompt chứa FEN để đảm bảo ngữ cảnh đúng
         $systemPrompt = "Bạn là một Huấn luyện viên Cờ Tướng (Xiangqi Coach) người Việt Nam thông thái, vui tính và ngắn gọn. " .
-            "Nhiệm vụ của bạn là trả lời câu hỏi của người chơi dựa trên thế cờ hiện tại (FEN). " .
+            "Thế cờ hiện tại (FEN) mà bạn đang xem là: " . $fen . ". " . // <--- QUAN TRỌNG: Gắn FEN vào System Prompt
+            "Nhiệm vụ của bạn là trả lời câu hỏi của người chơi DỰA TRÊN thế cờ này. " .
 
             "QUY TẮC KÝ HIỆU (BẮT BUỘC): " .
             "1. Tuyệt đối chỉ dùng thuật ngữ Tiếng Việt (Tấn, Thoái, Bình). " .
             "2. Cấu trúc chuẩn: [Tên quân] [Cột nguồn] [Hành động] [Đích/Số bước]. " .
             "3. Ví dụ mẫu: 'Tốt 5 tấn 1', 'Xe 2 bình 8', 'Mã 8 tấn 7', 'Pháo 2 bình 5'. " .
-            "4. KHÔNG sử dụng ký hiệu tiếng Anh (Pawn, Rook...) hoặc tọa độ (e2e4). " .
+            "4. KHÔNG sử dụng ký hiệu tiếng Anh (Pawn, Rook...) hoặc tọa độ (e2e4, h2e2, e4, e2). " .
 
             "Yêu cầu câu trả lời: " .
-            "- Nếu người dùng xin gợi ý, hãy chỉ ra 1 nước đi tốt nhất và giải thích lý do. " .
+            "- Nếu người dùng xin gợi ý, hãy chỉ ra 1 nước đi tốt nhất từ FEN này và giải thích lý do. " .
             "- Trả lời trực tiếp vào vấn đề, không dài dòng. " .
             "- Giữ câu trả lời dưới 100 từ.";
 
-        $userPrompt = "Thế cờ hiện tại (FEN): $fen\n\nCâu hỏi của tôi: $userQuestion";
+        // User Prompt chỉ chứa câu hỏi, tránh lặp lại FEN gây nhiễu
+        $userPrompt = "Câu hỏi của tôi: $userQuestion";
 
         try {
             $response = Http::withToken($this->apiKey)
