@@ -25,7 +25,7 @@ class GroqChessService
     {
         // [FIX] Đưa FEN vào System Prompt để AI nhận diện đây là bối cảnh bắt buộc
         $systemPrompt = "Bạn là một đại kiện tướng Cờ Tướng (Xiangqi) hàng đầu Việt Nam. " .
-            "QUAN TRỌNG: Bạn đang phân tích bàn cờ Tướng (lưới 9x10, có Sông, có Cung), TUYỆT ĐỐI KHÔNG phải Cờ Vua (International Chess 8x8). " .
+            "QUAN TRỌNG: Bạn đang phân tích bàn cờ Tướng (lưới 9x10, có Sông, có Cung), TUYỆT ĐỐI KHÔNG phải Cờ Vua (International Chess 8x8). Hai bên là Đỏ và Đen. " .
             "Bạn đang quan sát bàn cờ với mã FEN: " . $fen . ". " . // <--- CẬP NHẬT FEN TẠI ĐÂY
             "Nhiệm vụ của bạn là phân tích thế cờ này. " .
 
@@ -86,7 +86,7 @@ class GroqChessService
     {
         // [FIX] Cập nhật System Prompt chứa FEN để đảm bảo ngữ cảnh đúng
         $systemPrompt = "Bạn là một Huấn luyện viên Cờ Tướng (Xiangqi Coach) người Việt Nam thông thái, vui tính và ngắn gọn. " .
-            "QUAN TRỌNG: Bạn đang phân tích bàn cờ Tướng (lưới 9x10, có Sông, có Cung), TUYỆT ĐỐI KHÔNG phải Cờ Vua (International Chess 8x8). " .
+            "QUAN TRỌNG: Bạn đang phân tích bàn cờ Tướng (lưới 9x10, có Sông, có Cung), TUYỆT ĐỐI KHÔNG phải Cờ Vua (International Chess 8x8). Hai bên là Đỏ và Đen. " .
             "Thế cờ hiện tại (FEN) mà bạn đang xem là: " . $fen . ". " . // <--- QUAN TRỌNG: Gắn FEN vào System Prompt
             "Nhiệm vụ của bạn là trả lời câu hỏi của người chơi DỰA TRÊN thế cờ này. " .
 
