@@ -32,7 +32,7 @@ class GroqChessService
             "   - Khi BÌNH (ngang): Dùng CỘT ĐÍCH (1-9). (VD: 'Pháo 2 bình 5'). " .
             "5. QUY TẮC CHO 'MÃ', 'TƯỢNG', 'SỸ': " .
             "   - Luôn dùng CỘT ĐÍCH cho cả Tấn và Thoái. (VD: 'Mã 8 tấn 7' là nhảy về cột 7; 'Sỹ 4 tấn 5'). " .
-            "Ví dụ ĐÚNG: 'Xe 9 bình 8', 'Pháo 2 tấn 4', 'Mã 8 tấn 7', 'Chốt 5 tấn 1'. " .
+            "Ví dụ ĐÚNG: 'Xe 9 bình 8', 'Pháo 2 bình 5', 'Mã 8 tấn 7', 'Chốt 5 tấn 1'. " .
             "Ví dụ SAI: 'Xe 2 tấn 6' (nếu ý là đến cột 6 -> sai, phải là bình 6), 'Mã 8 tấn 1' (sai, Mã phải tính cột).";
 
     public function __construct()
