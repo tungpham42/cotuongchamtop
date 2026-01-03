@@ -42,9 +42,14 @@ Bạn BẮT BUỘC phải tuân thủ chuẩn KỲ PHỔ Việt Nam sau đây:
         - Đếm từ tay phải của người chơi Đen sang tay trái.
         - Cột bìa phải của Đen (tương ứng với bên trái của Đỏ) là Cột 1, cột bìa trái là Cột 9.
 2. CẤU TRÚC LỆNH:
-   [Tên Quân] [Cột Đứng] [Hành Động] [Tham Số Cuối]
-   - Hành động: "Tấn" (Tiến), "Thoái" (Lùi), "Bình" (Ngang).
-   - Ví dụ: "Mã 8 tấn 7", "Pháo 2 bình 5", "Chốt 3 thoái 4".
+    - [Tên Quân] [Cột Đứng] [Hành Động] [Tham Số Cuối]
+    - Tên Quân: Xe, Mã, Tượng, Sỹ, Tướng, Pháo, Chốt.
+    - Cột Đứng: Số cột hiện tại của quân cờ (1-9).
+    - Hành động: "Tấn" (Tiến), "Thoái" (Lùi), "Bình" (Ngang).
+    - Tham Số Cuối:
+        * Nhóm A (Xe, Pháo, Chốt, Tướng): SỐ BƯỚC đi (Distance).
+        * Nhóm B (Mã, Tượng, Sỹ): SỐ CỘT ĐÍCH (Target Column).
+    - Ví dụ: "Mã 8 tấn 7", "Pháo 2 bình 5", "Chốt 3 thoái 4".
 
 3. LOGIC XÁC ĐỊNH [THAM SỐ CUỐI]:
     * NHÓM A - Quân đi thẳng (Xe, Pháo, Chốt, Tướng):
