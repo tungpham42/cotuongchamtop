@@ -127,44 +127,23 @@ EOT;
     }
 
     /**
-     * Hàm gọi API đệ quy với cơ chế Fallback và Retry.
-     * * @param array $messages       Lịch sử chat gửi lên AI.
-     * @param array $models         Danh sách model hiện tại (bị cắt dần sau mỗi lần lỗi).
-     * @param bool $jsonMode        Có bắt buộc trả về JSON không.
+     * Hàm gọi API đệ quy với cơ chế Fallback (Index-based) giống GroqService.
+     * @param array $messages       Lịch sử chat gửi lên AI.
+     * @param int   $modelIndex     Chỉ mục của model trong mảng availableModels đang thử.
+     * @param bool  $jsonMode       Có bắt buộc trả về JSON không.
      * @param float $temperature    Độ sáng tạo.
-     * @param int $retryLimit       [MỚI] Số lần cho phép load lại danh sách model gốc nếu thử hết vẫn lỗi.
      * @return string|null          Nội dung trả lời hoặc null nếu thất bại hoàn toàn.
      */
-    protected function callWithFallback(array $messages, array $models, bool $jsonMode = false, float $temperature = 0.5, int $retryLimit = 1)
+    protected function callWithFallback(array $messages, int $modelIndex = 0, bool $jsonMode = false, float $temperature = 0.5)
     {
-        // =================================================================
-        // BƯỚC 1: KIỂM TRA DANH SÁCH MODEL
-        // =================================================================
-
-        // Nếu danh sách model rỗng (đã thử hết các model trong mảng)
-        if (empty($models)) {
-            // Kiểm tra xem còn quyền được thử lại (Retry) không?
-            if ($retryLimit > 0) {
-                Log::warning("GroqChessService: Đã thử hết các model. Đang tải lại danh sách gốc để thử lại (Lượt còn lại: $retryLimit)...");
-
-                // [QUAN TRỌNG] Lấy lại danh sách gốc từ thuộc tính của Class
-                $originalModels = $this->availableModels;
-
-                // Gọi đệ quy lại chính hàm này, nhưng giảm số lượt Retry đi 1
-                return $this->callWithFallback($messages, $originalModels, $jsonMode, $temperature, $retryLimit - 1);
-            }
-
-            // Nếu hết quyền Retry -> Chấp nhận thất bại
-            Log::error('GroqChessService: Thất bại toàn tập. Không còn model nào khả dụng.');
+        // 1. Kiểm tra điều kiện dừng: Nếu index vượt quá số lượng model khả dụng
+        if (!isset($this->availableModels[$modelIndex])) {
+            Log::error("GroqChessService: All models failed. Last attempted index: " . ($modelIndex - 1));
             return null;
         }
 
-        // =================================================================
-        // BƯỚC 2: CHUẨN BỊ MODEL VÀ GỌI API
-        // =================================================================
-
-        // Lấy model đầu tiên trong danh sách hiện tại
-        $currentModel = array_values($models)[0];
+        // 2. Lấy model hiện tại theo index
+        $currentModel = $this->availableModels[$modelIndex];
 
         try {
             // Cấu hình payload gửi đi
@@ -180,44 +159,34 @@ EOT;
 
             // Thực hiện gọi HTTP Request
             $response = Http::withToken($this->apiKey)
-                ->timeout(30) // Nên set timeout để tránh treo server quá lâu
+                ->timeout(30)
                 ->post($this->baseUrl, $payload);
 
-            // =================================================================
-            // BƯỚC 3: XỬ LÝ KẾT QUẢ
-            // =================================================================
+            // 3. Xử lý kết quả
 
-            // TRƯỜNG HỢP 1: THÀNH CÔNG (200 OK)
+            // TRƯỜNG HỢP: THÀNH CÔNG (200 OK)
             if ($response->successful()) {
                 return $response->json()['choices'][0]['message']['content'];
             }
 
-            // TRƯỜNG HỢP 2: LỖI CÓ THỂ THỬ LẠI (429 Too Many Requests hoặc 500 Server Error)
-            if ($response->status() === 429 || $response->status() === 500) {
-                Log::warning("Groq Model [$currentModel] gặp lỗi ({$response->status()}). Đang chuyển sang model tiếp theo...");
+            // TRƯỜNG HỢP: LỖI CÓ THỂ THỬ LẠI (429, 5xx)
+            if (in_array($response->status(), [429, 500, 502, 503, 504])) {
+                Log::warning("GroqChessService Model [$currentModel] failed with status {$response->status()}. Switching to next model...");
 
-                // Xóa model hiện tại khỏi danh sách (Shift)
-                array_shift($models);
-
-                // ĐỆ QUY: Gọi lại hàm với danh sách model đã bị rút gọn
-                // Lưu ý: Giữ nguyên $retryLimit vì đây vẫn là lần chạy của vòng hiện tại
-                return $this->callWithFallback($messages, $models, $jsonMode, $temperature, $retryLimit);
+                // ĐỆ QUY: Thử model tiếp theo (Index + 1)
+                return $this->callWithFallback($messages, $modelIndex + 1, $jsonMode, $temperature);
             }
 
-            // TRƯỜNG HỢP 3: LỖI KHÁC (400 Bad Request, 401 Unauthorized...)
-            // Những lỗi này thường do code sai hoặc key sai, đổi model không giải quyết được -> Dừng luôn.
-            Log::error("Groq API Fatal Error [$currentModel]: " . $response->body());
+            // TRƯỜNG HỢP: LỖI KHÔNG THỂ THỬ LẠI (400, 401...)
+            Log::error("GroqChessService API Permanent Error [$currentModel]: " . $response->body());
             return null;
 
         } catch (\Exception $e) {
-            // Xử lý lỗi ngoại lệ (Mất mạng, Timeout...)
-            Log::error("Groq Exception [$currentModel]: " . $e->getMessage());
+            // Lỗi kết nối hoặc timeout -> Thử model tiếp theo
+            Log::warning("GroqChessService Exception [$currentModel]: " . $e->getMessage());
 
-            // Tùy chọn: Nếu muốn lỗi mạng cũng thử model khác thì mở comment dòng dưới:
-            // array_shift($models);
-            // return $this->callWithFallback($messages, $models, $jsonMode, $temperature, $retryLimit);
-
-            return null;
+            // ĐỆ QUY: Thử model tiếp theo (Index + 1)
+            return $this->callWithFallback($messages, $modelIndex + 1, $jsonMode, $temperature);
         }
     }
 
@@ -280,7 +249,7 @@ EOT;
         ];
 
         // Gọi hàm đệ quy với danh sách model đầy đủ
-        return $this->callWithFallback($messages, $this->availableModels, true, 0.4);
+        return $this->callWithFallback($messages, 0, true, 0.4);
     }
 
     /**
@@ -335,7 +304,7 @@ EOT;
         ];
 
         // Gọi hàm đệ quy
-        $result = $this->callWithFallback($messages, $this->availableModels, false, 0.6);
+        $result = $this->callWithFallback($messages, 0, false, 0.6);
 
         return $result ?? "Xin lỗi, hiện tại tất cả các AI đều đang bận (Lỗi kết nối).";
     }
