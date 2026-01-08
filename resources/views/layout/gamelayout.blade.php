@@ -74,6 +74,7 @@
             <div class="puzzle-layout-board">
               <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
               @include('layout.partials.themeSelector')
+              @include('layout.partials.analyzeBtn')
               @yield('belowBoardExtras')
             </div>
             <div class="puzzle-layout-panel">
