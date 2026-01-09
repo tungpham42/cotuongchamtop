@@ -41,10 +41,12 @@
   <a data-step="3" data-intro="Ấn vào đây để đánh với máy" class="w-25 btn btn-dark btn-lg showPromotion" href="{{ url('') }}"><i class="fad fa-desktop"></i> Với máy</a>
   <a data-step="4" data-intro="Ấn vào đây để chơi lại từ đầu" id="reset" class="w-25 btn btn-dark btn-lg"><i class="fad fa-redo-alt"></i> Chơi lại</a>
 </p>
+@include('layout.partials.kypho')
 <script>
 let board = null;
 let $board = $('#ban-co');
 let game = new Xiangqi();
+let kypho = null;
 let squareToHighlight = null;
 let colorToHighlight = null;
 let squareClass = 'square-2b8ce';
@@ -84,6 +86,9 @@ function onDrop (source, target) {
   });
   // illegal move
   if (move === null) return 'snapback';
+  if (kypho) {
+    kypho.recordMove(move);
+  }
 
   if (move.color === 'r') {
     removeHighlights('red');
@@ -198,6 +203,9 @@ function updateStatus () {
     $('#resign').addClass('disabled').attr('aria-disabled', true);
     config.draggable = false;
   }
+  if (kypho) {
+    kypho.updateControls();
+  }
 }
 let config = {
   draggable: true,
@@ -214,6 +222,11 @@ let config = {
 board = Xiangqiboard('ban-co', config);
 $(window).resize(board.resize);
 updateStatus();
+kypho = KyPho.initLocal({
+  board: board,
+  startFen: game.fen(),
+  isLive: function() { return !game.game_over(); }
+});
 $('#resign').on('click', function() {
   game.load(game.fen() + ' resign');
   updateStatus();
@@ -223,6 +236,9 @@ $('#undo').on('click', function(){
   board.position(game.fen());
   nuocCo.play();
   updateStatus();
+  if (kypho) {
+    kypho.setMoves(game.history());
+  }
 });
 $('#switch').on('click', board.flip);
 $('#reset').on('click', function() {
@@ -233,6 +249,9 @@ $('#reset').on('click', function() {
   $('#game-over').removeClass('d-inline-block').addClass('d-none');
   $('#resign').removeClass('disabled').attr('aria-disabled', false);
   config.draggable = true;
+  if (kypho) {
+    kypho.setMoves([]);
+  }
 });
 </script>
 {{-- @include('layout.partials.userPuzzlesWrapper') --}}

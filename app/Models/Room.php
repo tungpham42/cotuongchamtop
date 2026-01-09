@@ -18,6 +18,7 @@ class Room extends Model
     public $fillable = [
         'code',
         'fen',
+        'moves',
         'result',
         'name',
         'host_id',

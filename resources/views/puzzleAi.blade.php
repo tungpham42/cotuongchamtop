@@ -64,11 +64,13 @@ $('#copy-url').on('click', function() {
   $(this).tooltip('update');
 });
 </script>
+@include('layout.partials.kypho')
 <script>
 let board = null;
 let game = new Xiangqi();
 let isComputerThinking = false;
 let resignAlertShown = false;
+let kypho = null;
 
 function removeGreySquares () {
   $('#ban-co .square-2b8ce').removeClass('highlight');
@@ -112,10 +114,19 @@ async function makeBestMove() {
       // Convert engine move format to Xiangqi.js format
       const move = convertEngineMoveToXiangqiJS(data.best_move);
 
-      if (move && game.move(move) !== null) {
-        board.position(game.fen());
-        nuocCo.play();
-        updateStatus();
+      if (move) {
+        const moveResult = game.move(move);
+        if (moveResult !== null) {
+          if (kypho) {
+            kypho.recordMove(moveResult);
+          }
+          board.position(game.fen());
+          nuocCo.play();
+          updateStatus();
+        } else {
+          console.error('Invalid move from engine:', data.best_move);
+          makeRandomMove(); // Fallback
+        }
       } else {
         console.error('Invalid move from engine:', data.best_move);
         makeRandomMove(); // Fallback
@@ -162,7 +173,11 @@ function makeRandomMove() {
   const moves = game.moves({verbose: true});
   if (moves.length > 0) {
     const randomMove = moves[Math.floor(Math.random() * moves.length)];
-    if (game.move(randomMove) !== null) {
+    const moveResult = game.move(randomMove);
+    if (moveResult !== null) {
+      if (kypho) {
+        kypho.recordMove(moveResult);
+      }
       board.position(game.fen());
       nuocCo.play();
       updateStatus();
@@ -182,6 +197,9 @@ function onDrop (source, target) {
 
   // illegal move
   if (move === null) return 'snapback';
+  if (kypho) {
+    kypho.recordMove(move);
+  }
 
   updateStatus();
 
@@ -303,6 +321,9 @@ function updateStatus () {
     isComputerThinking = false;
     resignAlertShown = true;
   }
+  if (kypho) {
+    kypho.updateControls();
+  }
 }
 
 let config = {
@@ -320,6 +341,11 @@ board = Xiangqiboard('ban-co', config);
 $(window).resize(board.resize);
 game.load('{{ $fen }}');
 updateStatus();
+kypho = KyPho.initLocal({
+  board: board,
+  startFen: game.fen(),
+  isLive: function() { return !game.game_over(); }
+});
 $(document).ready(function() {
   $('#FEN').val(game.fen());
   if (game.turn() === 'b') {
@@ -344,6 +370,9 @@ $('#undo').on('click', function(){
       nuocCo.play();
     }
     updateStatus();
+    if (kypho) {
+      kypho.setMoves(game.history());
+    }
   }
 });
 
@@ -362,6 +391,9 @@ $('#reset').on('click', function() {
   $('#game-over').removeClass('d-inline-block').addClass('d-none');
   $('#resign, #switch').removeClass('disabled').attr('aria-disabled', false);
   config.draggable = true;
+  if (kypho) {
+    kypho.setMoves([]);
+  }
 });
 
 $('#board').on('click auxclick', function(e){

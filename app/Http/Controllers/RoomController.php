@@ -702,6 +702,7 @@ class RoomController extends Controller
             ['code' => $code],
             [
                 'fen'           => $fen,
+                'moves'         => json_encode([]),
                 'host_id'       => $host_id,
                 'name'          => $name,
                 'pass'          => $pass,
@@ -743,7 +744,15 @@ class RoomController extends Controller
         $pass = $request->input('pass');
         Room::updateOrInsert(
             ['code' => $code],
-            ['fen' => $fen, 'host_id' => $host_id, 'guest_id' => $guest_id, 'name' => $name, 'pass' => $pass, 'modified_at' => date('Y-m-d H:i:s')]
+            [
+                'fen' => $fen,
+                'moves' => json_encode([]),
+                'host_id' => $host_id,
+                'guest_id' => $guest_id,
+                'name' => $name,
+                'pass' => $pass,
+                'modified_at' => date('Y-m-d H:i:s'),
+            ]
         );
     }
 
@@ -757,13 +766,28 @@ class RoomController extends Controller
     {
         $code = $request->input('ma-phong');
         $fen = $request->input('FEN');
-        $room = Room::updateOrCreate(
-            ['code' => $code],
-            [
-                'fen'         => $fen,
-                'modified_at' => now(),
-            ]
-        );
+        $move = $request->input('move');
+
+        $room = Room::firstOrNew(['code' => $code]);
+        $room->fen = $fen;
+        $room->modified_at = now();
+
+        if ($move) {
+            $moves = [];
+            if (!empty($room->moves)) {
+                $decoded = json_decode($room->moves, true);
+                if (is_array($decoded)) {
+                    $moves = $decoded;
+                }
+            }
+            $lastMove = end($moves);
+            if ($lastMove !== $move) {
+                $moves[] = $move;
+                $room->moves = json_encode($moves);
+            }
+        }
+
+        $room->save();
 
         // Push realtime update để hạn chế polling
         broadcast(new RoomUpdated($room->fresh()));
@@ -1161,6 +1185,21 @@ class RoomController extends Controller
         $fen = Room::where('code', $code)->value('fen');
 
         return $fen;
+    }
+
+    public function getMoves(Room $room, $code)
+    {
+        $moves = Room::where('code', $code)->value('moves');
+        if (!$moves) {
+            return response()->json([]);
+        }
+
+        $decoded = json_decode($moves, true);
+        if (!is_array($decoded)) {
+            $decoded = [];
+        }
+
+        return response()->json($decoded);
     }
 
     /**

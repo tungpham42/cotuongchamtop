@@ -32,11 +32,13 @@
   </p>
   @endif
 @endif
+@include('layout.partials.kypho')
 <script>
 let board = null;
 let game = new Xiangqi();
 let currentFEN = game.fen();
 let hasGameOverSound = false;
+let kypho = null;
 
 function updateFenCode(roomCode) {
   board.position(game.fen(), true);
@@ -69,6 +71,9 @@ function manipulateRoom(roomCode) {
         board.position(newFEN, true);
         game.load(newFEN);
         nuocCo.play();
+      }
+      if (kypho) {
+        kypho.syncMoves('{{ url('/api') }}/readMoves/' + roomCode);
       }
     }
     updateStatus()
@@ -237,6 +242,9 @@ function updateStatus () {
     $('#game-over').html('<i class="fad fa-flag-checkered"></i> Đã bỏ cuộc');
     $('#resign').addClass('disabled').attr('aria-disabled', true);
   }
+  if (kypho) {
+    kypho.updateControls();
+  }
 }
 let config = {
   draggable: false,
@@ -257,6 +265,14 @@ let config = {
 };
 board = Xiangqiboard('ban-co', config);
 $(window).resize(board.resize);
+kypho = KyPho.initRoom({
+  board: board,
+  startFen: '{{ env('INITIAL_FEN', 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1') }}',
+  isLive: function() { return !game.game_over(); }
+});
+if (kypho) {
+  kypho.syncMoves('{{ url('/api') }}/readMoves/{{ $roomCode }}');
+}
 updateStatus()
 // window.onload = function(){
 //   if (board.orientation() == 'red' && game.turn() === 'b') {

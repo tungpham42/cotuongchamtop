@@ -158,6 +158,10 @@ Route::get('/readFEN/{code}', [
     "uses" => 'RoomController@show',
     "as" => 'show'
 ]);
+Route::get('/readMoves/{code}', [
+    "uses" => 'RoomController@getMoves',
+    "as" => 'getMoves'
+]);
 Route::get('/getFEN/{code}', [
     "uses" => 'RoomController@getEventStream',
     "as" => 'getEventStream'

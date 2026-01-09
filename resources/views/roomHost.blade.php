@@ -37,6 +37,7 @@
   <a data-step="4" data-intro="Ấn vào đây nếu bạn không biết đi nước nào" id="resign" class="w-25 btn btn-dark btn-lg"><i class="fad fa-flag"></i> Bỏ cuộc</a>
 </p>
 @endif
+@include('layout.partials.kypho')
 <script>
 @if ($room['pass'] != null)
 function validateForm() {
@@ -130,18 +131,28 @@ let currentFEN = game.fen();
 let alertShown = false;
 let hasGameOverSound = false;
 let resignAlertShown = false;
+let kypho = null;
+let lastMoveIccs = null;
 
-function updateFenCode(roomCode) {
+function updateFenCode(roomCode, moveIccs) {
   board.position(game.fen(), true);
   game.load(game.fen());
+  const payload = {
+    'ma-phong': roomCode,
+    'FEN': game.fen()
+  };
+  if (moveIccs) {
+    payload.move = moveIccs;
+  }
   $.ajax({
     type: "POST",
     url: '{{ url('/api') }}/updateFEN',
-    data: {
-      'ma-phong': roomCode,
-      'FEN': game.fen()
-    },
+    data: payload,
     dataType: 'text'
+  }).done(function() {
+    if (kypho) {
+      kypho.syncMoves('{{ url('/api') }}/readMoves/' + roomCode);
+    }
   });
 }
 
@@ -165,6 +176,9 @@ function manipulateRoom(roomCode) {
       }
       const currentPlayer = game.turn() === 'b' ? 'red' : 'black';
       switchTurn(roomCode, currentPlayer);
+      if (kypho) {
+        kypho.syncMoves('{{ url('/api') }}/readMoves/' + roomCode);
+      }
     }
     updateStatus()
   });
@@ -280,6 +294,7 @@ function onDrop (source, target) {
   if (move !== null) {
     // trước khi update trạng thái, đổi timer trước
     switchTurn('{{ $roomCode }}', game.turn() === 'b' ? 'red' : 'black');
+    lastMoveIccs = move.iccs;
   }
 
   // illegal move
@@ -312,7 +327,8 @@ function onMouseoutSquare (square, piece) {
 
 function onSnapEnd () {
   nuocCo.play();
-  updateFenCode('{{ $roomCode }}');
+  updateFenCode('{{ $roomCode }}', lastMoveIccs);
+  lastMoveIccs = null;
   // updateStatus();
 }
 
@@ -437,6 +453,9 @@ function updateStatus () {
     $('#game-over').html('<i class="fad fa-flag-checkered"></i> Đã bỏ cuộc');
     $('#resign').addClass('disabled').attr('aria-disabled', true);
   }
+  if (kypho) {
+    kypho.updateControls();
+  }
 }
 let config = {
   @if ($room->red_time == 0 || $room->black_time == 0)
@@ -457,6 +476,14 @@ let config = {
 };
 board = Xiangqiboard('ban-co', config);
 $(window).resize(board.resize);
+kypho = KyPho.initRoom({
+  board: board,
+  startFen: '{{ env('INITIAL_FEN', 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1') }}',
+  isLive: function() { return !game.game_over(); }
+});
+if (kypho) {
+  kypho.syncMoves('{{ url('/api') }}/readMoves/{{ $roomCode }}');
+}
 updateStatus()
 // window.onload = function(){
 //   if (board.orientation() == 'red' && game.turn() === 'b') {
