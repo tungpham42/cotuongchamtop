@@ -5,19 +5,19 @@
         <i class="fas fa-chess-board"></i> 盤面のテーマ
       </h6>
       <div class="theme-options board-themes">
-        <button class="theme-option" data-theme-type="board" data-theme="xiangqi-board" title="デフォルトの盤面">
+        <button class="theme-option" data-theme-type="board" data-theme="xiangqi-board" title="標準">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/xiangqi-board.svg" alt="デフォルトの盤面" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-default')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/xiangqi-board.svg" alt="標準" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-default')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="ban-co-go" title="ライトウッド">
+        <button class="theme-option" data-theme-type="board" data-theme="ban-co-go" title="明るい木目">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/ban-co-go.svg" alt="ライトウッド" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-light')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/ban-co-go.svg" alt="明るい木目" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-light')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="wood-board" title="ダークウッド">
+        <button class="theme-option" data-theme-type="board" data-theme="wood-board" title="暗い木目">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/wood-board.svg" alt="ダークウッド" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-dark')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/wood-board.svg" alt="暗い木目" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-dark')" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="board" data-theme="banco" title="ライト">
@@ -30,12 +30,12 @@
 
     <div class="theme-section">
       <h6 class="theme-title">
-        <i class="fas fa-chess-knight"></i> 駒のセット
+        <i class="fas fa-chess-knight"></i> 駒のデザイン
       </h6>
       <div class="theme-options piece-themes">
-        <button class="theme-option" data-theme-type="pieces" data-theme="wiki" title="デフォルトの駒">
+        <button class="theme-option" data-theme-type="pieces" data-theme="wiki" title="標準">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/wiki/rK.svg" alt="デフォルトの駒" />
+            <img src="{{ url('/') }}/img/xiangqipieces/wiki/rK.svg" alt="標準" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="tung" title="スペシャル">
@@ -43,14 +43,14 @@
             <img src="{{ url('/') }}/img/xiangqipieces/tung/rK.svg" alt="スペシャル" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="do-den" title="赤と黒">
+        <button class="theme-option" data-theme-type="pieces" data-theme="do-den" title="赤・黒">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/do-den/rK.svg" alt="赤と黒" />
+            <img src="{{ url('/') }}/img/xiangqipieces/do-den/rK.svg" alt="赤・黒" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="graphic" title="西洋風">
+        <button class="theme-option" data-theme-type="pieces" data-theme="graphic" title="洋風">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/graphic/rK.svg" alt="西洋風" />
+            <img src="{{ url('/') }}/img/xiangqipieces/graphic/rK.svg" alt="洋風" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="co" title="オレンジ">
@@ -68,9 +68,9 @@
             <img src="{{ url('/') }}/img/xiangqipieces/quan/rK.svg" alt="ライト" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="traditional" title="伝統">
+        <button class="theme-option" data-theme-type="pieces" data-theme="traditional" title="伝統的">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/traditional/rK.svg" alt="伝統" />
+            <img src="{{ url('/') }}/img/xiangqipieces/traditional/rK.svg" alt="伝統的" />
           </div>
         </button>
       </div>
@@ -92,6 +92,7 @@
 </div>
 
 <style>
+/* Style giữ nguyên */
 .theme-selector-wrapper {
   position: relative;
   display: block;
@@ -282,109 +283,87 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   @endif
 
-  // Set active theme on page load
+  // Set active theme visual state on page load
   updateActiveThemes();
 
-  // Handle theme selection (updates preview only, does not apply yet)
+  // Handle theme selection (update active state and button style)
   themeOptions.forEach(option => {
     option.addEventListener('click', function() {
       // Update active state for visual feedback
       handleThemeClick(this);
 
-      // Highlight apply button to let the user know confirmation is needed
+      // Highlight apply button to indicate confirmation is needed
       const applyBtn = document.getElementById('apply-theme-btn');
       if (applyBtn) {
-        applyBtn.classList.add('btn-primary');
         applyBtn.classList.remove('btn-danger');
-        applyBtn.innerHTML = '<i class="fas fa-circle"></i> テーマを適用';
+        applyBtn.classList.add('btn-primary');
+        applyBtn.innerHTML = '<i class="fas fa-circle"></i> 適用する';
       }
     });
   });
 
-  // Handle apply theme button
+  // Handle apply theme button click
   const applyBtn = document.getElementById('apply-theme-btn');
   if (applyBtn) {
     applyBtn.addEventListener('click', function() {
-      // Get selected themes
+      // Get currently selected themes from the DOM (active classes)
       const selectedBoardTheme = document.querySelector('.theme-option[data-theme-type="board"].active')?.dataset.theme || 'xiangqi-board';
       const selectedPiecesTheme = document.querySelector('.theme-option[data-theme-type="pieces"].active')?.dataset.theme || 'wiki';
 
-      // Update hidden inputs
+      // Update hidden inputs if they exist (for form consistency)
       const boardInput = document.getElementById('boardTheme');
       const piecesInput = document.getElementById('piecesTheme');
-
       if (boardInput) boardInput.value = selectedBoardTheme;
       if (piecesInput) piecesInput.value = selectedPiecesTheme;
 
-      // Show loading state
-      this.classList.remove('btn-warning');
+      // Show loading state on button
+      this.classList.remove('btn-danger', 'btn-primary', 'btn-warning');
       this.classList.add('btn-info');
-      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 適用中...';
+      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 再読み込み中...';
       this.disabled = true;
 
-      // Save to server (will reload the page like the old system)
+      // Logic: Save preference then Reload Page
       @if(auth()->check())
-      const formData = new FormData();
-      formData.append('_token', '{{ csrf_token() }}');
-      formData.append('current_id', '{{ auth()->user()->id }}');
-      formData.append('board_theme', selectedBoardTheme);
-      formData.append('pieces_theme', selectedPiecesTheme);
+        // AUTH USER: Save to DB via AJAX
+        const formData = new FormData();
+        formData.append('_token', '{{ csrf_token() }}');
+        formData.append('current_id', '{{ auth()->user()->id }}');
+        formData.append('board_theme', selectedBoardTheme);
+        formData.append('pieces_theme', selectedPiecesTheme);
 
-      fetch('{{ url('/doi-giao-dien') }}', { // Note: URL endpoint is unchanged
-        method: 'POST',
-        body: formData
-      }).then(response => {
-        if (response.ok) {
-          // Success - old system would redirect, so we'll reload too for consistency
+        fetch('{{ url('/doi-giao-dien') }}', {
+          method: 'POST',
+          body: formData
+        }).then(response => {
+          if (response.ok) {
+             // Success -> Reload page
+             location.reload();
+          } else {
+            throw new Error('Server returned error');
+          }
+        }).catch(error => {
+          console.error('Save error:', error);
+          this.innerHTML = '<i class="fas fa-times"></i> 接続エラー';
           this.classList.remove('btn-info');
-          this.classList.add('btn-success');
-          this.innerHTML = '<i class="fas fa-check"></i> 成功しました!';
+          this.classList.add('btn-danger');
+          this.disabled = false;
+        });
 
-          setTimeout(() => {
-            location.reload(); // Reload to apply the theme like the old system
-          }, 800);
-        } else {
-          throw new Error('保存に失敗しました');
-        }
-      }).catch(error => {
-        console.log('保存エラー:', error);
-        this.classList.remove('btn-info');
-        this.classList.add('btn-danger');
-        this.innerHTML = '<i class="fas fa-times"></i> エラー!';
-        this.disabled = false;
-
-        setTimeout(() => {
-          this.classList.remove('btn-danger');
-          this.classList.add('btn-warning');
-          this.innerHTML = '<i class="fas exclamation-triangle"></i> テーマを適用';
-        }, 2000);
-      });
       @else
-      // Guest user - save to localStorage and apply
-      localStorage.setItem('guest_board_theme', selectedBoardTheme);
-      localStorage.setItem('guest_pieces_theme', selectedPiecesTheme);
+        // GUEST USER: Save to LocalStorage -> Reload
+        localStorage.setItem('guest_board_theme', selectedBoardTheme);
+        localStorage.setItem('guest_pieces_theme', selectedPiecesTheme);
 
-      // Apply themes immediately
-      applyTheme('board', selectedBoardTheme);
-      applyTheme('pieces', selectedPiecesTheme);
-
-      this.classList.remove('btn-info');
-      this.classList.add('btn-success');
-      this.innerHTML = '<i class="fas fa-check"></i> 適用しました!';
-      this.disabled = false;
-
-      setTimeout(() => {
-        this.classList.remove('btn-success');
-        this.classList.add('btn-danger');
-        this.innerHTML = '<i class="fas fa-check"></i> テーマを適用';
-        panel.classList.remove('show');
-      }, 2000);
+        // Slight delay just to let the user see the button click, then reload
+        setTimeout(() => {
+            location.reload();
+        }, 100);
       @endif
     });
   }
 
   function updateActiveThemes() {
-    // On page load, read from hidden inputs
+    // Read from hidden inputs (populated by server or localStorage above)
     const boardTheme = document.getElementById('boardTheme')?.value || 'xiangqi-board';
     const piecesTheme = document.getElementById('piecesTheme')?.value || 'wiki';
 
@@ -403,110 +382,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Handle theme option clicks to toggle active state
+  // Handle theme option clicks to toggle visual active state
   function handleThemeClick(clickedOption) {
     const themeType = clickedOption.dataset.themeType;
 
-    // Remove active from all options of this type
+    // Remove active from all options of this specific type
     themeOptions.forEach(option => {
       if (option.dataset.themeType === themeType) {
         option.classList.remove('active');
       }
     });
 
-    // Add active to clicked option
+    // Add active to the clicked option
     clickedOption.classList.add('active');
   }
-
-  function applyTheme(themeType, themeName) {
-    console.log('テーマを適用中:', themeType, '=', themeName);
-
-    // For guest users, we need to be more aggressive since no page reload
-    @if (!auth()->check())
-    // Force immediate board recreation for guests
-    console.log('ゲストユーザー - テーマを強制的に即時適用します');
-
-    setTimeout(() => {
-      try {
-        // Try to get board instance
-        let boardInstance = null;
-        if (typeof board !== 'undefined') {
-          boardInstance = board;
-        } else if (typeof window.board !== 'undefined') {
-          boardInstance = window.board;
-        }
-
-        if (boardInstance) {
-          // Get current position
-          const currentPos = typeof boardInstance.position === 'function' ?
-            boardInstance.position() : 'start';
-
-          console.log('現在の局面:', currentPos);
-
-          // Destroy and recreate board with new theme
-          if (typeof boardInstance.destroy === 'function') {
-            boardInstance.destroy();
-          }
-
-          // Wait then recreate
-          setTimeout(() => {
-            try {
-              const boardElement = document.getElementById('ban-co');
-              if (boardElement && typeof Xiangqiboard === 'function') {
-                // Create new board instance with updated theme values
-                if (typeof window.board !== 'undefined') {
-                  delete window.board;
-                }
-                const isPuzzlePage = window.location.pathname === '/pazuru';
-                window.board = Xiangqiboard('ban-co', {
-                  draggable: true,
-                  position: currentPos,
-                  sparePieces: isPuzzlePage,
-                  showNotation: true
-                });
-
-                // Update global board reference if needed
-                if (typeof board === 'undefined') {
-                  window.board = window.board;
-                }
-
-                console.log('ゲスト用に新しいテーマで盤面を再作成しました');
-              }
-            } catch (error) {
-              console.log('盤面の再作成に失敗しました:', error);
-              // Last resort: reload page
-              location.reload();
-            }
-          }, 200);
-        } else {
-          console.log('ゲストの盤面インスタンスが見つかりません。ページをリロードします');
-          location.reload();
-        }
-      } catch (error) {
-        console.log('ゲストのテーマ適用エラー:', error);
-        location.reload();
-      }
-    }, 100);
-
-    @else
-    // Logged users - use theme manager or reload
-    if (typeof window.updateBoardTheme !== 'function') {
-      console.log('テーママネージャーが見つかりません。テーマを適用するためにページをリロードします');
-      setTimeout(() => {
-        location.reload();
-      }, 500);
-    }
-    @endif
-
-    console.log('テーマ適用がトリガーされました:', themeType, '=', themeName);
-
-    setTimeout(() => {
-      if (typeof window.updateBoardTheme === 'function') {
-        window.updateBoardTheme();
-      }
-    }, 50);
-  }
-
 
 });
 </script>

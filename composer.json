@@ -15,6 +15,7 @@
     "creativeorange/gravatar": "~1.0",
     "elorating/elorating": "master",
     "fruitcake/laravel-cors": "^2.0.5",
+    "google/apiclient": "^2.18",
     "guzzlehttp/guzzle": "^7.2",
     "jgrossi/corcel": "^6.0",
     "laravel-lang/lang": "^11.0",

@@ -9,6 +9,7 @@
     @include('layout.partials.header')
     @include('layout.partials.adsenseModal')
     @include('layout.partials.shopeeModal')
+    @include('layout.partials.analysisModal')
     @if (session('status'))
       <div class="container">
         <div class="alert alert-success" role="alert">
@@ -62,6 +63,7 @@
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-1">
               <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
               @include('layout.partials.themeSelector')
+              @include('layout.partials.analyzeBtn')
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-auto">
               @yield('rightSide')
@@ -72,6 +74,7 @@
             <div class="puzzle-layout-board">
               <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
               @include('layout.partials.themeSelector')
+              @include('layout.partials.analyzeBtn')
               @yield('belowBoardExtras')
             </div>
             <div class="puzzle-layout-panel">
@@ -83,6 +86,7 @@
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
               <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
               @include('layout.partials.themeSelector')
+              @include('layout.partials.analyzeBtn')
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-5 mt-sm-5 mt-xs-5">
               @include('layout.partials.comments')
@@ -196,6 +200,26 @@
                 @yield('belowContent')
                 @if ( !isset($board) )
                 <script>
+                $('#btn-analyze').on('click', function(e) {
+                  e.preventDefault();
+
+                  if (typeof game === 'undefined') {
+                    bootbox.alert("Chưa tải được dữ liệu bàn cờ.");
+                    return;
+                  }
+
+                  // Lấy dữ liệu FEN
+                  var currentFen = game.fen();
+
+                  if (!currentFen) {
+                    bootbox.alert("Không lấy được mã FEN.");
+                    return;
+                  }
+
+                  // Gọi hàm mở Modal với chỉ FEN string
+                  // openAnalysisModal được định nghĩa trong analysisModal.blade.php
+                  openAnalysisModal(currentFen);
+                });
                 function createRoom() {
                   $.ajax({
                     type: "POST",
@@ -228,9 +252,9 @@
                                 centerVertical: true,
                                 closeButton: false,
                                 buttons: {
-                                ok: {
-                                  className: 'btn-danger'
-                                }
+                                  ok: {
+                                    className: 'btn-danger'
+                                  }
                                 },
                                 callback: function () {
                                   $('#create-room').trigger('click');
@@ -320,6 +344,7 @@
       </div>
       @include('layout.partials.fb')
     </main>
+    @include('layout.partials.aiChatWidget')
     @include('layout.partials.footer')
     @include('common.contactBtn')
   </body>

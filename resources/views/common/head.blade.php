@@ -67,3 +67,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <script type="text/javascript" src="{{ url('/') }}/js/aclib.js"></script>
 @endif
 <script type="text/javascript" src="{{ url('/') }}/js/theme-manager.js?v=1"></script>
+
+@guest
+<!--- Google One Tap Sign-in -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<div id="g_id_onload"
+     data-client_id="{{ config('services.google.client_id') }}"
+     data-login_uri="{{ route('login.google.onetap') }}"
+     data-auto_prompt="true"
+     data-position="top_right">
+</div>
+@endguest

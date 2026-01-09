@@ -19,6 +19,7 @@ class VerifyCsrfToken extends Middleware
         '/xulyMail',
         '/updateFEN',
         '/payos/webhook',
+        'auth/google/onetap',
         '/test-*'  // Allow all test routes
     ];
 

@@ -6,7 +6,10 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\XiangqiController;
 use App\Http\Controllers\PuzzleController;
+use App\Http\Controllers\Api\ChessAnalysisController;
 
+Route::post('/chess/analyze', [ChessAnalysisController::class, 'analyze']);
+Route::post('/chess/chat', [ChessAnalysisController::class, 'chat']);
 /*
 |--------------------------------------------------------------------------
 | API Routes

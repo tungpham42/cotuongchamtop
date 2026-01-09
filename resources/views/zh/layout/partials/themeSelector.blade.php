@@ -2,27 +2,27 @@
   <div class="theme-selector-panel">
     <div class="theme-section">
       <h6 class="theme-title">
-        <i class="fas fa-chess-board"></i> 棋盘主题
+        <i class="fas fa-chess-board"></i> 棋盘样式
       </h6>
       <div class="theme-options board-themes">
-        <button class="theme-option" data-theme-type="board" data-theme="xiangqi-board" title="默认棋盘">
+        <button class="theme-option" data-theme-type="board" data-theme="xiangqi-board" title="默认">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/xiangqi-board.svg" alt="默认棋盘" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-default')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/xiangqi-board.svg" alt="默认" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-default')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="ban-co-go" title="浅色木纹">
+        <button class="theme-option" data-theme-type="board" data-theme="ban-co-go" title="浅木纹">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/ban-co-go.svg" alt="浅色木纹" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-light')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/ban-co-go.svg" alt="浅木纹" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-light')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="wood-board" title="深色木纹">
+        <button class="theme-option" data-theme-type="board" data-theme="wood-board" title="深木纹">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/wood-board.svg" alt="深色木纹" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-dark')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/wood-board.svg" alt="深木纹" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-dark')" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="board" data-theme="banco" title="浅色">
+        <button class="theme-option" data-theme-type="board" data-theme="banco" title="亮色">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/banco.svg" alt="浅色" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-light')" />
+            <img src="{{ url('/') }}/img/xiangqiboards/banco.svg" alt="亮色" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-light')" />
           </div>
         </button>
       </div>
@@ -33,14 +33,14 @@
         <i class="fas fa-chess-knight"></i> 棋子样式
       </h6>
       <div class="theme-options piece-themes">
-        <button class="theme-option" data-theme-type="pieces" data-theme="wiki" title="默认棋子">
+        <button class="theme-option" data-theme-type="pieces" data-theme="wiki" title="默认">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/wiki/rK.svg" alt="默认棋子" />
+            <img src="{{ url('/') }}/img/xiangqipieces/wiki/rK.svg" alt="默认" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="tung" title="特别版">
+        <button class="theme-option" data-theme-type="pieces" data-theme="tung" title="特殊">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/tung/rK.svg" alt="特别版" />
+            <img src="{{ url('/') }}/img/xiangqipieces/tung/rK.svg" alt="特殊" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="do-den" title="红黑">
@@ -58,14 +58,14 @@
             <img src="{{ url('/') }}/img/xiangqipieces/co/rK.svg" alt="橙色" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="wikimedia" title="暗黄色">
+        <button class="theme-option" data-theme-type="pieces" data-theme="wikimedia" title="深黄">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/wikimedia/rK.svg" alt="暗黄色" />
+            <img src="{{ url('/') }}/img/xiangqipieces/wikimedia/rK.svg" alt="深黄" />
           </div>
         </button>
-        <button class="theme-option" data-theme-type="pieces" data-theme="quan" title="浅色">
+        <button class="theme-option" data-theme-type="pieces" data-theme="quan" title="亮色">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/quan/rK.svg" alt="浅色" />
+            <img src="{{ url('/') }}/img/xiangqipieces/quan/rK.svg" alt="亮色" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="traditional" title="传统">
@@ -92,7 +92,7 @@
 </div>
 
 <style>
-/* Styles remain the same */
+/* Style 保留原样 */
 .theme-selector-wrapper {
   position: relative;
   display: block;
@@ -283,109 +283,87 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   @endif
 
-  // Set active theme on page load
+  // Set active theme visual state on page load
   updateActiveThemes();
 
-  // Handle theme selection (updates preview only, does not apply yet)
+  // Handle theme selection (update active state and button style)
   themeOptions.forEach(option => {
     option.addEventListener('click', function() {
       // Update active state for visual feedback
       handleThemeClick(this);
 
-      // Highlight apply button to let the user know confirmation is needed
+      // Highlight apply button to indicate confirmation is needed
       const applyBtn = document.getElementById('apply-theme-btn');
       if (applyBtn) {
-        applyBtn.classList.add('btn-primary');
         applyBtn.classList.remove('btn-danger');
+        applyBtn.classList.add('btn-primary');
         applyBtn.innerHTML = '<i class="fas fa-circle"></i> 应用主题';
       }
     });
   });
 
-  // Handle apply theme button
+  // Handle apply theme button click
   const applyBtn = document.getElementById('apply-theme-btn');
   if (applyBtn) {
     applyBtn.addEventListener('click', function() {
-      // Get selected themes
+      // Get currently selected themes from the DOM (active classes)
       const selectedBoardTheme = document.querySelector('.theme-option[data-theme-type="board"].active')?.dataset.theme || 'xiangqi-board';
       const selectedPiecesTheme = document.querySelector('.theme-option[data-theme-type="pieces"].active')?.dataset.theme || 'wiki';
 
-      // Update hidden inputs
+      // Update hidden inputs if they exist (for form consistency)
       const boardInput = document.getElementById('boardTheme');
       const piecesInput = document.getElementById('piecesTheme');
-
       if (boardInput) boardInput.value = selectedBoardTheme;
       if (piecesInput) piecesInput.value = selectedPiecesTheme;
 
-      // Show loading state
-      this.classList.remove('btn-warning');
+      // Show loading state on button
+      this.classList.remove('btn-danger', 'btn-primary', 'btn-warning');
       this.classList.add('btn-info');
-      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 应用中...';
+      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在重新加载...';
       this.disabled = true;
 
-      // Save to server (will reload the page like the old system)
+      // Logic: Save preference then Reload Page
       @if(auth()->check())
-      const formData = new FormData();
-      formData.append('_token', '{{ csrf_token() }}');
-      formData.append('current_id', '{{ auth()->user()->id }}');
-      formData.append('board_theme', selectedBoardTheme);
-      formData.append('pieces_theme', selectedPiecesTheme);
+        // AUTH USER: Save to DB via AJAX
+        const formData = new FormData();
+        formData.append('_token', '{{ csrf_token() }}');
+        formData.append('current_id', '{{ auth()->user()->id }}');
+        formData.append('board_theme', selectedBoardTheme);
+        formData.append('pieces_theme', selectedPiecesTheme);
 
-      fetch('{{ url('/doi-giao-dien') }}', { // Note: URL endpoint is unchanged
-        method: 'POST',
-        body: formData
-      }).then(response => {
-        if (response.ok) {
-          // Success - old system would redirect, so we'll reload too for consistency
+        fetch('{{ url('/doi-giao-dien') }}', {
+          method: 'POST',
+          body: formData
+        }).then(response => {
+          if (response.ok) {
+             // Success -> Reload page
+             location.reload();
+          } else {
+            throw new Error('Server returned error');
+          }
+        }).catch(error => {
+          console.error('Save error:', error);
+          this.innerHTML = '<i class="fas fa-times"></i> 连接错误!';
           this.classList.remove('btn-info');
-          this.classList.add('btn-success');
-          this.innerHTML = '<i class="fas fa-check"></i> 成功!';
+          this.classList.add('btn-danger');
+          this.disabled = false;
+        });
 
-          setTimeout(() => {
-            location.reload(); // Reload to apply the theme like the old system
-          }, 800);
-        } else {
-          throw new Error('保存失败');
-        }
-      }).catch(error => {
-        console.log('保存错误:', error);
-        this.classList.remove('btn-info');
-        this.classList.add('btn-danger');
-        this.innerHTML = '<i class="fas fa-times"></i> 错误!';
-        this.disabled = false;
-
-        setTimeout(() => {
-          this.classList.remove('btn-danger');
-          this.classList.add('btn-warning');
-          this.innerHTML = '<i class="fas exclamation-triangle"></i> 应用主题';
-        }, 2000);
-      });
       @else
-      // Guest user - save to localStorage and apply
-      localStorage.setItem('guest_board_theme', selectedBoardTheme);
-      localStorage.setItem('guest_pieces_theme', selectedPiecesTheme);
+        // GUEST USER: Save to LocalStorage -> Reload
+        localStorage.setItem('guest_board_theme', selectedBoardTheme);
+        localStorage.setItem('guest_pieces_theme', selectedPiecesTheme);
 
-      // Apply themes immediately
-      applyTheme('board', selectedBoardTheme);
-      applyTheme('pieces', selectedPiecesTheme);
-
-      this.classList.remove('btn-info');
-      this.classList.add('btn-success');
-      this.innerHTML = '<i class="fas fa-check"></i> 已应用!';
-      this.disabled = false;
-
-      setTimeout(() => {
-        this.classList.remove('btn-success');
-        this.classList.add('btn-danger');
-        this.innerHTML = '<i class="fas fa-check"></i> 应用主题';
-        panel.classList.remove('show');
-      }, 2000);
+        // Slight delay just to let the user see the button click, then reload
+        setTimeout(() => {
+            location.reload();
+        }, 100);
       @endif
     });
   }
 
   function updateActiveThemes() {
-    // On page load, read from hidden inputs
+    // Read from hidden inputs (populated by server or localStorage above)
     const boardTheme = document.getElementById('boardTheme')?.value || 'xiangqi-board';
     const piecesTheme = document.getElementById('piecesTheme')?.value || 'wiki';
 
@@ -404,110 +382,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Handle theme option clicks to toggle active state
+  // Handle theme option clicks to toggle visual active state
   function handleThemeClick(clickedOption) {
     const themeType = clickedOption.dataset.themeType;
 
-    // Remove active from all options of this type
+    // Remove active from all options of this specific type
     themeOptions.forEach(option => {
       if (option.dataset.themeType === themeType) {
         option.classList.remove('active');
       }
     });
 
-    // Add active to clicked option
+    // Add active to the clicked option
     clickedOption.classList.add('active');
   }
-
-  function applyTheme(themeType, themeName) {
-    console.log('正在应用主题:', themeType, '=', themeName);
-
-    // For guest users, we need to be more aggressive since no page reload
-    @if (!auth()->check())
-    // Force immediate board recreation for guests
-    console.log('访客用户 - 强制立即应用主题');
-
-    setTimeout(() => {
-      try {
-        // Try to get board instance
-        let boardInstance = null;
-        if (typeof board !== 'undefined') {
-          boardInstance = board;
-        } else if (typeof window.board !== 'undefined') {
-          boardInstance = window.board;
-        }
-
-        if (boardInstance) {
-          // Get current position
-          const currentPos = typeof boardInstance.position === 'function' ?
-            boardInstance.position() : 'start';
-
-          console.log('当前局面:', currentPos);
-
-          // Destroy and recreate board with new theme
-          if (typeof boardInstance.destroy === 'function') {
-            boardInstance.destroy();
-          }
-
-          // Wait then recreate
-          setTimeout(() => {
-            try {
-              const boardElement = document.getElementById('ban-co');
-              if (boardElement && typeof Xiangqiboard === 'function') {
-                // Create new board instance with updated theme values
-                if (typeof window.board !== 'undefined') {
-                  delete window.board;
-                }
-                const isPuzzlePage = window.location.pathname === '/mi';
-                window.board = Xiangqiboard('ban-co', {
-                  draggable: true,
-                  position: currentPos,
-                  sparePieces: isPuzzlePage,
-                  showNotation: true
-                });
-
-                // Update global board reference if needed
-                if (typeof board === 'undefined') {
-                  window.board = window.board;
-                }
-
-                console.log('已为访客使用新主题重建棋盘');
-              }
-            } catch (error) {
-              console.log('棋盘重建失败:', error);
-              // Last resort: reload page
-              location.reload();
-            }
-          }, 200);
-        } else {
-          console.log('未找到访客的棋盘实例，正在刷新页面');
-          location.reload();
-        }
-      } catch (error) {
-        console.log('访客主题应用错误:', error);
-        location.reload();
-      }
-    }, 100);
-
-    @else
-    // Logged users - use theme manager or reload
-    if (typeof window.updateBoardTheme !== 'function') {
-      console.log('未找到主题管理器，正在刷新页面以应用主题');
-      setTimeout(() => {
-        location.reload();
-      }, 500);
-    }
-    @endif
-
-    console.log('已触发主题应用:', themeType, '=', themeName);
-
-    setTimeout(() => {
-      if (typeof window.updateBoardTheme === 'function') {
-        window.updateBoardTheme();
-      }
-    }, 50);
-  }
-
 
 });
 </script>
