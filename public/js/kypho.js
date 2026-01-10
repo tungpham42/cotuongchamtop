@@ -20,8 +20,53 @@
       return '';
     }
     var piece = PIECE_LABELS[move.piece] || String(move.piece || '').toUpperCase();
-    var capture = move.flags && move.flags.indexOf('c') !== -1 ? 'x' : '-';
-    return piece + move.from + capture + move.to;
+    var from = parseSquare(move.from);
+    var to = parseSquare(move.to);
+    if (!from || !to) {
+      return piece;
+    }
+    var color = move.color || 'r';
+    var fromCol = columnFromFile(from.fileIndex, color);
+    var toCol = columnFromFile(to.fileIndex, color);
+    var isSameRank = from.rank === to.rank;
+    var action;
+    if (isSameRank) {
+      action = '.';
+    } else {
+      var forward = color === 'r' ? to.rank > from.rank : to.rank < from.rank;
+      action = forward ? '+' : '-';
+    }
+
+    var last;
+    if (action === '.') {
+      last = toCol;
+    } else {
+      var usesTargetColumn = move.piece === 'n' || move.piece === 'b' || move.piece === 'a';
+      last = usesTargetColumn ? toCol : Math.abs(to.rank - from.rank);
+    }
+
+    return piece + fromCol + action + last;
+  }
+
+  function parseSquare(square) {
+    if (!square || square.length < 2) {
+      return null;
+    }
+    var fileChar = square.charAt(0);
+    var rankChar = square.charAt(1);
+    var fileIndex = 'abcdefghi'.indexOf(fileChar);
+    var rank = parseInt(rankChar, 10);
+    if (fileIndex === -1 || isNaN(rank)) {
+      return null;
+    }
+    return {
+      fileIndex: fileIndex,
+      rank: rank
+    };
+  }
+
+  function columnFromFile(fileIndex, color) {
+    return color === 'r' ? 9 - fileIndex : fileIndex + 1;
   }
 
   function buildFromMoves(startFen, moves) {
