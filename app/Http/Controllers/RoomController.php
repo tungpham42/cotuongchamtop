@@ -18,6 +18,7 @@ use App\Jobs\QuickMatchJob;
 use App\Jobs\AnonymousQuickMatchJob;
 use Illuminate\Support\Str;
 use Atrox\Haikunator;
+use Illuminate\Support\Facades\Schema;
 
 class RoomController extends Controller
 {
@@ -772,7 +773,7 @@ class RoomController extends Controller
         $room->fen = $fen;
         $room->modified_at = now();
 
-        if ($move) {
+        if ($move && Schema::hasColumn('rooms', 'moves')) {
             $moves = [];
             if (!empty($room->moves)) {
                 $decoded = json_decode($room->moves, true);
