@@ -1434,69 +1434,69 @@ class RoomController extends Controller
     /**
      * Dọn phòng cũ và đảm bảo session hiện tại luôn có phòng chờ hoặc đã ghép.
      */
-    private function prepareAnonymousRoom(string $sessionId): Room
+    public function prepareAnonymousRoom(string $sessionId): Room
     {
-        // Dọn phòng chờ quá hạn
+        // 1. CLEANUP: Delete very old abandoned rooms (older than 5 mins)
+        // We do this outside the transaction to keep the lock fast
         Room::whereNull('result')
-            ->whereNotNull('host_session')
-            ->whereNull('guest_session')
             ->where('modified_at', '<', now()->subMinutes(5))
             ->delete();
 
-        Room::whereNull('result')
-            ->whereNull('host_session')
-            ->whereNotNull('guest_session')
-            ->where('modified_at', '<', now()->subMinutes(5))
-            ->delete();
+        return DB::transaction(function () use ($sessionId) {
+            // 2. CHECK EXISTING: Is this user already in a room?
+            $currentRoom = Room::where(function($query) use ($sessionId) {
+                    $query->where('host_session', $sessionId)
+                        ->orWhere('guest_session', $sessionId);
+                })
+                ->whereNull('result')
+                ->lockForUpdate() // Lock this row to prevent conflicts
+                ->first();
 
-        // Nếu session đã ở trong một phòng đang đấu/chờ
-        $currentRoom = Room::where(function($query) use ($sessionId) {
-                $query->where('host_session', $sessionId)
-                      ->orWhere('guest_session', $sessionId);
-            })
-            ->whereNull('result')
-            ->first();
+            if ($currentRoom) {
+                // Update 'last seen' so the room stays alive
+                $currentRoom->update(['modified_at' => now()]);
+                return $currentRoom;
+            }
 
-        if ($currentRoom) {
-            $currentRoom->update(['modified_at' => now()]);
-            return $currentRoom;
-        }
+            // 3. MATCHMAKING: Find a room waiting for a guest
+            // CRITICAL CHANGE: Only join rooms modified in the last 15 seconds.
+            // This ensures we don't join a room where the Host closed their browser 1 minute ago.
+            $availableRoom = Room::whereNotNull('host_session')
+                ->whereNull('guest_session')
+                ->whereNull('result')
+                ->whereNull('pass')
+                ->where('fen', '=', env('INITIAL_FEN'))
+                ->where('modified_at', '>', now()->subSeconds(15))
+                ->orderBy('modified_at', 'desc') // Prioritize most active/recent host
+                ->lockForUpdate() // PREVENTS RACE CONDITION
+                ->first();
 
-        // Tìm phòng đang chờ guest
-        $availableRoom = Room::whereNotNull('host_session')
-            ->whereNull('guest_session')
-            ->whereNull('result')
-            ->whereNull('pass')
-            ->where('fen', '=', env('INITIAL_FEN'))
-            ->where('modified_at', '>', now()->subMinutes(5))
-            ->orderBy('modified_at', 'asc')
-            ->first();
+            if ($availableRoom) {
+                $availableRoom->update([
+                    'guest_session' => $sessionId,
+                    'modified_at'   => now(),
+                ]);
 
-        if ($availableRoom) {
-            $availableRoom->update([
-                'guest_session' => $sessionId,
+                return $availableRoom->fresh();
+            }
+
+            // 4. CREATE: No match found, create a new room
+            return Room::create([
+                'code'          => md5(time() . $sessionId . uniqid()), // Added uniqid for extra entropy
+                'fen'           => env('INITIAL_FEN'),
+                'name'          => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
+                'host_session'  => $sessionId,
+                'guest_session' => null,
+                'host_id'       => null,
+                'guest_id'      => null,
+                'pass'          => null,
+                'red_time'      => 600,
+                'black_time'    => 600,
+                'active_player' => null,
+                'last_update'   => null,
                 'modified_at'   => now(),
             ]);
-
-            return $availableRoom->fresh();
-        }
-
-        // Không có phòng nào -> tạo phòng mới
-        return Room::create([
-            'code'          => md5(time() . $sessionId),
-            'fen'           => env('INITIAL_FEN'),
-            'name'          => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
-            'host_session'  => $sessionId,
-            'guest_session' => null,
-            'host_id'       => null,
-            'guest_id'      => null,
-            'pass'          => null,
-            'red_time'      => 600,
-            'black_time'    => 600,
-            'active_player' => null,
-            'last_update'   => null,
-            'modified_at'   => now(),
-        ]);
+        });
     }
 
     /**
