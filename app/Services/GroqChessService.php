@@ -12,6 +12,7 @@ class GroqChessService
 
     // Danh sách các model theo thứ tự ưu tiên
     protected $availableModels = [
+        "llama-3.3-70b-versatile",
         "openai/gpt-oss-120b",
         "openai/gpt-oss-20b",
         "openai/gpt-oss-safeguard-20b",
@@ -28,7 +29,6 @@ Bạn là một Huấn luyện viên Cờ Tướng (Xiangqi Coach) người Vi�
 - Luôn tuân thủ quy tắc ký hiệu chuẩn trong mọi câu trả lời.
 - Tránh sử dụng thuật ngữ nước ngoài hoặc ký hiệu không chuẩn.
 - Giới hạn độ dài câu trả lời: Tối đa 100 từ.
-- DÙNG TIẾNG VIỆT CHUẨN.
 
 ### QUY TẮC KÝ HIỆU (QUAN TRỌNG NHẤT)
 Bạn BẮT BUỘC phải tuân thủ chuẩn KỲ PHỔ Việt Nam sau đây:
