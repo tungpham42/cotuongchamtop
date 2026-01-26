@@ -134,7 +134,7 @@ EOT;
      * @param float $temperature    Độ sáng tạo.
      * @return string|null          Nội dung trả lời hoặc null nếu thất bại hoàn toàn.
      */
-    protected function callWithFallback(array $messages, int $modelIndex = 0, bool $jsonMode = false, float $temperature = 0.5)
+    protected function callWithFallback(array $messages, int $modelIndex = 0, bool $jsonMode = false, float $temperature = 0.9)
     {
         // 1. Kiểm tra điều kiện dừng: Nếu index vượt quá số lượng model khả dụng
         if (!isset($this->availableModels[$modelIndex])) {
@@ -151,6 +151,7 @@ EOT;
                 'model' => $currentModel,
                 'messages' => $messages,
                 'temperature' => $temperature,
+                'max_tokens' => 4096,
             ];
 
             if ($jsonMode) {
@@ -249,7 +250,7 @@ EOT;
         ];
 
         // Gọi hàm đệ quy với danh sách model đầy đủ
-        return $this->callWithFallback($messages, 0, true, 0.4);
+        return $this->callWithFallback($messages, 0, true, 0.9);
     }
 
     /**
@@ -304,7 +305,7 @@ EOT;
         ];
 
         // Gọi hàm đệ quy
-        $result = $this->callWithFallback($messages, 0, false, 0.6);
+        $result = $this->callWithFallback($messages, 0, false, 0.9);
 
         return $result ?? "Xin lỗi, hiện tại tất cả các AI đều đang bận (Lỗi kết nối).";
     }
