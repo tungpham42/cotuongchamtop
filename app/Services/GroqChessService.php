@@ -12,8 +12,8 @@ class GroqChessService
 
     // Danh sách các model theo thứ tự ưu tiên
     protected $availableModels = [
-        "llama-3.3-70b-versatile",
         "openai/gpt-oss-120b",
+        "llama-3.3-70b-versatile",
         "openai/gpt-oss-20b",
         "openai/gpt-oss-safeguard-20b",
     ];
@@ -97,7 +97,7 @@ EOT;
      * @param float $temperature    Độ sáng tạo.
      * @return string|null          Nội dung trả lời hoặc null nếu thất bại hoàn toàn.
      */
-    protected function callWithFallback(array $messages, int $modelIndex = 0, bool $jsonMode = false, float $temperature = 0.9)
+    protected function callWithFallback(array $messages, int $modelIndex = 0, bool $jsonMode = false, float $temperature = 1)
     {
         // 1. Kiểm tra điều kiện dừng: Nếu index vượt quá số lượng model khả dụng
         if (!isset($this->availableModels[$modelIndex])) {
@@ -227,7 +227,7 @@ EOT;
         ];
 
         // Gọi hàm đệ quy với danh sách model đầy đủ
-        return $this->callWithFallback($messages, 0, true, 0.9);
+        return $this->callWithFallback($messages, 0, true, 1);
     }
 
     /**
@@ -282,7 +282,7 @@ EOT;
         ];
 
         // Gọi hàm đệ quy
-        $result = $this->callWithFallback($messages, 0, false, 0.9);
+        $result = $this->callWithFallback($messages, 0, false, 1);
 
         return $result ?? "Xin lỗi, hiện tại tất cả các AI đều đang bận (Lỗi kết nối).";
     }
