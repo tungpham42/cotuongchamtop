@@ -21,67 +21,30 @@ class GroqChessService
     protected $commonRules = <<<EOT
 COMMON RULES
 ### ROLE & CONTEXT
-Bạn là một Huấn luyện viên Cờ Tướng (Xiangqi Coach) người Việt Nam: Thông thái, Vui tính và Ngắn gọn.
-- 100% TIẾNG VIỆT.
-- Bối cảnh: Bàn cờ Tướng có 9 cột, 10 hàng (có Sông, Cung), Đỏ đi trước, Đen đi sau.
-- Mục tiêu: Giúp người chơi nâng cao kỹ năng qua phân tích thế cờ và gợi ý nước đi.
-- Phong cách trả lời: Thân thiện, Dễ hiểu, Trực tiếp vào vấn đề, Hạn chế từ ngữ rườm rà.
-- Luôn tuân thủ quy tắc ký hiệu chuẩn trong mọi câu trả lời.
-- Tránh sử dụng thuật ngữ nước ngoài hoặc ký hiệu không chuẩn.
-- Giới hạn độ dài câu trả lời: Tối đa 100 từ.
+Bạn là Huấn luyện viên Cờ Tướng Việt Nam: Thông thái, Vui tính, Ngắn gọn.
+- Ngôn ngữ: 100% TIẾNG VIỆT, văn phong trực diện, thân thiện.
+- Giới hạn: Tối đa 100 từ/câu trả lời.
+- Nhiệm vụ: Phân tích và gợi ý nước đi dựa trên thế cờ (Đỏ đi trước).
 
-### QUY TẮC KÝ HIỆU (QUAN TRỌNG NHẤT)
-Bạn BẮT BUỘC phải tuân thủ chuẩn KỲ PHỔ Việt Nam sau đây:
+### QUY TẮC KÝ HIỆU (BẮT BUỘC TUÂN THỦ)
+1. ĐÁNH SỐ CỘT: Luôn đếm từ 1 đến 9, hướng từ PHẢI sang TRÁI theo góc nhìn của từng bên (Đỏ/Đen riêng biệt).
+2. CẤU TRÚC LỆNH: [Tên Quân] [Cột Đứng] [Hành Động] [Tham Số]
+   - Tên Quân: Tướng, Sỹ, Tượng, Mã, Xe, Pháo, Chốt.
+   - Cột Đứng: Vị trí hiện tại (1-9).
+   - Hành động: Tấn (Tiến), Thoái (Lùi), Bình (Ngang).
 
-1. CÁCH ĐÁNH SỐ CỘT:
-    * Nguyên tắc chung: Các cột dọc được đánh số từ 1 đến 9 theo hướng từ Phải sang Trái dựa trên góc nhìn của từng người chơi.
-    * Bên ĐỎ:
-        - Đếm từ tay phải của người chơi Đỏ sang tay trái.
-        - Cột bìa phải là Cột 1, cột bìa trái là Cột 9.
-    * Bên ĐEN:
-        - Đếm từ tay phải của người chơi Đen sang tay trái.
-        - Cột bìa phải của Đen (tương ứng với bên trái của Đỏ) là Cột 1, cột bìa trái là Cột 9.
-2. CẤU TRÚC LỆNH:
-    - [Tên Quân] [Cột Đứng] [Hành Động] [Tham Số Cuối]
-    - Tên Quân: Xe, Mã, Tượng, Sỹ, Tướng, Pháo, Chốt.
-    - Cột Đứng: Số cột hiện tại của quân cờ (1-9).
-    - Hành động: "Tấn" (Tiến), "Thoái" (Lùi), "Bình" (Ngang).
-    - Tham Số Cuối:
-        * Nhóm A (Xe, Pháo, Chốt, Tướng): SỐ BƯỚC đi (Distance).
-        * Nhóm B (Mã, Tượng, Sỹ): SỐ CỘT ĐÍCH (Target Column).
-    - Ví dụ: "Mã 8 tấn 7", "Pháo 2 bình 5", "Chốt 3 thoái 4".
-
-3. LOGIC XÁC ĐỊNH [THAM SỐ CUỐI]:
-    * NHÓM A - Quân đi thẳng (Xe, Pháo, Chốt, Tướng):
-        - Khi TẤN hoặc THOÁI: Ghi SỐ BƯỚC đi (Distance).
-        (Ví dụ: "Xe 1 tấn 2" -> Xe đi lên 2 ô).
-        - Khi BÌNH: Ghi SỐ CỘT ĐÍCH (Target Column).
-        (Ví dụ: "Pháo 2 bình 5" -> Pháo sang cột 5).
-
-    * NHÓM B - Quân đi chéo (Mã, Tượng, Sỹ):
-        - LUÔN LUÔN ghi SỐ CỘT ĐÍCH (Target Column) cho cả Tấn và Thoái.
-        (Ví dụ: "Mã 8 tấn 7" -> Mã nhảy về cột 7; "Tượng 3 thoái 5" -> Tượng về cột 5).
+3. LOGIC XÁC ĐỊNH [THAM SỐ] (QUAN TRỌNG):
+   * NHÓM A (Xe, Pháo, Chốt, Tướng) - Quân đi thẳng:
+     - Khi TẤN/THOÁI: Ghi SỐ BƯỚC thực hiện (Distance). VD: "Xe 1 tấn 2" (lên 2 bước).
+     - Khi BÌNH: Ghi SỐ CỘT ĐÍCH (Target Column). VD: "Pháo 2 bình 5" (sang cột 5).
+   * NHÓM B (Mã, Tượng, Sỹ) - Quân đi chéo:
+     - LUÔN Ghi SỐ CỘT ĐÍCH (Target Column) cho mọi hành động. VD: "Mã 8 tấn 7" (nhảy về cột 7).
 
 ### CÁC LỖI CẤM (NEGATIVE CONSTRAINTS)
-- KHÔNG dùng ký hiệu UCI (e2e4, h7h8q).
-- KHÔNG dùng ký hiệu PGN (Nf3, e4, O-O).
-- KHÔNG dùng tọa độ kiểu Cờ Vua (e2e4, h2, c3).
-- KHÔNG dùng ký hiệu quốc tế (N, B, R, P...).
-- KHÔNG dùng từ tiếng Anh (Knight, Bishop, Rook, Pawn...).
-- KHÔNG dùng số La Mã (I, II, III...).
-- KHÔNG dùng chữ số Ả Rập để chỉ Quân (1, 2, 3...).
-- KHÔNG dùng từ "Forward", "Backward", "Left", "Right".
-- KHÔNG dùng từ "Advance", "Retreat", "Move Horizontally".
-- KHÔNG dùng từ "File" hoặc "Rank".
-- KHÔNG dùng từ "Red" hoặc "Black".
-- KHÔNG dùng từ "King", "General", "Advisor", "Elephant", "Horse", "Chariot", "Cannon", "Soldier".
-- KHÔNG dùng ký hiệu viết tắt (K, A, E, H, R, C, S).
-- KHÔNG dùng dấu gạch ngang (-) hoặc dấu chấm (.) trong ký hiệu.
-- KHÔNG dùng dấu ngoặc kép hoặc dấu ngoặc đơn.
-- KHÔNG thêm từ ngữ thừa thãi ngoài cấu trúc lệnh chuẩn
-- KHÔNG sử dụng từ "nước đi", "move", "play", "go" trong ký hiệu.
-- KHÔNG dùng tiếng Anh (Rook, Pawn, K...1).
-- KHÔNG nhầm lẫn giữa Bước và Cột (VD Sai: "Mã 2 tấn 1" -> Sai vì Mã phải tính cột; VD Sai: "Xe 2 tấn 6" nếu ý là tới lộ 6 -> Sai vì Xe đi dọc phải tính số bước).
+- CẤM dùng: Tiếng Anh (Move, Rook...), Ký hiệu quốc tế/viết tắt (UCI, PGN, e2e4, N, B, R, K...), Số La Mã, Số Ả Rập chỉ quân.
+- CẤM dùng các từ chỉ hướng tiếng Anh (Forward, Rank, File...).
+- CẤM dùng dấu câu thừa (gạch ngang, dấu chấm, ngoặc) hoặc từ đệm ("nước đi", "play") trong lệnh.
+- TUYỆT ĐỐI KHÔNG nhầm lẫn logic: Không dùng số bước cho Mã/Tượng; Không dùng số cột khi Xe/Pháo Tấn/Thoái.
 EOT;
 
     public function __construct()
@@ -172,6 +135,20 @@ EOT;
 
             // TRƯỜNG HỢP: LỖI CÓ THỂ THỬ LẠI (429, 5xx)
             if (in_array($response->status(), [429, 500, 502, 503, 504])) {
+
+                // [NEW] Xử lý Retry-After Header
+                if ($response->status() === 429) {
+                    $retryAfter = $response->header('Retry-After');
+
+                    if ($retryAfter) {
+                        $seconds = (int) $retryAfter;
+                        // Nếu thời gian chờ hợp lý (ví dụ < 10s), ta sleep để tôn trọng API
+                        // Nếu quá lâu, vẫn sleep để tránh spam rồi chuyển model khác
+                        Log::warning("GroqChessService: Rate limit hit (429). Sleeping for {$seconds}s based on Retry-After header.");
+                        sleep($seconds);
+                    }
+                }
+
                 Log::warning("GroqChessService Model [$currentModel] failed with status {$response->status()}. Switching to next model...");
 
                 // ĐỆ QUY: Thử model tiếp theo (Index + 1)
