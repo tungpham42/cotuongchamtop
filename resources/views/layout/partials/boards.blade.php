@@ -12,7 +12,15 @@
                 <div id="board-{{ $board->code }}" class="card shadow-lg rounded border-dark" style="cursor: pointer;background-color: transparent;">
                 </div>
                 <div class="bg-dark p-2 text-center">
-                    <a href="{{ url('/phong/') }}/{{ $board->code }}/theo-doi" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                    @auth
+                        @if (auth()->id() == $board->host_id)
+                            <a href="{{ url('/phong/') }}/{{ $board->code }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                        @elseif (auth()->id() == $board->guest_id)
+                            <a href="{{ url('/phong/') }}/{{ $board->code }}/khach" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                        @endif
+                    @else
+                        <a href="{{ url('/phong/') }}/{{ $board->code }}/theo-doi" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                    @endauth
                 </div>
                 <div class="bg-dark row mx-0">
                     <span class="py-1 col-12 text-light text-center host-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->host_id) !!}</span>
@@ -56,7 +64,15 @@
                 $('#board-{{ $board->code }}').on('click auxclick', function(e){
                     e.preventDefault();
                     // $('#AdSenseModal').attr('data-url', '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/theo-doi').modal('show');
-                    window.location.href = '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/theo-doi';
+                    @auth
+                        @if (auth()->id() == $board->host_id)
+                            window.location.href = '{{ url('/phong/') }}' + '/' + '{{ $board->code }}';
+                        @elseif (auth()->id() == $board->guest_id)
+                            window.location.href = '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/khach';
+                        @endif
+                    @else
+                        window.location.href = '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/theo-doi';
+                    @endauth
                 });
             </script>
             @endforeach
@@ -79,7 +95,15 @@
                     <div id="board-{{ $board->code }}" class="card shadow-lg rounded border-dark" style="cursor: pointer;background-color: transparent;">
                     </div>
                     <div class="bg-dark p-2 text-center">
-                        <a href="{{ url('/phong/') }}/{{ $board->code }}/theo-doi" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                        @auth
+                            @if (auth()->id() == $board->host_id)
+                                <a href="{{ url('/phong/') }}/{{ $board->code }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                            @elseif (auth()->id() == $board->guest_id)
+                                <a href="{{ url('/phong/') }}/{{ $board->code }}/khach" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                            @endif
+                        @else
+                            <a href="{{ url('/phong/') }}/{{ $board->code }}/theo-doi" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                        @endauth
                     </div>
                     <div class="bg-dark row mx-0">
                         <span class="py-1 col-12 text-light text-center host-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->host_id) !!}</span>
@@ -123,7 +147,15 @@
                     $('#board-{{ $board->code }}').on('click auxclick', function(e){
                         e.preventDefault();
                         // $('#AdSenseModal').attr('data-url', '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/theo-doi').modal('show');
-                        window.location.href = '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/theo-doi';
+                        @auth
+                            @if (auth()->id() == $board->host_id)
+                                window.location.href = '{{ url('/phong/') }}' + '/' + '{{ $board->code }}';
+                            @elseif (auth()->id() == $board->guest_id)
+                                window.location.href = '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/khach';
+                            @endif
+                        @else
+                            window.location.href = '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/theo-doi';
+                        @endauth
                     });
                 </script>
                 @endforeach
