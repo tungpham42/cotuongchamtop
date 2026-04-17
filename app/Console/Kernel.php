@@ -6,7 +6,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Console\Commands\DeleteRoomsCommand;
 use App\Console\Commands\DeleteNonameRoomsCommand;
-use App\Console\Commands\DeleteBadWordsCommand;
+use App\Console\Commands\CensorBadWordsCommand;
 use App\Console\Commands\UpdatePointsCommand;
 use App\Console\Commands\UpdatePuzzleSlugsCommand;
 // use App\Console\Commands\UpdateSitemapCommand;
@@ -23,7 +23,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\DeleteRoomsCommand::class,
         \App\Console\Commands\DeleteNonameRoomsCommand::class,
-        \App\Console\Commands\DeleteBadWordsCommand::class,
+        \App\Console\Commands\CensorBadWordsCommand::class,
         \App\Console\Commands\UpdatePointsCommand::class,
         \App\Console\Commands\UpdatePuzzleSlugsCommand::class,
         // \App\Console\Commands\UpdateSitemapCommand::class,
@@ -39,7 +39,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command(DeleteBadWordsCommand::class)->everyFiveMinutes();
+        $schedule->command(CensorBadWordsCommand::class)->everyFiveMinutes();
         $schedule->command(DeleteRoomsCommand::class)->hourly();
         $schedule->command(DeleteNonameRoomsCommand::class)->hourly();
         $schedule->command(UpdatePointsCommand::class)->hourly();
