@@ -40,23 +40,28 @@ class DeleteRoomsCommand extends Command
                       ->orWhere('fen', '=', 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1 resign');
             })
             ->delete();
-        
+
         Room::where('modified_at', '<', $date)
             ->whereNull('host_id')
             ->whereNull('result')
             ->delete();
-        
+
+        Room::whereNotNull('host_id')
+            ->whereNotNull('result')
+            ->whereNull('guest_id')
+            ->delete();
+
         Room::where('modified_at', '<', $date)
             ->whereNotNull('host_id')
             ->whereNotNull('result')
             ->where('fen', 'LIKE', '% - - 0 1%')
             ->delete();
-        
+
         // Delete rooms where host_id or guest_id doesn't exist in users table
         Room::whereNotIn('host_id', User::pluck('id')->toArray())
             ->orWhereNotIn('guest_id', User::pluck('id')->toArray())
             ->delete();
-        
+
         $this->info('Rooms older than ' . $days . ' days and rooms with missing users have been deleted.');
     }
 }
