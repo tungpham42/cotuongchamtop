@@ -43,9 +43,9 @@
       @include('layout.partials.scripts')
       @yield('belowContent')
       @include('common.xiangqiBanner')
-      @desktop
+      {{-- @desktop
         @include('layout.partials.fb')
-      @enddesktop
+      @enddesktop --}}
     </main>
     @include('layout.partials.footer')
     @include('common.contactBtn')

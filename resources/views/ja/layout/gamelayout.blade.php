@@ -133,7 +133,7 @@
           </div>
         </div>
       </div>
-      @include('ja.layout.partials.fb')
+      {{-- @include('ja.layout.partials.fb') --}}
     </main>
     @include('ja.layout.partials.footer')
     @include('common.adcash')

@@ -18,9 +18,9 @@
       @include('ko.layout.partials.scripts')
       @yield('belowContent')
       @include('common.xiangqiBanner')
-      @desktop
+      {{-- @desktop
         @include('ko.layout.partials.fb')
-      @enddesktop
+      @enddesktop --}}
     </main>
     @include('ko.layout.partials.footer')
     @include('common.adcash')

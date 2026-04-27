@@ -18,9 +18,9 @@
       @include('zh.layout.partials.scripts')
       @yield('belowContent')
       @include('common.xiangqiBanner')
-      @desktop
+      {{-- @desktop
         @include('zh.layout.partials.fb')
-      @enddesktop
+      @enddesktop --}}
     </main>
     @include('zh.layout.partials.footer')
     @include('common.adcash')

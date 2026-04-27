@@ -342,7 +342,7 @@
           </div>
         </div>
       </div>
-      @include('layout.partials.fb')
+      {{-- @include('layout.partials.fb') --}}
     </main>
     @include('layout.partials.aiChatWidget')
     @include('layout.partials.footer')

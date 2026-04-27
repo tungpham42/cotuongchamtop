@@ -133,7 +133,7 @@
           </div>
         </div>
       </div>
-      @include('ko.layout.partials.fb')
+      {{-- @include('ko.layout.partials.fb') --}}
     </main>
     @include('ko.layout.partials.footer')
     @include('common.adcash')
