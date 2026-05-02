@@ -10,8 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const applyVolumeState = (state) => {
     const isMuted = state === 'muted';
-    nuocCoVolume.muted = isMuted;
-    hetTranVolume.muted = isMuted;
+    if (nuocCoVolume) nuocCoVolume.muted = isMuted;
+    if (hetTranVolume) hetTranVolume.muted = isMuted;
 
     if (isMuted) {
       volumeSwitch.find('i').removeClass('fa-volume-up').addClass('fa-volume-slash');
@@ -27,9 +27,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Toggle function
   window.toggleMute = () => {
-    const newState = nuocCoVolume.muted ? 'unmuted' : 'muted';
+    const newState = nuocCoVolume && nuocCoVolume.muted ? 'unmuted' : 'muted';
     localStorage.setItem('volumeState', newState);
     applyVolumeState(newState);
   };
 });
+
+window.playMoveSound = () => {
+  const audio = document.getElementById('nuoc-co');
+  if (!audio) return;
+  audio.play().catch(() => {});
+};
 </script>

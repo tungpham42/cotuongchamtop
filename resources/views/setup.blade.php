@@ -37,7 +37,7 @@ function onSnapEnd () {
   if (board.fen() != history[history.length - 1]){
     history.push(board.fen());
   }
-  nuocCo.play();
+  window.playMoveSound();
   console.log(history);
 }
 function undo () {
