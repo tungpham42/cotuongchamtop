@@ -1,6 +1,5 @@
 @extends('en.layout.gamelayout')
 @section('aboveBoard')
-@include('common.puzzleSetupStyles')
 @if ($board != '')
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="This is a created puzzle">Puzzle</h5>
 @else
@@ -94,9 +93,6 @@ const board = Xiangqiboard('ban-co', {
   draggable: true,
   dropOffBoard: 'trash',
   sparePieces: true,
-  snapSpeed: 0,
-  snapbackSpeed: 0,
-  trashSpeed: 0,
   @if ($board != '')
   position: '{{ $board }}',
   @endif
@@ -115,14 +111,7 @@ function adjustBoard() {
 // adjustBoard();
 // $(window).on('load resize', adjustBoard);
 // $(document).ready(adjustBoard);
-function resizeSetupBoard() {
-  requestAnimationFrame(function() {
-    board.resize();
-  });
-}
-$(window).on('load resize', resizeSetupBoard);
-$(document).ready(resizeSetupBoard);
-setTimeout(resizeSetupBoard, 250);
+$(window).resize(board.resize);
 $('#new-board').on('click auxclick', function(e){
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({

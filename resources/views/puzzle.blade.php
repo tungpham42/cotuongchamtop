@@ -1,6 +1,5 @@
 @extends('layout.gamelayout')
 @section('aboveBoard')
-@include('common.puzzleSetupStyles')
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="Bàn cờ thế">Bạn đang xếp<span id="puzzle-title"></span></h5>
 <p class="w-100 text-center mt-0 mb-1">
   <a data-step="1" data-intro="Ấn vào đây để tải bàn cờ về khi đã xếp xong" id="capture" class="btn btn-danger btn-lg text-light" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title="Lưu thành ảnh nào"><i class="fad fa-download"></i> Tải bàn cờ thế</a>
@@ -91,9 +90,6 @@ const board = Xiangqiboard('ban-co', {
   draggable: true,
   dropOffBoard: 'trash',
   sparePieces: true,
-  snapSpeed: 0,
-  snapbackSpeed: 0,
-  trashSpeed: 0,
   @if ($board != '')
   position: '{{ $board }}',
   @endif
@@ -177,14 +173,7 @@ function adjustBoard() {
 // adjustBoard();
 // $(window).on('load resize', adjustBoard);
 // $(document).ready(adjustBoard);
-function resizeSetupBoard() {
-  requestAnimationFrame(function() {
-    board.resize();
-  });
-}
-$(window).on('load resize', resizeSetupBoard);
-$(document).ready(resizeSetupBoard);
-setTimeout(resizeSetupBoard, 250);
+$(window).resize(board.resize);
 $('#new-board').on('click auxclick', function(e){
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
