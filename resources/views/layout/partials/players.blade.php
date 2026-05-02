@@ -5,7 +5,7 @@
     <div class="container mx-auto px-3 pt-0">
         <div class="row my-0">
             <h2 class="d-block w-100 text-light ml-3 mb-4">
-                <i class="fas fa-users"></i> {{ $firstPagePlayers->total() }} kỳ thủ đang hoạt động, mời bạn <a class="text-light animate-light showPromotion" href="{{ url('/') }}/dang-ky">tham gia</a>
+                <i class="fas fa-users"></i> {{ $firstPagePlayers->total() }} {{ __("kỳ thủ đang hoạt động, mời bạn") }} <a class="text-light animate-light showPromotion" href="{{ url('/') }}/dang-ky">{{ __("tham gia") }}</a>
             </h2>
             {{ $firstPagePlayers->links('vendor.pagination.playerVi') }}
             @foreach($firstPagePlayers as $player)
@@ -15,12 +15,12 @@
                     <span class="py-2 col-12 text-light text-left lead">Elo: {!! app('App\Http\Controllers\UserController')::renderElo($player->id) !!}</span>
                     @if (auth()->check())
                         @if (auth()->id() != $player->id)
-                            <a class="btn btn-danger text-light mr-1 w-100" href="javascript:compete({{ $player->id }});"><i class="far fa-mouse"></i> Thách đấu</a>
+                            <a class="btn btn-danger text-light mr-1 w-100" href="javascript:compete({{ $player->id }});"><i class="far fa-mouse"></i> {{ __("Thách đấu") }}</a>
                         @else
-                            <a class="btn btn-dark text-light mr-1 w-100" style="cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> Thách đấu</a>
+                            <a class="btn btn-dark text-light mr-1 w-100" style="cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> {{ __("Thách đấu") }}</a>
                         @endif
                     @else
-                        <a class="btn btn-danger text-light mr-1 w-100" href=" {{ url('/dang-nhap') }} "><i class="far fa-sign-in"></i> Thách đấu</a>
+                        <a class="btn btn-danger text-light mr-1 w-100" href=" {{ url('/dang-nhap') }} "><i class="far fa-sign-in"></i> {{ __("Thách đấu") }}</a>
                     @endif
                 </div>
             </div>
@@ -38,7 +38,7 @@
                 }).done(function(data){
                     if (data == 'no') {
                         bootbox.prompt({
-                            title: "Mời đặt tên cho Phòng thi đấu:",
+                            title: "Mời đặt tên cho Phòng thi {{ __("đấu") }}:",
                             locale: 'vi',
                             centerVertical: true,
                             closeButton: false,
@@ -166,7 +166,7 @@
         <div class="container mx-auto px-3 pt-0">
             <div class="row my-0">
                 <h2 class="d-block w-100 text-light ml-3 mb-4">
-                    <i class="fas fa-users"></i> {{ $players->total() }} kỳ thủ đang hoạt động, mời bạn  <a class="text-light animate-light showPromotion" href="{{ url('/') }}/dang-ky">tham gia</a>
+                    <i class="fas fa-users"></i> {{ $players->total() }} {{ __("kỳ thủ đang hoạt động, mời bạn") }}  <a class="text-light animate-light showPromotion" href="{{ url('/') }}/dang-ky">{{ __("tham gia") }}</a>
                 </h2>
                 {{ $players->links('vendor.pagination.playerVi') }}
                 @foreach($players as $player)
@@ -176,12 +176,12 @@
                         <span class="py-2 col-12 text-light text-left lead">Elo: {!! app('App\Http\Controllers\UserController')::renderElo($player->id) !!}</span>
                         @if (auth()->check())
                             @if (auth()->id() != $player->id)
-                                <a class="btn btn-danger text-light mr-1 w-100" href="javascript:compete({{ $player->id }});"><i class="far fa-mouse"></i> Thách đấu</a>
+                                <a class="btn btn-danger text-light mr-1 w-100" href="javascript:compete({{ $player->id }});"><i class="far fa-mouse"></i> {{ __("Thách đấu") }}</a>
                             @else
-                                <a class="btn btn-dark text-light mr-1 w-100" style="cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> Thách đấu</a>
+                                <a class="btn btn-dark text-light mr-1 w-100" style="cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> {{ __("Thách đấu") }}</a>
                             @endif
                         @else
-                            <a class="btn btn-danger text-light mr-1 w-100" href=" {{ url('/dang-nhap') }} "><i class="far fa-sign-in"></i> Thách đấu</a>
+                            <a class="btn btn-danger text-light mr-1 w-100" href=" {{ url('/dang-nhap') }} "><i class="far fa-sign-in"></i> {{ __("Thách đấu") }}</a>
                         @endif
                     </div>
                 </div>
@@ -199,7 +199,7 @@
                     }).done(function(data){
                         if (data == 'no') {
                             bootbox.prompt({
-                                title: "Mời đặt tên cho Phòng thi đấu:",
+                                title: "Mời đặt tên cho Phòng thi {{ __("đấu") }}:",
                                 locale: 'vi',
                                 centerVertical: true,
                                 closeButton: false,

@@ -1,29 +1,29 @@
 @extends('amp.layout.gamelayout')
 @section('aboveContent')
-<h3 class="text-center my-2">Đang chơi với máy</h3>
-<h4 class="text-center my-2">Cấp độ bàn cờ: {{ $levelTxt }}</h4>
+<h3 class="text-center my-2">Đang {{ __("chơi") }} {{ __("với máy") }}</h3>
+<h4 class="text-center my-2">{{ __("Cấp độ") }} bàn cờ: {{ $levelTxt }}</h4>
 <div class="dropup mx-auto text-center">
   <button class="btn btn-lg btn-danger dropdown-toggle" type="button" id="levelDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <i class="fal fa-trophy"></i> Chọn cấp độ bàn cờ
+    <i class="fal fa-trophy"></i> {{ __("Chọn cấp độ bàn cờ") }}
   </button>
   <div class="dropdown-menu" aria-labelledby="levelDropdown">
-    <a class="add-fen dropdown-item" href="{{ url('/amp/ban-co-moi-choi') }}">Mới chơi</a>
-    <a class="add-fen dropdown-item" href="{{ url('/amp/ban-co-de') }}">Dễ</a>
-    <a class="add-fen dropdown-item" href="{{ url('/amp/ban-co-binh-thuong') }}">Bình thường</a>
-    <a class="add-fen dropdown-item" href="{{ url('/amp/ban-co-kho') }}">Khó</a>
-    <a class="add-fen dropdown-item" href="{{ url('/amp/ban-co-kho-nhat') }}">Khó nhất</a>
+    <a class="add-fen dropdown-item" href="{{ url('/amp/ban-co-moi-choi') }}">{{ __("Mới chơi") }}</a>
+    <a class="add-fen dropdown-item" href="{{ url('/amp/ban-co-de') }}">{{ __("Dễ") }}</a>
+    <a class="add-fen dropdown-item" href="{{ url('/amp/ban-co-binh-thuong') }}">{{ __("Bình thường") }}</a>
+    <a class="add-fen dropdown-item" href="{{ url('/amp/ban-co-kho') }}">{{ __("Khó") }}</a>
+    <a class="add-fen dropdown-item" href="{{ url('/amp/ban-co-kho-nhat') }}">{{ __("Khó nhất") }}</a>
   </div>
 </div>
 @endsection
 @section('belowContent')
 <p class="w-100 text-center mt-4">
   <a style="color: white" class="add-fen w-25 btn btn-dark btn-lg" href="{{ url('/amp/ban-co') }}"><i class="fad fa-user"></i> Tự giải</a>
-  <a style="color: white" id="reset" class="w-25 btn btn-danger btn-lg"><i class="fad fa-redo-alt"></i> Chơi lại</a>
+  <a style="color: white" id="reset" class="w-25 btn btn-danger btn-lg"><i class="fad fa-redo-alt"></i> {{ __("Chơi lại") }}</a>
 </p>
 <p class="w-100 text-center mt-2">
-  <i class="fad fa-external-link-alt"></i> Mời bạn bè chơi bằng cách gửi liên kết.
+  <i class="fad fa-external-link-alt"></i> {{ __("Mời bạn bè chơi bằng cách gửi liên kết.") }}
 </p>
-<div id="copy-url" class="input-group mb-2 w-50 mx-auto" data-toggle="tooltip" data-placement="bottom" data-original-title="Ấn để sao chép">
+<div id="copy-url" class="input-group mb-2 w-50 mx-auto{{ __("\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Ấn để sao chép") }}">
   <div class="input-group-prepend">
     <span class="input-group-text" id="url-addon"><i class="fal fa-copy"></i></span>
   </div>
@@ -122,26 +122,26 @@ function updateStatus () {
 
   var moveColor = 'Đỏ'
   if (game.turn() === 'b') {
-    moveColor = 'Đen'
+    moveColor = '{{ __("Đen") }}'
   }
 
   // checkmate?
   if (game.in_checkmate()) {
-    status = moveColor + ' bị chiếu bí'
+    status = moveColor + ' {{ __("bị chiếu bí") }}'
   }
 
   // draw?
   else if (game.in_draw()) {
-    status = 'Hòa'
+    status = '{{ __("Hòa") }}'
   }
 
   // game still on
   else {
-    status = 'Tới lượt ' + moveColor + ' đi'
+    status = '{{ __("Tới lượt") }} ' + moveColor + ' đi'
 
     // check?
     if (game.in_check()) {
-      status += ', ' + moveColor + ' đang bị chiếu'
+      status += ', ' + moveColor + ' {{ __("đang bị chiếu") }}'
       if ((board.orientation() == 'red' && game.turn() === 'r') || (board.orientation() == 'black' && game.turn() === 'b')) {
         $('#checkmateText').show();
       }
@@ -158,7 +158,7 @@ function updateStatus () {
   $('#header-status').html(': '+status);
   if (game.game_over()) {
     hetTran.play();
-    $('#header-status').html(': '+status+' - Hết trận');
+    $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
     $('#game-over').removeClass('d-none').addClass('d-inline-block');
   }
 }

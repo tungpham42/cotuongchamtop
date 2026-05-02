@@ -5,7 +5,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <header class="site-header shadow-lg sticky-top">
   <div class="container mx-auto">
     <div class="row align-items-center">
-      <a class="navbar-brand small mr-auto my-0 showPromotion" href="{{ url('') }}"><img src="{{ url('/') }}/img/app-icons/logo.png" class="xiangqi-logo" alt="xiangqi logo"><h1 class="d-inline" style="font-size: inherit !important;"><strong>Cờ tướng</strong></h1>
+      <a class="navbar-brand small mr-auto my-0 showPromotion" href="{{ url('') }}"><img src="{{ url('/') }}/img/app-icons/logo.png" class="xiangqi-logo" alt="xiangqi logo"><h1 class="d-inline" style="font-size: inherit !important;"><strong>{{ __("Cờ tướng") }}</strong></h1>
         @if ($roomCode != '')
         <span id="header-status"></span>
         @endif
@@ -14,24 +14,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <nav class="navbar py-0">
         <ul class="nav navbar-nav">
           <li class="nav-item">
-            <a class="home showPromotion" href="{{ url('') }}"><i class="far fa-house"></i> Trang chủ</a>
+            <a class="home showPromotion" href="{{ url('') }}"><i class="far fa-house"></i> {{ __("Trang chủ") }}</a>
           </li>
           <li class="dropdown">
-            <a id="dashboardDropdown" class="dashboard room trophy thi-dau dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false"><i class="far fa-trophy-alt"></i> Thi đấu</a>
+            <a id="dashboardDropdown" class="dashboard room trophy thi-dau dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false"><i class="far fa-trophy-alt"></i> {{ __("Thi đấu") }}</a>
             <div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="dashboardDropdown">
-              <a class="rooms-list showPromotion dropdown-item{{ url()->current() == url('/sanh-cho') ? ' active disabled' : '' }}" href="{{ url('/sanh-cho') }}"><i class="far fa-list-alt"></i> Sảnh chờ</a>
-              <a class="showPromotion dropdown-item{{ url()->current() == url('/thanh-vien') ? ' active disabled' : '' }}" href="{{ url('/thanh-vien') }}"><i class="far fa-users"></i> Thành viên</a>
-              <a class="setup puzzle showPromotion dropdown-item{{ url()->current() == url('/tat-ca-the-co') ? ' active disabled' : '' }}" href="{{ url('/tat-ca-the-co') }}"><i class="far fa-puzzle-piece"></i> Cờ thế</a>
-              <a class="showPromotion dropdown-item{{ url()->current() == url('/thi-dau') ? ' active disabled' : '' }}" href="{{ url('/thi-dau') }}"><i class="far fa-list"></i> Đang thi đấu</a>
-              <a class="showPromotion dropdown-item{{ url()->current() == url('/bang-xep-hang') ? ' active disabled' : '' }}" href="{{ url('/bang-xep-hang') }}"><i class="far fa-star"></i> Bảng xếp hạng</a>
-              <a class="showPromotion dropdown-item{{ url()->current() == url('/tim-kiem') ? ' active disabled' : '' }}" href="{{ url('/tim-kiem') }}"><i class="far fa-search"></i> Tìm kiếm kỳ thủ</a>
-              <a class="showPromotion dropdown-item{{ url()->current() == url('/lich-su') ? ' active disabled' : '' }}" href="{{ url('/lich-su') }}"><i class="far fa-archive"></i> Lịch sử thi đấu</a>
-              <a target="_blank" class="showPromotion dropdown-item" href="https://diendan.cotuong.top/"><i class="far fa-comments"></i> Diễn đàn</a>
+              <a class="rooms-list showPromotion dropdown-item{{ url()->current() == url('/sanh-cho') ? ' active disabled' : '' }}" href="{{ url('/sanh-cho') }}"><i class="far fa-list-alt"></i> {{ __("Sảnh chờ") }}</a>
+              <a class="showPromotion dropdown-item{{ url()->current() == url('/thanh-vien') ? ' active disabled' : '' }}" href="{{ url('/thanh-vien') }}"><i class="far fa-users"></i> {{ __("Thành viên") }}</a>
+              <a class="setup puzzle showPromotion dropdown-item{{ url()->current() == url('/tat-ca-the-co') ? ' active disabled' : '' }}" href="{{ url('/tat-ca-the-co') }}"><i class="far fa-puzzle-piece"></i> {{ __("Cờ thế") }}</a>
+              <a class="showPromotion dropdown-item{{ url()->current() == url('/thi-dau') ? ' active disabled' : '' }}" href="{{ url('/thi-dau') }}"><i class="far fa-list"></i> {{ __("Đang thi đấu") }}</a>
+              <a class="showPromotion dropdown-item{{ url()->current() == url('/bang-xep-hang') ? ' active disabled' : '' }}" href="{{ url('/bang-xep-hang') }}"><i class="far fa-star"></i> {{ __("Bảng xếp hạng") }}</a>
+              <a class="showPromotion dropdown-item{{ url()->current() == url('/tim-kiem') ? ' active disabled' : '' }}" href="{{ url('/tim-kiem') }}"><i class="far fa-search"></i> {{ __("Tìm kiếm kỳ thủ") }}</a>
+              <a class="showPromotion dropdown-item{{ url()->current() == url('/lich-su') ? ' active disabled' : '' }}" href="{{ url('/lich-su') }}"><i class="far fa-archive"></i> {{ __("Lịch sử thi đấu") }}</a>
+              <a target="_blank" class="showPromotion dropdown-item" href="https://diendan.cotuong.top/"><i class="far fa-comments"></i> {{ __("Diễn đàn") }}</a>
               {{-- <a class="dropdown-item" href="https://blog.cotuong.top/"><i class="far fa-blog"></i> Tin tức</a> --}}
             </div>
           </li>
           <li class="nav-item">
-            <a class="showPromotion" target="_blank" href="https://www.facebook.com/groups/HoiChoiCoTuong"><i class="far fa-user-friends"></i> Nhóm Facebook</a>
+            <a class="showPromotion" target="_blank" href="https://www.facebook.com/groups/HoiChoiCoTuong"><i class="far fa-user-friends"></i> {{ __("Nhóm Facebook") }}</a>
           </li>
           @guest
             @if (Route::has('login'))
@@ -53,16 +53,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
               <div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="navbarDropdown">
                 @if (Auth::user()->isStandard())
-                  <span class="dropdown-item text-success"><i class="far fa-crown"></i> Standard (ẩn quảng cáo)</span>
+                  <span class="dropdown-item text-success"><i class="far fa-crown"></i> {{ __("Standard (ẩn quảng cáo)") }}</span>
                 @else
                   <a href="{{ url('/ho-so-cua-toi') }}#standard-plan" class="showPromotion dropdown-item text-danger">
-                    <i class="far fa-crown"></i> Nâng cấp Standard
+                    <i class="far fa-crown"></i> {{ __("Nâng cấp Standard") }}
                   </a>
                 @endif
-                <a href="{{ url('/ho-so-cua-toi') }}" class="showPromotion dropdown-item{{ url()->current() == url('/ho-so-cua-toi') ? ' active disabled' : '' }}"><i class="far fa-id-card"></i> Hồ sơ của tôi</a>
-                <a href="{{ url('/doi-ten') }}" class="showPromotion dropdown-item{{ url()->current() == url('/doi-ten') ? ' active disabled' : '' }}"><i class="far fa-user-edit"></i> Đổi tên</a>
-                <a href="{{ url('/doi-giao-dien') }}" class="showPromotion dropdown-item{{ url()->current() == url('/doi-giao-dien') ? ' active disabled' : '' }}"><i class="far fa-palette"></i> Đổi giao diện</a>
-                <a href="{{ url('/doi-mat-khau') }}" class="showPromotion dropdown-item{{ url()->current() == url('/doi-mat-khau') ? ' active disabled' : '' }}"><i class="far fa-lock-alt"></i> Đổi mật khẩu</a>
+                <a href="{{ url('/ho-so-cua-toi') }}" class="showPromotion dropdown-item{{ url()->current() == url('/ho-so-cua-toi') ? ' active disabled' : '' }}"><i class="far fa-id-card"></i> {{ __("Hồ sơ của tôi") }}</a>
+                <a href="{{ url('/doi-ten') }}" class="showPromotion dropdown-item{{ url()->current() == url('/doi-ten') ? ' active disabled' : '' }}"><i class="far fa-user-edit"></i> {{ __("Đổi tên") }}</a>
+                <a href="{{ url('/doi-giao-dien') }}" class="showPromotion dropdown-item{{ url()->current() == url('/doi-giao-dien') ? ' active disabled' : '' }}"><i class="far fa-palette"></i> {{ __("Đổi giao diện") }}</a>
+                <a href="{{ url('/doi-mat-khau') }}" class="showPromotion dropdown-item{{ url()->current() == url('/doi-mat-khau') ? ' active disabled' : '' }}"><i class="far fa-lock-alt"></i> {{ __("Đổi mật khẩu") }}</a>
                 <a class="dropdown-item" href="{{ route('logout') }}"
                   onclick="event.preventDefault();
                                 document.getElementById('logout-form').submit();">
@@ -76,7 +76,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </li>
           @endguest
           <li class="dropdown language-switcher">
-            <a class="lang dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false"><i class="far fa-language"></i> Tiếng Việt</a>
+            <a class="lang dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false"><i class="far fa-language"></i> {{ $localeLabels[$locale] ?? 'Tiếng Việt' }}</a>
             <div class="dropdown-menu dropdown-menu-right shadow">
               <a class="dropdown-item showPromotion{{ $canonicalUrl === $langViUrl ? ' active disabled' : '' }}" href="{{ url($langViUrl) }}"><span class="shadow-sm fi fi-vn"></span> Tiếng Việt</a>
               @if (isset($room->host_id))

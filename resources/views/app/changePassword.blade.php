@@ -22,7 +22,7 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <i class="fas fa-lock-alt"></i> Đổi mật khẩu
+                    <i class="fas fa-lock-alt"></i> {{ __("Đổi") }} mật khẩu
                     @include('layout.partials.app.tourBtn')
                 </div>
                 <div class="card-body">
@@ -43,9 +43,9 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <label for="new_password" class="col-md-4 col-form-label text-md-end">Mật khẩu mới</label>
+                                <label for="new_password" class="col-md-4 col-form-label text-md-end">{{ __("Mật khẩu mới") }}</label>
                                 <div class="col-md-6">
-                                    <input data-step="2" data-intro="Mật khẩu mới phải ít nhất 8 ký tự" type="password" id="new_password" name="new_password" class="form-control @error('new_password') is-invalid @enderror" required>
+                                    <input data-step="2" data-intro="{{ __("Mật khẩu mới") }} phải ít nhất 8 ký tự" type="password" id="new_password" name="new_password" class="form-control @error('new_password') is-invalid @enderror" required>
                                     @error('new_password')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -67,7 +67,7 @@
                             <div class="row mb-0">
                                 <div class="col-md-6 offset-md-4">
                                     <button data-step="4" data-intro="Ấn vào đây để đổi mật khẩu mới" type="submit" class="btn btn-danger">
-                                        <i class="fad fa-lock-alt"></i> Đổi mật khẩu
+                                        <i class="fad fa-lock-alt"></i> {{ __("Đổi") }} mật khẩu
                                     </button>
                                 </div>
                             </div>

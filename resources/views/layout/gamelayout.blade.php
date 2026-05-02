@@ -178,7 +178,7 @@
                     }
                   </script>
                   @else
-                  <a class="btn btn-danger text-light btn-lg showPromotion thi-dau" href="{{ url('/dang-nhap') }}" data-toggle="tooltip" data-placement="top" title="Đăng nhập để thi đấu"><i class="fad fa-sign-in"></i> Đăng nhập</a>
+                  <a class="btn btn-danger text-light btn-lg showPromotion thi-dau" href="{{ url('/dang-nhap') }}" data-toggle="tooltip" data-placement="top" title="{{ __("Đăng nhập") }} để thi {{ __("đấu") }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
                   @endif
                 @else
                 <a class="btn btn-danger text-light btn-lg showPromotion mx-auto rooms-list" href="{{ URL::to('/sanh-cho') }}"><i class="fad fa-chevron-circle-left"></i> Quay lại sảnh chờ</a>
@@ -231,7 +231,7 @@
                   }).done(function(data){
                     if (data == 'no') {
                       bootbox.prompt({
-                        title: "Mời đặt tên cho Phòng thi đấu:",
+                        title: "Mời đặt tên cho Phòng thi {{ __("đấu") }}:",
                         locale: 'vi',
                         centerVertical: true,
                         closeButton: false,

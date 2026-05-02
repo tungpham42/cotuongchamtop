@@ -1,9 +1,9 @@
 <button id="find-match-btn" class="px-5 py-2 mx-auto mt-3 btn btn-lg btn-danger d-inline-block">
     <i class="fad fa-play mr-2"></i>
     @if ( $roomCode == '' )
-        Tìm trận
+        {{ __("Tìm trận") }}
     @else
-        Tìm trận mới
+        {{ __("Tìm trận") }} mới
     @endif
 </button>
 <span id="match-status" class="mt-3 d-inline w-100 text-center"></span>
@@ -65,7 +65,7 @@
                 errorCount++;
                 // Allow up to 5 consecutive failures before giving up
                 if(errorCount > 5) {
-                    stopPolling('Mất kết nối với máy chủ.');
+                    stopPolling('Mất kết nối {{ __("với máy") }} chủ.');
                 }
             });
         }, 1000);
@@ -86,7 +86,7 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content text-center p-4" style="background-color: #E1BF85; border-radius: 15px;">
                         <h4 class="mb-3 text-danger">
-                            <img width="42" height="42" src="/img/xiangqipieces/wiki/rK.svg" alt="Cờ tướng" class="mr-2">
+                            <img width="42" height="42" src="/img/xiangqipieces/wiki/rK.svg" alt="{{ __("Cờ tướng") }}" class="mr-2">
                             Đã tìm thấy đối thủ!
                         </h4>
                         <p class="fs-5 mb-3">Ván cờ sẽ bắt đầu sau:</p>

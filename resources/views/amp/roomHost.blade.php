@@ -1,9 +1,9 @@
 @extends('amp.layout.gamelayout')
 @section('aboveContent')
 <p class="w-100 text-center mt-2">
-  <i class="fad fa-external-link-alt"></i> Mời bạn bè chơi bằng cách gửi liên kết.
+  <i class="fad fa-external-link-alt"></i> {{ __("Mời bạn bè chơi bằng cách gửi liên kết.") }}
 </p>
-<div id="copy-url-black" class="input-group mb-2 w-50 mx-auto" data-toggle="tooltip" data-placement="bottom" data-original-title="Ấn để sao chép">
+<div id="copy-url-black" class="input-group mb-2 w-50 mx-auto{{ __("\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Ấn để sao chép") }}">
   <div class="input-group-prepend">
     <span class="input-group-text" id="url-addon-black"><i class="fal fa-copy"></i></span>
   </div>
@@ -13,20 +13,20 @@
   <span class="alert alert-info d-inline-block" role="alert" data-toggle="tooltip" data-placement="bottom" data-original-title="Ghi nhớ mã phòng này nhé"><i class="fad fa-trophy-alt"></i> {{ $roomCode }}</span>
 </p>
 <div id="change-pass" class="input-group mb-4 w-50 mx-auto">
-  <label class="m-auto" for="inputPassword">Mật khẩu mới</label>
+  <label class="m-auto" for="inputPassword">{{ __("Mật khẩu mới") }}</label>
   <input type="password" id="inputPassword" class="form-control mx-2" />
-  <button type="submit" class="btn btn-dark" onclick="validateForm();">Đổi</button>
+  <button type="submit" class="btn btn-dark" onclick="validateForm();">{{ __("Đổi") }}</button>
   <div id="status" class="w-100"></div>
 </div>
 @endsection
 @section('belowContent')
 {{-- <p class="w-100 text-center mt-4">
-  <a style="color: white" class="w-25 btn btn-danger btn-lg" href="{{ url('/amp') }}/phong/{{ $roomCode }}/do"><i class="fad fa-chess-clock-alt"></i> Bên ĐỎ</a>
-  <a style="color: white" class="w-25 btn btn-dark btn-lg" href="{{ url('/amp') }}/phong/{{ $roomCode }}/den"><i class="fad fa-chess-clock"></i> Bên ĐEN</a>
+  <a style="color: white" class="w-25 btn btn-danger btn-lg" href="{{ url('/amp') }}/phong/{{ $roomCode }}/do"><i class="fad fa-chess-clock-alt"></i> {{ __("Bên ĐỎ") }}</a>
+  <a style="color: white" class="w-25 btn btn-dark btn-lg" href="{{ url('/amp') }}/phong/{{ $roomCode }}/den"><i class="fad fa-chess-clock"></i> {{ __("Bên ĐEN") }}</a>
 </p> --}}
 <script>
 function validateForm() {
-  document.getElementById('status').innerHTML = "Đang xử lý...";
+  document.getElementById('status').innerHTML = "{{ __("Đang xử lý") }}...";
   formData = {
     'ma-phong': '{{ $roomCode }}',
     'pass': $('#inputPassword').val()
@@ -51,7 +51,7 @@ function validateForm() {
 }
 $(document).ready(function() {
   bootbox.prompt({
-    title: "Nhập mật khẩu để vào phòng:",
+    title: "{{ __("Nhập mật khẩu để vào phòng") }}:",
     required: true,
     centerVertical: true,
     locale: 'vi',
@@ -69,7 +69,7 @@ $(document).ready(function() {
         }).done(function(data) {
           if (data != password) {
             bootbox.alert({
-              message: "Sai mật khẩu! Bạn sẽ được chuyển hướng về Trang chủ",
+              message: "{{ __("Sai mật khẩu! Bạn sẽ được chuyển hướng về Trang chủ") }}",
               size: 'small',
               centerVertical: true,
               locale: 'vi',
@@ -86,7 +86,7 @@ $(document).ready(function() {
         });
       } else {
         bootbox.alert({
-          message: "Bạn đã ấn Hủy! Bạn sẽ được chuyển hướng về Trang chủ",
+          message: "{{ __("Bạn đã ấn Hủy! Bạn sẽ được chuyển hướng về Trang chủ") }}",
           size: 'small',
           centerVertical: true,
           locale: 'vi',
@@ -223,26 +223,26 @@ function updateStatus () {
 
   var moveColor = 'Đỏ'
   if (game.turn() === 'b') {
-    moveColor = 'Đen'
+    moveColor = '{{ __("Đen") }}'
   }
 
   // checkmate?
   if (game.in_checkmate()) {
-    status = moveColor + ' bị chiếu bí'
+    status = moveColor + ' {{ __("bị chiếu bí") }}'
   }
 
   // draw?
   else if (game.in_draw()) {
-    status = 'Hòa'
+    status = '{{ __("Hòa") }}'
   }
 
   // game still on
   else {
-    status = 'Tới lượt ' + moveColor + ' đi'
+    status = '{{ __("Tới lượt") }} ' + moveColor + ' đi'
 
     // check?
     if (game.in_check()) {
-      status += ', ' + moveColor + ' đang bị chiếu'
+      status += ', ' + moveColor + ' {{ __("đang bị chiếu") }}'
       if ((board.orientation() == 'red' && game.turn() === 'r') || (board.orientation() == 'black' && game.turn() === 'b')) {
         $('#checkmateText').show();
       }
@@ -258,7 +258,7 @@ function updateStatus () {
   $('#game-status').html(status);
   $('#header-status').html(': '+status);
   if (game.game_over()) {
-    $('#header-status').html(': '+status+' - Hết trận');
+    $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
   }
 }
 let config = {

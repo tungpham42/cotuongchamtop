@@ -1,16 +1,16 @@
 <meta charset="utf-8" />
-<title>{{ $headTitle }} - Mobile version - Cờ tướng 2 người - Chơi Cờ Tướng Online trực tuyến miễn phí - Cờ tướng online - Chơi cờ tướng với máy - Cờ thế - 象棋</title>
+<title>{{ $headTitle }} - Mobile version - Cờ tướng 2 người - Chơi Cờ Tướng Online trực tuyến miễn phí - Cờ tướng online - Chơi cờ tướng {{ __("với máy") }} - Cờ thế - 象棋</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="keywords" content="cờ tướng 2 người, chơi cờ tướng với máy, choi co tuong voi may, cờ tướng hay, co tuong, game co tuong online, co tuong 2 nguoi, cờ tướng, chơi cờ tướng online, choi co tuong online, choi co tuong, chơi cờ tướng online, chơi cờ tướng, cotuong, xiangqi, xiang qi" />
+<meta name="keywords" content="cờ tướng 2 người, {{ __("chơi") }} cờ tướng {{ __("với máy") }}, choi co tuong voi may, cờ tướng hay, co tuong, game co tuong online, co tuong 2 nguoi, cờ tướng, {{ __("chơi") }} cờ tướng online, choi co tuong online, choi co tuong, {{ __("chơi") }} cờ tướng online, {{ __("chơi") }} cờ tướng, cotuong, xiangqi, xiang qi" />
 <meta property="article:tag" content="cờ tướng"/>
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://cotuong.r.worldssl.net/img/img_desc_logo_game.png">
 <meta property="og:image:width" content="200" />
 <meta property="og:image:height" content="200" />
 <meta name="theme-color" content="#ff0028" />
-<meta name="description" content="Cùng chơi Cờ tướng với nhiều tính năng hấp dẫn như Cờ thế, Tạo phòng, Chơi một mình, Chơi với máy (5 cấp độ: Mới chơi, Dễ, Bình thường, Khó và Khó nhất) và nhất là không cần đăng ký! - {{ $headTitle }}" />
-<meta property="og:title" content="{{ $headTitle }} - Mobile version - Cờ tướng 2 người - Chơi Cờ Tướng Online trực tuyến miễn phí - Cờ tướng online - Chơi cờ tướng với máy - Cờ thế - 象棋" />
-<meta property="og:description" content="Cùng chơi Cờ tướng với nhiều tính năng hấp dẫn như Cờ thế, Tạo phòng, Chơi một mình, Chơi với máy (5 cấp độ: Mới chơi, Dễ, Bình thường, Khó và Khó nhất) và nhất là không cần đăng ký!" />
+<meta name="description" content="Cùng {{ __("chơi") }} Cờ tướng với nhiều tính năng hấp dẫn như Cờ thế, Tạo phòng, Chơi một mình, Chơi {{ __("với máy") }} (5 cấp độ: {{ __("Mới chơi") }}, {{ __("Dễ") }}, {{ __("Bình thường") }}, {{ __("Khó") }} và {{ __("Khó nhất") }}) và nhất là không cần đăng ký! - {{ $headTitle }}" />
+<meta property="og:title" content="{{ $headTitle }} - Mobile version - Cờ tướng 2 người - Chơi Cờ Tướng Online trực tuyến miễn phí - Cờ tướng online - Chơi cờ tướng {{ __("với máy") }} - Cờ thế - 象棋" />
+<meta property="og:description" content="Cùng {{ __("chơi") }} Cờ tướng với nhiều tính năng hấp dẫn như Cờ thế, Tạo phòng, Chơi một mình, Chơi {{ __("với máy") }} (5 cấp độ: {{ __("Mới chơi") }}, {{ __("Dễ") }}, {{ __("Bình thường") }}, {{ __("Khó") }} và {{ __("Khó nhất") }}) và nhất là không cần đăng ký!" />
 <meta property="og:url" content="{{ url()->full() }}" />
 <meta property="fb:app_id" content="279071963296709"/>
 <meta name="csrf-token" content="{{ csrf_token() }}">

@@ -60,7 +60,7 @@
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
 
                             <div class="col-md-6">
-                                <input data-step="3" data-intro="Điền vào mật khẩu của bạn. Mật khẩu mới phải ít nhất 8 ký tự" id="password" type="password" class="form-control form-control-lg @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+                                <input data-step="3" data-intro="Điền vào mật khẩu của bạn. {{ __("Mật khẩu mới") }} phải ít nhất 8 ký tự" id="password" type="password" class="form-control form-control-lg @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
 
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">

@@ -31,9 +31,9 @@
                             @csrf
                             <input type="hidden" value="{{ auth()->user()->id }}" name="current_id">
                             <div class="form-group">
-                                <label for="board_theme">Bàn cờ</label>
+                                <label for="board_theme">{{ __("Bàn cờ") }}</label>
                                 <select data-step="1" data-intro="Chọn giao diện bàn cờ" class="form-control form-control-lg" name="board_theme" id="board_theme">
-                                    <option value="xiangqi-board" @if(auth()->user()->board_theme === 'xiangqi-board') selected @endif>Bàn cờ mặc định</option>
+                                    <option value="xiangqi-board" @if(auth()->user()->board_theme === 'xiangqi-board') selected @endif>{{ __("Bàn cờ") }} mặc định</option>
                                     <option value="ban-co-go" @if(auth()->user()->board_theme === 'ban-co-go') selected @endif>Gỗ nhạt</option>
                                     <option value="wood-board" @if(auth()->user()->board_theme === 'wood-board') selected @endif>Gỗ đậm</option>
                                     <option value="ban-co" @if(auth()->user()->board_theme === 'ban-co') selected @endif>Vàng chói</option>
@@ -54,7 +54,7 @@
                                     <option value="traditional" @if(auth()->user()->pieces_theme === 'traditional') selected @endif>Truyền thống</option>
                                 </select>
                             </div>
-                            <button data-step="3" data-intro="Ấn vào đây để đổi giao diện" type="submit" class="btn btn-lg btn-danger"><i class="fad fa-palette"></i> Đổi giao diện</button>
+                            <button data-step="3" data-intro="Ấn vào đây để đổi giao diện" type="submit" class="btn btn-lg btn-danger"><i class="fad fa-palette"></i> {{ __("Đổi") }} giao diện</button>
                         </form>
                     </div>
                 </div>

@@ -87,7 +87,7 @@
 
   <button class="theme-toggle-btn" id="theme-toggle-btn">
     <i class="fas fa-palette"></i>
-    <span class="theme-toggle-text">Tùy chỉnh</span>
+    <span class="theme-toggle-text">{{ __("Tùy chỉnh") }}</span>
   </button>
 </div>
 

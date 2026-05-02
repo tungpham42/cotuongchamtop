@@ -2,7 +2,7 @@
 <div style="background-color: transparent" class="container-fluid insuranceArticles px-0">
     <div class="container mx-auto p-3">
         <div class="row my-5">
-            <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-heartbeat"></i> Bảo hiểm</h2>
+            <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-heartbeat"></i> {{ __("Bảo hiểm") }}</h2>
             @foreach($insuranceArticles as $article)
             <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
                 <div class="card shadow-lg rounded border-dark">

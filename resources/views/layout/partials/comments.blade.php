@@ -211,7 +211,7 @@ if (!isset($_SESSION['name'])) {
 <div id="chat-wrapper">
     <div id="menu">
         <p class="welcome">Chào bạn <b>@php echo $_SESSION['name']; @endphp</b></p>
-        <p class="logout"><a id="exit" href="javascript:void(0);">Thoát</a></p>
+        <p class="logout"><a id="exit" href="javascript:void(0);">{{ __("Thoát") }}</a></p>
     </div>
     <div id="chatbox">
         @php
@@ -258,7 +258,7 @@ $(document).ready(function () {
         $("#chat-wrapper").html(`
             <div id="menu">
                 <p class="welcome">Chào bạn <b>${name}</b></p>
-                <p class="logout"><a id="exit" href="javascript:void(0);">Thoát</a></p>
+                <p class="logout"><a id="exit" href="javascript:void(0);">{{ __("Thoát") }}</a></p>
             </div>
             <div id="chatbox"></div>
             <form name="message" id="message-form">
@@ -337,13 +337,13 @@ $(document).ready(function () {
     $("#chat-wrapper").on("click", "#exit", function (e) {
         e.preventDefault();
         bootbox.confirm({
-            message: "Thoát khỏi phòng chat?",
+            message: "{{ __("Thoát") }} khỏi phòng chat?",
             centerVertical: true,
             locale: 'vi',
             closeButton: false,
             buttons: {
                 confirm: {
-                    label: '<i class="fas fa-check"></i> Thoát',
+                    label: '<i class="fas fa-check"></i> {{ __("Thoát") }}',
                     className: 'btn-danger pulse-red'
                 },
                 cancel: {

@@ -4,7 +4,7 @@
     <div class="container mx-auto px-3 pt-0">
         <div class="row my-0">
             <h2 class="d-block w-100 text-light ml-3 mb-4">
-                <i class="fas fa-trophy-alt"></i> {{ $firstPageBoards->total() }} ván cờ <a class="text-light animate-light showPromotion" href="{{ url('/thanh-vien') }}">đang thi đấu</a>
+                <i class="fas fa-trophy-alt"></i> {{ $firstPageBoards->total() }} {{ __('ván cờ') }} <a class="text-light animate-light showPromotion" href="{{ url('/thanh-vien') }}">{{ __('đang thi đấu') }}</a>
             </h2>
             {{ $firstPageBoards->links('vendor.pagination.boardVi') }}
             @foreach($firstPageBoards as $board)
@@ -25,13 +25,13 @@
                     <span class="py-1 col-12 text-light text-center guest-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->guest_id) !!}</span>
                     <span class="py-1 col-12 text-light text-center">{{ $board->modified_at }}</span>
                     <span class="py-1 col-12 text-light text-center ">
-                        Tới lượt
+                        {{ __('Tới lượt') }}
                         @if (str_contains($board->fen, ' r '))
-                        Đỏ
+                        {{ __('Đỏ') }}
                         @elseif (str_contains($board->fen, ' b '))
-                        Đen
+                        {{ __('Đen') }}
                         @endif
-                        đi
+                        {{ __('đi') }}
                     </span>
                 </div>
             </div>
@@ -83,7 +83,7 @@
         <div class="container mx-auto px-3 pt-0">
             <div class="row my-0">
                 <h2 class="d-block w-100 text-light ml-3 mb-4">
-                    <i class="fas fa-trophy-alt"></i> {{ $boards->total() }} ván cờ <a class="text-light animate-light showPromotion" href="{{ url('/thanh-vien') }}">đang thi đấu</a>
+                    <i class="fas fa-trophy-alt"></i> {{ $boards->total() }} {{ __('ván cờ') }} <a class="text-light animate-light showPromotion" href="{{ url('/thanh-vien') }}">{{ __('đang thi đấu') }}</a>
                 </h2>
                 {{ $boards->links('vendor.pagination.boardVi') }}
                 @foreach($boards as $board)
@@ -104,13 +104,13 @@
                         <span class="py-1 col-12 text-light text-center guest-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->guest_id) !!}</span>
                         <span class="py-1 col-12 text-light text-center">{{ $board->modified_at }}</span>
                         <span class="py-1 col-12 text-light text-center ">
-                            Tới lượt
+                            {{ __('Tới lượt') }}
                             @if (str_contains($board->fen, ' r '))
-                            Đỏ
+                            {{ __('Đỏ') }}
                             @elseif (str_contains($board->fen, ' b '))
-                            Đen
+                            {{ __('Đen') }}
                             @endif
-                            đi
+                            {{ __('đi') }}
                         </span>
                     </div>
                 </div>

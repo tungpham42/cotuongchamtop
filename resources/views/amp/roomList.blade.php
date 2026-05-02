@@ -13,7 +13,7 @@
             <th class="text-center" scope="col">Mã phòng</th>
             <th class="text-center" scope="col">Vào</th>
             <th class="text-center no-sort" scope="col" data-sort-method="none">Theo dõi</th>
-            <th class="text-center" scope="col">Lần cuối chơi</th>
+            <th class="text-center" scope="col">{{ __("Lần cuối chơi") }}</th>
           </tr>
         </thead>
         <tbody style="background-color: whitesmoke;">

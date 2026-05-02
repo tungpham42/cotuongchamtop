@@ -5,33 +5,33 @@
     <div class="row">
     @include('layout.partials.findMatch')
     </div>
-    <h2 class="h1-responsivefooter text-center my-4">Sảnh chờ</h2>
+    <h2 class="h1-responsivefooter text-center my-4">{{ __("Sảnh chờ") }}</h2>
     <div class="dropdown mx-auto text-center mb-3">
-      <button data-step="1" data-intro="Ấn vào đây để tham gia thi đấu với các kỳ thủ khác" class="btn btn-danger btn-lg dropdown-toggle pulse-red" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span data-toggle="tooltip" data-placement="top" title="Đấu với bạn bè trong phòng"><i class="fad fa-gamepad-alt"></i> Chơi online</span>
+      <button data-step="1" data-intro="Ấn vào đây để tham gia thi {{ __("đấu") }} với các kỳ thủ khác" class="btn btn-danger btn-lg dropdown-toggle pulse-red" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span data-toggle="tooltip" data-placement="top" title="{{ __("Đấu với bạn bè trong phòng") }}"><i class="fad fa-gamepad-alt"></i> {{ __("Chơi online") }}</span>
       </button>
       <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/') }}/phong/{{ md5(time()) }}">
         @if (!auth()->check())
-        <a data-toggle="tooltip" data-placement="bottom" title="Đăng nhập để tham gia thi đấu" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="{{ URL::to('/dang-nhap') }}"><i class="fas fa-sign-in text-dark"></i> Đăng nhập</a>
+        <a data-toggle="tooltip" data-placement="bottom" title="{{ __("Đăng nhập để tham gia thi đấu") }}" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="{{ URL::to('/dang-nhap') }}"><i class="fas fa-sign-in text-dark"></i> {{ __("Đăng nhập") }}</a>
         @else
-        <a id="create-room" data-toggle="tooltip" data-placement="bottom" title="Thi đấu tính điểm và xếp hạng" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="javascript:createRoom();"><i class="fas fa-trophy-alt text-dark"></i> Thi đấu</a>
+        <a id="create-room" data-toggle="tooltip" data-placement="bottom" title="{{ __("Thi đấu tính điểm và xếp hạng") }}" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="javascript:createRoom();"><i class="fas fa-trophy-alt text-dark"></i> {{ __("Thi đấu") }}</a>
         @endif
-        <a data-toggle="tooltip" data-placement="bottom" title="Chơi cần mật khẩu" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> Riêng tư</a>
+        <a data-toggle="tooltip" data-placement="bottom" title="Chơi cần mật khẩu" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> {{ __("Riêng tư") }}</a>
         @if ($randomRoom != null)
-        <a data-toggle="tooltip" data-placement="bottom" title="Chơi trong phòng Công khai ngẫu nhiên" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ URL::to('/') }}/phong/{{ $randomRoom['code'] }}/ngau-nhien"><i class="fas fa-random text-dark"></i> Ngẫu nhiên</a>
+        <a data-toggle="tooltip" data-placement="bottom" title="Chơi trong phòng Công khai ngẫu nhiên" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ URL::to('/') }}/phong/{{ $randomRoom['code'] }}/ngau-nhien"><i class="fas fa-random text-dark"></i> {{ __("Ngẫu nhiên") }}</a>
         @endif
       </div>
       @include('common.tourBtn')
     </div>
-    <div data-step="2" data-intro="Danh sách tất cả các trận đấu" class="table-responsive">
+    <div data-step="2" data-intro="{{ __("Danh sách tất cả các trận đấu") }}" class="table-responsive">
       <table id="danh-sach-phong" class="table table-bordered table-hover table-striped table-sm">
         <thead class="thead-light">
           <tr>
-            <th class="text-center" scope="col">Tên phòng</th>
-            <th class="text-center" scope="col">Tới lượt</th>
-            <th class="text-center" scope="col">Kết quả</th>
-            <th class="text-center" scope="col">Hành động</th>
-            <th class="text-center" scope="col">Lần cuối chơi</th>
+            <th class="text-center" scope="col">{{ __("Tên phòng") }}</th>
+            <th class="text-center" scope="col">{{ __("Tới lượt") }}</th>
+            <th class="text-center" scope="col">{{ __("Kết quả") }}</th>
+            <th class="text-center" scope="col">{{ __("Hành động") }}</th>
+            <th class="text-center" scope="col">{{ __("Lần cuối chơi") }}</th>
           </tr>
         </thead>
         <tbody style="background-color: whitesmoke;">
@@ -46,7 +46,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 320px; margin: auto;">
     <div class="modal-content shadow-lg">
       <div class="modal-header">
-        <h5 class="modal-title"><i class="far fa-eye"></i> Xem trước "<span></span>"</h5>
+        <h5 class="modal-title"><i class="far fa-eye"></i> {{ __("Xem trước \"") }}<span></span>"</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -203,7 +203,7 @@ function createRoom() {
   }).done(function(data){
     if (data == 'no') {
       bootbox.prompt({
-        title: "Mời đặt tên cho Phòng thi đấu:",
+        title: "Mời đặt tên cho Phòng thi {{ __("đấu") }}:",
         locale: 'vi',
         centerVertical: true,
         closeButton: false,

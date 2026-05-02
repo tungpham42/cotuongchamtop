@@ -1,17 +1,17 @@
 @extends('layout.gamelayout')
 @section('aboveContent')
-<h3 class="text-center my-2">Đang xếp bàn cờ thế</h3>
+<h3 class="text-center my-2">{{ __("Đang xếp bàn cờ thế") }}</h3>
 @endsection
 @section('belowContent')
 <p class="w-100 text-center mt-4">
-  <a id="new-board" class="w-25 btn btn-dark btn-lg"><i class="fad fa-save"></i> Lưu bàn cờ</a>
-  <a id="undo" class="w-25 btn btn-danger btn-lg"><i class="fad fa-undo"></i> Xếp lại</a>
+  <a id="new-board" class="w-25 btn btn-dark btn-lg"><i class="fad fa-save"></i> {{ __("Lưu bàn cờ") }}</a>
+  <a id="undo" class="w-25 btn btn-danger btn-lg"><i class="fad fa-undo"></i> {{ __("Xếp lại") }}</a>
 </p>
 @if ($board != '')
 <p class="w-100 text-center mt-2">
-  <i class="fad fa-external-link-alt"></i> Mời bạn bè chơi bằng cách gửi liên kết.
+  <i class="fad fa-external-link-alt"></i> {{ __("Mời bạn bè chơi bằng cách gửi liên kết.") }}
 </p>
-<div id="copy-url" class="input-group mb-2 w-50 mx-auto" data-toggle="tooltip" data-placement="bottom" data-original-title="Ấn để sao chép">
+<div id="copy-url" class="input-group mb-2 w-50 mx-auto{{ __("\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Ấn để sao chép") }}">
   <div class="input-group-prepend">
     <span class="input-group-text" id="url-addon"><i class="fal fa-copy"></i></span>
   </div>

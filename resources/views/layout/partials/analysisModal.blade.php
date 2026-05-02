@@ -9,13 +9,13 @@
 
             <div class="modal-body px-4 py-3">
                 <div id="analysis-loading" class="text-center py-5">
-                    <p class="mt-3 fs-5 text-muted">Đang phân tích thế cờ...</p>
+                    <p class="mt-3 fs-5 text-muted">Đang phân tích {{ __("thế cờ") }}...</p>
                 </div>
 
                 <div id="analysis-result" style="display: none;">
 
                     <div class="mb-4 text-center">
-                        <h5 class="text-uppercase text-secondary small fw-bold ls-1">Đánh giá cục diện</h5>
+                        <h5 class="text-uppercase text-secondary small fw-bold ls-1">{{ __("Đánh giá cục diện") }}</h5>
                         <h2 id="ai-evaluation" class="fw-bold text-dark mb-0"></h2>
                     </div>
 

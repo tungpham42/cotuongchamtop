@@ -9,7 +9,7 @@
         <a class="shopee-link" href="https://shopee.vn/tungpham42" target="_blank" data-toggle="tooltip" data-placement="top" title="Shop Cờ Tướng Phạm Tùng"><img alt="Shopee" src="{{ $cdnUrl }}/img/shopbanner_300x300.png"  width="300" height="300" ></a>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal"><i class="fas fa-times"></i> Đóng</button>
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal"><i class="fas fa-times"></i> {{ __("Đóng") }}</button>
       </div>
     </div>
   </div>

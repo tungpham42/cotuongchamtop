@@ -32,12 +32,12 @@
                     @include('layout.partials.app.tourBtn')
                     @if (auth()->check())
                         @if (auth()->id() != $player->id)
-                            <a class="btn btn-danger text-light mr-1" style="width: 140px;" href="javascript:compete({{ $player->id }});"><i class="far fa-mouse"></i> Thách đấu</a>
+                            <a class="btn btn-danger text-light mr-1" style="width: 140px;" href="javascript:compete({{ $player->id }});"><i class="far fa-mouse"></i> Thách {{ __("đấu") }}</a>
                         @else
-                            <a class="btn btn-dark text-light mr-1" style="width: 140px; cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> Thách đấu</a>
+                            <a class="btn btn-dark text-light mr-1" style="width: 140px; cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> Thách {{ __("đấu") }}</a>
                         @endif
                     @else
-                        <a class="btn btn-danger text-light mr-1" style="width: 140px;" href=" {{ url('/dang-nhap') }} "><i class="far fa-sign-in"></i> Thách đấu</a>
+                        <a class="btn btn-danger text-light mr-1" style="width: 140px;" href=" {{ url('/dang-nhap') }} "><i class="far fa-sign-in"></i> Thách {{ __("đấu") }}</a>
                     @endif
                 </div>
                 <div class="card-body">
@@ -52,7 +52,7 @@
                     <h5>Số trận thắng: <span id="winPoints">{!! app('App\Http\Controllers\UserController')::renderWinMatchPoints($player->id) !!}</span></h5>
                     <h5>Số trận hòa: <span id="drawPoints">{!! app('App\Http\Controllers\UserController')::renderDrawMatchPoints($player->id) !!}</span></h5>
                     <h5>Số trận thua: <span id="losePoints">{!! app('App\Http\Controllers\UserController')::renderLoseMatchPoints($player->id) !!}</span></h5>
-                    <h5>Tổng số trận đã đấu xong: <span id="totalPoints">{!! app('App\Http\Controllers\UserController')::renderTotalMatchPoints($player->id) !!}</span></h5>
+                    <h5>Tổng số trận {{ __("đã đấu xong") }}: <span id="totalPoints">{!! app('App\Http\Controllers\UserController')::renderTotalMatchPoints($player->id) !!}</span></h5>
                     @if (auth()->check() && $player->id === auth()->id())
                     <div id="standard-plan" class="alert alert-warning d-flex align-items-center justify-content-between mt-3">
                         <div class="text-left">
@@ -85,9 +85,9 @@
                     @endif
                     @if ($player->id == auth()->id() && !str_contains(url()->current(), url('/ky-thu').'/'))
                     <p class="w-100 text-left">
-                        <a href="{{ url('/doi-ten') }}" class="btn btn-lg btn-dark showPromotion"><i class="fad fa-user-edit"></i> Đổi tên</a>
-                        <a href="{{ url('/doi-mat-khau') }}" class="btn btn-lg btn-dark showPromotion"><i class="fad fa-lock-alt"></i> Đổi mật khẩu</a>
-                        <a href="{{ url('/doi-giao-dien') }}" class="btn btn-lg btn-dark showPromotion"><i class="fad fa-palette"></i> Đổi giao diện</a>
+                        <a href="{{ url('/doi-ten') }}" class="btn btn-lg btn-dark showPromotion"><i class="fad fa-user-edit"></i> {{ __("Đổi") }} tên</a>
+                        <a href="{{ url('/doi-mat-khau') }}" class="btn btn-lg btn-dark showPromotion"><i class="fad fa-lock-alt"></i> {{ __("Đổi") }} mật khẩu</a>
+                        <a href="{{ url('/doi-giao-dien') }}" class="btn btn-lg btn-dark showPromotion"><i class="fad fa-palette"></i> {{ __("Đổi") }} giao diện</a>
                     </p>
                     @endif
                     @if (auth()->check())
@@ -104,7 +104,7 @@
                         }).done(function(data){
                             if (data == 'no') {
                                 bootbox.prompt({
-                                    title: "Mời đặt tên cho Phòng thi đấu:",
+                                    title: "Mời đặt tên cho Phòng thi {{ __("đấu") }}:",
                                     locale: 'vi',
                                     centerVertical: true,
                                     closeButton: false,
@@ -221,18 +221,18 @@
                     @endif
                     @if ($playerRooms->total() > 0)
                     <span style="background-color: #ffffff; margin-top: -70px;" class="d-block w-100 pb-5 mb-5" id="result-board"></span>
-                    <h2 data-step="1" data-intro="Danh sách các trận đấu của kỳ thủ '{{ $player->name }}'" class="mt-3"><i class="fas fa-list-ul"></i> Kết quả thi đấu</h2>
+                    <h2 data-step="1" data-intro="Danh sách các trận {{ __("đấu") }} của kỳ thủ '{{ $player->name }}'" class="mt-3"><i class="fas fa-list-ul"></i> {{ __("Kết quả") }} thi {{ __("đấu") }}</h2>
                     <div class="table-responsive mb-3">
                         <table class="table table-striped table-hover" id="results-table">
                             <thead>
                                 <tr>
-                                    <th scope="col">Tên phòng</th>
+                                    <th scope="col">{{ __("Tên phòng") }}</th>
                                     <th scope="col">Chủ phòng</th>
                                     <th scope="col">Khách</th>
-                                    <th scope="col">Tới lượt</th>
-                                    <th scope="col">Kết quả</th>
-                                    <th scope="col">Thi đấu</th>
-                                    <th scope="col">Lần cuối chơi</th>
+                                    <th scope="col">{{ __("Tới lượt") }}</th>
+                                    <th scope="col">{{ __("Kết quả") }}</th>
+                                    <th scope="col">{{ __("Thi đấu") }}</th>
+                                    <th scope="col">{{ __("Lần cuối chơi") }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -250,14 +250,14 @@
                                         @if (str_contains($room->fen, ' r '))
                                         <span class="text-danger">Đỏ</span>
                                         @elseif (str_contains($room->fen, ' b '))
-                                        <span class="text-dark">Đen</span>
+                                        <span class="text-dark">{{ __("Đen") }}</span>
                                         @endif
                                     </td>
                                     <td>
                                         @if ($room->result == '1')
                                             Chủ phòng thắng
                                         @elseif ($room->result == '0')
-                                            Hòa
+                                            {{ __("Hòa") }}
                                         @elseif ($room->result == '-1')
                                             Khách thắng
                                         @else
@@ -274,13 +274,13 @@
                                                 @endif
                                             @else
                                                 @if (isset($room->guest_id))
-                                                <a class="btn btn-sm btn-dark showPromotion" href="{{ url('/dang-nhap') }}"><i class="fad fa-sign-in"></i> Đăng nhập</a>
+                                                <a class="btn btn-sm btn-dark showPromotion" href="{{ url('/dang-nhap') }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
                                                 @else
-                                                <a class="btn btn-sm btn-danger pulse-red showPromotion" href="{{ url('/dang-nhap') }}"><i class="fad fa-sign-in"></i> Đăng nhập</a>
+                                                <a class="btn btn-sm btn-danger pulse-red showPromotion" href="{{ url('/dang-nhap') }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
                                                 @endif
                                             @endif
                                         @else
-                                            <span class="text-danger">Đã đấu xong</span>
+                                            <span class="text-danger">{{ __("Đã đấu xong") }}</span>
                                         @endif
                                     </td>
                                     <td class="room-time">{{ $room->modified_at }}</td>

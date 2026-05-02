@@ -2,7 +2,7 @@
 <div style="background-color: transparent" class="container-fluid puzzles px-0">
     <div class="container mx-auto px-3 pt-0">
         <div class="row my-0">
-            <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-book-open"></i> {{ numberToWordsVi($books->count()) }} quyển sách hay</h2>
+            <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-book-open"></i> {{ numberToWordsVi($books->count()) }} {{ __("quyển sách hay") }}</h2>
             @foreach($books as $book)
             <div class="col-xl-2 col-lg-4 col-md-6 col-sm-12 mb-4">
                 <div class="card shadow-lg rounded border-dark">

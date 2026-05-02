@@ -4,7 +4,7 @@
     <div class="container mx-auto px-3 pt-0">
         <div class="row my-0">
             <h2 class="d-block w-100 text-light ml-3 mb-4">
-                <i class="fas fa-archive"></i> {{ $firstPagePlayedBoards->total() }} ván cờ <a class="text-light animate-light stopPromotion" href="{{ url('/lich-su') }}">đã đấu xong</a>
+                <i class="fas fa-archive"></i> {{ $firstPagePlayedBoards->total() }} {{ __("ván cờ") }} <a class="text-light animate-light stopPromotion" href="{{ url('/lich-su') }}">{{ __("đã đấu xong") }}</a>
             </h2>
             {{ $firstPagePlayedBoards->links('vendor.pagination.playedBoardVi') }}
             @foreach($firstPagePlayedBoards as $board)
@@ -19,13 +19,13 @@
                     <span class="py-1 col-12 text-light text-center guest-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->guest_id) !!}</span>
                     <span class="py-1 col-12 text-light text-center">{{ $board->modified_at }}</span>
                     <span class="py-1 col-12 text-light text-center ">
-                        Tới lượt
+                        {{ __('Tới lượt') }}
                         @if (str_contains($board->fen, ' r '))
-                        Đỏ
+                        {{ __('Đỏ') }}
                         @elseif (str_contains($board->fen, ' b '))
-                        Đen
+                        {{ __('Đen') }}
                         @endif
-                        đi
+                        {{ __('đi') }}
                     </span>
                     <span class="py-1 col-12 text-light text-center">
                         @switch ($board->result)
@@ -84,7 +84,7 @@
         <div class="container mx-auto px-3 pt-0">
             <div class="row my-0">
                 <h2 class="d-block w-100 text-light ml-3 mb-4">
-                    <i class="fas fa-archive"></i> {{ $playedBoards->total() }} ván cờ <a class="text-light animate-light stopPromotion" href="{{ url('/lich-su') }}">đã đấu xong</a>
+                    <i class="fas fa-archive"></i> {{ $playedBoards->total() }} {{ __("ván cờ") }} <a class="text-light animate-light stopPromotion" href="{{ url('/lich-su') }}">{{ __("đã đấu xong") }}</a>
                 </h2>
                 {{ $playedBoards->links('vendor.pagination.playedBoardVi') }}
                 @foreach($playedBoards as $board)
@@ -99,13 +99,13 @@
                         <span class="py-1 col-12 text-light text-center guest-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->guest_id) !!}</span>
                         <span class="py-1 col-12 text-light text-center">{{ $board->modified_at }}</span>
                         <span class="py-1 col-12 text-light text-center ">
-                            Tới lượt
+                            {{ __('Tới lượt') }}
                             @if (str_contains($board->fen, ' r '))
-                            Đỏ
+                            {{ __('Đỏ') }}
                             @elseif (str_contains($board->fen, ' b '))
-                            Đen
+                            {{ __('Đen') }}
                             @endif
-                            đi
+                            {{ __('đi') }}
                         </span>
                         <span class="py-1 col-12 text-light text-center">
                             @switch ($board->result)

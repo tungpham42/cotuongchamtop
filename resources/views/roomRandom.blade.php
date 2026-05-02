@@ -1,31 +1,31 @@
 @extends('layout.gamelayout')
 @section('aboveBoard')
-<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="Bạn đang đi quân đen">Bạn đang đánh ngẫu nhiên</h5>
-<span id="room-name">Tên phòng: {{ $room->name }}</span>
+<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Bạn đang đi quân đen") }}">{{ __("Bạn đang đánh ngẫu nhiên") }}</h5>
+<span id="room-name">{{ __("Tên phòng") }}: {{ $room->name }}</span>
 @include('layout.partials.timer')
 @endsection
 @section('aboveContent')
 <p id="room-code" class="w-100 text-center mt-0 mb-1">
-  <span data-step="2" data-intro="Dùng mã phòng này để tìm kiếm trận đấu" class="alert alert-dark d-inline-block" role="alert" data-toggle="tooltip" data-placement="bottom" data-original-title="Sao chép mã phòng này nhé"><i class="fad fa-trophy-alt"></i> Mã phòng: <strong style="cursor: pointer;">{{ $roomCode }}</strong></span>
+  <span data-step="{{ __("2\" data-intro=\"Dùng mã phòng này để tìm kiếm trận đấu\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Sao chép mã phòng này nhé\"><i class=\"fad fa-trophy-alt\"></i> Mã phòng") }}: <strong style="cursor: pointer;">{{ $roomCode }}</strong></span>
   <input type="hidden" id="room-code-input" value="{{ $roomCode }}">
 </p>
 @endsection
 @section('belowContent')
 <p class="w-100 text-center">
-  <a data-step="1" data-intro="Ấn vào đây nếu bạn không biết đi nước nào" id="resign" class="btn btn-dark btn-lg"><i class="fad fa-flag"></i> Bỏ cuộc</a>
+  <a data-step="1" data-intro="{{ __("Ấn vào đây nếu bạn không biết đi nước nào\" id=\"resign\" class=\"btn btn-dark btn-lg\"><i class=\"fad fa-flag\"></i> Bỏ cuộc") }}</a>
 </p>
 @include('layout.partials.kypho')
 <script>
 @if ($room['pass'] != null)
 $(document).ready(function() {
   bootbox.prompt({
-    title: "Nhập mật khẩu để vào phòng:",
+    title: "{{ __("Nhập mật khẩu để vào phòng") }}:",
     required: true,
     centerVertical: true,
     locale: 'vi',
     buttons: {
       confirm: {
-        label: '<i class="fas fa-check"></i> Nhập',
+        label: '<i class="fas fa-check"></i> {{ __("Nhập") }}',
         className: 'btn-danger pulse-red'
       },
       cancel: {
@@ -41,7 +41,7 @@ $(document).ready(function() {
         }).done(function(data) {
           if (data != password) {
             bootbox.alert({
-              message: "Sai mật khẩu! Bạn sẽ được chuyển hướng về Trang chủ",
+              message: "{{ __("Sai mật khẩu! Bạn sẽ được chuyển hướng về Trang chủ") }}",
               size: 'small',
               centerVertical: true,
               locale: 'vi',
@@ -58,7 +58,7 @@ $(document).ready(function() {
         });
       } else {
         bootbox.alert({
-          message: "Bạn đã ấn Hủy! Bạn sẽ được chuyển hướng về Trang chủ",
+          message: "{{ __("Bạn đã ấn Hủy! Bạn sẽ được chuyển hướng về Trang chủ") }}",
           size: 'small',
           centerVertical: true,
           locale: 'vi',
@@ -251,12 +251,12 @@ function updateStatus () {
 
   var moveColor = 'Đỏ'
   if (game.turn() === 'b') {
-    moveColor = 'Đen'
+    moveColor = '{{ __("Đen") }}'
   }
 
   // checkmate?
   if (game.in_checkmate()) {
-    status = moveColor + ' bị chiếu bí'
+    status = moveColor + ' {{ __("bị chiếu bí") }}'
     if (game.turn() === 'b') {
       updateResult('{{ $roomCode }}', '1');
     } else if (game.turn() === 'r') {
@@ -266,13 +266,13 @@ function updateStatus () {
 
   // draw?
   else if (game.in_draw()) {
-    status = 'Hòa'
+    status = '{{ __("Hòa") }}'
     updateResult('{{ $roomCode }}', '0');
   }
 
   // game still on
   else {
-    status = 'Tới lượt ' + moveColor + ' đi'
+    status = '{{ __("Tới lượt") }} ' + moveColor + ' đi'
     if (game.game_over() && !game.in_draw() && !game.fen().includes('resign')) {
       if (game.turn() === 'b') {
         updateResult('{{ $roomCode }}', '1');
@@ -282,7 +282,7 @@ function updateStatus () {
     }
     // check?
     if (game.in_check()) {
-      status += ', ' + moveColor + ' đang bị chiếu'
+      status += ', ' + moveColor + ' {{ __("đang bị chiếu") }}'
 
       if ((board.orientation() == 'red' && game.turn() === 'r') || (board.orientation() == 'black' && game.turn() === 'b')) {
         $('#checkmateText').show();
@@ -304,14 +304,14 @@ function updateStatus () {
       hasGameOverSound = true;
       hetTran.play();
     }
-    $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> Hết trận');
-    $('#header-status').html(': '+status+' - Hết trận');
+    $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> {{ __("Hết trận") }}');
+    $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
     // evtSource.close();
     clearInterval(updateBoard);
   }
   if (game.fen().includes('resign') && !resignAlertShown) {
     resignAlertShown = true;
-    $('#header-status').html(': '+status+' - Đã bỏ cuộc');
+    $('#header-status').html(': '+status+' - {{ __("Đã bỏ cuộc") }}');
 
     // Determine who resigned based on whose turn it is now
     let resignResult;
@@ -324,7 +324,7 @@ function updateStatus () {
     }
 
     bootbox.alert({
-      message: '<i class="fad fa-flag-checkered"></i> Đã bỏ cuộc',
+      message: '<i class="fad fa-flag-checkered"></i> {{ __("Đã bỏ cuộc") }}',
       locale: 'vi',
       centerVertical: true,
       closeButton: false,
@@ -338,7 +338,7 @@ function updateStatus () {
         updateResult('{{ $roomCode }}', resignResult);
       }
     });
-    $('#game-over').html('<i class="fad fa-flag-checkered"></i> Đã bỏ cuộc');
+    $('#game-over').html('<i class="fad fa-flag-checkered"></i> {{ __("Đã bỏ cuộc") }}');
     $('#resign').addClass('disabled').attr('aria-disabled', true);
   }
   if (kypho) {

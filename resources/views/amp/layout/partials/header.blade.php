@@ -15,7 +15,7 @@
             <a class="setup" href="{{ url('/amp/co-the') }}">Cờ thế</a>
           </li>
           <li class="pt-4">
-            <a class="contact" href="{{ url('/amp/lien-he') }}">Liên hệ</a>
+            <a class="contact" href="{{ url('/amp/lien-he') }}">{{ __("Liên hệ") }}</a>
           </li>
           <li class="pt-4">
             <a class="lang" href="{{ url($langUrl) }}">English</a>

@@ -1,19 +1,19 @@
 <div id="kypho-panel" class="kypho-panel">
   <div class="kypho-header">
-    <h5 class="text-center my-2"><i class="fad fa-list"></i> Kỳ phổ</h5>
+    <h5 class="text-center my-2"><i class="fad fa-list"></i> {{ __("Kỳ phổ") }}</h5>
   </div>
   <div class="kypho-controls text-center mb-2">
     <button id="kypho-prev" type="button" class="btn btn-dark btn-sm mx-1" title="Nước trước">
-      <i class="fad fa-step-backward"></i> Trước
+      <i class="fad fa-step-backward"></i> {{ __("Trước") }}
     </button>
-    <button id="kypho-play" type="button" class="btn btn-danger btn-sm mx-1" title="Phát kỳ phổ">
-      <i class="fad fa-play"></i> Phát
+    <button id="kypho-play" type="button" class="btn btn-danger btn-sm mx-1" title="{{ __("Phát kỳ phổ") }}">
+      <i class="fad fa-play"></i> {{ __("Phát") }}
     </button>
-    <button id="kypho-pause" type="button" class="btn btn-dark btn-sm mx-1" title="Tạm dừng">
-      <i class="fad fa-pause"></i> Tạm dừng
+    <button id="kypho-pause" type="button" class="btn btn-dark btn-sm mx-1" title="{{ __("Tạm dừng") }}">
+      <i class="fad fa-pause"></i> {{ __("Tạm dừng") }}
     </button>
     <button id="kypho-next" type="button" class="btn btn-dark btn-sm mx-1" title="Nước sau">
-      <i class="fad fa-step-forward"></i> Sau
+      <i class="fad fa-step-forward"></i> {{ __("Sau") }}
     </button>
   </div>
   <div class="kypho-body">

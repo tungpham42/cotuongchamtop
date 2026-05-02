@@ -1,45 +1,45 @@
 @extends('layout.gamelayout')
 @section('aboveBoard')
-<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="Tăng kỹ năng chơi cờ">Bạn đang chơi một mình<span id="puzzle-title"></span></h5>
+<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Tăng kỹ năng chơi cờ") }}">{{ __("Bạn đang chơi một mình") }}<span id="puzzle-title"></span></h5>
 @endsection
 @section('rightSide')
 <p class="w-100 text-center m-0">
   <span class="rounded p-0 d-block" id="game-status"></span>
 </p>
 <p class="w-100 text-center mx-0 mb-0 mt-2">
-  <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> HẾT TRẬN</span>
+  <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> {{ __("HẾT TRẬN") }}</span>
 </p>
 <div class="sharethis-inline-reaction-buttons"></div>
 <div class="dropup mx-auto text-center my-1">
   <button class="btn btn-danger btn-lg dropdown-toggle" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <span data-toggle="tooltip" data-placement="top" title="Đấu với bạn bè trong phòng"><i class="fad fa-gamepad-alt"></i> Chơi online</span>
+    <span data-toggle="tooltip" data-placement="top" title="{{ __("Đấu với bạn bè trong phòng") }}"><i class="fad fa-gamepad-alt"></i> {{ __("Chơi online") }}</span>
   </button>
-  <a id="switch" class="btn btn-dark btn-lg mx-auto"><i class="fad fa-sync"></i> Đổi bên</a>
+  <a id="switch" class="btn btn-dark btn-lg mx-auto"><i class="fad fa-sync"></i> {{ __("Đổi bên") }}</a>
   @include('common.volumeBtn')
   @include('common.tourBtn')
   <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/') }}/phong/{{ md5(time()) }}">
     @if (!auth()->check())
-    <a data-toggle="tooltip" data-placement="bottom" title="Đăng nhập để tham gia thi đấu" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="{{ URL::to('/dang-nhap') }}"><i class="fas fa-sign-in text-dark"></i> Đăng nhập</a>
+    <a data-toggle="tooltip" data-placement="bottom" title="{{ __("Đăng nhập để tham gia thi đấu") }}" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="{{ URL::to('/dang-nhap') }}"><i class="fas fa-sign-in text-dark"></i> {{ __("Đăng nhập") }}</a>
     @else
-    <a data-toggle="tooltip" data-placement="bottom" title="Thi đấu tính điểm và xếp hạng" id="create-room" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="javascript:createRoom();"><i class="fas fa-trophy-alt text-dark"></i> Thi đấu</a>
+    <a data-toggle="tooltip" data-placement="bottom" title="{{ __("Thi đấu tính điểm và xếp hạng") }}" id="create-room" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="javascript:createRoom();"><i class="fas fa-trophy-alt text-dark"></i> {{ __("Thi đấu") }}</a>
     @endif
     {{-- <a data-toggle="tooltip" data-placement="bottom" title="Chơi không cần mật khẩu" id="tao-phong-public" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-globe text-dark"></i> Công khai</a> --}}
-    <a data-toggle="tooltip" data-placement="bottom" title="Chơi cần mật khẩu" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> Riêng tư</a>
+    <a data-toggle="tooltip" data-placement="bottom" title="Chơi cần mật khẩu" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> {{ __("Riêng tư") }}</a>
     @if ($randomRoom != null)
-    <a data-toggle="tooltip" data-placement="bottom" title="Chơi trong phòng Công khai ngẫu nhiên" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ URL::to('/') }}/phong/{{ $randomRoom['code'] }}/ngau-nhien"><i class="fas fa-random text-dark"></i> Ngẫu nhiên</a>
+    <a data-toggle="tooltip" data-placement="bottom" title="Chơi trong phòng Công khai ngẫu nhiên" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ URL::to('/') }}/phong/{{ $randomRoom['code'] }}/ngau-nhien"><i class="fas fa-random text-dark"></i> {{ __("Ngẫu nhiên") }}</a>
     @endif
-    <a data-toggle="tooltip" data-placement="bottom" title="Tìm phòng trống" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ URL::to('/sanh-cho') }}"><i class="fas fa-list-alt text-dark"></i> Sảnh chờ</a>
+    <a data-toggle="tooltip" data-placement="bottom" title="Tìm phòng trống" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ URL::to('/sanh-cho') }}"><i class="fas fa-list-alt text-dark"></i> {{ __("Sảnh chờ") }}</a>
   </div>
 </div>
 @endsection
 @section('belowContent')
 <p class="w-100 text-center mt-0 mb-1">
-  <a data-step="1" data-intro="Ấn vào đây nếu bạn không biết đi nước nào" id="resign" class="w-25 btn btn-dark btn-lg"><i class="fad fa-flag"></i> Bỏ cuộc</a>
-  <a data-step="2" data-intro="Ấn vào đây để quay lại nước trước đó" id="undo" class="w-25 btn btn-dark btn-lg"><i class="fad fa-undo-alt"></i> Đi lại</a>
+  <a data-step="1" data-intro="Ấn vào đây nếu bạn không biết đi nước nào" id="resign" class="w-25 btn btn-dark btn-lg"><i class="fad fa-flag"></i> {{ __("Bỏ cuộc") }}</a>
+  <a data-step="2" data-intro="Ấn vào đây để quay lại nước trước đó" id="undo" class="w-25 btn btn-dark btn-lg"><i class="fad fa-undo-alt"></i> {{ __("Đi lại") }}</a>
 </p>
 <p class="w-100 text-center mt-0 mb-1">
-  <a data-step="3" data-intro="Ấn vào đây để đánh với máy" class="w-25 btn btn-dark btn-lg showPromotion" href="{{ url('') }}"><i class="fad fa-desktop"></i> Với máy</a>
-  <a data-step="4" data-intro="Ấn vào đây để chơi lại từ đầu" id="reset" class="w-25 btn btn-dark btn-lg"><i class="fad fa-redo-alt"></i> Chơi lại</a>
+  <a data-step="3" data-intro="Ấn vào đây để đánh {{ __("với máy") }}" class="w-25 btn btn-dark btn-lg showPromotion" href="{{ url('') }}"><i class="fad fa-desktop"></i> {{ __("Với máy") }}</a>
+  <a data-step="4" data-intro="Ấn vào đây để {{ __("chơi") }} lại từ đầu" id="reset" class="w-25 btn btn-dark btn-lg"><i class="fad fa-redo-alt"></i> {{ __("Chơi lại") }}</a>
 </p>
 @include('layout.partials.kypho')
 <script>
@@ -145,26 +145,26 @@ function updateStatus () {
 
   var moveColor = 'Đỏ'
   if (game.turn() === 'b') {
-    moveColor = 'Đen'
+    moveColor = '{{ __("Đen") }}'
   }
 
   // checkmate?
   if (game.in_checkmate()) {
-    status = moveColor + ' bị chiếu bí'
+    status = moveColor + ' {{ __("bị chiếu bí") }}'
   }
 
   // draw?
   else if (game.in_draw()) {
-    status = 'Hòa'
+    status = '{{ __("Hòa") }}'
   }
 
   // game still on
   else {
-    status = 'Tới lượt ' + moveColor + ' đi'
+    status = '{{ __("Tới lượt") }} ' + moveColor + ' đi'
 
     // check?
     if (game.in_check()) {
-      status += ', ' + moveColor + ' đang bị chiếu'
+      status += ', ' + moveColor + ' {{ __("đang bị chiếu") }}'
 
       if ((board.orientation() == 'red' && game.turn() === 'r') || (board.orientation() == 'black' && game.turn() === 'b')) {
         $('#checkmateText').show();
@@ -182,13 +182,13 @@ function updateStatus () {
   $('#header-status').html(': '+status);
   if (game.game_over()) {
     hetTran.play();
-    $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> Hết trận');
-    $('#header-status').html(': '+status+' - Hết trận');
+    $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> {{ __("Hết trận") }}');
+    $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
   }
   if (game.fen().includes('resign') && !resignAlertShown) {
-    $('#header-status').html(': '+status+' - Đã bỏ cuộc');
+    $('#header-status').html(': '+status+' - {{ __("Đã bỏ cuộc") }}');
     bootbox.alert({
-      message: '<i class="fad fa-flag-checkered"></i> Đã bỏ cuộc',
+      message: '<i class="fad fa-flag-checkered"></i> {{ __("Đã bỏ cuộc") }}',
       locale: 'vi',
       centerVertical: true,
       closeButton: false,
@@ -199,7 +199,7 @@ function updateStatus () {
         }
       }
     });
-    $('#game-over').html('<i class="fad fa-flag-checkered"></i> Đã bỏ cuộc');
+    $('#game-over').html('<i class="fad fa-flag-checkered"></i> {{ __("Đã bỏ cuộc") }}');
     $('#resign').addClass('disabled').attr('aria-disabled', true);
     config.draggable = false;
   }

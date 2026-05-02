@@ -179,7 +179,7 @@
 
         <div class="chat-body" id="chat-messages">
             <div class="msg msg-ai">
-                <i class="fas fa-robot text-danger me-1"></i> Xin chào! Tôi là AI Coach. Bạn cần gợi ý nước đi hay phân tích thế cờ?
+                <i class="fas fa-robot text-danger me-1"></i> Xin chào! Tôi là AI Coach. Bạn cần gợi ý nước đi hay phân tích {{ __("thế cờ") }}?
             </div>
         </div>
 
@@ -188,7 +188,7 @@
                 <button class="btn btn-sm quick-btn" onclick="askAI('Gợi ý nước đi tiếp theo')">
                     <i class="fas fa-lightbulb text-warning"></i> Gợi ý nước đi
                 </button>
-                <button class="btn btn-sm quick-btn" onclick="askAI('Đánh giá thế cờ này')">
+                <button class="btn btn-sm quick-btn" onclick="askAI('Đánh giá {{ __("thế cờ") }} này')">
                     <i class="fas fa-balance-scale text-primary"></i> Đánh giá
                 </button>
                 <button class="btn btn-sm quick-btn" onclick="askAI('Bên nào đang ưu thế?')">

@@ -2,42 +2,42 @@
   <div class="container">
     <div class="row py-5 px-0">
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3 vcard">
-        <p>Email liên hệ</p>
+        <p>{{ __("Email liên hệ") }}</p>
         <a class="w-100 email showPromotion" href="mailto:tung.42@gmail.com">tung.42@gmail.com</a>
-        <p class="mt-3">Bản quyền <i class="fal fa-copyright"></i> {{ date('Y') }} <a class="url fn h-card showPromotion" target="_blank" href="https://tungpham42.github.io/">Phạm Tùng</a></p>
+        <p class="mt-3">{{ __("Bản quyền") }} <i class="fal fa-copyright"></i> {{ date('Y') }} <a class="url fn h-card showPromotion" target="_blank" href="https://tungpham42.github.io/">Phạm Tùng</a></p>
         <div class="bg-white p-1" style="width: fit-content; border-radius: 0.5rem;"><a href="https://soft.io.vn" target="_blank"><img alt="Logo Soft" height="40" class="me-2" src="{{ url('') }}/img/soft-logo.webp"></a></div>
       </div>
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
         <ul class="list-unstyled">
           <li>
-            <a class="home showPromotion" href="{{ url('') }}"><i class="fal fa-home-lg-alt"></i> Trang chủ</a>
+            <a class="home showPromotion" href="{{ url('') }}"><i class="fal fa-home-lg-alt"></i> {{ __("Trang chủ") }}</a>
           </li>
           <li>
-            <a class="dashboard showPromotion" href="{{ url('/thi-dau') }}"><i class="fal fa-trophy-alt"></i> Thi đấu</a>
+            <a class="dashboard showPromotion" href="{{ url('/thi-dau') }}"><i class="fal fa-trophy-alt"></i> {{ __("Thi đấu") }}</a>
           </li>
           <li>
-            <a class="trophy showPromotion" href="{{ url('/bang-xep-hang') }}"><i class="fal fa-star"></i> Bảng xếp hạng</a>
+            <a class="trophy showPromotion" href="{{ url('/bang-xep-hang') }}"><i class="fal fa-star"></i> {{ __("Bảng xếp hạng") }}</a>
           </li>
           <li>
-            <a class="room showPromotion rooms-list" href="{{ url('/sanh-cho') }}"><i class="fal fa-list-alt"></i> Sảnh chờ</a>
+            <a class="room showPromotion rooms-list" href="{{ url('/sanh-cho') }}"><i class="fal fa-list-alt"></i> {{ __("Sảnh chờ") }}</a>
           </li>
           <li>
-            <a class="setup puzzle showPromotion" href="{{ url('/co-the') }}"><i class="fal fa-puzzle-piece"></i> Cờ thế</a>
+            <a class="setup puzzle showPromotion" href="{{ url('/co-the') }}"><i class="fal fa-puzzle-piece"></i> {{ __("Cờ thế") }}</a>
           </li>
           <li>
-            <a class="about showPromotion" href="{{ url('/gioi-thieu') }}"><i class="fal fa-info-square"></i> Giới thiệu</a>
+            <a class="about showPromotion" href="{{ url('/gioi-thieu') }}"><i class="fal fa-info-square"></i> {{ __("Giới thiệu") }}</a>
           </li>
           <li>
-            <a class="contact showPromotion" href="{{ url('/lien-he') }}"><i class="fal fa-envelope"></i> Liên hệ</a>
+            <a class="contact showPromotion" href="{{ url('/lien-he') }}"><i class="fal fa-envelope"></i> {{ __("Liên hệ") }}</a>
           </li>
           <li>
-            <a target="_blank" class="game showPromotion" href="https://game.cotuong.top"><i class="fal fa-gamepad-alt"></i> Trò chơi</a>
+            <a target="_blank" class="game showPromotion" href="https://game.cotuong.top"><i class="fal fa-gamepad-alt"></i> {{ __("Trò chơi") }}</a>
           </li>
           <li>
-            <a target="_blank" class="buy showPromotion" href="https://www.codester.com/items/41601/multilingual-chinese-chess-game-with-many-options?ref=tungpham"><i class="fal fa-shopping-cart"></i> Mua mã nguồn</a>
+            <a target="_blank" class="buy showPromotion" href="https://www.codester.com/items/41601/multilingual-chinese-chess-game-with-many-options?ref=tungpham"><i class="fal fa-shopping-cart"></i> {{ __("Mua mã nguồn") }}</a>
           </li>
           <li>
-            <a target="_blank" class="hikari showPromotion" href="https://hikarilearn.io.vn/"><i class="fal fa-book-reader"></i> Học tiếng Nhật</a>
+            <a target="_blank" class="hikari showPromotion" href="https://hikarilearn.io.vn/"><i class="fal fa-book-reader"></i> {{ __("Học tiếng Nhật") }}</a>
           </li>
           <li>
             <a target="_blank" class="hololab showPromotion" href="https://hololab.vn/"><i class="fal fa-cube"></i> Hologram</a>
@@ -57,7 +57,7 @@
         </ul>
       </div>
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
-        <p>Chúng tôi trên mạng xã hội</p>
+        <p>{{ __("Chúng tôi trên mạng xã hội") }}</p>
         <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.youtube.com/@CoTuongVlog/videos"><i class="fab fa-youtube"></i></a>
         <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.facebook.com/CoTuongPage/"><i class="fab fa-facebook-square rounded"></i></a>
         <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.linkedin.com/company/cotuong/"><i class="fab fa-linkedin rounded"></i></a>
@@ -101,7 +101,7 @@ function showLatestRoom(offset, newCode) {
         <button id="cancel-room" class="btn btn-lg btn-dark float-right"><i class="fas fa-times"></i> Hủy</button>
       `;
       var dialog = bootbox.dialog({
-        title: 'Bạn được thách đấu tại "' + data.room.name + '"!',
+        title: 'Bạn được thách {{ __("đấu") }} tại "' + data.room.name + '"!',
         message: htmlContent,
         locale: 'vi',
         size: 'small',
@@ -156,7 +156,7 @@ function showLatestRoom(offset, newCode) {
                 if (result == true) {
                   // $('#AdSenseModal').attr('data-url', "{{ url('/sanh-cho') }}").modal('show');
                   // $('#AdSenseModal').on('shown.bs.modal', function (event) {
-                  //   $('#adModalCloseBtn').attr('data-original-title', 'Mời vào Sảnh chờ!');
+                  //   $('#adModalCloseBtn').attr('data-original-title', 'Mời vào {{ __("Sảnh chờ") }}!');
                   //   $('#adModalCloseBtn').tooltip();
                   // });
                   window.location.href = "{{ url('/sanh-cho') }}";
@@ -243,7 +243,7 @@ $('#AdSenseModal').on('show.bs.modal', function(){
   window.location.href = $(this).attr('data-url');
 });
 $('#tourBtn').on('click', function(){
-  introJs().setOptions({"nextLabel": "Sau", "prevLabel": "Trước", "skipLabel": "Bỏ qua", "doneLabel": "Hoàn tất", "showProgress": true, "showButtons": true, "showBullets": true, "exitOnOverlayClick": true, "hidePrev": true, "hideNext": true, "disableInteraction": true}).onskip(function(){
+  introJs().setOptions({"nextLabel": "{{ __("Sau") }}", "prevLabel": "{{ __("Trước") }}", "skipLabel": "Bỏ qua", "doneLabel": "Hoàn tất", "showProgress": true, "showButtons": true, "showBullets": true, "exitOnOverlayClick": true, "hidePrev": true, "hideNext": true, "disableInteraction": true}).onskip(function(){
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }).onexit(function(){
     window.scrollTo({ top: 0, behavior: 'smooth' });

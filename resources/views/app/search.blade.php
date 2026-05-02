@@ -44,7 +44,7 @@
                     </script>
                     @if (isset($results) && count($results) > 0)
                     <span class="lead">Tìm được {{ $results->total() }} kỳ thủ</span>
-                    <div data-step="6" data-intro="Kết quả tìm kiếm" class="table-responsive">
+                    <div data-step="6" data-intro="{{ __("Kết quả") }} tìm kiếm" class="table-responsive">
                         <table class="table table-striped table-hover" id="rankingTable">
                             <thead>
                                 <tr>

@@ -12,19 +12,19 @@
 
                 <div class="card-body">
                     <p class="w-100 text-center">
-                        <a data-step="5" data-intro="Đăng nhập ngay lập tức bằng tài khoản Google của bạn" href="{{ url('/auth/google') }}" class="mt-0 btn btn-google btn-lg btn-info mx-auto d-inline-block"><i class="fab fa-google"></i> Đăng nhập bằng Google</a>
-                        <a data-step="6" data-intro="Đăng nhập ngay lập tức bằng tài khoản Zalo của bạn" href="{{ url('/auth/zalo') }}" class="mt-3 mt-lg-0 ml-lg-2 btn btn-zalo btn-lg btn-info mx-auto d-inline-block"><i class="fad fa-phone-square-alt"></i> Đăng nhập bằng Zalo</a>
-                        {{-- <a data-step="6" data-intro="Đăng nhập ngay lập tức bằng tài khoản GitHub của bạn" href="{{ url('/auth/github') }}" class="mt-3 mt-lg-0 ml-lg-2 btn btn-github btn-lg btn-dark mx-auto d-inline-block"><i class="fab fa-github"></i> Đăng nhập bằng GitHub</a>
-                        <a data-step="5" data-intro="Đăng nhập ngay lập tức bằng tài khoản Facebook của bạn" href="{{ url('/auth/facebook') }}" class="mt-0 btn btn-facebook btn-lg btn-info mx-auto d-inline-block"><i class="fab fa-facebook-f"></i> Đăng nhập bằng Facebook</a>
-                        <a data-step="6" data-intro="Đăng nhập ngay lập tức bằng tài khoản Google của bạn" href="{{ url('/auth/google') }}" class="mt-3 mt-lg-0 ml-lg-2 btn btn-google btn-lg btn-danger mx-auto d-inline-block"><i class="fab fa-google"></i> Đăng nhập bằng Google</a> --}}
+                        <a data-step="5" data-intro="{{ __("Đăng nhập") }} ngay lập tức bằng tài khoản Google của bạn" href="{{ url('/auth/google') }}" class="mt-0 btn btn-google btn-lg btn-info mx-auto d-inline-block"><i class="fab fa-google"></i> {{ __("Đăng nhập") }} bằng Google</a>
+                        <a data-step="6" data-intro="{{ __("Đăng nhập") }} ngay lập tức bằng tài khoản Zalo của bạn" href="{{ url('/auth/zalo') }}" class="mt-3 mt-lg-0 ml-lg-2 btn btn-zalo btn-lg btn-info mx-auto d-inline-block"><i class="fad fa-phone-square-alt"></i> {{ __("Đăng nhập") }} bằng Zalo</a>
+                        {{-- <a data-step="6" data-intro="Đăng nhập ngay lập tức bằng tài khoản GitHub của bạn" href="{{ url('/auth/github') }}" class="mt-3 mt-lg-0 ml-lg-2 btn btn-github btn-lg btn-dark mx-auto d-inline-block"><i class="fab fa-github"></i> {{ __("Đăng nhập") }} bằng GitHub</a>
+                        <a data-step="5" data-intro="{{ __("Đăng nhập") }} ngay lập tức bằng tài khoản Facebook của bạn" href="{{ url('/auth/facebook') }}" class="mt-0 btn btn-facebook btn-lg btn-info mx-auto d-inline-block"><i class="fab fa-facebook-f"></i> {{ __("Đăng nhập") }} bằng Facebook</a>
+                        <a data-step="6" data-intro="{{ __("Đăng nhập") }} ngay lập tức bằng tài khoản Google của bạn" href="{{ url('/auth/google') }}" class="mt-3 mt-lg-0 ml-lg-2 btn btn-google btn-lg btn-danger mx-auto d-inline-block"><i class="fab fa-google"></i> {{ __("Đăng nhập") }} bằng Google</a> --}}
                     </p>
                     {{-- <p class="w-100 text-center">
-                        <a data-step="7" data-intro="Đăng nhập ngay lập tức bằng tài khoản GitHub của bạn" href="{{ url('/auth/github') }}" class="mt-0 btn btn-github btn-lg btn-dark mx-auto d-inline-block"><i class="fab fa-github"></i> Đăng nhập bằng GitHub</a>
-                        <a data-step="8" data-intro="Đăng nhập ngay lập tức bằng tài khoản LinkedIn của bạn" href="{{ url('/auth/linkedin') }}" class="mt-3 mt-lg-0 ml-lg-2 btn btn-linkedin btn-lg btn-info mx-auto d-inline-block"><i class="fab fa-linkedin-in"></i> Đăng nhập bằng LinkedIn</a>
+                        <a data-step="7" data-intro="Đăng nhập ngay lập tức bằng tài khoản GitHub của bạn" href="{{ url('/auth/github') }}" class="mt-0 btn btn-github btn-lg btn-dark mx-auto d-inline-block"><i class="fab fa-github"></i> {{ __("Đăng nhập") }} bằng GitHub</a>
+                        <a data-step="8" data-intro="{{ __("Đăng nhập") }} ngay lập tức bằng tài khoản LinkedIn của bạn" href="{{ url('/auth/linkedin') }}" class="mt-3 mt-lg-0 ml-lg-2 btn btn-linkedin btn-lg btn-info mx-auto d-inline-block"><i class="fab fa-linkedin-in"></i> {{ __("Đăng nhập") }} bằng LinkedIn</a>
                     </p>
                     <p class="w-100 text-center">
-                        <a data-step="9" data-intro="Đăng nhập ngay lập tức bằng tài khoản GitLab của bạn" href="{{ url('/auth/gitlab') }}" class="mt-0 btn btn-gitlab btn-lg btn-warning mx-auto d-inline-block"><i class="fab fa-gitlab"></i> Đăng nhập bằng GitLab</a>
-                        <a data-step="10" data-intro="Đăng nhập ngay lập tức bằng tài khoản Bitbucket của bạn" href="{{ url('/auth/bitbucket') }}" class="mt-3 mt-lg-0 ml-lg-2 btn btn-bitbucket btn-lg btn-info mx-auto d-inline-block"><i class="fab fa-bitbucket"></i> Đăng nhập bằng Bitbucket</a>
+                        <a data-step="9" data-intro="{{ __("Đăng nhập") }} ngay lập tức bằng tài khoản GitLab của bạn" href="{{ url('/auth/gitlab') }}" class="mt-0 btn btn-gitlab btn-lg btn-warning mx-auto d-inline-block"><i class="fab fa-gitlab"></i> {{ __("Đăng nhập") }} bằng GitLab</a>
+                        <a data-step="10" data-intro="{{ __("Đăng nhập") }} ngay lập tức bằng tài khoản Bitbucket của bạn" href="{{ url('/auth/bitbucket') }}" class="mt-3 mt-lg-0 ml-lg-2 btn btn-bitbucket btn-lg btn-info mx-auto d-inline-block"><i class="fab fa-bitbucket"></i> {{ __("Đăng nhập") }} bằng Bitbucket</a>
                     </p> --}}
                     <form method="POST" action="{{ route('login') }}" id="login-form">
                         @csrf

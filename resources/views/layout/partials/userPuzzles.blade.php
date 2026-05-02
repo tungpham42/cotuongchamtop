@@ -3,7 +3,7 @@
 <div style="background-color: transparent" class="container-fluid userPuzzles puzzles px-0">
     <div class="container mx-auto px-3 pt-0">
         <div id="user-puzzles" class="row my-0">
-            <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-puzzle-piece"></i> {{ $firstUserPuzzles->total() }} <a class="text-light animate-light showPromotion" href="{{ url('/') }}/tat-ca-the-co">thế cờ</a>, <a class="text-light animate-light showPromotion" href="{{ url('/') }}/co-the">tạo mới ngay</a></h2>
+            <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-puzzle-piece"></i> {{ $firstUserPuzzles->total() }} <a class="text-light animate-light showPromotion" href="{{ url('/') }}/tat-ca-the-co">{{ __('thế cờ') }}</a>, <a class="text-light animate-light showPromotion" href="{{ url('/') }}/co-the">{{ __('tạo mới ngay') }}</a></h2>
             {{ $firstUserPuzzles->links('vendor.pagination.userVi') }}
             @foreach($firstUserPuzzles as $userPuzzle)
             @php
@@ -15,7 +15,7 @@
                     <h5 class="mx-auto text-light m-0 font-weight-light text-center" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title='Thế cờ "{{ $userPuzzle->name }}"'>{{ $userPuzzle->name }}</h5>
                 </div>
                 <div class="row mx-0">
-                    <a class="py-2 col-3 btn btn-dark btn-sm text-light solve-puzzle-btn" href="javascript:solvePuzzle('{{ $userPuzzle->fen }}')" data-toggle="tooltip" data-placement="top" title='Giải thế cờ "{{ $userPuzzle->name }}"'><i class="fad fa-mouse"></i></a>
+                    <a class="py-2 col-3 btn btn-dark btn-sm text-light solve-puzzle-btn" href="javascript:solvePuzzle('{{ $userPuzzle->fen }}')" data-toggle="tooltip" data-placement="top" title='Giải {{ __("thế cờ") }} "{{ $userPuzzle->name }}"'><i class="fad fa-mouse"></i></a>
                     <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='Đánh giá "{{ $userPuzzle->name }}" là hay' data-reaction="like" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-thumbs-up"></i> <span class="puzzle-reaction-count" id="reaction-like-{{ $puzzleMd5 }}">{{ $userPuzzle->likes_count }}</span></a>
                     <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='Đánh giá "{{ $userPuzzle->name }}" là khó' data-reaction="hard" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-heart"></i> <span class="puzzle-reaction-count" id="reaction-hard-{{ $puzzleMd5 }}">{{ $userPuzzle->hard_count }}</span></a>
                     <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='Tôi chưa giải được "{{ $userPuzzle->name }}"' data-reaction="unsolved" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-question-circle"></i> <span class="puzzle-reaction-count" id="reaction-unsolved-{{ $puzzleMd5 }}">{{ $userPuzzle->unsolved_count }}</span></a>
@@ -59,7 +59,7 @@
     <div style="background-color: transparent" class="container-fluid userPuzzles puzzles px-0">
         <div class="container mx-auto px-3 pt-0">
             <div id="user-puzzles" class="row my-0">
-                <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-puzzle-piece"></i> {{ $userPuzzles->total() }} <a class="text-light animate-light showPromotion" href="{{ url('/') }}/tat-ca-the-co">thế cờ</a>, <a class="text-light animate-light showPromotion" href="{{ url('/') }}/co-the">tạo mới ngay</a></h2>
+                <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-puzzle-piece"></i> {{ $userPuzzles->total() }} <a class="text-light animate-light showPromotion" href="{{ url('/') }}/tat-ca-the-co">{{ __('thế cờ') }}</a>, <a class="text-light animate-light showPromotion" href="{{ url('/') }}/co-the">{{ __('tạo mới ngay') }}</a></h2>
                 {{ $userPuzzles->links('vendor.pagination.userVi') }}
                 @foreach($userPuzzles as $userPuzzle)
                 @php
@@ -71,7 +71,7 @@
                         <h5 class="mx-auto text-light m-0 font-weight-light text-center" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title='Thế cờ "{{ $userPuzzle->name }}"'>{{ $userPuzzle->name }}</h5>
                     </div>
                     <div class="row mx-0">
-                        <a class="py-2 col-3 btn btn-dark btn-sm text-light solve-puzzle-btn" href="javascript:solvePuzzle('{{ $userPuzzle->fen }}')" data-toggle="tooltip" data-placement="top" title='Giải thế cờ "{{ $userPuzzle->name }}"'><i class="fad fa-mouse"></i></a>
+                        <a class="py-2 col-3 btn btn-dark btn-sm text-light solve-puzzle-btn" href="javascript:solvePuzzle('{{ $userPuzzle->fen }}')" data-toggle="tooltip" data-placement="top" title='Giải {{ __("thế cờ") }} "{{ $userPuzzle->name }}"'><i class="fad fa-mouse"></i></a>
                         <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='Đánh giá "{{ $userPuzzle->name }}" là hay' data-reaction="like" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-thumbs-up"></i> <span class="puzzle-reaction-count" id="reaction-like-{{ $puzzleMd5 }}">{{ $userPuzzle->likes_count }}</span></a>
                         <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='Đánh giá "{{ $userPuzzle->name }}" là khó' data-reaction="hard" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-heart"></i> <span class="puzzle-reaction-count" id="reaction-hard-{{ $puzzleMd5 }}">{{ $userPuzzle->hard_count }}</span></a>
                         <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='Tôi chưa giải được "{{ $userPuzzle->name }}"' data-reaction="unsolved" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-question-circle"></i> <span class="puzzle-reaction-count" id="reaction-unsolved-{{ $puzzleMd5 }}">{{ $userPuzzle->unsolved_count }}</span></a>

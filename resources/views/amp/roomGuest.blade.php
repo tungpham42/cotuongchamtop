@@ -4,18 +4,18 @@
   <span class="alert alert-info d-inline-block" role="alert" data-toggle="tooltip" data-placement="bottom" data-original-title="Ghi nhớ mã phòng này nhé"><i class="fad fa-trophy-alt"></i> {{ $roomCode }}</span>
 </p>
 <p class="w-100 text-center mt-2">
-  <span class="alert alert-success d-inline-block" role="alert">Đã được mời</span>
+  <span class="alert alert-success d-inline-block" role="alert">{{ __("Đã được mời") }}</span>
 </p>
 @endsection
 @section('belowContent')
 {{-- <p class="w-100 text-center mt-4">
-  <a style="color: white" class="w-25 btn btn-danger btn-lg" href="{{ url('/amp') }}/phong/{{ $roomCode }}/do"><i class="fad fa-chess-clock-alt"></i> Bên ĐỎ</a>
-  <a style="color: white" class="w-25 btn btn-dark btn-lg" href="{{ url('/amp') }}/phong/{{ $roomCode }}/den"><i class="fad fa-chess-clock"></i> Bên ĐEN</a>
+  <a style="color: white" class="w-25 btn btn-danger btn-lg" href="{{ url('/amp') }}/phong/{{ $roomCode }}/do"><i class="fad fa-chess-clock-alt"></i> {{ __("Bên ĐỎ") }}</a>
+  <a style="color: white" class="w-25 btn btn-dark btn-lg" href="{{ url('/amp') }}/phong/{{ $roomCode }}/den"><i class="fad fa-chess-clock"></i> {{ __("Bên ĐEN") }}</a>
 </p> --}}
 <script>
 $(document).ready(function() {
   bootbox.prompt({
-    title: "Nhập mật khẩu để vào phòng:",
+    title: "{{ __("Nhập mật khẩu để vào phòng") }}:",
     required: true,
     centerVertical: true,
     locale: 'vi',
@@ -33,7 +33,7 @@ $(document).ready(function() {
         }).done(function(data) {
           if (data != password) {
             bootbox.alert({
-              message: "Sai mật khẩu! Bạn sẽ được chuyển hướng về Trang chủ",
+              message: "{{ __("Sai mật khẩu! Bạn sẽ được chuyển hướng về Trang chủ") }}",
               size: 'small',
               centerVertical: true,
               locale: 'vi',
@@ -50,7 +50,7 @@ $(document).ready(function() {
         });
       } else {
         bootbox.alert({
-          message: "Bạn đã ấn Hủy! Bạn sẽ được chuyển hướng về Trang chủ",
+          message: "{{ __("Bạn đã ấn Hủy! Bạn sẽ được chuyển hướng về Trang chủ") }}",
           size: 'small',
           centerVertical: true,
           locale: 'vi',
@@ -187,26 +187,26 @@ function updateStatus () {
 
   var moveColor = 'Đỏ'
   if (game.turn() === 'b') {
-    moveColor = 'Đen'
+    moveColor = '{{ __("Đen") }}'
   }
 
   // checkmate?
   if (game.in_checkmate()) {
-    status = moveColor + ' bị chiếu bí'
+    status = moveColor + ' {{ __("bị chiếu bí") }}'
   }
 
   // draw?
   else if (game.in_draw()) {
-    status = 'Hòa'
+    status = '{{ __("Hòa") }}'
   }
 
   // game still on
   else {
-    status = 'Tới lượt ' + moveColor + ' đi'
+    status = '{{ __("Tới lượt") }} ' + moveColor + ' đi'
 
     // check?
     if (game.in_check()) {
-      status += ', ' + moveColor + ' đang bị chiếu'
+      status += ', ' + moveColor + ' {{ __("đang bị chiếu") }}'
       if ((board.orientation() == 'red' && game.turn() === 'r') || (board.orientation() == 'black' && game.turn() === 'b')) {
         $('#checkmateText').show();
       }
@@ -222,7 +222,7 @@ function updateStatus () {
   $('#game-status').html(status);
   $('#header-status').html(': '+status);
   if (game.game_over()) {
-    $('#header-status').html(': '+status+' - Hết trận');
+    $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
   }
 }
 let config = {

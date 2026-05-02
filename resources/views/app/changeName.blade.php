@@ -22,7 +22,7 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <i class="fas fa-user-edit"></i> Đổi tên
+                    <i class="fas fa-user-edit"></i> {{ __("Đổi") }} tên
                     @include('layout.partials.app.tourBtn')
                 </div>
                 <div class="card-body">
@@ -40,7 +40,7 @@
                             <div class="row mb-3">
                                 <label for="new_name" class="col-md-4 col-form-label text-md-end">Tên mới</label>
                                 <div class="col-md-6">
-                                    <input data-step="2" data-intro="Nhập vào tên mới của bạn" type="text" id="new_name" name="new_name" class="form-control @error('new_name') is-invalid @enderror" required>
+                                    <input data-step="2" data-intro="{{ __("Nhập") }} vào tên mới của bạn" type="text" id="new_name" name="new_name" class="form-control @error('new_name') is-invalid @enderror" required>
                                     @error('new_name')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -51,7 +51,7 @@
                             <div class="row mb-0">
                                 <div class="col-md-6 offset-md-4">
                                     <button data-step="3" data-intro="Ấn vào đây để đổi tên mới" type="submit" class="btn btn-danger">
-                                        <i class="fad fa-user-edit"></i> Đổi tên
+                                        <i class="fad fa-user-edit"></i> {{ __("Đổi") }} tên
                                     </button>
                                 </div>
                             </div>

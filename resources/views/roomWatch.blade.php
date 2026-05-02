@@ -3,13 +3,13 @@
 @if (isset($room->host_id))
 <h5 id="room-title" class="text-center my-1"><span id="host-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($room->host_id) !!}</span> <span id="guest-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($room->guest_id) !!}</span></h5>
 @else
-<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="Quan sát hai kỳ thủ đang chơi">Bạn đang theo dõi</h5>
+<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Quan sát hai kỳ thủ đang chơi") }}">{{ __("Bạn đang theo dõi") }}</h5>
 @endif
-<span id="room-name">Tên phòng: {{ $room->name }}</span>
+<span id="room-name">{{ __("Tên phòng") }}: {{ $room->name }}</span>
 @endsection
 @section('aboveContent')
 <p id="room-code" class="w-100 text-center mt-0 mb-1">
-  <span data-step="1" data-intro="Dùng mã phòng này để tìm kiếm trận đấu" class="alert alert-dark d-inline-block" role="alert" data-toggle="tooltip" data-placement="bottom" data-original-title="Sao chép mã phòng này nhé"><i class="fad fa-trophy-alt"></i> Mã phòng: <strong style="cursor: pointer;">{{ $roomCode }}</strong></span>
+  <span data-step="{{ __("1\" data-intro=\"Dùng mã phòng này để tìm kiếm trận đấu\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Sao chép mã phòng này nhé\"><i class=\"fad fa-trophy-alt\"></i> Mã phòng") }}: <strong style="cursor: pointer;">{{ $roomCode }}</strong></span>
   <input type="hidden" id="room-code-input" value="{{ $roomCode }}">
 </p>
 @endsection
@@ -20,15 +20,15 @@
 @if (!isset($room->host_id) && !isset($room->result))
 <p class="w-100 text-center">
   @if (str_contains($room->fen, ' r '))
-  <a data-step="2" data-intro="Ấn vào đây để vào ván đấu khi đến lượt bạn" id="join-link" class="btn btn-danger text-light btn-lg showPromotion" href="{{ url('/') }}/phong/{{ $roomCode }}" data-toggle="tooltip" data-placement="top" title="Đến lược bạn đi"><i class="fad fa-sign-in-alt"></i> Vào trận</a>
+  <a data-step="2" data-intro="Ấn vào đây để vào ván {{ __("đấu") }} khi đến lượt bạn" id="join-link" class="btn btn-danger text-light btn-lg showPromotion" href="{{ url('/') }}/phong/{{ $roomCode }}" data-toggle="tooltip" data-placement="top" title="{{ __("Đến lược bạn đi") }}"><i class="fad fa-sign-in-alt"></i> {{ __("Vào trận") }}</a>
   @elseif (str_contains($room->fen, ' b '))
-  <a data-step="2" data-intro="Ấn vào đây để vào ván đấu khi đến lượt bạn" id="join-link" class="btn btn-dark text-light btn-lg showPromotion" href="{{ url('/') }}/phong/{{ $roomCode }}/khach" data-toggle="tooltip" data-placement="top" title="Đến lược bạn đi"><i class="fad fa-sign-in-alt"></i> Vào trận</a>
+  <a data-step="2" data-intro="Ấn vào đây để vào ván {{ __("đấu") }} khi đến lượt bạn" id="join-link" class="btn btn-dark text-light btn-lg showPromotion" href="{{ url('/') }}/phong/{{ $roomCode }}/khach" data-toggle="tooltip" data-placement="top" title="{{ __("Đến lược bạn đi") }}"><i class="fad fa-sign-in-alt"></i> {{ __("Vào trận") }}</a>
   @endif
 </p>
 @else
   @if (isset($room->result))
   <p class="w-100 text-center">
-    <span class="text-light lead">Đã đấu xong</span>
+    <span class="text-light lead">{{ __("Đã đấu xong") }}</span>
   </p>
   @endif
 @endif
@@ -175,26 +175,26 @@ function updateStatus () {
 
   var moveColor = 'Đỏ'
   if (game.turn() === 'b') {
-    moveColor = 'Đen'
+    moveColor = '{{ __("Đen") }}'
   }
 
   // checkmate?
   if (game.in_checkmate()) {
-    status = moveColor + ' bị chiếu bí'
+    status = moveColor + ' {{ __("bị chiếu bí") }}'
   }
 
   // draw?
   else if (game.in_draw()) {
-    status = 'Hòa'
+    status = '{{ __("Hòa") }}'
   }
 
   // game still on
   else {
-    status = 'Tới lượt ' + moveColor + ' đi'
+    status = '{{ __("Tới lượt") }} ' + moveColor + ' đi'
 
     // check?
     if (game.in_check()) {
-      status += ', ' + moveColor + ' đang bị chiếu'
+      status += ', ' + moveColor + ' {{ __("đang bị chiếu") }}'
 
       if ((board.orientation() == 'red' && game.turn() === 'r') || (board.orientation() == 'black' && game.turn() === 'b')) {
         $('#checkmateText').show();
@@ -217,8 +217,8 @@ function updateStatus () {
       hasGameOverSound = true;
       hetTran.play();
     }
-    $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> Hết trận');
-    $('#header-status').html(': '+status+' - Hết trận');
+    $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> {{ __("Hết trận") }}');
+    $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
     // evtSource.close();
     clearInterval(updateBoard);
     @if (isset($room->host_id))
@@ -226,9 +226,9 @@ function updateStatus () {
     @endif
   }
   if (game.fen().includes('resign') && !resignAlertShown) {
-    $('#header-status').html(': '+status+' - Đã bỏ cuộc');
+    $('#header-status').html(': '+status+' - {{ __("Đã bỏ cuộc") }}');
     bootbox.alert({
-      message: '<i class="fad fa-flag-checkered"></i> Đã bỏ cuộc',
+      message: '<i class="fad fa-flag-checkered"></i> {{ __("Đã bỏ cuộc") }}',
       locale: 'vi',
       centerVertical: true,
       closeButton: false,
@@ -239,7 +239,7 @@ function updateStatus () {
         }
       }
     });
-    $('#game-over').html('<i class="fad fa-flag-checkered"></i> Đã bỏ cuộc');
+    $('#game-over').html('<i class="fad fa-flag-checkered"></i> {{ __("Đã bỏ cuộc") }}');
     $('#resign').addClass('disabled').attr('aria-disabled', true);
   }
   if (kypho) {

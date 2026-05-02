@@ -43,7 +43,7 @@
 
                         <div class="row mb-0">
                             <div class="col-md-6 offset-md-4">
-                                <button data-step="2" data-intro="Gửi đường dẫn phục hồi mật khẩu đến email của bạn" type="submit" class="btn btn-lg btn-danger">
+                                <button data-step="2" data-intro="{{ __("Gửi") }} đường dẫn phục hồi mật khẩu đến email của bạn" type="submit" class="btn btn-lg btn-danger">
                                     <i class="fad fa-paper-plane"></i> {{ __('Send Password Reset Link') }}
                                 </button>
                             </div>

@@ -1,8 +1,8 @@
 @extends('layout.gamelayout')
 @section('aboveBoard')
-<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="Bàn cờ thế">Bạn đang xếp<span id="puzzle-title"></span></h5>
+<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Bàn cờ thế") }}">{{ __("Bạn đang xếp") }}<span id="puzzle-title"></span></h5>
 <p class="w-100 text-center mt-0 mb-1">
-  <a data-step="1" data-intro="Ấn vào đây để tải bàn cờ về khi đã xếp xong" id="capture" class="btn btn-danger btn-lg text-light" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title="Lưu thành ảnh nào"><i class="fad fa-download"></i> Tải bàn cờ thế</a>
+  <a data-step="1" data-intro="Ấn vào đây để tải bàn cờ về khi đã xếp xong" id="capture" class="btn btn-danger btn-lg text-light" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title="{{ __("Lưu thành ảnh nào") }}"><i class="fad fa-download"></i> {{ __("Tải bàn cờ thế") }}</a>
   @include('common.volumeBtn')
   @include('common.tourBtn')
 </p>
@@ -12,47 +12,47 @@
   <span class="rounded p-0 d-block" id="game-status"></span>
 </p>
 <p class="w-100 text-center mx-0 mb-0 mt-2">
-  <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> HẾT TRẬN</span>
+  <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> {{ __("HẾT TRẬN") }}</span>
 </p>
 <div class="sharethis-inline-reaction-buttons"></div>
 <div class="dropup mx-auto text-center my-1">
   <button class="btn btn-danger btn-lg dropdown-toggle" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <span data-toggle="tooltip" data-placement="top" title="Đấu với bạn bè trong phòng"><i class="fad fa-gamepad-alt"></i> Chơi online</span>
+    <span data-toggle="tooltip" data-placement="top" title="{{ __("Đấu với bạn bè trong phòng") }}"><i class="fad fa-gamepad-alt"></i> {{ __("Chơi online") }}</span>
   </button>
-  <a id="switch" class="btn btn-dark btn-lg mx-auto"><i class="fad fa-sync"></i> Đổi bên</a>
+  <a id="switch" class="btn btn-dark btn-lg mx-auto"><i class="fad fa-sync"></i> {{ __("Đổi bên") }}</a>
   <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/') }}/phong/{{ md5(time()) }}">
     @if (!auth()->check())
-    <a data-toggle="tooltip" data-placement="bottom" title="Đăng nhập để tham gia thi đấu" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="{{ URL::to('/dang-nhap') }}"><i class="fas fa-sign-in text-dark"></i> Đăng nhập</a>
+    <a data-toggle="tooltip" data-placement="bottom" title="{{ __("Đăng nhập để tham gia thi đấu") }}" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="{{ URL::to('/dang-nhap') }}"><i class="fas fa-sign-in text-dark"></i> {{ __("Đăng nhập") }}</a>
     @else
-    <a data-toggle="tooltip" data-placement="bottom" title="Thi đấu tính điểm và xếp hạng" id="create-room" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="javascript:createRoom();"><i class="fas fa-trophy-alt text-dark"></i> Thi đấu</a>
+    <a data-toggle="tooltip" data-placement="bottom" title="{{ __("Thi đấu tính điểm và xếp hạng") }}" id="create-room" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="javascript:createRoom();"><i class="fas fa-trophy-alt text-dark"></i> {{ __("Thi đấu") }}</a>
     @endif
     {{-- <a data-toggle="tooltip" data-placement="bottom" title="Chơi không cần mật khẩu" id="tao-phong-public" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-globe text-dark"></i> Công khai</a> --}}
-    <a data-toggle="tooltip" data-placement="bottom" title="Chơi cần mật khẩu" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> Riêng tư</a>
+    <a data-toggle="tooltip" data-placement="bottom" title="Chơi cần mật khẩu" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> {{ __("Riêng tư") }}</a>
     @if ($randomRoom != null)
-    <a data-toggle="tooltip" data-placement="bottom" title="Chơi trong phòng Công khai ngẫu nhiên" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ URL::to('/') }}/phong/{{ $randomRoom['code'] }}/ngau-nhien"><i class="fas fa-random text-dark"></i> Ngẫu nhiên</a>
+    <a data-toggle="tooltip" data-placement="bottom" title="Chơi trong phòng Công khai ngẫu nhiên" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ URL::to('/') }}/phong/{{ $randomRoom['code'] }}/ngau-nhien"><i class="fas fa-random text-dark"></i> {{ __("Ngẫu nhiên") }}</a>
     @endif
-    <a data-toggle="tooltip" data-placement="bottom" title="Tìm phòng trống" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ URL::to('/sanh-cho') }}"><i class="fas fa-list-alt text-dark"></i> Sảnh chờ</a>
+    <a data-toggle="tooltip" data-placement="bottom" title="Tìm phòng trống" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ URL::to('/sanh-cho') }}"><i class="fas fa-list-alt text-dark"></i> {{ __("Sảnh chờ") }}</a>
   </div>
 </div>
 @endsection
 @section('belowContent')
 <p class="w-100 text-center mt-0 mb-1">
-  <a data-step="2" data-intro="Ấn vào đây để vào trang giải thế cờ" id="solve-puzzle" class="w-25 btn btn-dark btn-lg" href="{{ url('/giai-co-the') }}"><i class="fad fa-abacus"></i> Giải cờ thế</a>
-  <a data-step="3" data-intro="Ấn vào đây để lưu và chia sẻ thế cờ" id="name-puzzle" class="w-25 btn btn-lg btn-dark" href="javascript:void(0);"><i class="fad fa-save"></i> Lưu &amp; chia sẻ</a>
+  <a data-step="2" data-intro="Ấn vào đây để vào trang giải {{ __("thế cờ") }}" id="solve-puzzle" class="w-25 btn btn-dark btn-lg" href="{{ url('/giai-co-the') }}"><i class="fad fa-abacus"></i> {{ __("Giải cờ thế") }}</a>
+  <a data-step="3" data-intro="Ấn vào đây để lưu và chia sẻ {{ __("thế cờ") }}" id="name-puzzle" class="w-25 btn btn-lg btn-dark" href="javascript:void(0);"><i class="fad fa-save"></i> Lưu &amp; chia sẻ</a>
 </p>
 <p class="w-100 text-center mt-0 mb-1">
-  <a data-step="4" data-intro="Ấn vào đây để lưu trạng thái bàn cờ" id="new-board" class="w-25 btn btn-dark btn-lg"><i class="fad fa-chess-board"></i> Lưu bàn cờ</a>
-  <a data-step="5" data-intro="Ấn vào đây để xếp lại nước trước đó" id="undo" class="w-25 btn btn-dark btn-lg"><i class="fad fa-undo"></i> Xếp lại</a>
+  <a data-step="4" data-intro="Ấn vào đây để lưu trạng thái bàn cờ" id="new-board" class="w-25 btn btn-dark btn-lg"><i class="fad fa-chess-board"></i> {{ __("Lưu bàn cờ") }}</a>
+  <a data-step="5" data-intro="Ấn vào đây để xếp lại nước trước đó" id="undo" class="w-25 btn btn-dark btn-lg"><i class="fad fa-undo"></i> {{ __("Xếp lại") }}</a>
 </p>
 @if ($board != '')
 <p class="w-100 text-center mt-0 mb-1">
-  <i class="fad fa-external-link-alt"></i> Mời bạn bè chơi bằng cách gửi liên kết bên dưới.
+  <i class="fad fa-external-link-alt"></i> {{ __("Mời bạn bè chơi bằng cách gửi liên kết bên dưới") }}.
 </p>
-<div id="copy-url" class="input-group my-1 w-50 mx-auto" data-toggle="tooltip" data-placement="bottom" data-original-title="Ấn để sao chép">
+<div id="copy-url" class="input-group my-1 w-50 mx-auto{{ __("\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Ấn để sao chép") }}">
   <div class="input-group-prepend">
     <span class="input-group-text" id="url-addon"><i class="fal fa-copy"></i></span>
   </div>
-  <input data-step="6" data-intro="Ấn vào đây để mời bạn bè cùng chơi" type="text" class="form-control" id="url" value="{{ url('/') }}/co-the/{{ $board }}">
+  <input data-step="{{ __("6\" data-intro=\"Ấn vào đây để mời bạn bè cùng chơi") }}" type="text" class="form-control" id="url" value="{{ url('/') }}/co-the/{{ $board }}">
 </div>
 <script>
 $('#copy-url').on('click', function() {
@@ -102,26 +102,26 @@ function updateStatus () {
 
   var moveColor = 'Đỏ'
   if (game.turn() === 'b') {
-    moveColor = 'Đen'
+    moveColor = '{{ __("Đen") }}'
   }
 
   // checkmate?
   if (game.in_checkmate()) {
-    status = moveColor + ' bị chiếu bí'
+    status = moveColor + ' {{ __("bị chiếu bí") }}'
   }
 
   // draw?
   else if (game.in_draw()) {
-    status = 'Hòa'
+    status = '{{ __("Hòa") }}'
   }
 
   // game still on
   else {
-    status = 'Tới lượt ' + moveColor + ' đi'
+    status = '{{ __("Tới lượt") }} ' + moveColor + ' đi'
 
     // check?
     if (game.in_check()) {
-      status += ', ' + moveColor + ' đang bị chiếu'
+      status += ', ' + moveColor + ' {{ __("đang bị chiếu") }}'
 
       if ((board.orientation() == 'red' && game.turn() === 'r') || (board.orientation() == 'black' && game.turn() === 'b')) {
         $('#checkmateText').show();
@@ -139,13 +139,13 @@ function updateStatus () {
   $('#header-status').html(': '+status);
   if (game.game_over()) {
     hetTran.play();
-    $('#header-status').html(': '+status+' - Hết trận');
-    $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> Hết trận');
+    $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
+    $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> {{ __("Hết trận") }}');
   }
   if (game.fen().includes('resign') && !resignAlertShown) {
-    $('#header-status').html(': '+status+' - Đã bỏ cuộc');
+    $('#header-status').html(': '+status+' - {{ __("Đã bỏ cuộc") }}');
     bootbox.alert({
-      message: '<i class="fad fa-flag-checkered"></i> Đã bỏ cuộc',
+      message: '<i class="fad fa-flag-checkered"></i> {{ __("Đã bỏ cuộc") }}',
       locale: 'vi',
       centerVertical: true,
       closeButton: false,
@@ -156,7 +156,7 @@ function updateStatus () {
         }
       }
     });
-    $('#game-over').html('<i class="fad fa-flag-checkered"></i> Đã bỏ cuộc');
+    $('#game-over').html('<i class="fad fa-flag-checkered"></i> {{ __("Đã bỏ cuộc") }}');
     $('#resign, #switch').addClass('disabled').attr('aria-disabled', true);
     config.draggable = false;
   }
@@ -177,7 +177,7 @@ $(window).resize(board.resize);
 $('#new-board').on('click auxclick', function(e){
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
-      message: "Bàn cờ thế không hợp lệ",
+      message: "{{ __("Bàn cờ thế") }} không hợp lệ",
       locale: 'vi',
       centerVertical: true,
       closeButton: false,
@@ -185,7 +185,7 @@ $('#new-board').on('click auxclick', function(e){
       buttons: {
         ok: {
           className: 'btn-danger',
-          label: 'Xếp lại'
+          label: '{{ __("Xếp lại") }}'
         }
       }
     });
@@ -203,7 +203,7 @@ $('#undo').on('click', undo);
 const savePuzzleFormTemplate = `
   <form id="save-puzzle-form">
     <div class="form-group">
-      <label for="save-puzzle-name" class="font-weight-bold">Tên thế cờ</label>
+      <label for="save-puzzle-name" class="font-weight-bold">Tên {{ __("thế cờ") }}</label>
       <input type="text" class="form-control" id="save-puzzle-name" maxlength="255" placeholder="Ví dụ: Cửu tử hồn - thế khó nhất 2025" required>
     </div>
     <div class="form-group">
@@ -218,7 +218,7 @@ const savePuzzleFormTemplate = `
       </div>
       <div class="custom-control custom-radio mt-1">
         <input type="radio" id="save-puzzle-private" name="save-puzzle-privacy" class="custom-control-input" value="private">
-        <label class="custom-control-label" for="save-puzzle-private">Riêng tư (chỉ ai có link mới xem được)</label>
+        <label class="custom-control-label" for="save-puzzle-private">{{ __("Riêng tư") }} (chỉ ai có link mới xem được)</label>
       </div>
     </div>
     <div class="alert alert-danger d-none mt-3 mb-0" id="save-puzzle-error"></div>
@@ -241,7 +241,7 @@ function submitPuzzle(dialog) {
 
   const validation = game.validate_fen(board.fen() + ' r - - 0 1');
   if (!validation.valid) {
-    errorBox.removeClass('d-none').text('Bàn cờ thế không hợp lệ, vui lòng xếp lại.');
+    errorBox.removeClass('d-none').text('{{ __("Bàn cờ thế") }} không hợp lệ, vui lòng xếp lại.');
     return false;
   }
 
@@ -264,8 +264,8 @@ function submitPuzzle(dialog) {
   }).done(function(response) {
     window.location.href = response.url;
   }).fail(function(xhr) {
-    confirmButton.prop('disabled', false).html('<i class="fas fa-share-alt"></i> Lưu & chia sẻ');
-    let message = 'Không thể lưu thế cờ, vui lòng thử lại.';
+    confirmButton.prop('disabled', false).html('<i class="fas fa-share-alt"></i> {{ __("Lưu & chia sẻ") }}');
+    let message = 'Không thể lưu {{ __("thế cờ") }}, vui lòng thử lại.';
     if (xhr.responseJSON) {
       if (xhr.responseJSON.message) {
         message = xhr.responseJSON.message;
@@ -284,7 +284,7 @@ $('#name-puzzle').on('click auxclick', function(e) {
 
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
-      message: "Bàn cờ thế không hợp lệ",
+      message: "{{ __("Bàn cờ thế") }} không hợp lệ",
       locale: 'vi',
       centerVertical: true,
       closeButton: false,
@@ -292,7 +292,7 @@ $('#name-puzzle').on('click auxclick', function(e) {
       buttons: {
         ok: {
           className: 'btn-danger',
-          label: 'Xếp lại'
+          label: '{{ __("Xếp lại") }}'
         }
       }
     });
@@ -300,7 +300,7 @@ $('#name-puzzle').on('click auxclick', function(e) {
   }
 
   const dialog = bootbox.dialog({
-    title: "Lưu & chia sẻ thế cờ",
+    title: "{{ __("Lưu & chia sẻ") }} {{ __("thế cờ") }}",
     message: savePuzzleFormTemplate,
     locale: 'vi',
     centerVertical: true,
@@ -311,7 +311,7 @@ $('#name-puzzle').on('click auxclick', function(e) {
         className: 'btn-dark text-light'
       },
       confirm: {
-        label: '<i class="fas fa-share-alt"></i> Lưu & chia sẻ',
+        label: '<i class="fas fa-share-alt"></i> {{ __("Lưu & chia sẻ") }}',
         className: 'btn-danger',
         callback: function() {
           return submitPuzzle(dialog);
@@ -327,7 +327,7 @@ $('#name-puzzle').on('click auxclick', function(e) {
 $("#capture").on('click', function() {
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
-      message: "Bàn cờ thế không hợp lệ",
+      message: "{{ __("Bàn cờ thế") }} không hợp lệ",
       locale: 'vi',
       centerVertical: true,
       closeButton: false,
@@ -335,7 +335,7 @@ $("#capture").on('click', function() {
       buttons: {
         ok: {
           className: 'btn-danger',
-          label: 'Xếp lại'
+          label: '{{ __("Xếp lại") }}'
         }
       }
     });
@@ -367,7 +367,7 @@ $('#solve-puzzle').on('click auxclick', function(e){
   e.preventDefault();
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
-      message: "Bàn cờ thế không hợp lệ",
+      message: "{{ __("Bàn cờ thế") }} không hợp lệ",
       locale: 'vi',
       centerVertical: true,
       closeButton: false,
@@ -375,7 +375,7 @@ $('#solve-puzzle').on('click auxclick', function(e){
       buttons: {
         ok: {
           className: 'btn-danger',
-          label: 'Xếp lại'
+          label: '{{ __("Xếp lại") }}'
         }
       }
     });
@@ -389,7 +389,7 @@ $('#compete').on('click auxclick', function(e){
   e.preventDefault();
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
-      message: "Bàn cờ thế không hợp lệ",
+      message: "{{ __("Bàn cờ thế") }} không hợp lệ",
       locale: 'vi',
       centerVertical: true,
       closeButton: false,
@@ -397,7 +397,7 @@ $('#compete').on('click auxclick', function(e){
       buttons: {
         ok: {
           className: 'btn-danger',
-          label: 'Xếp lại'
+          label: '{{ __("Xếp lại") }}'
         }
       }
     });

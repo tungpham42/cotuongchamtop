@@ -18,12 +18,12 @@
     </div>
 @endif
 @if(auth()->check())
-    <h2 class="mt-3"><i class="fas fa-gamepad-alt"></i> Thi đấu xếp hạng</h2>
+    <h2 class="mt-3"><i class="fas fa-gamepad-alt"></i> {{ __("Thi đấu") }} xếp hạng</h2>
     <form method="POST" id="create-form">
         <div class="form-group">
             @csrf
             <input name="ma-phong" type="hidden" value="{{ md5(time()) }}" disabled readonly>
-            <button data-step="1" data-intro="Ấn vào đây để tạo phòng thi đấu với các kỳ thủ khác" type="submit" class="btn btn-danger btn-lg my-3"><i class="fad fa-plus-octagon"></i> Tạo phòng mới</button>
+            <button data-step="1" data-intro="Ấn vào đây để tạo phòng thi {{ __("đấu") }} với các kỳ thủ khác" type="submit" class="btn btn-danger btn-lg my-3"><i class="fad fa-plus-octagon"></i> Tạo phòng mới</button>
         </div>
     </form>
     <script>  
@@ -45,7 +45,7 @@
         }).done(function(data){
             if (data == 'no') {
                 bootbox.prompt({
-                    title: "Mời đặt tên cho Phòng thi đấu:",
+                    title: "Mời đặt tên cho Phòng thi {{ __("đấu") }}:",
                     locale: 'vi',
                     centerVertical: true,
                     closeButton: false,
@@ -134,6 +134,6 @@
     </script>
 @else
 <div class="alert alert-secondary" role="alert">
-    <a data-step="1" data-intro="Ấn vào đây để đăng nhập vào thi đấu xếp hạng" class="stopPromotion" href="{{ url('/dang-nhap') }}">Đăng nhập</a> để tham gia thi đấu
+    <a data-step="1" data-intro="Ấn vào đây để đăng nhập vào thi {{ __("đấu") }} xếp hạng" class="stopPromotion" href="{{ url('/dang-nhap') }}">{{ __("Đăng nhập") }}</a> để {{ __("tham gia") }} thi {{ __("đấu") }}
 </div>
 @endif

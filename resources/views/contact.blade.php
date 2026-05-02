@@ -2,7 +2,7 @@
 @section('aboveContent')
 <div class="container-fluid contact px-0">
   <div class="container p-3">
-    <h2 class="h1-responsivefooter text-center my-4">Liên hệ</h2>
+    <h2 class="h1-responsivefooter text-center my-4">{{ __("Liên hệ") }}</h2>
     @include('common.map')
     <div class="row">
       <!--Grid column-->
@@ -16,7 +16,7 @@
             <div class="col-md-6">
               <div class="md-form mb-0">
                 <input type="text" id="name" name="name" class="form-control">
-                <label for="name" class="">Họ tên</label>
+                <label for="name" class="">{{ __("Họ tên") }}</label>
               </div>
             </div>
             <!--Grid column-->
@@ -38,7 +38,7 @@
             <div class="col-md-12">
               <div class="md-form mb-0">
                 <input type="text" id="subject" name="subject" class="form-control">
-                <label for="subject" class="">Chủ đề</label>
+                <label for="subject" class="">{{ __("Chủ đề") }}</label>
               </div>
             </div>
           </div>
@@ -52,7 +52,7 @@
 
               <div class="md-form">
                 <textarea id="message" name="message" rows="8" class="form-control md-textarea"></textarea>
-                <label for="message">Tin nhắn</label>
+                <label for="message">{{ __("Tin nhắn") }}</label>
               </div>
 
             </div>
@@ -62,7 +62,7 @@
         </form>
 
         <div class="text-center text-md-left">
-          <a class="btn btn-danger btn-lg" onclick="validateForm();">Gửi</a>
+          <a class="btn btn-danger btn-lg" onclick="validateForm();">{{ __("Gửi") }}</a>
         </div>
         <div id="status"></div>
       </div>
@@ -72,7 +72,7 @@
       <div class="col-md-3 text-center">
         <ul class="list-unstyled mb-0">
           <li><i class="fas fa-map-marker-alt fa-2x"></i>
-            <p>TP. Hồ Chí Minh, 756000, <br/>Việt Nam</p>
+            <p>{{ __("TP. Hồ Chí Minh, 756000,") }} <br/>Việt Nam</p>
           </li>
 
           <li><i class="fas fa-phone mt-4 fa-2x"></i>
@@ -92,7 +92,7 @@
 @section('belowContent')
 <script>
 function validateForm() {
-  document.getElementById('status').innerHTML = "Đang xử lý...";
+  document.getElementById('status').innerHTML = "{{ __("Đang xử lý") }}...";
   formData = {
     'name'     : $('input[name=name]').val(),
     'email'    : $('input[name=email]').val(),

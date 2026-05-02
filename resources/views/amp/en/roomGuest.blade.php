@@ -1,7 +1,7 @@
 @extends('amp.en.layout.gamelayout')
 @section('aboveContent')
 <p id="room-code" class="w-100 text-center mt-2">
-  <span class="alert alert-info d-inline-block" role="alert" data-toggle="tooltip" data-placement="bottom" data-original-title="Ghi nhớ mã phòng này nhé"><i class="fad fa-trophy-alt"></i> Mã phòng: {{ $roomCode }}</span>
+  <span class="alert alert-info d-inline-block" role="alert" data-toggle="tooltip" data-placement="bottom" data-original-title="Ghi nhớ mã phòng này nhé"><i class="fad fa-trophy-alt"></i> {{ __("Mã phòng:") }} {{ $roomCode }}</span>
 </p>
 <p class="w-100 text-center mt-2">
   <span class="alert alert-success d-inline-block" role="alert">Invited</span>

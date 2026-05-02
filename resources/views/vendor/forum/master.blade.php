@@ -218,7 +218,7 @@
                         </li>
                     @else
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/login') }}">Đăng nhập</a>
+                            <a class="nav-link" href="{{ url('/login') }}">{{ __("Đăng nhập") }}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('/register') }}">Đăng ký</a>

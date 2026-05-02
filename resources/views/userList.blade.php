@@ -13,7 +13,7 @@
             <th class="text-center" scope="col">Xếp hạng</th>
             <th class="text-center" scope="col">Kỳ thủ</th>
             <th class="text-center" scope="col">Elo</th>
-            <th class="text-center" scope="col">Hành động</th>
+            <th class="text-center" scope="col">{{ __("Hành động") }}</th>
             <th class="text-center" scope="col">Thời điểm tham gia</th>
           </tr>
         </thead>
@@ -123,7 +123,7 @@ function compete(guestId) {
   }).done(function(data){
     if (data == 'no') {
       bootbox.prompt({
-        title: "Mời đặt tên cho Phòng thi đấu:",
+        title: "Mời đặt tên cho Phòng thi {{ __("đấu") }}:",
         locale: 'vi',
         centerVertical: true,
         closeButton: false,

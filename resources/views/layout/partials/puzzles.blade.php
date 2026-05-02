@@ -3,20 +3,20 @@
 <div style="background-color: transparent" class="container-fluid puzzles px-0">
     <div class="container mx-auto px-3 pt-0">
         <div class="row my-0">
-            <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-puzzle-piece"></i> {{ numberToWordsVi($puzzles->total()) }} thế cờ đặc sắc</h2>
+            <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-puzzle-piece"></i> {{ numberToWordsVi($puzzles->total()) }} {{ __("thế cờ đặc sắc") }}</h2>
             {{ $firstPagePuzzles->links('vendor.pagination.vi') }}
             @foreach($firstPagePuzzles as $puzzle)
             <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
                 <div class="card shadow-lg rounded border-dark">
                     @if ($puzzle->post_excerpt)
-                        <img onclick="setupPuzzle('{{ $puzzle->post_excerpt }}', '{{ $puzzle->post_title }}')" class="card-img-top" style="cursor: pointer;" src="{{ $puzzle->getImageAttribute() }}" alt="{{ $puzzle->post_title }}" data-toggle="tooltip" data-placement="top" title='Chơi thế cờ "{{ $puzzle->post_title }}"'>
+                        <img onclick="setupPuzzle('{{ $puzzle->post_excerpt }}', '{{ $puzzle->post_title }}')" class="card-img-top" style="cursor: pointer;" src="{{ $puzzle->getImageAttribute() }}" alt="{{ $puzzle->post_title }}" data-toggle="tooltip" data-placement="top" title='Chơi {{ __("thế cờ") }} "{{ $puzzle->post_title }}"'>
                         <div class="card-body bg-dark p-2">
-                            <h5 onclick="setupPuzzle('{{ $puzzle->post_excerpt }}', '{{ $puzzle->post_title }}')" class="mx-auto card-title text-light m-0 font-weight-light text-center" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title='Chơi thế cờ "{{ $puzzle->post_title }}"'>{{ $puzzle->post_title }}</h5>
+                            <h5 onclick="setupPuzzle('{{ $puzzle->post_excerpt }}', '{{ $puzzle->post_title }}')" class="mx-auto card-title text-light m-0 font-weight-light text-center" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title='Chơi {{ __("thế cờ") }} "{{ $puzzle->post_title }}"'>{{ $puzzle->post_title }}</h5>
                         </div>
                         <div class="row mx-0">
-                            <a class="col-4 btn btn-dark btn-sm text-light setup-puzzle-btn" href="javascript:backToPuzzle('{{ $puzzle->post_excerpt }}')" data-toggle="tooltip" data-placement="top" title='Xếp thế cờ "{{ $puzzle->post_title }}"'><i class="fad fa-puzzle-piece"></i></a>
-                            <a class="col-4 btn btn-dark btn-sm text-light solve-puzzle-btn" href="javascript:solvePuzzle('{{ $puzzle->post_excerpt }}')" data-toggle="tooltip" data-placement="top" title='Giải thế cờ "{{ $puzzle->post_title }}"'><i class="fad fa-abacus"></i></a>
-                            <a class="col-4 btn btn-dark btn-sm text-light stopPromotion puzzle-hint-btn" target="_blank" href="https://blog.cotuong.top/the-co-dac-sac/{{ $puzzle->post_name }}" data-toggle="tooltip" data-placement="top" title='Lời giải của thế cờ "{{ $puzzle->post_title }}"'><i class="fad fa-info-square"></i></a>
+                            <a class="col-4 btn btn-dark btn-sm text-light setup-puzzle-btn" href="javascript:backToPuzzle('{{ $puzzle->post_excerpt }}')" data-toggle="tooltip" data-placement="top" title='Xếp {{ __("thế cờ") }} "{{ $puzzle->post_title }}"'><i class="fad fa-puzzle-piece"></i></a>
+                            <a class="col-4 btn btn-dark btn-sm text-light solve-puzzle-btn" href="javascript:solvePuzzle('{{ $puzzle->post_excerpt }}')" data-toggle="tooltip" data-placement="top" title='Giải {{ __("thế cờ") }} "{{ $puzzle->post_title }}"'><i class="fad fa-abacus"></i></a>
+                            <a class="col-4 btn btn-dark btn-sm text-light stopPromotion puzzle-hint-btn" target="_blank" href="https://blog.cotuong.top/the-co-dac-sac/{{ $puzzle->post_name }}" data-toggle="tooltip" data-placement="top" title='Lời giải của {{ __("thế cờ") }} "{{ $puzzle->post_title }}"'><i class="fad fa-info-square"></i></a>
                         </div>
                     @else
                         <a class="stopPromotion" target="_blank" href="https://blog.cotuong.top/the-co-dac-sac/{{ $puzzle->post_name }}"><img class="card-img-top" src="{{ $puzzle->getImageAttribute() }}" alt="{{ $puzzle->post_title }}"></a>
@@ -112,20 +112,20 @@
     <div style="background-color: transparent" class="container-fluid puzzles px-0">
         <div class="container mx-auto px-3 pt-0">
             <div class="row my-0">
-                <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-puzzle-piece"></i> {{ numberToWordsVi($puzzles->total()) }} thế cờ đặc sắc</h2>
+                <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-puzzle-piece"></i> {{ numberToWordsVi($puzzles->total()) }} {{ __("thế cờ đặc sắc") }}</h2>
                 {{ $puzzles->links('vendor.pagination.vi') }}
                 @foreach($puzzles as $puzzle)
                 <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-4">
                     <div class="card shadow-lg rounded border-dark">
                         @if ($puzzle->post_excerpt)
-                            <img onclick="setupPuzzle('{{ $puzzle->post_excerpt }}', '{{ $puzzle->post_title }}')" class="card-img-top" style="cursor: pointer;" src="{{ $puzzle->getImageAttribute() }}" alt="{{ $puzzle->post_title }}" data-toggle="tooltip" data-placement="top" title='Chơi thế cờ "{{ $puzzle->post_title }}"'>
+                            <img onclick="setupPuzzle('{{ $puzzle->post_excerpt }}', '{{ $puzzle->post_title }}')" class="card-img-top" style="cursor: pointer;" src="{{ $puzzle->getImageAttribute() }}" alt="{{ $puzzle->post_title }}" data-toggle="tooltip" data-placement="top" title='Chơi {{ __("thế cờ") }} "{{ $puzzle->post_title }}"'>
                             <div class="card-body bg-dark p-2">
-                                <h5 onclick="setupPuzzle('{{ $puzzle->post_excerpt }}', '{{ $puzzle->post_title }}')" class="mx-auto card-title text-light m-0 font-weight-light text-center" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title='Chơi thế cờ "{{ $puzzle->post_title }}"'>{{ $puzzle->post_title }}</h5>
+                                <h5 onclick="setupPuzzle('{{ $puzzle->post_excerpt }}', '{{ $puzzle->post_title }}')" class="mx-auto card-title text-light m-0 font-weight-light text-center" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title='Chơi {{ __("thế cờ") }} "{{ $puzzle->post_title }}"'>{{ $puzzle->post_title }}</h5>
                             </div>
                             <div class="row mx-0">
-                                <a class="col-4 btn btn-dark btn-sm text-light setup-puzzle-btn" href="javascript:backToPuzzle('{{ $puzzle->post_excerpt }}')" data-toggle="tooltip" data-placement="top" title='Xếp thế cờ "{{ $puzzle->post_title }}"'><i class="fad fa-puzzle-piece"></i></a>
-                                <a class="col-4 btn btn-dark btn-sm text-light solve-puzzle-btn" href="javascript:solvePuzzle('{{ $puzzle->post_excerpt }}')" data-toggle="tooltip" data-placement="top" title='Giải thế cờ "{{ $puzzle->post_title }}"'><i class="fad fa-abacus"></i></a>
-                                <a class="col-4 btn btn-dark btn-sm text-light stopPromotion puzzle-hint-btn" target="_blank" href="https://blog.cotuong.top/the-co-dac-sac/{{ $puzzle->post_name }}" data-toggle="tooltip" data-placement="top" title='Lời giải của thế cờ "{{ $puzzle->post_title }}"'><i class="fad fa-info-square"></i></a>
+                                <a class="col-4 btn btn-dark btn-sm text-light setup-puzzle-btn" href="javascript:backToPuzzle('{{ $puzzle->post_excerpt }}')" data-toggle="tooltip" data-placement="top" title='Xếp {{ __("thế cờ") }} "{{ $puzzle->post_title }}"'><i class="fad fa-puzzle-piece"></i></a>
+                                <a class="col-4 btn btn-dark btn-sm text-light solve-puzzle-btn" href="javascript:solvePuzzle('{{ $puzzle->post_excerpt }}')" data-toggle="tooltip" data-placement="top" title='Giải {{ __("thế cờ") }} "{{ $puzzle->post_title }}"'><i class="fad fa-abacus"></i></a>
+                                <a class="col-4 btn btn-dark btn-sm text-light stopPromotion puzzle-hint-btn" target="_blank" href="https://blog.cotuong.top/the-co-dac-sac/{{ $puzzle->post_name }}" data-toggle="tooltip" data-placement="top" title='Lời giải của {{ __("thế cờ") }} "{{ $puzzle->post_title }}"'><i class="fad fa-info-square"></i></a>
                             </div>
                         @else
                             <a class="stopPromotion" target="_blank" href="https://blog.cotuong.top/the-co-dac-sac/{{ $puzzle->post_name }}"><img class="card-img-top" src="{{ $puzzle->getImageAttribute() }}" alt="{{ $puzzle->post_title }}"></a>

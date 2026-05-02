@@ -130,7 +130,7 @@ $('#tao-phong-private').on('click auxclick', function(e) {
               if (password != null) {
                 if (password.trim().length === 0 || password.length === 0) {
                   bootbox.alert({
-                    message: "Vui lòng nhập mật khẩu. Sau đó gửi mật khẩu này cho bạn bè nhé.",
+                    message: "Vui lòng nhập mật khẩu. {{ __("Sau") }} đó gửi mật khẩu này cho bạn bè nhé.",
                     size: 'small',
                     locale: 'vi',
                     centerVertical: true,
@@ -186,7 +186,7 @@ function showLatestRoom(offset, newCode) {
         <button id="cancel-room" class="btn btn-lg btn-dark float-right"><i class="fas fa-times"></i> Hủy</button>
       `;
       var dialog = bootbox.dialog({
-        title: 'Bạn được thách đấu tại "' + data.room.name + '"!',
+        title: 'Bạn được thách {{ __("đấu") }} tại "' + data.room.name + '"!',
         message: htmlContent,
         locale: 'vi',
         size: 'small',
@@ -242,7 +242,7 @@ function showLatestRoom(offset, newCode) {
                 if (result == true) {
                   // $('#AdSenseModal').attr('data-url', "{{ url('/sanh-cho') }}").modal('show');
                   // $('#AdSenseModal').on('shown.bs.modal', function (event) {
-                  //   $('#adModalCloseBtn').attr('data-original-title', 'Mời vào Sảnh chờ!');
+                  //   $('#adModalCloseBtn').attr('data-original-title', 'Mời vào {{ __("Sảnh chờ") }}!');
                   //   $('#adModalCloseBtn').tooltip();
                   // });
                   window.location.href = "{{ url('/sanh-cho') }}";
@@ -321,7 +321,7 @@ $(function () {
   });
 });
 $('#tourBtn').on('click', function(){
-  introJs().setOptions({"nextLabel": "Sau", "prevLabel": "Trước", "skipLabel": "Bỏ qua", "doneLabel": "Hoàn tất", "showProgress": true, "showButtons": true, "showBullets": true, "exitOnOverlayClick": true, "hidePrev": true, "hideNext": true, "disableInteraction": true}).onskip(function(){
+  introJs().setOptions({"nextLabel": "{{ __("Sau") }}", "prevLabel": "{{ __("Trước") }}", "skipLabel": "Bỏ qua", "doneLabel": "Hoàn tất", "showProgress": true, "showButtons": true, "showBullets": true, "exitOnOverlayClick": true, "hidePrev": true, "hideNext": true, "disableInteraction": true}).onskip(function(){
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }).onexit(function(){
     window.scrollTo({ top: 0, behavior: 'smooth' });

@@ -1,11 +1,11 @@
 @extends('amp.layout.gamelayout')
 @section('aboveContent')
-<h3 class="text-center my-2">Đang chơi một mình</h3>
+<h3 class="text-center my-2">Đang {{ __("chơi") }} một mình</h3>
 @endsection
 @section('belowContent')
 <p class="w-100 text-center mt-4">
-  <a style="color: white" class="w-25 btn btn-dark btn-lg" href="{{ url('/amp/') }}"><i class="fad fa-desktop"></i> Chơi với máy</a>
-  <a style="color: white" id="reset" class="w-25 btn btn-danger btn-lg"><i class="fad fa-redo-alt"></i> Chơi lại</a>
+  <a style="color: white" class="w-25 btn btn-dark btn-lg" href="{{ url('/amp/') }}"><i class="fad fa-desktop"></i> Chơi {{ __("với máy") }}</a>
+  <a style="color: white" id="reset" class="w-25 btn btn-danger btn-lg"><i class="fad fa-redo-alt"></i> {{ __("Chơi lại") }}</a>
 </p>
 <script>
 let board = null;
@@ -110,26 +110,26 @@ function updateStatus () {
 
   var moveColor = 'Đỏ'
   if (game.turn() === 'b') {
-    moveColor = 'Đen'
+    moveColor = '{{ __("Đen") }}'
   }
 
   // checkmate?
   if (game.in_checkmate()) {
-    status = moveColor + ' bị chiếu bí'
+    status = moveColor + ' {{ __("bị chiếu bí") }}'
   }
 
   // draw?
   else if (game.in_draw()) {
-    status = 'Hòa'
+    status = '{{ __("Hòa") }}'
   }
 
   // game still on
   else {
-    status = 'Tới lượt ' + moveColor + ' đi'
+    status = '{{ __("Tới lượt") }} ' + moveColor + ' đi'
 
     // check?
     if (game.in_check()) {
-      status += ', ' + moveColor + ' đang bị chiếu'
+      status += ', ' + moveColor + ' {{ __("đang bị chiếu") }}'
       if ((board.orientation() == 'red' && game.turn() === 'r') || (board.orientation() == 'black' && game.turn() === 'b')) {
         $('#checkmateText').show();
       }
@@ -145,7 +145,7 @@ function updateStatus () {
   $('#game-status').html(status);
   $('#header-status').html(': '+status);
   if (game.game_over()) {
-    $('#header-status').html(': '+status+' - Hết trận');
+    $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
   }
 }
 let config = {

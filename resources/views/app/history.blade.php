@@ -22,22 +22,22 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <i class="fas fa-archive"></i> Lịch sử thi đấu
+                    <i class="fas fa-archive"></i> Lịch sử thi {{ __("đấu") }}
                     @include('layout.partials.app.tourBtn')
                 </div>
                 <div class="card-body">
                     @include('layout.partials.app.createRoom')
                     <span style="background-color: #ffffff; margin-top: -70px;" class="d-block w-100 pb-5 mb-5" id="result-board"></span>
-                    <h2 data-step="2" data-intro="Danh sách các ván đấu đã hoàn tất" class="mt-3"><i class="fas fa-archive"></i> Lịch sử thi đấu ({{ $playedRooms->total() }} trận, {!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</h2>
+                    <h2 data-step="2" data-intro="Danh sách các ván {{ __("đấu") }} đã hoàn tất" class="mt-3"><i class="fas fa-archive"></i> Lịch sử thi {{ __("đấu") }} ({{ $playedRooms->total() }} trận, {!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</h2>
                     <div class="table-responsive mb-3">
                         <table class="table table-striped table-hover" id="results-table">
                             <thead>
                                 <tr>
-                                    <th scope="col">Tên phòng</th>
+                                    <th scope="col">{{ __("Tên phòng") }}</th>
                                     <th scope="col">Chủ phòng</th>
                                     <th scope="col">Khách</th>
-                                    <th scope="col">Kết quả</th>
-                                    <th scope="col">Lần cuối chơi</th>
+                                    <th scope="col">{{ __("Kết quả") }}</th>
+                                    <th scope="col">{{ __("Lần cuối chơi") }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -55,7 +55,7 @@
                                         @if ($room->result == '1')
                                             Chủ phòng thắng
                                         @elseif ($room->result == '0')
-                                            Hòa
+                                            {{ __("Hòa") }}
                                         @elseif ($room->result == '-1')
                                             Khách thắng
                                         @else

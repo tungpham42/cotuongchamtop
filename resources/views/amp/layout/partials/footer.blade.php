@@ -18,10 +18,10 @@
             <a class="setup" href="{{ url('/amp/co-the') }}">Cờ thế</a>
           </li>
           <li>
-            <a class="about" href="{{ url('/amp/gioi-thieu') }}">Giới thiệu</a>
+            <a class="about" href="{{ url('/amp/gioi-thieu') }}">{{ __("Giới thiệu") }}</a>
           </li>
           <li>
-            <a class="contact" href="{{ url('/amp/lien-he') }}">Liên hệ</a>
+            <a class="contact" href="{{ url('/amp/lien-he') }}">{{ __("Liên hệ") }}</a>
           </li>
           <li>
             <a class="lang" href="{{ url($langUrl) }}">English</a>

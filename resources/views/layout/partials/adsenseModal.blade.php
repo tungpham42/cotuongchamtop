@@ -11,7 +11,7 @@
             style="display:inline-block;width:300px;height:300px"
             data-ad-client="ca-pub-3585118770961536"
             data-ad-slot="7625346255"></ins>
-            <a class="aff-link" href="https://www.facebook.com/groups/HoiChoiCoTuong" target="_blank" data-toggle="tooltip" data-placement="top" title="Diễn đàn Cờ tướng"><img alt="Diễn đàn Cờ tướng" src="{{ url('/') }}/img/diendan_cotuong.png"  width="300" height="300" ></a>
+            <a class="aff-link" href="https://www.facebook.com/groups/HoiChoiCoTuong" target="_blank" data-toggle="tooltip" data-placement="top" title="{{ __("Diễn đàn") }} {{ __("Cờ tướng") }}"><img alt="{{ __("Diễn đàn") }} {{ __("Cờ tướng") }}" src="{{ url('/') }}/img/diendan_cotuong.png"  width="300" height="300" ></a>
         <script>
         (adsbygoogle = window.adsbygoogle || []).push({});
         </script>
