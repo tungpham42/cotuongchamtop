@@ -1,7 +1,0 @@
-### General ###
-/build/
-
-### Composer ###
-composer.phar
-vendor
-composer.lock

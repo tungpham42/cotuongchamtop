@@ -1,7 +1,0 @@
-person
-    name: 'Brett'
-    address:
-      country: united kingdom
-environment:
-    app:
-      name: "Some App"

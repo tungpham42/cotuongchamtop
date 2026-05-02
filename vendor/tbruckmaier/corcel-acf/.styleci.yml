@@ -1,8 +1,0 @@
-preset: psr2
-risky: true
-finder:
-  exclude:
-    - vendor
-    - tests
-  name: "*.php"
-  not-name: "*.blade.php"

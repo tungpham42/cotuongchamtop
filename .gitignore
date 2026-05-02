@@ -164,6 +164,7 @@ pip-log.txt
 
 .env
 node_modules/
+vendor/
 playwright-report/
 test-results/
 blob-report/
