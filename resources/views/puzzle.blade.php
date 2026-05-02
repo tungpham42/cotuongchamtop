@@ -91,6 +91,9 @@ const board = Xiangqiboard('ban-co', {
   draggable: true,
   dropOffBoard: 'trash',
   sparePieces: true,
+  snapSpeed: 0,
+  snapbackSpeed: 0,
+  trashSpeed: 0,
   @if ($board != '')
   position: '{{ $board }}',
   @endif
@@ -174,7 +177,14 @@ function adjustBoard() {
 // adjustBoard();
 // $(window).on('load resize', adjustBoard);
 // $(document).ready(adjustBoard);
-$(window).resize(board.resize);
+function resizeSetupBoard() {
+  requestAnimationFrame(function() {
+    board.resize();
+  });
+}
+$(window).on('load resize', resizeSetupBoard);
+$(document).ready(resizeSetupBoard);
+setTimeout(resizeSetupBoard, 250);
 $('#new-board').on('click auxclick', function(e){
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
