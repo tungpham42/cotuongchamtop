@@ -1,5 +1,6 @@
 @extends('ja.layout.gamelayout')
 @section('aboveBoard')
+@include('common.puzzleSetupStyles')
 @if ($board != '')
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="作ったパズルです">パズル</h5>
 @else

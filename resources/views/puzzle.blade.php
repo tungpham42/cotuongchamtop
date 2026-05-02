@@ -1,5 +1,6 @@
 @extends('layout.gamelayout')
 @section('aboveBoard')
+@include('common.puzzleSetupStyles')
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="Bàn cờ thế">Bạn đang xếp<span id="puzzle-title"></span></h5>
 <p class="w-100 text-center mt-0 mb-1">
   <a data-step="1" data-intro="Ấn vào đây để tải bàn cờ về khi đã xếp xong" id="capture" class="btn btn-danger btn-lg text-light" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title="Lưu thành ảnh nào"><i class="fad fa-download"></i> Tải bàn cờ thế</a>

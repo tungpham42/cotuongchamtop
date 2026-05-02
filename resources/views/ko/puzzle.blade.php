@@ -1,5 +1,6 @@
 @extends('ko.layout.gamelayout')
 @section('aboveBoard')
+@include('common.puzzleSetupStyles')
 @if ($board != '')
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="이것은 만들어진 퍼즐이다">퍼즐</h5>
 @else

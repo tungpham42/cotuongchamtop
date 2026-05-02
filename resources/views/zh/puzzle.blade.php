@@ -1,5 +1,6 @@
 @extends('zh.layout.gamelayout')
 @section('aboveBoard')
+@include('common.puzzleSetupStyles')
 @if ($board != '')
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="这是一个创造的难题">谜</h5>
 @else
