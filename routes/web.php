@@ -217,220 +217,104 @@ Route::get('/play-with-ai/hardest', function () {
   return redirect('/hardest', 301);
 });
 
-Route::match(['get', 'post'], '/phong/{code}', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('roomHost', ['headTitle' => ((null !== RoomController::getHostIdRoute($code)) ? 'Thi đấu - ' : '').'Chủ phòng - Phòng: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code, 'langEnUrl' => '/room/'.$code, 'langJaUrl' => '/rumu/'.$code, 'langKoUrl' => '/bang/'.$code, 'langZhUrl' => '/fangjian/'.$code, 'canonicalUrl' => '/phong/'.$code, 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
-});
-Route::match(['get', 'post'], '/phong/{code}/khach', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('roomGuest', ['headTitle' => ((null !== RoomController::getHostIdRoute($code)) ? 'Thi đấu - ' : '').'Khách - Phòng: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/khach', 'langEnUrl' => '/room/'.$code.'/guest', 'langJaUrl' =>  '/rumu/'.$code.'/geesuto', 'langKoUrl' => '/bang/'.$code.'/bangmun', 'langZhUrl' => '/fangjian/'.$code.'/zhuke', 'canonicalUrl' => '/phong/'.$code.'/khach', 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
-});
-Route::match(['get', 'post'], '/phong/{code}/ngau-nhien', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('roomRandom', ['headTitle' => 'Ngẫu nhiên - Phòng: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/ngau-nhien', 'langEnUrl' => '/room/'.$code.'/random', 'langJaUrl' =>  '/rumu/'.$code.'/randamu', 'langKoUrl' => '/bang/'.$code.'/mujag-wiui', 'langZhUrl' => '/fangjian/'.$code.'/suijide', 'canonicalUrl' => '/phong/'.$code.'/ngau-nhien', 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
-});
-Route::match(['get', 'post'], '/phong/{code}/theo-doi', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('roomWatch', ['headTitle' => ((null !== RoomController::getHostIdRoute($code)) ? 'Thi đấu - ' : '').'Theo dõi - Phòng: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/theo-doi', 'langEnUrl' => '/room/'.$code.'/watch', 'langJaUrl' => '/rumu/'.$code.'/miru', 'langKoUrl' => '/bang/'.$code.'/boda', 'langZhUrl' => '/fangjian/'.$code.'/kan', 'canonicalUrl' => '/phong/'.$code.'/theo-doi', 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
-});
-Route::match(['get', 'post'], '/phong/{code}/do', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('roomRed', ['headTitle' => 'Bên đỏ - Phòng: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/do', 'langEnUrl' => '/room/'.$code.'/red', 'langJaUrl' => '/rumu/'.$code.'/aka', 'langKoUrl' => '/bang/'.$code.'/ppalgan', 'langZhUrl' => '/fangjian/'.$code.'/hongse', 'canonicalUrl' => '/phong/'.$code.'/do', 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
-});
-Route::match(['get', 'post'], '/phong/{code}/den', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('roomBlack', ['headTitle' => 'Bên đen - Phòng: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/den', 'langEnUrl' => '/room/'.$code.'/black', 'langJaUrl' => '/rumu/'.$code.'/kuro', 'langKoUrl' => '/bang/'.$code.'/geom-eunsaeg', 'langZhUrl' => '/fangjian/'.$code.'/heise', 'canonicalUrl' => '/phong/'.$code.'/den', 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
-});
+$localizedRoomPages = [
+  'room.host' => [
+    'view' => 'roomHost',
+    'titles' => [
+      'vi' => fn($code) => ((null !== RoomController::getHostIdRoute($code)) ? 'Thi đấu - ' : '').'Chủ phòng - Phòng: '.RoomController::getRoomName($code),
+      'en' => fn($code) => 'Host - Room: '.RoomController::getRoomName($code),
+      'ja' => fn($code) => 'ホスト - ルーム: '.RoomController::getRoomName($code),
+      'ko' => fn($code) => '주인 - 방: '.RoomController::getRoomName($code),
+      'zh' => fn($code) => '主办 - 房间：'.RoomController::getRoomName($code),
+    ],
+  ],
+  'room.guest' => [
+    'view' => 'roomGuest',
+    'titles' => [
+      'vi' => fn($code) => ((null !== RoomController::getHostIdRoute($code)) ? 'Thi đấu - ' : '').'Khách - Phòng: '.RoomController::getRoomName($code),
+      'en' => fn($code) => 'Guest - Room: '.RoomController::getRoomName($code),
+      'ja' => fn($code) => 'ゲスト - ルーム: '.RoomController::getRoomName($code),
+      'ko' => fn($code) => '손님 - 방: '.RoomController::getRoomName($code),
+      'zh' => fn($code) => '客人 - 房间：'.RoomController::getRoomName($code),
+    ],
+  ],
+  'room.random' => [
+    'view' => 'roomRandom',
+    'titles' => [
+      'vi' => fn($code) => 'Ngẫu nhiên - Phòng: '.RoomController::getRoomName($code),
+      'en' => fn($code) => 'Random - Room: '.RoomController::getRoomName($code),
+      'ja' => fn($code) => 'ランダム - ルーム: '.RoomController::getRoomName($code),
+      'ko' => fn($code) => '무작위의 - 방: '.RoomController::getRoomName($code),
+      'zh' => fn($code) => '随机的 - 房间：'.RoomController::getRoomName($code),
+    ],
+  ],
+  'room.watch' => [
+    'view' => 'roomWatch',
+    'titles' => [
+      'vi' => fn($code) => ((null !== RoomController::getHostIdRoute($code)) ? 'Thi đấu - ' : '').'Theo dõi - Phòng: '.RoomController::getRoomName($code),
+      'en' => fn($code) => 'Watch - Room: '.RoomController::getRoomName($code),
+      'ja' => fn($code) => '見る - ルーム: '.RoomController::getRoomName($code),
+      'ko' => fn($code) => '보다 - 방: '.RoomController::getRoomName($code),
+      'zh' => fn($code) => '看 - 房间：'.RoomController::getRoomName($code),
+    ],
+  ],
+  'room.red' => [
+    'view' => 'roomRed',
+    'titles' => [
+      'vi' => fn($code) => 'Bên đỏ - Phòng: '.RoomController::getRoomName($code),
+      'en' => fn($code) => 'Red side - Room: '.RoomController::getRoomName($code),
+      'ja' => fn($code) => '赤 - ルーム: '.RoomController::getRoomName($code),
+      'ko' => fn($code) => '빨간 - 방: '.RoomController::getRoomName($code),
+      'zh' => fn($code) => '红方 - 房间：'.RoomController::getRoomName($code),
+    ],
+  ],
+  'room.black' => [
+    'view' => 'roomBlack',
+    'titles' => [
+      'vi' => fn($code) => 'Bên đen - Phòng: '.RoomController::getRoomName($code),
+      'en' => fn($code) => 'Black side - Room: '.RoomController::getRoomName($code),
+      'ja' => fn($code) => '黒 - ルーム: '.RoomController::getRoomName($code),
+      'ko' => fn($code) => '검은색 - 방: '.RoomController::getRoomName($code),
+      'zh' => fn($code) => '黑边 - 房间：'.RoomController::getRoomName($code),
+    ],
+  ],
+];
 
-Route::match(['get', 'post'], '/room/{code}', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('en/roomHost', ['headTitle' => 'Host - Room: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code, 'langEnUrl' => '/room/'.$code, 'langJaUrl' => '/rumu/'.$code, 'langKoUrl' => '/bang/'.$code, 'langZhUrl' => '/fangjian/'.$code, 'canonicalUrl' => '/room/'.$code]);
-});
-Route::match(['get', 'post'], '/room/{code}/guest', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('en/roomGuest', ['headTitle' => 'Guest - Room: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/khach', 'langEnUrl' => '/room/'.$code.'/guest', 'langJaUrl' =>  '/rumu/'.$code.'/geesuto', 'langKoUrl' => '/bang/'.$code.'/bangmun', 'langZhUrl' => '/fangjian/'.$code.'/zhuke', 'canonicalUrl' => '/room/'.$code.'/guest']);
-});
-Route::match(['get', 'post'], '/room/{code}/random', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('en/roomRandom', ['headTitle' => 'Random - Room: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/ngau-nhien', 'langEnUrl' => '/room/'.$code.'/random', 'langJaUrl' =>  '/rumu/'.$code.'/randamu', 'langKoUrl' => '/bang/'.$code.'/mujag-wiui', 'langZhUrl' => '/fangjian/'.$code.'/suijide', 'canonicalUrl' => '/room/'.$code.'/random']);
-});
-Route::match(['get', 'post'], '/room/{code}/watch', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('en/roomWatch', ['headTitle' => 'Watch - Room: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/theo-doi', 'langEnUrl' => '/room/'.$code.'/watch', 'langJaUrl' => '/rumu/'.$code.'/miru', 'langKoUrl' => '/bang/'.$code.'/boda', 'langZhUrl' => '/fangjian/'.$code.'/kan', 'canonicalUrl' => '/room/'.$code.'/watch']);
-});
-Route::match(['get', 'post'], '/room/{code}/red', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('en/roomRed', ['headTitle' => 'Red side - Room: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/do', 'langEnUrl' => '/room/'.$code.'/red', 'langJaUrl' => '/rumu/'.$code.'/aka', 'langKoUrl' => '/bang/'.$code.'/ppalgan', 'langZhUrl' => '/fangjian/'.$code.'/hongse', 'canonicalUrl' => '/room/'.$code.'/red']);
-});
-Route::match(['get', 'post'], '/room/{code}/black', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('en/roomBlack', ['headTitle' => 'Black side - Room: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/den', 'langEnUrl' => '/room/'.$code.'/black', 'langJaUrl' => '/rumu/'.$code.'/kuro', 'langKoUrl' => '/bang/'.$code.'/geom-eunsaeg', 'langZhUrl' => '/fangjian/'.$code.'/heise', 'canonicalUrl' => '/room/'.$code.'/black']);
-});
+foreach ($localizedRoomPages as $pageKey => $roomPage) {
+  foreach (config('locales.supported', []) as $locale) {
+    Route::match(['get', 'post'], localized_path($pageKey, ['code' => '{code}'], $locale), function($code) use ($pageKey, $roomPage, $locale) {
+      $room = Room::firstWhere('code', $code);
+      if (!$room) {
+        abort(404);
+      }
 
-Route::match(['get', 'post'], '/rumu/{code}', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('ja/roomHost', ['headTitle' => 'ホスト - ルーム: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code, 'langEnUrl' => '/room/'.$code, 'langJaUrl' => '/rumu/'.$code, 'langKoUrl' => '/bang/'.$code, 'langZhUrl' => '/fangjian/'.$code, 'canonicalUrl' => '/rumu/'.$code]);
-});
-Route::match(['get', 'post'], '/rumu/{code}/geesuto', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('ja/roomGuest', ['headTitle' => 'ゲスト - ルーム: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/khach', 'langEnUrl' => '/room/'.$code.'/guest', 'langJaUrl' =>  '/rumu/'.$code.'/geesuto', 'langKoUrl' => '/bang/'.$code.'/bangmun', 'langZhUrl' => '/fangjian/'.$code.'/zhuke', 'canonicalUrl' => '/rumu/'.$code.'/geesuto']);
-});
-Route::match(['get', 'post'], '/rumu/{code}/randamu', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('ja/roomRandom', ['headTitle' => 'ランダム - ルーム: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/ngau-nhien', 'langEnUrl' => '/room/'.$code.'/random', 'langJaUrl' =>  '/rumu/'.$code.'/randamu', 'langKoUrl' => '/bang/'.$code.'/mujag-wiui', 'langZhUrl' => '/fangjian/'.$code.'/suijide', 'canonicalUrl' => '/rumu/'.$code.'/randamu']);
-});
-Route::match(['get', 'post'], '/rumu/{code}/miru', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('ja/roomWatch', ['headTitle' => '見る - ルーム: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/theo-doi', 'langEnUrl' => '/room/'.$code.'/watch', 'langJaUrl' => '/rumu/'.$code.'/miru', 'langKoUrl' => '/bang/'.$code.'/boda', 'langZhUrl' => '/fangjian/'.$code.'/kan', 'canonicalUrl' => '/rumu/'.$code.'/miru']);
-});
-Route::match(['get', 'post'], '/rumu/{code}/aka', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('ja/roomRed', ['headTitle' => '赤 - ルーム: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/do', 'langEnUrl' => '/room/'.$code.'/red', 'langJaUrl' => '/rumu/'.$code.'/aka', 'langKoUrl' => '/bang/'.$code.'/ppalgan', 'langZhUrl' => '/fangjian/'.$code.'/hongse', 'canonicalUrl' => '/rumu/'.$code.'/aka']);
-});
-Route::match(['get', 'post'], '/rumu/{code}/kuro', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('ja/roomBlack', ['headTitle' => '黒 - ルーム: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/den', 'langEnUrl' => '/room/'.$code.'/black', 'langJaUrl' => '/rumu/'.$code.'/kuro', 'langKoUrl' => '/bang/'.$code.'/geom-eunsaeg', 'langZhUrl' => '/fangjian/'.$code.'/heise', 'canonicalUrl' => '/rumu/'.$code.'/kuro']);
-});
+      $view = $locale === 'vi' ? $roomPage['view'] : "{$locale}/{$roomPage['view']}";
+      $data = [
+        'headTitle' => $roomPage['titles'][$locale]($code),
+        'bodyClass' => 'room',
+        'randomRoom' => RoomController::getRandomRoom(),
+        'roomCode' => $code,
+        'room' => $room,
+        'cdnUrl' => URL::to(''),
+      ];
 
-Route::match(['get', 'post'], '/bang/{code}', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('ko/roomHost', ['headTitle' => '주인 - 방: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code, 'langEnUrl' => '/room/'.$code, 'langJaUrl' => '/rumu/'.$code, 'langKoUrl' => '/bang/'.$code, 'langZhUrl' => '/fangjian/'.$code, 'canonicalUrl' => '/bang/'.$code]);
-});
-Route::match(['get', 'post'], '/bang/{code}/bangmun', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('ko/roomGuest', ['headTitle' => '손님 - 방: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/khach', 'langEnUrl' => '/room/'.$code.'/guest', 'langJaUrl' =>  '/rumu/'.$code.'/geesuto', 'langKoUrl' => '/bang/'.$code.'/bangmun', 'langZhUrl' => '/fangjian/'.$code.'/zhuke', 'canonicalUrl' => '/bang/'.$code.'/bangmun']);
-});
-Route::match(['get', 'post'], '/bang/{code}/mujag-wiui', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('ko/roomRandom', ['headTitle' => '무작위의 - 방: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/ngau-nhien', 'langEnUrl' => '/room/'.$code.'/random', 'langJaUrl' =>  '/rumu/'.$code.'/randamu', 'langKoUrl' => '/bang/'.$code.'/mujag-wiui', 'langZhUrl' => '/fangjian/'.$code.'/suijide', 'canonicalUrl' => '/bang/'.$code.'/mujag-wiui']);
-});
-Route::match(['get', 'post'], '/bang/{code}/boda', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('ko/roomWatch', ['headTitle' => '보다 - 방: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/theo-doi', 'langEnUrl' => '/room/'.$code.'/watch', 'langJaUrl' => '/rumu/'.$code.'/miru', 'langKoUrl' => '/bang/'.$code.'/boda', 'langZhUrl' => '/fangjian/'.$code.'/kan', 'canonicalUrl' => '/bang/'.$code.'/boda']);
-});
-Route::match(['get', 'post'], '/bang/{code}/ppalgan', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('ko/roomRed', ['headTitle' => '빨간 - 방: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/do', 'langEnUrl' => '/room/'.$code.'/red', 'langJaUrl' => '/rumu/'.$code.'/aka', 'langKoUrl' => '/bang/'.$code.'/ppalgan', 'langZhUrl' => '/fangjian/'.$code.'/hongse', 'canonicalUrl' => '/bang/'.$code.'/ppalgan']);
-});
-Route::match(['get', 'post'], '/bang/{code}/geom-eunsaeg', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('ko/roomBlack', ['headTitle' => '검은색 - 방: '.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/den', 'langEnUrl' => '/room/'.$code.'/black', 'langJaUrl' => '/rumu/'.$code.'/kuro', 'langKoUrl' => '/bang/'.$code.'/geom-eunsaeg', 'langZhUrl' => '/fangjian/'.$code.'/heise', 'canonicalUrl' => '/bang/'.$code.'/geom-eunsaeg']);
-});
+      if ($locale === 'vi') {
+        $data = array_merge($data, [
+          'userPuzzles' => PuzzleController::getUserPuzzles(),
+          'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(),
+          'boards' => RoomController::getBoards(),
+          'firstPageBoards' => RoomController::getFirstPageBoards(),
+          'playedBoards' => RoomController::getPlayedBoards(),
+          'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(),
+          'players' => UserController::getPlayers(),
+          'firstPagePlayers' => UserController::getFirstPagePlayers(),
+        ]);
+      }
 
-Route::match(['get', 'post'], '/fangjian/{code}', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
+      return view($view, localized_page_data($pageKey, $locale, $data, ['code' => $code]));
+    })->middleware("locale:{$locale}");
   }
-  return view('zh/roomHost', ['headTitle' => '主办 - 房间：'.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code, 'langEnUrl' => '/room/'.$code, 'langJaUrl' => '/rumu/'.$code, 'langKoUrl' => '/bang/'.$code, 'langZhUrl' => '/fangjian/'.$code, 'canonicalUrl' => '/fangjian/'.$code]);
-});
-Route::match(['get', 'post'], '/fangjian/{code}/zhuke', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('zh/roomGuest', ['headTitle' => '客人 - 房间：'.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/khach', 'langEnUrl' => '/room/'.$code.'/guest', 'langJaUrl' =>  '/rumu/'.$code.'/geesuto', 'langKoUrl' => '/bang/'.$code.'/bangmun', 'langZhUrl' => '/fangjian/'.$code.'/zhuke', 'canonicalUrl' => '/fangjian/'.$code.'/zhuke']);
-});
-Route::match(['get', 'post'], '/fangjian/{code}/suijide', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('zh/roomRandom', ['headTitle' => '随机的 - 房间：'.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/ngau-nhien', 'langEnUrl' => '/room/'.$code.'/random', 'langJaUrl' =>  '/rumu/'.$code.'/randamu', 'langKoUrl' => '/bang/'.$code.'/mujag-wiui', 'langZhUrl' => '/fangjian/'.$code.'/suijide', 'canonicalUrl' => '/fangjian/'.$code.'/suijide']);
-});
-Route::match(['get', 'post'], '/fangjian/{code}/kan', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('zh/roomWatch', ['headTitle' => '看 - 房间：'.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/theo-doi', 'langEnUrl' => '/room/'.$code.'/watch', 'langJaUrl' => '/rumu/'.$code.'/miru', 'langKoUrl' => '/bang/'.$code.'/boda', 'langZhUrl' => '/fangjian/'.$code.'/kan', 'canonicalUrl' => '/fangjian/'.$code.'/kan']);
-});
-Route::match(['get', 'post'], '/fangjian/{code}/hongse', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('zh/roomRed', ['headTitle' => '红方 - 房间：'.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/do', 'langEnUrl' => '/room/'.$code.'/red', 'langJaUrl' => '/rumu/'.$code.'/aka', 'langKoUrl' => '/bang/'.$code.'/ppalgan', 'langZhUrl' => '/fangjian/'.$code.'/hongse', 'canonicalUrl' => '/fangjian/'.$code.'/hongse']);
-});
-Route::match(['get', 'post'], '/fangjian/{code}/heise', function($code) {
-  $room = Room::firstWhere('code', $code);
-  if (!$room) {
-    abort(404);
-  }
-  return view('zh/roomBlack', ['headTitle' => '黑边 - 房间：'.RoomController::getRoomName($code), 'bodyClass' => 'room', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => $code, 'room' => $room, 'cdnUrl' => URL::to(''), 'langViUrl' => '/phong/'.$code.'/den', 'langEnUrl' => '/room/'.$code.'/black', 'langJaUrl' => '/rumu/'.$code.'/kuro', 'langKoUrl' => '/bang/'.$code.'/geom-eunsaeg', 'langZhUrl' => '/fangjian/'.$code.'/heise', 'canonicalUrl' => '/fangjian/'.$code.'/heise']);
-});
+}
 
 
 
@@ -926,21 +810,41 @@ foreach ($localizedStaticPages as $pageKey => $localizedPages) {
   }
 }
 
-Route::match(['get', 'post'], '/sanh-cho', function () {
-return view('roomList', ['headTitle' => 'Sảnh chờ', 'bodyClass' => 'room', 'rooms' => Room::all(), 'roomCode' => '', 'randomRoom' => RoomController::getRandomRoom(), 'cdnUrl' => URL::to(''), 'langViUrl' => '/sanh-cho', 'langEnUrl' => '/rooms', 'langJaUrl' => '/heya-ichiran', 'langKoUrl' => '/bang-moglog', 'langZhUrl' => '/fangjianliebiao', 'canonicalUrl' => '/sanh-cho', 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
-});
-Route::match(['get', 'post'], '/rooms', function () {
-return view('en/roomList', ['headTitle' => 'Rooms\' list', 'bodyClass' => 'room', 'rooms' => Room::all(), 'roomCode' => '', 'randomRoom' => RoomController::getRandomRoom(), 'cdnUrl' => URL::to(''), 'langViUrl' => '/sanh-cho', 'langEnUrl' => '/rooms', 'langJaUrl' => '/heya-ichiran', 'langKoUrl' => '/bang-moglog', 'langZhUrl' => '/fangjianliebiao', 'canonicalUrl' => '/rooms']);
-});
-Route::match(['get', 'post'], '/heya-ichiran', function () {
-return view('ja/roomList', ['headTitle' => '部屋一覧', 'bodyClass' => 'room', 'rooms' => Room::all(), 'roomCode' => '', 'randomRoom' => RoomController::getRandomRoom(), 'cdnUrl' => URL::to(''), 'langViUrl' => '/sanh-cho', 'langEnUrl' => '/rooms', 'langJaUrl' => '/heya-ichiran', 'langKoUrl' => '/bang-moglog', 'langZhUrl' => '/fangjianliebiao', 'canonicalUrl' => '/heya-ichiran']);
-});
-Route::match(['get', 'post'], '/bang-moglog', function () {
-return view('ko/roomList', ['headTitle' => '방 목록', 'bodyClass' => 'room', 'rooms' => Room::all(), 'roomCode' => '', 'randomRoom' => RoomController::getRandomRoom(), 'cdnUrl' => URL::to(''), 'langViUrl' => '/sanh-cho', 'langEnUrl' => '/rooms', 'langJaUrl' => '/heya-ichiran', 'langKoUrl' => '/bang-moglog', 'langZhUrl' => '/fangjianliebiao', 'canonicalUrl' => '/bang-moglog']);
-});
-Route::match(['get', 'post'], '/fangjianliebiao', function () {
-return view('zh/roomList', ['headTitle' => '房间列表', 'bodyClass' => 'room', 'rooms' => Room::all(), 'roomCode' => '', 'randomRoom' => RoomController::getRandomRoom(), 'cdnUrl' => URL::to(''), 'langViUrl' => '/sanh-cho', 'langEnUrl' => '/rooms', 'langJaUrl' => '/heya-ichiran', 'langKoUrl' => '/bang-moglog', 'langZhUrl' => '/fangjianliebiao', 'canonicalUrl' => '/fangjianliebiao']);
-});
+$localizedRoomListPages = [
+  'vi' => ['view' => 'roomList', 'title' => 'Sảnh chờ'],
+  'en' => ['view' => 'en/roomList', 'title' => "Rooms' list"],
+  'ja' => ['view' => 'ja/roomList', 'title' => '部屋一覧'],
+  'ko' => ['view' => 'ko/roomList', 'title' => '방 목록'],
+  'zh' => ['view' => 'zh/roomList', 'title' => '房间列表'],
+];
+
+foreach ($localizedRoomListPages as $locale => $page) {
+  Route::match(['get', 'post'], localized_path('room.list', [], $locale), function () use ($locale, $page) {
+    $data = [
+      'headTitle' => $page['title'],
+      'bodyClass' => 'room',
+      'rooms' => Room::all(),
+      'roomCode' => '',
+      'randomRoom' => RoomController::getRandomRoom(),
+      'cdnUrl' => URL::to(''),
+    ];
+
+    if ($locale === 'vi') {
+      $data = array_merge($data, [
+        'userPuzzles' => PuzzleController::getUserPuzzles(),
+        'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(),
+        'boards' => RoomController::getBoards(),
+        'firstPageBoards' => RoomController::getFirstPageBoards(),
+        'playedBoards' => RoomController::getPlayedBoards(),
+        'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(),
+        'players' => UserController::getPlayers(),
+        'firstPagePlayers' => UserController::getFirstPagePlayers(),
+      ]);
+    }
+
+    return view($page['view'], localized_page_data('room.list', $locale, $data));
+  })->middleware("locale:{$locale}");
+}
 Route::match(['get', 'post'], '/tat-ca-the-co', function () {
   return view('puzzleList', ['headTitle' => 'Tất cả thế cờ', 'bodyClass' => 'puzzle setup', 'rooms' => Room::all(), 'roomCode' => '', 'randomRoom' => RoomController::getRandomRoom(), 'cdnUrl' => URL::to(''), 'langViUrl' => '/tat-ca-the-co', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'canonicalUrl' => '/tat-ca-the-co', 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
 });

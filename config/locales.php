@@ -39,6 +39,14 @@ return [
             'zh' => 'zh',
         ],
 
+        'room.list' => [
+            'vi' => 'sanh-cho',
+            'en' => 'rooms',
+            'ja' => 'heya-ichiran',
+            'ko' => 'bang-moglog',
+            'zh' => 'fangjianliebiao',
+        ],
+
         'room.host' => [
             'vi' => 'phong/{code}',
             'en' => 'room/{code}',

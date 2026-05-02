@@ -1,6 +1,8 @@
 @php
-session_name('CoTuong_ZH-'.$roomCode);
-session_start();
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_name('CoTuong_ZH-'.$roomCode);
+    session_start();
+}
 
 $room_path = public_path().'/fangjianChatLog/'.$roomCode.'-fangjianchatlog.html';
 $log_path = url('/').'/fangjianChatLog/'.$roomCode.'-fangjianchatlog.html';

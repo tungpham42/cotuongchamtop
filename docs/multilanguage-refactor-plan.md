@@ -27,6 +27,17 @@ N translation files
 
 Language-specific behavior should come from config and translation files, not duplicated route/controller/view code.
 
+## Progress
+
+- Done: created centralized locale config and localized URL service.
+- Done: added locale middleware and shared locale variables for views.
+- Done: canonical and hreflang tags now use generated localized URLs, with `x-default` pointing to Vietnamese.
+- Done: static `about` and `contact` routes now use generated localized routes.
+- Done: room list routes now use one localized route definition while preserving `/sanh-cho`, `/rooms`, `/heya-ichiran`, `/bang-moglog`, and `/fangjianliebiao`.
+- Done: room play/watch side routes now use one generated route definition while preserving old room URLs such as `/phong/{code}`, `/room/{code}`, `/rumu/{code}`, `/bang/{code}`, and `/fangjian/{code}`.
+- Done: chat comment partials no longer crash when Laravel has already started a session.
+- Next: continue collapsing duplicated controller endpoints and Blade views into shared locale-aware controllers/components.
+
 ## SEO-Safe Migration Requirement
 
 SEO is important for this project, so the refactor must not remove or casually change existing public URLs.
