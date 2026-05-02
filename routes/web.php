@@ -127,10 +127,10 @@ Route::post('/test-anonymous-quick-match', [RoomController::class, 'anonymousQui
 Route::post('/test-check-anonymous-match-status', [RoomController::class, 'checkAnonymousMatchStatus'])->name('test-check-anonymous-match-status');
 
 Route::get('/terms-and-conditions', function () {
-  return view('terms', ['headTitle' => 'Terms and Conditions', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'canonicalUrl' => '/terms-and-conditions']);
+  return view('terms', localized_page_data('terms', app()->getLocale(), ['headTitle' => 'Terms and Conditions', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to('')]));
 });
 Route::get('/privacy-policy', function () {
-  return view('privacy', ['headTitle' => 'Privacy Policy', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'canonicalUrl' => '/privacy-policy']);
+  return view('privacy', localized_page_data('privacy', app()->getLocale(), ['headTitle' => 'Privacy Policy', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to('')]));
 });
 
 Route::get('/getUserPuzzlesTemplate', function(){
@@ -895,36 +895,36 @@ Route::match(['get', 'post'], '/zuinande', function () {
 return view('zh/ai', ['headTitle' => '最难的', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/kho-nhat', 'langEnUrl' => '/hardest', 'langJaUrl' => '/mottomo-muzukashi', 'langKoUrl' => '/gajang-dandanhan', 'langZhUrl' => '/zuinande', 'level' => '5', 'levelTxt' => '最难的', 'canonicalUrl' => '/zuinande']);
 });
 
-Route::match(['get', 'post'], '/gioi-thieu', function () {
-  return view('about', ['headTitle' => 'Giới thiệu', 'bodyClass' => 'about', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/gioi-thieu', 'langEnUrl' => '/about-us', 'langJaUrl' => '/yaku', 'langKoUrl' => '/urie-daehae', 'langZhUrl' => '/guanyuwomens', 'canonicalUrl' => '/gioi-thieu']);
-});
-Route::match(['get', 'post'], '/about-us', function () {
-  return view('en/about', ['headTitle' => 'About us', 'bodyClass' => 'about', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/gioi-thieu', 'langEnUrl' => '/about-us', 'langJaUrl' => '/yaku', 'langKoUrl' => '/urie-daehae', 'langZhUrl' => '/guanyuwomens', 'canonicalUrl' => '/about-us']);
-});
-Route::match(['get', 'post'], '/yaku', function () {
-  return view('ja/about', ['headTitle' => '約', 'bodyClass' => 'about', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/gioi-thieu', 'langEnUrl' => '/about-us', 'langJaUrl' => '/yaku', 'langKoUrl' => '/urie-daehae', 'langZhUrl' => '/guanyuwomens', 'canonicalUrl' => '/yaku']);
-});
-Route::match(['get', 'post'], '/urie-daehae', function () {
-  return view('ko/about', ['headTitle' => '우리에 대해', 'bodyClass' => 'about', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/gioi-thieu', 'langEnUrl' => '/about-us', 'langJaUrl' => '/yaku', 'langKoUrl' => '/urie-daehae', 'langZhUrl' => '/guanyuwomens', 'canonicalUrl' => '/urie-daehae']);
-});
-Route::match(['get', 'post'], '/guanyuwomens', function () {
-  return view('zh/about', ['headTitle' => '关于我们', 'bodyClass' => 'about', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/gioi-thieu', 'langEnUrl' => '/about-us', 'langJaUrl' => '/yaku', 'langKoUrl' => '/urie-daehae', 'langZhUrl' => '/guanyuwomens', 'canonicalUrl' => '/guanyuwomens']);
-});
-Route::match(['get', 'post'], '/lien-he', function () {
-  return view('contact', ['headTitle' => 'Liên hệ', 'bodyClass' => 'contact', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/lien-he', 'langEnUrl' => '/contact-us', 'langJaUrl' => '/kontakuto', 'langKoUrl' => '/mun-uihagi', 'langZhUrl' => '/lianxiwomen', 'canonicalUrl' => '/lien-he']);
-});
-Route::match(['get', 'post'], '/contact-us', function () {
-  return view('en/contact', ['headTitle' => 'Contact us', 'bodyClass' => 'contact', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/lien-he', 'langEnUrl' => '/contact-us', 'langJaUrl' => '/kontakuto', 'langKoUrl' => '/mun-uihagi', 'langZhUrl' => '/lianxiwomen', 'canonicalUrl' => '/contact-us']);
-});
-Route::match(['get', 'post'], '/kontakuto', function () {
-  return view('ja/contact', ['headTitle' => 'コンタクト', 'bodyClass' => 'contact', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/lien-he', 'langEnUrl' => '/contact-us', 'langJaUrl' => '/kontakuto', 'langKoUrl' => '/mun-uihagi', 'langZhUrl' => '/lianxiwomen', 'canonicalUrl' => '/kontakuto']);
-});
-Route::match(['get', 'post'], '/mun-uihagi', function () {
-  return view('ko/contact', ['headTitle' => '문의하기', 'bodyClass' => 'contact', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/lien-he', 'langEnUrl' => '/contact-us', 'langJaUrl' => '/kontakuto', 'langKoUrl' => '/mun-uihagi', 'langZhUrl' => '/lianxiwomen', 'canonicalUrl' => '/mun-uihagi']);
-});
-Route::match(['get', 'post'], '/lianxiwomen', function () {
-  return view('zh/contact', ['headTitle' => '联系我们', 'bodyClass' => 'contact', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => URL::to(''), 'langViUrl' => '/lien-he', 'langEnUrl' => '/contact-us', 'langJaUrl' => '/kontakuto', 'langKoUrl' => '/mun-uihagi', 'langZhUrl' => '/lianxiwomen', 'canonicalUrl' => '/lianxiwomen']);
-});
+$localizedStaticPages = [
+  'about' => [
+    'vi' => ['view' => 'about', 'title' => 'Giới thiệu'],
+    'en' => ['view' => 'en/about', 'title' => 'About us'],
+    'ja' => ['view' => 'ja/about', 'title' => '約'],
+    'ko' => ['view' => 'ko/about', 'title' => '우리에 대해'],
+    'zh' => ['view' => 'zh/about', 'title' => '关于我们'],
+  ],
+  'contact' => [
+    'vi' => ['view' => 'contact', 'title' => 'Liên hệ'],
+    'en' => ['view' => 'en/contact', 'title' => 'Contact us'],
+    'ja' => ['view' => 'ja/contact', 'title' => 'コンタクト'],
+    'ko' => ['view' => 'ko/contact', 'title' => '문의하기'],
+    'zh' => ['view' => 'zh/contact', 'title' => '联系我们'],
+  ],
+];
+
+foreach ($localizedStaticPages as $pageKey => $localizedPages) {
+  foreach ($localizedPages as $locale => $page) {
+    Route::match(['get', 'post'], localized_path($pageKey, [], $locale), function () use ($pageKey, $locale, $page) {
+      return view($page['view'], localized_page_data($pageKey, $locale, [
+        'headTitle' => $page['title'],
+        'bodyClass' => $pageKey,
+        'randomRoom' => RoomController::getRandomRoom(),
+        'roomCode' => '',
+        'cdnUrl' => URL::to(''),
+      ]));
+    })->middleware("locale:{$locale}");
+  }
+}
 
 Route::match(['get', 'post'], '/sanh-cho', function () {
 return view('roomList', ['headTitle' => 'Sảnh chờ', 'bodyClass' => 'room', 'rooms' => Room::all(), 'roomCode' => '', 'randomRoom' => RoomController::getRandomRoom(), 'cdnUrl' => URL::to(''), 'langViUrl' => '/sanh-cho', 'langEnUrl' => '/rooms', 'langJaUrl' => '/heya-ichiran', 'langKoUrl' => '/bang-moglog', 'langZhUrl' => '/fangjianliebiao', 'canonicalUrl' => '/sanh-cho', 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);

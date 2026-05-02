@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\LocalizedUrlService;
 use App\Services\XiangqiEngineService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -16,6 +17,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->singleton(LocalizedUrlService::class);
+
         $this->app->singleton(XiangqiEngineService::class, function ($app) {
             return new XiangqiEngineService();
         });

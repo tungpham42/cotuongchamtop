@@ -1,6 +1,46 @@
 <?php
 
+use App\Services\LocalizedUrlService;
 use Illuminate\Support\Facades\NumberFormat;
+
+if (!function_exists('localized_path')) {
+    function localized_path(string $key, array $parameters = [], ?string $locale = null): string
+    {
+        return app(LocalizedUrlService::class)->path($key, $parameters, $locale);
+    }
+}
+
+if (!function_exists('localized_url')) {
+    function localized_url(string $key, array $parameters = [], ?string $locale = null): string
+    {
+        return app(LocalizedUrlService::class)->url($key, $parameters, $locale);
+    }
+}
+
+if (!function_exists('localized_alternate_paths')) {
+    function localized_alternate_paths(string $key, array $parameters = []): array
+    {
+        return app(LocalizedUrlService::class)->alternatePaths($key, $parameters);
+    }
+}
+
+if (!function_exists('localized_page_data')) {
+    function localized_page_data(string $key, string $locale, array $data = [], array $parameters = []): array
+    {
+        $paths = localized_alternate_paths($key, $parameters);
+
+        return array_merge([
+            'locale' => $locale,
+            'langViUrl' => $paths['vi'] ?? '/',
+            'langEnUrl' => $paths['en'] ?? '/',
+            'langJaUrl' => $paths['ja'] ?? '/',
+            'langKoUrl' => $paths['ko'] ?? '/',
+            'langZhUrl' => $paths['zh'] ?? '/',
+            'canonicalUrl' => $paths[$locale] ?? ($paths[config('locales.default', 'vi')] ?? '/'),
+            'alternateUrls' => app(LocalizedUrlService::class)->alternateUrls($key, $parameters),
+        ], $data);
+    }
+}
 
 function numberToWordsVi($number)
 {
