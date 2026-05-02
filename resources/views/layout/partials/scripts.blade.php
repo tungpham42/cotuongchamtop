@@ -1,6 +1,6 @@
 {{-- @include('common.scripts') --}}
 @desktop
-<script src="{{ $cdnUrl }}/js/xiangqiboard.js?v=33"></script>
+<script src="{{ $cdnUrl }}/js/xiangqiboard.js?v=34"></script>
 @elsedesktop
 <script src="{{ $cdnUrl }}/js/xiangqiboard_mobile.js?v=3"></script>
 @enddesktop
