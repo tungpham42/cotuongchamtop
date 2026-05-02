@@ -810,10 +810,10 @@ foreach ($localizedStaticPages as $pageKey => $localizedPages) {
 
 $localizedRoomListPages = [
   'vi' => ['view' => 'roomList', 'title' => 'Sảnh chờ'],
-  'en' => ['view' => 'en/roomList', 'title' => "Rooms' list"],
-  'ja' => ['view' => 'ja/roomList', 'title' => '部屋一覧'],
-  'ko' => ['view' => 'ko/roomList', 'title' => '방 목록'],
-  'zh' => ['view' => 'zh/roomList', 'title' => '房间列表'],
+  'en' => ['view' => 'roomList', 'title' => "Rooms' list"],
+  'ja' => ['view' => 'roomList', 'title' => '部屋一覧'],
+  'ko' => ['view' => 'roomList', 'title' => '방 목록'],
+  'zh' => ['view' => 'roomList', 'title' => '房间列表'],
 ];
 
 foreach ($localizedRoomListPages as $locale => $page) {
@@ -843,7 +843,7 @@ foreach ($localizedRoomListPages as $locale => $page) {
 }
 Route::match(['get', 'post'], '/tat-ca-the-co', function () {
   return view('puzzleList', ['headTitle' => 'Tất cả thế cờ', 'bodyClass' => 'puzzle setup', 'rooms' => Room::all(), 'roomCode' => '', 'randomRoom' => RoomController::getRandomRoom(), 'cdnUrl' => URL::to(''), 'langViUrl' => '/tat-ca-the-co', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'canonicalUrl' => '/tat-ca-the-co', 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
-})->middleware('locale:vi');
+});
 Route::match(['get', 'post'], '/thanh-vien', function () {
   return view('userList', ['headTitle' => 'Tất cả kỳ thủ', 'bodyClass' => 'room', 'rooms' => Room::all(), 'roomCode' => '', 'randomRoom' => RoomController::getRandomRoom(), 'cdnUrl' => URL::to(''), 'langViUrl' => '/thanh-vien', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'canonicalUrl' => '/thanh-vien', 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
-})->middleware('locale:vi');
+});

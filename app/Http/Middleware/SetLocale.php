@@ -18,13 +18,15 @@ class SetLocale
 
     public function handle(Request $request, Closure $next, ?string $locale = null)
     {
-        $locale = $locale ?: $this->localizedUrls->detectLocaleFromPath($request->path());
+        $detectedLocale = $this->localizedUrls->detectLocaleFromPath($request->path());
+        $locale = $locale ?: $request->session()->get('locale', $detectedLocale);
 
         if (!$this->localizedUrls->isSupported($locale)) {
             $locale = $this->localizedUrls->defaultLocale();
         }
 
         app()->setLocale($locale);
+        $request->session()->put('locale', $locale);
 
         View::share('locale', $locale);
         View::share('supportedLocales', $this->localizedUrls->supportedLocales());
