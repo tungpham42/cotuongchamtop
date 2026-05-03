@@ -60,20 +60,24 @@ if (isset($_POST['enter'])) {
 @endphp
 
 <style>
-/* Modern Chatbox Styles */
+/* * BOLD, DARK & CATCHY CHAT UI
+ * Color Palette: Deep Space Navy, Neon Crimson, Soft Ash
+ */
+
 #chat-wrapper {
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: 400px;
-    height: 520px;
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    max-width: 420px;
+    height: 550px;
+    background: #13131A; /* Deep dark background */
+    border-radius: 20px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.6), 0 0 0 1px #2A2A35;
     overflow: hidden;
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    float: left;
-    border: 1px solid #e5e7eb;
+    justify-content: space-between;
+    align-content: center;
+    margin: 0 auto;
 }
 
 /* Login Form */
@@ -83,115 +87,130 @@ if (isset($_POST['enter'])) {
     justify-content: center;
     align-items: center;
     height: 100%;
-    padding: 2rem;
+    padding: 2.5rem;
     text-align: center;
-    background: #f9fafb;
+    background: radial-gradient(circle at center, #1C1C24 0%, #13131A 100%);
 }
 #loginform p {
-    font-size: 16px;
-    font-weight: 600;
-    color: #374151;
-    margin-bottom: 1.5rem;
+    font-size: 18px;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin-bottom: 2rem;
+    letter-spacing: 0.5px;
 }
 #loginform form {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 }
-#loginform label {
-    display: none;
-}
+#loginform label { display: none; }
+
 #name {
     width: 100%;
-    border-radius: 8px;
-    border: 2px solid #e5e7eb;
-    padding: 10px 14px;
-    font-size: 15px;
-    transition: all 0.3s ease;
+    border-radius: 12px;
+    border: 2px solid #2A2A35;
+    background: #1C1C24;
+    color: #FFFFFF;
+    padding: 14px 18px;
+    font-size: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     outline: none;
 }
+#name::placeholder { color: #6C6C80; }
 #name:focus {
-    border-color: #E94125;
-    box-shadow: 0 0 0 3px rgba(233, 65, 37, 0.2);
+    border-color: #FF473A;
+    background: #22222D;
+    box-shadow: 0 0 15px rgba(255, 71, 58, 0.15);
 }
+
 #enter {
-    background: #E94125;
+    background: linear-gradient(135deg, #FF473A, #FF2A5F);
     color: white;
     border: none;
-    padding: 10px;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 15px;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 16px;
     cursor: pointer;
-    transition: background 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 71, 58, 0.3);
 }
 #enter:hover {
-    background: #C8351C;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 71, 58, 0.5);
 }
 .error {
-    color: #ef4444;
-    font-size: 13px;
-    margin-top: 10px;
+    color: #FF473A;
+    font-size: 14px;
+    margin-top: 12px;
+    font-weight: 600;
 }
 
 /* Chat Header */
 #menu {
-    background: #ffffff;
-    padding: 14px 20px;
+    background: #1C1C24;
+    padding: 16px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #e5e7eb;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    border-bottom: 1px solid #2A2A35;
     z-index: 10;
 }
 #menu p.welcome {
     margin: 0;
     font-size: 15px;
-    color: #374151;
+    color: #A0A0B0;
     font-weight: 500;
 }
 #menu p.welcome b {
-    color: #111827;
+    color: #FFFFFF;
     font-weight: 700;
+    letter-spacing: 0.5px;
 }
 a#exit {
-    color: #4b5563;
-    background: #f3f4f6;
-    padding: 6px 12px;
+    color: #FF473A;
+    background: rgba(255, 71, 58, 0.1);
+    padding: 8px 16px;
     border-radius: 20px;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 13px;
     text-decoration: none;
+    text-transform: uppercase;
     transition: all 0.2s;
+    border: 1px solid rgba(255, 71, 58, 0.2);
 }
 a#exit:hover {
-    background: #e5e7eb;
-    color: #1f2937;
+    background: #FF473A;
+    color: #FFFFFF;
+    box-shadow: 0 0 10px rgba(255, 71, 58, 0.4);
 }
 
 /* Chat Content Area */
 #chatbox {
     flex: 1;
-    padding: 20px 15px;
-    background: #f3f4f6;
+    padding: 20px 16px;
+    background: #13131A;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 }
-/* Scrollbar */
+
+/* Custom Scrollbar for Dark UI */
 #chatbox::-webkit-scrollbar { width: 6px; }
 #chatbox::-webkit-scrollbar-track { background: transparent; }
-#chatbox::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+#chatbox::-webkit-scrollbar-thumb { background: #2A2A35; border-radius: 10px; }
+#chatbox::-webkit-scrollbar-thumb:hover { background: #3F3F50; }
 
 /* Chat Bubbles Container */
 .msg-container {
     display: flex;
     flex-direction: column;
-    max-width: 80%;
-    animation: fadeIn 0.3s ease;
+    max-width: 85%;
+    animation: slideUpFade 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 /* Other Player (Left) */
@@ -199,101 +218,114 @@ a#exit:hover {
     align-self: flex-start;
 }
 .message-theirs .msg-content {
-    background: #ffffff;
-    color: #1f2937;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px 16px 16px 4px;
-    padding: 10px 14px;
-    font-size: 14.5px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    background: #22222D;
+    color: #E2E2E9;
+    border: 1px solid #2A2A35;
+    border-radius: 18px 18px 18px 4px;
+    padding: 12px 16px;
+    font-size: 15px;
+    line-height: 1.4;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 .message-theirs .msg-meta {
     font-size: 11px;
-    color: #6b7280;
-    margin-bottom: 4px;
-    margin-left: 4px;
+    color: #6C6C80;
+    margin-bottom: 6px;
+    margin-left: 6px;
+    font-weight: 500;
 }
+.message-theirs .msg-meta b { color: #A0A0B0; }
 
 /* Current Player (Right) */
 .message-mine {
     align-self: flex-end;
 }
 .message-mine .msg-content {
-    background: #E94125;
-    color: #ffffff;
-    border-radius: 16px 16px 4px 16px;
-    padding: 10px 14px;
-    font-size: 14.5px;
-    box-shadow: 0 1px 2px rgba(233, 65, 37, 0.2);
+    background: linear-gradient(135deg, #FF473A, #FF2A5F);
+    color: #FFFFFF;
+    border-radius: 18px 18px 4px 18px;
+    padding: 12px 16px;
+    font-size: 15px;
+    line-height: 1.4;
+    box-shadow: 0 4px 10px rgba(255, 71, 58, 0.25);
 }
 .message-mine .msg-meta {
     font-size: 11px;
-    color: #6b7280;
-    margin-bottom: 4px;
-    margin-right: 4px;
+    color: #6C6C80;
+    margin-bottom: 6px;
+    margin-right: 6px;
     text-align: right;
+    font-weight: 500;
 }
 
 /* System Messages */
 .message-system {
     align-self: center;
-    background: rgba(0,0,0,0.05);
-    color: #6b7280;
-    font-size: 12px;
-    padding: 4px 12px;
-    border-radius: 12px;
-    margin: 8px 0;
+    background: #1C1C24;
+    border: 1px solid #2A2A35;
+    color: #8C8C9E;
+    font-size: 12.5px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin: 10px 0;
     max-width: 90%;
     text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
-.message-system .welcome-info { color: #d97706; font-weight: 500; }
-.message-system .enter-info { color: #059669; font-weight: 500;}
-.message-system .left-info { color: #dc2626; font-weight: 500;}
+.message-system .welcome-info { color: #FFB340; font-weight: 600; }
+.message-system .enter-info { color: #00E676; font-weight: 600; }
+.message-system .left-info { color: #FF473A; font-weight: 600; }
 
 /* Input Area */
 #message-form {
     display: flex;
-    padding: 12px 15px;
-    background: #ffffff;
-    border-top: 1px solid #e5e7eb;
+    padding: 16px;
+    background: #1C1C24;
+    border-top: 1px solid #2A2A35;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 #usermsg {
     flex: 1;
-    border-radius: 20px;
-    border: 1px solid #d1d5db;
-    background: #f9fafb;
-    padding: 10px 16px;
-    font-size: 14px;
+    border-radius: 24px;
+    border: 1px solid #2A2A35;
+    background: #13131A;
+    color: #FFFFFF;
+    padding: 14px 20px;
+    font-size: 15px;
     outline: none;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
 }
+#usermsg::placeholder { color: #5C5C70; }
 #usermsg:focus {
-    border-color: #E94125;
-    background: #ffffff;
+    border-color: #FF473A;
+    background: #181822;
+    box-shadow: inset 0 0 0 1px rgba(255, 71, 58, 0.3);
 }
 #submitmsg {
-    background: #E94125;
+    background: linear-gradient(135deg, #FF473A, #FF2A5F);
     color: white;
     border: none;
     border-radius: 50%;
-    width: 42px;
-    height: 42px;
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: transform 0.2s, background 0.2s;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 10px rgba(255, 71, 58, 0.3);
 }
 #submitmsg:hover {
-    background: #C8351C;
-    transform: scale(1.05);
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 6px 15px rgba(255, 71, 58, 0.4);
 }
+#submitmsg i { font-size: 16px; }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
+/* Animations */
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(15px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 </style>
 
@@ -328,7 +360,7 @@ a#exit:hover {
 $(document).ready(function () {
     let currentUser = "{{ isset($_SESSION['name']) ? addslashes($_SESSION['name']) : '' }}";
     let lastScrollHeight = 0;
-    let renderedMessageCount = 0; // NEW: Track how many messages we've shown
+    let renderedMessageCount = 0; // Track how many messages we've shown
 
     if (typeof $ === 'undefined') {
         console.error("jQuery is not loaded. Please ensure jQuery is included.");
@@ -393,7 +425,7 @@ $(document).ready(function () {
                 let $temp = $('<div>').html(html);
                 let $allMessages = $temp.find('.msgln');
 
-                // NEW: Only process if there are more messages than we've already rendered
+                // Only process if there are more messages than we've already rendered
                 if ($allMessages.length > renderedMessageCount) {
                     let $newMessages = $allMessages.slice(renderedMessageCount);
                     let newFormattedHtml = parseAndRenderChat($newMessages);
