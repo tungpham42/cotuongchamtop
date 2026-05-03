@@ -1436,13 +1436,15 @@ class RoomController extends Controller
      */
     public function prepareAnonymousRoom(string $sessionId): Room
     {
+        $initialFen = env('INITIAL_FEN') ?: 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1';
+
         // 1. CLEANUP: Delete very old abandoned rooms (older than 5 mins)
         // We do this outside the transaction to keep the lock fast
         Room::whereNull('result')
             ->where('modified_at', '<', now()->subMinutes(5))
             ->delete();
 
-        return DB::transaction(function () use ($sessionId) {
+        return DB::transaction(function () use ($sessionId, $initialFen) {
             // 2. CHECK EXISTING: Is this user already in a room?
             $currentRoom = Room::where(function($query) use ($sessionId) {
                     $query->where('host_session', $sessionId)
@@ -1465,7 +1467,7 @@ class RoomController extends Controller
                 ->whereNull('guest_session')
                 ->whereNull('result')
                 ->whereNull('pass')
-                ->where('fen', '=', env('INITIAL_FEN'))
+                ->where('fen', '=', $initialFen)
                 ->where('modified_at', '>', now()->subSeconds(15))
                 ->orderBy('modified_at', 'desc') // Prioritize most active/recent host
                 ->lockForUpdate() // PREVENTS RACE CONDITION
@@ -1483,7 +1485,7 @@ class RoomController extends Controller
             // 4. CREATE: No match found, create a new room
             return Room::create([
                 'code'          => md5(time() . $sessionId . uniqid()), // Added uniqid for extra entropy
-                'fen'           => env('INITIAL_FEN'),
+                'fen'           => $initialFen,
                 'name'          => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
                 'host_session'  => $sessionId,
                 'guest_session' => null,

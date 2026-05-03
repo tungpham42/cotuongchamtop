@@ -334,10 +334,19 @@ $('#tourBtn').on('click', function(){
 //   }, {passive: false});
 // }
 document.addEventListener('touchstart touchend touchmove', function(event) {
-  event.preventDefault();
-});
+  const target = event.target;
+  const isInteractive = target.closest('button, a, input, select, textarea, .dropdown-item');
+  if (!isInteractive) {
+    event.preventDefault();
+  }
+}, {passive: false});
+
 document.oncontextmenu = function(e){
-  stopEvent(e);
+  const target = e.target;
+  const isInteractive = target.closest('button, a, input, select, textarea, .dropdown-item');
+  if (!isInteractive) {
+    stopEvent(e);
+  }
 }
 function stopEvent(event){
   if(event.preventDefault != undefined)

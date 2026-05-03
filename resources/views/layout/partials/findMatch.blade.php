@@ -15,11 +15,24 @@
     let pollInterval;
     let errorCount = 0;
 
+    @php
+        $localeSuffix = app()->getLocale() == 'vi' ? '' : '-' . app()->getLocale();
+        $quickMatchRoute = 'anonymous-quick-match' . $localeSuffix;
+        $checkStatusRoute = 'check-anonymous-match-status' . $localeSuffix;
+    @endphp
+
+    const routes = {
+        quickMatch: '{{ route($quickMatchRoute, [], false) }}',
+        checkStatus: '{{ route($checkStatusRoute, [], false) }}',
+        roomRed: '{{ localized_path("room.red", ["code" => ":code"]) }}',
+        roomBlack: '{{ localized_path("room.black", ["code" => ":code"]) }}'
+    };
+
     document.getElementById('find-match-btn').addEventListener('click', function () {
         this.disabled = true;
-        document.getElementById('match-status').innerText = 'Đang tìm đối thủ...';
+        document.getElementById('match-status').innerText = '{{ __("Đang tìm đối thủ...") }}';
 
-        axios.post('/anonymous-quick-match')
+        axios.post(routes.quickMatch)
             .then(response => {
                 if (response.data.code === 1) {
                     sessionId = response.data.session_id;
@@ -33,7 +46,7 @@
             })
             .catch(error => {
                 console.error(error);
-                document.getElementById('match-status').innerText = 'Lỗi kết nối server.';
+                document.getElementById('match-status').innerText = '{{ __("Lỗi kết nối server.") }}';
                 this.disabled = false;
             });
     });
@@ -41,14 +54,11 @@
     function startPolling() {
         let hasMatched = false;
 
-        // Poll every 1 second (1000ms) to keep the room "Alive" in the database
-        // and find matches faster.
         pollInterval = setInterval(() => {
-            axios.get('/check-anonymous-match-status', {
+            axios.get(routes.checkStatus, {
                 params: { session_id: sessionId }
             })
             .then(response => {
-                // Reset error count on success
                 errorCount = 0;
 
                 if (response.data.status === 'matched' && !hasMatched) {
@@ -56,16 +66,14 @@
                     clearInterval(pollInterval);
                     showMatchFoundModal(response.data);
                 } else if (response.data.status === 'error') {
-                    // Only stop if server explicitly says error
                     stopPolling(response.data.message);
                 }
             })
             .catch((err) => {
                 console.error(err);
                 errorCount++;
-                // Allow up to 5 consecutive failures before giving up
                 if(errorCount > 5) {
-                    stopPolling('Mất kết nối {{ __("với máy") }} chủ.');
+                    stopPolling('{{ __("Mất kết nối với máy chủ.") }}');
                 }
             });
         }, 1000);
@@ -78,21 +86,20 @@
     }
 
     function showMatchFoundModal(data) {
-        let countdown = 5; // Reduced to 5 for faster entry
+        let countdown = 5;
 
-        // Removed inline HTML string for brevity - ensure your original Modal HTML is here
         const modalHTML = `
-            <div class="modal fade" id="countdownModal" tabindex="-1" role="dialog" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal fade" id="countdownModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content text-center p-4" style="background-color: #E1BF85; border-radius: 15px;">
                         <h4 class="mb-3 text-danger">
                             <img width="42" height="42" src="/img/xiangqipieces/wiki/rK.svg" alt="{{ __("Cờ tướng") }}" class="mr-2">
-                            Đã tìm thấy đối thủ!
+                            {{ __("Đã tìm thấy đối thủ!") }}
                         </h4>
-                        <p class="fs-5 mb-3">Ván cờ sẽ bắt đầu sau:</p>
+                        <p class="fs-5 mb-3">{{ __("Ván cờ sẽ bắt đầu sau:") }}</p>
                         <div class="display-4 fw-bold text-danger" id="countdownNumber">${countdown}</div>
                         <p class="mt-3" style="color: #413E3C;">
-                            <i class="fas fa-clock"></i> Chuẩn bị sẵn sàng...
+                            <i class="fas fa-clock"></i> {{ __("Chuẩn bị sẵn sàng...") }}
                         </p>
                     </div>
                 </div>
@@ -104,8 +111,8 @@
         }
 
         const tickSound = new Audio("/sound/tick.mp3");
-        const modalEl = new bootstrap.Modal(document.getElementById('countdownModal'));
-        modalEl.show();
+        const $modal = $('#countdownModal');
+        $modal.modal('show');
 
         const countdownEl = document.getElementById("countdownNumber");
         const countdownInterval = setInterval(() => {
@@ -116,10 +123,18 @@
 
             if (countdown <= 0) {
                 clearInterval(countdownInterval);
-                modalEl.hide();
+                $modal.modal('hide');
+                
+                let targetUrl = '';
+                if (data.side === 'do' || data.side === 'red' || data.side === 'aka' || data.side === 'ppalgan' || data.side === 'hongse') {
+                    targetUrl = routes.roomRed.replace(':code', data.room_code);
+                } else {
+                    targetUrl = routes.roomBlack.replace(':code', data.room_code);
+                }
+                
                 document.getElementById('match-status').innerText =
-                    `Đã tìm thấy! Vào phòng "${data.room_name}" với quân ${data.color}.`;
-                window.location.href = `/phong/${data.room_code}/${data.side}`;
+                    `{{ __("Đã tìm thấy!") }} {{ __("Vào phòng") }} "${data.room_name}" {{ __("với quân") }} ${data.color}.`;
+                window.location.href = targetUrl;
             }
         }, 1000);
     }
