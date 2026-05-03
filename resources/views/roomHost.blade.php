@@ -19,11 +19,11 @@
   <input data-step="1" data-intro="{{ __("Ấn vào đây để mời bạn bè cùng chơi") }}" type="text" class="form-control" id="url-black" value="{{ url('/') }}/phong/{{ $roomCode }}/khach">
 </div>
 <p id="room-code" class="w-100 text-center mt-0 mb-1">
-  <span data-step="{{ __("2\" data-intro=\"Dùng mã phòng này để tìm kiếm trận đấu\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Sao chép mã phòng này nhé\"><i class=\"fad fa-trophy-alt\"></i> Mã phòng") }}: <strong style="cursor: pointer;">{{ $roomCode }}</strong></span>
+  <span data-step="2" data-intro="{{ __("Dùng mã phòng này để tìm kiếm trận đấu") }}" class="alert alert-dark d-inline-block" role="alert" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ __("Sao chép mã phòng này nhé") }}"><i class="fad fa-trophy-alt"></i> {{ __("Mã phòng") }}: <strong style="cursor: pointer;">{{ $roomCode }}</strong></span>
   <input type="hidden" id="room-code-input" value="{{ $roomCode }}">
 </p>
 @if ($room['pass'] != null)
-<div data-step="3" data-intro="Ấn vào đây để thay đổi mật khẩu" id="change-pass" class="input-group mb-4 w-50 mx-auto">
+<div data-step="3" data-intro="{{ __("Ấn vào đây để thay đổi mật khẩu") }}" id="change-pass" class="input-group mb-4 w-50 mx-auto">
   <label class="m-auto" for="inputPassword">{{ __("Mật khẩu mới") }}</label>
   <input type="password" id="inputPassword" class="form-control mx-2" />
   <button type="submit" class="btn btn-dark" onclick="validateForm();">{{ __("Đổi") }}</button>
@@ -34,7 +34,7 @@
 @section('belowContent')
 @if (!auth()->check() || (isset($room->guest_id) && auth()->id() == $room->host_id))
 <p class="w-100 text-center">
-  <a data-step="{{ __("4\" data-intro=\"Ấn vào đây nếu bạn không biết đi nước nào\" id=\"resign\" class=\"w-25 btn btn-dark btn-lg\"><i class=\"fad fa-flag\"></i> Bỏ cuộc") }}</a>
+  <a data-step="4" data-intro="{{ __("Ấn vào đây nếu bạn không biết đi nước nào") }}" id="resign" class="w-25 btn btn-dark btn-lg"><i class="fad fa-flag"></i> {{ __("Bỏ cuộc") }}</a>
 </p>
 @endif
 @include('layout.partials.kypho')

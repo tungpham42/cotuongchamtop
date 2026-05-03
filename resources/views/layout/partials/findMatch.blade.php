@@ -1,10 +1,5 @@
 <button id="find-match-btn" class="px-5 py-2 mx-auto mt-3 btn btn-lg btn-danger d-inline-block">
-    <i class="fad fa-play mr-2"></i>
-    @if ( $roomCode == '' )
-        {{ __("Tìm trận") }}
-    @else
-        {{ __("Tìm trận") }} mới
-    @endif
+    <i class="fad fa-play mr-2"></i> {{ __("Tìm trận") }}
 </button>
 <span id="match-status" class="mt-3 d-inline w-100 text-center"></span>
 
@@ -124,14 +119,14 @@
             if (countdown <= 0) {
                 clearInterval(countdownInterval);
                 $modal.modal('hide');
-                
+
                 let targetUrl = '';
                 if (data.side === 'do' || data.side === 'red' || data.side === 'aka' || data.side === 'ppalgan' || data.side === 'hongse') {
                     targetUrl = routes.roomRed.replace(':code', data.room_code);
                 } else {
                     targetUrl = routes.roomBlack.replace(':code', data.room_code);
                 }
-                
+
                 document.getElementById('match-status').innerText =
                     `{{ __("Đã tìm thấy!") }} {{ __("Vào phòng") }} "${data.room_name}" {{ __("với quân") }} ${data.color}.`;
                 window.location.href = targetUrl;

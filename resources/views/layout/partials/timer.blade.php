@@ -1,6 +1,6 @@
 <div class="timer-container">
-    <div>⏳ Đỏ: <span id="red-clock">0:00</span></div>
-    <div>⏳ Đen: <span id="black-clock">0:00</span></div>
+    <div>⏳ {{ __("Đỏ") }}: <span id="red-clock">0:00</span></div>
+    <div>⏳ {{ __("Đen") }}: <span id="black-clock">0:00</span></div>
 </div>
 
 <style>

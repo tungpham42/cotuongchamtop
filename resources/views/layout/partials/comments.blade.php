@@ -1,20 +1,48 @@
 @php
+$locale = app()->getLocale();
+$sessionPrefix = 'CoTuong_VI-';
+$folder = 'phongChatLog';
+$suffix = '-phongchatlog.html';
+$apiEndpoint = '/dangChat';
+
+if ($locale === 'en') {
+    $sessionPrefix = 'CoTuong_EN-';
+    $folder = 'roomChatLog';
+    $suffix = '-roomchatlog.html';
+    $apiEndpoint = '/postChat';
+} elseif ($locale === 'ja') {
+    $sessionPrefix = 'CoTuong_JA-';
+    $folder = 'rumuChatLog';
+    $suffix = '-rumuchatlog.html';
+    $apiEndpoint = '/postChatJa';
+} elseif ($locale === 'ko') {
+    $sessionPrefix = 'CoTuong_KO-';
+    $folder = 'bangChatLog';
+    $suffix = '-bangchatlog.html';
+    $apiEndpoint = '/postChatKo';
+} elseif ($locale === 'zh') {
+    $sessionPrefix = 'CoTuong_ZH-';
+    $folder = 'fangjianChatLog';
+    $suffix = '-fangjianchatlog.html';
+    $apiEndpoint = '/postChatZh';
+}
+
 if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_name('CoTuong_VI-'.$roomCode);
+    session_name($sessionPrefix . $roomCode);
     session_start();
 }
 
-$room_path = public_path().'/phongChatLog/'.$roomCode.'-phongchatlog.html';
-$log_path = url('/').'/phongChatLog/'.$roomCode.'-phongchatlog.html';
+$room_path = public_path() . '/' . $folder . '/' . $roomCode . $suffix;
+$log_path = url('/') . '/' . $folder . '/' . $roomCode . $suffix;
 
 if (!is_file($room_path)) {
-    $welcome_message = "<div class='msgln'><span class='chat-time'>".date("Y-m-d | H:i:s")."</span> <span class='welcome-info'>Phòng được tạo</span><br></div>";
+    $welcome_message = "<div class='msgln system-msg'><span class='chat-time'>".date("H:i")."</span> <span class='welcome-info'>👋 ".__('Phòng được tạo')."</span></div>\n";
     file_put_contents($room_path, $welcome_message);
 }
 
 if (isset($_GET['logout'])) {
     if (isset($_SESSION['name'])) {
-        $logout_message = "<div class='msgln'><span class='chat-time'>".date("Y-m-d | H:i:s")."</span> <span class='left-info'>Người dùng <b class='user-name-left'>". $_SESSION['name'] ."</b> đã rời phòng chat.</span><br></div>";
+        $logout_message = "<div class='msgln system-msg'><span class='chat-time'>".date("H:i")."</span> <span class='left-info'>".__('Người dùng')." <b>". $_SESSION['name'] ."</b> ".__('đã rời phòng chat.')."</span></div>\n";
         file_put_contents($room_path, $logout_message, FILE_APPEND | LOCK_EX);
         $_SESSION = [];
         setcookie('cotuong_name', '', time() - 3600, "/");
@@ -25,319 +53,448 @@ if (isset($_POST['enter'])) {
     if ($_POST['name'] != "") {
         $_SESSION['name'] = stripslashes(htmlspecialchars($_POST['name']));
         setcookie('cotuong_name', $_SESSION['name'], time() + (86400 * 30), "/");
-        $login_message = "<div class='msgln'><span class='chat-time'>".date("Y-m-d | H:i:s")."</span> <span class='enter-info'>Người dùng <b class='user-name-enter'>". $_SESSION['name'] ."</b> đã vào phòng chat.</span><br></div>";
+        $login_message = "<div class='msgln system-msg'><span class='chat-time'>".date("H:i")."</span> <span class='enter-info'>".__('Người dùng')." <b>". $_SESSION['name'] ."</b> ".__('đã vào phòng chat.')."</span></div>\n";
         file_put_contents($room_path, $login_message, FILE_APPEND | LOCK_EX);
     }
 }
 @endphp
 
 <style>
-#loginform form, #chat-wrapper form {
-    padding: 9px 0;
-    display: block;
-    font-size: 14px;
-}
-
-#loginform form label, #chat-wrapper form label {
-    font-size: 14px;
-    font-weight: bold;
-    margin-top: 5px;
-}
-
+/* Modern Chatbox Styles */
 #chat-wrapper {
-    margin: 0;
-    padding-bottom: 0;
-    background: #413e3b;
-    max-width: calc(100% - 150px);
-    border: 2px solid #413e3b;
-    border-radius: 4px;
-    color: #eee;
-    height: 460px;
-    float: left;
-}
-
-#loginform {
-    padding-top: 18px;
-    text-align: center;
-    border: none;
-    font-size: 14px;
-}
-
-#loginform p {
-    padding: 0;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-#chatbox {
-    text-align: left;
-    margin: 0 auto;
-    padding: 10px;
-    background: #fff;
-    height: calc(100% - 120px);
-    width: calc(100% - 20px);
-    border: 1px solid #a7a7a7;
-    overflow: auto;
-    border-radius: 4px;
-    border-bottom: 4px solid #a7a7a7
-}
-
-#loginform + #chatbox {
-    margin-bottom: 10px !important;
-}
-
-#usermsg {
-    border-radius: 4px;
-    border: 1px solid #ff9800;
-    margin-left: 9px;
-    width: calc(100% - 72px);
-    font-size: 18px;
-}
-
-#name {
-    border-radius: 4px;
-    border: 1px solid #ff9800;
-    padding: 2px 8px;
-    font-size: 18px;
-    width: calc(100% - 118px);
-}
-
-#submitmsg,
-#enter {
-    background: #ff0028;
-    border: 2px solid #ff0028;
-    color: white;
-    padding: 4px 10px 2px;
-    font-weight: bold;
-    border-radius: 4px;
-    font-size: 14px;
-    margin-right: 0;
-}
-
-.error {
-    color: #ff0000;
-    width: 100%;
-    text-align: center;
-}
-
-#menu {
-    padding: 9px;
     display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+    height: 520px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    overflow: hidden;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    float: left;
+    border: 1px solid #e5e7eb;
 }
 
+/* Login Form */
+#loginform {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 2rem;
+    text-align: center;
+    background: #f9fafb;
+}
+#loginform p {
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 1.5rem;
+}
+#loginform form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+#loginform label {
+    display: none;
+}
+#name {
+    width: 100%;
+    border-radius: 8px;
+    border: 2px solid #e5e7eb;
+    padding: 10px 14px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    outline: none;
+}
+#name:focus {
+    border-color: #E94125;
+    box-shadow: 0 0 0 3px rgba(233, 65, 37, 0.2);
+}
+#enter {
+    background: #E94125;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#enter:hover {
+    background: #C8351C;
+}
+.error {
+    color: #ef4444;
+    font-size: 13px;
+    margin-top: 10px;
+}
+
+/* Chat Header */
+#menu {
+    background: #ffffff;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    z-index: 10;
+}
 #menu p.welcome {
-    flex: 1;
+    margin: 0;
+    font-size: 15px;
+    color: #374151;
+    font-weight: 500;
 }
-
+#menu p.welcome b {
+    color: #111827;
+    font-weight: 700;
+}
 a#exit {
+    color: #4b5563;
+    background: #f3f4f6;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+a#exit:hover {
+    background: #e5e7eb;
+    color: #1f2937;
+}
+
+/* Chat Content Area */
+#chatbox {
+    flex: 1;
+    padding: 20px 15px;
+    background: #f3f4f6;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+/* Scrollbar */
+#chatbox::-webkit-scrollbar { width: 6px; }
+#chatbox::-webkit-scrollbar-track { background: transparent; }
+#chatbox::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+/* Chat Bubbles Container */
+.msg-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 80%;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Other Player (Left) */
+.message-theirs {
+    align-self: flex-start;
+}
+.message-theirs .msg-content {
+    background: #ffffff;
+    color: #1f2937;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px 16px 16px 4px;
+    padding: 10px 14px;
+    font-size: 14.5px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.message-theirs .msg-meta {
+    font-size: 11px;
+    color: #6b7280;
+    margin-bottom: 4px;
+    margin-left: 4px;
+}
+
+/* Current Player (Right) */
+.message-mine {
+    align-self: flex-end;
+}
+.message-mine .msg-content {
+    background: #E94125;
+    color: #ffffff;
+    border-radius: 16px 16px 4px 16px;
+    padding: 10px 14px;
+    font-size: 14.5px;
+    box-shadow: 0 1px 2px rgba(233, 65, 37, 0.2);
+}
+.message-mine .msg-meta {
+    font-size: 11px;
+    color: #6b7280;
+    margin-bottom: 4px;
+    margin-right: 4px;
+    text-align: right;
+}
+
+/* System Messages */
+.message-system {
+    align-self: center;
+    background: rgba(0,0,0,0.05);
+    color: #6b7280;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    margin: 8px 0;
+    max-width: 90%;
+    text-align: center;
+}
+.message-system .welcome-info { color: #d97706; font-weight: 500; }
+.message-system .enter-info { color: #059669; font-weight: 500;}
+.message-system .left-info { color: #dc2626; font-weight: 500;}
+
+/* Input Area */
+#message-form {
+    display: flex;
+    padding: 12px 15px;
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    align-items: center;
+    gap: 10px;
+}
+#usermsg {
+    flex: 1;
+    border-radius: 20px;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+    padding: 10px 16px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s;
+}
+#usermsg:focus {
+    border-color: #E94125;
+    background: #ffffff;
+}
+#submitmsg {
+    background: #E94125;
     color: white;
-    background: #c62828;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-weight: bold;
+    border: none;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+#submitmsg:hover {
+    background: #C8351C;
+    transform: scale(1.05);
 }
 
-.msgln {
-    margin: 0 0 5px 0;
-    color: #413e3b;
-}
-
-.msgln span.welcome-info {
-    color: goldenrod;
-}
-
-.msgln span.left-info {
-    color: orangered;
-}
-
-.msgln span.enter-info {
-    color: green;
-}
-
-.msgln span.chat-time {
-    color: #666;
-    font-size: 60%;
-}
-
-.msgln b.user-name, .msgln b.user-name-left, .msgln b.user-name-enter {
-    font-weight: bold;
-    background: #546e7a;
-    color: white;
-    padding: 2px 4px;
-    font-size: 90%;
-    border-radius: 4px;
-    margin: 0 5px 0 0;
-}
-
-.msgln b.user-name-left {
-    background: orangered;
-}
-
-.msgln b.user-name-enter {
-    background: green;
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 </style>
 
-@php
-if (!isset($_SESSION['name'])) {
-@endphp
 <div id="chat-wrapper">
-    <div id="loginform">
-        <p>Vui lòng nhập tên để bắt đầu chat!</p>
-        <form id="login-form" method="post" action="{{ url()->current() }}">
-            @csrf
-            <label for="name">Tên &#58;</label>
-            @if (Auth::check())
-            <input type="text" name="name" id="name" value="{{ Auth::user()->name }}" />
-            @else
-            <input type="text" name="name" id="name" value="{{ isset($_COOKIE['cotuong_name']) ? $_COOKIE['cotuong_name'] : '' }}" />
-            @endif
-            <input type="submit" name="enter" id="enter" value="Nhập" />
+    @php if (!isset($_SESSION['name'])) { @endphp
+        <div id="loginform">
+            <p>{{ __('Vui lòng nhập tên để bắt đầu chat!') }}</p>
+            <form id="login-form" method="post" action="{{ url()->current() }}">
+                @csrf
+                <input type="text" name="name" id="name" placeholder="{{ __('Tên') }}..." value="{{ Auth::check() ? Auth::user()->name : (isset($_COOKIE['cotuong_name']) ? $_COOKIE['cotuong_name'] : '') }}" />
+                <input type="submit" name="enter" id="enter" value="{{ __('Nhập') }}" />
+            </form>
+            <div id="login-error" class="error"></div>
+        </div>
+        <div id="chatbox" style="display:none;"></div>
+    @php } else { @endphp
+        <div id="menu">
+            <p class="welcome">{{ __('Chào bạn') }}, <b>@php echo $_SESSION['name']; @endphp</b></p>
+            <a id="exit" href="javascript:void(0);">{{ __("Thoát") }}</a>
+        </div>
+        <div id="chatbox"></div>
+        <form name="message" id="message-form">
+            <input name="usermsg" type="text" id="usermsg" placeholder="{{ __('Nhập tin nhắn...') }}" required="required" autocomplete="off" />
+            <button name="submitmsg" type="submit" id="submitmsg">
+                <i class="fas fa-paper-plane"></i>
+            </button>
         </form>
-        <div id="login-error" class="error"></div>
-    </div>
-    <div id="chatbox">
-        @php
-        if (file_exists($log_path) && filesize($log_path) > 0) {
-            $contents = file_get_contents($log_path);
-            echo $contents;
-        }
-        @endphp
-    </div>
+    @php } @endphp
 </div>
-@php
-} else {
-@endphp
-<div id="chat-wrapper">
-    <div id="menu">
-        <p class="welcome">Chào bạn <b>@php echo $_SESSION['name']; @endphp</b></p>
-        <p class="logout"><a id="exit" href="javascript:void(0);">{{ __("Thoát") }}</a></p>
-    </div>
-    <div id="chatbox">
-        @php
-        if (file_exists($log_path) && filesize($log_path) > 0) {
-            $contents = file_get_contents($log_path);
-            echo $contents;
-        }
-        @endphp
-    </div>
-    <form name="message" id="message-form">
-        <input name="usermsg" type="text" id="usermsg" required="required" />
-        <input name="submitmsg" type="submit" id="submitmsg" value="Gửi" />
-    </form>
-</div>
-@php
-}
-@endphp
 
 <script>
-// jQuery Document
 $(document).ready(function () {
-    // Store current username in JavaScript for client-side use
     let currentUser = "{{ isset($_SESSION['name']) ? addslashes($_SESSION['name']) : '' }}";
+    let lastScrollHeight = 0;
+    let renderedMessageCount = 0; // NEW: Track how many messages we've shown
 
-    // Ensure jQuery is loaded
     if (typeof $ === 'undefined') {
         console.error("jQuery is not loaded. Please ensure jQuery is included.");
         return;
     }
 
-    // Handle login form submission
+    // Pass only the NEW messages to this function
+    function parseAndRenderChat($newElements) {
+        let formattedHtml = '';
+
+        $newElements.each(function() {
+            let $this = $(this);
+
+            // Check if it's a system message
+            if ($this.hasClass('system-msg') || $this.find('.welcome-info, .left-info, .enter-info').length > 0) {
+                $this.addClass('msg-container message-system');
+                formattedHtml += $this.prop('outerHTML');
+                return; // Acts as continue in $.each
+            }
+
+            // Extract data for player messages
+            let $user = $this.find('.user-name');
+            if ($user.length) {
+                let userName = $user.text().trim();
+                let rawTime = $this.find('.chat-time').text().trim();
+                let timeOnly = rawTime.split('|').pop().trim(); // Just get H:i:s
+
+                // Clone to safely remove structural elements and grab just the text
+                let $clone = $this.clone();
+                $clone.find('.chat-time, .user-name').remove();
+                // Remove the trailing <br> generated by the backend
+                $clone.find('br').last().remove();
+                let msgText = $clone.html().trim();
+
+                let isMine = (userName === currentUser);
+                let bubbleClass = isMine ? 'message-mine' : 'message-theirs';
+                let metaText = isMine ? timeOnly : `<b>${userName}</b> • ${timeOnly}`;
+
+                formattedHtml += `
+                    <div class="msg-container ${bubbleClass}">
+                        <div class="msg-meta">${metaText}</div>
+                        <div class="msg-content">${msgText}</div>
+                    </div>
+                `;
+            }
+        });
+
+        return formattedHtml;
+    }
+
+    function loadLog(forceScroll = false) {
+        if ($("#chatbox").length === 0 || $("#chatbox").is(":hidden")) return;
+
+        $.ajax({
+            url: "{{ $log_path }}",
+            cache: false,
+            success: function (html) {
+                let chatbox = $("#chatbox")[0];
+                let isScrolledToBottom = chatbox.scrollHeight - chatbox.clientHeight <= chatbox.scrollTop + 50;
+
+                // Load HTML into a temporary element and extract the lines
+                let $temp = $('<div>').html(html);
+                let $allMessages = $temp.find('.msgln');
+
+                // NEW: Only process if there are more messages than we've already rendered
+                if ($allMessages.length > renderedMessageCount) {
+                    let $newMessages = $allMessages.slice(renderedMessageCount);
+                    let newFormattedHtml = parseAndRenderChat($newMessages);
+
+                    // APPEND instead of replacing everything to prevent flickering
+                    $("#chatbox").append(newFormattedHtml);
+
+                    // Update our count
+                    renderedMessageCount = $allMessages.length;
+
+                    // Auto-scroll logic
+                    if (forceScroll || isScrolledToBottom || lastScrollHeight === 0) {
+                        chatbox.scrollTop = chatbox.scrollHeight;
+                    }
+                    lastScrollHeight = chatbox.scrollHeight;
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error loading chat log:", xhr, status, error);
+            }
+        });
+    }
+
+    // Initial log load
+    if (currentUser !== "") {
+        loadLog(true);
+        setInterval(() => loadLog(false), 1500); // Polling
+    }
+
+    // Login Handler
     $(document).on("submit", "#login-form", function (e) {
-        e.preventDefault(); // Prevent default form submission
-        e.stopImmediatePropagation(); // Stop any other handlers
+        e.preventDefault();
+        e.stopImmediatePropagation();
 
         const name = $("#name").val().trim();
         if (name === "") {
-            $("#login-error").text("Vui lòng điền tên");
+            $("#login-error").text("{{ __('Vui lòng điền tên') }}");
             return false;
         }
 
-        // Update UI immediately
         currentUser = name;
+        // Reset rendered count when dynamically mounting the chat interface
+        renderedMessageCount = 0;
+
         $("#chat-wrapper").html(`
             <div id="menu">
-                <p class="welcome">Chào bạn <b>${name}</b></p>
-                <p class="logout"><a id="exit" href="javascript:void(0);">{{ __("Thoát") }}</a></p>
+                <p class="welcome">{{ __('Chào bạn') }}, <b>${name}</b></p>
+                <a id="exit" href="javascript:void(0);">{{ __("Thoát") }}</a>
             </div>
             <div id="chatbox"></div>
             <form name="message" id="message-form">
-                <input name="usermsg" type="text" id="usermsg" required="required" />
-                <input name="submitmsg" type="submit" id="submitmsg" value="Gửi" />
+                <input name="usermsg" type="text" id="usermsg" placeholder="{{ __('Nhập tin nhắn...') }}" required="required" autocomplete="off" />
+                <button name="submitmsg" type="submit" id="submitmsg">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </form>
         `);
 
-        // Submit login to server via AJAX
         $.ajax({
             url: "{{ url()->current() }}",
             type: "POST",
             data: {
                 _token: "{{ csrf_token() }}",
                 name: name,
-                enter: "Nhập"
+                enter: "{{ __('Nhập') }}"
             },
-            success: function (response) {
-                console.log("Login successful:", response);
-                loadLog(); // Load chat log after successful login
+            success: function () {
+                loadLog(true);
+                setInterval(() => loadLog(false), 1500);
             },
-            error: function (xhr, status, error) {
-                console.error("Login error:", xhr, status, error);
-                $("#login-error").text("Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại.");
-                // Revert UI if login fails
-                $("#chat-wrapper").html(`
-                    <div id="loginform">
-                        <p>Vui lòng nhập tên để bắt đầu chat!</p>
-                        <form id="login-form" method="post">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <label for="name">Tên &#58;</label>
-                            <input type="text" name="name" id="name" value="${name}" />
-                            <input type="submit" name="enter" id="enter" value="Nhập" />
-                        </form>
-                        <div id="login-error" class="error">Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại.</div>
-                    </div>
-                    <div id="chatbox"></div>
-                `);
+            error: function () {
+                $("#login-error").text("{{ __('Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại.') }}");
+                location.reload();
             }
         });
-
         return false;
     });
 
-    // Handle message submission
+    // Send Message Handler
     $("#chat-wrapper").on("submit", "#message-form", function (e) {
         e.preventDefault();
         const clientmsg = $("#usermsg").val().trim();
-        if (clientmsg === "") {
-            bootbox.alert({
-                message: "Vui lòng nhập tin nhắn.",
-                size: 'small',
-                centerVertical: true,
-                locale: 'vi',
-                closeButton: false,
-                buttons: {
-                    ok: {
-                        className: 'btn-danger pulse-red'
-                    }
-                }
-            });
-            return false;
-        }
+        if (clientmsg === "") return false;
 
-        // Submit message to server
-        $.post("{{ url('/api') }}/dangChat", {
+        $.post("{{ url('/api') }}{{ $apiEndpoint }}", {
             roomCode: "{{ $roomCode }}",
             text: clientmsg,
             _token: "{{ csrf_token() }}"
+        }, function() {
+            loadLog(true); // Force scroll on own message send
         });
+
         $("#usermsg").val("");
         return false;
     });
 
-    // Handle logout
+    // Exit/Logout Handler
     $("#chat-wrapper").on("click", "#exit", function (e) {
         e.preventDefault();
         bootbox.confirm({
-            message: "{{ __("Thoát") }} khỏi phòng chat?",
+            message: "{{ __('Thoát') }} {{ __('khỏi phòng chat?') }}",
             centerVertical: true,
             locale: 'vi',
             closeButton: false,
@@ -347,29 +504,12 @@ $(document).ready(function () {
                     className: 'btn-danger pulse-red'
                 },
                 cancel: {
-                    label: '<i class="fas fa-times"></i> Hủy',
+                    label: '<i class="fas fa-times"></i> {{ __("Hủy") }}',
                     className: 'btn-dark text-light'
                 }
             },
             callback: function (result) {
                 if (result) {
-                    // Update UI immediately
-                    currentUser = "";
-                    $("#chat-wrapper").html(`
-                        <div id="loginform">
-                            <p>Vui lòng nhập tên để bắt đầu chat!</p>
-                            <form id="login-form" method="post">
-                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                <label for="name">Tên &#58;</label>
-                                <input type="text" name="name" id="name" value="" />
-                                <input type="submit" name="enter" id="enter" value="Nhập" />
-                            </form>
-                            <div id="login-error" class="error"></div>
-                        </div>
-                        <div id="chatbox"></div>
-                    `);
-
-                    // Submit logout to server via AJAX
                     $.ajax({
                         url: "{{ url()->current() }}?logout=true",
                         type: "POST",
@@ -377,39 +517,13 @@ $(document).ready(function () {
                             _token: "{{ csrf_token() }}",
                             logout: true
                         },
-                        success: function (response) {
-                            console.log("Logout successful:", response);
-                            loadLog(); // Load chat log after successful logout
-                        },
-                        error: function (xhr, status, error) {
-                            console.error("Logout error:", xhr, status, error);
-                            $("#login-error").text("Đã xảy ra lỗi khi thoát. Vui lòng thử lại.");
+                        success: function () {
+                            location.reload();
                         }
                     });
                 }
             }
         });
     });
-
-    // Load chat log
-    function loadLog() {
-        var oldscrollHeight = $("#chatbox")[0].scrollHeight - 20; // Scroll height before the request
-        $.ajax({
-            url: "{{ $log_path }}",
-            cache: false,
-            success: function (html) {
-                $("#chatbox").html(html); // Insert chat log into the #chatbox div
-                var newscrollHeight = $("#chatbox")[0].scrollHeight - 20; // Scroll height after the request
-                if (newscrollHeight > oldscrollHeight) {
-                    $("#chatbox").animate({ scrollTop: newscrollHeight }, 'normal'); // Autoscroll to bottom
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Error loading chat log:", xhr, status, error);
-            }
-        });
-    }
-
-    setInterval(loadLog, 1000);
 });
 </script>

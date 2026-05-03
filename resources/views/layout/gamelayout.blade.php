@@ -37,7 +37,7 @@
     @endif
     <main>
       @include('common.xiangqiBanner')
-      <span id="checkmateText">Chiếu!</span>
+      <span id="checkmateText">{{ __('Chiếu!') }}</span>
       <div class="container-fluid game px-0" itemscope itemtype="http://schema.org/Game">
         <div class="container {{ isset($board) ? 'px-3 pb-0 pt-3' : 'p-3' }}">
           <audio id="nuoc-co">
@@ -90,7 +90,7 @@
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-5 mt-sm-5 mt-xs-5">
               @include('layout.partials.comments')
-              @include('common.sideAds')
+              {{-- @include('common.sideAds') --}}
             </div>
           </div>
           @endif
@@ -100,7 +100,7 @@
               <p class="w-100 text-center my-3">
                 @if (!isset($room->result) && isset($room->host_id))
                   @if (auth()->check())
-                  <a id="choi" class="btn btn-danger text-light btn-lg showPromotion mx-auto" href="javascript:joinMatch('{{ $roomCode }}')"><i class="fad fa-mouse"></i> Chơi</a>
+                  <a id="choi" class="btn btn-danger text-light btn-lg showPromotion mx-auto" href="javascript:joinMatch('{{ $roomCode }}')"><i class="fad fa-mouse"></i> {{ __('Chơi') }}</a>
                   <script>
                     function joinMatch(roomCode) {
                       var hostId = '';
@@ -126,7 +126,7 @@
                             dataType: 'text'
                           }).done(function() {
                             bootbox.alert({
-                              message: "Hãy chuẩn bị vào phòng!",
+                              message: "{{ __('Hãy chuẩn bị vào phòng!') }}",
                               size: 'small',
                               centerVertical: true,
                               closeButton: false,
@@ -143,7 +143,7 @@
                           });
                         } else if (guestId == '{{ auth()->id() }}') {
                           bootbox.alert({
-                            message: "Mời bạn quay lại phòng!",
+                            message: "{{ __('Mời bạn quay lại phòng!') }}",
                             size: 'small',
                             centerVertical: true,
                             closeButton: false,
@@ -159,7 +159,7 @@
                           });
                         } else if (hostId == '{{ auth()->id() }}') {
                           bootbox.alert({
-                            message: "Mời bạn vào lại phòng của mình!",
+                            message: "{{ __('Mời bạn vào lại phòng của mình!') }}",
                             size: 'small',
                             centerVertical: true,
                             closeButton: false,
@@ -178,10 +178,10 @@
                     }
                   </script>
                   @else
-                  <a class="btn btn-danger text-light btn-lg showPromotion thi-dau" href="{{ url('/dang-nhap') }}" data-toggle="tooltip" data-placement="top" title="{{ __("Đăng nhập") }} để thi {{ __("đấu") }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
+                  <a class="btn btn-danger text-light btn-lg showPromotion thi-dau" href="{{ url('/dang-nhap') }}" data-toggle="tooltip" data-placement="top" title="{{ __('Đăng nhập để thi đấu') }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
                   @endif
                 @else
-                <a class="btn btn-danger text-light btn-lg showPromotion mx-auto rooms-list" href="{{ URL::to('/sanh-cho') }}"><i class="fad fa-chevron-circle-left"></i> Quay lại sảnh chờ</a>
+                <a class="btn btn-danger text-light btn-lg showPromotion mx-auto rooms-list" href="{{ URL::to('/sanh-cho') }}"><i class="fad fa-chevron-circle-left"></i> {{ __("Quay lại sảnh chờ") }}</a>
                 @endif
                 @include('common.volumeBtn')
                 @include('common.tourBtn')
@@ -204,7 +204,7 @@
                   e.preventDefault();
 
                   if (typeof game === 'undefined') {
-                    bootbox.alert("Chưa tải được dữ liệu bàn cờ.");
+                    bootbox.alert("{{ __('Chưa tải được dữ liệu bàn cờ.') }}");
                     return;
                   }
 
@@ -212,7 +212,7 @@
                   var currentFen = game.fen();
 
                   if (!currentFen) {
-                    bootbox.alert("Không lấy được mã FEN.");
+                    bootbox.alert("{{ __('Không lấy được mã FEN.') }}");
                     return;
                   }
 
@@ -231,14 +231,14 @@
                   }).done(function(data){
                     if (data == 'no') {
                       bootbox.prompt({
-                        title: "Mời đặt tên cho Phòng thi {{ __("đấu") }}:",
+                        title: "{{ __('Mời đặt tên cho Phòng thi đấu:') }}",
                         locale: 'vi',
                         centerVertical: true,
                         closeButton: false,
                         maxlength: 32,
                         buttons: {
                           confirm: {
-                            label: '<i class="fas fa-check"></i> Đặt tên',
+                            label: '<i class="fas fa-check"></i> {{ __('Đặt tên') }}',
                             className: 'btn-danger'
                           }
                         },
@@ -246,14 +246,15 @@
                           if (roomName != null) {
                             if (roomName.trim().length === 0 || roomName.length === 0) {
                               bootbox.alert({
-                                message: "Vui lòng đặt tên cho phòng!",
+                                message: "{{ __('Vui lòng đặt tên cho phòng!') }}",
                                 size: 'small',
                                 locale: 'vi',
                                 centerVertical: true,
                                 closeButton: false,
                                 buttons: {
                                   ok: {
-                                    className: 'btn-danger'
+                                    className: 'btn-danger',
+                                    label: '{{ __('Oki') }}'
                                   }
                                 },
                                 callback: function () {
@@ -274,7 +275,7 @@
                                 dataType: 'text'
                               }).done(function() {
                                 bootbox.alert({
-                                  message: "Bạn đã tạo phòng thành công.",
+                                  message: "{{ __('Bạn đã tạo phòng thành công.') }}",
                                   size: 'small',
                                   centerVertical: true,
                                   closeButton: false,
@@ -295,7 +296,7 @@
                       });
                     } else if (data == 'yes') {
                       bootbox.alert({
-                        message: "Mã phòng bị trùng, vui lòng thử lại.",
+                        message: "{{ __('Mã phòng bị trùng, vui lòng thử lại.') }}",
                         size: 'small',
                         centerVertical: true,
                         closeButton: false,

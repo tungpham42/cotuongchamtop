@@ -7,7 +7,7 @@
     </div>
     <h2 class="h1-responsivefooter text-center my-4">{{ __("Sảnh chờ") }}</h2>
     <div class="dropdown mx-auto text-center mb-3">
-      <button data-step="1" data-intro="Ấn vào đây để tham gia thi {{ __("đấu") }} với các kỳ thủ khác" class="btn btn-danger btn-lg dropdown-toggle pulse-red" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button data-step="1" data-intro="{{ __('Ấn vào đây để tham gia thi đấu với các kỳ thủ khác') }}" class="btn btn-danger btn-lg dropdown-toggle pulse-red" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span data-toggle="tooltip" data-placement="top" title="{{ __("Đấu với bạn bè trong phòng") }}"><i class="fad fa-gamepad-alt"></i> {{ __("Chơi online") }}</span>
       </button>
       <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/') }}/phong/{{ md5(time()) }}">
@@ -16,9 +16,9 @@
         @else
         <a id="create-room" data-toggle="tooltip" data-placement="bottom" title="{{ __("Thi đấu tính điểm và xếp hạng") }}" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="javascript:createRoom();"><i class="fas fa-trophy-alt text-dark"></i> {{ __("Thi đấu") }}</a>
         @endif
-        <a data-toggle="tooltip" data-placement="bottom" title="Chơi cần mật khẩu" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> {{ __("Riêng tư") }}</a>
+        <a data-toggle="tooltip" data-placement="bottom" title="{{ __('Chơi cần mật khẩu') }}" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> {{ __("Riêng tư") }}</a>
         @if ($randomRoom != null)
-        <a data-toggle="tooltip" data-placement="bottom" title="Chơi trong phòng Công khai ngẫu nhiên" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ URL::to('/') }}/phong/{{ $randomRoom['code'] }}/ngau-nhien"><i class="fas fa-random text-dark"></i> {{ __("Ngẫu nhiên") }}</a>
+        <a data-toggle="tooltip" data-placement="bottom" title="{{ __('Chơi trong phòng Công khai ngẫu nhiên') }}" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ URL::to('/') }}/phong/{{ $randomRoom['code'] }}/ngau-nhien"><i class="fas fa-random text-dark"></i> {{ __("Ngẫu nhiên") }}</a>
         @endif
       </div>
       @include('common.tourBtn')
@@ -59,14 +59,14 @@
 </div>
 <script>
 $(document).ready(function () {
-  console.log('List URL: ' + '{{ route('roomsVi.list') }}');
+  console.log('List URL: ' + '{{ route(__('rooms_list_route')) }}');
   var table = $('#danh-sach-phong').DataTable({
     processing: true,
     serverSide: true,
     ordering: true,
     searching: true,
     ajax: {
-      url: "{{ route('roomsVi.list') }}"
+      url: "{{ route(__('rooms_list_route')) }}"
     },
     deferRender: true,
     columns: [
@@ -107,7 +107,7 @@ $(document).ready(function () {
       }
     ],
     'language': {
-      'url': '{{ URL::to('/') }}/js/TableVn.json?v=1'
+      'url': '{{ URL::to('/') }}{{ __('table_lang_url') }}'
     },
     'createdRow': function(row, data, dataIndex) {
       var selectedFen = $(row).find('td.room-code > a').attr('data-fen');
@@ -203,14 +203,14 @@ function createRoom() {
   }).done(function(data){
     if (data == 'no') {
       bootbox.prompt({
-        title: "Mời đặt tên cho Phòng thi {{ __("đấu") }}:",
+        title: "{{ __('Mời đặt tên cho Phòng thi đấu:') }}",
         locale: 'vi',
         centerVertical: true,
         closeButton: false,
         maxlength: 32,
         buttons: {
           confirm: {
-            label: '<i class="fas fa-check"></i> Đặt tên',
+            label: '<i class="fas fa-check"></i> {{ __("Đặt tên") }}',
             className: 'btn-danger pulse-red'
           }
         },
@@ -218,7 +218,7 @@ function createRoom() {
           if (roomName != null) {
             if (roomName.trim().length === 0 || roomName.length === 0) {
               bootbox.alert({
-                message: "Vui lòng đặt tên cho phòng!",
+                message: "{{ __('Vui lòng đặt tên cho phòng!') }}",
                 size: 'small',
                 locale: 'vi',
                 centerVertical: true,
@@ -246,7 +246,7 @@ function createRoom() {
                 dataType: 'text'
               }).done(function() {
                 bootbox.alert({
-                  message: "Bạn đã tạo phòng thành công.",
+                  message: "{{ __('Bạn đã tạo phòng thành công.') }}",
                   size: 'small',
                   centerVertical: true,
                   closeButton: false,
@@ -267,7 +267,7 @@ function createRoom() {
       });
     } else if (data == 'yes') {
       bootbox.alert({
-        message: "Mã phòng bị trùng, vui lòng thử lại.",
+        message: "{{ __('Mã phòng bị trùng, vui lòng thử lại.') }}",
         size: 'small',
         centerVertical: true,
         closeButton: false,
@@ -310,7 +310,7 @@ function joinMatch(roomCode) {
         dataType: 'text'
       }).done(function() {
         bootbox.alert({
-          message: "Hãy chuẩn bị vào phòng!",
+          message: "{{ __('Hãy chuẩn bị vào phòng!') }}",
           size: 'small',
           centerVertical: true,
           closeButton: false,
@@ -327,7 +327,7 @@ function joinMatch(roomCode) {
       });
     } else if (guestId == '{{ auth()->id() }}') {
       bootbox.alert({
-        message: "Mời bạn quay lại phòng!",
+        message: "{{ __('Mời bạn quay lại phòng!') }}",
         size: 'small',
         centerVertical: true,
         closeButton: false,
@@ -343,7 +343,7 @@ function joinMatch(roomCode) {
       });
     } else if (hostId == '{{ auth()->id() }}') {
       bootbox.alert({
-        message: "Mời bạn vào lại phòng của mình!",
+        message: "{{ __('Mời bạn vào lại phòng của mình!') }}",
         size: 'small',
         centerVertical: true,
         closeButton: false,
@@ -363,8 +363,6 @@ function joinMatch(roomCode) {
 @endif
 </script>
 <input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ URL::to('/') }}" >
-{{-- @include('layout.partials.userPuzzlesWrapper') --}}
-{{-- @include('layout.partials.userPuzzles') --}}
 @include('layout.partials.players')
 @include('layout.partials.boards')
 @include('layout.partials.playedBoards')

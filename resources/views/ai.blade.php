@@ -74,7 +74,7 @@ $action = $actionMap[$level ?? '3'] ?? 'chơi';
   <a data-step="3" data-intro="Ấn vào đây để quay lại nước trước đó" id="undo" class="w-25 btn btn-dark btn-lg"><i class="fad fa-undo-alt"></i> {{ __("Đi lại") }}</a>
 </p>
 <p class="w-100 text-center mt-0 mb-1">
-  <a data-step="5" data-intro="Nơi luyện tập với chính mình nhé" class="w-25 btn btn-dark btn-lg showPromotion" href="{{ url('/choi-mot-minh') }}"><i class="fad fa-user"></i> {{ __("Một mình") }}</a>
+  <a data-step="5" data-intro="Nơi luyện tập với chính mình nhé" class="w-25 btn btn-dark btn-lg showPromotion" href="{{ url('/' . __('choi-mot-minh')) }}"><i class="fad fa-user"></i> {{ __("Một mình") }}</a>
   <a data-step="4" data-intro="Ấn vào đây để {{ __("chơi") }} lại từ đầu" id="reset" class="w-25 btn btn-dark btn-lg"><i class="fad fa-redo-alt"></i> {{ __("Chơi lại") }}</a>
 </p>
 @include('layout.partials.kypho')
@@ -255,7 +255,7 @@ function onSnapEnd () {
 
 function updateStatus () {
   var status = '';
-  var moveColor = 'Đỏ';
+  var moveColor = '{{ __("Đỏ") }}';
 
   if (game.turn() === 'b') {
     moveColor = '{{ __("Đen") }}';
@@ -271,7 +271,7 @@ function updateStatus () {
   }
   // game still on
   else {
-    status = '{{ __("Tới lượt") }} ' + moveColor + ' đi';
+    status = '{{ __("Tới lượt:") }} ' + moveColor;
 
     // check?
     if (game.in_check()) {

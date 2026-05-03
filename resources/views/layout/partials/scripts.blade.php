@@ -12,23 +12,23 @@ $.ajaxSetup({
   }
 });
 var locale = {
-  OK: '<i class="fas fa-check"></i> Đồng ý',
-  CONFIRM: '<i class="fas fa-check"></i> Chấp nhận',
-  CANCEL: '<i class="fas fa-times"></i> Hủy'
+  OK: '<i class="fas fa-check"></i> {{ __('Đồng ý') }}',
+  CONFIRM: '<i class="fas fa-check"></i> {{ __('Chấp nhận') }}',
+  CANCEL: '<i class="fas fa-times"></i> {{ __('Hủy') }}'
 };
-bootbox.addLocale('vi', locale);
+bootbox.addLocale('{{ __('vi') }}', locale);
 
 $('#tao-phong-public').on('click auxclick', function(e) {
   e.preventDefault();
   bootbox.prompt({
-    title: "Mời đặt tên cho Phòng công khai:",
-    locale: 'vi',
+    title: "{{ __('Mời đặt tên cho Phòng công khai') }}:",
+    locale: '{{ __('vi') }}',
     centerVertical: true,
     closeButton: false,
     maxlength: 32,
     buttons: {
       confirm: {
-        label: '<i class="fas fa-check"></i> Đặt tên',
+        label: '<i class="fas fa-check"></i> {{ __('Đặt tên') }}',
         className: 'btn-lg btn-danger pulse-red'
       },
       cancel: {
@@ -39,7 +39,7 @@ $('#tao-phong-public').on('click auxclick', function(e) {
       if (roomName != null) {
         if (roomName.trim().length === 0 || roomName.length === 0) {
           bootbox.alert({
-            message: "Vui lòng đặt tên cho phòng!",
+            message: "{{ __('Vui lòng đặt tên cho phòng!') }}",
             size: 'small',
             locale: 'vi',
             centerVertical: true,
@@ -65,9 +65,6 @@ $('#tao-phong-public').on('click auxclick', function(e) {
             },
             dataType: 'text'
           }).done(function() {
-            // $('#AdSenseModal').attr('data-url', $('#tao-phong').attr('data-url')).modal('show');
-            // $('#adModalCloseBtn').attr('data-original-title', $('#AdSenseModal').attr('data-url'));
-            // $('#adModalCloseBtn').tooltip();
             window.location.href = $('#tao-phong').attr('data-url');
           });
         }
@@ -78,14 +75,14 @@ $('#tao-phong-public').on('click auxclick', function(e) {
 $('#tao-phong-private').on('click auxclick', function(e) {
   e.preventDefault();
   bootbox.prompt({
-    title: "Mời đặt tên cho Phòng riêng tư:",
-    locale: 'vi',
+    title: "{{ __('Mời đặt tên cho Phòng riêng tư') }}:",
+    locale: '{{ __('vi') }}',
     centerVertical: true,
     closeButton: false,
     maxlength: 32,
     buttons: {
       confirm: {
-        label: '<i class="fas fa-check"></i> Đặt tên',
+        label: '<i class="fas fa-check"></i> {{ __('Đặt tên') }}',
         className: 'btn-lg btn-danger pulse-red'
       },
       cancel: {
@@ -96,9 +93,9 @@ $('#tao-phong-private').on('click auxclick', function(e) {
       if (roomName != null) {
         if (roomName.trim().length === 0 || roomName.length === 0) {
           bootbox.alert({
-            message: "Vui lòng đặt tên cho phòng!",
+            message: "{{ __('Vui lòng đặt tên cho phòng!') }}",
             size: 'small',
-            locale: 'vi',
+            locale: '{{ __('vi') }}',
             centerVertical: true,
             closeButton: false,
             buttons: {
@@ -112,13 +109,13 @@ $('#tao-phong-private').on('click auxclick', function(e) {
           });
         } else {
           bootbox.prompt({
-            title: 'Mời tạo mật khẩu cho Phòng "' + roomName + '":',
-            locale: 'vi',
+            title: '{{ __('Mời tạo mật khẩu cho Phòng') }} "' + roomName + '":',
+            locale: '{{ __('vi') }}',
             centerVertical: true,
             closeButton: false,
             buttons: {
               confirm: {
-                label: '<i class="fas fa-check"></i> Tạo',
+                label: '<i class="fas fa-check"></i> {{ __('Tạo') }}',
                 className: 'btn-lg btn-danger pulse-red'
               },
               cancel: {
@@ -130,9 +127,9 @@ $('#tao-phong-private').on('click auxclick', function(e) {
               if (password != null) {
                 if (password.trim().length === 0 || password.length === 0) {
                   bootbox.alert({
-                    message: "Vui lòng nhập mật khẩu. {{ __("Sau") }} đó gửi mật khẩu này cho bạn bè nhé.",
+                    message: "{{ __('Vui lòng nhập mật khẩu. Sau đó gửi mật khẩu này cho bạn bè nhé.') }}",
                     size: 'small',
-                    locale: 'vi',
+                    locale: '{{ __('vi') }}',
                     centerVertical: true,
                     closeButton: false,
                     buttons: {
@@ -156,9 +153,6 @@ $('#tao-phong-private').on('click auxclick', function(e) {
                     },
                     dataType: 'text'
                   }).done(function() {
-                    // $('#AdSenseModal').attr('data-url', $('#tao-phong').attr('data-url')).modal('show');
-                    // $('#adModalCloseBtn').attr('data-original-title', $('#AdSenseModal').attr('data-url'));
-                    // $('#adModalCloseBtn').tooltip();
                     window.location.href = $('#tao-phong').attr('data-url');
                   });
                 }
@@ -182,13 +176,13 @@ function showLatestRoom(offset, newCode) {
   }).done(function(data){
     if (data.room.code != '{{ $roomCode }}' && data.room.code != newCode) {
       var htmlContent = `
-        <button id="join-room" class="btn btn-lg btn-danger float-right ml-2"><i class="fas fa-sign-in-alt"></i> Vào</button>
-        <button id="cancel-room" class="btn btn-lg btn-dark float-right"><i class="fas fa-times"></i> Hủy</button>
+        <button id="join-room" class="btn btn-lg btn-danger float-right ml-2"><i class="fas fa-sign-in-alt"></i> {{ __('Vào') }}</button>
+        <button id="cancel-room" class="btn btn-lg btn-dark float-right"><i class="fas fa-times"></i> {{ __('Hủy') }}</button>
       `;
       var dialog = bootbox.dialog({
-        title: 'Bạn được thách {{ __("đấu") }} tại "' + data.room.name + '"!',
+        title: '{{ __('Bạn được thách đấu tại') }} "' + data.room.name + '"!',
         message: htmlContent,
-        locale: 'vi',
+        locale: '{{ __('vi') }}',
         size: 'small',
         centerVertical: true,
         closeButton: false
@@ -196,20 +190,10 @@ function showLatestRoom(offset, newCode) {
       dialog.find("#join-room").on('click', function() {
         if (data.color == 'red') {
           dialog.modal("hide");
-          // $('#AdSenseModal').attr('data-url', "{{ url('/') }}" + '/phong/' + data.room.code + '/do').modal('show');
-          // $('#AdSenseModal').on('shown.bs.modal', function (event) {
-          //   $('#adModalCloseBtn').attr('data-original-title', 'Mời Đỏ đi tiếp trong phòng "' + data.room.name + '"');
-          //   $('#adModalCloseBtn').tooltip();
-          // })
-          window.location.href = "{{ url('/') }}" + '/phong/' + data.room.code + '/do';
+          window.location.href = "{{ url('/') }}" + '{{ __('/phong/') }}' + data.room.code + '{{ __('/do') }}';
         } else if (data.color == 'black') {
           dialog.modal("hide");
-          // $('#AdSenseModal').attr('data-url', "{{ url('/') }}" + '/phong/' + data.room.code + '/den').modal('show');
-          // $('#AdSenseModal').on('shown.bs.modal', function (event) {
-          //   $('#adModalCloseBtn').attr('data-original-title', 'Mời Đen đi tiếp trong phòng "' + data.room.name + '"');
-          //   $('#adModalCloseBtn').tooltip();
-          // })
-          window.location.href = "{{ url('/') }}" + '/phong/' + data.room.code + '/den';
+          window.location.href = "{{ url('/') }}" + '{{ __('/phong/') }}' + data.room.code + '{{ __('/den') }}';
         }
       });
 
@@ -223,14 +207,14 @@ function showLatestRoom(offset, newCode) {
             showLatestRoom(offset + 1, data.room.code);
           } else if (offset == {{ env('ROOM_OFFSET') }} && !window.location.href.toLowerCase().includes('sanh-cho')) {
             bootbox.confirm({
-              message: "Vào sảnh chờ!",
+              message: "{{ __('Vào sảnh chờ!') }}",
               size: 'small',
               locale: 'vi',
               centerVertical: true,
               closeButton: false,
               buttons: {
                 confirm: {
-                  label: '<i class="fas fa-check"></i> Vào',
+                  label: '<i class="fas fa-check"></i> {{ __('Vào') }}',
                   className: 'btn-lg btn-danger pulse-red rooms-list'
                 },
                 cancel: {
@@ -240,12 +224,7 @@ function showLatestRoom(offset, newCode) {
               },
               callback: function (result) {
                 if (result == true) {
-                  // $('#AdSenseModal').attr('data-url', "{{ url('/sanh-cho') }}").modal('show');
-                  // $('#AdSenseModal').on('shown.bs.modal', function (event) {
-                  //   $('#adModalCloseBtn').attr('data-original-title', 'Mời vào {{ __("Sảnh chờ") }}!');
-                  //   $('#adModalCloseBtn').tooltip();
-                  // });
-                  window.location.href = "{{ url('/sanh-cho') }}";
+                  window.location.href = "{{ url(__('/sanh-cho')) }}";
                 }
               }
             });
@@ -255,21 +234,13 @@ function showLatestRoom(offset, newCode) {
     }
   });
 }
-// window.onscroll = function() {
-//   if (window.innerHeight + window.pageYOffset >= (document.body.offsetHeight / 3)) {
-//     showLatestRoom(0, '{{ $roomCode }}');
-//     window.onscroll = null;
-//   }
-// }
 @endif
 $('#random-room').on('click auxclick', function(e) {
   e.preventDefault();
-  // $('#AdSenseModal').attr('data-url', $(this).attr('href')).modal('show');
   window.location.href = $(this).attr('href');
 });
 $('#room-list').on('click auxclick', function(e) {
   e.preventDefault();
-  // $('#AdSenseModal').attr('data-url', $(this).attr('href')).modal('show');
   window.location.href = $(this).attr('href');
 });
 $('#copy-url-red').on('click', function() {
@@ -293,8 +264,8 @@ const hetTran = document.getElementById("het-tran");
 $(function () {
   $('.dropdown-toggle').dropdown();
   if (!Modernizr.touch) {
-    $('#volumeSwitch').attr('title', 'Ấn vào đây để bật/tắt âm lượng');
-    $('#tourBtn').attr('title', 'Ấn vào đây để được hướng dẫn sử dụng trang web');
+    $('#volumeSwitch').attr('title', '{{ __('Ấn vào đây để bật/tắt âm lượng') }}');
+    $('#tourBtn').attr('title', '{{ __('Ấn vào đây để được hướng dẫn sử dụng trang web') }}');
     $('[data-toggle="tooltip"]').tooltip();
     document.addEventListener('contextmenu', function(e) {
       e.preventDefault();
@@ -321,18 +292,12 @@ $(function () {
   });
 });
 $('#tourBtn').on('click', function(){
-  introJs().setOptions({"nextLabel": "{{ __("Sau") }}", "prevLabel": "{{ __("Trước") }}", "skipLabel": "Bỏ qua", "doneLabel": "Hoàn tất", "showProgress": true, "showButtons": true, "showBullets": true, "exitOnOverlayClick": true, "hidePrev": true, "hideNext": true, "disableInteraction": true}).onskip(function(){
+  introJs().setOptions({"nextLabel": "{{ __('Sau') }}", "prevLabel": "{{ __('Trước') }}", "skipLabel": "{{ __('Bỏ qua') }}", "doneLabel": "{{ __('Hoàn tất') }}", "showProgress": true, "showButtons": true, "showBullets": true, "exitOnOverlayClick": true, "hidePrev": true, "hideNext": true, "disableInteraction": true}).onskip(function(){
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }).onexit(function(){
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }).start();
 });
-// var is_iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-// if (is_iOS) {
-//   document.addEventListener('touchstart touchend touchcancel touchmove', event => {
-//     event.preventDefault();
-//   }, {passive: false});
-// }
 document.addEventListener('touchstart touchend touchmove', function(event) {
   const target = event.target;
   const isInteractive = target.closest('button, a, input, select, textarea, .dropdown-item');
@@ -368,6 +333,4 @@ window.onload = () => {
   }
 }
 </script>
-<!-- Go to www.addthis.com/dashboard to customize your tools -->
-<!-- <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-62e5116d104f368b"></script> -->
 <script src='https://platform-api.sharethis.com/js/sharethis.js#property=646aee4bd8c6d2001a06c2f8&product=sticky-share-buttons' async='async'></script>

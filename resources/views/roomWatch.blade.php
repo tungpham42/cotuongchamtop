@@ -9,7 +9,7 @@
 @endsection
 @section('aboveContent')
 <p id="room-code" class="w-100 text-center mt-0 mb-1">
-  <span data-step="{{ __("1\" data-intro=\"Dùng mã phòng này để tìm kiếm trận đấu\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Sao chép mã phòng này nhé\"><i class=\"fad fa-trophy-alt\"></i> Mã phòng") }}: <strong style="cursor: pointer;">{{ $roomCode }}</strong></span>
+  <span data-step="1" data-intro="{{ __("Dùng mã phòng này để tìm kiếm trận đấu") }}" class="alert alert-dark d-inline-block" role="alert" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ __("Sao chép mã phòng này nhé") }}"><i class="fad fa-trophy-alt"></i> {{ __("Mã phòng") }}: <strong style="cursor: pointer;">{{ $roomCode }}</strong></span>
   <input type="hidden" id="room-code-input" value="{{ $roomCode }}">
 </p>
 @endsection
@@ -20,9 +20,9 @@
 @if (!isset($room->host_id) && !isset($room->result))
 <p class="w-100 text-center">
   @if (str_contains($room->fen, ' r '))
-  <a data-step="2" data-intro="Ấn vào đây để vào ván {{ __("đấu") }} khi đến lượt bạn" id="join-link" class="btn btn-danger text-light btn-lg showPromotion" href="{{ url('/') }}/phong/{{ $roomCode }}" data-toggle="tooltip" data-placement="top" title="{{ __("Đến lược bạn đi") }}"><i class="fad fa-sign-in-alt"></i> {{ __("Vào trận") }}</a>
+  <a data-step="2" data-intro="{{ __("Ấn vào đây để vào ván đấu khi đến lượt bạn") }}" id="join-link" class="btn btn-danger text-light btn-lg showPromotion" href="{{ url('/') }}/phong/{{ $roomCode }}" data-toggle="tooltip" data-placement="top" title="{{ __("Đến lược bạn đi") }}"><i class="fad fa-sign-in-alt"></i> {{ __("Vào trận") }}</a>
   @elseif (str_contains($room->fen, ' b '))
-  <a data-step="2" data-intro="Ấn vào đây để vào ván {{ __("đấu") }} khi đến lượt bạn" id="join-link" class="btn btn-dark text-light btn-lg showPromotion" href="{{ url('/') }}/phong/{{ $roomCode }}/khach" data-toggle="tooltip" data-placement="top" title="{{ __("Đến lược bạn đi") }}"><i class="fad fa-sign-in-alt"></i> {{ __("Vào trận") }}</a>
+  <a data-step="2" data-intro="{{ __("Ấn vào đây để vào ván đấu khi đến lượt bạn") }}" id="join-link" class="btn btn-dark text-light btn-lg showPromotion" href="{{ url('/') }}/phong/{{ $roomCode }}/khach" data-toggle="tooltip" data-placement="top" title="{{ __("Đến lược bạn đi") }}"><i class="fad fa-sign-in-alt"></i> {{ __("Vào trận") }}</a>
   @endif
 </p>
 @else

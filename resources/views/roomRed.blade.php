@@ -10,14 +10,14 @@
 @endsection
 @section('aboveContent')
 <p id="room-code" class="w-100 text-center mt-0 mb-1">
-  <span data-step="{{ __("2\" data-intro=\"Dùng mã phòng này để tìm kiếm trận đấu\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Sao chép mã phòng này nhé\"><i class=\"fad fa-trophy-alt\"></i> Mã phòng") }}: <strong style="cursor: pointer;">{{ $roomCode }}</strong></span>
+  <span data-step="2" data-intro="{{ __("Dùng mã phòng này để tìm kiếm trận đấu") }}" class="alert alert-dark d-inline-block" role="alert" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ __("Sao chép mã phòng này nhé") }}"><i class="fad fa-trophy-alt"></i> {{ __("Mã phòng") }}: <strong style="cursor: pointer;">{{ $roomCode }}</strong></span>
   <input type="hidden" id="room-code-input" value="{{ $roomCode }}">
 </p>
 @endsection
 @section('belowContent')
 @if (!auth()->check() || (isset($room->guest_id) && auth()->id() == $room->host_id))
 <p class="w-100 text-center">
-  <a data-step="{{ __("5\" data-intro=\"Ấn vào đây nếu bạn không biết đi nước nào\" id=\"resign\" class=\"w-25 btn btn-dark btn-lg\"><i class=\"fad fa-flag\"></i> Bỏ cuộc") }}</a>
+  <a data-step="5" data-intro="{{ __("Ấn vào đây nếu bạn không biết đi nước nào") }}" id="resign" class="w-25 btn btn-dark btn-lg"><i class="fad fa-flag"></i> {{ __("Bỏ cuộc") }}</a>
 </p>
 @endif
 @include('layout.partials.kypho')
