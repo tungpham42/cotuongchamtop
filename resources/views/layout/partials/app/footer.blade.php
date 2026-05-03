@@ -103,7 +103,7 @@ function showLatestRoom(offset, newCode) {
       var dialog = bootbox.dialog({
         title: 'Bạn được thách {{ __("đấu") }} tại "' + data.room.name + '"!',
         message: htmlContent,
-        locale: 'vi',
+        locale: '{{ __("vi") }}',
         size: 'small',
         centerVertical: true,
         closeButton: false
@@ -140,7 +140,7 @@ function showLatestRoom(offset, newCode) {
             bootbox.confirm({
               message: "Vào sảnh chờ!",
               size: 'small',
-              locale: 'vi',
+              locale: '{{ __("vi") }}',
               centerVertical: true,
               closeButton: false,
               buttons: {

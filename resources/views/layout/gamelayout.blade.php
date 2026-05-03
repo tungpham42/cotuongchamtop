@@ -232,7 +232,7 @@
                     if (data == 'no') {
                       bootbox.prompt({
                         title: "{{ __('Mời đặt tên cho Phòng thi đấu:') }}",
-                        locale: 'vi',
+                        locale: '{{ __("vi") }}',
                         centerVertical: true,
                         closeButton: false,
                         maxlength: 32,
@@ -248,7 +248,7 @@
                               bootbox.alert({
                                 message: "{{ __('Vui lòng đặt tên cho phòng!') }}",
                                 size: 'small',
-                                locale: 'vi',
+                                locale: '{{ __("vi") }}',
                                 centerVertical: true,
                                 closeButton: false,
                                 buttons: {

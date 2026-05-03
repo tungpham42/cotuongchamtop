@@ -27,7 +27,7 @@ $('#tao-phong').on('click', function() {
   bootbox.prompt({
     title: "Mời tạo mật khẩu cho phòng:",
     required: true,
-    locale: 'vi',
+    locale: '{{ __("vi") }}',
     centerVertical: true,
     buttons: {
       confirm: {

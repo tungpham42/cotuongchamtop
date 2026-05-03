@@ -41,7 +41,7 @@ $('#tao-phong-public').on('click auxclick', function(e) {
           bootbox.alert({
             message: "{{ __('Vui lòng đặt tên cho phòng!') }}",
             size: 'small',
-            locale: 'vi',
+            locale: '{{ __("vi") }}',
             centerVertical: true,
             closeButton: false,
             buttons: {
@@ -209,7 +209,7 @@ function showLatestRoom(offset, newCode) {
             bootbox.confirm({
               message: "{{ __('Vào sảnh chờ!') }}",
               size: 'small',
-              locale: 'vi',
+              locale: '{{ __("vi") }}',
               centerVertical: true,
               closeButton: false,
               buttons: {

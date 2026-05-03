@@ -54,7 +54,7 @@ $(document).ready(function() {
     title: "{{ __("Nhập mật khẩu để vào phòng") }}:",
     required: true,
     centerVertical: true,
-    locale: 'vi',
+    locale: '{{ __("vi") }}',
     buttons: {
       confirm: {
         className: 'btn-success'
@@ -72,7 +72,7 @@ $(document).ready(function() {
               message: "{{ __("Sai mật khẩu! Bạn sẽ được chuyển hướng về Trang chủ") }}",
               size: 'small',
               centerVertical: true,
-              locale: 'vi',
+              locale: '{{ __("vi") }}',
               buttons: {
                 ok: {
                   className: 'btn-success'
@@ -89,7 +89,7 @@ $(document).ready(function() {
           message: "{{ __("Bạn đã ấn Hủy! Bạn sẽ được chuyển hướng về Trang chủ") }}",
           size: 'small',
           centerVertical: true,
-          locale: 'vi',
+          locale: '{{ __("vi") }}',
           buttons: {
             ok: {
               className: 'btn-success'

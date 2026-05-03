@@ -241,5 +241,22 @@
     "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại.": "登录时发生错误。请重试。",
     "Vui lòng nhập tin nhắn.": "请输入消息。",
     "khỏi phòng chat?": "离开聊天室吗？",
-    "Đã xảy ra lỗi khi thoát. Vui lòng thử lại.": "退出时发生错误。请重试。"
+    "Đã xảy ra lỗi khi thoát. Vui lòng thử lại.": "退出时发生错误。请重试。",
+    "vi": "zh",
+    "Màu bàn cờ": "棋盘颜色",
+    "Bàn cờ mặc định": "默认棋盘",
+    "Gỗ nhạt": "浅色木纹",
+    "Gỗ đậm": "深色木纹",
+    "Sáng": "亮色",
+    "Kiểu quân cờ": "棋子样式",
+    "Quân cờ mặc định": "默认棋子",
+    "Đặc biệt": "特别",
+    "Đỏ đen": "红黑",
+    "Phương Tây": "西方",
+    "Cam": "橙色",
+    "Vàng đậm": "深黄色",
+    "Truyền thống": "传统",
+    "Áp dụng Theme": "应用主题",
+    "Đang tải lại...": "重新加载中...",
+    "Lỗi kết nối!": "连接错误！"
 }

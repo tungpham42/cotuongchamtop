@@ -137,7 +137,7 @@ $('#name-puzzle').on('click auxclick', function(e) {
   if (!checkGame.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
       message: "{{ __("Bàn cờ thế") }} không hợp lệ",
-      locale: 'vi',
+      locale: '{{ __("vi") }}',
       centerVertical: true,
       closeButton: false,
       size: 'small',
@@ -154,7 +154,7 @@ $('#name-puzzle').on('click auxclick', function(e) {
   const dialog = bootbox.dialog({
     title: "{{ __("Lưu & chia sẻ") }} {{ __("thế cờ") }}",
     message: savePuzzleFormTemplate,
-    locale: 'vi',
+    locale: '{{ __("vi") }}',
     centerVertical: true,
     closeButton: false,
     buttons: {
@@ -222,7 +222,7 @@ const board = Xiangqiboard('ban-co', {
 function updateStatus () {
   var status = ''
 
-  var moveColor = 'Đỏ'
+  var moveColor = '{{ __("Đỏ") }}'
   if (game.turn() === 'b') {
     moveColor = '{{ __("Đen") }}'
   }
@@ -239,7 +239,7 @@ function updateStatus () {
 
   // game still on
   else {
-    status = '{{ __("Tới lượt") }} ' + moveColor + ' đi'
+    status = '{{ __("Tới lượt:") }} ' + moveColor
 
     // check?
     if (game.in_check()) {
@@ -268,7 +268,7 @@ function updateStatus () {
     $('#header-status').html(': '+status+' - {{ __("Đã bỏ cuộc") }}');
     bootbox.alert({
       message: '<i class="fad fa-flag-checkered"></i> {{ __("Đã bỏ cuộc") }}',
-      locale: 'vi',
+      locale: '{{ __("vi") }}',
       centerVertical: true,
       closeButton: false,
       size: 'small',
@@ -300,7 +300,7 @@ $('#new-board').on('click auxclick', function(e){
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
       message: "{{ __("Bàn cờ thế") }} không hợp lệ",
-      locale: 'vi',
+      locale: '{{ __("vi") }}',
       centerVertical: true,
       closeButton: false,
       size: 'small',
@@ -325,7 +325,7 @@ $("#capture").on('click', function() {
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
       message: "{{ __("Bàn cờ thế") }} không hợp lệ",
-      locale: 'vi',
+      locale: '{{ __("vi") }}',
       centerVertical: true,
       closeButton: false,
       size: 'small',
@@ -365,7 +365,7 @@ $('#solve-puzzle').on('click auxclick', function(e){
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
       message: "{{ __("Bàn cờ thế") }} không hợp lệ",
-      locale: 'vi',
+      locale: '{{ __("vi") }}',
       centerVertical: true,
       closeButton: false,
       size: 'small',

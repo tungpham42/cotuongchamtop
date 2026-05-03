@@ -238,5 +238,22 @@
     "Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại.": "로그인 중 오류가 발생했습니다. 다시 시도해 주세요.",
     "Vui lòng nhập tin nhắn.": "메시지를 입력해 주세요.",
     "khỏi phòng chat?": "채팅방에서 나가시겠습니까?",
-    "Đã xảy ra lỗi khi thoát. Vui lòng thử lại.": "로그아웃 중 오류가 발생했습니다. 다시 시도해 주세요."
+    "Đã xảy ra lỗi khi thoát. Vui lòng thử lại.": "로그아웃 중 오류가 발생했습니다. 다시 시도해 주세요.",
+    "vi": "ko",
+    "Màu bàn cờ": "보드 색상",
+    "Bàn cờ mặc định": "기본 보드",
+    "Gỗ nhạt": "밝은 나무",
+    "Gỗ đậm": "어두운 나무",
+    "Sáng": "밝은",
+    "Kiểu quân cờ": "기물 스타일",
+    "Quân cờ mặc định": "기본 기물",
+    "Đặc biệt": "특별한",
+    "Đỏ đen": "빨강 및 검정",
+    "Phương Tây": "서양식",
+    "Cam": "주황색",
+    "Vàng đậm": "짙은 노란색",
+    "Truyền thống": "전통적인",
+    "Áp dụng Theme": "테마 적용",
+    "Đang tải lại...": "다시 불러오는 중...",
+    "Lỗi kết nối!": "연결 오류!"
 }

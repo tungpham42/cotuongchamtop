@@ -124,7 +124,7 @@ function compete(guestId) {
     if (data == 'no') {
       bootbox.prompt({
         title: "Mời đặt tên cho Phòng thi {{ __("đấu") }}:",
-        locale: 'vi',
+        locale: '{{ __("vi") }}',
         centerVertical: true,
         closeButton: false,
         maxlength: 32,
@@ -143,7 +143,7 @@ function compete(guestId) {
               bootbox.alert({
                 message: "Vui lòng đặt tên cho phòng!",
                 size: 'small',
-                locale: 'vi',
+                locale: '{{ __("vi") }}',
                 centerVertical: true,
                 closeButton: false,
                 buttons: {

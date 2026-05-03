@@ -72,7 +72,7 @@
         if (!game.validate_fen(fenCode + ' r - - 0 1').valid) {
             bootbox.alert({
             message: "Bàn cờ thế không hợp lệ",
-            locale: 'vi',
+            locale: '{{ __("vi") }}',
             centerVertical: true,
             closeButton: false,
             buttons: {
@@ -90,7 +90,7 @@
         if (!game.validate_fen(fenCode + ' r - - 0 1').valid) {
             bootbox.alert({
             message: "Bàn cờ thế không hợp lệ",
-            locale: 'vi',
+            locale: '{{ __("vi") }}',
             centerVertical: true,
             closeButton: false,
             buttons: {
@@ -181,7 +181,7 @@
             if (!game.validate_fen(fenCode + ' r - - 0 1').valid) {
                 bootbox.alert({
                 message: "Bàn cờ thế không hợp lệ",
-                locale: 'vi',
+                locale: '{{ __("vi") }}',
                 centerVertical: true,
                 closeButton: false,
                 buttons: {
@@ -199,7 +199,7 @@
             if (!game.validate_fen(fenCode + ' r - - 0 1').valid) {
                 bootbox.alert({
                 message: "Bàn cờ thế không hợp lệ",
-                locale: 'vi',
+                locale: '{{ __("vi") }}',
                 centerVertical: true,
                 closeButton: false,
                 buttons: {

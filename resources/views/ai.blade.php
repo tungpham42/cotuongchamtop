@@ -316,7 +316,7 @@ function updateStatus () {
     if (typeof bootbox !== 'undefined') {
       bootbox.alert({
         message: '<i class="fad fa-flag-checkered"></i> {{ __("Đã bỏ cuộc") }}',
-        locale: 'vi',
+        locale: '{{ __("vi") }}',
         centerVertical: true,
         closeButton: false,
         size: 'small',

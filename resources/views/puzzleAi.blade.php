@@ -242,7 +242,7 @@ function onSnapEnd () {
 
 function updateStatus () {
   var status = '';
-  var moveColor = 'Đỏ';
+  var moveColor = '{{ __("Đỏ") }}';
 
   if (game.turn() === 'b') {
     moveColor = '{{ __("Đen") }}';
@@ -258,7 +258,7 @@ function updateStatus () {
   }
   // game still on
   else {
-    status = '{{ __("Tới lượt") }} ' + moveColor + ' đi';
+    status = '{{ __("Tới lượt:") }} ' + moveColor;
 
     // check?
     if (game.in_check()) {
@@ -303,7 +303,7 @@ function updateStatus () {
     if (typeof bootbox !== 'undefined') {
       bootbox.alert({
         message: '<i class="fad fa-flag-checkered"></i> {{ __("Đã bỏ cuộc") }}',
-        locale: 'vi',
+        locale: '{{ __("vi") }}',
         centerVertical: true,
         closeButton: false,
         size: 'small',

@@ -28,7 +28,7 @@ $(document).ready(function() {
     title: "{{ __("Nhập mật khẩu để vào phòng") }}:",
     centerVertical: true,
     closeButton: false,
-    locale: 'vi',
+    locale: '{{ __("vi") }}',
     buttons: {
       confirm: {
         label: '<i class="fas fa-check"></i> {{ __("Nhập") }}',
@@ -51,7 +51,7 @@ $(document).ready(function() {
               size: 'small',
               centerVertical: true,
               closeButton: false,
-              locale: 'vi',
+              locale: '{{ __("vi") }}',
               buttons: {
                 ok: {
                   className: 'btn-danger pulse-red'
@@ -69,7 +69,7 @@ $(document).ready(function() {
           size: 'small',
           centerVertical: true,
           closeButton: false,
-          locale: 'vi',
+          locale: '{{ __("vi") }}',
           buttons: {
             ok: {
               className: 'btn-danger pulse-red'
@@ -162,7 +162,7 @@ function updateResult(roomCode, result) {
       size: 'small',
       centerVertical: true,
       closeButton: false,
-      locale: 'vi',
+      locale: '{{ __("vi") }}',
       buttons: {
         ok: {
           className: 'btn-danger pulse-red'
@@ -202,7 +202,7 @@ function updateResult(roomCode, result) {
       size: 'small',
       centerVertical: true,
       closeButton: false,
-      locale: 'vi',
+      locale: '{{ __("vi") }}',
       buttons: {
         ok: {
           className: 'btn-danger pulse-red'
@@ -317,7 +317,7 @@ const updatePlayers = setInterval(function() {
 function updateStatus () {
   var status = ''
 
-  var moveColor = 'Đỏ'
+  var moveColor = '{{ __("Đỏ") }}'
   if (game.turn() === 'b') {
     moveColor = '{{ __("Đen") }}'
   }
@@ -340,7 +340,7 @@ function updateStatus () {
 
   // game still on
   else {
-    status = '{{ __("Tới lượt") }} ' + moveColor + ' đi'
+    status = '{{ __("Tới lượt:") }} ' + moveColor
     if (game.game_over() && !game.in_draw() && !game.fen().includes('resign')) {
       if (game.turn() === 'b') {
         updateResult('{{ $roomCode }}', '1');
@@ -396,7 +396,7 @@ function updateStatus () {
 
     bootbox.alert({
       message: '<i class="fad fa-flag-checkered"></i> {{ __("Đã bỏ cuộc") }}',
-      locale: 'vi',
+      locale: '{{ __("vi") }}',
       centerVertical: true,
       closeButton: false,
       size: 'small',

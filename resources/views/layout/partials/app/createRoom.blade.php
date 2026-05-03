@@ -26,7 +26,7 @@
             <button data-step="1" data-intro="Ấn vào đây để tạo phòng thi {{ __("đấu") }} với các kỳ thủ khác" type="submit" class="btn btn-danger btn-lg my-3"><i class="fad fa-plus-octagon"></i> Tạo phòng mới</button>
         </div>
     </form>
-    <script>  
+    <script>
     var locale = {
         OK: '<i class="fas fa-check"></i> Đồng ý',
         CONFIRM: '<i class="fas fa-check"></i> Chấp nhận',
@@ -46,7 +46,7 @@
             if (data == 'no') {
                 bootbox.prompt({
                     title: "Mời đặt tên cho Phòng thi {{ __("đấu") }}:",
-                    locale: 'vi',
+                    locale: '{{ __("vi") }}',
                     centerVertical: true,
                     closeButton: false,
                     maxlength: 32,
@@ -65,7 +65,7 @@
                                 bootbox.alert({
                                     message: "Vui lòng đặt tên cho phòng!",
                                     size: 'small',
-                                    locale: 'vi',
+                                    locale: '{{ __("vi") }}',
                                     centerVertical: true,
                                     closeButton: false,
                                     buttons: {
