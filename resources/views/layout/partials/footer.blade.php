@@ -10,25 +10,25 @@
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
         <ul class="list-unstyled">
           <li>
-            <a class="home showPromotion" href="{{ url('') }}"><i class="fal fa-home-lg-alt"></i> {{ __("Trang chủ") }}</a>
+            <a class="home showPromotion" href="{{ url(app()->getLocale() == 'vi' ? '' : app()->getLocale()) }}"><i class="fal fa-home-lg-alt"></i> {{ __("Trang chủ") }}</a>
           </li>
           <li>
-            <a class="dashboard showPromotion" href="{{ url('/thi-dau') }}"><i class="fal fa-trophy-alt"></i> {{ __("Thi đấu") }}</a>
+            <a class="dashboard showPromotion" href="{{ url(__('thi-dau')) }}"><i class="fal fa-trophy-alt"></i> {{ __("Thi đấu") }}</a>
           </li>
           <li>
-            <a class="trophy showPromotion" href="{{ url('/bang-xep-hang') }}"><i class="fal fa-star"></i> {{ __("Bảng xếp hạng") }}</a>
+            <a class="trophy showPromotion" href="{{ url(__('bang-xep-hang')) }}"><i class="fal fa-star"></i> {{ __("Bảng xếp hạng") }}</a>
           </li>
           <li>
-            <a class="room showPromotion rooms-list" href="{{ url('/sanh-cho') }}"><i class="fal fa-list-alt"></i> {{ __("Sảnh chờ") }}</a>
+            <a class="room showPromotion rooms-list" href="{{ url(__('sanh-cho')) }}"><i class="fal fa-list-alt"></i> {{ __("Sảnh chờ") }}</a>
           </li>
           <li>
-            <a class="setup puzzle showPromotion" href="{{ url('/co-the') }}"><i class="fal fa-puzzle-piece"></i> {{ __("Cờ thế") }}</a>
+            <a class="setup puzzle showPromotion" href="{{ url(__('co-the')) }}"><i class="fal fa-puzzle-piece"></i> {{ __("Cờ thế") }}</a>
           </li>
           <li>
-            <a class="about showPromotion" href="{{ url('/gioi-thieu') }}"><i class="fal fa-info-square"></i> {{ __("Giới thiệu") }}</a>
+            <a class="about showPromotion" href="{{ url(__('gioi-thieu')) }}"><i class="fal fa-info-square"></i> {{ __("Giới thiệu") }}</a>
           </li>
           <li>
-            <a class="contact showPromotion" href="{{ url('/lien-he') }}"><i class="fal fa-envelope"></i> {{ __("Liên hệ") }}</a>
+            <a class="contact showPromotion" href="{{ url(__('lien-he')) }}"><i class="fal fa-envelope"></i> {{ __("Liên hệ") }}</a>
           </li>
           <li>
             <a target="_blank" class="game showPromotion" href="https://game.cotuong.top"><i class="fal fa-gamepad-alt"></i> {{ __("Trò chơi") }}</a>

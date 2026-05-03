@@ -1,24 +1,25 @@
 @extends('layout.gamelayout')
 @section('aboveBoard')
 @php
-$action = 'chơi';
-switch ($levelTxt) {
-  case 'Mới chơi':
-    $action = 'tập chơi';
-    break;
-  case 'Dễ':
-    $action = 'thư giãn';
-    break;
-  case 'Bình thường':
-    $action = 'chơi';
-    break;
-  case 'Khó':
-    $action = 'đấu';
-    break;
-  case 'Khó nhất':
-    $action = 'đấu trí';
-    break;
-}
+$locale = app()->getLocale() ?: 'vi';
+$levelUrls = [
+    'vi' => ['moi-choi', 'de', 'binh-thuong', 'kho', 'kho-nhat'],
+    'en' => ['newbie', 'easy', 'normal', 'hard', 'hardest'],
+    'ja' => ['shoshinsha', 'kantan', 'tsujo', 'hado', 'mottomo-muzukashi'],
+    'ko' => ['nyubi', 'iji', 'nomol', 'hadeu', 'gajang-dandanhan'],
+    'zh' => ['xinshou', 'rongyide', 'dianxingde', 'jiangude', 'zuinande'],
+];
+$urls = $levelUrls[$locale] ?? $levelUrls['vi'];
+$actionMap = [
+    '1' => 'tập chơi',
+    '2' => 'thư giãn',
+    '3' => 'chơi',
+    '4' => 'đấu',
+    '5' => 'đấu trí',
+];
+
+// Fallback to 'chơi' just in case $level is missing or unmapped
+$action = $actionMap[$level ?? '3'] ?? 'chơi';
 @endphp
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Cấp độ") }} máy: {{ __($levelTxt) }}">{{ __('Bạn đang') }} {{ __($action) }} {{ __('với máy') }}<span id="puzzle-title"></span></h5>
 @endsection
@@ -39,12 +40,12 @@ switch ($levelTxt) {
     <i class="fad fa-robot"></i> {{ __("Chọn cấp độ máy") }}
   </button>
   <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="levelDropdown">
-    <a class="dropdown-item{{ $levelTxt === 'Mới chơi' ? ' active disabled' : '' }}" href="{{ url('/moi-choi') }}" style="cursor: pointer !important;">{{ __("Mới chơi") }}</a>
-    <a class="dropdown-item{{ $levelTxt === 'Dễ' ? ' active disabled' : '' }}" href="{{ url('/de') }}" style="cursor: pointer !important;">{{ __("Dễ") }}</a>
-    <a class="dropdown-item{{ $levelTxt === 'Bình thường' ? ' active disabled' : '' }}" href="{{ url('/binh-thuong') }}" style="cursor: pointer !important;">{{ __("Bình thường") }}</a>
-    <a class="dropdown-item{{ $levelTxt === 'Khó' ? ' active disabled' : '' }}" href="{{ url('/kho') }}" style="cursor: pointer !important;">{{ __("Khó") }}</a>
-    <a class="dropdown-item{{ $levelTxt === 'Khó nhất' ? ' active disabled' : '' }}" href="{{ url('/kho-nhat') }}" style="cursor: pointer !important;">{{ __("Khó nhất") }}</a>
-  </div>
+    <a class="dropdown-item{{ request()->is($urls[0]) ? ' active disabled' : '' }}" href="{{ url('/' . $urls[0]) }}" style="cursor: pointer !important;">{{ __("Mới chơi") }}</a>
+    <a class="dropdown-item{{ request()->is($urls[1]) ? ' active disabled' : '' }}" href="{{ url('/' . $urls[1]) }}" style="cursor: pointer !important;">{{ __("Dễ") }}</a>
+    <a class="dropdown-item{{ request()->is($urls[2]) ? ' active disabled' : '' }}" href="{{ url('/' . $urls[2]) }}" style="cursor: pointer !important;">{{ __("Bình thường") }}</a>
+    <a class="dropdown-item{{ request()->is($urls[3]) ? ' active disabled' : '' }}" href="{{ url('/' . $urls[3]) }}" style="cursor: pointer !important;">{{ __("Khó") }}</a>
+    <a class="dropdown-item{{ request()->is($urls[4]) ? ' active disabled' : '' }}" href="{{ url('/' . $urls[4]) }}" style="cursor: pointer !important;">{{ __("Khó nhất") }}</a>
+</div>
 </div>
 <div class="dropup mx-auto text-center my-1">
   <button class="btn btn-danger btn-lg dropdown-toggle" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

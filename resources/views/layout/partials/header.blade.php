@@ -46,7 +46,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           @guest
             @if (Route::has('login'))
               <li class="nav-item">
-                <a class="showPromotion login" href="{{ route('login') }}"><i class="far fa-sign-in"></i> {{ __('Login') }}</a>
+                <a class="showPromotion login" href="{{ route('login') }}"><i class="far fa-sign-in"></i> {{ __('Đăng nhập') }}</a>
               </li>
             @endif
 
