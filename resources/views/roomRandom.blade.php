@@ -1,4 +1,4 @@
-@extends('layout.gamelayout')
+@extends('layout.playlayout')
 @section('aboveBoard')
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Bạn đang đi quân đen") }}">{{ __("Bạn đang đánh ngẫu nhiên") }}</h5>
 <span id="room-name">{{ __("Tên phòng") }}: {{ $room->name }}</span>

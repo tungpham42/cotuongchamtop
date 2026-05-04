@@ -1,4 +1,4 @@
-@extends('layout.gamelayout')
+@extends('layout.playlayout')
 @section('aboveBoard')
 @if (isset($room->host_id))
 <h5 id="room-title" class="text-center my-1"><span id="host-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($room->host_id) !!}</span> <span id="guest-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($room->guest_id) !!}</span></h5>

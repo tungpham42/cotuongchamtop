@@ -278,9 +278,6 @@
                 <input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ url('/') }}" >
                 @include('common.themes')
                 @include('layout.partials.scripts')
-                @if ( !isset($board) )
-                  @include('layout.partials.rules')
-                @endif
                 @yield('belowContent')
                 @if ( !isset($board) )
                 <script>
@@ -427,10 +424,6 @@
           </div>
         </div>
       </div>
-      {{-- @include('layout.partials.fb') --}}
     </main>
-    @include('layout.partials.aiChatWidget')
-    @include('layout.partials.footer')
-    @include('common.contactBtn')
   </body>
 </html>
