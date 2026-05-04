@@ -20,7 +20,6 @@
       #ban-co {
         background-color: #252a36;
         border-radius: 8px;
-        box-shadow: inset 0 0 15px rgba(0,0,0,0.5), 0 4px 10px rgba(0,0,0,0.3);
         padding: 5px;
         margin-bottom: 15px;
       }
