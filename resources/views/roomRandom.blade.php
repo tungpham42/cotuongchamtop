@@ -428,10 +428,10 @@ style.textContent = `
 document.head.appendChild(style);
 </script>
 {{-- @include('layout.partials.userPuzzlesWrapper') --}}
-@include('layout.partials.players')
-@include('layout.partials.userPuzzles')
-@include('layout.partials.boards')
-@include('layout.partials.playedBoards')
+{{-- @include('layout.partials.players') --}}
+{{-- @include('layout.partials.userPuzzles') --}}
+{{-- @include('layout.partials.boards') --}}
+{{-- @include('layout.partials.playedBoards') --}}
 {{-- @include('layout.partials.puzzles') --}}
 {{-- @include('layout.partials.comments') --}}
 @endsection
