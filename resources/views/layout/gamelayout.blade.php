@@ -66,7 +66,7 @@
         text-shadow: 0 0 15px rgba(255, 82, 82, 0.8), 0 0 5px rgba(255, 255, 255, 0.5);
         text-transform: uppercase;
         letter-spacing: 3px;
-        display: block;
+        display: none;
         text-align: center;
         margin-bottom: 15px;
       }
