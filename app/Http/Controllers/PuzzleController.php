@@ -36,14 +36,14 @@ class PuzzleController extends Controller
                     return $puzzleRank;
                 })
                 ->addColumn('name', function($row){
-                    $puzzleName = '<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.URL::to('/').'/the-co/'.$row->slug.'">'.$row->name.'</a>';
+                    $puzzleName = '<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').'/the-co/'.$row->slug.'">'.$row->name.'</a>';
                     return $puzzleName;
                 })
                 ->addColumn('rating', function($row){
                     return (int) $row->likes_count;
                 })
                 ->addColumn('action', function($row){
-                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 140px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.URL::to('/').'/giai-co-the/'.$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> Giải cờ thế</a>';
+                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 140px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').'/giai-co-the/'.$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> Giải cờ thế</a>';
                     $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> Xem trước</a>';
                     return $actionBtn;
                 })
@@ -152,7 +152,7 @@ class PuzzleController extends Controller
             'message' => 'Tạo thế cờ thành công!',
             'code' => 1,
             'slug' => $puzzle->slug,
-            'url' => URL::to('/').'/the-co/'.$puzzle->slug,
+            'url' => url('/').'/the-co/'.$puzzle->slug,
         ], 201);
     }
 

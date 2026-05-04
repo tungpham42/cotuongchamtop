@@ -21,10 +21,10 @@
 <link rel="apple-touch-icon" sizes="120x120" href="https://cotuong.r.worldssl.net/img/app-icons/apple-touch-icon-iphone-retina-game.png">
 <link rel="apple-touch-icon" sizes="152x152" href="https://cotuong.r.worldssl.net/img/app-icons/apple-touch-icon-ipad-retina-game.png">
 <link rel="icon" sizes="32x32" href="https://cotuong.r.worldssl.net/img/favicon-32x32-game.png" />
-<link rel="manifest" href="{{ URL::to('/') }}/manifest.webmanifest?v=2">
-<link rel="canonical" href="{{ URL::to('/').$canonicalUrl }}" />
-<link rel="alternate" hreflang="vi" href="{{ URL::to('/').$langUrl }}"/>
-<link rel="alternate" hreflang="en" href="{{ URL::to('/').$canonicalUrl }}"/>
+<link rel="manifest" href="{{ url('/') }}/manifest.webmanifest?v=2">
+<link rel="canonical" href="{{ url('/').$canonicalUrl }}" />
+<link rel="alternate" hreflang="vi" href="{{ url('/').$langUrl }}"/>
+<link rel="alternate" hreflang="en" href="{{ url('/').$canonicalUrl }}"/>
 <link rel="amphtml" href="{{ url()->full() }}" />
 <link rel="stylesheet" href="https://cotuong.r.worldssl.net/css/fa/css/in-use.css?v=3" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous" />

@@ -94,7 +94,7 @@ function stopEvent(event){
 //   if ('serviceWorker' in navigator) {
 //     console.log("Will the service worker register?");
 //     navigator.serviceWorker
-//     .register('{{ URL::to('/') }}/serviceWorker.js')
+//     .register('{{ url('/') }}/serviceWorker.js')
 //     .then(function(reg) {
 //       console.log("Yes, it did.");
 //     }).catch(function(err) {

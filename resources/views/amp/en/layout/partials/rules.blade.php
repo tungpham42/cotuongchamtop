@@ -16,9 +16,9 @@
 {{--         <p>There are 4 options: Play alone, Play with AI, Play in room, and Set up the board</p> --}}
         <p>There are 2 options: Play alone and Play with AI</p>
         <ol>
-          <li><u>Play alone:</u> Players press on the button <a target="_blank" href="{{ URL::to('/amp/play-alone') }}">"PLAY ALONE"</a> on the front page and practice alone.</li>
+          <li><u>Play alone:</u> Players press on the button <a target="_blank" href="{{ url('/amp/play-alone') }}">"PLAY ALONE"</a> on the front page and practice alone.</li>
           <li><u>Play with AI:</u> Players play directly on the front page. There are 5 levels: <a target="_blank" href="{{ url('/amp/newbie') }}">Newbie</a>, <a target="_blank" href="{{ url('/amp/easy') }}">Easy</a>, <a target="_blank" href="{{ url('/amp/normal') }}">Normal</a>, <a target="_blank" href="{{ url('/amp/hard') }}">Hard</a>, and <a target="_blank" href="{{ url('/amp/hardest') }}">Hardest</a>.</li>
-{{--           <li><u>Play in room:</u> Players press on the button "HOST A ROOM", host a new room with random Room code, and create a password for you and your friend, also capable of Inviting friend to play by sending the link. Players can also access the page <a target="_blank" href="{{ URL::to('/amp/rooms') }}">"Rooms"</a> to enter a hosted room. Players can choose Red Side or Black Side, Red moves first.</li>
+{{--           <li><u>Play in room:</u> Players press on the button "HOST A ROOM", host a new room with random Room code, and create a password for you and your friend, also capable of Inviting friend to play by sending the link. Players can also access the page <a target="_blank" href="{{ url('/amp/rooms') }}">"Rooms"</a> to enter a hosted room. Players can choose Red Side or Black Side, Red moves first.</li>
           <li><u>Set up the board:</u> Players press on the link <a target="_blank" href="{{ url('/amp/set-up') }}">"Set Up"</a>. In this option, players can arrange the chess pieces and press "SAVE BOARD" to challenge friends.</li> --}}
         </ol>
       </div>

@@ -59,7 +59,7 @@ const board = Xiangqiboard('ban-co', {
 });
 $(window).resize(board.resize);
 $('#new-board').on('click', function(){
-  window.location.href = "{{ URL::to('/co-the/') }}/" + board.fen();
+  window.location.href = "{{ url('/co-the/') }}/" + board.fen();
 });
 $('#undo').on('click', undo);
 $("#capture").on('click', function() {
@@ -80,7 +80,7 @@ $("#capture").on('click', function() {
       context.fillText('COTUONG.TOP', canvas.width / 2, canvas.height / 2);
 
       canvas.toBlob(function(blob) {
-        saveAs(blob, "ban-co-{{ date('Y-m-d h:i:s A') }}.png"); 
+        saveAs(blob, "ban-co-{{ date('Y-m-d h:i:s A') }}.png");
       });
     }
   });

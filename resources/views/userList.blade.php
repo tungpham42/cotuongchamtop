@@ -75,7 +75,7 @@ $(document).ready(function () {
       }
     ],
     'language': {
-      'url': '{{ URL::to('/') }}/js/TableUserVn.json'
+      'url': '{{ url('/') }}/js/TableUserVn.json'
     },
     'order': [[ 2, 'desc' ]],
     'drawCallback': function() {
@@ -238,7 +238,7 @@ function compete(guestId) {
 }
 @endif
 </script>
-<input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ URL::to('/') }}" >
+<input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ url('/') }}" >
 {{-- @include('layout.partials.userPuzzlesWrapper') --}}
 {{-- @include('layout.partials.userPuzzles') --}}
 @include('layout.partials.players')

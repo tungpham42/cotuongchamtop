@@ -47,7 +47,7 @@ class MailController extends Controller
             exit();
         }
     }
-    
+
     public function send(Request $request)
     {
         $name = $request->input('name');
@@ -77,7 +77,7 @@ class MailController extends Controller
         $recipient = "tung.42@gmail.com";
         $this->sendSmtpMail($recipient, $subject, $content, $messages[] = ['Email not sent', 'Email has been sent', 'Message could not be sent']);
     }
-    
+
     public function sendJa(Request $request)
     {
         $name = $request->input('name');
@@ -107,7 +107,7 @@ class MailController extends Controller
         $recipient = "tung.42@gmail.com";
         $this->sendSmtpMail($recipient, $subject, $content, $messages[] = ['メールが送信されない', 'メールが送信されました', 'メッセージを送信できませんでした']);
     }
-    
+
     public function sendKo(Request $request)
     {
         $name = $request->input('name');
@@ -137,7 +137,7 @@ class MailController extends Controller
         $recipient = "tung.42@gmail.com";
         $this->sendSmtpMail($recipient, $subject, $content, $messages[] = ['이메일이 전송되지 않음', '이메일이 전송되었습니다.', '메시지를 보내지 못했습니다.']);
     }
-    
+
     public function sendZh(Request $request)
     {
         $name = $request->input('name');
@@ -215,8 +215,8 @@ class MailController extends Controller
         <p>Tôi hy vọng bạn đang có một ngày tốt lành!</p>
         <p>Tôi muốn mời bạn tham gia vào một trận cờ tướng thú vị trên trang cotuong.top.</p>
         <p>Tôi đã thấy bạn tham gia vào cộng đồng cờ tướng trực tuyến này và tôi rất muốn có cơ hội thách đấu và học hỏi từ bạn. Chúng ta có thể cùng nhau trải nghiệm niềm vui của trí tuệ và chiến thuật trong một trận đấu đầy kích thích.</p>
-        <p>Đường dẫn tới phòng \"$roomName\" tại đây: <a target=\"_blank\" href=\"".URL::to('/phong/')."/".$roomCode."/khach\">".URL::to('/phong/')."/".$roomCode."/khach</a></p>
-        <p>Rất mong nhận được phản hồi từ bạn sớm nhất. Cảm ơn bạn đã dành thời gian để đọc email này.</p>        
+        <p>Đường dẫn tới phòng \"$roomName\" tại đây: <a target=\"_blank\" href=\"".url('/phong/')."/".$roomCode."/khach\">".url('/phong/')."/".$roomCode."/khach</a></p>
+        <p>Rất mong nhận được phản hồi từ bạn sớm nhất. Cảm ơn bạn đã dành thời gian để đọc email này.</p>
         <p>Trân trọng,</p>
         <p>$hostName</p>";
 

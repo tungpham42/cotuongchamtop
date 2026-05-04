@@ -15,7 +15,7 @@
 <body class="login">
 @elseif (str_contains(url()->current(), url('/dat-lai-mat-khau').'/'))
 <body class="login">
-@elseif (url()->current() == url('/thi-dau') || url()->current() == url('/bang-xep-hang') || url()->current() == url('/lich-su') || url()->current() == url('/sanh-cho') || url()->current() == url('/co-the') || url()->current() == url('/tim-kiem'))
+@elseif (url()->current() == url('/thi-dau') || url()->current() == url('/bang-xep-hang') || url()->current() == url('/lich-su') || url()->current() == url(__('/sanh-cho')) || url()->current() == url('/co-the') || url()->current() == url('/tim-kiem'))
 <body class="dashboard">
 @else
 <body>
@@ -24,7 +24,7 @@
     @include('layout.partials.adsenseModal')
     <div id="app">
         @include('layout.partials.app.header')
-        <input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ URL::to('/') }}" >
+        <input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ url('/') }}" >
         @include('common.themes')
 
         <main class="py-5 bg-dark">

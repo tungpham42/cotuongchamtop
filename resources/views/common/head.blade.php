@@ -39,7 +39,7 @@
   }
 </style>
 @endif
-<link rel="manifest" href="{{ URL::to('/') }}/manifest.webmanifest?v=2">
+<link rel="manifest" href="{{ url('/') }}/manifest.webmanifest?v=2">
 @if ($showAds ?? true)
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3585118770961536" crossorigin="anonymous"></script>
 @endif

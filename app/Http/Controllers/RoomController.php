@@ -94,14 +94,14 @@ class RoomController extends Controller
                     if (!isset($row->host_id)) {
                         if ($row->fen == env('INITIAL_FEN')) {
                             if ($row->pass == '') {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/phong/'.$row->code.'/do"><i class="far fa-mouse"></i> Chơi</a>';
+                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/phong/'.$row->code.'/do"><i class="far fa-mouse"></i> Chơi</a>';
                             } else {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/phong/'.$row->code.'"><i class="far fa-mouse"></i> Chơi</a>';
+                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/phong/'.$row->code.'"><i class="far fa-mouse"></i> Chơi</a>';
                             }
                             if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/phong/'.$row->code.'/theo-doi" data-toggle="tooltip" data-placement="top" data-original-title="Công khai"><i class="far fa-globe"></i> Theo dõi</a>';
+                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/phong/'.$row->code.'/theo-doi" data-toggle="tooltip" data-placement="top" data-original-title="Công khai"><i class="far fa-globe"></i> Theo dõi</a>';
                             } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/phong/'.$row->code.'/theo-doi" data-toggle="tooltip" data-placement="top" data-original-title="Riêng tư"><i class="far fa-lock"></i> Theo dõi</a>';
+                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/phong/'.$row->code.'/theo-doi" data-toggle="tooltip" data-placement="top" data-original-title="Riêng tư"><i class="far fa-lock"></i> Theo dõi</a>';
                             }
                         } else {
                             if (isset($row->result)) {
@@ -112,29 +112,29 @@ class RoomController extends Controller
                                 }
                             } else {
                                 if (str_contains($row->fen, ' b ')) {
-                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/phong/'.$row->code.'/den"><i class="far fa-mouse"></i> Chơi</a>';
+                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/phong/'.$row->code.'/den"><i class="far fa-mouse"></i> Chơi</a>';
                                 } else if (str_contains($row->fen, ' r ')) {
-                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/phong/'.$row->code.'/do"><i class="far fa-mouse"></i> Chơi</a>';
+                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/phong/'.$row->code.'/do"><i class="far fa-mouse"></i> Chơi</a>';
                                 }
                             }
                             if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/phong/'.$row->code.'/theo-doi" data-toggle="tooltip" data-placement="top" data-original-title="Công khai"><i class="far fa-globe"></i> Theo dõi</a>';
+                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/phong/'.$row->code.'/theo-doi" data-toggle="tooltip" data-placement="top" data-original-title="Công khai"><i class="far fa-globe"></i> Theo dõi</a>';
                             } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/phong/'.$row->code.'/theo-doi" data-toggle="tooltip" data-placement="top" data-original-title="Riêng tư"><i class="far fa-lock"></i> Theo dõi</a>';
+                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/phong/'.$row->code.'/theo-doi" data-toggle="tooltip" data-placement="top" data-original-title="Riêng tư"><i class="far fa-lock"></i> Theo dõi</a>';
                             }
                         }
                     } else {
                         if (auth()->check()) {
                             if (isset($row->result)) {
-                                $actionBtn = '<a class="btn btn-dark text-light showPromotion" style="width: 200px;" href="'.URL::to('/').'/phong/'.$row->code.'/theo-doi"><i class="far fa-archive"></i> Đã đấu xong</a>';
+                                $actionBtn = '<a class="btn btn-dark text-light showPromotion" style="width: 200px;" href="'.url('/').'/phong/'.$row->code.'/theo-doi"><i class="far fa-archive"></i> Đã đấu xong</a>';
                             } else {
                                 $actionBtn = '<a class="btn btn-danger text-light pulse-red" style="width: 200px;" href="javascript:joinMatch(`'.$row->code.'`)"><i class="far fa-mouse"></i> Chơi nào</a>';
                             }
                         } else {
                             if (str_contains($row->fen, ' r ')) {
-                                $actionBtn = '<a class="btn btn-danger text-light showPromotion pulse-red" style="width: 200px;" href="'.URL::to('/dang-nhap/').'"><i class="far fa-sign-in"></i> Đăng nhập</a>';
+                                $actionBtn = '<a class="btn btn-danger text-light showPromotion pulse-red" style="width: 200px;" href="'.url('/dang-nhap/').'"><i class="far fa-sign-in"></i> Đăng nhập</a>';
                             } else if (str_contains($row->fen, ' b ')) {
-                                $actionBtn = '<a class="btn btn-dark text-light showPromotion pulse-dark" style="width: 200px;" href="'.URL::to('/dang-nhap/').'"><i class="far fa-sign-in"></i> Đăng nhập</a>';
+                                $actionBtn = '<a class="btn btn-dark text-light showPromotion pulse-dark" style="width: 200px;" href="'.url('/dang-nhap/').'"><i class="far fa-sign-in"></i> Đăng nhập</a>';
                             }
                         }
                     }
@@ -223,14 +223,14 @@ class RoomController extends Controller
                     if (!isset($row->host_id)) {
                         if ($row->fen == env('INITIAL_FEN')) {
                             if ($row->pass == '') {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/room/'.$row->code.'/red"><i class="far fa-mouse"></i> Play</a>';
+                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/room/'.$row->code.'/red"><i class="far fa-mouse"></i> Play</a>';
                             } else {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/room/'.$row->code.'"><i class="far fa-mouse"></i> Play</a>';
+                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/room/'.$row->code.'"><i class="far fa-mouse"></i> Play</a>';
                             }
                             if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/room/'.$row->code.'/watch" data-toggle="tooltip" data-placement="top" data-original-title="Public"><i class="far fa-globe"></i> Watch</a>';
+                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/room/'.$row->code.'/watch" data-toggle="tooltip" data-placement="top" data-original-title="Public"><i class="far fa-globe"></i> Watch</a>';
                             } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/room/'.$row->code.'/watch" data-toggle="tooltip" data-placement="top" data-original-title="Private"><i class="far fa-lock"></i> Watch</a>';
+                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/room/'.$row->code.'/watch" data-toggle="tooltip" data-placement="top" data-original-title="Private"><i class="far fa-lock"></i> Watch</a>';
                             }
                         } else {
                             if (isset($row->result)) {
@@ -241,19 +241,19 @@ class RoomController extends Controller
                                 }
                             } else {
                                 if (str_contains($row->fen, ' b ')) {
-                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/room/'.$row->code.'/black"><i class="far fa-mouse"></i> Play</a>';
+                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/room/'.$row->code.'/black"><i class="far fa-mouse"></i> Play</a>';
                                 } else if (str_contains($row->fen, ' r ')) {
-                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/room/'.$row->code.'/red"><i class="far fa-mouse"></i> Play</a>';
+                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/room/'.$row->code.'/red"><i class="far fa-mouse"></i> Play</a>';
                                 }
                             }
                             if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/room/'.$row->code.'/watch" data-toggle="tooltip" data-placement="top" data-original-title="Public"><i class="far fa-globe"></i> Watch</a>';
+                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/room/'.$row->code.'/watch" data-toggle="tooltip" data-placement="top" data-original-title="Public"><i class="far fa-globe"></i> Watch</a>';
                             } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/room/'.$row->code.'/watch" data-toggle="tooltip" data-placement="top" data-original-title="Private"><i class="far fa-lock"></i> Watch</a>';
+                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/room/'.$row->code.'/watch" data-toggle="tooltip" data-placement="top" data-original-title="Private"><i class="far fa-lock"></i> Watch</a>';
                             }
                         }
                     } else {
-                        $actionBtn = '<a class="btn btn-dark text-light showPromotion" style="width: 182px;" href="'.URL::to('/sanh-cho/').'"><i class="far fa-language"></i> Switch language</a>';
+                        $actionBtn = '<a class="btn btn-dark text-light showPromotion" style="width: 182px;" href="'.url('/sanh-cho/').'"><i class="far fa-language"></i> Switch language</a>';
                     }
                     $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> Preview</a>';
                     return $actionBtn;
@@ -340,14 +340,14 @@ class RoomController extends Controller
                     if (!isset($row->host_id)) {
                         if ($row->fen == env('INITIAL_FEN')) {
                             if ($row->pass == '') {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/rumu/'.$row->code.'/kuro"><i class="far fa-mouse"></i> 加入</a>';
+                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/rumu/'.$row->code.'/kuro"><i class="far fa-mouse"></i> 加入</a>';
                             } else {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/rumu/'.$row->code.'"><i class="far fa-mouse"></i> 加入</a>';
+                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/rumu/'.$row->code.'"><i class="far fa-mouse"></i> 加入</a>';
                             }
                             if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/rumu/'.$row->code.'/miru" data-toggle="tooltip" data-placement="top" data-original-title="公衆"><i class="far fa-globe"></i> 見る</a>';
+                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/rumu/'.$row->code.'/miru" data-toggle="tooltip" data-placement="top" data-original-title="公衆"><i class="far fa-globe"></i> 見る</a>';
                             } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/rumu/'.$row->code.'/miru" data-toggle="tooltip" data-placement="top" data-original-title="民間"><i class="far fa-lock"></i> 見る</a>';
+                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/rumu/'.$row->code.'/miru" data-toggle="tooltip" data-placement="top" data-original-title="民間"><i class="far fa-lock"></i> 見る</a>';
                             }
                         } else {
                             if (isset($row->result)) {
@@ -358,19 +358,19 @@ class RoomController extends Controller
                                 }
                             } else {
                                 if (str_contains($row->fen, ' b ')) {
-                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/rumu/'.$row->code.'/aka"><i class="far fa-mouse"></i> 加入</a>';
+                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/rumu/'.$row->code.'/aka"><i class="far fa-mouse"></i> 加入</a>';
                                 } else if (str_contains($row->fen, ' r ')) {
-                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/rumu/'.$row->code.'/kuro"><i class="far fa-mouse"></i> 加入</a>';
+                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/rumu/'.$row->code.'/kuro"><i class="far fa-mouse"></i> 加入</a>';
                                 }
                             }
                             if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/rumu/'.$row->code.'/miru" data-toggle="tooltip" data-placement="top" data-original-title="公衆"><i class="far fa-globe"></i> 見る</a>';
+                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/rumu/'.$row->code.'/miru" data-toggle="tooltip" data-placement="top" data-original-title="公衆"><i class="far fa-globe"></i> 見る</a>';
                             } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/rumu/'.$row->code.'/miru" data-toggle="tooltip" data-placement="top" data-original-title="民間"><i class="far fa-lock"></i> 見る</a>';
+                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/rumu/'.$row->code.'/miru" data-toggle="tooltip" data-placement="top" data-original-title="民間"><i class="far fa-lock"></i> 見る</a>';
                             }
                         }
                     } else {
-                        $actionBtn = '<a class="btn btn-dark text-light showPromotion" style="width: 170px;" href="'.URL::to('/sanh-cho/').'"><i class="far fa-language"></i> 言語を切り替える</a>';
+                        $actionBtn = '<a class="btn btn-dark text-light showPromotion" style="width: 170px;" href="'.url('/sanh-cho/').'"><i class="far fa-language"></i> 言語を切り替える</a>';
                     }
                     $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> プレビュー</a>';
                     return $actionBtn;
@@ -457,14 +457,14 @@ class RoomController extends Controller
                     if (!isset($row->host_id)) {
                         if ($row->fen == env('INITIAL_FEN')) {
                             if ($row->pass == '') {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/bang/'.$row->code.'/geom-eunsaeg"><i class="far fa-mouse"></i> 참여</a>';
+                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/bang/'.$row->code.'/geom-eunsaeg"><i class="far fa-mouse"></i> 참여</a>';
                             } else {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/bang/'.$row->code.'"><i class="far fa-mouse"></i> 참여</a>';
+                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/bang/'.$row->code.'"><i class="far fa-mouse"></i> 참여</a>';
                             }
                             if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/bang/'.$row->code.'/boda" data-toggle="tooltip" data-placement="top" data-original-title="공공의"><i class="far fa-globe"></i> 보다</a>';
+                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/bang/'.$row->code.'/boda" data-toggle="tooltip" data-placement="top" data-original-title="공공의"><i class="far fa-globe"></i> 보다</a>';
                             } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/bang/'.$row->code.'/boda" data-toggle="tooltip" data-placement="top" data-original-title="사적인"><i class="far fa-lock"></i> 보다</a>';
+                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/bang/'.$row->code.'/boda" data-toggle="tooltip" data-placement="top" data-original-title="사적인"><i class="far fa-lock"></i> 보다</a>';
                             }
                         } else {
                             if (isset($row->result)) {
@@ -475,19 +475,19 @@ class RoomController extends Controller
                                 }
                             } else {
                                 if (str_contains($row->fen, ' b ')) {
-                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/bang/'.$row->code.'/ppalgan"><i class="far fa-mouse"></i> 참여</a>';
+                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/bang/'.$row->code.'/ppalgan"><i class="far fa-mouse"></i> 참여</a>';
                                 } else if (str_contains($row->fen, ' r ')) {
-                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/bang/'.$row->code.'/geom-eunsaeg"><i class="far fa-mouse"></i> 참여</a>';
+                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/bang/'.$row->code.'/geom-eunsaeg"><i class="far fa-mouse"></i> 참여</a>';
                                 }
                             }
                             if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/bang/'.$row->code.'/boda" data-toggle="tooltip" data-placement="top" data-original-title="공공의"><i class="far fa-globe"></i> 보다</a>';
+                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/bang/'.$row->code.'/boda" data-toggle="tooltip" data-placement="top" data-original-title="공공의"><i class="far fa-globe"></i> 보다</a>';
                             } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/bang/'.$row->code.'/boda" data-toggle="tooltip" data-placement="top" data-original-title="사적인"><i class="far fa-lock"></i> 보다</a>';
+                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/bang/'.$row->code.'/boda" data-toggle="tooltip" data-placement="top" data-original-title="사적인"><i class="far fa-lock"></i> 보다</a>';
                             }
                         }
                     } else {
-                        $actionBtn = '<a class="btn btn-dark text-light showPromotion" style="width: 168px;" href="'.URL::to('/sanh-cho/').'"><i class="far fa-language"></i> 언어 변경</a>';
+                        $actionBtn = '<a class="btn btn-dark text-light showPromotion" style="width: 168px;" href="'.url('/sanh-cho/').'"><i class="far fa-language"></i> 언어 변경</a>';
                     }
                     $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> 미리보기</a>';
                     return $actionBtn;
@@ -574,14 +574,14 @@ class RoomController extends Controller
                     if (!isset($row->host_id)) {
                         if ($row->fen == env('INITIAL_FEN')) {
                             if ($row->pass == '') {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 70px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/fangjian/'.$row->code.'/heise"><i class="far fa-mouse"></i> 参加</a>';
+                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 70px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/fangjian/'.$row->code.'/heise"><i class="far fa-mouse"></i> 参加</a>';
                             } else {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 70px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/fangjian/'.$row->code.'"><i class="far fa-mouse"></i> 参加</a>';
+                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 70px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/fangjian/'.$row->code.'"><i class="far fa-mouse"></i> 参加</a>';
                             }
                             if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" style="width: 60px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/fangjian/'.$row->code.'/kan" data-toggle="tooltip" data-placement="top" data-original-title="平民的"><i class="far fa-globe"></i> 看</a>';
+                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" style="width: 60px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/fangjian/'.$row->code.'/kan" data-toggle="tooltip" data-placement="top" data-original-title="平民的"><i class="far fa-globe"></i> 看</a>';
                             } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" style="width: 60px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/fangjian/'.$row->code.'/kan" data-toggle="tooltip" data-placement="top" data-original-title="私有的"><i class="far fa-lock"></i> 看</a>';
+                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" style="width: 60px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/fangjian/'.$row->code.'/kan" data-toggle="tooltip" data-placement="top" data-original-title="私有的"><i class="far fa-lock"></i> 看</a>';
                             }
                         } else {
                             if (isset($row->result)) {
@@ -592,19 +592,19 @@ class RoomController extends Controller
                                 }
                             } else {
                                 if (str_contains($row->fen, ' b ')) {
-                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion" style="width: 70px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/fangjian/'.$row->code.'/hongse"><i class="far fa-mouse"></i> 参加</a>';
+                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion" style="width: 70px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/fangjian/'.$row->code.'/hongse"><i class="far fa-mouse"></i> 参加</a>';
                                 } else if (str_contains($row->fen, ' r ')) {
-                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 70px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/fangjian/'.$row->code.'/heise"><i class="far fa-mouse"></i> 参加</a>';
+                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 70px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/fangjian/'.$row->code.'/heise"><i class="far fa-mouse"></i> 参加</a>';
                                 }
                             }
                             if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" style="width: 60px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/fangjian/'.$row->code.'/kan" data-toggle="tooltip" data-placement="top" data-original-title="平民的"><i class="far fa-globe"></i> 看</a>';
+                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" style="width: 60px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/fangjian/'.$row->code.'/kan" data-toggle="tooltip" data-placement="top" data-original-title="平民的"><i class="far fa-globe"></i> 看</a>';
                             } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" style="width: 60px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.URL::to('/').'/fangjian/'.$row->code.'/kan" data-toggle="tooltip" data-placement="top" data-original-title="私有的"><i class="far fa-lock"></i> 看</a>';
+                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" style="width: 60px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/fangjian/'.$row->code.'/kan" data-toggle="tooltip" data-placement="top" data-original-title="私有的"><i class="far fa-lock"></i> 看</a>';
                             }
                         }
                     } else {
-                        $actionBtn = '<a class="btn btn-dark text-light showPromotion" style="width: 134px;" href="'.URL::to('/sanh-cho/').'"><i class="far fa-language"></i> 切换语言</a>';
+                        $actionBtn = '<a class="btn btn-dark text-light showPromotion" style="width: 134px;" href="'.url('/sanh-cho/').'"><i class="far fa-language"></i> 切换语言</a>';
                     }
                     $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> 预览</a>';
                     return $actionBtn;

@@ -7,7 +7,6 @@
       /* Tổng thể body và Typography */
       body {
         background-color: #121418 !important; /* Nền tối sâu giảm mỏi mắt */
-        color: #e0e0e0 !important;
       }
 
       /* Khu vực chứa game chính */
@@ -262,7 +261,7 @@
                   <a class="btn btn-danger text-light btn-lg showPromotion thi-dau mx-2" href="{{ url('/dang-nhap') }}" data-toggle="tooltip" data-placement="top" title="{{ __('Đăng nhập để thi đấu') }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
                   @endif
                 @else
-                <a class="btn btn-danger text-light btn-lg showPromotion mx-2 rooms-list" href="{{ URL::to('/sanh-cho') }}"><i class="fad fa-chevron-circle-left"></i> {{ __("Quay lại sảnh chờ") }}</a>
+                <a class="btn btn-danger text-light btn-lg showPromotion mx-2 rooms-list" href="{{ url(__('/sanh-cho')) }}"><i class="fad fa-chevron-circle-left"></i> {{ __("Quay lại sảnh chờ") }}</a>
                 @endif
                 @include('common.volumeBtn')
                 @include('common.tourBtn')
@@ -276,7 +275,7 @@
               @yield('aboveContent')
               <div class="row">
                 <input type="hidden" name="FEN" id="FEN" >
-                <input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ URL::to('/') }}" >
+                <input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ url('/') }}" >
                 @include('common.themes')
                 @include('layout.partials.scripts')
                 @if ( !isset($board) )

@@ -94,7 +94,7 @@ $(document).ready(function () {
       }
     ],
     'language': {
-      'url': '{{ URL::to('/') }}/js/TablePuzzleVn.json'
+      'url': '{{ url('/') }}/js/TablePuzzleVn.json'
     },
     'createdRow': function(row, data, dataIndex) {
       var selectedFen = $(row).find('td.room-code > a').attr('data-fen');
@@ -127,7 +127,7 @@ $(document).ready(function () {
             var boardDiv = $('<div class="innerBoard">').attr('id', boardId);
             container.html(boardDiv);
             let boardConfig = {
-              position: fenCode              
+              position: fenCode
             };
             if (fenCode.includes(' r ')) {
               boardConfig.orientation = 'red';
@@ -179,7 +179,7 @@ $(document).ready(function () {
   $('.dataTables_length').addClass('bs-select');
 });
 </script>
-<input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ URL::to('/') }}" >
+<input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ url('/') }}" >
 {{-- @include('layout.partials.userPuzzlesWrapper') --}}
 {{-- @include('layout.partials.userPuzzles') --}}
 @include('layout.partials.players')

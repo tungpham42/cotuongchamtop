@@ -31,17 +31,17 @@
             <span class="rounded d-none" id="game-over" data-toggle="tooltip" data-placement="top" data-original-title="Press 'Host a Room' to play with real person"><i class="fad fa-flag-checkered"></i> GAME OVER</span>
           </p>
 {{--           <p class="w-100 text-center my-4">
-            <a style="color: white" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/amp') }}/room/{{ md5(time()) }}" class="btn btn-success btn-lg"><i class="fad fa-plus-circle"></i> Host a room</a>
+            <a style="color: white" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ url('/amp') }}/room/{{ md5(time()) }}" class="btn btn-success btn-lg"><i class="fad fa-plus-circle"></i> Host a room</a>
           </p> --}}
           @yield('aboveContent')
           <div class="row">
             <input type="hidden" name="FEN" id="FEN" />
-            <input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ URL::to('/') }}" />
+            <input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ url('/') }}" />
             @include('amp.en.layout.partials.scripts')
             @yield('belowContent')
 {{--             @if ( !isset($board) )
             <p class="w-100 text-center mt-2">
-              <a style="color: white" id="share-board" class="mx-auto btn btn-success btn-lg py-2" href="{{ URL::to('/amp/board/') }}"><i class="fad fa-share"></i> Share board</a>
+              <a style="color: white" id="share-board" class="mx-auto btn btn-success btn-lg py-2" href="{{ url('/amp/board/') }}"><i class="fad fa-share"></i> Share board</a>
             </p>
             <script>
             $('#share-board').on('click', function(){
@@ -51,8 +51,8 @@
             @else
             <h3 class="mx-auto text-center my-2 d-block w-100">Who goes first?</h3>
             <p class="w-100 text-center mt-2">
-              <a id="red-first" class="w-25 btn btn-danger btn-lg" href="{{ URL::to('/amp/board/') }}"><i class="fad fa-chess-clock-alt"></i> Red first</a>
-              <a id="black-first" class="w-25 btn btn-dark btn-lg" href="{{ URL::to('/amp/board/') }}"><i class="fad fa-chess-clock"></i> Black first</a>
+              <a id="red-first" class="w-25 btn btn-danger btn-lg" href="{{ url('/amp/board/') }}"><i class="fad fa-chess-clock-alt"></i> Red first</a>
+              <a id="black-first" class="w-25 btn btn-dark btn-lg" href="{{ url('/amp/board/') }}"><i class="fad fa-chess-clock"></i> Black first</a>
             </p>
             <script>
             $('#red-first').on('click', function(){

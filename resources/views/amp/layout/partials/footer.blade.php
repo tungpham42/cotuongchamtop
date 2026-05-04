@@ -114,4 +114,4 @@ justDetectAdblock.detectAnyAdblocker().then(function(detected) {
 });
 </script>
 <a href="#0" class="cd-top js-cd-top rounded" style="background-image: url('https://cotuong.r.worldssl.net/img/cd-top-arrow.svg');">Top</a>
-<script src="{{ URL::to('/') }}/js/to-top.js"></script>
+<script src="{{ url('/') }}/js/to-top.js"></script>

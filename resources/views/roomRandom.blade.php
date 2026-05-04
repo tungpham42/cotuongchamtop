@@ -144,7 +144,7 @@ function updateResult(roomCode, result) {
     data: {
       'ma-phong': roomCode,
       'result': result,
-      'lang': 'vi',
+      'lang': '{{ __('vi') }}',
       'side': 'black'
     },
     dataType: 'json'
@@ -161,7 +161,7 @@ function updateResult(roomCode, result) {
         }
       },
       callback: function () {
-        window.location.href = "{{ url('/sanh-cho') }}";
+        window.location.href = "{{ url(__('/sanh-cho')) }}";
       }
     });
   });

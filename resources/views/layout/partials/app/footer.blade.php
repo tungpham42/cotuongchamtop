@@ -19,7 +19,7 @@
             <a class="trophy showPromotion" href="{{ url('/bang-xep-hang') }}"><i class="fal fa-star"></i> {{ __("Bảng xếp hạng") }}</a>
           </li>
           <li>
-            <a class="room showPromotion rooms-list" href="{{ url('/sanh-cho') }}"><i class="fal fa-list-alt"></i> {{ __("Sảnh chờ") }}</a>
+            <a class="room showPromotion rooms-list" href="{{ url(__('/sanh-cho')) }}"><i class="fal fa-list-alt"></i> {{ __("Sảnh chờ") }}</a>
           </li>
           <li>
             <a class="setup puzzle showPromotion" href="{{ url('/co-the') }}"><i class="fal fa-puzzle-piece"></i> {{ __("Cờ thế") }}</a>
@@ -154,12 +154,12 @@ function showLatestRoom(offset, newCode) {
               },
               callback: function (result) {
                 if (result == true) {
-                  // $('#AdSenseModal').attr('data-url', "{{ url('/sanh-cho') }}").modal('show');
+                  // $('#AdSenseModal').attr('data-url', "{{ url(__('/sanh-cho')) }}").modal('show');
                   // $('#AdSenseModal').on('shown.bs.modal', function (event) {
                   //   $('#adModalCloseBtn').attr('data-original-title', 'Mời vào {{ __("Sảnh chờ") }}!');
                   //   $('#adModalCloseBtn').tooltip();
                   // });
-                  window.location.href = "{{ url('/sanh-cho') }}";
+                  window.location.href = "{{ url(__('/sanh-cho')) }}";
                 }
               }
             });

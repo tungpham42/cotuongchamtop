@@ -19,7 +19,7 @@
         <tbody style="background-color: whitesmoke;">
   @for ($i = 0; $i < count($rooms); ++$i)
           <tr>
-            <td class="text-center room-code"><a href="{{ URL::to('/') }}/phong/{{ $rooms[$i]['code'] }}">{{ $rooms[$i]['code'] }}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-key text-dark" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ $rooms[$i]['pass'] }}"></i>
+            <td class="text-center room-code"><a href="{{ url('/') }}/phong/{{ $rooms[$i]['code'] }}">{{ $rooms[$i]['code'] }}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-key text-dark" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ $rooms[$i]['pass'] }}"></i>
               @if ($rooms[$i]['fen'] == 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1')
                 <span class="text-right badge badge-warning">Mới</span>
               @else
@@ -30,8 +30,8 @@
               <a target="_blank" class="btn btn-success text-light" href="{{ url('/') }}/phong/{{ $rooms[$i]['code'] }}/duoc-moi">Vào phòng</a>
             </td>
             <td class="text-center" data-sort-method="none">
-              <a target="_blank" class="btn btn-danger" href="{{ URL::to('/') }}/phong/{{ $rooms[$i]['code'] }}/do">ĐỎ</a>
-              <a target="_blank" class="btn btn-dark" href="{{ URL::to('/') }}/phong/{{ $rooms[$i]['code'] }}/den">ĐEN</a>
+              <a target="_blank" class="btn btn-danger" href="{{ url('/') }}/phong/{{ $rooms[$i]['code'] }}/do">ĐỎ</a>
+              <a target="_blank" class="btn btn-dark" href="{{ url('/') }}/phong/{{ $rooms[$i]['code'] }}/den">ĐEN</a>
             </td>
             <td class="text-right" data-order="{{ strtotime($rooms[$i]['modified_at']) }}">{{ date('Y-m-d | g:i a', strtotime($rooms[$i]['modified_at']) + (420*60)) }}</td>
           </tr>
@@ -47,7 +47,7 @@
 $(document).ready(function () {
   $('#danh-sach-phong').DataTable({
     'language': {
-      'url': '{{ URL::to('/') }}/js/TableVietnam.json'
+      'url': '{{ url('/') }}/js/TableVietnam.json'
     },
     'order': [[ 3, 'desc' ]]
   });

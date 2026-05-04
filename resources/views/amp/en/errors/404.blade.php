@@ -11,7 +11,7 @@
 
 	<!-- Google font -->
 	<link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700&display=swap&subset=latin-ext,vietnamese" rel="stylesheet">
-  <link rel="icon" sizes="32x32" href="{{ URL::to('/') }}/img/favicon-32x32-game.png" />
+  <link rel="icon" sizes="32x32" href="{{ url('/') }}/img/favicon-32x32-game.png" />
 	<!-- Custom stlylesheet -->
 	<style>
   * {
