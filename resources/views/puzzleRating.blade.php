@@ -380,8 +380,7 @@ $('#copy-url').on('click', function() {
   $(this).tooltip('update');
 });
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js" integrity="sha512-OqcrADJLG261FZjar4Z6c4CfLqd861A3yPNMb+vRQ2JwzFT49WT4lozrh3bcKxHxtDTgNiqgYbEUStzvZQRfgQ==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.svg.min.js" integrity="sha512-cX+p7MRIKvgo59Ap3QDj2ymdc7XFFCEJ71X+nWPT+3UxNylm/ztqgDJTbko2atIo4jiozj0dUpYb+xfv1bCl8g==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8ZPB8L1B2hOFEARX51sEQIGk8ksAQ67YwGqj02Z2I2IwwA14Wa+Yg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js" integrity="sha256-u/J1Urdrk3nCYFefpoeTMgI5viU1ujCDu2fXXoSJjhg=" crossorigin="anonymous"></script>
 <script>
 let board = null;
@@ -567,6 +566,8 @@ $('#undo').on('click', function(){
   nuocCo.play();
   updateStatus();
 });
+
+// Đã cập nhật hàm tính năng tải ảnh không bị cắt xén
 $("#capture").on('click', function() {
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
@@ -583,29 +584,35 @@ $("#capture").on('click', function() {
       }
     });
   } else {
-    html2canvas(document.getElementById("ban-co"), {
-      windowWidth: document.getElementById("ban-co").scrollWidth,
-      windowHeight: document.getElementById("ban-co").scrollHeight,
-      allowTaint: true,
+    var captureElement = document.getElementById("ban-co");
+    var scale = window.devicePixelRatio || 2;
+
+    html2canvas(captureElement, {
+      scale: scale,
       useCORS: true,
-      onrendered: function(canvas) {
-        var context = canvas.getContext('2d');
+      allowTaint: true,
+      scrollX: 0,
+      scrollY: 0,
+      width: captureElement.offsetWidth,
+      height: captureElement.offsetHeight
+    }).then(function(canvas) {
+      var context = canvas.getContext('2d');
 
-        // Draw the Watermark
-        context.font = '18px sans-serif';
-        context.globalCompositeOperation = 'multiply';
-        context.fillStyle = '#444422';
-        context.textAlign = 'center';
-        context.textBaseline = 'middle';
-        context.fillText('{{ $name }}', canvas.width / 2, canvas.height / 2);
+      // Draw the Watermark
+      context.font = (18 * scale) + 'px sans-serif';
+      context.globalCompositeOperation = 'multiply';
+      context.fillStyle = '#444422';
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      context.fillText('{{ $name }}', canvas.width / 2, canvas.height / 2);
 
-        canvas.toBlob(function(blob) {
-          saveAs(blob, "ban-co-{{ date('Y-m-d h:i:s A') }}.png");
-        });
-      }
+      canvas.toBlob(function(blob) {
+        saveAs(blob, "ban-co-{{ date('Y-m-d h:i:s A') }}.png");
+      });
     });
   }
 });
+
 $('#switch').on('click', board.flip);
 
 const reactionEndpoints = {
