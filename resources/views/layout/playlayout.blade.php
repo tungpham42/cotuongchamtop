@@ -168,7 +168,7 @@
               @include('layout.partials.themeSelector')
               @include('layout.partials.analyzeBtn')
             </div>
-            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-5 mt-sm-5 mt-xs-5">
+            <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-0">
               @include('layout.partials.comments')
               {{-- @include('common.sideAds') --}}
             </div>
