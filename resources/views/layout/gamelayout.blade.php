@@ -138,7 +138,7 @@
               @yield('aboveBoard')
             </div>
           </div>
-          @if ( !$roomCode && !isset($slug) )
+          @if ( !isset($roomCode) && !isset($slug) )
           <div class="row">
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-1">
               <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
@@ -149,7 +149,7 @@
               @yield('rightSide')
             </div>
           </div>
-          @elseif ( !$roomCode && $slug )
+          @elseif ( !isset($roomCode) && isset($slug) )
           <div class="puzzle-layout-wrapper">
             <div class="puzzle-layout-board">
               <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
