@@ -35,6 +35,7 @@
         letter-spacing: 0.5px;
       }
       .btn-danger:hover {
+        transform: translateY(-2px);
         box-shadow: 0 6px 15px rgba(211, 47, 47, 0.6);
         background: linear-gradient(145deg, #f44336, #d32f2f) !important;
       }
