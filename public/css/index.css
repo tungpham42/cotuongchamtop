@@ -432,7 +432,8 @@ select:-webkit-autofill:focus {
     transition: background-color 1000s ease-in-out 0s;
 }
 body {
-    font-family: "Roboto", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
+    font-family:
+        "Plus Jakarta Sans", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
         sans-serif !important;
     overflow-x: hidden;
     overflow-y: scroll;
@@ -450,8 +451,8 @@ h6,
 .h4,
 .h5,
 .h6 {
-    font-family: "Texturina", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
-        sans-serif !important;
+    font-family:
+        "Texturina", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC", sans-serif !important;
 }
 .form-control,
 input:-internal-autofill-selected {
@@ -713,7 +714,8 @@ body.register main {
     font-style: italic;
 }
 .tooltip {
-    font-family: "Roboto", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
+    font-family:
+        "Plus Jakarta Sans", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
         sans-serif !important;
     z-index: 100000 !important;
 }
@@ -935,7 +937,9 @@ a.animate {
     padding: 0 0.25rem;
     margin: 0 -0.25rem;
     border-radius: 0.5rem;
-    transition: color 666ms ease-in-out, box-shadow 666ms ease-in-out;
+    transition:
+        color 666ms ease-in-out,
+        box-shadow 666ms ease-in-out;
 }
 a.animate:hover {
     color: #fff !important;
@@ -950,7 +954,9 @@ a.animate-light {
     padding: 0 0.25rem;
     margin: 0 -0.25rem;
     border-radius: 0.5rem;
-    transition: color 666ms ease-in-out, box-shadow 666ms ease-in-out;
+    transition:
+        color 666ms ease-in-out,
+        box-shadow 666ms ease-in-out;
 }
 a.animate-light:hover {
     color: #f04124 !important;
@@ -1049,7 +1055,8 @@ body.setup #game-status {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-family: "Roboto", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
+    font-family:
+        "Plus Jakarta Sans", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
         sans-serif;
 }
 .table td,
@@ -1484,7 +1491,8 @@ body.dashboard .waitingIndicator .indicator {
     }
 }
 .introjs-helperNumberLayer {
-    font-family: "Roboto", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
+    font-family:
+        "Plus Jakarta Sans", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
         sans-serif;
     font-size: 14px;
     text-shadow: none;
@@ -1504,7 +1512,8 @@ body.dashboard .waitingIndicator .indicator {
 .introjs-tooltip {
     letter-spacing: 0.1em;
     color: #f04124;
-    font-family: "Roboto", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
+    font-family:
+        "Plus Jakarta Sans", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
         sans-serif;
     border-radius: 2px;
     background-color: rgba(255, 255, 255, 0.84);
@@ -1514,18 +1523,29 @@ body.dashboard .waitingIndicator .indicator {
     text-shadow: none;
     font-weight: bold;
     color: #f04124;
-    font-family: "Roboto", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
+    font-family:
+        "Plus Jakarta Sans", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
         sans-serif;
     background: #ecf0f1;
     background-image: none;
     -webkit-border-radius: 0.2em;
     -moz-border-radius: 0.2em;
     border-radius: 0.2em;
-    -webkit-transition: background 0.3s, border 0.3s;
-    -moz-transition: background 0.3s, border 0.3s;
-    -ms-transition: background 0.3s, border 0.3s;
-    -o-transition: background 0.3s, border 0.3s;
-    transition: background 0.3s, border 0.3s;
+    -webkit-transition:
+        background 0.3s,
+        border 0.3s;
+    -moz-transition:
+        background 0.3s,
+        border 0.3s;
+    -ms-transition:
+        background 0.3s,
+        border 0.3s;
+    -o-transition:
+        background 0.3s,
+        border 0.3s;
+    transition:
+        background 0.3s,
+        border 0.3s;
 }
 .introjs-prevbutton {
     border-radius: 0.2em 0 0 0.2em;
@@ -1540,7 +1560,8 @@ body.dashboard .waitingIndicator .indicator {
     box-shadow: none;
     border-color: #f04124;
     text-decoration: none;
-    font-family: "Roboto", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
+    font-family:
+        "Plus Jakarta Sans", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
         sans-serif;
 }
 .introjs-bullets ul li a {
@@ -1577,16 +1598,26 @@ body.dashboard .waitingIndicator .indicator {
         center 50%;
     visibility: hidden;
     opacity: 0;
-    -webkit-transition: opacity 0.3s 0s, visibility 0s 0.3s,
+    -webkit-transition:
+        opacity 0.3s 0s,
+        visibility 0s 0.3s,
         background-color 0.3s 0s;
-    transition: opacity 0.3s 0s, visibility 0s 0.3s, background-color 0.3s 0s;
+    transition:
+        opacity 0.3s 0s,
+        visibility 0s 0.3s,
+        background-color 0.3s 0s;
 }
 .cd-top.cd-top--show,
 .cd-top.cd-top--fade-out,
 .cd-top:hover {
-    -webkit-transition: opacity 0.3s 0s, visibility 0s 0s,
+    -webkit-transition:
+        opacity 0.3s 0s,
+        visibility 0s 0s,
         background-color 0.3s 0s;
-    transition: opacity 0.3s 0s, visibility 0s 0s, background-color 0.3s 0s;
+    transition:
+        opacity 0.3s 0s,
+        visibility 0s 0s,
+        background-color 0.3s 0s;
 }
 .cd-top.cd-top--show {
     visibility: visible;
@@ -1729,7 +1760,8 @@ body.dashboard .waitingIndicator .indicator {
 }
 .notation-8c7a2 {
     cursor: default;
-    font-family: "Roboto", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
+    font-family:
+        "Plus Jakarta Sans", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
         sans-serif;
     font-size: 14px;
     position: absolute;

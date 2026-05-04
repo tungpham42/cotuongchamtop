@@ -2,6 +2,88 @@
 <html lang="vi">
   <head>
     @include('layout.partials.head')
+
+    <style>
+      /* Tổng thể body và Typography */
+      body {
+        background-color: #121418 !important; /* Nền tối sâu giảm mỏi mắt */
+        color: #e0e0e0 !important;
+      }
+
+      /* Khu vực chứa game chính */
+      .game.container-fluid {
+        background: linear-gradient(135deg, #1a1c23 0%, #121418 100%);
+        min-height: calc(100vh - 80px);
+      }
+
+      /* Khung bao quanh Bàn cờ */
+      #ban-co {
+        background-color: #252a36;
+        border-radius: 8px;
+        box-shadow: inset 0 0 15px rgba(0,0,0,0.5), 0 4px 10px rgba(0,0,0,0.3);
+        padding: 5px;
+        margin-bottom: 15px;
+      }
+
+      /* Nút bấm (Buttons) hiện đại hơn */
+      .btn-danger {
+        background: linear-gradient(145deg, #d32f2f, #b71c1c) !important;
+        border: none !important;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+      .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(211, 47, 47, 0.6);
+        background: linear-gradient(145deg, #f44336, #d32f2f) !important;
+      }
+
+      /* Tùy chỉnh Alerts cho Dark Theme */
+      .alert {
+        border-radius: 8px;
+        border: none;
+        backdrop-filter: blur(5px);
+        margin-top: 15px;
+      }
+      .alert-success {
+        background-color: rgba(46, 125, 50, 0.2);
+        color: #81c784;
+        border-left: 4px solid #4caf50;
+      }
+      .alert-warning {
+        background-color: rgba(245, 124, 0, 0.2);
+        color: #ffb74d;
+        border-left: 4px solid #ff9800;
+      }
+
+      /* Dòng chữ "Chiếu!" */
+      #checkmateText {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #ff5252;
+        text-shadow: 0 0 15px rgba(255, 82, 82, 0.8), 0 0 5px rgba(255, 255, 255, 0.5);
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        display: block;
+        text-align: center;
+        margin-bottom: 15px;
+      }
+
+      /* Tùy chỉnh thanh cuộn (Scrollbar) cho đồng bộ Dark theme */
+      ::-webkit-scrollbar { width: 8px; height: 8px; }
+      ::-webkit-scrollbar-track { background: #121418; }
+      ::-webkit-scrollbar-thumb { background: #3a3f4c; border-radius: 4px; }
+      ::-webkit-scrollbar-thumb:hover { background: #505769; }
+
+      /* Cân bằng các khoảng trống section bên dưới */
+      .mt-lg-0.mt-md-5 {
+          margin-top: 2rem !important;
+      }
+    </style>
   </head>
   <body class="{{ $bodyClass }}">
     @include('common.afterBody')
@@ -54,7 +136,7 @@
             @include('layout.partials.findMatch')
           </div>
           <div class="row">
-            <div class="col-12 text-center">
+            <div class="col-12 text-center mb-3">
               @yield('aboveBoard')
             </div>
           </div>
@@ -97,10 +179,10 @@
           <div class="row">
             <div class="col-12">
               @if ( $roomCode != '' )
-              <p class="w-100 text-center my-3">
+              <p class="w-100 text-center my-3 d-flex justify-content-center align-items-center flex-wrap gap-2">
                 @if (!isset($room->result) && isset($room->host_id))
                   @if (auth()->check())
-                  <a id="choi" class="btn btn-danger text-light btn-lg showPromotion mx-auto" href="javascript:joinMatch('{{ $roomCode }}')"><i class="fad fa-mouse"></i> {{ __('Chơi') }}</a>
+                  <a id="choi" class="btn btn-danger text-light btn-lg showPromotion mx-2" href="javascript:joinMatch('{{ $roomCode }}')"><i class="fad fa-mouse"></i> {{ __('Chơi') }}</a>
                   <script>
                     function joinMatch(roomCode) {
                       var hostId = '';
@@ -178,16 +260,20 @@
                     }
                   </script>
                   @else
-                  <a class="btn btn-danger text-light btn-lg showPromotion thi-dau" href="{{ url('/dang-nhap') }}" data-toggle="tooltip" data-placement="top" title="{{ __('Đăng nhập để thi đấu') }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
+                  <a class="btn btn-danger text-light btn-lg showPromotion thi-dau mx-2" href="{{ url('/dang-nhap') }}" data-toggle="tooltip" data-placement="top" title="{{ __('Đăng nhập để thi đấu') }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
                   @endif
                 @else
-                <a class="btn btn-danger text-light btn-lg showPromotion mx-auto rooms-list" href="{{ URL::to('/sanh-cho') }}"><i class="fad fa-chevron-circle-left"></i> {{ __("Quay lại sảnh chờ") }}</a>
+                <a class="btn btn-danger text-light btn-lg showPromotion mx-2 rooms-list" href="{{ URL::to('/sanh-cho') }}"><i class="fad fa-chevron-circle-left"></i> {{ __("Quay lại sảnh chờ") }}</a>
                 @endif
                 @include('common.volumeBtn')
                 @include('common.tourBtn')
               </p>
               @endif
-              @include('common.ads')
+
+              <div class="mt-3">
+                @include('common.ads')
+              </div>
+
               @yield('aboveContent')
               <div class="row">
                 <input type="hidden" name="FEN" id="FEN" >
