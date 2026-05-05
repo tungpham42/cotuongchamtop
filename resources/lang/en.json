@@ -240,6 +240,7 @@
     "/do": "/red",
     "/den": "/black",
     "/sanh-cho": "/rooms",
+    "/co-the": "/puzzle",
     "Đang tìm đối thủ...": "Finding opponent...",
     "Lỗi kết nối server.": "Server connection error.",
     "Mất kết nối với máy chủ.": "Lost connection to the server.",
