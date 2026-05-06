@@ -550,7 +550,7 @@ $('#undo').on('click', function(){
   updateStatus();
 });
 
-// Chụp ảnh SỬA LỖI LỆCH QUÂN CỜ TRÊN MOBILE VÀ RÕ CHỮ Ở SÔNG
+// Fix for misplaced pieces and missing river text
 $("#capture").on('click', function() {
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
@@ -559,59 +559,62 @@ $("#capture").on('click', function() {
       centerVertical: true,
       closeButton: false,
       size: 'small',
-      buttons: {
-        ok: {
-          className: 'btn-danger',
-          label: '{{ __("Xếp lại") }}'
-        }
-      }
+      buttons: { ok: { className: 'btn-danger', label: '{{ __("Xếp lại") }}' } }
     });
   } else {
     var captureElement = document.getElementById("ban-co");
+    
+    // 1. Calculate scale based on device screen density (usually 2x or 3x on mobile)
     var scale = window.devicePixelRatio || 2;
 
-    // Sửa lỗi: Lưu lại vị trí cuộn và cuộn lên top trước khi chạy html2canvas
-    var originalScrollX = window.scrollX || window.pageXOffset;
-    var originalScrollY = window.scrollY || window.pageYOffset;
+    // 2. IMPORTANT: Save current scroll position and jump to top
+    // This is the primary fix for "floating" or misplaced pieces on mobile.
+    var originalScrollX = window.pageXOffset;
+    var originalScrollY = window.pageYOffset;
     window.scrollTo(0, 0);
 
     html2canvas(captureElement, {
       scale: scale,
       useCORS: true,
       allowTaint: true,
-      // Đã loại bỏ scrollX: 0 và scrollY: 0 để tránh xung đột offset trên mobile
+      logging: false,
+      backgroundColor: null, // Keeps transparency if your board has it
       width: captureElement.offsetWidth,
       height: captureElement.offsetHeight
     }).then(function(canvas) {
-      // Khôi phục vị trí cuộn ngay lập tức sau khi chụp xong
+      // 3. Immediately restore scroll position for the user
       window.scrollTo(originalScrollX, originalScrollY);
 
       var context = canvas.getContext('2d');
 
-      // Draw the Watermark to be highly readable at the river
-      var maxWidth = canvas.width * 0.85;
+      // 4. Draw the Name on the River
+      // We calculate the center based on the scaled canvas size
       var x = canvas.width / 2;
       var y = canvas.height / 2;
-      
-      context.globalCompositeOperation = 'source-over';
-      context.font = 'bold ' + (24 * scale) + 'px Arial, sans-serif';
+      var fontSize = 22 * scale; // Adjust base size (22) as needed
+      var maxWidth = canvas.width * 0.8;
+
+      context.font = 'bold ' + fontSize + 'px "Arial", sans-serif';
       context.textAlign = 'center';
       context.textBaseline = 'middle';
 
-      context.lineWidth = 5 * scale;
-      context.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+      // Add a slight white glow/outline to make it readable over the board lines
+      context.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+      context.lineWidth = 4 * scale;
       context.strokeText('{{ $name }}', x, y, maxWidth);
 
-      context.fillStyle = 'rgba(220, 53, 69, 1)';
+      // Fill with red color
+      context.fillStyle = '#dc3545';
       context.fillText('{{ $name }}', x, y, maxWidth);
 
+      // 5. Save the image
       canvas.toBlob(function(blob) {
-        saveAs(blob, "ban-co-{{ date('Y-m-d h:i:s A') }}.png");
+        saveAs(blob, "the-co-{{ now()->format('Ymd-His') }}.png");
       });
     }).catch(function(err) {
-      // Đảm bảo luôn khôi phục vị trí cuộn nếu có lỗi xảy ra
+      // Fallback: restore scroll if error occurs
       window.scrollTo(originalScrollX, originalScrollY);
-      console.error("Lỗi khi chụp ảnh bàn cờ:", err);
+      console.error("Capture failed:", err);
     });
   }
 });
