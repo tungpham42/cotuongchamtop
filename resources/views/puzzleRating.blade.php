@@ -305,7 +305,7 @@
           @if ($randomRoom != null)
           <a data-toggle="tooltip" data-placement="bottom" title="Chơi trong phòng Công khai ngẫu nhiên" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ url('/') }}/phong/{{ $randomRoom['code'] }}/ngau-nhien"><i class="fas fa-random text-dark"></i> {{ __("Ngẫu nhiên") }}</a>
           @endif
-          <a data-toggle="tooltip" data-placement="bottom" title="Tìm phòng trống" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ url('/sanh-cho') }}"><i class="fas fa-list-alt text-dark"></i> {{ __("Sảnh chờ") }}</a>
+          <a data-toggle="tooltip" data-placement="bottom" title="Tìm phòng trống" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ url(__('/sanh-cho')) }}"><i class="fas fa-list-alt text-dark"></i> {{ __("Sảnh chờ") }}</a>
         </div>
       </div>
     </div>
@@ -480,7 +480,7 @@ function onMoveEnd () {
 function updateStatus () {
   var status = ''
 
-  var moveColor = 'Đỏ'
+  var moveColor = '{{ __("Đỏ") }}'
   if (game.turn() === 'b') {
     moveColor = '{{ __("Đen") }}'
   }
@@ -497,7 +497,7 @@ function updateStatus () {
 
   // game still on
   else {
-    status = '{{ __("Tới lượt") }} ' + moveColor + ' đi'
+    status = '{{ __("Tới lượt:") }} ' + moveColor
 
     // check?
     if (game.in_check()) {
@@ -526,7 +526,7 @@ function updateStatus () {
     $('#header-status').html(': '+status+' - {{ __("Đã bỏ cuộc") }}');
     bootbox.alert({
       message: '<i class="fad fa-flag-checkered"></i> {{ __("Đã bỏ cuộc") }}',
-      locale: 'vi',
+      locale: '{{ __("vi") }}',
       centerVertical: true,
       closeButton: false,
       size: 'small',
@@ -571,7 +571,7 @@ $("#capture").on('click', function() {
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
       message: "{{ __("Bàn cờ thế") }} không hợp lệ",
-      locale: 'vi',
+      locale: '{{ __("vi") }}',
       centerVertical: true,
       closeButton: false,
       size: 'small',
@@ -711,7 +711,7 @@ $('.reaction-btn').on('click', function() {
     }
     bootbox.alert({
       message: message,
-      locale: 'vi',
+      locale: '{{ __("vi") }}',
       centerVertical: true,
       closeButton: false,
       size: 'small'
@@ -909,7 +909,7 @@ $('#puzzle-comment-list').on('click', '.comment-like', function() {
     }
     bootbox.alert({
       message: message,
-      locale: 'vi',
+      locale: '{{ __("vi") }}',
       centerVertical: true,
       closeButton: false,
       size: 'small'
@@ -1030,7 +1030,7 @@ function solvePuzzle(fenCode) {
   if (!game.validate_fen(fenCode + ' r - - 0 1').valid) {
     bootbox.alert({
     message: "{{ __("Bàn cờ thế") }} không hợp lệ",
-    locale: 'vi',
+    locale: '{{ __("vi") }}',
     centerVertical: true,
     closeButton: false,
     buttons: {

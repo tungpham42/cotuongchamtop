@@ -62,10 +62,9 @@ $('#copy-url').on('click', function() {
 });
 </script>
 @endif
-
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js" integrity="sha512-OqcrADJLG261FZjar4Z6c4CfLqd861A3yPNMb+vRQ2JwzFT49WT4lozrh3bcKxHxtDTgNiqgYbEUStzvZQRfgQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.svg.min.js" integrity="sha512-cX+p7MRIKvgo59Ap3QDj2ymdc7XFFCEJ71X+nWPT+3UxNylm/ztqgDJTbko2atIo4jiozj0dUpYb+xfv1bCl8g==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js" integrity="sha256-u/J1Urdrk3nCYFefpoeTMgI5viU1ujCDu2fXXoSJjhg=" crossorigin="anonymous"></script>
 @include('common.volume')
 <script>
 @if ($board != '')
@@ -325,8 +324,6 @@ $('#name-puzzle').on('click auxclick', function(e) {
     dialog.find('#save-puzzle-name').trigger('focus');
   });
 });
-
-// Hàm capture đã được fix lỗi cắt xén ảnh
 $("#capture").on('click', function() {
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
@@ -343,35 +340,29 @@ $("#capture").on('click', function() {
       }
     });
   } else {
-    var captureElement = document.getElementById("ban-co");
-    var scale = window.devicePixelRatio || 2;
-
-    html2canvas(captureElement, {
-      scale: scale,
-      useCORS: true,
+    html2canvas(document.getElementsByClassName("board-1ef78")[0], {
+      windowWidth: document.getElementsByClassName("board-1ef78")[0].scrollWidth,
+      windowHeight: document.getElementsByClassName("board-1ef78")[0].scrollHeight,
       allowTaint: true,
-      scrollX: 0,
-      scrollY: 0,
-      width: captureElement.offsetWidth,
-      height: captureElement.offsetHeight
-    }).then(function(canvas) {
-      var context = canvas.getContext('2d');
+      useCORS: true,
+      onrendered: function(canvas) {
+        var context = canvas.getContext('2d');
 
-      // Draw the Watermark
-      context.font = (25 * scale) + 'px cursive';
-      context.globalCompositeOperation = 'multiply';
-      context.fillStyle = '#444422';
-      context.textAlign = 'center';
-      context.textBaseline = 'middle';
-      context.fillText('COTUONG.TOP', canvas.width / 2, canvas.height / 2);
+        // Draw the Watermark
+        context.font = '25px cursive';
+        context.globalCompositeOperation = 'multiply';
+        context.fillStyle = '#444422';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText('COTUONG.TOP', canvas.width / 2, canvas.height / 2);
 
-      canvas.toBlob(function(blob) {
-        saveAs(blob, "ban-co-{{ date('Y-m-d h:i:s A') }}.png");
-      });
+        canvas.toBlob(function(blob) {
+          saveAs(blob, "ban-co-{{ date('Y-m-d h:i:s A') }}.png");
+        });
+      }
     });
   }
 });
-
 $('#solve-puzzle').on('click auxclick', function(e){
   e.preventDefault();
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {

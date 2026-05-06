@@ -185,7 +185,7 @@ function onSnapEnd () {
 function updateStatus () {
   var status = ''
 
-  var moveColor = 'Đỏ'
+  var moveColor = '{{ __("Đỏ") }}'
   if (game.turn() === 'b') {
     moveColor = '{{ __("Đen") }}'
   }
@@ -202,7 +202,7 @@ function updateStatus () {
 
   // game still on
   else {
-    status = '{{ __("Tới lượt") }} ' + moveColor + ' đi'
+    status = '{{ __("Tới lượt:") }} ' + moveColor
 
     // check?
     if (game.in_check()) {
