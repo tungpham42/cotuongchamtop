@@ -405,10 +405,8 @@ function greySquare (square) {
 }
 
 function onDragStart (source, piece) {
-  // do not pick up pieces if the game is over
   if (game.game_over()) return false;
 
-  // or if it's not that side's turn
   if ((game.turn() === 'r' && piece.search(/^b/) !== -1) ||
       (game.turn() === 'b' && piece.search(/^r/) !== -1)) {
     return false;
@@ -418,12 +416,10 @@ function onDragStart (source, piece) {
 function onDrop (source, target) {
   removeGreySquares();
 
-  // see if the move is legal
   let move = game.move({
     from: source,
     to: target
   });
-  // illegal move
   if (move === null) return 'snapback';
 
   if (move.color === 'r') {
@@ -443,19 +439,15 @@ function onDrop (source, target) {
 }
 
 function onMouseoverSquare (square, piece) {
-  // get list of possible moves for this square
   let moves = game.moves({
     square: square,
     verbose: true
   });
 
-  // exit if there are no moves available for this square
   if (moves.length === 0) return;
 
-  // highlight the square they moused over
   greySquare(square);
 
-  // highlight the possible squares for this piece
   for (let i = 0; i < moves.length; i++) {
     greySquare(moves[i].to);
   }
@@ -484,24 +476,16 @@ function updateStatus () {
     moveColor = '{{ __("Đen") }}'
   }
 
-  // checkmate?
   if (game.in_checkmate()) {
     status = moveColor + ' {{ __("bị chiếu bí") }}'
   }
-
-  // draw?
   else if (game.in_draw()) {
     status = '{{ __("Hòa") }}'
   }
-
-  // game still on
   else {
     status = '{{ __("Tới lượt:") }} ' + moveColor
-
-    // check?
     if (game.in_check()) {
       status += ', ' + moveColor + ' {{ __("đang bị chiếu") }}'
-
       if ((board.orientation() == 'red' && game.turn() === 'r') || (board.orientation() == 'black' && game.turn() === 'b')) {
         $('#checkmateText').show();
       }
@@ -550,7 +534,6 @@ let config = {
   onSnapEnd: onSnapEnd,
   onMoveEnd: onMoveEnd,
   showNotation: true
-  //pieceTheme: '/static/img/xiangqipieces/traditional/{piece}.svg'
 };
 board = Xiangqiboard('ban-co', config);
 $(window).resize(board.resize);
@@ -567,7 +550,7 @@ $('#undo').on('click', function(){
   updateStatus();
 });
 
-// Đã cập nhật hàm tính năng tải ảnh không bị cắt xén
+// Chụp ảnh SỬA LỖI LỆCH QUÂN CỜ TRÊN MOBILE VÀ RÕ CHỮ Ở SÔNG
 $("#capture").on('click', function() {
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
@@ -587,28 +570,48 @@ $("#capture").on('click', function() {
     var captureElement = document.getElementById("ban-co");
     var scale = window.devicePixelRatio || 2;
 
+    // Sửa lỗi: Lưu lại vị trí cuộn và cuộn lên top trước khi chạy html2canvas
+    var originalScrollX = window.scrollX || window.pageXOffset;
+    var originalScrollY = window.scrollY || window.pageYOffset;
+    window.scrollTo(0, 0);
+
     html2canvas(captureElement, {
       scale: scale,
       useCORS: true,
       allowTaint: true,
-      scrollX: 0,
-      scrollY: 0,
+      // Đã loại bỏ scrollX: 0 và scrollY: 0 để tránh xung đột offset trên mobile
       width: captureElement.offsetWidth,
       height: captureElement.offsetHeight
     }).then(function(canvas) {
+      // Khôi phục vị trí cuộn ngay lập tức sau khi chụp xong
+      window.scrollTo(originalScrollX, originalScrollY);
+
       var context = canvas.getContext('2d');
 
-      // Draw the Watermark
-      context.font = (18 * scale) + 'px sans-serif';
-      context.globalCompositeOperation = 'multiply';
-      context.fillStyle = '#444422';
+      // Draw the Watermark to be highly readable at the river
+      var maxWidth = canvas.width * 0.85;
+      var x = canvas.width / 2;
+      var y = canvas.height / 2;
+      
+      context.globalCompositeOperation = 'source-over';
+      context.font = 'bold ' + (24 * scale) + 'px Arial, sans-serif';
       context.textAlign = 'center';
       context.textBaseline = 'middle';
-      context.fillText('{{ $name }}', canvas.width / 2, canvas.height / 2);
+
+      context.lineWidth = 5 * scale;
+      context.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+      context.strokeText('{{ $name }}', x, y, maxWidth);
+
+      context.fillStyle = 'rgba(220, 53, 69, 1)';
+      context.fillText('{{ $name }}', x, y, maxWidth);
 
       canvas.toBlob(function(blob) {
         saveAs(blob, "ban-co-{{ date('Y-m-d h:i:s A') }}.png");
       });
+    }).catch(function(err) {
+      // Đảm bảo luôn khôi phục vị trí cuộn nếu có lỗi xảy ra
+      window.scrollTo(originalScrollX, originalScrollY);
+      console.error("Lỗi khi chụp ảnh bàn cờ:", err);
     });
   }
 });
@@ -662,7 +665,6 @@ function persistLikedComments() {
   try {
     localStorage.setItem(commentLikeStorageKey, JSON.stringify(likedCommentIds));
   } catch (error) {
-    // localStorage might be unavailable (privacy modes, etc.)
   }
 }
 
@@ -1046,7 +1048,6 @@ function solvePuzzle(fenCode) {
       }
     }});
   } else {
-    // $('#AdSenseModal').attr('data-url', '{{ url('/giai-co-the') }}/' + fenCode + ' r - - 0 1').modal('show');
     window.location.href = '{{ url('/giai-co-the') }}/' + fenCode + ' r - - 0 1';
   }
 }
@@ -1056,6 +1057,4 @@ function solvePuzzle(fenCode) {
 @include('layout.partials.userPuzzles')
 @include('layout.partials.boards')
 @include('layout.partials.playedBoards')
-{{-- @include('layout.partials.puzzles') --}}
-{{-- @include('layout.partials.books') --}}
 @endsection
