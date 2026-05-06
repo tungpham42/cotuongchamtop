@@ -295,17 +295,17 @@
         <a id="switch" class="btn btn-dark btn-lg w-100 mt-2"><i class="fad fa-sync"></i> {{ __("Đổi bên") }}</a>
         <a id="solve-puzzle" class="btn btn-dark btn-lg w-100 mt-2" href="javascript:solvePuzzle('{{ $fen }}')"><i class="fad fa-mouse"></i> Giải {{ __("thế cờ") }} "{{ $name }}"</a>
         @endif
-        <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ url('/') }}/phong/{{ md5(time()) }}">
+        <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ URL::to('/') }}/phong/{{ md5(time()) }}">
           @if (!auth()->check())
-          <a data-toggle="tooltip" data-placement="bottom" title="{{ __("Đăng nhập để tham gia thi đấu") }}" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="{{ url('/dang-nhap') }}"><i class="fas fa-sign-in text-dark"></i> {{ __("Đăng nhập") }}</a>
+          <a data-toggle="tooltip" data-placement="bottom" title="{{ __("Đăng nhập để tham gia thi đấu") }}" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="{{ URL::to('/dang-nhap') }}"><i class="fas fa-sign-in text-dark"></i> {{ __("Đăng nhập") }}</a>
           @else
           <a data-toggle="tooltip" data-placement="bottom" title="{{ __("Thi đấu tính điểm và xếp hạng") }}" id="create-room" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="javascript:createRoom();"><i class="fas fa-trophy-alt text-dark"></i> {{ __("Thi đấu") }}</a>
           @endif
           <a data-toggle="tooltip" data-placement="bottom" title="Chơi cần mật khẩu" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> {{ __("Riêng tư") }}</a>
           @if ($randomRoom != null)
-          <a data-toggle="tooltip" data-placement="bottom" title="Chơi trong phòng Công khai ngẫu nhiên" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ url('/') }}/phong/{{ $randomRoom['code'] }}/ngau-nhien"><i class="fas fa-random text-dark"></i> {{ __("Ngẫu nhiên") }}</a>
+          <a data-toggle="tooltip" data-placement="bottom" title="Chơi trong phòng Công khai ngẫu nhiên" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ URL::to('/') }}/phong/{{ $randomRoom['code'] }}/ngau-nhien"><i class="fas fa-random text-dark"></i> {{ __("Ngẫu nhiên") }}</a>
           @endif
-          <a data-toggle="tooltip" data-placement="bottom" title="Tìm phòng trống" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ url(__('/sanh-cho')) }}"><i class="fas fa-list-alt text-dark"></i> {{ __("Sảnh chờ") }}</a>
+          <a data-toggle="tooltip" data-placement="bottom" title="Tìm phòng trống" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ URL::to('/sanh-cho') }}"><i class="fas fa-list-alt text-dark"></i> {{ __("Sảnh chờ") }}</a>
         </div>
       </div>
     </div>
@@ -380,8 +380,9 @@ $('#copy-url').on('click', function() {
   $(this).tooltip('update');
 });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.min.js" integrity="sha512-OqcrADJLG261FZjar4Z6c4CfLqd861A3yPNMb+vRQ2JwzFT49WT4lozrh3bcKxHxtDTgNiqgYbEUStzvZQRfgQ==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.svg.min.js" integrity="sha512-cX+p7MRIKvgo59Ap3QDj2ymdc7XFFCEJ71X+nWPT+3UxNylm/ztqgDJTbko2atIo4jiozj0dUpYb+xfv1bCl8g==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js" integrity="sha256-u/J1Urdrk3nCYFefpoeTMgI5viU1ujCDu2fXXoSJjhg=" crossorigin="anonymous"></script>
 <script>
 let board = null;
 let $board = $('#ban-co');
@@ -405,8 +406,10 @@ function greySquare (square) {
 }
 
 function onDragStart (source, piece) {
+  // do not pick up pieces if the game is over
   if (game.game_over()) return false;
 
+  // or if it's not that side's turn
   if ((game.turn() === 'r' && piece.search(/^b/) !== -1) ||
       (game.turn() === 'b' && piece.search(/^r/) !== -1)) {
     return false;
@@ -416,10 +419,12 @@ function onDragStart (source, piece) {
 function onDrop (source, target) {
   removeGreySquares();
 
+  // see if the move is legal
   let move = game.move({
     from: source,
     to: target
   });
+  // illegal move
   if (move === null) return 'snapback';
 
   if (move.color === 'r') {
@@ -439,15 +444,19 @@ function onDrop (source, target) {
 }
 
 function onMouseoverSquare (square, piece) {
+  // get list of possible moves for this square
   let moves = game.moves({
     square: square,
     verbose: true
   });
 
+  // exit if there are no moves available for this square
   if (moves.length === 0) return;
 
+  // highlight the square they moused over
   greySquare(square);
 
+  // highlight the possible squares for this piece
   for (let i = 0; i < moves.length; i++) {
     greySquare(moves[i].to);
   }
@@ -471,21 +480,29 @@ function onMoveEnd () {
 function updateStatus () {
   var status = ''
 
-  var moveColor = '{{ __("Đỏ") }}'
+  var moveColor = 'Đỏ'
   if (game.turn() === 'b') {
     moveColor = '{{ __("Đen") }}'
   }
 
+  // checkmate?
   if (game.in_checkmate()) {
     status = moveColor + ' {{ __("bị chiếu bí") }}'
   }
+
+  // draw?
   else if (game.in_draw()) {
     status = '{{ __("Hòa") }}'
   }
+
+  // game still on
   else {
-    status = '{{ __("Tới lượt:") }} ' + moveColor
+    status = '{{ __("Tới lượt") }} ' + moveColor + ' đi'
+
+    // check?
     if (game.in_check()) {
       status += ', ' + moveColor + ' {{ __("đang bị chiếu") }}'
+
       if ((board.orientation() == 'red' && game.turn() === 'r') || (board.orientation() == 'black' && game.turn() === 'b')) {
         $('#checkmateText').show();
       }
@@ -509,7 +526,7 @@ function updateStatus () {
     $('#header-status').html(': '+status+' - {{ __("Đã bỏ cuộc") }}');
     bootbox.alert({
       message: '<i class="fad fa-flag-checkered"></i> {{ __("Đã bỏ cuộc") }}',
-      locale: '{{ __("vi") }}',
+      locale: 'vi',
       centerVertical: true,
       closeButton: false,
       size: 'small',
@@ -534,6 +551,7 @@ let config = {
   onSnapEnd: onSnapEnd,
   onMoveEnd: onMoveEnd,
   showNotation: true
+  //pieceTheme: '/static/img/xiangqipieces/traditional/{piece}.svg'
 };
 board = Xiangqiboard('ban-co', config);
 $(window).resize(board.resize);
@@ -549,76 +567,45 @@ $('#undo').on('click', function(){
   nuocCo.play();
   updateStatus();
 });
-
-// Fix for misplaced pieces and missing river text
 $("#capture").on('click', function() {
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
       message: "{{ __("Bàn cờ thế") }} không hợp lệ",
-      locale: '{{ __("vi") }}',
+      locale: 'vi',
       centerVertical: true,
       closeButton: false,
       size: 'small',
-      buttons: { ok: { className: 'btn-danger', label: '{{ __("Xếp lại") }}' } }
+      buttons: {
+        ok: {
+          className: 'btn-danger',
+          label: '{{ __("Xếp lại") }}'
+        }
+      }
     });
   } else {
-    var captureElement = document.getElementById("ban-co");
-    
-    // 1. Calculate scale based on device screen density (usually 2x or 3x on mobile)
-    var scale = window.devicePixelRatio || 2;
-
-    // 2. IMPORTANT: Save current scroll position and jump to top
-    // This is the primary fix for "floating" or misplaced pieces on mobile.
-    var originalScrollX = window.pageXOffset;
-    var originalScrollY = window.pageYOffset;
-    window.scrollTo(0, 0);
-
-    html2canvas(captureElement, {
-      scale: scale,
-      useCORS: true,
+    html2canvas(document.getElementById("ban-co"), {
+      windowWidth: document.getElementById("ban-co").scrollWidth,
+      windowHeight: document.getElementById("ban-co").scrollHeight,
       allowTaint: true,
-      logging: false,
-      backgroundColor: null, // Keeps transparency if your board has it
-      width: captureElement.offsetWidth,
-      height: captureElement.offsetHeight
-    }).then(function(canvas) {
-      // 3. Immediately restore scroll position for the user
-      window.scrollTo(originalScrollX, originalScrollY);
+      useCORS: true,
+      onrendered: function(canvas) {
+        var context = canvas.getContext('2d');
 
-      var context = canvas.getContext('2d');
+        // Draw the Watermark
+        context.font = '18px sans-serif';
+        context.globalCompositeOperation = 'multiply';
+        context.fillStyle = '#444422';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText('{{ $name }}', canvas.width / 2, canvas.height / 2);
 
-      // 4. Draw the Name on the River
-      // We calculate the center based on the scaled canvas size
-      var x = canvas.width / 2;
-      var y = canvas.height / 2;
-      var fontSize = 22 * scale; // Adjust base size (22) as needed
-      var maxWidth = canvas.width * 0.8;
-
-      context.font = 'bold ' + fontSize + 'px "Arial", sans-serif';
-      context.textAlign = 'center';
-      context.textBaseline = 'middle';
-
-      // Add a slight white glow/outline to make it readable over the board lines
-      context.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-      context.lineWidth = 4 * scale;
-      context.strokeText('{{ $name }}', x, y, maxWidth);
-
-      // Fill with red color
-      context.fillStyle = '#dc3545';
-      context.fillText('{{ $name }}', x, y, maxWidth);
-
-      // 5. Save the image
-      canvas.toBlob(function(blob) {
-        saveAs(blob, "the-co-{{ now()->format('Ymd-His') }}.png");
-      });
-    }).catch(function(err) {
-      // Fallback: restore scroll if error occurs
-      window.scrollTo(originalScrollX, originalScrollY);
-      console.error("Capture failed:", err);
+        canvas.toBlob(function(blob) {
+          saveAs(blob, "ban-co-{{ date('Y-m-d h:i:s A') }}.png");
+        });
+      }
     });
   }
 });
-
 $('#switch').on('click', board.flip);
 
 const reactionEndpoints = {
@@ -668,6 +655,7 @@ function persistLikedComments() {
   try {
     localStorage.setItem(commentLikeStorageKey, JSON.stringify(likedCommentIds));
   } catch (error) {
+    // localStorage might be unavailable (privacy modes, etc.)
   }
 }
 
@@ -723,7 +711,7 @@ $('.reaction-btn').on('click', function() {
     }
     bootbox.alert({
       message: message,
-      locale: '{{ __("vi") }}',
+      locale: 'vi',
       centerVertical: true,
       closeButton: false,
       size: 'small'
@@ -921,7 +909,7 @@ $('#puzzle-comment-list').on('click', '.comment-like', function() {
     }
     bootbox.alert({
       message: message,
-      locale: '{{ __("vi") }}',
+      locale: 'vi',
       centerVertical: true,
       closeButton: false,
       size: 'small'
@@ -1042,7 +1030,7 @@ function solvePuzzle(fenCode) {
   if (!game.validate_fen(fenCode + ' r - - 0 1').valid) {
     bootbox.alert({
     message: "{{ __("Bàn cờ thế") }} không hợp lệ",
-    locale: '{{ __("vi") }}',
+    locale: 'vi',
     centerVertical: true,
     closeButton: false,
     buttons: {
@@ -1051,6 +1039,7 @@ function solvePuzzle(fenCode) {
       }
     }});
   } else {
+    // $('#AdSenseModal').attr('data-url', '{{ url('/giai-co-the') }}/' + fenCode + ' r - - 0 1').modal('show');
     window.location.href = '{{ url('/giai-co-the') }}/' + fenCode + ' r - - 0 1';
   }
 }
@@ -1060,4 +1049,6 @@ function solvePuzzle(fenCode) {
 @include('layout.partials.userPuzzles')
 @include('layout.partials.boards')
 @include('layout.partials.playedBoards')
+{{-- @include('layout.partials.puzzles') --}}
+{{-- @include('layout.partials.books') --}}
 @endsection
