@@ -5,7 +5,7 @@
 
 {{-- Set the dynamic Open Graph Image and Alt text using a placeholder service --}}
 @if($puzzleName)
-    @section('og_image', 'https://placehold.co/1200x630/f04124/ffd700?text=' . urlencode($puzzleName))
+    @section('og_image', 'https://placehold.co/1200x630/DFBD85/725834?font=montserrat&text=' . urlencode($puzzleName))
     @section('og_image_alt', $puzzleName)
 @else
     @section('og_image_alt', 'Giải cờ thế')
