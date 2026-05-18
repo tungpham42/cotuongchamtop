@@ -2,6 +2,15 @@
 @php
   $puzzleName = App\Http\Controllers\PuzzleController::getNameByFen($fen);
 @endphp
+
+{{-- Set the dynamic Open Graph Image and Alt text using a placeholder service --}}
+@if($puzzleName)
+    @section('og_image', 'https://placehold.co/1200x630/f04124/ffd700?text=' . urlencode($puzzleName))
+    @section('og_image_alt', $puzzleName)
+@else
+    @section('og_image_alt', 'Giải cờ thế')
+@endif
+
 @section('aboveBoard')
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Bạn đang giải cờ thế với máy") }}">
     {{ __("Bạn đang giải") }} @if($puzzleName) "{{ $puzzleName }}" @else cờ thế @endif
