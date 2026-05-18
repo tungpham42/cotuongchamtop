@@ -6,7 +6,7 @@
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#f04124" >
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta property="og:image" content="{{ url('/') }}/img/1200x630.jpg">
+<meta property="og:image" content="@yield('og_image', url('/') . '/img/1200x630.jpg')">
 <meta property="og:image:width" content="1200" >
 <meta property="og:image:height" content="630" >
 <meta property="og:image:alt" content="Cờ tướng 2 người" >
