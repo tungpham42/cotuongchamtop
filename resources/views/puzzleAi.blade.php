@@ -9,11 +9,13 @@
     @section('og_image_alt', $puzzleName)
     @section('og_image_width', '1080')
     @section('og_image_height', '1080')
+    @section('og_image_type', 'image/png')
 @else
     @section('og_image', url('/') . '/img/1200x630.jpg')
     @section('og_image_alt', 'Giải cờ thế')
     @section('og_image_width', '1200')
     @section('og_image_height', '630')
+    @section('og_image_type', 'image/jpeg')
 @endif
 
 @section('aboveBoard')

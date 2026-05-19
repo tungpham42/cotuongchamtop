@@ -10,6 +10,7 @@
 <meta property="og:image:width" content="@yield('og_image_width', '1200')" >
 <meta property="og:image:height" content="@yield('og_image_height', '630')" >
 <meta property="og:image:alt" content="@yield('og_image_alt', 'Cờ tướng 2 người')" >
+<meta property="og:image:type" content="@yield('og_image_type', 'image/jpeg')" />
 <link rel="apple-touch-icon" href="{{ url('/') }}/img/app-icons/apple-touch-icon-iphone-game.png">
 <link rel="apple-touch-icon" sizes="76x76" href="{{ url('/') }}/img/app-icons/apple-touch-icon-ipad-game.png">
 <link rel="apple-touch-icon" sizes="120x120" href="{{ url('/') }}/img/app-icons/apple-touch-icon-iphone-retina-game.png">
