@@ -21,7 +21,6 @@
 <body>
 @endif
     @include('common.afterBody')
-    @include('layout.partials.adsenseModal')
     <div id="app">
         @include('layout.partials.app.header')
         <input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ url('/') }}" >

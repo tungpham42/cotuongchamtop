@@ -87,8 +87,6 @@
     @include('common.afterBody')
     @include('common.scripts')
     @include('layout.partials.header')
-    @include('layout.partials.adsenseModal')
-    @include('layout.partials.shopeeModal')
     @include('layout.partials.analysisModal')
     @if (session('status'))
       <div class="container">

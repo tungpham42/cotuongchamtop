@@ -8,8 +8,6 @@
     @include('common.scripts')
     @include('common.themes')
     @include('layout.partials.header')
-    @include('layout.partials.adsenseModal')
-    @include('layout.partials.shopeeModal')
     @if (session('status'))
       <div class="container">
         <div class="alert alert-success" role="alert">
