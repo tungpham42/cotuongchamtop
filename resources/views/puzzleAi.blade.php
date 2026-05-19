@@ -5,10 +5,11 @@
 
 {{-- Set the dynamic Open Graph Image and Alt text using a placeholder service --}}
 @if($puzzleName)
-    @section('og_image', 'https://placehold.co/1200x630/DFBD85/725834/jpeg/?font=roboto&text=' . urlencode(__('Thế cờ') . "\n" . $puzzleName))
+    @section('og_image', 'https://placehold.co/1200x630/DFBD85/725834/jpeg/?font=roboto&text=' . urlencode($puzzleName))
     @section('og_image_alt', $puzzleName)
 @else
-    @section('og_image_alt', __('Giải cờ thế'))
+    @section('og_image', url('/') . '/img/1200x630.jpg')
+    @section('og_image_alt', 'Giải cờ thế')
 @endif
 
 @section('aboveBoard')
