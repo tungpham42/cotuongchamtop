@@ -101,7 +101,7 @@
             });
         } else {
             // $('#AdSenseModal').attr('data-url', '{{ url('/giai-co-the') }}/' + fenCode + ' r - - 0 1').modal('show');
-            window.location.href = '{{ url('/giai-co-the') }}/' + fenCode + ' r - - 0 1';
+            window.location.href = '{{ url(__("/giai-co-the")) }}/' + fenCode + ' r - - 0 1';
         }
     }
     </script>
@@ -210,7 +210,7 @@
                 });
             } else {
                 // $('#AdSenseModal').attr('data-url', '{{ url('/giai-co-the') }}/' + fenCode + ' r - - 0 1').modal('show');
-                window.location.href = '{{ url('/giai-co-the') }}/' + fenCode + ' r - - 0 1';
+                window.location.href = '{{ url(__("/giai-co-the")) }}/' + fenCode + ' r - - 0 1';
             }
         }
         </script>
