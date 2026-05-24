@@ -262,5 +262,18 @@
     "Đang tải lại...": "再読み込み中...",
     "Lỗi kết nối!": "接続エラー！",
     "Nhập tin nhắn...": "メッセージを入力...",
-    "Thế cờ": "Puzzle"
+    "Thế cờ": "Puzzle",
+    "piece_k": "将",
+    "piece_a": "士",
+    "piece_b": "象",
+    "piece_n": "馬",
+    "piece_r": "車",
+    "piece_c": "砲",
+    "piece_p": "兵",
+    "move_advance": "進",
+    "move_retreat": "退",
+    "move_traverse": "平",
+    "Sao chép": "コピー",
+    "Sao chép kỳ phổ": "棋譜をコピーする",
+    "Đã sao chép kỳ phổ thành công!": "棋譜のコピーに成功しました！"
 }

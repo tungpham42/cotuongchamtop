@@ -14,7 +14,19 @@ $.ajaxSetup({
 var locale = {
   OK: '<i class="fas fa-check"></i> {{ __('Đồng ý') }}',
   CONFIRM: '<i class="fas fa-check"></i> {{ __('Chấp nhận') }}',
-  CANCEL: '<i class="fas fa-times"></i> {{ __('Hủy') }}'
+  CANCEL: '<i class="fas fa-times"></i> {{ __('Hủy') }}',
+  // Bổ sung dịch thuật cho kỳ phổ
+  piece_k: '{{ __('piece_k') }}',
+  piece_a: '{{ __('piece_a') }}',
+  piece_b: '{{ __('piece_b') }}',
+  piece_n: '{{ __('piece_n') }}',
+  piece_r: '{{ __('piece_r') }}',
+  piece_c: '{{ __('piece_c') }}',
+  piece_p: '{{ __('piece_p') }}',
+  move_advance: '{{ __('move_advance') }}',
+  move_retreat: '{{ __('move_retreat') }}',
+  move_traverse: '{{ __('move_traverse') }}',
+  kypho_copied: '{{ __('Đã sao chép kỳ phổ thành công!') }}'
 };
 bootbox.addLocale('{{ __('vi') }}', locale);
 

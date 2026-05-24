@@ -261,5 +261,18 @@
     "Đang tải lại...": "다시 불러오는 중...",
     "Lỗi kết nối!": "연결 오류!",
     "Nhập tin nhắn...": "메시지를 입력하세요...",
-    "Thế cờ": "Puzzle"
+    "Thế cờ": "Puzzle",
+    "piece_k": "장",
+    "piece_a": "사",
+    "piece_b": "상",
+    "piece_n": "마",
+    "piece_r": "차",
+    "piece_c": "포",
+    "piece_p": "졸",
+    "move_advance": "진",
+    "move_retreat": "퇴",
+    "move_traverse": "평",
+    "Sao chép": "복사",
+    "Sao chép kỳ phổ": "게임 기록 복사",
+    "Đã sao chép kỳ phổ thành công!": "기보를 성공적으로 복사했습니다!"
 }

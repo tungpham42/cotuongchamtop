@@ -1219,5 +1219,18 @@
     "Ngẫu nhiên": "Ngẫu nhiên",
     "Đi lại": "Đi lại",
     "Tới lượt:": "Tới lượt:",
-    "Thế cờ": "Thế cờ"
+    "Thế cờ": "Thế cờ",
+    "piece_k": "Tướng",
+    "piece_a": "Sĩ",
+    "piece_b": "Tượng",
+    "piece_n": "Mã",
+    "piece_r": "Xe",
+    "piece_c": "Pháo",
+    "piece_p": "Chốt",
+    "move_advance": "tấn",
+    "move_retreat": "thoái",
+    "move_traverse": "bình",
+    "Sao chép": "Sao chép",
+    "Sao chép kỳ phổ": "Sao chép kỳ phổ",
+    "Đã sao chép kỳ phổ thành công!": "Đã sao chép kỳ phổ thành công!"
 }

@@ -264,5 +264,18 @@
     "Đang tải lại...": "重新加载中...",
     "Lỗi kết nối!": "连接错误！",
     "Nhập tin nhắn...": "输入消息...",
-    "Thế cờ": "Puzzle"
+    "Thế cờ": "Puzzle",
+    "piece_k": "将",
+    "piece_a": "士",
+    "piece_b": "象",
+    "piece_n": "马",
+    "piece_r": "车",
+    "piece_c": "炮",
+    "piece_p": "卒",
+    "move_advance": "进",
+    "move_retreat": "退",
+    "move_traverse": "平",
+    "Sao chép": "复制",
+    "Sao chép kỳ phổ": "复制游戏记录",
+    "Đã sao chép kỳ phổ thành công!": "棋谱复制成功！"
 }

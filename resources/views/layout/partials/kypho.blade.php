@@ -15,6 +15,9 @@
     <button id="kypho-next" type="button" class="btn btn-dark btn-sm mx-1" title="Nước sau">
       <i class="fad fa-step-forward"></i> {{ __("Sau") }}
     </button>
+    <button id="kypho-copy" type="button" class="btn btn-danger btn-sm mx-1" title="{{ __("Sao chép kỳ phổ") }}">
+      <i class="fad fa-copy"></i> {{ __("Sao chép") }}
+    </button>
   </div>
   <div class="kypho-body">
     <div id="kypho-list" class="kypho-moves"></div>
