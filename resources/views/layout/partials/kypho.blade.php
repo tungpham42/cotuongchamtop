@@ -1,3 +1,5 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/whammy@0.0.1/whammy.min.js"></script>
 <div id="kypho-panel" class="kypho-panel">
   <div class="kypho-header">
     <h5 class="text-center my-2"><i class="fad fa-list"></i> {{ __("Kỳ phổ") }}</h5>
@@ -17,6 +19,9 @@
     </button>
     <button id="kypho-copy" type="button" class="btn btn-danger btn-sm mx-1" title="{{ __("Sao chép kỳ phổ") }}">
       <i class="fad fa-copy"></i> {{ __("Sao chép") }}
+    </button>
+    <button id="kypho-video" type="button" class="btn btn-danger btn-sm mx-1" title="{{ __("Tải Video (9:16)") }}" disabled>
+      <i class="fad fa-video"></i> {{ __("Video") }}
     </button>
   </div>
   <div class="kypho-body">

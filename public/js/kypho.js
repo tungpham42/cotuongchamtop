@@ -125,6 +125,7 @@
         var playBtn = document.getElementById("kypho-play");
         var pauseBtn = document.getElementById("kypho-pause");
         var copyBtn = document.getElementById("kypho-copy");
+        var videoBtn = document.getElementById("kypho-video"); // Nút Video mới
         var panelEl = document.getElementById("kypho-panel");
 
         if (
@@ -304,12 +305,210 @@
             if (playBtn) playBtn.disabled = !enabled || state.isPlaying;
             if (pauseBtn) pauseBtn.disabled = !enabled || !state.isPlaying;
 
-            // THÊM DÒNG NÀY: Nút copy chỉ bị khóa khi không có nước đi
             if (copyBtn) copyBtn.disabled = !hasMoves;
+            if (videoBtn) videoBtn.disabled = !hasMoves; // Cập nhật trạng thái nút video
 
             if (live && state.isPlaying) {
                 stopPlayback();
             }
+        }
+
+        // Logic xuất video 9:16 bằng Native MediaRecorder API
+        if (videoBtn) {
+            videoBtn.addEventListener("click", async function () {
+                var L = window.locale || {}; // Lấy object ngôn ngữ
+
+                if (videoBtn.disabled) return;
+
+                if (typeof html2canvas === "undefined") {
+                    alert(
+                        L.video_loading_lib ||
+                            "Đang tải thư viện tạo ảnh, vui lòng thử lại sau giây lát.",
+                    );
+                    return;
+                }
+
+                var originalHtml = videoBtn.innerHTML;
+                videoBtn.innerHTML =
+                    '<i class="fad fa-spinner fa-spin"></i> ' +
+                    (L.video_processing || "Đang xử lý...");
+                videoBtn.disabled = true;
+
+                try {
+                    await generateAndDownloadVideo();
+                } catch (error) {
+                    console.error("Lỗi tạo video:", error);
+                    alert(L.video_error || "Có lỗi xảy ra khi tạo video.");
+                }
+
+                videoBtn.innerHTML = originalHtml;
+                videoBtn.disabled = false;
+            });
+        }
+
+        async function generateAndDownloadVideo() {
+            var L = window.locale || {}; // Lấy object ngôn ngữ
+            var originalIndex = state.currentIndex;
+            var originalFen = state.fens[originalIndex];
+
+            var canvas = document.createElement("canvas");
+            canvas.width = 720;
+            canvas.height = 1280;
+            var ctx = canvas.getContext("2d");
+            var boardEl = document.getElementById("ban-co");
+
+            // BƯỚC 1: Chụp toàn bộ ảnh các nước đi trước để video không bị giật lag
+            var frames = [];
+            for (var i = 0; i < state.fens.length; i++) {
+                state.board.position(state.fens[i], false);
+                // Đợi render DOM
+                await new Promise((resolve) => setTimeout(resolve, 150));
+
+                var boardCanvas = await html2canvas(boardEl, {
+                    backgroundColor: null,
+                    scale: 2,
+                });
+
+                // Dịch chữ "Bắt đầu"
+                var moveText =
+                    i === 0
+                        ? L.video_start || "Bắt đầu"
+                        : formatMove(state.prettyMoves[i - 1]);
+
+                frames.push({
+                    board: boardCanvas,
+                    text: moveText,
+                    index: i,
+                });
+            }
+
+            // Khôi phục lại trạng thái bàn cờ ban đầu
+            state.board.position(originalFen, false);
+            setIndex(originalIndex);
+
+            // BƯỚC 2: Cài đặt Native MediaRecorder
+            var stream = canvas.captureStream(30); // Capture ở 30 FPS
+            var mimeType = "video/webm";
+
+            // Ưu tiên MP4 trên Safari/iOS nếu có hỗ trợ, nếu không dùng WebM
+            if (MediaRecorder.isTypeSupported("video/mp4")) {
+                mimeType = "video/mp4";
+            } else if (
+                MediaRecorder.isTypeSupported("video/webm; codecs=vp9")
+            ) {
+                mimeType = "video/webm; codecs=vp9";
+            }
+
+            var recorder = new MediaRecorder(stream, { mimeType: mimeType });
+            var chunks = [];
+
+            recorder.ondataavailable = function (e) {
+                if (e.data.size > 0) chunks.push(e.data);
+            };
+
+            var recordingPromise = new Promise(function (resolve) {
+                recorder.onstop = function () {
+                    var blob = new Blob(chunks, { type: mimeType });
+                    var url = URL.createObjectURL(blob);
+                    var a = document.createElement("a");
+                    a.style.display = "none";
+                    a.href = url;
+
+                    var ext = mimeType.includes("mp4") ? "mp4" : "webm";
+                    a.download = "video" + Date.now() + "." + ext;
+
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(function () {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                        resolve();
+                    }, 100);
+                };
+            });
+
+            // Bắt đầu ghi hình
+            recorder.start();
+
+            // BƯỚC 3: Vẽ frame lên canvas theo thời gian thực (1.5 giây mỗi nước đi)
+            var fps = 30;
+            var holdSeconds = 1.5;
+            var totalFramesPerMove = fps * holdSeconds;
+
+            for (var i = 0; i < frames.length; i++) {
+                var f = frames[i];
+
+                // Lặp lại việc vẽ để MediaRecorder bắt được chuyển động ở 30fps
+                for (
+                    var frameCount = 0;
+                    frameCount < totalFramesPerMove;
+                    frameCount++
+                ) {
+                    ctx.fillStyle = "#1e2024";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "bold 50px sans-serif";
+                    ctx.textAlign = "center";
+
+                    // Dịch tiêu đề "Trận Đấu Cờ Tướng"
+                    ctx.fillText(
+                        L.video_title || "Trận Đấu Cờ Tướng",
+                        canvas.width / 2,
+                        120,
+                    );
+
+                    var moveColor = f.index % 2 !== 0 ? "#ff6b6b" : "#cbd3da";
+                    ctx.fillStyle = f.index === 0 ? "#ffffff" : moveColor;
+                    ctx.font = "40px sans-serif";
+
+                    // Dịch chữ "Nước"
+                    ctx.fillText(
+                        f.index === 0
+                            ? f.text
+                            : (L.video_move || "Nước") +
+                                  " " +
+                                  f.index +
+                                  ": " +
+                                  f.text,
+                        canvas.width / 2,
+                        200,
+                    );
+
+                    var padding = 40;
+                    var boardWidth = canvas.width - padding * 2;
+                    var boardHeight =
+                        (f.board.height / f.board.width) * boardWidth;
+                    var startX = padding;
+                    var startY = (canvas.height - boardHeight) / 2;
+                    ctx.drawImage(
+                        f.board,
+                        startX,
+                        startY,
+                        boardWidth,
+                        boardHeight,
+                    );
+
+                    ctx.fillStyle = "#888888";
+                    ctx.font = "24px sans-serif";
+
+                    // Dịch chữ footer
+                    ctx.fillText(
+                        L.video_footer || "Tạo bởi nền tảng Cờ Tướng Chấm Top",
+                        canvas.width / 2,
+                        canvas.height - 100,
+                    );
+
+                    // Nghỉ ~33ms để khớp với khung hình 30 FPS
+                    await new Promise((resolve) =>
+                        setTimeout(resolve, 1000 / fps),
+                    );
+                }
+            }
+
+            // Dừng ghi hình và tải file xuống
+            recorder.stop();
+            await recordingPromise;
         }
 
         // Helper function to play the move sound

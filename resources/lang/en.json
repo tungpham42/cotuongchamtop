@@ -300,5 +300,14 @@
     "move_traverse": "traverse",
     "Sao chép": "Copy",
     "Sao chép kỳ phổ": "Copy game record",
-    "Đã sao chép kỳ phổ thành công!": "Game record copied successfully!"
+    "Đã sao chép kỳ phổ thành công!": "Game record copied successfully!",
+    "Tải Video (9:16)": "Download Video (9:16)",
+    "Video": "Video",
+    "Đang tải thư viện tạo ảnh, vui lòng thử lại sau giây lát.": "Loading the image library, please try again in a moment.",
+    "Có lỗi xảy ra khi tạo video.": "An error occurred while creating the video.",
+    "Trận Đấu Cờ Tướng": "Xiangqi Match",
+    "Bắt đầu": "Start",
+    "Nước": "Move",
+    "Tạo bởi nền tảng của bạn": "Created by Cotuong.TOP",
+    "Đang xử lý...": "Processing..."
 }
