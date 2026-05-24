@@ -311,6 +311,21 @@
             }
         }
 
+        // Helper function to play the move sound
+        function playMoveSound() {
+            var audio = document.getElementById("nuoc-co");
+            if (audio) {
+                audio.currentTime = 0; // Reset so rapid moves play from the start
+                var playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(function (error) {
+                        // Suppress errors if the browser blocks autoplay before user interaction
+                        console.warn("Audio blocked by browser policy:", error);
+                    });
+                }
+            }
+        }
+
         function setIndex(index) {
             if (!state.fens.length) {
                 return;
@@ -335,10 +350,14 @@
                 return;
             }
             setIndex(state.currentIndex + 1);
+            playMoveSound();
         }
 
         function stepPrev() {
-            setIndex(state.currentIndex - 1);
+            if (state.currentIndex > 0) {
+                setIndex(state.currentIndex - 1);
+                playMoveSound();
+            }
         }
 
         function startPlayback() {
@@ -370,10 +389,12 @@
         });
 
         playBtn.addEventListener("click", function () {
+            playMoveSound();
             startPlayback();
         });
 
         pauseBtn.addEventListener("click", function () {
+            playMoveSound();
             stopPlayback();
             updateControls();
         });
