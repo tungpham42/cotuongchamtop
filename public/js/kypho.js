@@ -191,6 +191,9 @@
                     numberEl.textContent = moveNumber + ".";
                     moveEl.appendChild(numberEl);
                     moveEl.appendChild(document.createTextNode(" "));
+                } else {
+                    // Add a comma and a space before appending Black's move
+                    listEl.appendChild(document.createTextNode(", "));
                 }
 
                 moveEl.appendChild(document.createTextNode(moveText));
@@ -233,7 +236,7 @@
                     text += moveNumber + ". " + moveText;
                 } else {
                     // Nước đi của Đen: Cách bằng 2 khoảng trắng và xuống dòng
-                    text += "  " + moveText + "\n";
+                    text += ", " + moveText + "\n";
                 }
             }
             return text.trim();
@@ -274,6 +277,7 @@
                                 successMsg,
                             size: "small",
                             centerVertical: true,
+                            closeButton: false,
                             backdrop: true,
                             buttons: {
                                 ok: {
