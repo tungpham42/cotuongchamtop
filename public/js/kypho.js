@@ -191,9 +191,6 @@
                     numberEl.textContent = moveNumber + ".";
                     moveEl.appendChild(numberEl);
                     moveEl.appendChild(document.createTextNode(" "));
-                } else {
-                    // Add a comma and a space before appending Black's move
-                    listEl.appendChild(document.createTextNode(", "));
                 }
 
                 moveEl.appendChild(document.createTextNode(moveText));
