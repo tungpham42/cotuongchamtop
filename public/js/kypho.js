@@ -474,7 +474,7 @@
                 recorder.onstop = function () {
                     var blob = new Blob(chunks, { type: mimeType });
                     var ext = mimeType.includes("mp4") ? "mp4" : "webm";
-                    var filename = "Ky_Pho_" + Date.now() + "." + ext;
+                    var filename = "Video_" + Date.now() + "." + ext;
                     var url = URL.createObjectURL(blob);
 
                     if (canvas.parentNode)
