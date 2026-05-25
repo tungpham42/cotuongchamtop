@@ -286,5 +286,9 @@
     "Bắt đầu": "开始",
     "Nước": "步",
     "Tạo bởi nền tảng của bạn": "由您的平台创建",
-    "Đang xử lý...": "处理中..."
+    "Đang xử lý...": "处理中...",
+    "video_completed": "成功！",
+    "video_success": "视频创建成功。接下来你想做什么？",
+    "video_download": "下载",
+    "video_share": "分享"
 }

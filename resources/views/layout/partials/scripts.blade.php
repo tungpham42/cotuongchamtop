@@ -4,7 +4,7 @@
 @elsedesktop
 <script src="{{ $cdnUrl }}/js/xiangqiboard_mobile.js?v=3"></script>
 @enddesktop
-<script src="{{ url('/') }}/js/kypho.js?v=6"></script>
+<script src="{{ url('/') }}/js/kypho.js?v=7"></script>
 <script>
 $.ajaxSetup({
   headers: {
@@ -33,7 +33,11 @@ var locale = {
   video_title: '{!! addslashes($room->name ?? $puzzleName ?? __('Trận Đấu Cờ Tướng')) !!}',
   video_start: '{{ __('Bắt đầu') }}',
   video_move: '{{ __('Nước') }}',
-  video_footer: '{{ __('Tạo bởi nền tảng của bạn') }}'
+  video_footer: '{{ __('Tạo bởi nền tảng của bạn') }}',
+  video_completed: '{{ __('Thành công!') }}',
+  video_success: '{{ __('Video đã được tạo thành công. Bạn muốn làm gì tiếp theo?') }}',
+  video_download: '{{ __('Tải xuống') }}',
+  video_share: '{{ __('Chia sẻ') }}',
 };
 bootbox.addLocale('{{ __('vi') }}', locale);
 

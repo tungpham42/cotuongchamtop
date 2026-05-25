@@ -313,13 +313,12 @@
             }
         }
 
-        // Logic xuất video 9:16 bằng Native MediaRecorder API
+        // Bắt sự kiện xuất video 9:16 (Bao gồm Fix Mobile & iOS)
         if (videoBtn) {
             videoBtn.addEventListener("click", async function () {
-                var L = window.locale || {}; // Lấy object ngôn ngữ
+                var L = window.locale || {};
 
                 if (videoBtn.disabled) return;
-
                 if (typeof html2canvas === "undefined") {
                     alert(
                         L.video_loading_lib ||
@@ -347,50 +346,71 @@
         }
 
         async function generateAndDownloadVideo() {
-            var L = window.locale || {}; // Lấy object ngôn ngữ
+            var L = window.locale || {};
             var originalIndex = state.currentIndex;
             var originalFen = state.fens[originalIndex];
+            var isMobile = window.innerWidth < 768;
 
             var canvas = document.createElement("canvas");
             canvas.width = 720;
             canvas.height = 1280;
+
+            // FIX 1: Chèn canvas ẩn vào DOM để tránh lỗi đen màn hình (Black Screen) trên iOS
+            canvas.style.position = "fixed";
+            canvas.style.top = "-9999px";
+            canvas.style.visibility = "hidden";
+            document.body.appendChild(canvas);
+
             var ctx = canvas.getContext("2d");
             var boardEl = document.getElementById("ban-co");
-
-            // BƯỚC 1: Chụp toàn bộ ảnh các nước đi trước để video không bị giật lag
             var frames = [];
+
+            // BƯỚC 1: Chụp ảnh và chuyển ngay sang định dạng Image để giải phóng RAM
             for (var i = 0; i < state.fens.length; i++) {
                 state.board.position(state.fens[i], false);
-                // Đợi render DOM
-                await new Promise((resolve) => setTimeout(resolve, 150));
+
+                // Nghỉ một chút để DOM kịp render trên các thiết bị yếu
+                await new Promise((resolve) =>
+                    setTimeout(resolve, isMobile ? 250 : 150),
+                );
 
                 var boardCanvas = await html2canvas(boardEl, {
                     backgroundColor: null,
-                    scale: 2,
+                    scale: isMobile ? 1.5 : 2, // Giảm scale trên mobile để chống crash RAM
                 });
 
-                // Dịch chữ "Bắt đầu"
+                // Chuyển Canvas thành Image data và xóa Canvas ngay lập tức
+                var img = new Image();
+                img.src = boardCanvas.toDataURL("image/png");
+                await new Promise(function (resolve) {
+                    img.onload = resolve;
+                });
+
                 var moveText =
                     i === 0
                         ? L.video_start || "Bắt đầu"
                         : formatMove(state.prettyMoves[i - 1]);
 
                 frames.push({
-                    board: boardCanvas,
+                    boardImg: img,
                     text: moveText,
                     index: i,
+                    width: boardCanvas.width,
+                    height: boardCanvas.height,
                 });
+
+                // FIX 2: Giải phóng triệt để Canvas Memory Quota (tránh iOS crash)
+                boardCanvas.width = 0;
+                boardCanvas.height = 0;
+                boardCanvas = null;
             }
 
-            // Khôi phục lại trạng thái bàn cờ ban đầu
             state.board.position(originalFen, false);
             setIndex(originalIndex);
 
-            // BƯỚC 2: Cài đặt Native MediaRecorder
-            var stream = canvas.captureStream(30); // Capture ở 30 FPS
+            // BƯỚC 2: Cài đặt MediaRecorder
+            var stream = canvas.captureStream(30);
             var mimeType = "video/webm";
-
-            // Ưu tiên MP4 trên Safari/iOS nếu có hỗ trợ, nếu không dùng WebM
             if (MediaRecorder.isTypeSupported("video/mp4")) {
                 mimeType = "video/mp4";
             } else if (
@@ -403,55 +423,44 @@
             var chunks = [];
 
             recorder.ondataavailable = function (e) {
-                if (e.data.size > 0) chunks.push(e.data);
+                if (e.data && e.data.size > 0) chunks.push(e.data);
             };
 
             var recordingPromise = new Promise(function (resolve) {
                 recorder.onstop = function () {
                     var blob = new Blob(chunks, { type: mimeType });
-                    var url = URL.createObjectURL(blob);
-                    var a = document.createElement("a");
-                    a.style.display = "none";
-                    a.href = url;
-
                     var ext = mimeType.includes("mp4") ? "mp4" : "webm";
-                    a.download = "video" + Date.now() + "." + ext;
+                    var filename = "Ky_Pho_" + Date.now() + "." + ext;
+                    var url = URL.createObjectURL(blob);
 
-                    document.body.appendChild(a);
-                    a.click();
-                    setTimeout(function () {
-                        document.body.removeChild(a);
-                        window.URL.revokeObjectURL(url);
-                        resolve();
-                    }, 100);
+                    if (canvas.parentNode)
+                        canvas.parentNode.removeChild(canvas);
+                    resolve({
+                        url: url,
+                        blob: blob,
+                        filename: filename,
+                        mimeType: mimeType,
+                    });
                 };
             });
 
-            // Bắt đầu ghi hình
             recorder.start();
 
-            // BƯỚC 3: Vẽ frame lên canvas theo thời gian thực (1.5 giây mỗi nước đi)
-            var fps = 30;
-            var holdSeconds = 1.5;
-            var totalFramesPerMove = fps * holdSeconds;
+            // BƯỚC 3: Vẽ Frame theo thời gian thực
+            var holdMs = 1500; // 1.5 giây mỗi nước
 
             for (var i = 0; i < frames.length; i++) {
                 var f = frames[i];
+                var startMoveTime = performance.now();
 
-                // Lặp lại việc vẽ để MediaRecorder bắt được chuyển động ở 30fps
-                for (
-                    var frameCount = 0;
-                    frameCount < totalFramesPerMove;
-                    frameCount++
-                ) {
+                // FIX 3: Dùng vòng lặp kiểm tra thời gian thay vì setTimeout tĩnh
+                while (performance.now() - startMoveTime < holdMs) {
                     ctx.fillStyle = "#1e2024";
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
                     ctx.fillStyle = "#ffffff";
                     ctx.font = "bold 50px sans-serif";
                     ctx.textAlign = "center";
-
-                    // Dịch tiêu đề "Trận Đấu Cờ Tướng"
                     ctx.fillText(
                         L.video_title || "Trận Đấu Cờ Tướng",
                         canvas.width / 2,
@@ -461,8 +470,6 @@
                     var moveColor = f.index % 2 !== 0 ? "#ff6b6b" : "#cbd3da";
                     ctx.fillStyle = f.index === 0 ? "#ffffff" : moveColor;
                     ctx.font = "40px sans-serif";
-
-                    // Dịch chữ "Nước"
                     ctx.fillText(
                         f.index === 0
                             ? f.text
@@ -477,38 +484,96 @@
 
                     var padding = 40;
                     var boardWidth = canvas.width - padding * 2;
-                    var boardHeight =
-                        (f.board.height / f.board.width) * boardWidth;
-                    var startX = padding;
-                    var startY = (canvas.height - boardHeight) / 2;
+                    var boardHeight = (f.height / f.width) * boardWidth;
                     ctx.drawImage(
-                        f.board,
-                        startX,
-                        startY,
+                        f.boardImg,
+                        padding,
+                        (canvas.height - boardHeight) / 2,
                         boardWidth,
                         boardHeight,
                     );
 
                     ctx.fillStyle = "#888888";
                     ctx.font = "24px sans-serif";
-
-                    // Dịch chữ footer
                     ctx.fillText(
-                        L.video_footer || "Tạo bởi nền tảng Cờ Tướng Chấm Top",
+                        L.video_footer || "Tạo bởi nền tảng Cờ Tướng",
                         canvas.width / 2,
                         canvas.height - 100,
                     );
 
-                    // Nghỉ ~33ms để khớp với khung hình 30 FPS
+                    // Nhường luồng cho trình duyệt render, chống giật lag
                     await new Promise((resolve) =>
-                        setTimeout(resolve, 1000 / fps),
+                        requestAnimationFrame(resolve),
                     );
                 }
             }
 
-            // Dừng ghi hình và tải file xuống
             recorder.stop();
-            await recordingPromise;
+            var videoData = await recordingPromise;
+
+            // BƯỚC 4: Fix lỗi bảo mật Download của iOS
+            var file = new File([videoData.blob], videoData.filename, {
+                type: videoData.mimeType,
+            });
+            var canShare =
+                typeof navigator.canShare === "function" &&
+                navigator.canShare({ files: [file] });
+
+            var btns = {
+                download: {
+                    label:
+                        '<i class="fad fa-download"></i> ' +
+                        (L.video_download || "Tải xuống"),
+                    className: "btn-danger",
+                    callback: function () {
+                        var a = document.createElement("a");
+                        a.style.display = "none";
+                        a.href = videoData.url;
+                        a.download = videoData.filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        setTimeout(function () {
+                            document.body.removeChild(a);
+                            window.URL.revokeObjectURL(videoData.url);
+                        }, 500);
+                    },
+                },
+            };
+
+            if (canShare) {
+                btns.share = {
+                    label:
+                        '<i class="fad fa-share-alt"></i> ' +
+                        (L.video_share || "Chia sẻ"),
+                    className: "btn-dark",
+                    callback: function () {
+                        navigator
+                            .share({
+                                title: L.video_title || "Trận Đấu Cờ Tướng",
+                                files: [file],
+                            })
+                            .catch(function (e) {
+                                console.warn("Share cancel:", e);
+                            });
+                        return false;
+                    },
+                };
+            }
+
+            if (window.bootbox) {
+                bootbox.dialog({
+                    title: L.video_completed || "Thành công!",
+                    message:
+                        '<p class="text-center">' +
+                        (L.video_success || "Video đã được tạo thành công.") +
+                        "</p>",
+                    centerVertical: true,
+                    closeButton: true,
+                    buttons: btns,
+                });
+            } else {
+                btns.download.callback();
+            }
         }
 
         // Helper function to play the move sound

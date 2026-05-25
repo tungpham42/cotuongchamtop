@@ -284,5 +284,9 @@
     "Bắt đầu": "開始",
     "Nước": "手",
     "Tạo bởi nền tảng của bạn": "当プラットフォームで作成",
-    "Đang xử lý...": "処理中..."
+    "Đang xử lý...": "処理中...",
+    "video_completed": "成功！",
+    "video_success": "動画が正常に作成されました。次は何をしますか？",
+    "video_download": "ダウンロード",
+    "video_share": "共有"
 }

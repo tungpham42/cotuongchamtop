@@ -283,5 +283,9 @@
     "Bắt đầu": "시작",
     "Nước": "수",
     "Tạo bởi nền tảng của bạn": "우리 플랫폼에서 제작되었습니다",
-    "Đang xử lý...": "처리 중..."
+    "Đang xử lý...": "처리 중...",
+    "video_completed": "성공!",
+    "video_success": "동영상이 성공적으로 생성되었습니다. 다음으로 무엇을 하시겠습니까?",
+    "video_download": "다운로드",
+    "video_share": "공유"
 }
