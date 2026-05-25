@@ -4,7 +4,7 @@
 @elsedesktop
 <script src="{{ $cdnUrl }}/js/xiangqiboard_mobile.js?v=3"></script>
 @enddesktop
-<script src="{{ url('/') }}/js/kypho.js?v=7"></script>
+<script src="{{ url('/') }}/js/kypho.js?v=8"></script>
 <script>
 $.ajaxSetup({
   headers: {
