@@ -59,5 +59,5 @@
         </div>
     </div>
 </div>
-@include('layout.partials.app.fb')
+{{-- @include('layout.partials.app.fb') --}}
 @endsection
