@@ -374,10 +374,54 @@
                     setTimeout(resolve, isMobile ? 250 : 150),
                 );
 
+                // ---> BẮT ĐẦU FIX: Chuyển đổi SVG thành PNG trước khi chụp <---
+                var svgImgs = boardEl.querySelectorAll('img[src*=".svg"]');
+                var originalSrcs = [];
+                var htmlScale = isMobile ? 1.5 : 2; // Lấy đúng scale của html2canvas để ảnh không bị mờ
+
+                for (var j = 0; j < svgImgs.length; j++) {
+                    var imgEl = svgImgs[j];
+                    var rect = imgEl.getBoundingClientRect();
+                    var w = rect.width || imgEl.clientWidth || 40;
+                    var h = rect.height || imgEl.clientHeight || 40;
+
+                    var tmpCanvas = document.createElement("canvas");
+                    tmpCanvas.width = w * htmlScale;
+                    tmpCanvas.height = h * htmlScale;
+                    var tmpCtx = tmpCanvas.getContext("2d");
+
+                    // Scale context để chất lượng PNG khớp với html2canvas
+                    tmpCtx.scale(htmlScale, htmlScale);
+                    tmpCtx.drawImage(imgEl, 0, 0, w, h);
+
+                    try {
+                        var pngUrl = tmpCanvas.toDataURL("image/png");
+                        originalSrcs.push({ el: imgEl, src: imgEl.src });
+                        imgEl.src = pngUrl; // Tráo SVG bằng Base64 PNG
+                    } catch (e) {
+                        console.warn(
+                            "Bỏ qua lỗi CORS khi convert SVG -> PNG:",
+                            e,
+                        );
+                    }
+                }
+
+                // Đợi thêm một chút xíu (50ms) để trình duyệt kịp cập nhật ảnh PNG lên giao diện
+                if (originalSrcs.length > 0) {
+                    await new Promise((resolve) => setTimeout(resolve, 50));
+                }
+                // ---> KẾT THÚC FIX <---
+
                 var boardCanvas = await html2canvas(boardEl, {
                     backgroundColor: null,
-                    scale: isMobile ? 1.5 : 2, // Giảm scale trên mobile để chống crash RAM
+                    scale: htmlScale, // Dùng biến scale đã khai báo ở trên
                 });
+
+                // ---> BẮT ĐẦU FIX: Trả lại SVG nguyên bản cho bàn cờ <---
+                for (var j = 0; j < originalSrcs.length; j++) {
+                    originalSrcs[j].el.src = originalSrcs[j].src;
+                }
+                // ---> KẾT THÚC FIX <---
 
                 // Chuyển Canvas thành Image data và xóa Canvas ngay lập tức
                 var img = new Image();
