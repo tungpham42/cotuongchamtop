@@ -1,6 +1,8 @@
 @extends('layout.app')
 
 @section('og:image', $tournament->cover_photo ? asset('storage/' . $tournament->cover_photo) : asset('img/1200x630.jpg'))
+@section('og:image:width', '1200')
+@section('og:image:height', '630')
 
 @section('content')
 <style>

@@ -2,14 +2,29 @@
 <meta property="article:tag" content="{{ __("cờ tướng") }}">
 @hasSection('og:image')
     <meta property="og:image" content="@yield('og:image')">
+    <meta property="og:image:width" content="@yield('og:image:width', '1200')">
+    <meta property="og:image:height" content="@yield('og:image:height', '630')">
 @elseif(str_contains(url()->current(), '/ky-thu/') && isset($player))
     @php
-        Avatar::create($player->name)->setDimension(200)->setFontSize(100)->save(public_path().'/players/'.md5($player->email).'.jpg', 100);
-        $avatar_image_url = url('/').'/players/'.md5($player->email).'.jpg';
+        $avatarDir = public_path('players');
+        $avatarPath = $avatarDir . '/' . md5($player->email) . '.jpg';
+
+        // Caching: Only create the avatar if it doesn't already exist on disk
+        if (!file_exists($avatarPath)) {
+            // Safety: Ensure the directory exists before saving
+            if (!is_dir($avatarDir)) {
+                mkdir($avatarDir, 0755, true);
+            }
+            Avatar::create($player->name)->setDimension(200)->setFontSize(100)->save($avatarPath, 100);
+        }
     @endphp
-    <meta property="og:image" content="{{ $avatar_image_url }}">
+    <meta property="og:image" content="{{ asset('players/' . md5($player->email) . '.jpg') }}">
+    <meta property="og:image:width" content="200">
+    <meta property="og:image:height" content="200">
 @else
-    <meta property="og:image" content="{{ url('/') }}/img/1200x630.jpg">
+    <meta property="og:image" content="{{ asset('img/1200x630.jpg') }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
 @endif
 <meta property="og:image:width" content="1200" >
 <meta property="og:image:height" content="630" >
