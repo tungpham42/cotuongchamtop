@@ -297,7 +297,7 @@
     "piece_p": "Soldier",
     "move_advance": "advance",
     "move_retreat": "retreat",
-    "move_traverse": "traverse",
+    "move_traverse": "horizontal move",
     "Sao chép": "Copy",
     "Sao chép kỳ phổ": "Copy game record",
     "Đã sao chép kỳ phổ thành công!": "Game record copied successfully!",
