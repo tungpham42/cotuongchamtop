@@ -74,7 +74,7 @@
             <div class="col-12">
                 <div class="alert alert-secondary bg-dark text-center border-0 p-5">
                     <i class="fad fa-box-open fa-3x text-muted mb-3"></i>
-                    <h5 class="text-dark">{{ __('Chưa có giải đấu nào.') }}</h5>
+                    <h5 class="text-light">{{ __('Chưa có giải đấu nào.') }}</h5>
                 </div>
             </div>
         @endforelse
