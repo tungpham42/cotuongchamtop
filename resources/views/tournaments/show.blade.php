@@ -156,8 +156,20 @@
                                 <span><i class="fad fa-chess-pawn text-dark"></i> {{ $match->guest->name ?? __('Chờ đối thủ...') }}</span>
                                 @if($guestIsWinner) <i class="fad fa-crown"></i> @endif
                             </div>
+@php
+    // Mặc định link là vào xem phòng
+    $roomUrl = url('/phong/'.$match->code);
 
-                            <a href="{{ url('/phong/'.$match->code) }}" class="bracket-room-link bg-light text-dark font-weight-bold">
+    // Nếu đã đăng nhập, kiểm tra xem có phải là người chơi trong phòng không
+    if (auth()->check()) {
+        if (auth()->id() === $match->host_id) {
+            $roomUrl = url('/phong/'.$match->code.'/do'); // Chủ phòng (Bên đỏ)
+        } elseif (auth()->id() === $match->guest_id) {
+            $roomUrl = url('/phong/'.$match->code.'/den'); // Khách (Bên đen)
+        }
+    }
+@endphp
+                            <a href="{{ $roomUrl }}" class="bracket-room-link bg-light text-dark font-weight-bold">
                                 @if(is_null($match->result))
                                     <i class="fad fa-mouse"></i> {{ __('Vào phòng đấu') }}
                                 @else
