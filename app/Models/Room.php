@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\User;
+use App\Models\Tournament;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,7 +15,7 @@ class Room extends Model
     protected $keyType = 'string';
 
     public $incrementing = false;
-    
+
     public $fillable = [
         'code',
         'fen',
@@ -31,6 +32,9 @@ class Room extends Model
         'active_player',
         'last_update',
         'modified_at',
+        'tournament_id',
+        'tournament_round',
+        'next_room_code',
     ];
 
     public function user()
@@ -46,6 +50,11 @@ class Room extends Model
     public function guest()
     {
         return $this->belongsTo(User::class, 'guest_id');
+    }
+
+    public function tournament()
+    {
+        return $this->belongsTo(Tournament::class);
     }
 
     public function hostTimeRemaining($seconds)

@@ -867,6 +867,27 @@ class RoomController extends Controller
             ['result' => $result, 'modified_at' => now()]
         );
 
+        // --- NEW: TOURNAMENT ADVANCEMENT LOGIC ---
+        $room = Room::where('code', $code)->first();
+
+        if ($room->tournament_id && $room->next_room_code && $result !== '0') {
+            // Determine winner
+            $winnerId = ($result === '1') ? $room->host_id : $room->guest_id;
+
+            $nextRoom = Room::where('code', $room->next_room_code)->first();
+
+            // Place winner in the next room (host if empty, else guest)
+            if (is_null($nextRoom->host_id)) {
+                $nextRoom->update(['host_id' => $winnerId]);
+            } else {
+                $nextRoom->update([
+                    'guest_id' => $winnerId,
+                    // Optional: Update name dynamically once both are present
+                    'name' => "Tournament Match - Round " . $nextRoom->tournament_round
+                ]);
+            }
+        }
+
         // Define success messages
         $successMessages = [
             'host' => [

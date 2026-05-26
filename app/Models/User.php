@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Room;
+use App\Models\Tournament;
 use App\Models\PayosPayment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -56,6 +57,11 @@ class User extends Authenticatable
     public function rooms()
     {
         return $this->hasMany(Room::class, 'id');
+    }
+
+    public function tournaments()
+    {
+        return $this->belongsToMany(Tournament::class, 'tournament_user')->withTimestamps();
     }
 
     public function payosPayments()

@@ -12,6 +12,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PuzzleController;
 use App\Http\Controllers\TimerController;
 use App\Http\Controllers\PayOSController;
+use App\Http\Controllers\TournamentController;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Spatie\Sitemap\SitemapGenerator;
@@ -99,6 +100,15 @@ Route::get('/sitemap', function () {
 });
 Route::get('/sitemap-the-co.xml', function() {
   return response()->view('sitemap-puzzle')->header('Content-Type', 'text/xml');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/tournaments/{id}/join', [TournamentController::class, 'join'])->name('tournaments.join');
+    Route::post('/tournaments/{id}/generate', [TournamentController::class, 'generateBracket'])->name('tournaments.generate');
+
+    // You will need a simple GET route to render the views for the tournaments list and bracket
+    Route::get('/giai-dau', [TournamentController::class, 'index'])->name('tournaments.index');
+    Route::get('/giai-dau/{id}', [TournamentController::class, 'show'])->name('tournaments.show');
 });
 
 Route::post('/startTimer/{roomCode}/{player}', [RoomController::class, 'startTimer']);
