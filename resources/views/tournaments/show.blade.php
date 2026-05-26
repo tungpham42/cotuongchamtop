@@ -167,6 +167,9 @@
         } elseif (auth()->id() === $match->guest_id) {
             $roomUrl = url('/phong/'.$match->code.'/den'); // Khách (Bên đen)
         }
+    } elseif ($match->result !== null) {
+        // Nếu chưa đăng nhập nhưng trận đấu đã có kết quả, vẫn cho phép xem kết quả
+        $roomUrl = url('/phong/'.$match->code.'/theo-doi');
     }
 @endphp
                             <a href="{{ $roomUrl }}" class="bracket-room-link bg-light text-dark font-weight-bold">
