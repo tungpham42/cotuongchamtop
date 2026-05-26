@@ -162,14 +162,14 @@
 
     // Nếu đã đăng nhập, kiểm tra xem có phải là người chơi trong phòng không
     if (auth()->check()) {
-        if (auth()->id() === $match->host_id) {
+        if (auth()->id() === $match->host_id && $match->result === null) {
             $roomUrl = url('/phong/'.$match->code.'/do'); // Chủ phòng (Bên đỏ)
-        } elseif (auth()->id() === $match->guest_id) {
+        } elseif (auth()->id() === $match->guest_id && $match->result === null) {
             $roomUrl = url('/phong/'.$match->code.'/den'); // Khách (Bên đen)
-        }
-    } elseif ($match->result !== null) {
+        } elseif ($match->result !== null) {
         // Nếu chưa đăng nhập nhưng trận đấu đã có kết quả, vẫn cho phép xem kết quả
         $roomUrl = url('/phong/'.$match->code.'/theo-doi');
+    }
     }
 @endphp
                             <a href="{{ $roomUrl }}" class="bracket-room-link bg-light text-dark font-weight-bold">
