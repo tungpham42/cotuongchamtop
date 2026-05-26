@@ -134,20 +134,20 @@
     </div>
 
     @if($rounds->count() > 0)
-        <h4 class="text-dark mb-4"><i class="fad fa-sitemap text-danger"></i> {{ __('Sơ đồ thi đấu') }}</h4>
+        <h4 class="text-light mb-4"><i class="fad fa-sitemap text-danger"></i> {{ __('Sơ đồ thi đấu') }}</h4>
         <div class="bracket-container custom-scrollbar">
 
             @foreach($rounds as $roundNumber => $matches)
                 <div class="bracket-round">
-                    <h6 class="text-center text-secondary mb-3">{{ __('Vòng') }} {{ $roundNumber }}</h6>
+                    <h6 class="text-center text-light mb-3">{{ __('Vòng') }} {{ $roundNumber }}</h6>
 
                     @foreach($matches as $match)
                         @php
                             $hostIsWinner = $match->result === 1;
                             $guestIsWinner = $match->result === -1;
                         @endphp
-                        <div class="match-card shadow-sm">
-                            <div class="match-player text-dark {{ $hostIsWinner ? 'match-winner' : '' }}">
+                        <div class="match-card bg-light shadow-sm">
+                            <div class="match-player text-danger {{ $hostIsWinner ? 'match-winner' : '' }}">
                                 <span><i class="fad fa-chess-pawn text-danger"></i> {{ $match->host->name ?? __('Chờ đối thủ...') }}</span>
                                 @if($hostIsWinner) <i class="fad fa-crown"></i> @endif
                             </div>
@@ -157,7 +157,7 @@
                                 @if($guestIsWinner) <i class="fad fa-crown"></i> @endif
                             </div>
 
-                            <a href="{{ url('/phong/'.$match->code) }}" class="bracket-room-link">
+                            <a href="{{ url('/phong/'.$match->code) }}" class="bracket-room-link bg-light text-dark font-weight-bold">
                                 @if(is_null($match->result))
                                     <i class="fad fa-mouse"></i> {{ __('Vào phòng đấu') }}
                                 @else

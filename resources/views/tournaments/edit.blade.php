@@ -30,7 +30,7 @@
 
                             <div class="col-md-4 form-group text-dark">
                                 <label>{{ __('Số lượng kỳ thủ') }} <span class="text-danger">*</span></label>
-                                <input type="number" name="max_players" class="form-control bg-dark text-dark border-secondary" min="2" value="{{ $tournament->max_players }}" required>
+                                <input type="number" name="max_players" class="form-control bg-dark text-dark border-secondary" min="2" max="16" value="{{ $tournament->max_players }}" required>
                             </div>
 
                             <div class="col-md-4 form-group text-dark">
