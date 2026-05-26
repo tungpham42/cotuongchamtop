@@ -124,9 +124,15 @@
                         @endif
                     @else
                         {{-- CHƯA ĐĂNG NHẬP --}}
-                        <a href="{{ route('login') }}" class="btn btn-info text-dark font-weight-bold d-inline-block mb-2">
-                            <i class="fad fa-sign-in-alt"></i> {{ __('Đăng nhập để tham gia') }}
-                        </a>
+                        <div class="d-inline-flex align-items-center bg-dark p-2" style="border-radius: 8px; border: 1px solid #3a3f4c;">
+                            <span class="text-muted small mr-3 ml-2"><i class="fad fa-lock-alt"></i> {{ __('Yêu cầu tài khoản') }}</span>
+                            <a href="{{ route('register') }}" class="btn btn-primary font-weight-bold btn-sm mr-2" style="box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);">
+                                <i class="fad fa-user-plus"></i> {{ __('Đăng ký') }}
+                            </a>
+                            <a href="{{ route('login') }}" class="btn btn-outline-light font-weight-bold btn-sm">
+                                {{ __('Đăng nhập') }}
+                            </a>
+                        </div>
                     @endif
                 </div>
             </div>

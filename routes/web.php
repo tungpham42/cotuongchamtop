@@ -102,14 +102,23 @@ Route::get('/sitemap-the-co.xml', function() {
   return response()->view('sitemap-puzzle')->header('Content-Type', 'text/xml');
 });
 
+// ==========================================
+// PUBLIC TOURNAMENT ROUTES (Visible to Guests)
+// ==========================================
+Route::get('/giai-dau', [TournamentController::class, 'index'])->name('tournaments.index');
+Route::get('/giai-dau/{slug}', [TournamentController::class, 'show'])->name('tournaments.show');
+
+// ==========================================
+// PROTECTED TOURNAMENT ROUTES (Requires Login)
+// ==========================================
 Route::middleware('auth')->group(function () {
+    // Player Actions
     Route::post('/giai-dau/{slug}/tham-gia', [TournamentController::class, 'join'])->name('tournaments.join');
+
+    // Admin / Organizer Actions
     Route::post('/giai-dau/{slug}/tao-bang', [TournamentController::class, 'generateBracket'])->name('tournaments.generate');
 
-    Route::get('/giai-dau', [TournamentController::class, 'index'])->name('tournaments.index');
-    Route::get('/giai-dau/{slug}', [TournamentController::class, 'show'])->name('tournaments.show');
-
-    // --- BỔ SUNG CÁC ROUTE ADMIN ---
+    // --- CÁC ROUTE ADMIN ---
     Route::get('/admin/giai-dau/tao-moi', [TournamentController::class, 'create'])->name('tournaments.create');
     Route::post('/admin/giai-dau', [TournamentController::class, 'store'])->name('tournaments.store');
     Route::get('/admin/giai-dau/{slug}/sua', [TournamentController::class, 'edit'])->name('tournaments.edit');

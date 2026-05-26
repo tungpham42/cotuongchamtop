@@ -136,6 +136,36 @@
               @yield('aboveBoard')
             </div>
           </div>
+          @guest
+            <div class="row mb-4 justify-content-center">
+              <div class="col-lg-8 col-md-10 col-12 text-center">
+                <div class="card text-light shadow-lg" style="border-radius: 15px; background: linear-gradient(145deg, #252a36 0%, #1a1c23 100%); border: 1px solid #3a3f4c; overflow: hidden;">
+
+                  {{-- Header Banner of the Card --}}
+                  <div class="card-header border-0 text-dark py-2 d-flex align-items-center justify-content-center" style="background: linear-gradient(90deg, #fbc02d, #ff9800);">
+                    <i class="fad fa-trophy-alt text-dark fa-lg mr-2"></i>
+                    <strong style="letter-spacing: 0.5px; font-size: 1.1rem;">{{ __('GIẢI ĐẤU CỜ TƯỚNG ĐANG CHỜ BẠN!') }}</strong>
+                  </div>
+
+                  <div class="card-body p-4">
+                    <p class="lead mb-3" style="font-size: 1.05rem; color: #b0bec5;">
+                      {{ __('Bạn đang chơi với tư cách Khách. Bạn có biết tài khoản miễn phí cho phép bạn tham gia các giải đấu, theo dõi Elo và ghi danh vào Bảng Xếp Hạng?') }}
+                    </p>
+
+                    <div class="d-flex flex-column flex-md-row justify-content-center gap-3 mt-3">
+                      <a href="{{ route('tournaments.index') }}" class="btn btn-outline-warning font-weight-bold px-4 py-2 mx-md-2 mb-2 mb-md-0" style="border-radius: 25px; transition: 0.3s;">
+                        <i class="fad fa-eye"></i> {{ __('Xem Các Giải Đấu') }}
+                      </a>
+                      <a href="{{ route('register') }}" class="btn btn-warning text-dark font-weight-bold px-4 py-2 mx-md-2 pulse-red" style="border-radius: 25px; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);">
+                        <i class="fad fa-user-plus"></i> {{ __('Đăng Ký Miễn Phí Ngay') }}
+                      </a>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          @endguest
           @if ( !$roomCode && !isset($slug) )
           <div class="row">
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-1">
