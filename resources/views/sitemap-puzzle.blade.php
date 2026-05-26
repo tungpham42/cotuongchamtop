@@ -9,7 +9,7 @@ echo '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>';
 
     @foreach($puzzles as $puzzle)
     <url>
-        <loc>{{ url('/') }}/the-co/{{ $puzzle->slug }}</loc>
+        <loc>{{ url('/') }}{{ __("/the-co/") }}{{ $puzzle->slug }}</loc>
         <lastmod>{{ date('Y-m-d\TH:i:sP', strtotime($puzzle->updated_at)) }}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>

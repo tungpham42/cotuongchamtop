@@ -39,13 +39,13 @@
             $(window).resize(board{{ md5($userPuzzle->slug) }}.resize);
             $('#board-{{ md5($userPuzzle->slug) }}').on('click auxclick', function(e){
                 e.preventDefault();
-                // $('#AdSenseModal').attr('data-url', '{{ url('/') }}' + '/the-co/' + '{{ $userPuzzle->slug }}').modal('show');
-                window.location.href = '{{ url('/') }}' + '/the-co/' + '{{ $userPuzzle->slug }}';
+                // $('#AdSenseModal').attr('data-url', '{{ url('/') }}' + '{{ __("/the-co/") }}' + '{{ $userPuzzle->slug }}').modal('show');
+                window.location.href = '{{ url('/') }}' + '{{ __("/the-co/") }}' + '{{ $userPuzzle->slug }}';
             });
             $('#board-{{ md5($userPuzzle->slug) }} + div h5').on('click auxclick', function(e){
                 e.preventDefault();
-                // $('#AdSenseModal').attr('data-url', '{{ url('/') }}' + '/the-co/' + '{{ $userPuzzle->slug }}').modal('show');
-                window.location.href = '{{ url('/') }}' + '/the-co/' + '{{ $userPuzzle->slug }}';
+                // $('#AdSenseModal').attr('data-url', '{{ url('/') }}' + '{{ __("/the-co/") }}' + '{{ $userPuzzle->slug }}').modal('show');
+                window.location.href = '{{ url('/') }}' + '{{ __("/the-co/") }}' + '{{ $userPuzzle->slug }}';
             });
             </script>
             @endforeach
@@ -95,13 +95,13 @@
                 $(window).resize(board{{ md5($userPuzzle->slug) }}.resize);
                 $('#board-{{ md5($userPuzzle->slug) }}').on('click auxclick', function(e){
                     e.preventDefault();
-                    // $('#AdSenseModal').attr('data-url', '{{ url('/') }}' + '/the-co/' + '{{ $userPuzzle->slug }}').modal('show');
-                    window.location.href = '{{ url('/') }}' + '/the-co/' + '{{ $userPuzzle->slug }}';
+                    // $('#AdSenseModal').attr('data-url', '{{ url('/') }}' + '{{ __("/the-co/") }}' + '{{ $userPuzzle->slug }}').modal('show');
+                    window.location.href = '{{ url('/') }}' + '{{ __("/the-co/") }}' + '{{ $userPuzzle->slug }}';
                 });
                 $('#board-{{ md5($userPuzzle->slug) }} + div h5').on('click auxclick', function(e){
                     e.preventDefault();
-                    // $('#AdSenseModal').attr('data-url', '{{ url('/') }}' + '/the-co/' + '{{ $userPuzzle->slug }}').modal('show');
-                    window.location.href = '{{ url('/') }}' + '/the-co/' + '{{ $userPuzzle->slug }}';
+                    // $('#AdSenseModal').attr('data-url', '{{ url('/') }}' + '{{ __("/the-co/") }}' + '{{ $userPuzzle->slug }}').modal('show');
+                    window.location.href = '{{ url('/') }}' + '{{ __("/the-co/") }}' + '{{ $userPuzzle->slug }}';
                 });
                 </script>
                 @endforeach

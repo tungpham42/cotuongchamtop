@@ -6,7 +6,7 @@
     $isPrivate = isset($isPublic) ? !$isPublic : (!$puzzle->is_public ?? false);
 @endphp
 @section('aboveBoard')
-<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title='Bạn {{ __("đang thi đấu") }} {{ __("thế cờ") }} "{{ $name }}'>Bạn {{ __("đang thi đấu") }} {{ __("thế cờ") }} "{{ $name }}"</h5>
+<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title='{{ __("Bạn đang thi đấu") }} {{ __("thế cờ") }} "{{ $name }}'>{{ __("Bạn đang thi đấu") }} {{ __("thế cờ") }} "{{ $name }}"</h5>
 <p class="w-100 text-center mt-0 mb-1">
   <a data-step="1" data-intro='Ấn vào đây để tải {{ __("thế cờ") }} "{{ $name }}" về máy' id="capture" class="btn btn-danger btn-lg text-light" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title="{{ __("Lưu thành ảnh nào") }}"><i class="fad fa-download"></i> {{ __("Tải bàn cờ thế") }}</a>
   @include('common.volumeBtn')
@@ -247,14 +247,14 @@
 </style>
 <div id="puzzle-note-block" class="puzzle-side-card mr-lg-0 mx-md-auto mw-md-100">
   <div class="card-body">
-    <h5 class="mb-2 text-left"><i class="fas fa-info-circle text-danger"></i> Ghi chú {{ __("thế cờ") }}</h5>
+    <h5 class="mb-2 text-left"><i class="fas fa-info-circle text-danger"></i> {{ __("Ghi chú thế cờ") }}</h5>
     @if (!empty($puzzleDescription))
       <div style="color:#f1f5f9" class="mb-3">{!! nl2br(e($puzzleDescription)) !!}</div>
     @else
-      <div class="puzzle-empty-comment mb-3">Chưa có ghi chú cho {{ __("thế cờ") }} này.</div>
+      <div class="puzzle-empty-comment mb-3">{{ __("Chưa có ghi chú cho thế cờ này.") }}</div>
     @endif
     <p class="text-muted small mb-2 text-left" id="reaction-summary">
-      Tổng phản hồi: <span id="reaction-total">{{ $totalReactions }}</span>
+      {{ __("Tổng phản hồi:") }} <span id="reaction-total">{{ $totalReactions }}</span>
     </p>
     <div class="puzzle-reaction-mini justify-content-end">
       <button type="button" class="reaction-btn reaction-btn-like" data-reaction="like">
@@ -283,7 +283,7 @@
       </div>
       @if ($isPrivate)
         <div class="alert alert-warning shadow-sm mb-3 text-left">
-          <i class="fas fa-lock"></i> Thế cờ này đang ở chế độ <strong>riêng tư</strong>. Chỉ những ai có liên kết mới có thể xem.
+          <i class="fas fa-lock"></i> {{ __("Thế cờ này đang ở chế độ") }} <strong>{{ __("riêng tư") }}</strong>{{ __(". Chỉ những ai có liên kết mới có thể xem.") }}
         </div>
       @endif
       <div class="sharethis-inline-reaction-buttons mb-3"></div>
@@ -293,7 +293,7 @@
         </button>
         @if ( isset($name) && $name != '' )
         <a id="switch" class="btn btn-dark btn-lg w-100 mt-2"><i class="fad fa-sync"></i> {{ __("Đổi bên") }}</a>
-        <a id="solve-puzzle" class="btn btn-dark btn-lg w-100 mt-2" href="javascript:solvePuzzle('{{ $fen }}')"><i class="fad fa-mouse"></i> Giải {{ __("thế cờ") }} "{{ $name }}"</a>
+        <a id="solve-puzzle" class="btn btn-dark btn-lg w-100 mt-2" href="javascript:solvePuzzle('{{ $fen }}')"><i class="fad fa-mouse"></i> {{ __("Giải") }} {{ __("thế cờ") }} "{{ $name }}"</a>
         @endif
         <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ url('/') }}/phong/{{ md5(time()) }}">
           @if (!auth()->check())
@@ -301,11 +301,11 @@
           @else
           <a data-toggle="tooltip" data-placement="bottom" title="{{ __("Thi đấu tính điểm và xếp hạng") }}" id="create-room" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="javascript:createRoom();"><i class="fas fa-trophy-alt text-dark"></i> {{ __("Thi đấu") }}</a>
           @endif
-          <a data-toggle="tooltip" data-placement="bottom" title="Chơi cần mật khẩu" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> {{ __("Riêng tư") }}</a>
+          <a data-toggle="tooltip" data-placement="bottom" title="{{ __("Chơi cần mật khẩu") }}" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> {{ __("Riêng tư") }}</a>
           @if ($randomRoom != null)
-          <a data-toggle="tooltip" data-placement="bottom" title="Chơi trong phòng Công khai ngẫu nhiên" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ url('/') }}/phong/{{ $randomRoom['code'] }}/ngau-nhien"><i class="fas fa-random text-dark"></i> {{ __("Ngẫu nhiên") }}</a>
+          <a data-toggle="tooltip" data-placement="bottom" title="{{ __("Chơi trong phòng Công khai ngẫu nhiên") }}" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ url('/') }}/phong/{{ $randomRoom['code'] }}/ngau-nhien"><i class="fas fa-random text-dark"></i> {{ __("Ngẫu nhiên") }}</a>
           @endif
-          <a data-toggle="tooltip" data-placement="bottom" title="Tìm phòng trống" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ url(__('/sanh-cho')) }}"><i class="fas fa-list-alt text-dark"></i> {{ __("Sảnh chờ") }}</a>
+          <a data-toggle="tooltip" data-placement="bottom" title="{{ __("Tìm phòng trống") }}" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ url(__('/sanh-cho')) }}"><i class="fas fa-list-alt text-dark"></i> {{ __("Sảnh chờ") }}</a>
         </div>
       </div>
     </div>
@@ -313,26 +313,26 @@
 
   <div class="puzzle-side-card">
     <div class="card-body">
-      <h5 class="mb-3"><i class="fas fa-comments text-danger"></i> Bình luận &amp; góp ý</h5>
+      <h5 class="mb-3"><i class="fas fa-comments text-danger"></i> {{ __("Bình luận & góp ý") }}</h5>
       <form id="puzzle-comment-form">
         <div class="form-group">
-          <label for="comment_author">Tên bạn (không bắt buộc)</label>
-          <input type="text" class="form-control" id="comment_author" maxlength="120" placeholder="Ví dụ: Kỳ thủ A">
+          <label for="comment_author">{{ __("Tên bạn (không bắt buộc)") }}</label>
+          <input type="text" class="form-control" id="comment_author" maxlength="120" placeholder="{{ __("Ví dụ: Kỳ thủ A") }}">
         </div>
         <div class="form-group">
-          <label for="comment_content">Nội dung</label>
-          <textarea class="form-control" id="comment_content" rows="3" maxlength="1000" placeholder="Chia sẻ hướng giải hoặc góp ý cho {{ __("thế cờ") }} này..." required></textarea>
+          <label for="comment_content">{{ __("Nội dung") }}</label>
+          <textarea class="form-control" id="comment_content" rows="3" maxlength="1000" placeholder="{{ __("Chia sẻ hướng giải hoặc góp ý cho thế cờ này...") }}" required></textarea>
         </div>
         <div class="d-flex justify-content-between align-items-center">
           <small class="d-none text-danger" id="comment-feedback"></small>
-          <button type="submit" class="btn btn-danger" id="comment-submit"><i class="fas fa-paper-plane"></i> {{ __("Gửi") }} bình luận</button>
+          <button type="submit" class="btn btn-danger" id="comment-submit"><i class="fas fa-paper-plane"></i> {{ __("Gửi") }} {{ __("bình luận") }}</button>
         </div>
       </form>
     </div>
   </div>
 
   <div class="puzzle-comment-feed">
-    <h6 class="mb-3"><i class="fas fa-comment-dots text-danger"></i> Dòng thảo luận</h6>
+    <h6 class="mb-3"><i class="fas fa-comment-dots text-danger"></i> {{ __("Dòng thảo luận") }}</h6>
     <div id="puzzle-comment-list" class="puzzle-comments"></div>
   </div>
 </div>
@@ -360,18 +360,18 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 <p class="w-100 text-center mt-0 mb-1">
-  <a data-step="2" data-intro="Ấn vào đây để xếp {{ __("thế cờ") }} mới" id="setup" class="w-25 btn btn-dark btn-lg" href="{{ url('/') }}/co-the"><i class="fad fa-plus-hexagon"></i> Xếp ván mới</a>
+  <a data-step="2" data-intro="Ấn vào đây để xếp {{ __("thế cờ") }} mới" id="setup" class="w-25 btn btn-dark btn-lg" href="{{ url('/') }}{{ __("/co-the") }}"><i class="fad fa-plus-hexagon"></i> {{ __("Xếp ván mới") }}</a>
   <a data-step="3" data-intro="Ấn vào đây để quay lại nước trước đó" id="undo" class="w-25 btn btn-dark btn-lg"><i class="fad fa-undo-alt"></i> {{ __("Đi lại") }}</a>
 </p>
 
 <p class="w-100 text-center mt-0 mb-1">
   <i class="fad fa-external-link-alt"></i> {{ __("Mời bạn bè chơi bằng cách gửi liên kết bên dưới") }}.
 </p>
-<div id="copy-url" class="input-group my-1 w-50 mx-auto" data-toggle="tooltip" data-placement="bottom" data-original-title="Ấn để sao chép">
+<div id="copy-url" class="input-group my-1 w-50 mx-auto" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ __("Ấn để sao chép") }}">
   <div class="input-group-prepend">
     <span class="input-group-text" id="url-addon"><i class="fal fa-copy"></i></span>
   </div>
-  <input data-step="6" data-intro="Ấn vào đây để mời bạn bè cùng chơi" type="text" class="form-control" id="url" value="{{ url('/') }}/the-co/{{ $slug }}">
+  <input data-step="6" data-intro="Ấn vào đây để mời bạn bè cùng chơi" type="text" class="form-control" id="url" value="{{ url('/') }}{{ __("/the-co/") }}{{ $slug }}">
 </div>
 <script>
 $('#copy-url').on('click', function() {
@@ -570,7 +570,7 @@ $('#undo').on('click', function(){
 $("#capture").on('click', function() {
   if (!game.validate_fen(board.fen() + ' r - - 0 1').valid) {
     bootbox.alert({
-      message: "{{ __("Bàn cờ thế") }} không hợp lệ",
+      message: '{{ __("Bàn cờ thế") }} {{ __("không hợp lệ") }}',
       locale: '{{ __("vi") }}',
       centerVertical: true,
       closeButton: false,
@@ -705,7 +705,7 @@ $('.reaction-btn').on('click', function() {
   }).done(function(response) {
     renderReactions(response);
   }).fail(function(xhr) {
-    let message = 'Không thể ghi nhận phản hồi, vui lòng thử lại.';
+    let message = '{{ __("Không thể ghi nhận phản hồi, vui lòng thử lại.") }}';
     if (xhr.responseJSON && xhr.responseJSON.message) {
       message = xhr.responseJSON.message;
     }
@@ -732,7 +732,7 @@ function formatCommentDate(dateString) {
 }
 
 function buildCommentCard(comment, level = 0) {
-  const author = comment.author_name ? comment.author_name : 'Ẩn danh';
+  const author = comment.author_name ? comment.author_name : '{{ __("Ẩn danh") }}';
   const createdAt = comment.created_at ? formatCommentDate(comment.created_at) : '';
   const initials = author.trim().length ? author.trim().charAt(0).toUpperCase() : 'Ẩ';
   const contentHtml = $('<div>').text(comment.content || '').html().replace(/\n/g, '<br>');
@@ -765,7 +765,7 @@ function buildCommentCard(comment, level = 0) {
     likeAction.attr('data-comment-id', commentId);
   }
   likeAction.append('<i class="far fa-thumbs-up"></i>');
-  likeAction.append(' <span class="like-label">Thích</span>');
+  likeAction.append(' <span class="like-label">{{ __("Thích") }}</span>');
   likeAction.append(' <span class="comment-like-count">' + likeCount + '</span>');
   if (hasLikedComment(commentId)) {
     likeAction.addClass('liked');
@@ -777,7 +777,7 @@ function buildCommentCard(comment, level = 0) {
     replyAction.attr('data-comment-id', commentId);
   }
   replyAction.append('<i class="far fa-comment"></i>');
-  replyAction.append(' Trả lời');
+  replyAction.append(' {{ __("Trả lời") }}');
   actions.append(replyAction);
 
   card.append(actions);
@@ -786,11 +786,11 @@ function buildCommentCard(comment, level = 0) {
   if (!Number.isNaN(commentId)) {
     replyForm.attr('data-comment-id', commentId);
   }
-  replyForm.append('<div class="form-group mb-2"><input type="text" class="form-control form-control-sm reply-author" maxlength="120" placeholder="Tên bạn (không bắt buộc)"></div>');
-  replyForm.append('<div class="form-group mb-2"><textarea class="form-control form-control-sm reply-content" rows="2" maxlength="1000" placeholder="Phản hồi của bạn..." required></textarea></div>');
+  replyForm.append('<div class="form-group mb-2"><input type="text" class="form-control form-control-sm reply-author" maxlength="120" placeholder="{{ __("Tên bạn (không bắt buộc)") }}"></div>');
+  replyForm.append('<div class="form-group mb-2"><textarea class="form-control form-control-sm reply-content" rows="2" maxlength="1000" placeholder="{{ __("Phản hồi của bạn...") }}" required></textarea></div>');
   replyForm.append('<small class="reply-feedback d-none"></small>');
   const replyActions = $('<div class="d-flex justify-content-end gap-2"></div>');
-  replyActions.append('<button type="button" class="btn btn-outline-light btn-sm comment-reply-cancel">Hủy</button>');
+  replyActions.append('<button type="button" class="btn btn-outline-light btn-sm comment-reply-cancel">{{ __("Hủy") }}</button>');
   replyActions.append('<button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-paper-plane"></i> {{ __("Gửi") }}</button>');
   replyForm.append(replyActions);
   card.append(replyForm);
@@ -811,7 +811,7 @@ function renderComments(comments) {
   container.empty();
 
   if (!comments || !comments.length) {
-    container.append('<div class="puzzle-empty-comment">Chưa có bình luận nào. Hãy là người đầu tiên chia sẻ cảm nhận!</div>');
+    container.append('<div class="puzzle-empty-comment">{{ __("Chưa có bình luận nào. Hãy là người đầu tiên chia sẻ cảm nhận!") }}</div>');
     return;
   }
 
@@ -827,7 +827,7 @@ function loadComments() {
     })
     .fail(function() {
       const container = $('#puzzle-comment-list');
-      container.empty().append('<div class="puzzle-empty-comment error">Không thể tải bình luận. Vui lòng thử lại sau.</div>');
+      container.empty().append('<div class="puzzle-empty-comment error">{{ __("Không thể tải bình luận. Vui lòng thử lại sau.") }}</div>');
     });
 }
 
@@ -839,11 +839,11 @@ $('#puzzle-comment-form').on('submit', function(e) {
   const submitBtn = $('#comment-submit');
 
   if (!content.length) {
-    feedback.removeClass('d-none text-success').addClass('text-danger').text('Vui lòng nhập nội dung bình luận.');
+    feedback.removeClass('d-none text-success').addClass('text-danger').text('{{ __("Vui lòng nhập nội dung bình luận.") }}');
     return;
   }
 
-  submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang gửi...');
+  submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> {{ __("Đang gửi...") }}');
   feedback.addClass('d-none').text('').removeClass('text-danger text-success');
 
   $.ajax({
@@ -859,13 +859,13 @@ $('#puzzle-comment-form').on('submit', function(e) {
   }).done(function() {
     $('#comment_author').val('');
     $('#comment_content').val('');
-    feedback.removeClass('d-none text-danger').addClass('text-success').text('Cảm ơn bạn! Bình luận đã được gửi.');
+    feedback.removeClass('d-none text-danger').addClass('text-success').text('{{ __("Cảm ơn bạn! Bình luận đã được gửi.") }}');
     loadComments();
     setTimeout(function() {
       feedback.addClass('d-none').text('').removeClass('text-success');
     }, 4000);
   }).fail(function(xhr) {
-    let message = 'Không thể gửi bình luận, vui lòng thử lại.';
+    let message = '{{ __("Không thể gửi bình luận, vui lòng thử lại.") }}';
     if (xhr.responseJSON) {
       if (xhr.responseJSON.message) {
         message = xhr.responseJSON.message;
@@ -875,7 +875,7 @@ $('#puzzle-comment-form').on('submit', function(e) {
     }
     feedback.removeClass('d-none text-success').addClass('text-danger').text(message);
   }).always(function() {
-    submitBtn.prop('disabled', false).html('<i class="fas fa-paper-plane"></i> {{ __("Gửi") }} bình luận');
+    submitBtn.prop('disabled', false).html('<i class="fas fa-paper-plane"></i> {{ __("Gửi") }} {{ __("bình luận") }}');
   });
 });
 
@@ -903,7 +903,7 @@ $('#puzzle-comment-list').on('click', '.comment-like', function() {
     $btn.addClass('liked');
     rememberLikedComment(commentId);
   }).fail(function(xhr) {
-    let message = 'Không thể thích bình luận, vui lòng thử lại.';
+    let message = '{{ __("Không thể thích bình luận, vui lòng thử lại.") }}';
     if (xhr.responseJSON && xhr.responseJSON.message) {
       message = xhr.responseJSON.message;
     }
@@ -944,11 +944,11 @@ $('#puzzle-comment-list').on('submit', '.comment-reply-form', function(e) {
   const parentId = form.data('comment-id');
 
   if (!content.length) {
-    feedback.removeClass('d-none text-success').addClass('text-danger').text('Vui lòng nhập nội dung phản hồi.');
+    feedback.removeClass('d-none text-success').addClass('text-danger').text('{{ __("Vui lòng nhập nội dung phản hồi.") }}');
     return;
   }
 
-  submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang gửi...');
+  submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> {{ __("Đang gửi...") }}');
   feedback.addClass('d-none').text('').removeClass('text-danger text-success');
 
   $.ajax({
@@ -967,7 +967,7 @@ $('#puzzle-comment-list').on('submit', '.comment-reply-form', function(e) {
     form.addClass('d-none');
     loadComments();
   }).fail(function(xhr) {
-    let message = 'Không thể gửi phản hồi, vui lòng thử lại.';
+    let message = '{{ __("Không thể gửi phản hồi, vui lòng thử lại.") }}';
     if (xhr.responseJSON) {
       if (xhr.responseJSON.message) {
         message = xhr.responseJSON.message;
@@ -1029,7 +1029,7 @@ $('#reset').on('click', function() {
 function solvePuzzle(fenCode) {
   if (!game.validate_fen(fenCode + ' r - - 0 1').valid) {
     bootbox.alert({
-    message: "{{ __("Bàn cờ thế") }} không hợp lệ",
+    message: '{{ __("Bàn cờ thế") }} {{ __("không hợp lệ") }}',
     locale: '{{ __("vi") }}',
     centerVertical: true,
     closeButton: false,
@@ -1039,7 +1039,7 @@ function solvePuzzle(fenCode) {
       }
     }});
   } else {
-    // $('#AdSenseModal').attr('data-url', '{{ url('/giai-co-the') }}/' + fenCode + ' r - - 0 1').modal('show');
+    // $('#AdSenseModal').attr('data-url', '{{ url(__("/giai-co-the")) }}/' + fenCode + ' r - - 0 1').modal('show');
     window.location.href = '{{ url(__("/giai-co-the")) }}/' + fenCode + ' r - - 0 1';
   }
 }

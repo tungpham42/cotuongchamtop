@@ -105,7 +105,7 @@
             $(window).resize(board{{ $puzzleMd5 }}.resize);
             $('#board-{{ $puzzleMd5 }}, #board-{{ $puzzleMd5 }} + div h5').on('click auxclick', function(e){
                 e.preventDefault();
-                window.location.href = '{{ url('/') }}' + '/the-co/' + '{{ $userPuzzle->slug }}';
+                window.location.href = '{{ url('/') }}' + '{{ __("/the-co/") }}' + '{{ $userPuzzle->slug }}';
             });
             </script>
             @endforeach

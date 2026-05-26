@@ -446,45 +446,57 @@ Route::match(['get', 'post'], '/thach-dau/{board}', function ($board) {
 return view('puzzleCompete', ['headTitle' => 'Thách đấu', 'bodyClass' => 'puzzle', 'board' => $board, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'canonicalUrl' => '/thach-dau/'.$board, 'userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()]);
 })->where(['board' => $fenRegex]);
 
-Route::match(['get', 'post'], '/the-co/{slug}', function ($slug) {
-    $puzzle = Puzzle::where('slug', $slug)->firstOrFail();
+$puzzleRatingRoutes = [
+    'vi' => ['prefix' => '/the-co/{slug}', 'title' => 'Thế cờ'],
+    'en' => ['prefix' => '/puzzle-record/{slug}', 'title' => 'Puzzle'],
+    'ja' => ['prefix' => '/pazuru-kiroku/{slug}', 'title' => 'パズル'],
+    'ko' => ['prefix' => '/peojeul-girog/{slug}', 'title' => '퍼즐'],
+    'zh' => ['prefix' => '/mi-jilu/{slug}', 'title' => '谜'],
+];
 
-    $headTitle = $puzzle->name ? 'Thế cờ "' . $puzzle->name . '"' : 'Thế cờ';
+foreach ($puzzleRatingRoutes as $locale => $routeInfo) {
+    Route::match(['get', 'post'], $routeInfo['prefix'], function ($slug) use ($locale, $routeInfo) {
+        $puzzle = Puzzle::where('slug', $slug)->firstOrFail();
+        $headTitle = $puzzle->name ? $routeInfo['title'] . ' "' . $puzzle->name . '"' : $routeInfo['title'];
 
-    return view('puzzleRating', [
-        'headTitle' => $headTitle,
-        'bodyClass' => 'puzzle',
-        'puzzle' => $puzzle,
-        'name' => $puzzle->name,
-        'slug' => $puzzle->slug,
-        'fen' => $puzzle->fen,
-        'description' => $puzzle->description,
-        'isPublic' => $puzzle->is_public,
-        'reactions' => [
-            'likes' => $puzzle->likes_count,
-            'hard' => $puzzle->hard_count,
-            'unsolved' => $puzzle->unsolved_count,
-            'rating' => $puzzle->rating,
-        ],
-        'randomRoom' => RoomController::getRandomRoom(),
-        'roomCode' => '',
-        'cdnUrl' => url(''),
-        'langViUrl' => '/',
-        'langEnUrl' => '/en',
-        'langJaUrl' => '/ja',
-        'langKoUrl' => '/ko',
-        'langZhUrl' => '/zh',
-        'canonicalUrl' => '/the-co/'.$puzzle->slug,
-        'userPuzzles' => PuzzleController::getUserPuzzles(),
-        'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(),
-        'boards' => RoomController::getBoards(),
-        'firstPageBoards' => RoomController::getFirstPageBoards(),
-        'playedBoards' => RoomController::getPlayedBoards(),
-        'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(),
-        'players' => UserController::getPlayers(),
-        'firstPagePlayers' => UserController::getFirstPagePlayers(),
-    ]);
-})->middleware('locale:vi');
+        // Dynamically replace {slug} with the actual slug for the canonical URL
+        $canonicalUrl = str_replace('{slug}', $puzzle->slug, $routeInfo['prefix']);
+
+        return view('puzzleRating', [
+            'headTitle' => $headTitle,
+            'bodyClass' => 'puzzle',
+            'puzzle' => $puzzle,
+            'name' => $puzzle->name,
+            'slug' => $puzzle->slug,
+            'fen' => $puzzle->fen,
+            'description' => $puzzle->description,
+            'isPublic' => $puzzle->is_public,
+            'reactions' => [
+                'likes' => $puzzle->likes_count,
+                'hard' => $puzzle->hard_count,
+                'unsolved' => $puzzle->unsolved_count,
+                'rating' => $puzzle->rating,
+            ],
+            'randomRoom' => RoomController::getRandomRoom(),
+            'roomCode' => '',
+            'cdnUrl' => url(''),
+            'langViUrl' => '/the-co/' . $puzzle->slug,
+            'langEnUrl' => '/puzzle-record/' . $puzzle->slug,
+            'langJaUrl' => '/pazuru-kiroku/' . $puzzle->slug,
+            'langKoUrl' => '/peojeul-girog/' . $puzzle->slug,
+            'langZhUrl' => '/mi-jilu/' . $puzzle->slug,
+            'canonicalUrl' => $canonicalUrl,
+            'userPuzzles' => PuzzleController::getUserPuzzles(),
+            'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(),
+            'boards' => RoomController::getBoards(),
+            'firstPageBoards' => RoomController::getFirstPageBoards(),
+            'playedBoards' => RoomController::getPlayedBoards(),
+            'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(),
+            'players' => UserController::getPlayers(),
+            'firstPagePlayers' => UserController::getFirstPagePlayers(),
+        ]);
+    })->middleware("locale:{$locale}");
+}
 
 Route::match(['get', 'post'], '/getUserPuzzlesTemplate', function(){
 return view('layout.partials.userPuzzles', ['userPuzzles' => PuzzleController::getUserPuzzles(), 'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(), 'boards' => RoomController::getBoards(), 'firstPageBoards' => RoomController::getFirstPageBoards(), 'playedBoards' => RoomController::getPlayedBoards(), 'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(), 'players' => UserController::getPlayers(), 'firstPagePlayers' => UserController::getFirstPagePlayers()])->render();

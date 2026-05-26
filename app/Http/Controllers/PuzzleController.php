@@ -36,7 +36,7 @@ class PuzzleController extends Controller
                     return $puzzleRank;
                 })
                 ->addColumn('name', function($row){
-                    $puzzleName = '<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').'/the-co/'.$row->slug.'">'.$row->name.'</a>';
+                    $puzzleName = '<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/the-co/").$row->slug.'">'.$row->name.'</a>';
                     return $puzzleName;
                 })
                 ->addColumn('rating', function($row){
@@ -152,7 +152,7 @@ class PuzzleController extends Controller
             'message' => 'Tạo thế cờ thành công!',
             'code' => 1,
             'slug' => $puzzle->slug,
-            'url' => url('/').'/the-co/'.$puzzle->slug,
+            'url' => url('/').__("/the-co/").$puzzle->slug,
         ], 201);
     }
 
