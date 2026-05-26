@@ -107,8 +107,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/tournaments/{id}/generate', [TournamentController::class, 'generateBracket'])->name('tournaments.generate');
 
     // You will need a simple GET route to render the views for the tournaments list and bracket
-    Route::get('/tournaments', [TournamentController::class, 'index'])->name('tournaments.index');
-    Route::get('/tournaments/{id}', [TournamentController::class, 'show'])->name('tournaments.show');
+    Route::get('/giai-dau', [TournamentController::class, 'index'])->name('tournaments.index');
+    Route::get('/giai-dau/{id}', [TournamentController::class, 'show'])->name('tournaments.show');
 });
 
 Route::post('/startTimer/{roomCode}/{player}', [RoomController::class, 'startTimer']);
