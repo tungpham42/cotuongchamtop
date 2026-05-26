@@ -294,7 +294,7 @@
     "piece_n": "Horse",
     "piece_r": "Chariot",
     "piece_c": "Cannon",
-    "piece_p": "Pawn",
+    "piece_p": "Soldier",
     "move_advance": "advance",
     "move_retreat": "retreat",
     "move_traverse": "traverse",
