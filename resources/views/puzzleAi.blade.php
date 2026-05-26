@@ -1,10 +1,19 @@
 @extends('layout.gamelayout')
 @php
-  $puzzleName = App\Http\Controllers\PuzzleController::getNameByFen($fen);
+    function containsCJK(string $string): bool {
+        // \p{Han} covers Chinese characters (including Japanese Kanji and Korean Hanja)
+        // \p{Hiragana} and \p{Katakana} cover Japanese syllabaries
+        // \p{Hangul} covers the Korean alphabet
+        // The 'u' modifier at the end turns on UTF-8 mode
+        $pattern = '/[\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]/u';
+
+        return preg_match($pattern, $string) === 1;
+    }
+    $puzzleName = App\Http\Controllers\PuzzleController::getNameByFen($fen);
 @endphp
 
 {{-- Set the dynamic Open Graph Image and Alt text using a placeholder service --}}
-@if($puzzleName)
+@if($puzzleName && !containsCJK($puzzleName))
     @section('og_image', 'https://placehold.co/1080x1080/DFBD85/725834/jpeg?font=roboto&text=' . urlencode(__("Thế cờ") . "\n" . $puzzleName))
     @section('og_image_alt', $puzzleName)
     @section('og_image_width', '1080')

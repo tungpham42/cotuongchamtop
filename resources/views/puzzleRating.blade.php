@@ -1,10 +1,34 @@
 @extends('layout.gamelayout')
 @php
+    function containsCJK(string $string): bool {
+        // \p{Han} covers Chinese characters (including Japanese Kanji and Korean Hanja)
+        // \p{Hiragana} and \p{Katakana} cover Japanese syllabaries
+        // \p{Hangul} covers the Korean alphabet
+        // The 'u' modifier at the end turns on UTF-8 mode
+        $pattern = '/[\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]/u';
+
+        return preg_match($pattern, $string) === 1;
+    }
     $reactionData = $reactions ?? ['likes' => 0, 'hard' => 0, 'unsolved' => 0, 'rating' => 0];
     $totalReactions = $reactionData['likes'] + $reactionData['hard'] + $reactionData['unsolved'];
     $puzzleDescription = $description ?? ($puzzle->description ?? '');
     $isPrivate = isset($isPublic) ? !$isPublic : (!$puzzle->is_public ?? false);
 @endphp
+
+@if($name && !containsCJK($name))
+    @section('og_image', 'https://placehold.co/1200x630/DFBD85/725834/jpeg?font=roboto&text=' .  $name)
+    @section('og_image_alt', $name)
+    @section('og_image_width', '1200')
+    @section('og_image_height', '630')
+    @section('og_image_type', 'image/jpeg')
+@else
+    @section('og_image', url('/') . '/img/1200x630.jpg')
+    @section('og_image_alt', 'Cờ thế')
+    @section('og_image_width', '1200')
+    @section('og_image_height', '630')
+    @section('og_image_type', 'image/jpeg')
+@endif
+
 @section('aboveBoard')
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title='{{ __("Bạn đang thi đấu") }} {{ __("thế cờ") }} "{{ $name }}'>{{ __("Bạn đang thi đấu") }} {{ __("thế cờ") }} "{{ $name }}"</h5>
 <p class="w-100 text-center mt-0 mb-1">
