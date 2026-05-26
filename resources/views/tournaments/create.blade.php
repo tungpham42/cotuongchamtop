@@ -11,28 +11,28 @@
                 <div class="card-body">
                     <form action="{{ route('tournaments.store') }}" method="POST">
                         @csrf
-                        <div class="form-group">
+                        <div class="form-group text-dark">
                             <label>{{ __('Tên Giải Đấu') }} <span class="text-danger">*</span></label>
                             <input type="text" name="name" class="form-control bg-dark text-light border-secondary" required>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group text-dark">
                             <label>{{ __('Mô tả') }}</label>
                             <textarea name="description" class="form-control bg-dark text-light border-secondary" rows="3"></textarea>
                         </div>
 
                         <div class="row">
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-4 form-group text-dark">
                                 <label>{{ __('Ngày Bắt Đầu') }} <span class="text-danger">*</span></label>
                                 <input type="datetime-local" name="start_date" class="form-control bg-dark text-light border-secondary" required>
                             </div>
 
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-4 form-group text-dark">
                                 <label>{{ __('Số lượng kỳ thủ') }} <span class="text-danger">*</span></label>
                                 <input type="number" name="max_players" class="form-control bg-dark text-light border-secondary" min="2" value="16" required>
                             </div>
 
-                            <div class="col-md-4 form-group">
+                            <div class="col-md-4 form-group text-dark">
                                 <label>{{ __('Trạng thái') }} <span class="text-danger">*</span></label>
                                 <select name="status" class="form-control bg-dark text-light border-secondary" required>
                                     <option value="open">{{ __('Mở đăng ký') }}</option>
@@ -43,7 +43,7 @@
                         </div>
 
                         <div class="mt-4 text-right">
-                            <a href="{{ route('tournaments.index') }}" class="btn btn-outline-light mr-2">{{ __('Hủy') }}</a>
+                            <a href="{{ route('tournaments.index') }}" class="btn text-dark btn-outline-light mr-2">{{ __('Hủy') }}</a>
                             <button type="submit" class="btn btn-warning text-dark font-weight-bold"><i class="fad fa-save"></i> {{ __('Lưu Giải Đấu') }}</button>
                         </div>
                     </form>
