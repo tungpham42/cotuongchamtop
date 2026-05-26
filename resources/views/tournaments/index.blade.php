@@ -32,7 +32,7 @@
     <div class="row">
         @forelse($tournaments as $tournament)
             <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card bg-secondary text-light h-100 border-0 shadow-sm" style="border-radius: 12px;">
+                <div class="card bg-secondary text-dark h-100 border-0 shadow-sm" style="border-radius: 12px;">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <h5 class="card-title text-warning font-weight-bold mb-0">{{ $tournament->name }}</h5>
@@ -44,7 +44,7 @@
                                 <span class="badge badge-dark text-muted">{{ __('Đã kết thúc') }}</span>
                             @endif
                         </div>
-                        <p class="card-text text-light small">{{ $tournament->description ?? __('Không có mô tả.') }}</p>
+                        <p class="card-text text-dark small">{{ $tournament->description ?? __('Không có mô tả.') }}</p>
 
                         <ul class="list-unstyled mb-4 small">
                             <li><i class="fad fa-calendar-alt w-20px text-center"></i> <strong>{{ __('Bắt đầu:') }}</strong> {{ \Carbon\Carbon::parse($tournament->start_date)->format('d/m/Y H:i') }}</li>
@@ -74,7 +74,7 @@
             <div class="col-12">
                 <div class="alert alert-secondary bg-dark text-center border-0 p-5">
                     <i class="fad fa-box-open fa-3x text-muted mb-3"></i>
-                    <h5 class="text-light">{{ __('Chưa có giải đấu nào.') }}</h5>
+                    <h5 class="text-dark">{{ __('Chưa có giải đấu nào.') }}</h5>
                 </div>
             </div>
         @endforelse
