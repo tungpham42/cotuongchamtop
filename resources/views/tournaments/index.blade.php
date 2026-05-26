@@ -54,7 +54,7 @@
 
                     <div class="card-footer bg-transparent border-0 pt-0">
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('tournaments.show', $tournament->id) }}" class="btn btn-outline-light btn-sm w-100 mr-2">
+                            <a href="{{ route('tournaments.show', $tournament->id) }}" class="btn btn-outline-light btn-sm w-100 text-dark mr-2">
                                 <i class="fad fa-eye"></i> {{ __('Xem chi tiết') }}
                             </a>
 

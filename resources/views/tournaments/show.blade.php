@@ -60,7 +60,7 @@
         <a href="{{ route('tournaments.index') }}" class="btn btn-dark text-light"><i class="fad fa-arrow-left"></i> {{ __('Quay lại') }}</a>
     </div>
 
-    <div class="card bg-secondary text-light border-0 mb-4" style="border-radius: 12px;">
+    <div class="card bg-secondary text-dark border-0 mb-4" style="border-radius: 12px;">
         <div class="card-body">
             <h2 class="text-warning font-weight-bold">{{ $tournament->name }}</h2>
             <p>{{ $tournament->description }}</p>
@@ -101,7 +101,7 @@
     </div>
 
     @if($rounds->count() > 0)
-        <h4 class="text-light mb-4"><i class="fad fa-sitemap text-danger"></i> {{ __('Sơ đồ thi đấu') }}</h4>
+        <h4 class="text-dark mb-4"><i class="fad fa-sitemap text-danger"></i> {{ __('Sơ đồ thi đấu') }}</h4>
         <div class="bracket-container custom-scrollbar">
 
             @foreach($rounds as $roundNumber => $matches)
@@ -114,12 +114,12 @@
                             $guestIsWinner = $match->result === -1;
                         @endphp
                         <div class="match-card shadow-sm">
-                            <div class="match-player text-light {{ $hostIsWinner ? 'match-winner' : '' }}">
+                            <div class="match-player text-dark {{ $hostIsWinner ? 'match-winner' : '' }}">
                                 <span><i class="fad fa-chess-pawn text-danger"></i> {{ $match->host->name ?? __('Chờ đối thủ...') }}</span>
                                 @if($hostIsWinner) <i class="fad fa-crown"></i> @endif
                             </div>
 
-                            <div class="match-player text-light {{ $guestIsWinner ? 'match-winner' : '' }}">
+                            <div class="match-player text-dark {{ $guestIsWinner ? 'match-winner' : '' }}">
                                 <span><i class="fad fa-chess-pawn text-dark"></i> {{ $match->guest->name ?? __('Chờ đối thủ...') }}</span>
                                 @if($guestIsWinner) <i class="fad fa-crown"></i> @endif
                             </div>
@@ -140,7 +140,7 @@
     @else
         <div class="alert alert-dark bg-secondary text-center border-0 p-5 mt-4" style="border-radius: 12px;">
             <i class="fad fa-project-diagram fa-4x text-muted mb-3"></i>
-            <h5 class="text-light">{{ __('Sơ đồ giải đấu chưa được tạo.') }}</h5>
+            <h5 class="text-dark">{{ __('Sơ đồ giải đấu chưa được tạo.') }}</h5>
             <p class="text-muted">{{ __('Sơ đồ sẽ xuất hiện khi giải đấu bắt đầu và bốc thăm hoàn tất.') }}</p>
         </div>
     @endif
