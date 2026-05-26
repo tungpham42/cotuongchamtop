@@ -26,6 +26,7 @@ class User extends Authenticatable
         'points',
         'email',
         'password',
+        'is_admin',
         'subscription_plan',
         'subscription_started_at',
         'subscription_ends_at',
@@ -52,6 +53,7 @@ class User extends Authenticatable
         'subscription_started_at' => 'datetime',
         'subscription_ends_at' => 'datetime',
         'ads_removed' => 'boolean',
+        'is_admin' => 'boolean',
     ];
 
     public function rooms()
