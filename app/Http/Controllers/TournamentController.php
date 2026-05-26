@@ -101,16 +101,19 @@ class TournamentController extends Controller
     }
 
     // List all tournaments
-public function index()
+    public function index()
     {
         $tournaments = Tournament::withCount('users')->orderBy('start_date', 'desc')->paginate(10);
 
         return view('tournaments.index', [
             'headTitle' => 'Danh sách Giải đấu',
-            'bodyClass' => 'dashboard', // hoặc 'room' tùy css của bạn
+            'bodyClass' => 'dashboard',
             'tournaments' => $tournaments,
 
-            // CÁC BIẾN BẮT BUỘC CHO MAINLAYOUT
+            // Bổ sung thêm dòng này
+            'canonicalUrl' => '/giai-dau',
+
+            // Các biến đã thêm từ trước
             'randomRoom' => RoomController::getRandomRoom(),
             'roomCode' => '',
             'cdnUrl' => url(''),
@@ -136,7 +139,10 @@ public function index()
             'tournament' => $tournament,
             'rounds' => $rounds,
 
-            // CÁC BIẾN BẮT BUỘC CHO MAINLAYOUT
+            // Bổ sung thêm dòng này (trỏ đích danh vào ID giải đấu)
+            'canonicalUrl' => '/giai-dau/' . $tournament->id,
+
+            // Các biến đã thêm từ trước
             'randomRoom' => RoomController::getRandomRoom(),
             'roomCode' => '',
             'cdnUrl' => url(''),
