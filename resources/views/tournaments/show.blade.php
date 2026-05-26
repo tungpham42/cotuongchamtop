@@ -1,6 +1,6 @@
-@extends('app')
+@extends('layout.mainlayout')
 
-@section('content')
+@section('aboveContent')
 <style>
     /* Visual Bracket Styles */
     .bracket-container {

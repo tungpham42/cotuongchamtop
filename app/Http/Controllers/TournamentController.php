@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Tournament;
 use App\Models\Room;
 use App\Models\User;
+use App\Models\Puzzle;
+use App\Http\Controllers\RoomController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\PuzzleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -97,31 +101,53 @@ class TournamentController extends Controller
     }
 
     // List all tournaments
-    public function index()
+public function index()
     {
-        // Fetch tournaments, paginated
         $tournaments = Tournament::withCount('users')->orderBy('start_date', 'desc')->paginate(10);
 
         return view('tournaments.index', [
             'headTitle' => 'Danh sách Giải đấu',
-            'bodyClass' => 'dashboard',
-            'tournaments' => $tournaments
+            'bodyClass' => 'dashboard', // hoặc 'room' tùy css của bạn
+            'tournaments' => $tournaments,
+
+            // CÁC BIẾN BẮT BUỘC CHO MAINLAYOUT
+            'randomRoom' => RoomController::getRandomRoom(),
+            'roomCode' => '',
+            'cdnUrl' => url(''),
+            'userPuzzles' => PuzzleController::getUserPuzzles(),
+            'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(),
+            'boards' => RoomController::getBoards(),
+            'firstPageBoards' => RoomController::getFirstPageBoards(),
+            'playedBoards' => RoomController::getPlayedBoards(),
+            'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(),
+            'players' => UserController::getPlayers(),
+            'firstPagePlayers' => UserController::getFirstPagePlayers(),
         ]);
     }
 
-    // Show a specific tournament and its bracket
     public function show($id)
     {
         $tournament = Tournament::with(['users', 'rooms.host', 'rooms.guest'])->findOrFail($id);
-
-        // Group rooms by round for the bracket visualization
         $rounds = $tournament->rooms->groupBy('tournament_round')->sortKeys();
 
         return view('tournaments.show', [
             'headTitle' => 'Giải đấu - ' . $tournament->name,
             'bodyClass' => 'dashboard',
             'tournament' => $tournament,
-            'rounds' => $rounds
+            'rounds' => $rounds,
+
+            // CÁC BIẾN BẮT BUỘC CHO MAINLAYOUT
+            'randomRoom' => RoomController::getRandomRoom(),
+            'roomCode' => '',
+            'cdnUrl' => url(''),
+            'userPuzzles' => PuzzleController::getUserPuzzles(),
+            'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(),
+            'boards' => RoomController::getBoards(),
+            'firstPageBoards' => RoomController::getFirstPageBoards(),
+            'playedBoards' => RoomController::getPlayedBoards(),
+            'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(),
+            'players' => UserController::getPlayers(),
+            'firstPagePlayers' => UserController::getFirstPagePlayers(),
         ]);
     }
 }
