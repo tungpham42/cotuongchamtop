@@ -1,15 +1,16 @@
 <meta charset="utf-8">
 <meta property="article:tag" content="{{ __("cờ tướng") }}">
-@php
-if (str_contains(url()->current(), '/ky-thu/') && isset($player)):
-    Avatar::create($player->name)->setDimension(200)->setFontSize(100)->save(public_path().'/players/'.md5($player->email).'.jpg', 100);
-    $avatar_image_url = url('/').'/players/'.md5($player->email).'.jpg';
-@endphp
+@hasSection('og:image')
+    <meta property="og:image" content="@yield('og:image')">
+@elseif(str_contains(url()->current(), '/ky-thu/') && isset($player))
+    @php
+        Avatar::create($player->name)->setDimension(200)->setFontSize(100)->save(public_path().'/players/'.md5($player->email).'.jpg', 100);
+        $avatar_image_url = url('/').'/players/'.md5($player->email).'.jpg';
+    @endphp
     <meta property="og:image" content="{{ $avatar_image_url }}">
-@php
-else:
-@endphp
-<meta property="og:image" content="{{ url('/') }}/img/1200x630.jpg">
+@else
+    <meta property="og:image" content="{{ url('/') }}/img/1200x630.jpg">
+@endif
 <meta property="og:image:width" content="1200" >
 <meta property="og:image:height" content="630" >
 <meta property="og:image:alt" content="{{ __("Cờ tướng") }} 2 nguòi" >
@@ -65,7 +66,7 @@ function get_gravatar_image_url(email, size, default_image, allowed_rating, forc
     default_image = typeof default_image !== 'undefined' ? default_image : 'retro';
     allowed_rating = typeof allowed_rating !== 'undefined' ? allowed_rating : 'g';
     force_default = force_default === true ? 'y' : 'n';
-    
+
     return ("https://secure.gravatar.com/avatar/" + CryptoJS.MD5(email.toLowerCase().trim()) + "?size=" + size + "&default=" + encodeURIComponent(default_image) + "&rating=" + allowed_rating + (force_default === 'y' ? "&forcedefault=" + force_default : ''));
 }
 </script>
