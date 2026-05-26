@@ -14,9 +14,6 @@
 <meta property="og:image:width" content="1200" >
 <meta property="og:image:height" content="630" >
 <meta property="og:image:alt" content="{{ __("Cờ tướng") }} 2 nguòi" >
-@php
-endif
-@endphp
 <meta name="description" content="Cùng {{ __("chơi") }} với nhiều tính năng hấp dẫn như {{ __("cờ tướng") }} 2 người, {{ __("cờ tướng") }} online, {{ __("chơi") }} {{ __("cờ tướng") }} {{ __("với máy") }}, cờ thế và {{ __("Thi đấu") }} xếp hạng!" >
 <meta property="og:description" content="Cùng {{ __("chơi") }} với nhiều tính năng hấp dẫn như {{ __("cờ tướng") }} 2 người, {{ __("cờ tướng") }} online, {{ __("chơi") }} {{ __("cờ tướng") }} {{ __("với máy") }}, cờ thế và {{ __("Thi đấu") }} xếp hạng!" >
 @php
