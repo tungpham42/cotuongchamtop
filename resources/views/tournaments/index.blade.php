@@ -69,19 +69,23 @@
                             <a href="{{ route('tournaments.show', $tournament->slug) }}" class="btn btn-outline-light btn-sm w-100 text-dark mr-2">
                                 <i class="fad fa-eye"></i> {{ __('Xem chi tiết') }}
                             </a>
-
-                            @if($tournament->status === 'open' && $tournament->users_count < $tournament->max_players)
+                            @php
+                                $isJoined = $tournament->users->contains(auth()->id());
+                                $isOpen = $tournament->status === 'open';
+                                $isFull = $tournament->users->count() >= $tournament->max_players;
+                            @endphp
+                            @if($isOpen && !$isFull)
                                 <form action="{{ route('tournaments.join', $tournament->slug) }}" method="POST" class="w-100 ml-2">
                                     @csrf
                                     <button type="submit" class="btn btn-danger btn-sm w-100">
                                         <i class="fad fa-sign-in-alt"></i> {{ __('Tham gia') }}
                                     </button>
                                 </form>
-                            @elseif($tournament->users->contains(auth()->id()))
+                            @elseif($isJoined)
                                 <button class="btn btn-secondary btn-sm w-100" disabled style="opacity: 0.8; cursor: not-allowed;">
                                     <i class="fad fa-check-circle text-success"></i> {{ __('Đã tham gia') }}
                                 </button>
-                            @elseif($tournament->users_count >= $tournament->max_players)
+                            @elseif($isFull)
                                 <button class="btn btn-secondary btn-sm w-100" disabled>
                                     <i class="fad fa-users-slash"></i> {{ __('Đã đầy') }}
                                 </button>
