@@ -110,7 +110,7 @@
                             </form>
                             @endif
 
-                            <a href="{{ route('tournaments.edit', $tournament->slug) }}" class="btn btn-warning text-dark font-weight-bold d-inline-block mb-2">
+                            <a href="{{ route('tournaments.edit', $tournament->slug) }}" class="btn btn-warning text-dark font-weight-bold d-inline-block">
                                 <i class="fad fa-edit"></i>
                             </a>
 
