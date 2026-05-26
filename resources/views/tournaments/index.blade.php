@@ -54,12 +54,12 @@
 
                     <div class="card-footer bg-transparent border-0 pt-0">
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('tournaments.show', $tournament->id) }}" class="btn btn-outline-light btn-sm w-100 text-dark mr-2">
+                            <a href="{{ route('tournaments.show', $tournament->slug) }}" class="btn btn-outline-light btn-sm w-100 text-dark mr-2">
                                 <i class="fad fa-eye"></i> {{ __('Xem chi tiết') }}
                             </a>
 
                             @if($tournament->status === 'open' && $tournament->users_count < $tournament->max_players)
-                                <form action="{{ route('tournaments.join', $tournament->id) }}" method="POST" class="w-100 ml-2">
+                                <form action="{{ route('tournaments.join', $tournament->slug) }}" method="POST" class="w-100 ml-2">
                                     @csrf
                                     <button type="submit" class="btn btn-danger btn-sm w-100">
                                         <i class="fad fa-sign-in-alt"></i> {{ __('Tham gia') }}

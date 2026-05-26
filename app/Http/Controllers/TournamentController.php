@@ -16,9 +16,9 @@ use Carbon\Carbon;
 class TournamentController extends Controller
 {
     // Register a user for the tournament
-    public function join(Request $request, $id)
+    public function join(Request $request, $slug)
     {
-        $tournament = Tournament::findOrFail($id);
+        $tournament = Tournament::where('slug', $slug)->firstOrFail();
         $userId = auth()->id();
 
         if ($tournament->status !== 'open') {
@@ -37,9 +37,9 @@ class TournamentController extends Controller
     }
 
     // Generate Single Elimination Bracket
-    public function generateBracket($id)
+    public function generateBracket($slug)
     {
-        $tournament = Tournament::findOrFail($id);
+        $tournament = Tournament::where('slug', $slug)->firstOrFail();
 
         if ($tournament->status !== 'open') {
             return back()->with('error', 'Tournament has already started.');
@@ -128,9 +128,12 @@ class TournamentController extends Controller
         ]);
     }
 
-    public function show($id)
+    public function show($slug)
     {
-        $tournament = Tournament::with(['users', 'rooms.host', 'rooms.guest'])->findOrFail($id);
+        $tournament = Tournament::with(['users', 'rooms.host', 'rooms.guest'])
+            ->where('slug', $slug)
+            ->firstOrFail();
+
         $rounds = $tournament->rooms->groupBy('tournament_round')->sortKeys();
 
         return view('tournaments.show', [
@@ -140,7 +143,7 @@ class TournamentController extends Controller
             'rounds' => $rounds,
 
             // Bổ sung thêm dòng này (trỏ đích danh vào ID giải đấu)
-            'canonicalUrl' => '/giai-dau/' . $tournament->id,
+            'canonicalUrl' => '/giai-dau/' . $tournament->slug,
 
             // Các biến đã thêm từ trước
             'randomRoom' => RoomController::getRandomRoom(),
@@ -208,16 +211,16 @@ class TournamentController extends Controller
     }
 
     // 3. Giao diện Sửa
-    public function edit($id)
+    public function edit($slug)
     {
         $this->checkAdmin();
-        $tournament = Tournament::findOrFail($id);
+        $tournament = Tournament::where('slug', $slug)->firstOrFail();
 
         return view('tournaments.edit', [
             'headTitle' => 'Sửa Giải đấu: ' . $tournament->name,
             'bodyClass' => 'dashboard',
             'tournament' => $tournament,
-            'canonicalUrl' => '/admin/giai-dau/' . $tournament->id . '/sua',
+            'canonicalUrl' => '/admin/giai-dau/' . $tournament->slug . '/sua',
             // Các biến bắt buộc cho Layout
             'randomRoom' => RoomController::getRandomRoom(),
             'roomCode' => '',
@@ -234,10 +237,10 @@ class TournamentController extends Controller
     }
 
     // 4. Xử lý cập nhật Sửa
-    public function update(Request $request, $id)
+    public function update(Request $request, $slug)
     {
         $this->checkAdmin();
-        $tournament = Tournament::findOrFail($id);
+        $tournament = Tournament::where('slug', $slug)->firstOrFail();
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -249,14 +252,14 @@ class TournamentController extends Controller
 
         $tournament->update($request->all());
 
-        return redirect()->route('tournaments.show', $tournament->id)->with('success', 'Cập nhật giải đấu thành công!');
+        return redirect()->route('tournaments.show', $tournament->slug)->with('success', 'Cập nhật giải đấu thành công!');
     }
 
     // 5. Xử lý Xóa
-    public function destroy($id)
+    public function destroy($slug)
     {
         $this->checkAdmin();
-        $tournament = Tournament::findOrFail($id);
+        $tournament = Tournament::where('slug', $slug)->firstOrFail();
 
         // Bạn có thể cân nhắc xóa các phòng (rooms) thuộc giải đấu này tại đây nếu cần
         // Room::where('tournament_id', $tournament->id)->delete();

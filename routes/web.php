@@ -103,19 +103,18 @@ Route::get('/sitemap-the-co.xml', function() {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::post('/giai-dau/{id}/tham-gia', [TournamentController::class, 'join'])->name('tournaments.join');
-    Route::post('/giai-dau/{id}/tao-bang', [TournamentController::class, 'generateBracket'])->name('tournaments.generate');
+    Route::post('/giai-dau/{slug}/tham-gia', [TournamentController::class, 'join'])->name('tournaments.join');
+    Route::post('/giai-dau/{slug}/tao-bang', [TournamentController::class, 'generateBracket'])->name('tournaments.generate');
 
-    // You will need a simple GET route to render the views for the tournaments list and bracket
     Route::get('/giai-dau', [TournamentController::class, 'index'])->name('tournaments.index');
-    Route::get('/giai-dau/{id}', [TournamentController::class, 'show'])->name('tournaments.show');
+    Route::get('/giai-dau/{slug}', [TournamentController::class, 'show'])->name('tournaments.show');
 
     // --- BỔ SUNG CÁC ROUTE ADMIN ---
     Route::get('/admin/giai-dau/tao-moi', [TournamentController::class, 'create'])->name('tournaments.create');
     Route::post('/admin/giai-dau', [TournamentController::class, 'store'])->name('tournaments.store');
-    Route::get('/admin/giai-dau/{id}/sua', [TournamentController::class, 'edit'])->name('tournaments.edit');
-    Route::put('/admin/giai-dau/{id}', [TournamentController::class, 'update'])->name('tournaments.update');
-    Route::delete('/admin/giai-dau/{id}', [TournamentController::class, 'destroy'])->name('tournaments.destroy');
+    Route::get('/admin/giai-dau/{slug}/sua', [TournamentController::class, 'edit'])->name('tournaments.edit');
+    Route::put('/admin/giai-dau/{slug}', [TournamentController::class, 'update'])->name('tournaments.update');
+    Route::delete('/admin/giai-dau/{slug}', [TournamentController::class, 'destroy'])->name('tournaments.destroy');
 });
 
 Route::post('/startTimer/{roomCode}/{player}', [RoomController::class, 'startTimer']);

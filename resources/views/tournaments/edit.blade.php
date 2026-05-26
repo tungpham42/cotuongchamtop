@@ -9,7 +9,7 @@
                     <h4 class="mb-0"><i class="fad fa-edit"></i> {{ __('Sửa Giải Đấu') }}</h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('tournaments.update', $tournament->id) }}" method="POST">
+                    <form action="{{ route('tournaments.update', $tournament->slug) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="form-group text-dark">
@@ -44,7 +44,7 @@
                         </div>
 
                         <div class="mt-4 text-right">
-                            <a href="{{ route('tournaments.show', $tournament->id) }}" class="btn btn-outline-light text-dark mr-2">{{ __('Hủy') }}</a>
+                            <a href="{{ route('tournaments.show', $tournament->slug) }}" class="btn btn-outline-light text-dark mr-2">{{ __('Hủy') }}</a>
                             <button type="submit" class="btn btn-warning text-dark font-weight-bold"><i class="fad fa-save"></i> {{ __('Cập nhật') }}</button>
                         </div>
                     </form>
