@@ -128,15 +128,7 @@
             <source src="{{ $cdnUrl }}/sound/hetTran.wav" type="audio/wav">
             Your browser does not support the audio element.
           </audio>
-          <div class="row">
-            @include('layout.partials.findMatch')
-          </div>
-          <div class="row">
-            <div class="col-12 text-center mb-3">
-              @yield('aboveBoard')
-            </div>
-          </div>
-@guest
+          @guest
             @if(app()->getLocale() === 'vi')
             <div class="row mb-4 justify-content-center">
               <div class="col-lg-8 col-md-10 col-12 text-center">
@@ -199,6 +191,14 @@
             </div>
             @endif
           @endguest
+          <div class="row">
+            @include('layout.partials.findMatch')
+          </div>
+          <div class="row">
+            <div class="col-12 text-center mb-3">
+              @yield('aboveBoard')
+            </div>
+          </div>
           @if ( !$roomCode && !isset($slug) )
           <div class="row">
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-1">

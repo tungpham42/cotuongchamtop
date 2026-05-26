@@ -128,9 +128,9 @@
             <source src="{{ $cdnUrl }}/sound/hetTran.wav" type="audio/wav">
             Your browser does not support the audio element.
           </audio>
-          <div class="row">
+          {{-- <div class="row">
             @include('layout.partials.findMatch')
-          </div>
+          </div> --}}
           <div class="row">
             <div class="col-12 text-center mb-3">
               @yield('aboveBoard')
