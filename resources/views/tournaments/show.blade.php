@@ -73,27 +73,60 @@
                     <p><i class="fad fa-users text-muted"></i> <strong>{{ __('Số lượng:') }}</strong> {{ $tournament->users->count() }} / {{ $tournament->max_players }}</p>
                 </div>
                 <div class="col-md-4 text-right">
-                    @if(auth()->check() && auth()->user()->is_admin)
-                        @if($tournament->status === 'open')
-                        <form action="{{ route('tournaments.generate', $tournament->id) }}" method="POST" class="d-inline-block mb-2">
-                            @csrf
-                            <button type="submit" class="btn btn-success font-weight-bold">
-                                <i class="fad fa-sitemap"></i> {{ __('Bốc thăm') }}
+                    {{-- NÚT THAM GIA CHO NGƯỜI CHƠI --}}
+                    @if(auth()->check())
+                        @php
+                            $isJoined = $tournament->users->contains(auth()->id());
+                            $isOpen = $tournament->status === 'open';
+                            $isFull = $tournament->users->count() >= $tournament->max_players;
+                        @endphp
+
+                        @if($isJoined)
+                            <button class="btn btn-secondary font-weight-bold d-inline-block mb-2" disabled style="opacity: 0.8; cursor: not-allowed;">
+                                <i class="fad fa-check-circle text-success"></i> {{ __('Đã tham gia') }}
                             </button>
-                        </form>
+                        @elseif($isOpen && !$isFull)
+                            <form action="{{ route('tournaments.join', $tournament->id) }}" method="POST" class="d-inline-block mb-2">
+                                @csrf
+                                <button type="submit" class="btn btn-primary font-weight-bold pulse-red">
+                                    <i class="fad fa-sign-in-alt"></i> {{ __('Tham gia') }}
+                                </button>
+                            </form>
+                        @elseif($isOpen && $isFull)
+                            <button class="btn btn-secondary font-weight-bold d-inline-block mb-2" disabled>
+                                <i class="fad fa-users-slash"></i> {{ __('Đã đầy') }}
+                            </button>
                         @endif
 
-                        <a href="{{ route('tournaments.edit', $tournament->id) }}" class="btn btn-warning text-dark font-weight-bold d-inline-block mb-2">
-                            <i class="fad fa-edit"></i>
-                        </a>
+                        {{-- CÁC NÚT QUẢN LÝ DÀNH RIÊNG CHO ADMIN --}}
+                        @if(auth()->user()->is_admin)
+                            <span class="text-muted mx-2">|</span>
+                            @if($isOpen)
+                            <form action="{{ route('tournaments.generate', $tournament->id) }}" method="POST" class="d-inline-block mb-2">
+                                @csrf
+                                <button type="submit" class="btn btn-success font-weight-bold">
+                                    <i class="fad fa-sitemap"></i> {{ __('Bốc thăm') }}
+                                </button>
+                            </form>
+                            @endif
 
-                        <form action="{{ route('tournaments.destroy', $tournament->id) }}" method="POST" class="d-inline-block mb-2" onsubmit="return confirm('{{ __('Bạn có chắc chắn muốn xóa giải đấu này không?') }}');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger font-weight-bold">
-                                <i class="fad fa-trash-alt"></i>
-                            </button>
-                        </form>
+                            <a href="{{ route('tournaments.edit', $tournament->id) }}" class="btn btn-warning text-dark font-weight-bold d-inline-block mb-2">
+                                <i class="fad fa-edit"></i>
+                            </a>
+
+                            <form action="{{ route('tournaments.destroy', $tournament->id) }}" method="POST" class="d-inline-block mb-2" onsubmit="return confirm('{{ __('Bạn có chắc chắn muốn xóa giải đấu này không?') }}');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger font-weight-bold">
+                                    <i class="fad fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        @endif
+                    @else
+                        {{-- CHƯA ĐĂNG NHẬP --}}
+                        <a href="{{ route('login') }}" class="btn btn-info text-dark font-weight-bold d-inline-block mb-2">
+                            <i class="fad fa-sign-in-alt"></i> {{ __('Đăng nhập để tham gia') }}
+                        </a>
                     @endif
                 </div>
             </div>
