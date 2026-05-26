@@ -7,7 +7,8 @@ use Illuminate\Support\Str;
 
 class Tournament extends Model
 {
-    protected $fillable = ['name', 'slug', 'description', 'start_date', 'status', 'max_players'];
+    // Thêm 'cover_photo' vào mảng fillable
+    protected $fillable = ['name', 'slug', 'description', 'cover_photo', 'start_date', 'status', 'max_players'];
 
     protected static function boot()
     {

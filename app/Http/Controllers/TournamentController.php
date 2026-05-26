@@ -10,6 +10,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PuzzleController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
@@ -200,12 +201,20 @@ class TournamentController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20480', // Validate ảnh
             'start_date' => 'required|date',
             'status' => 'required|in:open,in_progress,completed',
             'max_players' => 'required|integer|min:2',
         ]);
 
-        Tournament::create($request->all());
+        $data = $request->all();
+
+        // Xử lý upload ảnh
+        if ($request->hasFile('cover_photo')) {
+            $data['cover_photo'] = $request->file('cover_photo')->store('tournaments', 'public');
+        }
+
+        Tournament::create($data);
 
         return redirect()->route('tournaments.index')->with('success', 'Tạo giải đấu thành công!');
     }
@@ -245,12 +254,24 @@ class TournamentController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20480', // Validate ảnh
             'start_date' => 'required|date',
             'status' => 'required|in:open,in_progress,completed',
             'max_players' => 'required|integer|min:2',
         ]);
 
-        $tournament->update($request->all());
+        $data = $request->all();
+
+        // Xử lý upload ảnh mới
+        if ($request->hasFile('cover_photo')) {
+            // Xóa ảnh cũ nếu có
+            if ($tournament->cover_photo) {
+                Storage::disk('public')->delete($tournament->cover_photo);
+            }
+            $data['cover_photo'] = $request->file('cover_photo')->store('tournaments', 'public');
+        }
+
+        $tournament->update($data);
 
         return redirect()->route('tournaments.show', $tournament->slug)->with('success', 'Cập nhật giải đấu thành công!');
     }
@@ -261,8 +282,10 @@ class TournamentController extends Controller
         $this->checkAdmin();
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
 
-        // Bạn có thể cân nhắc xóa các phòng (rooms) thuộc giải đấu này tại đây nếu cần
-        // Room::where('tournament_id', $tournament->id)->delete();
+        // Xóa ảnh khi xóa giải đấu
+        if ($tournament->cover_photo) {
+            Storage::disk('public')->delete($tournament->cover_photo);
+        }
 
         $tournament->delete();
 

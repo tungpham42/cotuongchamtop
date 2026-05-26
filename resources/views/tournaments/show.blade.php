@@ -60,7 +60,13 @@
         <a href="{{ route('tournaments.index') }}" class="btn btn-dark text-light"><i class="fad fa-arrow-left"></i> {{ __('Quay lại') }}</a>
     </div>
 
-    <div class="card bg-secondary text-dark border-0 mb-4" style="border-radius: 12px;">
+    <div class="card bg-secondary text-dark border-0 mb-4" style="border-radius: 12px; overflow: hidden;">
+
+        @if($tournament->cover_photo)
+            <div style="width: 100%; aspect-ratio: 16/9; background-image: url('{{ asset('storage/' . $tournament->cover_photo) }}'); background-size: cover; background-position: center;">
+            </div>
+        @endif
+
         <div class="card-body">
             <h2 class="text-warning font-weight-bold">{{ $tournament->name }}</h2>
             <p>{{ $tournament->description }}</p>

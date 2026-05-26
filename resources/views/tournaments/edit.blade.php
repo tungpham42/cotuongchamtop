@@ -9,12 +9,22 @@
                     <h4 class="mb-0"><i class="fad fa-edit"></i> {{ __('Sửa Giải Đấu') }}</h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('tournaments.update', $tournament->slug) }}" method="POST">
+                    <form action="{{ route('tournaments.update', $tournament->slug) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="form-group text-dark">
                             <label>{{ __('Tên Giải Đấu') }} <span class="text-danger">*</span></label>
                             <input type="text" name="name" class="form-control bg-dark text-dark border-secondary" value="{{ $tournament->name }}" required>
+                        </div>
+
+                        <div class="form-group text-dark">
+                            <label>{{ __('Hình Nền (Cover Photo)') }}</label>
+                            @if($tournament->cover_photo)
+                                <div class="mb-3" style="max-width: 320px;">
+                                    <img src="{{ asset('storage/' . $tournament->cover_photo) }}" alt="Cover" class="img-thumbnail w-100" style="aspect-ratio: 16/9; object-fit: cover;">
+                                </div>
+                            @endif
+                            <input type="file" name="cover_photo" class="form-control-file text-dark" accept="image/*">
                         </div>
 
                         <div class="form-group text-dark">
