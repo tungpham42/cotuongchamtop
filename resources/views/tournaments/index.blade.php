@@ -5,7 +5,7 @@
     <div class="row mb-4 align-items-center">
         <div class="col-md-8">
             <h2 class="text-light"><i class="fad fa-trophy-alt text-warning"></i> {{ __('Danh sách Giải đấu') }}</h2>
-            <p class="text-secondary">{{ __('Tham gia các giải đấu để tranh tài và nâng cao thứ hạng của bạn.') }}</p>
+            <p class="text-light">{{ __('Tham gia các giải đấu để tranh tài và nâng cao thứ hạng của bạn.') }}</p>
         </div>
     </div>
 
