@@ -73,11 +73,25 @@
                     <p><i class="fad fa-users text-muted"></i> <strong>{{ __('Số lượng:') }}</strong> {{ $tournament->users->count() }} / {{ $tournament->max_players }}</p>
                 </div>
                 <div class="col-md-4 text-right">
-                    @if($tournament->status === 'open' && auth()->user()->role === 'admin')
-                        <form action="{{ route('tournaments.generate', $tournament->id) }}" method="POST">
+                    @if(auth()->check() && auth()->user()->is_admin)
+                        @if($tournament->status === 'open')
+                        <form action="{{ route('tournaments.generate', $tournament->id) }}" method="POST" class="d-inline-block mb-2">
                             @csrf
-                            <button type="submit" class="btn btn-warning text-dark font-weight-bold">
-                                <i class="fad fa-sitemap"></i> {{ __('Bốc thăm chia cặp') }}
+                            <button type="submit" class="btn btn-success font-weight-bold">
+                                <i class="fad fa-sitemap"></i> {{ __('Bốc thăm') }}
+                            </button>
+                        </form>
+                        @endif
+
+                        <a href="{{ route('tournaments.edit', $tournament->id) }}" class="btn btn-warning text-dark font-weight-bold d-inline-block mb-2">
+                            <i class="fad fa-edit"></i>
+                        </a>
+
+                        <form action="{{ route('tournaments.destroy', $tournament->id) }}" method="POST" class="d-inline-block mb-2" onsubmit="return confirm('{{ __('Bạn có chắc chắn muốn xóa giải đấu này không?') }}');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger font-weight-bold">
+                                <i class="fad fa-trash-alt"></i>
                             </button>
                         </form>
                     @endif

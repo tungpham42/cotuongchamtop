@@ -7,6 +7,14 @@
             <h2 class="text-light"><i class="fad fa-trophy-alt text-warning"></i> {{ __('Danh sách Giải đấu') }}</h2>
             <p class="text-light">{{ __('Tham gia các giải đấu để tranh tài và nâng cao thứ hạng của bạn.') }}</p>
         </div>
+        {{-- THÊM NÚT TẠO MỚI CHO ADMIN Ở ĐÂY --}}
+        @if(auth()->check() && auth()->user()->is_admin)
+        <div class="col-md-4 text-right">
+            <a href="{{ route('tournaments.create') }}" class="btn btn-warning text-dark font-weight-bold">
+                <i class="fad fa-plus-circle"></i> {{ __('Tạo Giải Đấu') }}
+            </a>
+        </div>
+        @endif
     </div>
 
     @if (session('success'))

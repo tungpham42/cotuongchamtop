@@ -156,4 +156,113 @@ class TournamentController extends Controller
             'firstPagePlayers' => UserController::getFirstPagePlayers(),
         ]);
     }
+
+    // Bổ sung hàm kiểm tra quyền Admin
+    private function checkAdmin()
+    {
+        if (!auth()->check() || !auth()->user()->is_admin) {
+            abort(403, 'Bạn không có quyền truy cập trang này.');
+        }
+    }
+
+    // 1. Giao diện Tạo mới
+    public function create()
+    {
+        $this->checkAdmin();
+
+        return view('tournaments.create', [
+            'headTitle' => 'Tạo Giải đấu mới',
+            'bodyClass' => 'dashboard',
+            'canonicalUrl' => '/admin/giai-dau/tao-moi',
+            // Các biến bắt buộc cho Layout
+            'randomRoom' => RoomController::getRandomRoom(),
+            'roomCode' => '',
+            'cdnUrl' => url(''),
+            'userPuzzles' => PuzzleController::getUserPuzzles(),
+            'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(),
+            'boards' => RoomController::getBoards(),
+            'firstPageBoards' => RoomController::getFirstPageBoards(),
+            'playedBoards' => RoomController::getPlayedBoards(),
+            'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(),
+            'players' => UserController::getPlayers(),
+            'firstPagePlayers' => UserController::getFirstPagePlayers(),
+        ]);
+    }
+
+    // 2. Xử lý lưu Tạo mới
+    public function store(Request $request)
+    {
+        $this->checkAdmin();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'start_date' => 'required|date',
+            'status' => 'required|in:open,in_progress,completed',
+            'max_players' => 'required|integer|min:2',
+        ]);
+
+        Tournament::create($request->all());
+
+        return redirect()->route('tournaments.index')->with('success', 'Tạo giải đấu thành công!');
+    }
+
+    // 3. Giao diện Sửa
+    public function edit($id)
+    {
+        $this->checkAdmin();
+        $tournament = Tournament::findOrFail($id);
+
+        return view('tournaments.edit', [
+            'headTitle' => 'Sửa Giải đấu: ' . $tournament->name,
+            'bodyClass' => 'dashboard',
+            'tournament' => $tournament,
+            'canonicalUrl' => '/admin/giai-dau/' . $tournament->id . '/sua',
+            // Các biến bắt buộc cho Layout
+            'randomRoom' => RoomController::getRandomRoom(),
+            'roomCode' => '',
+            'cdnUrl' => url(''),
+            'userPuzzles' => PuzzleController::getUserPuzzles(),
+            'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(),
+            'boards' => RoomController::getBoards(),
+            'firstPageBoards' => RoomController::getFirstPageBoards(),
+            'playedBoards' => RoomController::getPlayedBoards(),
+            'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(),
+            'players' => UserController::getPlayers(),
+            'firstPagePlayers' => UserController::getFirstPagePlayers(),
+        ]);
+    }
+
+    // 4. Xử lý cập nhật Sửa
+    public function update(Request $request, $id)
+    {
+        $this->checkAdmin();
+        $tournament = Tournament::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'start_date' => 'required|date',
+            'status' => 'required|in:open,in_progress,completed',
+            'max_players' => 'required|integer|min:2',
+        ]);
+
+        $tournament->update($request->all());
+
+        return redirect()->route('tournaments.show', $tournament->id)->with('success', 'Cập nhật giải đấu thành công!');
+    }
+
+    // 5. Xử lý Xóa
+    public function destroy($id)
+    {
+        $this->checkAdmin();
+        $tournament = Tournament::findOrFail($id);
+
+        // Bạn có thể cân nhắc xóa các phòng (rooms) thuộc giải đấu này tại đây nếu cần
+        // Room::where('tournament_id', $tournament->id)->delete();
+
+        $tournament->delete();
+
+        return redirect()->route('tournaments.index')->with('success', 'Đã xóa giải đấu!');
+    }
 }
