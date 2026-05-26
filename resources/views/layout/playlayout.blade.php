@@ -178,7 +178,7 @@
               <p class="w-100 text-center my-3 d-flex justify-content-center align-items-center flex-wrap gap-2">
                 @if (!isset($room->result) && isset($room->host_id))
                   @if (auth()->check())
-                  <a id="choi" class="btn btn-danger text-light btn-lg showPromotion mx-2" href="javascript:joinMatch('{{ $roomCode }}')"><i class="fad fa-mouse"></i> {{ __('Chơi') }}</a>
+                  @if (!isset($room->tournament_id))<a id="choi" class="btn btn-danger text-light btn-lg showPromotion mx-2" href="javascript:joinMatch('{{ $roomCode }}')"><i class="fad fa-mouse"></i> {{ __('Chơi') }}</a>@endif
                   <script>
                     function joinMatch(roomCode) {
                       var hostId = '';
