@@ -34,10 +34,10 @@ var locale = {
   video_start: '{{ __('Bắt đầu') }}',
   video_move: '{{ __('Nước') }}',
   video_footer: '{{ __('Tạo bởi nền tảng của bạn') }}',
-  video_completed: '{{ __('Thành công!') }}',
-  video_success: '{{ __('Video đã được tạo thành công. Bạn muốn làm gì tiếp theo?') }}',
-  video_download: '{{ __('Tải xuống') }}',
-  video_share: '{{ __('Chia sẻ') }}',
+  video_completed: '{{ __('video_completed') }}',
+  video_success: '{{ __('video_success') }}',
+  video_download: '{{ __('video_download') }}',
+  video_share: '{{ __('video_share') }}'
 };
 bootbox.addLocale('{{ __('vi') }}', locale);
 
