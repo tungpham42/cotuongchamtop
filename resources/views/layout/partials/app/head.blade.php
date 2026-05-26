@@ -1,21 +1,10 @@
 <meta charset="utf-8">
 <meta property="article:tag" content="{{ __("cờ tướng") }}">
-@php
-if (str_contains(url()->current(), '/ky-thu/') && isset($player)):
-    Avatar::create($player->name)->setDimension(200)->setFontSize(100)->save(public_path().'/players/'.md5($player->email).'.jpg', 100);
-    $avatar_image_url = url('/').'/players/'.md5($player->email).'.jpg';
-@endphp
-    <meta property="og:image" content="{{ $avatar_image_url }}">
-@php
-else:
-@endphp
-<meta property="og:image" content="{{ url('/') }}/img/1200x630.jpg">
-<meta property="og:image:width" content="1200" >
-<meta property="og:image:height" content="630" >
-<meta property="og:image:alt" content="{{ __("Cờ tướng") }} 2 nguòi" >
-@php
-endif
-@endphp
+<meta property="og:image" content="@yield('og_image', url('/') . '/img/1200x630.jpg')">
+<meta property="og:image:width" content="@yield('og_image_width', '1200')" >
+<meta property="og:image:height" content="@yield('og_image_height', '630')" >
+<meta property="og:image:alt" content="@yield('og_image_alt', 'Cờ tướng 2 người')" >
+<meta property="og:image:type" content="@yield('og_image_type', 'image/jpeg')" />
 <meta name="description" content="Cùng {{ __("chơi") }} với nhiều tính năng hấp dẫn như {{ __("cờ tướng") }} 2 người, {{ __("cờ tướng") }} online, {{ __("chơi") }} {{ __("cờ tướng") }} {{ __("với máy") }}, cờ thế và {{ __("Thi đấu") }} xếp hạng!" >
 <meta property="og:description" content="Cùng {{ __("chơi") }} với nhiều tính năng hấp dẫn như {{ __("cờ tướng") }} 2 người, {{ __("cờ tướng") }} online, {{ __("chơi") }} {{ __("cờ tướng") }} {{ __("với máy") }}, cờ thế và {{ __("Thi đấu") }} xếp hạng!" >
 @php

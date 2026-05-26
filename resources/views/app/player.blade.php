@@ -1,5 +1,22 @@
 @extends('layout.app')
 
+@php
+    // Cache the image to prevent high server disk I/O on every page load
+    $avatarDir = public_path('players');
+    $avatarPath = $avatarDir . '/' . md5($player->email) . '.jpg';
+
+    if (!file_exists($avatarPath)) {
+        if (!is_dir($avatarDir)) {
+            mkdir($avatarDir, 0755, true);
+        }
+        Avatar::create($player->name)->setDimension(200)->setFontSize(100)->save($avatarPath, 100);
+    }
+@endphp
+
+@section('og_image', url('/players/' . md5($player->email) . '.jpg'))
+@section('og_image_width', '200')
+@section('og_image_height', '200')
+
 @section('content')
 <div class="container">
     @if ($showAds ?? true)
