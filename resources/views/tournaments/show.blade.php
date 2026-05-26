@@ -1,12 +1,6 @@
 @extends('layout.app')
 
-@section('og:image')
-    @if($tournament->cover_photo)
-        {{ asset('storage/' . $tournament->cover_photo) }}
-    @else
-        {{ asset('img/1200x630.jpg') }}
-    @endif
-@endsection
+@section('og:image', $tournament->cover_photo ? asset('storage/' . $tournament->cover_photo) : asset('img/1200x630.jpg'))
 
 @section('content')
 <style>
