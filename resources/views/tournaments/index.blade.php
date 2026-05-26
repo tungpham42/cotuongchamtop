@@ -46,11 +46,15 @@
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card bg-secondary text-dark h-100 border-0 shadow-sm" style="border-radius: 12px;">
                     @if($tournament->cover_photo)
-                        <img src="{{ asset('storage/' . $tournament->cover_photo) }}" class="card-img-top w-100" alt="{{ $tournament->name }}" style="aspect-ratio: 16/9; object-fit: cover; border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                        <a href="{{ route('tournaments.show', $tournament->slug) }}" class="stretched-link">
+                            <img src="{{ asset('storage/' . $tournament->cover_photo) }}" class="card-img-top w-100" alt="{{ $tournament->name }}" style="aspect-ratio: 16/9; object-fit: cover; border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                        </a>
                     @else
-                        <div class="card-img-top bg-dark d-flex align-items-center justify-content-center w-100" style="aspect-ratio: 16/9; border-top-left-radius: 12px; border-top-right-radius: 12px;">
-                            <i class="fad fa-trophy-alt fa-4x text-muted"></i>
-                        </div>
+                        <a href="{{ route('tournaments.show', $tournament->slug) }}" class="stretched-link">
+                            <div class="card-img-top bg-dark d-flex align-items-center justify-content-center w-100" style="aspect-ratio: 16/9; border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                                <i class="fad fa-trophy-alt fa-4x text-muted"></i>
+                            </div>
+                        </a>
                     @endif
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-2">
