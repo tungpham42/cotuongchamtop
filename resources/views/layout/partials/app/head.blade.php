@@ -1,16 +1,15 @@
 <meta charset="utf-8">
 <meta property="article:tag" content="{{ __("cờ tướng") }}">
-@hasSection('og:image')
-    <meta property="og:image" content="@yield('og:image')">
-@elseif(str_contains(url()->current(), '/ky-thu/') && isset($player))
-    @php
-        Avatar::create($player->name)->setDimension(200)->setFontSize(100)->save(public_path().'/players/'.md5($player->email).'.jpg', 100);
-        $avatar_image_url = url('/').'/players/'.md5($player->email).'.jpg';
-    @endphp
+@php
+if (str_contains(url()->current(), '/ky-thu/') && isset($player)):
+    Avatar::create($player->name)->setDimension(200)->setFontSize(100)->save(public_path().'/players/'.md5($player->email).'.jpg', 100);
+    $avatar_image_url = url('/').'/players/'.md5($player->email).'.jpg';
+@endphp
     <meta property="og:image" content="{{ $avatar_image_url }}">
-@else
-    <meta property="og:image" content="{{ url('/') }}/img/1200x630.jpg">
-@endif
+@php
+else:
+@endphp
+<meta property="og:image" content="{{ url('/') }}/img/1200x630.jpg">
 <meta property="og:image:width" content="1200" >
 <meta property="og:image:height" content="630" >
 <meta property="og:image:alt" content="{{ __("Cờ tướng") }} 2 nguòi" >
