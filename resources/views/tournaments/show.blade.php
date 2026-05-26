@@ -139,7 +139,7 @@
 
             @foreach($rounds as $roundNumber => $matches)
                 <div class="bracket-round">
-                    <h6 class="h5 text-center text-light mb-3">{{ __('Vòng') }} {{ $roundNumber }}</h6>
+                    <h6 class="h5 text-center text-light mb-0">{{ __('Vòng') }} {{ $roundNumber }}</h6>
 
                     @foreach($matches as $match)
                         @php
