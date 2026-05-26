@@ -77,6 +77,22 @@
                                         <i class="fad fa-sign-in-alt"></i> {{ __('Tham gia') }}
                                     </button>
                                 </form>
+                            @elseif($tournament->users->contains(auth()->id()))
+                                <button class="btn btn-secondary btn-sm w-100" disabled style="opacity: 0.8; cursor: not-allowed;">
+                                    <i class="fad fa-check-circle text-success"></i> {{ __('Đã tham gia') }}
+                                </button>
+                            @elseif($tournament->users_count >= $tournament->max_players)
+                                <button class="btn btn-secondary btn-sm w-100" disabled>
+                                    <i class="fad fa-users-slash"></i> {{ __('Đã đầy') }}
+                                </button>
+                            @elseif($tournament->status === 'in_progress')
+                                <button class="btn btn-secondary btn-sm w-100" disabled>
+                                    <i class="fad fa-spinner fa-spin"></i> {{ __('Đang diễn ra') }}
+                                </button>
+                            @else
+                                <button class="btn btn-secondary btn-sm w-100" disabled>
+                                    <i class="fad fa-check-circle"></i> {{ __('Đã kết thúc') }}
+                                </button>
                             @endif
                         </div>
                     </div>
