@@ -85,7 +85,7 @@
                             <button class="btn btn-secondary font-weight-bold d-inline-block mb-2" disabled style="opacity: 0.8; cursor: not-allowed;">
                                 <i class="fad fa-check-circle text-success"></i> {{ __('Đã tham gia') }}
                             </button>
-                        @elseif($isOpen)
+                        @elseif($isOpen && !$isFull)
                             <form action="{{ route('tournaments.join', $tournament->id) }}" method="POST" class="d-inline-block mb-2">
                                 @csrf
                                 <button type="submit" class="btn btn-primary font-weight-bold pulse-red">
