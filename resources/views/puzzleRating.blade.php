@@ -16,7 +16,7 @@
 @endphp
 
 @if($name && !containsCJK($name))
-    @section('og_image', 'https://placehold.co/1200x630/DFBD85/725834/jpeg?font=roboto&text=' .  $name)
+    @section('og_image', 'https://placehold.co/1200x630/DFBD85/725834/jpeg?font=roboto&text=' . urlencode(__("Thế cờ") . "\n" . $name))
     @section('og_image_alt', $name)
     @section('og_image_width', '1200')
     @section('og_image_height', '630')
