@@ -70,31 +70,33 @@
                                 <i class="fad fa-eye"></i> {{ __('Xem chi tiết') }}
                             </a>
                             @php
-                                $isJoined = $tournament->users->contains(auth()->id());
+                                // Added auth()->check() to prevent errors for guests
+                                $isJoined = auth()->check() ? $tournament->users->contains(auth()->id()) : false;
                                 $isOpen = $tournament->status === 'open';
-                                $isFull = $tournament->users->count() >= $tournament->max_players;
+                                // Changed to users_count to prevent N+1 queries (avoids lazy-loading the whole users collection)
+                                $isFull = $tournament->users_count >= $tournament->max_players;
                             @endphp
-                            @if($isOpen && !$isFull)
+                            @if($isJoined)
+                                <button class="btn btn-secondary btn-sm w-100 ml-2" disabled style="opacity: 0.8; cursor: not-allowed;">
+                                    <i class="fad fa-check-circle text-success"></i> {{ __('Đã tham gia') }}
+                                </button>
+                            @elseif($isOpen && !$isFull)
                                 <form action="{{ route('tournaments.join', $tournament->slug) }}" method="POST" class="w-100 ml-2">
                                     @csrf
                                     <button type="submit" class="btn btn-danger btn-sm w-100">
                                         <i class="fad fa-sign-in-alt"></i> {{ __('Tham gia') }}
                                     </button>
                                 </form>
-                            @elseif($isJoined)
-                                <button class="btn btn-secondary btn-sm w-100" disabled style="opacity: 0.8; cursor: not-allowed;">
-                                    <i class="fad fa-check-circle text-success"></i> {{ __('Đã tham gia') }}
-                                </button>
                             @elseif($isFull)
-                                <button class="btn btn-secondary btn-sm w-100" disabled>
+                                <button class="btn btn-secondary btn-sm w-100 ml-2" disabled>
                                     <i class="fad fa-users-slash"></i> {{ __('Đã đầy') }}
                                 </button>
                             @elseif($tournament->status === 'in_progress')
-                                <button class="btn btn-secondary btn-sm w-100" disabled>
+                                <button class="btn btn-secondary btn-sm w-100 ml-2" disabled>
                                     <i class="fad fa-spinner fa-spin"></i> {{ __('Đang diễn ra') }}
                                 </button>
                             @else
-                                <button class="btn btn-secondary btn-sm w-100" disabled>
+                                <button class="btn btn-secondary btn-sm w-100 ml-2" disabled>
                                     <i class="fad fa-check-circle"></i> {{ __('Đã kết thúc') }}
                                 </button>
                             @endif
