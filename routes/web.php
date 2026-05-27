@@ -313,6 +313,22 @@ foreach ($localizedRoomPages as $pageKey => $roomPage) {
         abort(404);
       }
 
+      // --- ANTI-CHEAT: Prevent URL manipulation to join specific sides ---
+      if (isset($room->host_id)) {
+        // Block unauthorized access to the Red/Host side
+        if (in_array($pageKey, ['room.host', 'room.red'])) {
+          if (!auth()->check() || auth()->id() != $room->host_id) {
+            abort(403, 'Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.');
+          }
+        }
+        // Block unauthorized access to the Black/Guest side
+        elseif (in_array($pageKey, ['room.guest', 'room.black'])) {
+          if (!auth()->check() || auth()->id() != $room->guest_id) {
+            abort(403, 'Bạn không có quyền truy cập vào phe Đen / Khách.');
+          }
+        }
+      }
+
       $view = $roomPage['view'];
       $data = [
         'headTitle' => $roomPage['titles'][$locale]($code),
