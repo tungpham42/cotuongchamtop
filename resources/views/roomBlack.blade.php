@@ -188,7 +188,7 @@ function updateResult(roomCode, result) {
             @if (!isset($room->tournament_id))
             window.location.href = "{{ url('/thi-dau') }}";
             @else
-            window.location.href = "{{ url('/giai-dau') }}";
+            window.location.href = "{{ url('/giai-dau') }}" + "/" + "{{ $room->tournament->slug }}";
             @endif
           }, 500);
         });
