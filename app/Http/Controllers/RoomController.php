@@ -876,15 +876,18 @@ class RoomController extends Controller
 
             $nextRoom = Room::where('code', $room->next_room_code)->first();
 
-            // Place winner in the next room (host if empty, else guest)
-            if (is_null($nextRoom->host_id)) {
-                $nextRoom->update(['host_id' => $winnerId]);
-            } else {
-                $nextRoom->update([
-                    'guest_id' => $winnerId,
-                    // Optional: Update name dynamically once both are present
-                    'name' => "Tournament Match - Round " . $nextRoom->tournament_round
-                ]);
+            // FIX: Check if the winner is already in the next room to prevent duplicate entry
+            if ($nextRoom->host_id !== $winnerId && $nextRoom->guest_id !== $winnerId) {
+                // Place winner in the next room (host if empty, else guest)
+                if (is_null($nextRoom->host_id)) {
+                    $nextRoom->update(['host_id' => $winnerId]);
+                } else {
+                    $nextRoom->update([
+                        'guest_id' => $winnerId,
+                        // Optional: Update name dynamically once both are present
+                        'name' => "Tournament Match - Round " . $nextRoom->tournament_round
+                    ]);
+                }
             }
         }
 
