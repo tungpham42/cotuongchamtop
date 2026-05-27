@@ -14,7 +14,7 @@
                         @method('PUT')
                         <div class="form-group text-dark">
                             <label>{{ __('Tên Giải Đấu') }} <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control bg-dark text-dark border-secondary" value="{{ $tournament->name }}" required>
+                            <input type="text" name="name" class="form-control bg-light text-dark border-secondary" value="{{ $tournament->name }}" required>
                         </div>
 
                         <div class="form-group text-dark">
@@ -24,28 +24,28 @@
                                     <img src="{{ asset('storage/' . $tournament->cover_photo) }}" alt="Cover" class="img-thumbnail w-100" style="aspect-ratio: 16/9; object-fit: cover;">
                                 </div>
                             @endif
-                            <input type="file" name="cover_photo" class="form-control-file text-dark" accept="image/*">
+                            <input type="file" name="cover_photo" class="form-control-file bg-light text-dark" accept="image/*">
                         </div>
 
                         <div class="form-group text-dark">
                             <label>{{ __('Mô tả') }}</label>
-                            <textarea name="description" class="form-control bg-dark text-dark border-secondary" rows="3">{{ $tournament->description }}</textarea>
+                            <textarea name="description" class="form-control bg-light text-dark border-secondary" rows="3">{{ $tournament->description }}</textarea>
                         </div>
 
                         <div class="row">
                             <div class="col-md-4 form-group text-dark">
                                 <label>{{ __('Ngày Bắt Đầu') }} <span class="text-danger">*</span></label>
-                                <input type="datetime-local" name="start_date" class="form-control bg-dark text-dark border-secondary" value="{{ date('Y-m-d\TH:i', strtotime($tournament->start_date)) }}" required>
+                                <input type="datetime-local" name="start_date" class="form-control bg-light text-dark border-secondary" value="{{ date('Y-m-d\TH:i', strtotime($tournament->start_date)) }}" required>
                             </div>
 
                             <div class="col-md-4 form-group text-dark">
                                 <label>{{ __('Số lượng kỳ thủ') }} <span class="text-danger">*</span></label>
-                                <input type="number" name="max_players" class="form-control bg-dark text-dark border-secondary" min="2" max="16" value="{{ $tournament->max_players }}" required>
+                                <input type="number" name="max_players" class="form-control bg-light text-dark border-secondary" min="2" max="16" value="{{ $tournament->max_players }}" required>
                             </div>
 
                             <div class="col-md-4 form-group text-dark">
                                 <label>{{ __('Trạng thái') }} <span class="text-danger">*</span></label>
-                                <select name="status" class="form-control bg-dark text-dark border-secondary" required>
+                                <select name="status" class="form-control bg-light text-dark border-secondary" required>
                                     <option value="open" {{ $tournament->status == 'open' ? 'selected' : '' }}>{{ __('Mở đăng ký') }}</option>
                                     <option value="in_progress" {{ $tournament->status == 'in_progress' ? 'selected' : '' }}>{{ __('Đang diễn ra') }}</option>
                                     <option value="completed" {{ $tournament->status == 'completed' ? 'selected' : '' }}>{{ __('Đã kết thúc') }}</option>
