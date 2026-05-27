@@ -5,8 +5,13 @@
 <meta property="og:image:height" content="@yield('og_image_height', '630')" >
 <meta property="og:image:alt" content="@yield('og_image_alt', 'Cờ tướng 2 người')" >
 <meta property="og:image:type" content="@yield('og_image_type', 'image/jpeg')" />
+@hasSection('meta_description')
+<meta name="description" content="@yield('meta_description')" >
+<meta property="og:description" content="@yield('meta_description')" >
+@else
 <meta name="description" content="Cùng {{ __("chơi") }} với nhiều tính năng hấp dẫn như {{ __("cờ tướng") }} 2 người, {{ __("cờ tướng") }} online, {{ __("chơi") }} {{ __("cờ tướng") }} {{ __("với máy") }}, cờ thế và {{ __("Thi đấu") }} xếp hạng!" >
 <meta property="og:description" content="Cùng {{ __("chơi") }} với nhiều tính năng hấp dẫn như {{ __("cờ tướng") }} 2 người, {{ __("cờ tướng") }} online, {{ __("chơi") }} {{ __("cờ tướng") }} {{ __("với máy") }}, cờ thế và {{ __("Thi đấu") }} xếp hạng!" >
+@endif
 @php
     $siteTitle = '';
     if (isset($headTitle)) {
