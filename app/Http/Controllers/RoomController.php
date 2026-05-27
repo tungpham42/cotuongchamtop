@@ -885,7 +885,7 @@ class RoomController extends Controller
                     $nextRoom->update([
                         'guest_id' => $winnerId,
                         // Optional: Update name dynamically once both are present
-                        'name' => "Tournament Match - Round " . $nextRoom->tournament_round
+                        'name' => $room->name . " - Vòng " . $nextRoom->tournament_round
                     ]);
                 }
             }
