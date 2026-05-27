@@ -226,7 +226,11 @@ function updateResult(roomCode, result) {
           dataType: 'json'
         }).done(function(){
           const updatePointsTimeout = setTimeout(function(){
+            @if (!isset($room->tournament_id))
             window.location.href = "{{ url('/thi-dau') }}";
+            @else
+            window.location.href = "{{ url('/giai-dau') }}";
+            @endif
           }, 500);
         });
       }
