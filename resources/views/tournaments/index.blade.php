@@ -58,7 +58,9 @@
                     @endif
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-2">
-                            <h5 class="card-title text-warning font-weight-bold mb-0">{{ $tournament->name }}</h5>
+                            <a href="{{ route('tournaments.show', $tournament->slug) }}" class="text-decoration-none">
+                                <h5 class="card-title text-warning font-weight-bold mb-0">{{ $tournament->name }}</h5>
+                            </a>
                             @if($tournament->status === 'open')
                                 <span class="badge badge-success">{{ __('Mở đăng ký') }}</span>
                             @elseif($tournament->status === 'in_progress')
