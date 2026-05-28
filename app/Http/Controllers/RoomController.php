@@ -1825,4 +1825,62 @@ class RoomController extends Controller
             'last_update' => $room->last_update,
         ]);
     }
+
+    /**
+     * Unified method to find a match (handles both guests and authenticated users via Session/Client ID)
+     */
+    public function findMatch(Request $request)
+    {
+        // Use provided session_id from frontend, or fallback to Laravel session
+        $sessionId = $request->input('session_id') ?: $request->session()->get('match_session_id', Str::random(32));
+        $request->session()->put('match_session_id', $sessionId);
+
+        $room = $this->prepareAnonymousRoom($sessionId);
+        $matched = $room && $room->host_session && $room->guest_session;
+        $isHost = $room->host_session === $sessionId;
+
+        return response()->json([
+            'code' => 1,
+            // Uses Laravel's __() helper to adapt if a locale middleware is present,
+            // otherwise frontend JS will override with its own localized strings.
+            'message' => $matched ? __('Đã tìm thấy đối thủ!') : __('Đang tìm trận...'),
+            'session_id' => $sessionId,
+            'matched' => $matched,
+            'room_code' => $room->code,
+            'room_name' => $room->name,
+            // Standardized sides
+            'side' => $matched ? ($isHost ? 'red' : 'black') : null,
+        ]);
+    }
+
+    /**
+     * Unified method to check matchmaking status
+     */
+    public function checkMatchStatus(Request $request)
+    {
+        $sessionId = $request->input('session_id');
+
+        if (!$sessionId) {
+            return response()->json([
+                'status' => 'error',
+                'message' => __('Không tìm thấy phiên bản kết nối (Session ID).'),
+            ], 400);
+        }
+
+        $room = $this->prepareAnonymousRoom($sessionId);
+
+        if ($room->host_session && $room->guest_session) {
+            $isHost = $room->host_session == $sessionId;
+
+            return response()->json([
+                'status'    => 'matched',
+                'room_code' => $room->code,
+                'room_name' => $room->name,
+                // Return standard English keys for the frontend logic to parse effortlessly
+                'side'      => $isHost ? 'red' : 'black',
+            ]);
+        }
+
+        return response()->json(['status' => 'waiting']);
+    }
 }

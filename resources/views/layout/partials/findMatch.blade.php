@@ -6,19 +6,13 @@
 <script>
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    let sessionId = localStorage.getItem('anonymous_match_id');
+    let sessionId = localStorage.getItem('match_session_id') || 'guest_' + Math.random().toString(36).substr(2, 9);
     let pollInterval;
     let errorCount = 0;
 
-    @php
-        $localeSuffix = app()->getLocale() == 'vi' ? '' : '-' . app()->getLocale();
-        $quickMatchRoute = 'anonymous-quick-match' . $localeSuffix;
-        $checkStatusRoute = 'check-anonymous-match-status' . $localeSuffix;
-    @endphp
-
     const routes = {
-        quickMatch: '{{ route($quickMatchRoute, [], false) }}',
-        checkStatus: '{{ route($checkStatusRoute, [], false) }}',
+        findMatch: '{{ route("match.find") }}',
+        checkStatus: '{{ route("match.status") }}',
         roomRed: '{{ localized_path("room.red", ["code" => ":code"]) }}',
         roomBlack: '{{ localized_path("room.black", ["code" => ":code"]) }}'
     };
@@ -27,11 +21,11 @@
         this.disabled = true;
         document.getElementById('match-status').innerText = '{{ __("Đang tìm đối thủ...") }}';
 
-        axios.post(routes.quickMatch)
+        // Send session ID so the server can track this specific client queue
+        axios.post(routes.findMatch, { session_id: sessionId })
             .then(response => {
                 if (response.data.code === 1) {
-                    sessionId = response.data.session_id;
-                    localStorage.setItem('anonymous_match_id', sessionId);
+                    localStorage.setItem('match_session_id', response.data.session_id || sessionId);
                     document.getElementById('match-status').innerText = response.data.message;
                     startPolling();
                 } else {
@@ -51,7 +45,7 @@
 
         pollInterval = setInterval(() => {
             axios.get(routes.checkStatus, {
-                params: { session_id: sessionId }
+                params: { session_id: localStorage.getItem('match_session_id') }
             })
             .then(response => {
                 errorCount = 0;
@@ -120,15 +114,13 @@
                 clearInterval(countdownInterval);
                 $modal.modal('hide');
 
-                let targetUrl = '';
-                if (data.side === 'do' || data.side === 'red' || data.side === 'aka' || data.side === 'ppalgan' || data.side === 'hongse') {
-                    targetUrl = routes.roomRed.replace(':code', data.room_code);
-                } else {
-                    targetUrl = routes.roomBlack.replace(':code', data.room_code);
-                }
+                // Cleanly check standardized side strings from backend
+                let targetUrl = (data.side === 'red')
+                    ? routes.roomRed.replace(':code', data.room_code)
+                    : routes.roomBlack.replace(':code', data.room_code);
 
                 document.getElementById('match-status').innerText =
-                    `{{ __("Đã tìm thấy!") }} {{ __("Vào phòng") }} "${data.room_name}" {{ __("với quân") }} ${data.color}.`;
+                    `{{ __("Đã tìm thấy!") }} {{ __("Vào phòng") }} "${data.room_name}".`;
                 window.location.href = targetUrl;
             }
         }, 1000);

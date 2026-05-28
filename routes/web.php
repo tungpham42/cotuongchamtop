@@ -132,24 +132,11 @@ Route::post('/switchTurn/{roomCode}', [RoomController::class, 'switchTurn']);
 Route::get('/getTime/{roomCode}', [RoomController::class, 'getTime']);
 Route::post('/saveTime/{roomCode}', [RoomController::class, 'saveTime']);
 
-Route::post('/anonymous-quick-match', [RoomController::class, 'anonymousQuickMatch'])->name('anonymous-quick-match');
-Route::get('/check-anonymous-match-status', [RoomController::class, 'checkAnonymousMatchStatus'])->name('check-anonymous-match-status');
-
-Route::post('/anonymous-quick-match/en', [RoomController::class, 'anonymousQuickMatchEn'])->name('anonymous-quick-match-en');
-Route::get('/check-anonymous-match-status/en', [RoomController::class, 'checkAnonymousMatchStatusEn'])->name('check-anonymous-match-status-en');
-
-Route::post('/anonymous-quick-match/ja', [RoomController::class, 'anonymousQuickMatchJa'])->name('anonymous-quick-match-ja');
-Route::get('/check-anonymous-match-status/ja', [RoomController::class, 'checkAnonymousMatchStatusJa'])->name('check-anonymous-match-status-ja');
-
-Route::post('/anonymous-quick-match/ko', [RoomController::class, 'anonymousQuickMatchKo'])->name('anonymous-quick-match-ko');
-Route::get('/check-anonymous-match-status/ko', [RoomController::class, 'checkAnonymousMatchStatusKo'])->name('check-anonymous-match-status-ko');
-
-Route::post('/anonymous-quick-match/zh', [RoomController::class, 'anonymousQuickMatchZh'])->name('anonymous-quick-match-zh');
-Route::get('/check-anonymous-match-status/zh', [RoomController::class, 'checkAnonymousMatchStatusZh'])->name('check-anonymous-match-status-zh');
-
-// Test routes (no CSRF required)
-Route::post('/test-anonymous-quick-match', [RoomController::class, 'anonymousQuickMatch'])->name('test-anonymous-quick-match');
-Route::post('/test-check-anonymous-match-status', [RoomController::class, 'checkAnonymousMatchStatus'])->name('test-check-anonymous-match-status');
+// ==========================================
+// UNIFIED MATCHMAKING ROUTES (Guests & Auth)
+// ==========================================
+Route::post('/match/find', [RoomController::class, 'findMatch'])->name('match.find');
+Route::get('/match/status', [RoomController::class, 'checkMatchStatus'])->name('match.status');
 
 Route::get('/terms-and-conditions', function () {
   return view('terms', localized_page_data('terms', app()->getLocale(), ['headTitle' => 'Terms and Conditions', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url('')]));
