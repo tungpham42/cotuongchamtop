@@ -153,17 +153,17 @@
 
     {{-- DANH SÁCH NGƯỜI CHƠI (CHỈ DÀNH CHO ADMIN) --}}
     @if(auth()->check() && auth()->user()->is_admin)
-        <div class="card bg-dark text-light border-0 mb-4 shadow" style="border-radius: 12px; overflow: hidden;">
-            <div class="card-header border-bottom" style="border-color: #3a3f4c !important;">
-                <h5 class="mb-0 text-warning">
-                    <i class="fad fa-users-cog"></i> {{ __('Danh sách kỳ thủ đã đăng ký (Góc nhìn Admin)') }}
+        <div class="card bg-white text-dark mb-4 shadow-sm" style="border-radius: 12px; overflow: hidden; border: 1px solid #dee2e6;">
+            <div class="card-header bg-light border-bottom" style="border-color: #dee2e6 !important;">
+                <h5 class="mb-0 text-dark font-weight-bold">
+                    <i class="fad fa-users-cog text-primary"></i> {{ __('Danh sách kỳ thủ đã đăng ký (Góc nhìn Admin)') }}
                 </h5>
             </div>
             <div class="card-body p-0">
                 @if($tournament->users->count() > 0)
                     <div class="table-responsive">
-                        <table class="table table-dark table-hover table-borderless mb-0">
-                            <thead style="background-color: #252a36;">
+                        <table class="table table-hover table-borderless mb-0">
+                            <thead class="bg-light text-dark" style="border-bottom: 2px solid #dee2e6;">
                                 <tr>
                                     <th class="pl-4">#</th>
                                     <th>{{ __('Tên kỳ thủ') }}</th>
@@ -174,20 +174,20 @@
                             </thead>
                             <tbody>
                                 @foreach($tournament->users as $index => $player)
-                                    <tr style="border-bottom: 1px solid #252a36;">
-                                        <td class="pl-4">{{ $index + 1 }}</td>
-                                        <td>
-                                            <a href="{{ url('/ky-thu/'.$player->id) }}" class="text-light font-weight-bold" style="text-decoration: none;">
+                                    <tr style="border-bottom: 1px solid #e9ecef;">
+                                        <td class="pl-4 align-middle text-muted">{{ $index + 1 }}</td>
+                                        <td class="align-middle">
+                                            <a href="{{ url('/ky-thu/'.$player->id) }}" class="text-primary font-weight-bold" style="text-decoration: none;">
                                                 {{ $player->name }}
                                             </a>
                                         </td>
-                                        <td class="text-danger font-weight-bold">{{ intval($player->elo) }}</td>
-                                        <td class="text-muted">{{ $player->pivot->created_at->format('d/m/Y H:i') }}</td>
-                                        <td class="pr-4 text-right">
+                                        <td class="text-danger font-weight-bold align-middle">{{ intval($player->elo) }}</td>
+                                        <td class="text-muted align-middle">{{ $player->pivot->created_at->format('d/m/Y H:i') }}</td>
+                                        <td class="pr-4 text-right align-middle">
                                             @if($player->last_seen_at && \Carbon\Carbon::parse($player->last_seen_at)->diffInMinutes() < 5)
-                                                <span class="badge badge-success"><i class="fad fa-circle"></i> Online</span>
+                                                <span class="badge badge-success px-2 py-1"><i class="fad fa-circle" style="font-size: 0.7rem;"></i> Online</span>
                                             @else
-                                                <span class="badge badge-secondary"><i class="fad fa-circle"></i> Offline</span>
+                                                <span class="badge badge-secondary px-2 py-1"><i class="fad fa-circle" style="font-size: 0.7rem;"></i> Offline</span>
                                             @endif
                                         </td>
                                     </tr>
@@ -196,8 +196,8 @@
                         </table>
                     </div>
                 @else
-                    <div class="p-4 text-center text-muted">
-                        <i class="fad fa-box-open fa-2x mb-2"></i>
+                    <div class="p-4 text-center text-muted bg-white">
+                        <i class="fad fa-box-open fa-2x mb-2 text-secondary"></i>
                         <p class="mb-0">{{ __('Chưa có kỳ thủ nào tham gia giải đấu này.') }}</p>
                     </div>
                 @endif
