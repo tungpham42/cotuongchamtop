@@ -22,7 +22,7 @@ $actionMap = [
 $action = $actionMap[$level ?? '3'] ?? 'chơi';
 @endphp
 
-@if(isset($level) && $level == '6')
+@if(isset($level) && $level == '8')
     {{-- GRANDMASTER CUSTOM UI --}}
     <div class="grandmaster-header text-center mt-3 mb-2 p-3 rounded" style="background: linear-gradient(45deg, #1a0505, #3a0000); border: 2px solid #ffd700; color: #ffd700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);">
         <img src="/img/xiangqipieces/wiki/rK.svg" width="55" class="mb-2" style="filter: drop-shadow(0 0 8px #ffd700);" alt="Grandmaster">
