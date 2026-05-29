@@ -110,7 +110,7 @@
                             <img width="42" height="42" src="/img/xiangqipieces/wiki/rK.svg" alt="{{ __("Cờ tướng") }}" class="mr-2">
                             ${matchTitle}
                         </h4>
-                        <p class="fs-5 mb-3">{{ __("Ván cờ sẽ bắt đầu sau:") }}</p>
+                        <p class="fs-5 mb-3 text-danger">{{ __("Ván cờ sẽ bắt đầu sau:") }}</p>
                         <div class="display-4 fw-bold text-danger" id="countdownNumber">${countdown}</div>
                         <p class="mt-3" style="color: #413E3C;">
                             <i class="fas fa-clock"></i> {{ __("Chuẩn bị sẵn sàng...") }}
