@@ -33,7 +33,9 @@ $action = $actionMap[$level ?? '3'] ?? 'chơi';
         body.home { background-color: #120808 !important; color: #fff !important; }
         #ban-co { box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); border: 2px solid #ffd700; }
         .btn-dark { background-color: #2b0a0a !important; border-color: #ffd700 !important; color: #ffd700 !important; }
-        .btn-dark:hover { background-color: #ffd700 !important; color: #2b0a0a !important; }
+        .btn-dark i * { color: #ffd700 !important; }
+        .btn-dark:hover i, .btn-dark.text-light:hover i, .btn-dark:hover i *, .btn-dark.text-light:hover i *, .btn-danger i, .btn-danger.text-light i, .btn-danger i *, .btn-danger.text-light i * { color: #2b0a0a !important; }
+        .btn:hover, .btn-danger, .btn-danger:hover { background-color: #ffd700 !important; background-image: linear-gradient(45deg, #ffd700, #ffaa00) !important; color: #2b0a0a !important; }
         .btn-danger { background: linear-gradient(45deg, #ffd700, #ffaa00) !important; color: #000 !important; border: none !important; }
         #game-status.black { color: #ffd700 !important; } /* Make black text visible on dark bg */
         #game-status.red { color: #ff4444 !important; }
