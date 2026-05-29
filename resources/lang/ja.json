@@ -21,7 +21,7 @@
     "Ấn để sao chép": "クリックしてコピー",
     "Giới thiệu": "概要",
     "Ấn vào đây để mời bạn bè cùng chơi": "リンクをコピーして友達を招待して一緒に遊ぶにはここをクリックしてください",
-    "Máy đang suy nghĩ": "考え",
+    "Đang suy nghĩ": "考え",
     "Dùng mã phòng này để tìm kiếm trận đấu\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Sao chép mã phòng này nhé\"><i class=\"fad fa-trophy-alt\"></i> Mã phòng": "このルームコードを使ってマッチを検索してください\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"このルームコードをコピー\"><i class=\"fad fa-trophy-alt\"></i> ルームコード",
     "5\" data-intro=\"Ấn vào đây nếu bạn không biết đi nước nào\" id=\"resign\" class=\"w-25 btn btn-dark btn-lg\"><i class=\"fad fa-flag\"></i> Bỏ cuộc": "1\" data-intro=\"手掛かりが尽きた場合はここをクリックしてください\" id=\"resign\" class=\"btn btn-dark btn-lg\"><i class=\"fad fa-flag\"></i> 辞任",
     "Hết trận": "ゲームオーバー",
@@ -343,5 +343,9 @@
     "Vào phòng đấu": "対戦ルームに入る",
     "Xem kết quả": "結果を見る",
     "Sơ đồ giải đấu chưa được tạo.": "トーナメント表はまだ作成されていません。",
-    "Sơ đồ sẽ xuất hiện khi giải đấu bắt đầu và bốc thăm hoàn tất.": "トーナメントが開始され、抽選が完了すると、トーナメント表が表示されます。"
+    "Sơ đồ sẽ xuất hiện khi giải đấu bắt đầu và bốc thăm hoàn tất.": "トーナメントが開始され、抽選が完了すると、トーナメント表が表示されます。",
+    "Kiện tướng": "マスター",
+    "Đại Kiện Tướng": "グランドマスター",
+    "khiêu chiến": "に挑戦している",
+    "Bạn đang khiêu chiến với đối thủ mạnh nhất.": "最強の相手に挑戦しています。"
 }

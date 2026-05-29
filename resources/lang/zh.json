@@ -23,7 +23,7 @@
     "Ấn để sao chép": "点击复制",
     "Giới thiệu": "关于",
     "Ấn vào đây để mời bạn bè cùng chơi": "请点击这里复制链接并邀请朋友一起玩",
-    "Máy đang suy nghĩ": "思维",
+    "Đang suy nghĩ": "思维",
     "Dùng mã phòng này để tìm kiếm trận đấu\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Sao chép mã phòng này nhé\"><i class=\"fad fa-trophy-alt\"></i> Mã phòng:": "使用此房间代码进行匹配搜索\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"复制这个房间代码\"><i class=\"fad fa-trophy-alt\"></i> 房间代码：",
     "5\" data-intro=\"Ấn vào đây nếu bạn không biết đi nước nào\" id=\"resign\" class=\"w-25 btn btn-dark btn-lg\"><i class=\"fad fa-flag\"></i> Bỏ cuộc": "1\" data-intro=\"如果您没有线索，请点击这里\" id=\"resign\" class=\"btn btn-dark btn-lg\"><i class=\"fad fa-flag\"></i> 辞职",
     "Hết trận": "游戏结束了",
@@ -345,5 +345,9 @@
     "Vào phòng đấu": "进入比赛房间",
     "Xem kết quả": "查看结果",
     "Sơ đồ giải đấu chưa được tạo.": "锦标赛对阵图尚未生成。",
-    "Sơ đồ sẽ xuất hiện khi giải đấu bắt đầu và bốc thăm hoàn tất.": "锦标赛开始且抽签完成后，将显示对阵图。"
+    "Sơ đồ sẽ xuất hiện khi giải đấu bắt đầu và bốc thăm hoàn tất.": "锦标赛开始且抽签完成后，将显示对阵图。",
+    "Kiện tướng": "大师级",
+    "Đại Kiện Tướng": "特级大师",
+    "khiêu chiến": "挑战",
+    "Bạn đang khiêu chiến với đối thủ mạnh nhất.": "你正在挑战最强的对手。"
 }

@@ -13,11 +13,11 @@
 
     // Map locales to their corresponding "Hardest" AI routes based on web.php
     const botRoutes = {
-        'vi': '/kho-nhat',
-        'en': '/hardest',
-        'ja': '/mottomo-muzukashi',
-        'ko': '/gajang-dandanhan',
-        'zh': '/zuiyingban'
+        'vi': '/kien-tuong',
+        'en': '/master',
+        'ja': '/masuta',
+        'ko': '/maseuteo',
+        'zh': '/dashi'
     };
     const currentLocale = '{{ app()->getLocale() }}';
     const aiTargetUrl = '{{ url("") }}' + (botRoutes[currentLocale] || '/kho-nhat');

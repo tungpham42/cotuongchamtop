@@ -1039,7 +1039,7 @@
     "Ấn để sao chép": "Ấn để sao chép",
     "Giới thiệu": "Giới thiệu",
     "6\" data-intro=\"Ấn vào đây để mời bạn bè cùng chơi": "6\" data-intro=\"Ấn vào đây để mời bạn bè cùng chơi",
-    "Máy đang suy nghĩ": "Máy đang suy nghĩ",
+    "Đang suy nghĩ": "Đang suy nghĩ",
     "đang bị chiếu": "đang bị chiếu",
     "Ấn vào đây để mời bạn bè cùng chơi": "Ấn vào đây để mời bạn bè cùng chơi",
     "Dùng mã phòng này để tìm kiếm trận đấu\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Sao chép mã phòng này nhé\"><i class=\"fad fa-trophy-alt\"></i> Mã phòng": "Dùng mã phòng này để tìm kiếm trận đấu\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Sao chép mã phòng này nhé\"><i class=\"fad fa-trophy-alt\"></i> Mã phòng",
@@ -1300,5 +1300,9 @@
     "Vào phòng đấu": "Vào phòng đấu",
     "Xem kết quả": "Xem kết quả",
     "Sơ đồ giải đấu chưa được tạo.": "Sơ đồ giải đấu chưa được tạo.",
-    "Sơ đồ sẽ xuất hiện khi giải đấu bắt đầu và bốc thăm hoàn tất.": "Sơ đồ sẽ xuất hiện khi giải đấu bắt đầu và bốc thăm hoàn tất."
+    "Sơ đồ sẽ xuất hiện khi giải đấu bắt đầu và bốc thăm hoàn tất.": "Sơ đồ sẽ xuất hiện khi giải đấu bắt đầu và bốc thăm hoàn tất.",
+    "Kiện tướng": "Kiện tướng",
+    "Đại Kiện Tướng": "Đại Kiện Tướng",
+    "khiêu chiến": "khiêu chiến",
+    "Bạn đang khiêu chiến với đối thủ mạnh nhất.": "Bạn đang khiêu chiến với đối thủ mạnh nhất."
 }

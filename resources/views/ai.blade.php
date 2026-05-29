@@ -3,11 +3,11 @@
 @php
 $locale = app()->getLocale() ?: 'vi';
 $levelUrls = [
-    'vi' => ['moi-choi', 'de', 'binh-thuong', 'kho', 'kho-nhat'],
-    'en' => ['newbie', 'easy', 'normal', 'hard', 'hardest'],
-    'ja' => ['shoshinsha', 'kantan', 'tsujo', 'hado', 'mottomo-muzukashi'],
-    'ko' => ['nyubi', 'iji', 'nomol', 'hadeu', 'gajang-dandanhan'],
-    'zh' => ['xinshou', 'rongyide', 'dianxingde', 'jiangude', 'zuinande'],
+    'vi' => ['moi-choi', 'de', 'binh-thuong', 'kho', 'kho-nhat', 'kien-tuong'],
+    'en' => ['newbie', 'easy', 'normal', 'hard', 'hardest', 'master'],
+    'ja' => ['shoshinsha', 'kantan', 'tsujo', 'hado', 'mottomo-muzukashi', 'masuta'],
+    'ko' => ['nyubi', 'iji', 'nomol', 'hadeu', 'gajang-dandanhan', 'maseuteo'],
+    'zh' => ['xinshou', 'rongyide', 'dianxingde', 'jiangude', 'zuinande', 'dashi'],
 ];
 $urls = $levelUrls[$locale] ?? $levelUrls['vi'];
 $actionMap = [
@@ -16,16 +16,37 @@ $actionMap = [
     '3' => 'chơi',
     '4' => 'đấu',
     '5' => 'đấu trí',
+    '6' => 'khiêu chiến',
 ];
 
-// Fallback to 'chơi' just in case $level is missing or unmapped
 $action = $actionMap[$level ?? '3'] ?? 'chơi';
 @endphp
-<h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Cấp độ") }} máy: {{ __($levelTxt) }}">{{ __('Bạn đang') }} {{ __($action) }} {{ __('với máy') }}<span id="puzzle-title"></span></h5>
-@endsection
-@section('aboveContent')
 
+@if(isset($level) && $level == '6')
+    {{-- GRANDMASTER CUSTOM UI --}}
+    <div class="grandmaster-header text-center mt-3 mb-2 p-3 rounded" style="background: linear-gradient(45deg, #1a0505, #3a0000); border: 2px solid #ffd700; color: #ffd700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);">
+        <img src="/img/xiangqipieces/wiki/rK.svg" width="55" class="mb-2" style="filter: drop-shadow(0 0 8px #ffd700);" alt="Grandmaster">
+        <h4 class="text-uppercase font-weight-bold mb-1"><i class="fas fa-crown"></i> {{ __("Đại Kiện Tướng") }} Phạm Tùng</h4>
+        <p class="m-0 small text-light">{{ __("Bạn đang khiêu chiến với đối thủ mạnh nhất.") }}</p>
+    </div>
+    <style>
+        body.home { background-color: #120808 !important; color: #fff !important; }
+        #ban-co { box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); border: 2px solid #ffd700; }
+        .btn-dark { background-color: #2b0a0a !important; border-color: #ffd700 !important; color: #ffd700 !important; }
+        .btn-dark:hover { background-color: #ffd700 !important; color: #2b0a0a !important; }
+        .btn-danger { background: linear-gradient(45deg, #ffd700, #ffaa00) !important; color: #000 !important; border: none !important; }
+        #game-status.black { color: #ffd700 !important; } /* Make black text visible on dark bg */
+        #game-status.red { color: #ff4444 !important; }
+    </style>
+@else
+    {{-- STANDARD AI UI --}}
+    <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Cấp độ") }} máy: {{ __($levelTxt) }}">{{ __('Bạn đang') }} {{ __($action) }} {{ __('với máy') }}<span id="puzzle-title"></span></h5>
+@endif
 @endsection
+
+@section('aboveContent')
+@endsection
+
 @section('rightSide')
 <p class="w-100 text-center m-0">
   <span class="rounded p-0 d-block" id="game-status"></span>
@@ -45,6 +66,8 @@ $action = $actionMap[$level ?? '3'] ?? 'chơi';
     <a class="dropdown-item{{ request()->is($urls[2]) ? ' active disabled' : '' }}" href="{{ url('/' . $urls[2]) }}" style="cursor: pointer !important;">{{ __("Bình thường") }}</a>
     <a class="dropdown-item{{ request()->is($urls[3]) ? ' active disabled' : '' }}" href="{{ url('/' . $urls[3]) }}" style="cursor: pointer !important;">{{ __("Khó") }}</a>
     <a class="dropdown-item{{ request()->is($urls[4]) ? ' active disabled' : '' }}" href="{{ url('/' . $urls[4]) }}" style="cursor: pointer !important;">{{ __("Khó nhất") }}</a>
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item text-danger font-weight-bold{{ request()->is($urls[5]) ? ' active disabled' : '' }}" href="{{ url('/' . $urls[5]) }}" style="cursor: pointer !important;"><i class="fas fa-crown"></i> {{ __("Kiện tướng") }}</a>
 </div>
 </div>
 <div class="dropup mx-auto text-center my-1">
@@ -101,12 +124,11 @@ function onDragStart (source, piece, position, orientation) {
   }
 }
 
-// Use Pikafish engine for AI moves
 async function makeBestMove() {
   if (isComputerThinking || game.game_over()) return;
 
   isComputerThinking = true;
-  $('#game-status').html('{{ __("Máy đang suy nghĩ") }}... <i class="fas fa-spinner fa-spin"></i>');
+  $('#game-status').html('{{ __("Đang suy nghĩ") }}... <i class="fas fa-spinner fa-spin"></i>');
 
   try {
     const response = await fetch('/api/xiangqi/best-move', {
@@ -117,14 +139,13 @@ async function makeBestMove() {
       },
       body: JSON.stringify({
         fen: game.fen(),
-        timeout: getTimeoutByLevel({{ $level }})
+        timeout: getTimeoutByLevel({{ $level ?? 3 }})
       })
     });
 
     const data = await response.json();
 
     if (data.success && data.best_move) {
-      // Convert engine move format to Xiangqi.js format
       const move = convertEngineMoveToXiangqiJS(data.best_move);
 
       if (move) {
@@ -134,65 +155,53 @@ async function makeBestMove() {
             kypho.recordMove(moveResult);
           }
           board.position(game.fen());
-          nuocCo.play();
+          if (typeof nuocCo !== 'undefined') nuocCo.play();
           updateStatus();
         } else {
-          console.error('Invalid move from engine:', data.best_move);
-          makeRandomMove(); // Fallback
+          makeRandomMove();
         }
       } else {
-        console.error('Invalid move from engine:', data.best_move);
-        makeRandomMove(); // Fallback
+        makeRandomMove();
       }
     } else {
-      console.error('Engine error:', data.error);
-      makeRandomMove(); // Fallback to random move
+      makeRandomMove();
     }
   } catch (error) {
-    console.error('Request failed:', error);
-    makeRandomMove(); // Fallback to random move
+    makeRandomMove();
   } finally {
     isComputerThinking = false;
   }
 }
 
-// Convert engine move format ("h2e2") to Xiangqi.js move object
 function convertEngineMoveToXiangqiJS(engineMove) {
   if (!engineMove || engineMove.length !== 4) return null;
-
-  const from = engineMove.substring(0, 2);
-  const to = engineMove.substring(2, 4);
-
   return {
-    from: from,
-    to: to
+    from: engineMove.substring(0, 2),
+    to: engineMove.substring(2, 4)
   };
 }
 
-// Get timeout based on level
 function getTimeoutByLevel(level) {
   const timeouts = {
-    1: 500,   // {{ __("Mới chơi") }}
-    2: 1000,   // {{ __("Dễ") }}
-    3: 1500,   // {{ __("Bình thường") }}
-    4: 2000,   // {{ __("Khó") }}
-    5: 2500   // {{ __("Khó nhất") }}
+    1: 500,   // Mới chơi
+    2: 1000,  // Dễ
+    3: 1500,  // Bình thường
+    4: 2000,  // Khó
+    5: 2500,  // Khó nhất
+    6: 5000   // Kiện tướng (Max depth/timeout)
   };
   return timeouts[level] || 3000;
 }
 
-// Fallback function if engine fails
 function makeRandomMove() {
   const moves = game.moves({verbose: true});
   if (moves.length > 0) {
     const randomMove = moves[Math.floor(Math.random() * moves.length)];
     const moveResult = game.move(randomMove);
     if (moveResult !== null) {
-      if (kypho) {
-        kypho.recordMove(moveResult);
-      }
+      if (kypho) kypho.recordMove(moveResult);
       board.position(game.fen());
-      nuocCo.play();
+      if (typeof nuocCo !== 'undefined') nuocCo.play();
       updateStatus();
     }
   }
@@ -201,22 +210,17 @@ function makeRandomMove() {
 function onDrop (source, target) {
   if (isComputerThinking) return 'snapback';
 
-  // see if the move is legal
   let move = game.move({
     from: source,
     to: target,
     promotion: 'q'
   });
 
-  // illegal move
   if (move === null) return 'snapback';
-  if (kypho) {
-    kypho.recordMove(move);
-  }
+  if (kypho) kypho.recordMove(move);
 
   updateStatus();
 
-  // If it's computer's turn after player move
   if (!game.game_over() && game.turn() === 'b') {
     setTimeout(makeBestMove, 500);
   }
@@ -224,20 +228,9 @@ function onDrop (source, target) {
 
 function onMouseoverSquare (square, piece) {
   if (isComputerThinking) return;
-
-  // get list of possible moves for this square
-  let moves = game.moves({
-    square: square,
-    verbose: true
-  });
-
-  // exit if there are no moves available for this square
+  let moves = game.moves({ square: square, verbose: true });
   if (moves.length === 0) return;
-
-  // highlight the square they moused over
   greySquare(square);
-
-  // highlight the possible squares for this piece
   for (let i = 0; i < moves.length; i++) {
     greySquare(moves[i].to);
   }
@@ -249,7 +242,7 @@ function onMouseoutSquare (square, piece) {
 
 function onSnapEnd () {
   board.position(game.fen());
-  nuocCo.play();
+  if (typeof nuocCo !== 'undefined') nuocCo.play();
   updateStatus();
 }
 
@@ -257,23 +250,14 @@ function updateStatus () {
   var status = '';
   var moveColor = '{{ __("Đỏ") }}';
 
-  if (game.turn() === 'b') {
-    moveColor = '{{ __("Đen") }}';
-  }
+  if (game.turn() === 'b') moveColor = '{{ __("Đen") }}';
 
-  // checkmate?
   if (game.in_checkmate()) {
     status = moveColor + ' {{ __("bị chiếu bí") }}';
-  }
-  // draw?
-  else if (game.in_draw()) {
+  } else if (game.in_draw()) {
     status = '{{ __("Hòa") }}';
-  }
-  // game still on
-  else {
+  } else {
     status = '{{ __("Tới lượt:") }} ' + moveColor;
-
-    // check?
     if (game.in_check()) {
       status += ', ' + moveColor + ' {{ __("đang bị chiếu") }}';
       if ((board.orientation() == 'red' && game.turn() === 'r') ||
@@ -298,9 +282,7 @@ function updateStatus () {
   }
 
   if (game.game_over()) {
-    if (typeof hetTran !== 'undefined') {
-      hetTran.play();
-    }
+    if (typeof hetTran !== 'undefined') hetTran.play();
     if (typeof $('#header-status') !== 'undefined' && $('#header-status').length) {
       $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
     }
@@ -320,11 +302,7 @@ function updateStatus () {
         centerVertical: true,
         closeButton: false,
         size: 'small',
-        buttons: {
-          ok: {
-            className: 'btn-danger'
-          }
-        }
+        buttons: { ok: { className: 'btn-danger' } }
       });
     }
 
@@ -334,9 +312,7 @@ function updateStatus () {
     isComputerThinking = false;
     resignAlertShown = true;
   }
-  if (kypho) {
-    kypho.updateControls();
-  }
+  if (kypho) kypho.updateControls();
 }
 
 let config = {
@@ -350,13 +326,9 @@ let config = {
   showNotation: true
 };
 
-// Initialize the board
 board = Xiangqiboard('ban-co', config);
 
-// Handle window resize
-if (typeof $(window).resize === 'function') {
-  $(window).resize(board.resize);
-}
+if (typeof $(window).resize === 'function') $(window).resize(board.resize);
 
 updateStatus();
 kypho = KyPho.initLocal({
@@ -379,18 +351,13 @@ $('#resign').on('click', function() {
 
 $('#undo').on('click', function(){
   if (isComputerThinking) return;
-
   if (game.history().length >= 2) {
     game.undo();
     game.undo();
     board.position(game.fen());
-    if (typeof nuocCo !== 'undefined') {
-      nuocCo.play();
-    }
+    if (typeof nuocCo !== 'undefined') nuocCo.play();
     updateStatus();
-    if (kypho) {
-      kypho.setMoves(game.history());
-    }
+    if (kypho) kypho.setMoves(game.history());
   }
 });
 
@@ -409,56 +376,39 @@ $('#reset').on('click', function() {
   $('#game-over').removeClass('d-inline-block').addClass('d-none');
   $('#resign, #switch').removeClass('disabled').attr('aria-disabled', false);
   config.draggable = true;
-  if (kypho) {
-    kypho.setMoves([]);
-  }
+  if (kypho) kypho.setMoves([]);
 });
 
 $('.level.dropup .dropdown-item').each(function(){
   const activePointer = '<i class="far fa-hand-point-right"></i>  ';
-  if ($(this).hasClass('active')) {
-    $(this).prepend(activePointer);
-  }
+  if ($(this).hasClass('active')) $(this).prepend(activePointer);
   $(this).on('click auxclick', function(e){
     window.location.href = $(this).attr('href');
   }).on('mouseenter mouseleave', function(){
-    if ($(this).has('i').length) {
+    if ($(this).has('i').length && !$(this).hasClass('text-danger')) {
       $(this).find('i').remove();
-    } else {
+    } else if (!$(this).hasClass('text-danger')) {
       $(this).prepend(activePointer);
     }
   });
 });
 
-// Add CSS for loading state
 const style = document.createElement('style');
 style.textContent = `
-  .fa-spinner {
-    margin-left: 5px;
-  }
-  .disabled {
-    opacity: 0.5;
-    pointer-events: none;
-  }
-  .highlight {
-    background-color: #ffeb3b !important;
-    opacity: 0.6;
-  }
+  .fa-spinner { margin-left: 5px; }
+  .disabled { opacity: 0.5; pointer-events: none; }
+  .highlight { background-color: #ffeb3b !important; opacity: 0.6; }
 `;
 document.head.appendChild(style);
 
-// Initialize computer move if black starts first
 @if(isset($computerStarts) && $computerStarts)
 $(document).ready(function() {
   setTimeout(makeBestMove, 1000);
 });
 @endif
 </script>
-{{-- @include('layout.partials.userPuzzlesWrapper') --}}
 @include('layout.partials.players')
 @include('layout.partials.userPuzzles')
 @include('layout.partials.boards')
 @include('layout.partials.playedBoards')
-{{-- @include('layout.partials.puzzles') --}}
-{{-- @include('layout.partials.books') --}}
 @endsection

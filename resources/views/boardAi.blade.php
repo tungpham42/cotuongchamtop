@@ -101,7 +101,7 @@ async function makeBestMove() {
   if (isComputerThinking || game.game_over()) return;
 
   isComputerThinking = true;
-  $('#game-status').html('{{ __("Máy đang suy nghĩ") }}... <i class="fas fa-spinner fa-spin"></i>');
+  $('#game-status').html('{{ __("Đang suy nghĩ") }}... <i class="fas fa-spinner fa-spin"></i>');
 
   try {
     const response = await fetch('/api/xiangqi/best-move', {

@@ -427,37 +427,33 @@ Route::get('/auth/zalo/callback', 'Auth\LoginController@handleZaloCallback');
 
 Route::match(['get', 'post'], '/timer', [TimerController::class, 'update'])->name('timer.update');
 
-Route::match(['get', 'post'], '/choi-mot-minh', function () {
-  return view('human', ['headTitle' => 'Chơi một mình', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/choi-mot-minh', 'langEnUrl' => '/play-alone', 'langJaUrl' => '/ichi-nin-de-asobu', 'langKoUrl' => '/honja-nolda', 'langZhUrl' => '/duchu', 'canonicalUrl' => '/choi-mot-minh']);
-})->middleware('locale:vi');
-Route::match(['get', 'post'], '/play-alone', function () {
-  return view('human', ['headTitle' => 'Play alone', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/choi-mot-minh', 'langEnUrl' => '/play-alone', 'langJaUrl' => '/ichi-nin-de-asobu', 'langKoUrl' => '/honja-nolda', 'langZhUrl' => '/duchu', 'canonicalUrl' => '/play-alone']);
-})->middleware('locale:en');
-Route::match(['get', 'post'], '/ichi-nin-de-asobu', function () {
-  return view('human', ['headTitle' => '一人で遊ぶ', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/choi-mot-minh', 'langEnUrl' => '/play-alone', 'langJaUrl' => '/ichi-nin-de-asobu', 'langKoUrl' => '/honja-nolda', 'langZhUrl' => '/duchu', 'canonicalUrl' => '/ichi-nin-de-asobu']);
-})->middleware('locale:ja');
-Route::match(['get', 'post'], '/honja-nolda', function () {
-  return view('human', ['headTitle' => '혼자 놀다', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/choi-mot-minh', 'langEnUrl' => '/play-alone', 'langJaUrl' => '/ichi-nin-de-asobu', 'langKoUrl' => '/honja-nolda', 'langZhUrl' => '/duchu', 'canonicalUrl' => '/honja-nolda']);
-})->middleware('locale:ko');
-Route::match(['get', 'post'], '/duchu', function () {
-  return view('human', ['headTitle' => '独处', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/choi-mot-minh', 'langEnUrl' => '/play-alone', 'langJaUrl' => '/ichi-nin-de-asobu', 'langKoUrl' => '/honja-nolda', 'langZhUrl' => '/duchu', 'canonicalUrl' => '/duchu']);
-})->middleware('locale:zh');
+// ==========================================
+// LOCALIZED HUMAN PAGES (Play alone)
+// ==========================================
+$localizedHumanPages = [
+    'human.play' => [
+        'bodyClass' => 'home',
+        'titles' => [
+            'vi' => 'Chơi một mình',
+            'en' => 'Play alone',
+            'ja' => '一人で遊ぶ',
+            'ko' => '혼자 놀다',
+            'zh' => '独处',
+        ]
+    ]
+];
 
-Route::match(['get', 'post'], '/co-the', function () {
-return view('puzzle', ['headTitle' => 'Xếp bàn cờ thế', 'bodyClass' => 'puzzle setup', 'board' => '', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/co-the', 'langEnUrl' => '/puzzle', 'langJaUrl' => '/pazuru', 'langKoUrl' => '/peojeul', 'langZhUrl' => '/mi', 'canonicalUrl' => '/co-the']);
-})->middleware('locale:vi');
-Route::match(['get', 'post'], '/puzzle', function () {
-return view('puzzle', ['headTitle' => 'Set up the puzzle', 'bodyClass' => 'puzzle setup', 'board' => '', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/co-the', 'langEnUrl' => '/puzzle', 'langJaUrl' => '/pazuru', 'langKoUrl' => '/peojeul', 'langZhUrl' => '/mi', 'canonicalUrl' => '/puzzle']);
-})->middleware('locale:en');
-Route::match(['get', 'post'], '/pazuru', function () {
-return view('puzzle', ['headTitle' => 'パズルを組み立てる', 'bodyClass' => 'puzzle setup', 'board' => '', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/co-the', 'langEnUrl' => '/puzzle', 'langJaUrl' => '/pazuru', 'langKoUrl' => '/peojeul', 'langZhUrl' => '/mi', 'canonicalUrl' => '/pazuru']);
-})->middleware('locale:ja');
-Route::match(['get', 'post'], '/peojeul', function () {
-return view('puzzle', ['headTitle' => '퍼즐', 'bodyClass' => 'puzzle setup', 'board' => '', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/co-the', 'langEnUrl' => '/puzzle', 'langJaUrl' => '/pazuru', 'langKoUrl' => 'peojeul', 'langZhUrl' => '/mi', 'canonicalUrl' => '/peojeul']);
-})->middleware('locale:ko');
-Route::match(['get', 'post'], '/mi', function () {
-return view('puzzle', ['headTitle' => '谜', 'bodyClass' => 'puzzle setup', 'board' => '', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/co-the', 'langEnUrl' => '/puzzle', 'langJaUrl' => '/pazuru', 'langKoUrl' => '/peojeul', 'langZhUrl' => '/mi', 'canonicalUrl' => '/mi']);
-})->middleware('locale:zh');
+foreach ($localizedHumanPages['human.play']['titles'] as $locale => $title) {
+    Route::match(['get', 'post'], localized_path('human.play', [], $locale), function () use ($locale, $title) {
+        return view('human', localized_page_data('human.play', $locale, [
+            'headTitle' => $title,
+            'bodyClass' => 'home',
+            'randomRoom' => RoomController::getRandomRoom(),
+            'roomCode' => '',
+            'cdnUrl' => url(''),
+        ]));
+    })->middleware("locale:{$locale}");
+}
 
 Route::match(['get', 'post'], '/thach-dau/{board}', function ($board) {
 return view('puzzleCompete', ['headTitle' => 'Thách đấu', 'bodyClass' => 'puzzle', 'board' => $board, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'canonicalUrl' => '/thach-dau/'.$board]);
@@ -511,204 +507,264 @@ Route::match(['get', 'post'], '/getUserPuzzlesTemplate', function(){
 return view('layout.partials.userPuzzles')->render();
 });
 
-Route::match(['get', 'post'], '/co-the/{board}', function ($board) {
-return view('puzzle', ['headTitle' => 'Bàn cờ thế', 'bodyClass' => 'puzzle', 'board' => $board, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/co-the/'.$board, 'langEnUrl' => '/puzzle/'.$board, 'langJaUrl' => '/pazuru/'.$board, 'langKoUrl' => '/peojeul/'.$board, 'langZhUrl' => '/mi/'.$board, 'canonicalUrl' => '/co-the/'.$board]);
-})->where(['board' => $fenRegex]);
-Route::match(['get', 'post'], '/puzzle/{board}', function ($board) {
-return view('puzzle', ['headTitle' => 'Puzzle', 'bodyClass' => 'puzzle', 'board' => $board, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/co-the/'.$board, 'langEnUrl' => '/puzzle/'.$board, 'langJaUrl' => '/pazuru/'.$board, 'langKoUrl' => '/peojeul/'.$board, 'langZhUrl' => '/mi/'.$board, 'canonicalUrl' => '/puzzle/'.$board]);
-})->where(['board' => $fenRegex]);
-Route::match(['get', 'post'], '/pazuru/{board}', function ($board) {
-return view('puzzle', ['headTitle' => 'パズル', 'bodyClass' => 'puzzle', 'board' => $board, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/co-the/'.$board, 'langEnUrl' => '/puzzle/'.$board, 'langJaUrl' => '/pazuru/'.$board, 'langKoUrl' => '/peojeul/'.$board, 'langZhUrl' => '/mi/'.$board, 'canonicalUrl' => '/pazuru/'.$board]);
-})->where(['board' => $fenRegex]);
-Route::match(['get', 'post'], '/peojeul/{board}', function ($board) {
-return view('puzzle', ['headTitle' => '퍼즐', 'bodyClass' => 'puzzle', 'board' => $board, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/co-the/'.$board, 'langEnUrl' => '/puzzle/'.$board, 'langJaUrl' => '/pazuru/'.$board, 'langKoUrl' => '/peojeul/'.$board, 'langZhUrl' => '/mi/'.$board, 'canonicalUrl' => '/peojeul/'.$board]);
-})->where(['board' => $fenRegex]);
-Route::match(['get', 'post'], '/mi/{board}', function ($board) {
-return view('puzzle', ['headTitle' => '谜', 'bodyClass' => 'puzzle', 'board' => $board, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/co-the/'.$board, 'langEnUrl' => '/puzzle/'.$board, 'langJaUrl' => '/pazuru/'.$board, 'langKoUrl' => '/peojeul/'.$board, 'langZhUrl' => '/mi/'.$board, 'canonicalUrl' => '/mi/'.$board]);
-})->where(['board' => $fenRegex]);
+// ==========================================
+// LOCALIZED PUZZLE PAGES (Setup & Board)
+// ==========================================
+$localizedPuzzlePages = [
+    'puzzle.setup' => [
+        'bodyClass' => 'puzzle setup',
+        'titles' => [
+            'vi' => 'Xếp bàn cờ thế',
+            'en' => 'Set up the puzzle',
+            'ja' => 'パズルを組み立てる',
+            'ko' => '퍼즐',
+            'zh' => '谜',
+        ]
+    ],
+    'puzzle.board' => [
+        'bodyClass' => 'puzzle',
+        'titles' => [
+            'vi' => 'Bàn cờ thế',
+            'en' => 'Puzzle',
+            'ja' => 'パズル',
+            'ko' => '퍼즐',
+            'zh' => '谜',
+        ]
+    ]
+];
 
-Route::match(['get', 'post'], '/ban-co/{fen}', function ($fen) {
-return view('board', ['headTitle' => 'Bàn cờ tự giải', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co/'.$fen, 'langEnUrl' => '/board/'.$fen, 'langJaUrl' => '/bodo/'.$fen, 'langKoUrl' => '/bodeu/'.$fen, 'langZhUrl' => '/ban/'.$fen, 'canonicalUrl' => '/ban-co/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:vi');
+// 1. Puzzle Setup (Empty Board)
+foreach ($localizedPuzzlePages['puzzle.setup']['titles'] as $locale => $title) {
+    Route::match(['get', 'post'], localized_path('puzzle.setup', [], $locale), function () use ($locale, $title) {
+        return view('puzzle', localized_page_data('puzzle.setup', $locale, [
+            'headTitle' => $title,
+            'bodyClass' => 'puzzle setup',
+            'board' => '',
+            'randomRoom' => RoomController::getRandomRoom(),
+            'roomCode' => '',
+            'cdnUrl' => url(''),
+        ]));
+    })->middleware("locale:{$locale}");
+}
 
-Route::match(['get', 'post'], '/ban-co-de-nhat/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => 'Bàn cờ dễ nhất', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '1', 'levelTxt' => 'Dễ nhất', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-de-nhat/'.$fen, 'langEnUrl' => '/easiest-board/'.$fen, 'langJaUrl' => '/mottomo-kantanna-bodo/'.$fen, 'langKoUrl' => '/gajang-swiun-bodeu/'.$fen, 'langZhUrl' => '/zuijiandandeban/'.$fen, 'canonicalUrl' => '/ban-co-de-nhat/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:vi');
-Route::match(['get', 'post'], '/ban-co-moi-choi/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => 'Bàn cờ mới chơi', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '1', 'levelTxt' => 'Mới chơi', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-moi-choi/'.$fen, 'langEnUrl' => '/newbie-board/'.$fen, 'langJaUrl' => '/shoshinsha-bodo/'.$fen, 'langKoUrl' => '/nyubi-bodeu/'.$fen, 'langZhUrl' => '/xinshouban/'.$fen, 'canonicalUrl' => '/ban-co-moi-choi/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:vi');
-Route::match(['get', 'post'], '/ban-co-de/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => 'Bàn cờ dễ', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '2', 'levelTxt' => 'Dễ', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-de/'.$fen, 'langEnUrl' => '/easy-board/'.$fen, 'langJaUrl' => '/kantan-bodo/'.$fen, 'langKoUrl' => '/iji-bodeu/'.$fen, 'langZhUrl' => '/jianyiban/'.$fen, 'canonicalUrl' => '/ban-co-de/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:vi');
-Route::match(['get', 'post'], '/ban-co-binh-thuong/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => 'Bàn cờ bình thường', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '3', 'levelTxt' => 'Bình thường', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-binh-thuong/'.$fen, 'langEnUrl' => '/normal-board/'.$fen, 'langJaUrl' => '/tsujo-bodo/'.$fen, 'langKoUrl' => '/nomol-bodeu/'.$fen, 'langZhUrl' => '/putongban/'.$fen, 'canonicalUrl' => '/ban-co-binh-thuong/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:vi');
-Route::match(['get', 'post'], '/ban-co-kho/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => 'Bàn cờ khó', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '4', 'levelTxt' => 'Khó', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-kho/'.$fen, 'langEnUrl' => '/hard-board/'.$fen, 'langJaUrl' => '/hado-bodo/'.$fen, 'langKoUrl' => '/hadeu-bodeu/'.$fen, 'langZhUrl' => '/yingban/'.$fen, 'canonicalUrl' => '/ban-co-kho/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:vi');
-Route::match(['get', 'post'], '/ban-co-kho-nhat/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => 'Bàn cờ khó nhất', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '4', 'levelTxt' => 'Khó nhất', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-kho-nhat/'.$fen, 'langEnUrl' => '/hardest-board/'.$fen, 'langJaUrl' => '/mottomo-muzukashi-bodo/'.$fen, 'langKoUrl' => '/gajang-dandanhan-bodeu/'.$fen, 'langZhUrl' => '/zuiyingban/'.$fen, 'canonicalUrl' => '/ban-co-kho-nhat/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:vi');
-Route::match(['get', 'post'], '/giai-co-the/{fen}', function ($fen) {
-    $puzzleName = PuzzleController::getNameByFen($fen);
-    $headTitle = $puzzleName ? 'Giải cờ thế "' . $puzzleName . '"' : 'Giải cờ thế';
-return view('puzzleAi', ['headTitle' => $headTitle, 'bodyClass' => 'puzzle', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '5', 'levelTxt' => 'Khó nhất', 'cdnUrl' => url(''), 'langViUrl' => '/giai-co-the/'.$fen, 'langEnUrl' => '/solve-puzzle/'.$fen, 'langJaUrl' => '/pazuru-o-toku/'.$fen, 'langKoUrl' => '/pojeureul-pulda/'.$fen, 'langZhUrl' => '/jiejuenanti/'.$fen, 'canonicalUrl' => '/giai-co-the/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:vi');
+// 2. Puzzle Board (With FEN/Board string)
+foreach ($localizedPuzzlePages['puzzle.board']['titles'] as $locale => $title) {
+    Route::match(['get', 'post'], localized_path('puzzle.board', ['board' => '{board}'], $locale), function ($board) use ($locale, $title) {
+        return view('puzzle', localized_page_data('puzzle.board', $locale, [
+            'headTitle' => $title,
+            'bodyClass' => 'puzzle',
+            'board' => $board,
+            'randomRoom' => RoomController::getRandomRoom(),
+            'roomCode' => '',
+            'cdnUrl' => url(''),
+        ], ['board' => $board]));
+    })->where(['board' => $fenRegex])->middleware("locale:{$locale}");
+}
 
-Route::match(['get', 'post'], '/board/{fen}', function ($fen) {
-  return view('board', ['headTitle' => 'Board', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co/'.$fen, 'langEnUrl' => '/board/'.$fen, 'langJaUrl' => '/bodo/'.$fen, 'langKoUrl' => '/bodeu/'.$fen, 'langZhUrl' => '/ban/'.$fen, 'canonicalUrl' => '/board/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:en');
+// ==========================================
+// LOCALIZED FEN BOARD & BOARD AI PAGES
+// ==========================================
+$localizedBoardPages = [
+    'board.self' => [
+        'view' => 'board',
+        'titles' => [
+            'vi' => 'Bàn cờ tự giải',
+            'en' => 'Board',
+            'ja' => 'ボード',
+            'ko' => '보드',
+            'zh' => '板',
+        ],
+    ],
+    'board.ai.easiest' => [
+        'view' => 'boardAi',
+        'level' => '1',
+        'titles' => [
+            'vi' => ['title' => 'Bàn cờ dễ nhất', 'levelTxt' => 'Dễ nhất'],
+            'en' => ['title' => 'Easiest board', 'levelTxt' => 'Easiest'],
+            'ja' => ['title' => '最も簡単なボード', 'levelTxt' => '最も簡単'],
+            'ko' => ['title' => '가장 쉬운 보드', 'levelTxt' => '가장 쉬운'],
+            'zh' => ['title' => '最简单的板', 'levelTxt' => '最容易的'],
+        ],
+    ],
+    'board.ai.newbie' => [
+        'view' => 'boardAi',
+        'level' => '1',
+        'titles' => [
+            'vi' => ['title' => 'Bàn cờ mới chơi', 'levelTxt' => 'Mới chơi'],
+            'en' => ['title' => 'Newbie board', 'levelTxt' => 'Newbie'],
+            'ja' => ['title' => '初心者ボード', 'levelTxt' => '初心者'],
+            'ko' => ['title' => '뉴비 보드', 'levelTxt' => '뉴비'],
+            'zh' => ['title' => '新手板', 'levelTxt' => '新手'],
+        ],
+    ],
+    'board.ai.easy' => [
+        'view' => 'boardAi',
+        'level' => '2',
+        'titles' => [
+            'vi' => ['title' => 'Bàn cờ dễ', 'levelTxt' => 'Dễ'],
+            'en' => ['title' => 'Easy board', 'levelTxt' => 'Easy'],
+            'ja' => ['title' => 'イージーボード', 'levelTxt' => '簡単'],
+            'ko' => ['title' => '이지보드', 'levelTxt' => '쉬운'],
+            'zh' => ['title' => '简易板', 'levelTxt' => '容易的'],
+        ],
+    ],
+    'board.ai.normal' => [
+        'view' => 'boardAi',
+        'level' => '3',
+        'titles' => [
+            'vi' => ['title' => 'Bàn cờ bình thường', 'levelTxt' => 'Bình thường'],
+            'en' => ['title' => 'Normal board', 'levelTxt' => 'Normal'],
+            'ja' => ['title' => '通常ボード', 'levelTxt' => 'ツジョ'],
+            'ko' => ['title' => '노멀 보드', 'levelTxt' => '노멀'],
+            'zh' => ['title' => '普通板', 'levelTxt' => '典型的'],
+        ],
+    ],
+    'board.ai.hard' => [
+        'view' => 'boardAi',
+        'level' => '4',
+        'titles' => [
+            'vi' => ['title' => 'Bàn cờ khó', 'levelTxt' => 'Khó'],
+            'en' => ['title' => 'Hard board', 'levelTxt' => 'Hard'],
+            'ja' => ['title' => 'ハードボード', 'levelTxt' => 'ハード'],
+            'ko' => ['title' => '하드보드', 'levelTxt' => '하드'],
+            'zh' => ['title' => '硬板', 'levelTxt' => '坚固的'],
+        ],
+    ],
+    'board.ai.hardest' => [
+        'view' => 'boardAi',
+        'level' => '5',
+        'titles' => [
+            'vi' => ['title' => 'Bàn cờ khó nhất', 'levelTxt' => 'Khó nhất'],
+            'en' => ['title' => 'Hardest board', 'levelTxt' => 'Hardest'],
+            'ja' => ['title' => '最も難しいボード', 'levelTxt' => '最も難しい'],
+            'ko' => ['title' => '가장 단단한 보드', 'levelTxt' => '가장 단단한'],
+            'zh' => ['title' => '最难的', 'levelTxt' => '最难的'],
+        ],
+    ],
+    'puzzle.ai.solve' => [
+        'view' => 'puzzleAi',
+        'level' => '6',
+        'titles' => [
+            'vi' => ['title' => 'Giải cờ thế', 'levelTxt' => 'Khó nhất'],
+            'en' => ['title' => 'Solve puzzle', 'levelTxt' => 'Hardest'],
+            'ja' => ['title' => 'パズルを解く', 'levelTxt' => '最も難しい'],
+            'ko' => ['title' => '퍼즐을 풀다', 'levelTxt' => '가장 단단한'],
+            'zh' => ['title' => '解决难题', 'levelTxt' => '最难的'],
+        ],
+    ]
+];
 
-Route::match(['get', 'post'], '/easiest-board/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => 'Easiest board', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '1', 'levelTxt' => 'Easiest', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-de-nhat/'.$fen, 'langEnUrl' => '/easiest-board/'.$fen, 'langJaUrl' => '/mottomo-kantanna-bodo/'.$fen, 'langKoUrl' => '/gajang-swiun-bodeu/'.$fen, 'langZhUrl' => '/zuijiandandeban/'.$fen, 'canonicalUrl' => '/easiest-board/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:en');
-Route::match(['get', 'post'], '/newbie-board/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => 'Newbie board', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '1', 'levelTxt' => 'Newbie', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-moi-choi/'.$fen, 'langEnUrl' => '/newbie-board/'.$fen, 'langJaUrl' => '/shoshinsha-bodo/'.$fen, 'langKoUrl' => '/nyubi-bodeu/'.$fen, 'langZhUrl' => '/xinshouban/'.$fen, 'canonicalUrl' => '/newbie-board/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:en');
-Route::match(['get', 'post'], '/easy-board/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => 'Easy board', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '2', 'levelTxt' => 'Easy', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-de/'.$fen, 'langEnUrl' => '/easy-board/'.$fen, 'langJaUrl' => '/kantan-bodo/'.$fen, 'langKoUrl' => '/iji-bodeu/'.$fen, 'langZhUrl' => '/jianyiban/'.$fen, 'canonicalUrl' => '/easy-board/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:en');
-Route::match(['get', 'post'], '/normal-board/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => 'Normal board', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '3', 'levelTxt' => 'Normal', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-binh-thuong/'.$fen, 'langEnUrl' => '/normal-board/'.$fen, 'langJaUrl' => '/tsujo-bodo/'.$fen, 'langKoUrl' => '/nomol-bodeu/'.$fen, 'langZhUrl' => '/putongban/'.$fen, 'canonicalUrl' => '/normal-board/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:en');
-Route::match(['get', 'post'], '/hard-board/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => 'Hard board', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '4', 'levelTxt' => 'Hard', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-kho/'.$fen, 'langEnUrl' => '/hard-board/'.$fen, 'langJaUrl' => '/hado-bodo/'.$fen, 'langKoUrl' => '/hadeu-bodeu/'.$fen, 'langZhUrl' => '/yingban/'.$fen, 'canonicalUrl' => '/hard-board/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:en');
-Route::match(['get', 'post'], '/hardest-board/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => 'Hardest board', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '4', 'levelTxt' => 'Hardest', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-kho-nhat/'.$fen, 'langEnUrl' => '/hardest-board/'.$fen, 'langJaUrl' => '/mottomo-muzukashi-bodo/'.$fen, 'langKoUrl' => '/gajang-dandanhan-bodeu/'.$fen, 'langZhUrl' => '/zuiyingban/'.$fen, 'canonicalUrl' => '/hardest-board/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:en');
-Route::match(['get', 'post'], '/solve-puzzle/{fen}', function ($fen) {
-    $puzzleName = PuzzleController::getNameByFen($fen);
-    $headTitle = $puzzleName ? 'Solve puzzle "' . $puzzleName . '"' : 'Solve puzzle';
-return view('puzzleAi', ['headTitle' => $headTitle, 'bodyClass' => 'puzzle', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '5', 'levelTxt' => 'Hardest', 'cdnUrl' => url(''), 'langViUrl' => '/giai-co-the/'.$fen, 'langEnUrl' => '/solve-puzzle/'.$fen, 'langJaUrl' => '/pazuru-o-toku/'.$fen, 'langKoUrl' => '/pojeureul-pulda/'.$fen, 'langZhUrl' => '/jiejuenanti/'.$fen, 'canonicalUrl' => '/solve-puzzle/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:en');
+foreach ($localizedBoardPages as $pageKey => $pageData) {
+    foreach ($pageData['titles'] as $locale => $localeData) {
+        Route::match(['get', 'post'], localized_path($pageKey, ['fen' => '{fen}'], $locale), function ($fen) use ($pageKey, $pageData, $locale, $localeData) {
 
-Route::match(['get', 'post'], '/bodo/{fen}', function ($fen) {
-  return view('board', ['headTitle' => 'ボード', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co/'.$fen, 'langEnUrl' => '/board/'.$fen, 'langJaUrl' => '/bodo/'.$fen, 'langKoUrl' => '/bodeu/'.$fen, 'langZhUrl' => '/ban/'.$fen, 'canonicalUrl' => '/bodo/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:ja');
+            // 1. Setup base view data
+            $viewData = [
+                'bodyClass' => ($pageData['view'] === 'puzzleAi') ? 'puzzle' : 'home',
+                'fen' => $fen,
+                'randomRoom' => RoomController::getRandomRoom(),
+                'roomCode' => '',
+                'cdnUrl' => url(''),
+            ];
 
-Route::match(['get', 'post'], '/mottomo-kantanna-bodo/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => '最も簡単なボード', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '1', 'levelTxt' => '最も簡単', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-de-nhat/'.$fen, 'langEnUrl' => '/easiest-board/'.$fen, 'langJaUrl' => '/mottomo-kantanna-bodo/'.$fen, 'langKoUrl' => '/gajang-swiun-bodeu/'.$fen, 'langZhUrl' => '/zuijiandandeban/'.$fen, 'canonicalUrl' => '/mottomo-kantanna-bodo/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:ja');
-Route::match(['get', 'post'], '/shoshinsha-bodo/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => '初心者ボード', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '1', 'levelTxt' => '初心者', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-moi-choi/'.$fen, 'langEnUrl' => '/newbie-board/'.$fen, 'langJaUrl' => '/shoshinsha-bodo/'.$fen, 'langKoUrl' => '/nyubi-bodeu/'.$fen, 'langZhUrl' => '/xinshouban/'.$fen, 'canonicalUrl' => '/shoshinsha-bodo/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:ja');
-Route::match(['get', 'post'], '/kantan-bodo/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => 'イージーボード', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '2', 'levelTxt' => '簡単', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-de/'.$fen, 'langEnUrl' => '/easy-board/'.$fen, 'langJaUrl' => '/kantan-bodo/'.$fen, 'langKoUrl' => '/iji-bodeu/'.$fen, 'langZhUrl' => '/jianyiban/'.$fen, 'canonicalUrl' => '/kantan-bodo/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:ja');
-Route::match(['get', 'post'], '/tsujo-bodo/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => '通常ボード', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '3', 'levelTxt' => 'ツジョ', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-binh-thuong/'.$fen, 'langEnUrl' => '/normal-board/'.$fen, 'langJaUrl' => '/tsujo-bodo/'.$fen, 'langKoUrl' => '/nomol-bodeu/'.$fen, 'langZhUrl' => '/putongban/'.$fen, 'canonicalUrl' => '/tsujo-bodo/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:ja');
-Route::match(['get', 'post'], '/hado-bodo/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => 'ハードボード', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '4', 'levelTxt' => 'ハード', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-kho/'.$fen, 'langEnUrl' => '/hard-board/'.$fen, 'langJaUrl' => '/hado-bodo/'.$fen, 'langKoUrl' => '/hadeu-bodeu/'.$fen, 'langZhUrl' => '/yingban/'.$fen, 'canonicalUrl' => '/hado-bodo/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:ja');
-Route::match(['get', 'post'], '/mottomo-muzukashi-bodo/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => '最も難しいボード', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '4', 'levelTxt' => '最も難しい', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-kho-nhat/'.$fen, 'langEnUrl' => '/hardest-board/'.$fen, 'langJaUrl' => '/mottomo-muzukashi-bodo/'.$fen, 'langKoUrl' => '/gajang-dandanhan-bodeu/'.$fen, 'langZhUrl' => '/zuiyingban/'.$fen, 'canonicalUrl' => '/mottomo-muzukashi-bodo/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:ja');
-Route::match(['get', 'post'], '/pazuru-o-toku/{fen}', function ($fen) {
-    $puzzleName = PuzzleController::getNameByFen($fen);
-    $headTitle = $puzzleName ? 'パズルを解く "' . $puzzleName . '"' : 'パズルを解く';
-return view('puzzleAi', ['headTitle' => $headTitle, 'bodyClass' => 'puzzle', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '5', 'levelTxt' => '最も難しい', 'cdnUrl' => url(''), 'langViUrl' => '/giai-co-the/'.$fen, 'langEnUrl' => '/solve-puzzle/'.$fen, 'langJaUrl' => '/pazuru-o-toku/'.$fen, 'langKoUrl' => '/pojeureul-pulda/'.$fen, 'langZhUrl' => '/jiejuenanti/'.$fen, 'canonicalUrl' => '/pazuru-o-toku/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:ja');
+            // 2. Parse differences between standard board and AI boards
+            if ($pageData['view'] === 'board') {
+                $viewData['headTitle'] = $localeData;
+            } else {
+                $baseTitle = $localeData['title'];
 
-Route::match(['get', 'post'], '/bodeu/{fen}', function ($fen) {
-return view('board', ['headTitle' => '보드', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co/'.$fen, 'langEnUrl' => '/board/'.$fen, 'langJaUrl' => '/bodo/'.$fen, 'langKoUrl' => '/bodeu/'.$fen, 'langZhUrl' => '/ban/'.$fen, 'canonicalUrl' => '/bodeu/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:ko');
+                // Inject dynamic puzzle name specifically for puzzleAi
+                if ($pageData['view'] === 'puzzleAi') {
+                    $puzzleName = PuzzleController::getNameByFen($fen);
+                    $viewData['headTitle'] = $puzzleName ? $baseTitle . ' "' . $puzzleName . '"' : $baseTitle;
+                } else {
+                    $viewData['headTitle'] = $baseTitle;
+                }
 
-Route::match(['get', 'post'], '/gajang-swiun-bodeu/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => '가장 쉬운 보드', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '1', 'levelTxt' => '가장 쉬운', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-de-nhat/'.$fen, 'langEnUrl' => '/easiest-board/'.$fen, 'langJaUrl' => '/mottomo-kantanna-bodo/'.$fen, 'langKoUrl' => '/gajang-swiun-bodeu/'.$fen, 'langZhUrl' => '/zuijiandandeban/'.$fen, 'canonicalUrl' => '/gajang-swiun-bodeu/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:ko');
-Route::match(['get', 'post'], '/nyubi-bodeu/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => '뉴비 보드', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '1', 'levelTxt' => '뉴비', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-moi-choi/'.$fen, 'langEnUrl' => '/newbie-board/'.$fen, 'langJaUrl' => '/shoshinsha-bodo/'.$fen, 'langKoUrl' => '/nyubi-bodeu/'.$fen, 'langZhUrl' => '/xinshouban/'.$fen, 'canonicalUrl' => '/nyubi-bodeu/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:ko');
-Route::match(['get', 'post'], '/iji-bodeu/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => '이지보드', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '2', 'levelTxt' => '쉬운', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-de/'.$fen, 'langEnUrl' => '/easy-board/'.$fen, 'langJaUrl' => '/kantan-bodo/'.$fen, 'langKoUrl' => '/iji-bodeu/'.$fen, 'langZhUrl' => '/jianyiban/'.$fen, 'canonicalUrl' => '/iji-bodeu/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:ko');
-Route::match(['get', 'post'], '/nomol-bodeu/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => '노멀 보드', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '3', 'levelTxt' => '노멀', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-binh-thuong/'.$fen, 'langEnUrl' => '/normal-board/'.$fen, 'langJaUrl' => '/tsujo-bodo/'.$fen, 'langKoUrl' => '/nomol-bodeu/'.$fen, 'langZhUrl' => '/putongban/'.$fen, 'canonicalUrl' => '/nomol-bodeu/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:ko');
-Route::match(['get', 'post'], '/hadeu-bodeu/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => '하드보드', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '4', 'levelTxt' => '하드', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-kho/'.$fen, 'langEnUrl' => '/hard-board/'.$fen, 'langJaUrl' => '/hado-bodo/'.$fen, 'langKoUrl' => '/hadeu-bodeu/'.$fen, 'langZhUrl' => '/yingban/'.$fen, 'canonicalUrl' => '/hadeu-bodeu/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:ko');
-Route::match(['get', 'post'], '/gajang-dandanhan-bodeu/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => '가장 단단한 보드', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '4', 'levelTxt' => '가장 단단한', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-kho-nhat/'.$fen, 'langEnUrl' => '/hardest-board/'.$fen, 'langJaUrl' => '/mottomo-muzukashi-bodo/'.$fen, 'langKoUrl' => '/gajang-dandanhan-bodeu/'.$fen, 'langZhUrl' => '/zuiyingban/'.$fen, 'canonicalUrl' => '/gajang-dandanhan-bodeu/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:ko');
-Route::match(['get', 'post'], '/pojeureul-pulda/{fen}', function ($fen) {
-    $puzzleName = PuzzleController::getNameByFen($fen);
-    $headTitle = $puzzleName ? '퍼즐을 풀다 "' . $puzzleName . '"' : '퍼즐을 풀다';
-return view('puzzleAi', ['headTitle' => $headTitle, 'bodyClass' => 'puzzle', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '5', 'levelTxt' => '가장 단단한', 'cdnUrl' => url(''), 'langViUrl' => '/giai-co-the/'.$fen, 'langEnUrl' => '/solve-puzzle/'.$fen, 'langJaUrl' => '/pazuru-o-toku/'.$fen, 'langKoUrl' => '/pojeureul-pulda/'.$fen, 'langZhUrl' => '/jiejuenanti/'.$fen, 'canonicalUrl' => '/pojeureul-pulda/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:ko');
+                $viewData['level'] = $pageData['level'];
+                $viewData['levelTxt'] = $localeData['levelTxt'];
+            }
 
-Route::match(['get', 'post'], '/ban/{fen}', function ($fen) {
-  return view('board', ['headTitle' => '板', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co/'.$fen, 'langEnUrl' => '/board/'.$fen, 'langJaUrl' => '/bodo/'.$fen, 'langKoUrl' => '/bodeu/'.$fen, 'langZhUrl' => '/ban/'.$fen, 'canonicalUrl' => '/ban/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:zh');
+            return view($pageData['view'], localized_page_data($pageKey, $locale, $viewData, ['fen' => $fen]));
+        })->where(['fen' => $fenRegex])->middleware("locale:{$locale}");
+    }
+}
 
-Route::match(['get', 'post'], '/zuijiandandeban/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => '最简单的板', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '1', 'levelTxt' => '最容易的', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-de-nhat/'.$fen, 'langEnUrl' => '/easiest-board/'.$fen, 'langJaUrl' => '/mottomo-kantanna-bodo/'.$fen, 'langKoUrl' => '/gajang-swiun-bodeu/'.$fen, 'langZhUrl' => '/zuijiandandeban/'.$fen, 'canonicalUrl' => '/zuijiandandeban/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:zh');
-Route::match(['get', 'post'], '/xinshouban/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => '新手板', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '1', 'levelTxt' => '新手', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-moi-choi/'.$fen, 'langEnUrl' => '/newbie-board/'.$fen, 'langJaUrl' => '/shoshinsha-bodo/'.$fen, 'langKoUrl' => '/nyubi-bodeu/'.$fen, 'langZhUrl' => '/xinshouban/'.$fen, 'canonicalUrl' => '/xinshouban/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:zh');
-Route::match(['get', 'post'], '/jianyiban/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => '简易板', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '2', 'levelTxt' => '容易的', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-de/'.$fen, 'langEnUrl' => '/easy-board/'.$fen, 'langJaUrl' => '/kantan-bodo/'.$fen, 'langKoUrl' => '/iji-bodeu/'.$fen, 'langZhUrl' => '/jianyiban/'.$fen, 'canonicalUrl' => '/jianyiban/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:zh');
-Route::match(['get', 'post'], '/putongban/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => '普通板', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '3', 'levelTxt' => '典型的', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-binh-thuong/'.$fen, 'langEnUrl' => '/normal-board/'.$fen, 'langJaUrl' => '/tsujo-bodo/'.$fen, 'langKoUrl' => '/nomol-bodeu/'.$fen, 'langZhUrl' => '/putongban/'.$fen, 'canonicalUrl' => '/putongban/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:zh');
-Route::match(['get', 'post'], '/yingban/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => '硬板', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '4', 'levelTxt' => '坚固的', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-kho/'.$fen, 'langEnUrl' => '/hard-board/'.$fen, 'langJaUrl' => '/hado-bodo/'.$fen, 'langKoUrl' => '/hadeu-bodeu/'.$fen, 'langZhUrl' => '/yingban/'.$fen, 'canonicalUrl' => '/yingban/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:zh');
-Route::match(['get', 'post'], '/zuiyingban/{fen}', function ($fen) {
-return view('boardAi', ['headTitle' => '最难的', 'bodyClass' => 'home', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '4', 'levelTxt' => '最难的', 'cdnUrl' => url(''), 'langViUrl' => '/ban-co-kho-nhat/'.$fen, 'langEnUrl' => '/hardest-board/'.$fen, 'langJaUrl' => '/mottomo-muzukashi-bodo/'.$fen, 'langKoUrl' => '/gajang-dandanhan-bodeu/'.$fen, 'langZhUrl' => '/zuiyingban/'.$fen, 'canonicalUrl' => '/zuiyingban/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:zh');
-Route::match(['get', 'post'], '/jiejuenanti/{fen}', function ($fen) {
-    $puzzleName = PuzzleController::getNameByFen($fen);
-    $headTitle = $puzzleName ? '解决难题 "' . $puzzleName . '"' : '解决难题';
-return view('puzzleAi', ['headTitle' => $headTitle, 'bodyClass' => 'puzzle', 'fen' => $fen, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'level' => '5', 'levelTxt' => '最难的', 'cdnUrl' => url(''), 'langViUrl' => '/giai-co-the/'.$fen, 'langEnUrl' => '/solve-puzzle/'.$fen, 'langJaUrl' => '/pazuru-o-toku/'.$fen, 'langKoUrl' => '/pojeureul-pulda/'.$fen, 'langZhUrl' => '/jiejuenanti/'.$fen, 'canonicalUrl' => '/jiejuenanti/'.$fen]);
-})->where(['fen' => $fenRegex])->middleware('locale:zh');
+$localizedLevelPages = [
+    'ai.home' => [
+        'vi' => ['title' => 'Trang chủ', 'level' => '3', 'levelTxt' => 'Bình thường'],
+        'en' => ['title' => 'Home', 'level' => '3', 'levelTxt' => 'Normal'],
+        'ja' => ['title' => 'ホームページ', 'level' => '3', 'levelTxt' => 'ツジョ'],
+        'ko' => ['title' => '홈페이지', 'level' => '3', 'levelTxt' => '노멀'],
+        'zh' => ['title' => '主页', 'level' => '3', 'levelTxt' => '典型的'],
+    ],
+    'ai.easiest' => [
+        'vi' => ['title' => 'Dễ nhất', 'level' => '1', 'levelTxt' => 'Dễ nhất'],
+        'en' => ['title' => 'Easiest', 'level' => '1', 'levelTxt' => 'Easiest'],
+        'ja' => ['title' => '最も簡単', 'level' => '1', 'levelTxt' => '最も簡単'],
+        'ko' => ['title' => '가장 쉬운', 'level' => '1', 'levelTxt' => '가장 쉬운'],
+        'zh' => ['title' => '最容易的', 'level' => '1', 'levelTxt' => '最容易的'],
+    ],
+    'ai.newbie' => [
+        'vi' => ['title' => 'Mới chơi', 'level' => '1', 'levelTxt' => 'Mới chơi'],
+        'en' => ['title' => 'Newbie', 'level' => '1', 'levelTxt' => 'Newbie'],
+        'ja' => ['title' => '初心者', 'level' => '1', 'levelTxt' => '初心者'],
+        'ko' => ['title' => '뉴비', 'level' => '1', 'levelTxt' => '뉴비'],
+        'zh' => ['title' => '新手', 'level' => '1', 'levelTxt' => '新手'],
+    ],
+    'ai.easy' => [
+        'vi' => ['title' => 'Dễ', 'level' => '2', 'levelTxt' => 'Dễ'],
+        'en' => ['title' => 'Easy', 'level' => '2', 'levelTxt' => 'Easy'],
+        'ja' => ['title' => '簡単', 'level' => '2', 'levelTxt' => '簡単'],
+        'ko' => ['title' => '쉬운', 'level' => '2', 'levelTxt' => '쉬운'],
+        'zh' => ['title' => '容易的', 'level' => '2', 'levelTxt' => '容易的'],
+    ],
+    'ai.normal' => [
+        'vi' => ['title' => 'Bình thường', 'level' => '3', 'levelTxt' => 'Bình thường'],
+        'en' => ['title' => 'Normal', 'level' => '3', 'levelTxt' => 'Normal'],
+        'ja' => ['title' => 'ツジョ', 'level' => '3', 'levelTxt' => 'ツジョ'],
+        'ko' => ['title' => '노멀', 'level' => '3', 'levelTxt' => '노멀'],
+        'zh' => ['title' => '典型的', 'level' => '3', 'levelTxt' => '典型的'],
+    ],
+    'ai.hard' => [
+        'vi' => ['title' => 'Khó', 'level' => '4', 'levelTxt' => 'Khó'],
+        'en' => ['title' => 'Hard', 'level' => '4', 'levelTxt' => 'Hard'],
+        'ja' => ['title' => 'ハード', 'level' => '4', 'levelTxt' => 'ハード'],
+        'ko' => ['title' => '하드', 'level' => '4', 'levelTxt' => '하드'],
+        'zh' => ['title' => '坚固的', 'level' => '4', 'levelTxt' => '坚固的'],
+    ],
+    'ai.hardest' => [
+        'vi' => ['title' => 'Khó nhất', 'level' => '5', 'levelTxt' => 'Khó nhất'],
+        'en' => ['title' => 'Hardest', 'level' => '5', 'levelTxt' => 'Hardest'],
+        'ja' => ['title' => '最も難しい', 'level' => '5', 'levelTxt' => '最も難しい'],
+        'ko' => ['title' => '가장 단단한', 'level' => '5', 'levelTxt' => '가장 단단한'],
+        'zh' => ['title' => '最难的', 'level' => '5', 'levelTxt' => '最难的'],
+    ],
+    'ai.master' => [
+        'vi' => ['title' => 'Kiện tướng', 'level' => '8', 'levelTxt' => 'Kiện tướng'],
+        'en' => ['title' => 'Master', 'level' => '8', 'levelTxt' => 'Master'],
+        'ja' => ['title' => 'マスター', 'level' => '8', 'levelTxt' => 'マスター'],
+        'ko' => ['title' => '마스터', 'level' => '8', 'levelTxt' => '마스터'],
+        'zh' => ['title' => '大师级', 'level' => '8', 'levelTxt' => '大师级'],
+    ],
+];
 
-Route::match(['get', 'post'], '', function () {
-return view('ai', ['headTitle' => 'Trang chủ', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'level' => '3', 'levelTxt' => 'Bình thường', 'canonicalUrl' => '']);
-})->middleware('locale:vi');
-Route::match(['get', 'post'], '/de-nhat', function () {
-return view('ai', ['headTitle' => 'Dễ nhất', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/de-nhat', 'langEnUrl' => '/easiest', 'langJaUrl' => '/mottomo-kantan', 'langKoUrl' => '/gajang-swiun', 'langZhUrl' => '/zuirongyide', 'level' => '1', 'levelTxt' => 'Dễ nhất', 'canonicalUrl' => '/de-nhat']);
-})->middleware('locale:vi');
-Route::match(['get', 'post'], '/moi-choi', function () {
-  return view('ai', ['headTitle' => 'Mới chơi', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/moi-choi', 'langEnUrl' => '/newbie', 'langJaUrl' => '/shoshinsha', 'langKoUrl' => '/nyubi', 'langZhUrl' => '/xinshou', 'level' => '1', 'levelTxt' => 'Mới chơi', 'canonicalUrl' => '/moi-choi']);
-})->middleware('locale:vi');
-Route::match(['get', 'post'], '/de', function () {
-return view('ai', ['headTitle' => 'Dễ', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/de', 'langEnUrl' => '/easy', 'langJaUrl' => '/kantan', 'langKoUrl' => '/iji', 'langZhUrl' => '/rongyide', 'level' => '2', 'levelTxt' => 'Dễ', 'canonicalUrl' => '/de']);
-})->middleware('locale:vi');
-Route::match(['get', 'post'], '/binh-thuong', function () {
-return view('ai', ['headTitle' => 'Bình thường', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/binh-thuong', 'langEnUrl' => '/normal', 'langJaUrl' => '/tsujo', 'langKoUrl' => '/nomol', 'langZhUrl' => '/dianxingde', 'level' => '3', 'levelTxt' => 'Bình thường', 'canonicalUrl' => '/binh-thuong']);
-})->middleware('locale:vi');
-Route::match(['get', 'post'], '/kho', function () {
-return view('ai', ['headTitle' => 'Khó', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/kho', 'langEnUrl' => '/hard', 'langJaUrl' => '/muzukashi', 'langKoUrl' => '/hadeu', 'langZhUrl' => '/jiangude', 'level' => '4', 'levelTxt' => 'Khó', 'canonicalUrl' => '/kho']);
-})->middleware('locale:vi');
-Route::match(['get', 'post'], '/kho-nhat', function () {
-return view('ai', ['headTitle' => 'Khó nhất', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/kho-nhat', 'langEnUrl' => '/hardest', 'langJaUrl' => '/mottomo-muzukashi', 'langKoUrl' => '/gajang-dandanhan', 'langZhUrl' => '/zuinande', 'level' => '5', 'levelTxt' => 'Khó nhất', 'canonicalUrl' => '/kho-nhat']);
-})->middleware('locale:vi');
-Route::match(['get', 'post'], '/en', function () {
-return view('ai', ['headTitle' => 'Home', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'level' => '3', 'levelTxt' => 'Normal', 'canonicalUrl' => '/en']);
-})->middleware('locale:en');
-Route::match(['get', 'post'], '/easiest', function () {
-return view('ai', ['headTitle' => 'Easiest', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/de-nhat', 'langEnUrl' => '/easiest', 'langJaUrl' => '/mottomo-kantan', 'langKoUrl' => '/gajang-swiun', 'langZhUrl' => '/zuirongyide', 'level' => '1', 'levelTxt' => 'Easiest', 'canonicalUrl' => '/easiest']);
-})->middleware('locale:en');
-Route::match(['get', 'post'], '/newbie', function () {
-  return view('ai', ['headTitle' => 'Newbie', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/moi-choi', 'langEnUrl' => '/newbie', 'langJaUrl' => '/shoshinsha', 'langKoUrl' => '/nyubi', 'langZhUrl' => '/xinshou', 'level' => '1', 'levelTxt' => 'Newbie', 'canonicalUrl' => '/newbie']);
-})->middleware('locale:en');
-Route::match(['get', 'post'], '/easy', function () {
-return view('ai', ['headTitle' => 'Easy', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/de', 'langEnUrl' => '/easy', 'langJaUrl' => '/kantan', 'langKoUrl' => '/iji', 'langZhUrl' => '/rongyide', 'level' => '2', 'levelTxt' => 'Easy', 'canonicalUrl' => '/easy']);
-})->middleware('locale:en');
-Route::match(['get', 'post'], '/normal', function () {
-return view('ai', ['headTitle' => 'Normal', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/binh-thuong', 'langEnUrl' => '/normal', 'langJaUrl' => '/tsujo', 'langKoUrl' => '/nomol', 'langZhUrl' => '/dianxingde', 'level' => '3', 'levelTxt' => 'Normal', 'canonicalUrl' => '/normal']);
-})->middleware('locale:en');
-Route::match(['get', 'post'], '/hard', function () {
-return view('ai', ['headTitle' => 'Hard', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/kho', 'langEnUrl' => '/hard', 'langJaUrl' => '/muzukashi', 'langKoUrl' => '/hadeu', 'langZhUrl' => '/jiangude', 'level' => '4', 'levelTxt' => 'Hard', 'canonicalUrl' => '/hard']);
-})->middleware('locale:en');
-Route::match(['get', 'post'], '/hardest', function () {
-return view('ai', ['headTitle' => 'Hardest', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/kho-nhat', 'langEnUrl' => '/hardest', 'langJaUrl' => '/mottomo-muzukashi', 'langKoUrl' => '/gajang-dandanhan', 'langZhUrl' => '/zuinande', 'level' => '5', 'levelTxt' => 'Hardest', 'canonicalUrl' => '/hardest']);
-})->middleware('locale:en');
+foreach ($localizedLevelPages as $pageKey => $localizedPages) {
+    foreach ($localizedPages as $locale => $page) {
+        Route::match(['get', 'post'], localized_path($pageKey, [], $locale), function () use ($pageKey, $locale, $page) {
+            return view('ai', localized_page_data($pageKey, $locale, [
+                'headTitle' => $page['title'],
+                'bodyClass' => 'home',
+                'randomRoom' => RoomController::getRandomRoom(),
+                'roomCode' => '',
+                'cdnUrl' => url(''),
+                'level' => $page['level'],
+                'levelTxt' => $page['levelTxt'],
+            ]));
+        })->middleware("locale:{$locale}");
+    }
+}
+
 Route::match(['get', 'post'], '/play-with-ai', function () {
 return redirect('/en', 301);
 });
@@ -730,73 +786,6 @@ return redirect('/hard', 301);
 Route::match(['get', 'post'], '/play-with-ai/hardest', function () {
 return redirect('/hardest', 301);
 });
-
-Route::match(['get', 'post'], '/ja', function () {
-return view('ai', ['headTitle' => 'ホームページ', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'level' => '3', 'levelTxt' => 'ツジョ', 'canonicalUrl' => '/ja']);
-})->middleware('locale:ja');
-Route::match(['get', 'post'], '/mottomo-kantan', function () {
-return view('ai', ['headTitle' => '最も簡単', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/de-nhat', 'langEnUrl' => '/easiest', 'langJaUrl' => '/mottomo-kantan', 'langKoUrl' => '/gajang-swiun', 'langZhUrl' => '/zuirongyide', 'level' => '1', 'levelTxt' => '最も簡単', 'canonicalUrl' => '/mottomo-kantan']);
-})->middleware('locale:ja');
-Route::match(['get', 'post'], '/shoshinsha', function () {
-  return view('ai', ['headTitle' => '初心者', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/moi-choi', 'langEnUrl' => '/newbie', 'langJaUrl' => '/shoshinsha', 'langKoUrl' => '/nyubi', 'langZhUrl' => '/xinshou', 'level' => '1', 'levelTxt' => '初心者', 'canonicalUrl' => '/shoshinsha']);
-})->middleware('locale:ja');
-Route::match(['get', 'post'], '/kantan', function () {
-return view('ai', ['headTitle' => '簡単', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/de', 'langEnUrl' => '/easy', 'langJaUrl' => '/kantan', 'langKoUrl' => '/iji', 'langZhUrl' => '/rongyide', 'level' => '2', 'levelTxt' => '簡単', 'canonicalUrl' => '/kantan']);
-})->middleware('locale:ja');
-Route::match(['get', 'post'], '/tsujo', function () {
-return view('ai', ['headTitle' => 'ツジョ', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/binh-thuong', 'langEnUrl' => '/normal', 'langJaUrl' => '/tsujo', 'langKoUrl' => '/nomol', 'langZhUrl' => '/dianxingde', 'level' => '3', 'levelTxt' => 'ツジョ', 'canonicalUrl' => '/tsujo']);
-})->middleware('locale:ja');
-Route::match(['get', 'post'], '/hado', function () {
-return view('ai', ['headTitle' => 'ハード', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/kho', 'langEnUrl' => '/hard', 'langJaUrl' => '/muzukashi', 'langKoUrl' => '/hadeu', 'langZhUrl' => '/jiangude', 'level' => '4', 'levelTxt' => 'ハード', 'canonicalUrl' => '/muzukashi']);
-})->middleware('locale:ja');
-Route::match(['get', 'post'], '/mottomo-muzukashi', function () {
-return view('ai', ['headTitle' => '最も難しい', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/kho-nhat', 'langEnUrl' => '/hardest', 'langJaUrl' => '/mottomo-muzukashi', 'langKoUrl' => '/gajang-dandanhan', 'langZhUrl' => '/zuinande', 'level' => '5', 'levelTxt' => '最も難しい', 'canonicalUrl' => '/mottomo-muzukashi']);
-})->middleware('locale:ja');
-
-Route::match(['get', 'post'], '/ko', function () {
-return view('ai', ['headTitle' => '홈페이지', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'level' => '3', 'levelTxt' => '노멀', 'canonicalUrl' => '/ko']);
-})->middleware('locale:ko');
-Route::match(['get', 'post'], '/gajang-swiun', function () {
-return view('ai', ['headTitle' => '가장 쉬운', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/de-nhat', 'langEnUrl' => '/easiest', 'langJaUrl' => '/mottomo-kantan', 'langKoUrl' => '/gajang-swiun', 'langZhUrl' => '/zuirongyide', 'level' => '1', 'levelTxt' => '가장 쉬운', 'canonicalUrl' => '/gajang-swiun']);
-})->middleware('locale:ko');
-Route::match(['get', 'post'], '/nyubi', function () {
-  return view('ai', ['headTitle' => '뉴비', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/moi-choi', 'langEnUrl' => '/newbie', 'langJaUrl' => '/shoshinsha', 'langKoUrl' => '/nyubi', 'langZhUrl' => '/xinshou', 'level' => '1', 'levelTxt' => '뉴비', 'canonicalUrl' => '/nyubi']);
-})->middleware('locale:ko');
-Route::match(['get', 'post'], '/iji', function () {
-return view('ai', ['headTitle' => '쉬운', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/de', 'langEnUrl' => '/easy', 'langJaUrl' => '/kantan', 'langKoUrl' => '/iji', 'langZhUrl' => '/rongyide', 'level' => '2', 'levelTxt' => '쉬운', 'canonicalUrl' => '/iji']);
-})->middleware('locale:ko');
-Route::match(['get', 'post'], '/nomol', function () {
-return view('ai', ['headTitle' => '노멀', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/binh-thuong', 'langEnUrl' => '/normal', 'langJaUrl' => '/tsujo', 'langKoUrl' => '/nomol', 'langZhUrl' => '/dianxingde', 'level' => '3', 'levelTxt' => '노멀', 'canonicalUrl' => '/nomol']);
-})->middleware('locale:ko');
-Route::match(['get', 'post'], '/hadeu', function () {
-return view('ai', ['headTitle' => '하드', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/kho', 'langEnUrl' => '/hard', 'langJaUrl' => '/muzukashi', 'langKoUrl' => '/hadeu', 'langZhUrl' => '/jiangude', 'level' => '4', 'levelTxt' => '하드', 'canonicalUrl' => '/hadeu']);
-})->middleware('locale:ko');
-Route::match(['get', 'post'], '/gajang-dandanhan', function () {
-return view('ai', ['headTitle' => '가장 단단한', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/kho-nhat', 'langEnUrl' => '/hardest', 'langJaUrl' => '/mottomo-muzukashi', 'langKoUrl' => '/gajang-dandanhan', 'langZhUrl' => '/zuinande', 'level' => '5', 'levelTxt' => '가장 단단한', 'canonicalUrl' => '/gajang-dandanhan']);
-})->middleware('locale:ko');
-
-
-Route::match(['get', 'post'], '/zh', function () {
-return view('ai', ['headTitle' => '主页', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'level' => '3', 'levelTxt' => '典型的', 'canonicalUrl' => '/zh']);
-})->middleware('locale:zh');
-Route::match(['get', 'post'], '/zuirongyide', function () {
-return view('ai', ['headTitle' => '最容易的', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/de-nhat', 'langEnUrl' => '/easiest', 'langJaUrl' => '/mottomo-kantan', 'langKoUrl' => '/gajang-swiun', 'langZhUrl' => '/zuirongyide', 'level' => '1', 'levelTxt' => '最容易的', 'canonicalUrl' => '/zuirongyide']);
-})->middleware('locale:zh');
-Route::match(['get', 'post'], '/xinshou', function () {
-  return view('ai', ['headTitle' => '新手', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/moi-choi', 'langEnUrl' => '/newbie', 'langJaUrl' => '/shoshinsha', 'langKoUrl' => '/nyubi', 'langZhUrl' => '/xinshou', 'level' => '1', 'levelTxt' => '新手', 'canonicalUrl' => '/xinshou']);
-})->middleware('locale:zh');
-Route::match(['get', 'post'], '/rongyide', function () {
-return view('ai', ['headTitle' => '容易的', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/de', 'langEnUrl' => '/easy', 'langJaUrl' => '/kantan', 'langKoUrl' => '/iji', 'langZhUrl' => '/rongyide', 'level' => '2', 'levelTxt' => '容易的', 'canonicalUrl' => '/rongyide']);
-})->middleware('locale:zh');
-Route::match(['get', 'post'], '/dianxingde', function () {
-return view('ai', ['headTitle' => '典型的', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/binh-thuong', 'langEnUrl' => '/normal', 'langJaUrl' => '/tsujo', 'langKoUrl' => '/nomol', 'langZhUrl' => '/dianxingde', 'level' => '3', 'levelTxt' => '典型的', 'canonicalUrl' => '/dianxingde']);
-})->middleware('locale:zh');
-Route::match(['get', 'post'], '/jiangude', function () {
-return view('ai', ['headTitle' => '坚固的', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/kho', 'langEnUrl' => '/hard', 'langJaUrl' => '/muzukashi', 'langKoUrl' => '/hadeu', 'langZhUrl' => '/jiangude', 'level' => '4', 'levelTxt' => '坚固的', 'canonicalUrl' => '/jiangude']);
-})->middleware('locale:zh');
-Route::match(['get', 'post'], '/zuinande', function () {
-return view('ai', ['headTitle' => '最难的', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/kho-nhat', 'langEnUrl' => '/hardest', 'langJaUrl' => '/mottomo-muzukashi', 'langKoUrl' => '/gajang-dandanhan', 'langZhUrl' => '/zuinande', 'level' => '5', 'levelTxt' => '最难的', 'canonicalUrl' => '/zuinande']);
-})->middleware('locale:zh');
 
 $localizedStaticPages = [
   'about' => [

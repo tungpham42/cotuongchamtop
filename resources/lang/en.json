@@ -22,7 +22,7 @@
     "Ấn để sao chép": "Click to copy",
     "Giới thiệu": "About us",
     "6\" data-intro=\"Ấn vào đây để mời bạn bè cùng chơi": "5\" data-intro=\"Click here to copy the link and invite friends to play",
-    "Máy đang suy nghĩ": "Thinking",
+    "Đang suy nghĩ": "Thinking",
     "đang bị chiếu": "is in check",
     "Ấn vào đây để mời bạn bè cùng chơi": "Click here to copy the link and invite friends to play",
     "Dùng mã phòng này để tìm kiếm trận đấu\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Sao chép mã phòng này nhé\"><i class=\"fad fa-trophy-alt\"></i> Mã phòng": "Use this room code to search for match\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Copy this room code\"><i class=\"fad fa-trophy-alt\"></i> Room code",
@@ -368,5 +368,9 @@
     "Vào phòng đấu": "Enter match room",
     "Xem kết quả": "View result",
     "Sơ đồ giải đấu chưa được tạo.": "Tournament bracket not generated yet.",
-    "Sơ đồ sẽ xuất hiện khi giải đấu bắt đầu và bốc thăm hoàn tất.": "Bracket will appear when the tournament starts and the draw is completed."
+    "Sơ đồ sẽ xuất hiện khi giải đấu bắt đầu và bốc thăm hoàn tất.": "Bracket will appear when the tournament starts and the draw is completed.",
+    "Kiện tướng": "Master",
+    "Đại Kiện Tướng": "Grandmaster",
+    "khiêu chiến": "challenging",
+    "Bạn đang khiêu chiến với đối thủ mạnh nhất.": "You are challenging the strongest opponent."
 }

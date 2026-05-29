@@ -22,7 +22,7 @@
     "Ấn để sao chép": "복사하려면 클릭",
     "Giới thiệu": "소개",
     "Ấn vào đây để mời bạn bè cùng chơi": "여기를 클릭하여 링크를 복사하고 친구를 초대하여 함께 플레이하세요",
-    "Máy đang suy nghĩ": "생각",
+    "Đang suy nghĩ": "생각",
     "đang bị chiếu": "이(가) 체크 상태입니다",
     "Dùng mã phòng này để tìm kiếm trận đấu\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Sao chép mã phòng này nhé\"><i class=\"fad fa-trophy-alt\"></i> Mã phòng": "이 방 코드를 사용하여 매치를 검색하세요\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"이 룸 코드를 복사\"><i class=\"fad fa-trophy-alt\"></i> 객실코드",
     "5\" data-intro=\"Ấn vào đây nếu bạn không biết đi nước nào\" id=\"resign\" class=\"w-25 btn btn-dark btn-lg\"><i class=\"fad fa-flag\"></i> Bỏ cuộc": "1\" data-intro=\"단서가 부족한 경우 여기를 클릭하세요\" id=\"resign\" class=\"btn btn-dark btn-lg\"><i class=\"fad fa-flag\"></i> 사직하다",
@@ -342,5 +342,9 @@
     "Vào phòng đấu": "매치 룸 입장",
     "Xem kết quả": "결과 보기",
     "Sơ đồ giải đấu chưa được tạo.": "토너먼트 대진표가 아직 생성되지 않았습니다.",
-    "Sơ đồ sẽ xuất hiện khi giải đấu bắt đầu và bốc thăm hoàn tất.": "토너먼트가 시작되고 추첨이 완료되면 대진표가 나타납니다."
+    "Sơ đồ sẽ xuất hiện khi giải đấu bắt đầu và bốc thăm hoàn tất.": "토너먼트가 시작되고 추첨이 완료되면 대진표가 나타납니다.",
+    "Kiện tướng": "마스터",
+    "Đại Kiện Tướng": "그랜드마스터",
+    "khiêu chiến": "도전",
+    "Bạn đang khiêu chiến với đối thủ mạnh nhất.": "가장 강력한 상대에게 도전하고 있습니다."
 }
