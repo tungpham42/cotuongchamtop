@@ -1,3 +1,8 @@
+<button id="find-match-btn" class="px-5 py-2 mx-auto mt-3 btn btn-lg btn-danger d-inline-block">
+    <i class="fad fa-play mr-2"></i> {{ __("Tìm trận") }}
+</button>
+<span id="match-status" class="mt-3 d-inline w-100 text-center"></span>
+
 <script>
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
