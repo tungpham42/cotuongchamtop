@@ -16,7 +16,7 @@ $actionMap = [
     '3' => 'chơi',
     '4' => 'đấu',
     '5' => 'đấu trí',
-    '6' => 'khiêu chiến',
+    '8' => 'khiêu chiến',
 ];
 
 $action = $actionMap[$level ?? '3'] ?? 'chơi';
