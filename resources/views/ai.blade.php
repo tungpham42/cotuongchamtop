@@ -409,8 +409,10 @@ $(document).ready(function() {
 });
 @endif
 </script>
+@if(isset($level) && $level != '8')
 @include('layout.partials.players')
 @include('layout.partials.userPuzzles')
 @include('layout.partials.boards')
 @include('layout.partials.playedBoards')
+@endif
 @endsection

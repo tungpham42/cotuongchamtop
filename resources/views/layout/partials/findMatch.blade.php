@@ -58,8 +58,8 @@
         pollInterval = setInterval(() => {
             waitSeconds++;
 
-            // If 5 seconds have passed and no human is found, match with Phạm Tùng (Bot)
-            if (waitSeconds >= 5 && !hasMatched) {
+            // If 10 seconds have passed and no human is found, match with Phạm Tùng (Bot)
+            if (waitSeconds >= 10 && !hasMatched) {
                 hasMatched = true;
                 clearInterval(pollInterval);
                 showMatchFoundModal(null, true);
