@@ -110,22 +110,10 @@ class TournamentController extends Controller
             'headTitle' => 'Danh sách Giải đấu',
             'bodyClass' => 'dashboard',
             'tournaments' => $tournaments,
-
-            // Bổ sung thêm dòng này
-            'canonicalUrl' => '/giai-dau',
-
-            // Các biến đã thêm từ trước
+            'canonicalUrl' => url('/giai-dau'),
             'randomRoom' => RoomController::getRandomRoom(),
             'roomCode' => '',
             'cdnUrl' => url(''),
-            'userPuzzles' => PuzzleController::getUserPuzzles(),
-            'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(),
-            'boards' => RoomController::getBoards(),
-            'firstPageBoards' => RoomController::getFirstPageBoards(),
-            'playedBoards' => RoomController::getPlayedBoards(),
-            'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(),
-            'players' => UserController::getPlayers(),
-            'firstPagePlayers' => UserController::getFirstPagePlayers(),
         ]);
     }
 
@@ -142,22 +130,10 @@ class TournamentController extends Controller
             'bodyClass' => 'dashboard',
             'tournament' => $tournament,
             'rounds' => $rounds,
-
-            // Bổ sung thêm dòng này (trỏ đích danh vào ID giải đấu)
-            'canonicalUrl' => '/giai-dau/' . $tournament->slug,
-
-            // Các biến đã thêm từ trước
+            'canonicalUrl' => url('/giai-dau/' . $tournament->slug),
             'randomRoom' => RoomController::getRandomRoom(),
             'roomCode' => '',
             'cdnUrl' => url(''),
-            'userPuzzles' => PuzzleController::getUserPuzzles(),
-            'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(),
-            'boards' => RoomController::getBoards(),
-            'firstPageBoards' => RoomController::getFirstPageBoards(),
-            'playedBoards' => RoomController::getPlayedBoards(),
-            'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(),
-            'players' => UserController::getPlayers(),
-            'firstPagePlayers' => UserController::getFirstPagePlayers(),
         ]);
     }
 
@@ -177,19 +153,10 @@ class TournamentController extends Controller
         return view('tournaments.create', [
             'headTitle' => 'Tạo Giải đấu mới',
             'bodyClass' => 'dashboard',
-            'canonicalUrl' => '/admin/giai-dau/tao-moi',
-            // Các biến bắt buộc cho Layout
+            'canonicalUrl' => url('/admin/giai-dau/tao-moi'),
             'randomRoom' => RoomController::getRandomRoom(),
             'roomCode' => '',
             'cdnUrl' => url(''),
-            'userPuzzles' => PuzzleController::getUserPuzzles(),
-            'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(),
-            'boards' => RoomController::getBoards(),
-            'firstPageBoards' => RoomController::getFirstPageBoards(),
-            'playedBoards' => RoomController::getPlayedBoards(),
-            'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(),
-            'players' => UserController::getPlayers(),
-            'firstPagePlayers' => UserController::getFirstPagePlayers(),
         ]);
     }
 
@@ -229,19 +196,10 @@ class TournamentController extends Controller
             'headTitle' => 'Sửa Giải đấu: ' . $tournament->name,
             'bodyClass' => 'dashboard',
             'tournament' => $tournament,
-            'canonicalUrl' => '/admin/giai-dau/' . $tournament->slug . '/sua',
-            // Các biến bắt buộc cho Layout
+            'canonicalUrl' => url('/admin/giai-dau/' . $tournament->slug . '/sua'),
             'randomRoom' => RoomController::getRandomRoom(),
             'roomCode' => '',
             'cdnUrl' => url(''),
-            'userPuzzles' => PuzzleController::getUserPuzzles(),
-            'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(),
-            'boards' => RoomController::getBoards(),
-            'firstPageBoards' => RoomController::getFirstPageBoards(),
-            'playedBoards' => RoomController::getPlayedBoards(),
-            'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(),
-            'players' => UserController::getPlayers(),
-            'firstPagePlayers' => UserController::getFirstPagePlayers(),
         ]);
     }
 

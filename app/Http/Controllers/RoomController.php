@@ -1462,67 +1462,70 @@ class RoomController extends Controller
     {
         $initialFen = env('INITIAL_FEN') ?: 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1';
 
-        // 1. CLEANUP: Delete very old abandoned rooms (older than 5 mins)
-        // We do this outside the transaction to keep the lock fast
-        Room::whereNull('result')
-            ->where('modified_at', '<', now()->subMinutes(5))
-            ->delete();
+        // 1. CLEANUP: Throttled to reduce DB contention (e.g., runs ~10% of the time).
+        // Ideally, move this to a scheduled Laravel command/cron job later.
+        if (rand(1, 10) === 1) {
+            Room::whereNull('result')
+                ->where('modified_at', '<', now()->subMinutes(5))
+                ->delete();
+        }
 
-        return DB::transaction(function () use ($sessionId, $initialFen) {
-            // 2. CHECK EXISTING: Is this user already in a room?
-            $currentRoom = Room::where(function($query) use ($sessionId) {
-                    $query->where('host_session', $sessionId)
-                        ->orWhere('guest_session', $sessionId);
-                })
-                ->whereNull('result')
-                ->lockForUpdate() // Lock this row to prevent conflicts
-                ->first();
+        // 2. CHECK EXISTING: Is this user already in a room?
+        $currentRoom = Room::where(function($query) use ($sessionId) {
+                $query->where('host_session', $sessionId)
+                    ->orWhere('guest_session', $sessionId);
+            })
+            ->whereNull('result')
+            ->first();
 
-            if ($currentRoom) {
-                // Update 'last seen' so the room stays alive
-                $currentRoom->update(['modified_at' => now()]);
-                return $currentRoom;
-            }
+        if ($currentRoom) {
+            $currentRoom->update(['modified_at' => now()]);
+            return $currentRoom;
+        }
 
-            // 3. MATCHMAKING: Find a room waiting for a guest
-            // CRITICAL CHANGE: Only join rooms modified in the last 15 seconds.
-            // This ensures we don't join a room where the Host closed their browser 1 minute ago.
-            $availableRoom = Room::whereNotNull('host_session')
+        // 3. MATCHMAKING: Find a room waiting for a guest (No gap locks!)
+        $availableRoom = Room::whereNotNull('host_session')
+            ->whereNull('guest_session')
+            ->whereNull('result')
+            ->whereNull('pass')
+            ->where('fen', '=', $initialFen)
+            ->where('modified_at', '>', now()->subSeconds(15))
+            ->orderBy('modified_at', 'desc')
+            ->first();
+
+        if ($availableRoom) {
+            // Atomic update to safely claim the room without race conditions
+            $updated = Room::where('code', $availableRoom->code)
                 ->whereNull('guest_session')
-                ->whereNull('result')
-                ->whereNull('pass')
-                ->where('fen', '=', $initialFen)
-                ->where('modified_at', '>', now()->subSeconds(15))
-                ->orderBy('modified_at', 'desc') // Prioritize most active/recent host
-                ->lockForUpdate() // PREVENTS RACE CONDITION
-                ->first();
-
-            if ($availableRoom) {
-                $availableRoom->update([
+                ->update([
                     'guest_session' => $sessionId,
                     'modified_at'   => now(),
                 ]);
 
-                return $availableRoom->fresh();
+            if ($updated) {
+                return Room::where('code', $availableRoom->code)->first();
             }
 
-            // 4. CREATE: No match found, create a new room
-            return Room::create([
-                'code'          => md5(time() . $sessionId . uniqid()), // Added uniqid for extra entropy
-                'fen'           => $initialFen,
-                'name'          => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
-                'host_session'  => $sessionId,
-                'guest_session' => null,
-                'host_id'       => null,
-                'guest_id'      => null,
-                'pass'          => null,
-                'red_time'      => 600,
-                'black_time'    => 600,
-                'active_player' => null,
-                'last_update'   => null,
-                'modified_at'   => now(),
-            ]);
-        });
+            // If the update failed, someone else grabbed the room milliseconds before. Retry!
+            return $this->prepareAnonymousRoom($sessionId);
+        }
+
+        // 4. CREATE: No match found, create a new room
+        return Room::create([
+            'code'          => md5(time() . $sessionId . uniqid('', true)), // Added true for extra entropy
+            'fen'           => $initialFen,
+            'name'          => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
+            'host_session'  => $sessionId,
+            'guest_session' => null,
+            'host_id'       => null,
+            'guest_id'      => null,
+            'pass'          => null,
+            'red_time'      => 600,
+            'black_time'    => 600,
+            'active_player' => null,
+            'last_update'   => null,
+            'modified_at'   => now(),
+        ]);
     }
 
     /**

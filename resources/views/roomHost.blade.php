@@ -139,8 +139,9 @@ let kypho = null;
 let lastMoveIccs = null;
 
 function updateFenCode(roomCode, moveIccs) {
-  board.position(game.fen(), true);
-  game.load(game.fen());
+  currentFEN = game.fen();
+  // board.position(currentFEN, true);
+
   const payload = {
     'ma-phong': roomCode,
     'FEN': game.fen()
@@ -167,26 +168,52 @@ function manipulateRoom(roomCode) {
     dataType: 'text'
   }).done(function(newFEN) {
     if (newFEN != currentFEN) {
-      currentFEN = game.fen();
-      if (newFEN == game.fen()) {
-        // my move
-        board.position(newFEN, true);
-        game.load(newFEN);
-      } else {
-        // opponent's move
-        board.position(newFEN, true);
-        game.load(newFEN);
-        nuocCo.play();
-      }
-      const currentPlayer = game.turn() === 'b' ? 'red' : 'black';
-      @if (!isset($room->tournament_id))
-        switchTurn(roomCode, currentPlayer);
-      @endif
-      if (kypho) {
-        kypho.syncMoves('{{ url('/api') }}/readMoves/' + roomCode);
-      }
+      let isMyMove = (newFEN == game.fen()); // Kiểm tra xem có phải do mình vừa đi không
+      currentFEN = newFEN;
+      board.position(newFEN, true);
+
+      // Gọi API lấy mảng lịch sử nước đi (ICCS) từ server
+      $.ajax({
+        type: "GET",
+        url: '{{ url('/api') }}/readMoves/' + roomCode,
+        dataType: 'json'
+      }).done(function(moves) {
+        let lastMove = (moves && moves.length > 0) ? moves[moves.length - 1] : null;
+        let tempGame = new Xiangqi(game.fen());
+
+        if (lastMove) {
+          tempGame.move(lastMove);
+        }
+
+        if (lastMove && tempGame.fen() === newFEN) {
+          game.move(lastMove);
+        } else {
+          game.reset();
+          if (moves && Array.isArray(moves)) {
+            moves.forEach(function(m) {
+              game.move(m);
+            });
+          }
+        }
+
+        if (!isMyMove) {
+          nuocCo.play();
+        }
+
+        const currentPlayer = game.turn() === 'b' ? 'red' : 'black';
+        @if (!isset($room->tournament_id))
+          switchTurn(roomCode, currentPlayer);
+        @endif
+
+        if (kypho) {
+          kypho.syncMoves('{{ url('/api') }}/readMoves/' + roomCode);
+        }
+
+        updateStatus();
+      });
+    } else {
+      updateStatus();
     }
-    updateStatus()
   });
 }
 
@@ -437,14 +464,17 @@ function updateStatus () {
     resignAlertShown = true;
     $('#header-status').html(': '+status+' - {{ __("Đã bỏ cuộc") }}');
 
-    // Determine who resigned based on whose turn it is now
+    // Determine who resigned based on the explicit FEN string marker
     let resignResult;
-    if (board.orientation() === 'black') {
-      // Black player resigned (Black loses = 1)
+    if (game.fen().includes('resign-black')) {
+      // Black player explicitly resigned (Black loses, Red wins = 1)
       resignResult = '1';
-    } else {
-      // Red player resigned (Red loses = -1)
+    } else if (game.fen().includes('resign-red')) {
+      // Red player explicitly resigned (Red loses, Black wins = -1)
       resignResult = '-1';
+    } else {
+      // Fallback for any old cached sessions
+      resignResult = board.orientation() === 'black' ? '1' : '-1';
     }
 
     bootbox.alert({
@@ -561,7 +591,8 @@ updateStatus()
 @endif
 @if (!isset($room->tournament_id))
   $('#resign').on('click', function() {
-    game.load(game.fen() + ' resign');
+    // Append the specific color of the person resigning
+    game.load(game.fen() + ' resign-' + board.orientation());
     updateFenCode('{{ $roomCode }}');
     updateStatus();
   });

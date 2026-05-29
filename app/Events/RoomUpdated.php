@@ -4,10 +4,10 @@ namespace App\Events;
 
 use App\Models\Room;
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
-use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Foundation\Events\Dispatchable;
 
 class RoomUpdated implements ShouldBroadcastNow
 {
@@ -20,26 +20,15 @@ class RoomUpdated implements ShouldBroadcastNow
         $this->room = $room;
     }
 
+    // Đặt tên kênh (channel) dựa trên mã phòng
     public function broadcastOn()
     {
         return new Channel('room.' . $this->room->code);
     }
 
+    // (Tùy chọn) Đặt tên sự kiện
     public function broadcastAs()
     {
         return 'room.updated';
-    }
-
-    public function broadcastWith()
-    {
-        return [
-            'code'          => $this->room->code,
-            'fen'           => $this->room->fen,
-            'red_time'      => $this->room->red_time,
-            'black_time'    => $this->room->black_time,
-            'active_player' => $this->room->active_player,
-            'modified_at'   => (string) $this->room->modified_at,
-            'last_update'   => (string) $this->room->last_update,
-        ];
     }
 }

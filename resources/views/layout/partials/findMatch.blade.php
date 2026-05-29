@@ -6,7 +6,7 @@
 <script>
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    let sessionId = localStorage.getItem('match_session_id') || 'guest_' + Math.random().toString(36).substr(2, 9);
+    let sessionId = sessionStorage.getItem('match_session_id') || 'guest_' + Math.random().toString(36).substr(2, 9);
     let pollInterval;
     let errorCount = 0;
 
@@ -25,7 +25,8 @@
         axios.post(routes.findMatch, { session_id: sessionId })
             .then(response => {
                 if (response.data.code === 1) {
-                    localStorage.setItem('match_session_id', response.data.session_id || sessionId);
+                    // Changed from localStorage to sessionStorage
+                    sessionStorage.setItem('match_session_id', response.data.session_id || sessionId);
                     document.getElementById('match-status').innerText = response.data.message;
                     startPolling();
                 } else {
@@ -45,7 +46,8 @@
 
         pollInterval = setInterval(() => {
             axios.get(routes.checkStatus, {
-                params: { session_id: localStorage.getItem('match_session_id') }
+                // Changed from localStorage to sessionStorage
+                params: { session_id: sessionStorage.getItem('match_session_id') }
             })
             .then(response => {
                 errorCount = 0;
