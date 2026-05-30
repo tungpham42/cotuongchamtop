@@ -46,11 +46,11 @@
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card bg-secondary text-dark h-100 border-0 shadow-sm" style="border-radius: 12px;">
                     @if($tournament->cover_photo)
-                        <a href="{{ localized_url('tournaments.show', $tournament->slug) }}">
+                        <a href="{{ localized_url('tournaments.show', ['slug' => $tournament->slug]) }}">
                             <img src="{{ asset('storage/' . $tournament->cover_photo) }}" class="card-img-top w-100" alt="{{ $tournament->name }}" style="aspect-ratio: 16/9; object-fit: cover; border-top-left-radius: 12px; border-top-right-radius: 12px;">
                         </a>
                     @else
-                        <a href="{{ localized_url('tournaments.show', $tournament->slug) }}">
+                        <a href="{{ localized_url('tournaments.show', ['slug' => $tournament->slug]) }}">
                             <div class="card-img-top bg-dark d-flex align-items-center justify-content-center w-100" style="aspect-ratio: 16/9; border-top-left-radius: 12px; border-top-right-radius: 12px;">
                                 <i class="fad fa-trophy-alt fa-4x text-muted"></i>
                             </div>
@@ -58,7 +58,7 @@
                     @endif
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-2">
-                            <a href="{{ localized_url('tournaments.show', $tournament->slug) }}" class="text-decoration-none">
+                            <a href="{{ localized_url('tournaments.show', ['slug' => $tournament->slug]) }}" class="text-decoration-none">
                                 <h5 class="card-title text-warning font-weight-bold mb-0">{{ $tournament->name }}</h5>
                             </a>
                             @if($tournament->status === 'open')
@@ -79,7 +79,7 @@
 
                     <div class="card-footer bg-transparent border-0 pt-0">
                         <div class="d-flex justify-content-between">
-                            <a href="{{ localized_url('tournaments.show', $tournament->slug) }}" class="btn btn-outline-light btn-sm w-100 text-dark mr-2">
+                            <a href="{{ localized_url('tournaments.show', ['slug' => $tournament->slug]) }}" class="btn btn-outline-light btn-sm w-100 text-dark mr-2">
                                 <i class="fad fa-eye"></i> {{ __('Xem chi tiết') }}
                             </a>
                             @php
@@ -94,7 +94,7 @@
                                     <i class="fad fa-check-circle text-success"></i> {{ __('Đã tham gia') }}
                                 </button>
                             @elseif($isOpen && !$isFull)
-                                <form action="{{ localized_url('tournaments.join', $tournament->slug) }}" method="POST" class="w-100 ml-2">
+                                <form action="{{ localized_url('tournaments.join', ['slug' => $tournament->slug]) }}" method="POST" class="w-100 ml-2">
                                     @csrf
                                     <button type="submit" class="btn btn-danger btn-sm w-100">
                                         <i class="fad fa-sign-in-alt"></i> {{ __('Tham gia') }}
