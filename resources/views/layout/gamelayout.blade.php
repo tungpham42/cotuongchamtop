@@ -180,7 +180,7 @@
                       <a href="{{ localized_url('tournaments.index') }}" class="btn btn-outline-info font-weight-bold px-4 py-2 mx-md-2 mb-2 mb-md-0" style="border-radius: 25px; transition: 0.3s;">
                         <i class="fad fa-trophy"></i> {{ __('Giải Đấu Đang Diễn Ra') }}
                       </a>
-                      <a href="{{ localized_url('leaderboard') }}" class="btn btn-info text-dark font-weight-bold px-4 py-2 mx-md-2 pulse-blue" style="border-radius: 25px; box-shadow: 0 4px 15px rgba(41, 182, 246, 0.4);">
+                      <a href="{{ localized_url('app.ranking') }}" class="btn btn-info text-dark font-weight-bold px-4 py-2 mx-md-2 pulse-blue" style="border-radius: 25px; box-shadow: 0 4px 15px rgba(41, 182, 246, 0.4);">
                         <i class="fad fa-chart-line"></i> {{ __('Xem Bảng Xếp Hạng') }}
                       </a>
                     </div>
