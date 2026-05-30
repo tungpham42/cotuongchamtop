@@ -103,10 +103,33 @@ Route::get('/sitemap-the-co.xml', function() {
 });
 
 // ==========================================
-// PUBLIC TOURNAMENT ROUTES (Visible to Guests)
+// PUBLIC TOURNAMENT ROUTES (Visible to Guests) - LOCALIZED
 // ==========================================
-Route::get('/giai-dau', [TournamentController::class, 'index'])->name('tournaments.index');
-Route::get('/giai-dau/{slug}', [TournamentController::class, 'show'])->name('tournaments.show');
+$localizedTournamentPages = [
+    'tournaments.index' => [
+        'action' => [TournamentController::class, 'index'],
+        'params' => [],
+    ],
+    'tournaments.show' => [
+        'action' => [TournamentController::class, 'show'],
+        'params' => ['slug' => '{slug}'],
+    ],
+];
+
+foreach ($localizedTournamentPages as $pageKey => $page) {
+    foreach (config('locales.supported', []) as $locale) {
+        $route = Route::get(localized_path($pageKey, $page['params'], $locale), $page['action'])
+            ->middleware("locale:{$locale}");
+
+        // Retain original route names for the default locale to prevent component breaks.
+        // For localized versions, prefix them with the locale.
+        if ($locale === config('locales.default', 'vi')) {
+            $route->name($pageKey);
+        } else {
+            $route->name("{$locale}.{$pageKey}");
+        }
+    }
+}
 
 // ==========================================
 // PROTECTED TOURNAMENT ROUTES (Requires Login)
