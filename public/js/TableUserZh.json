@@ -1,0 +1,220 @@
+{
+    "processing": "处理中...",
+    "aria": {
+        "sortAscending": "：激活以按升序排序",
+        "sortDescending": "：激活以按降序排序"
+    },
+    "autoFill": {
+        "cancel": "取消",
+        "fill": "用 <i>%d</i> 填充所有单元格",
+        "fillHorizontal": "水平填充",
+        "fillVertical": "垂直填充"
+    },
+    "buttons": {
+        "collection": "集合 <span class=\"ui-button-icon-primary ui-icon ui-icon-triangle-1-s\"></span>",
+        "colvis": "列可见性",
+        "colvisRestore": "恢复可见性",
+        "copy": "复制",
+        "copyKeys": "按 Ctrl 或 u2318 + C 将玩家表复制到剪贴板。<br /><br />要取消，请单击此消息或按 ESC",
+        "copySuccess": {
+            "1": "已复制 1 名玩家到剪贴板",
+            "_": "已复制 %d 名玩家到剪贴板"
+        },
+        "copyTitle": "复制到剪贴板",
+        "pageLength": {
+            "-1": "显示所有行",
+            "_": "显示 %d 行"
+        },
+        "print": "打印",
+        "createState": "创建状态",
+        "csv": "CSV",
+        "excel": "Excel",
+        "pdf": "PDF",
+        "removeAllStates": "删除所有状态",
+        "removeState": "删除",
+        "renameState": "重命名",
+        "savedStates": "已存状态",
+        "stateRestore": "状态 %d",
+        "updateState": "更新"
+    },
+    "infoThousands": ",",
+    "select": {
+        "cells": {
+            "1": "已选择 1 个单元格",
+            "_": "已选择 %d 个单元格"
+        },
+        "columns": {
+            "1": "已选择 1 列",
+            "_": "已选择 %d 列"
+        },
+        "rows": {
+            "1": "已选择 1 行",
+            "_": "已选择 %d 行"
+        }
+    },
+    "thousands": ",",
+    "searchBuilder": {
+        "title": {
+            "_": "自定义搜索 (%d)",
+            "0": "自定义搜索"
+        },
+        "button": {
+            "0": "搜索生成器",
+            "_": "搜索生成器 (%d)"
+        },
+        "value": "值",
+        "clearAll": "全部清除",
+        "condition": "条件",
+        "conditions": {
+            "date": {
+                "after": "之后",
+                "before": "之前",
+                "between": "之间",
+                "empty": "为空",
+                "equals": "等于",
+                "not": "非",
+                "notBetween": "不在之间",
+                "notEmpty": "不为空"
+            },
+            "number": {
+                "between": "之间",
+                "empty": "为空",
+                "equals": "等于",
+                "gt": "大于",
+                "gte": "大于等于",
+                "lt": "小于",
+                "lte": "小于等于",
+                "not": "非",
+                "notBetween": "不在之间",
+                "notEmpty": "不为空"
+            },
+            "string": {
+                "contains": "包含",
+                "empty": "为空",
+                "endsWith": "以...结尾",
+                "equals": "等于",
+                "not": "非",
+                "notEmpty": "不为空",
+                "startsWith": "以...开始",
+                "notContains": "不包含",
+                "notEnds": "不以...结尾",
+                "notStarts": "不以...开始"
+            },
+            "array": {
+                "equals": "等于",
+                "empty": "为空",
+                "contains": "包含",
+                "not": "非",
+                "notEmpty": "不为空",
+                "without": "不包含"
+            }
+        },
+        "logicAnd": "与(And)",
+        "logicOr": "或(Or)",
+        "add": "添加条件",
+        "data": "玩家",
+        "deleteTitle": "删除过滤规则",
+        "leftTitle": "减少缩进",
+        "rightTitle": "增加缩进"
+    },
+    "searchPanes": {
+        "countFiltered": "{shown} ({total})",
+        "emptyPanes": "没有搜索面板",
+        "clearMessage": "全部清除",
+        "loadMessage": "加载搜索面板中",
+        "collapse": {
+            "0": "搜索面板",
+            "_": "搜索面板 (%d)"
+        },
+        "title": "活动过滤器 - %d",
+        "count": "{total}",
+        "collapseMessage": "全部折叠",
+        "showMessage": "显示全部"
+    },
+    "datetime": {
+        "hours": "小时",
+        "minutes": "分钟",
+        "next": "下一个",
+        "previous": "上一个",
+        "seconds": "秒",
+        "amPm": ["上午", "下午"],
+        "unknown": "-",
+        "weekdays": ["日", "一", "二", "三", "四", "五", "六"]
+    },
+    "emptyTable": "没有玩家",
+    "info": "显示第 _START_ 至 _END_ 名玩家，共 _TOTAL_ 名",
+    "infoEmpty": "显示第 0 至 0 名玩家，共 0 名",
+    "lengthMenu": "显示 _MENU_ 名玩家",
+    "loadingRecords": "加载中...",
+    "paginate": {
+        "first": "首页",
+        "last": "末页",
+        "next": "下页",
+        "previous": "上页"
+    },
+    "search": "搜索:",
+    "zeroRecords": "没有找到匹配的记录",
+    "decimal": ".",
+    "editor": {
+        "close": "关闭",
+        "create": {
+            "button": "新建",
+            "submit": "创建",
+            "title": "创建新条目"
+        },
+        "edit": {
+            "button": "编辑",
+            "submit": "更新",
+            "title": "编辑条目"
+        },
+        "error": {
+            "system": "发生系统错误 (&lt;a target=\"\\\" rel=\"nofollow\" href=\"\\\"&gt;更多信息&lt;/a&gt;)。"
+        },
+        "multi": {
+            "info": "所选项目包含此输入的不同值。若要编辑并将此输入的所有项目设置为相同的值，请点击或点击此处，否则它们将保留其各自的值。",
+            "noMulti": "此输入可以单独编辑，但不能作为组的一部分。",
+            "restore": "撤销更改",
+            "title": "多个值"
+        },
+        "remove": {
+            "button": "删除",
+            "confirm": {
+                "_": "您确定要删除 %d 行吗？",
+                "1": "您确定要删除 1 行吗？"
+            },
+            "submit": "删除",
+            "title": "删除"
+        }
+    },
+    "infoFiltered": "(由 _MAX_ 名玩家过滤)",
+    "searchPlaceholder": "搜索...",
+    "stateRestore": {
+        "creationModal": {
+            "button": "创建",
+            "columns": {
+                "search": "列搜索",
+                "visible": "列可见性"
+            },
+            "name": "名称:",
+            "order": "排序",
+            "paging": "分页",
+            "scroller": "滚动位置",
+            "search": "搜索",
+            "searchBuilder": "搜索生成器",
+            "select": "选择",
+            "title": "创建状态",
+            "toggleLabel": "包含:"
+        },
+        "duplicateError": "具有此名称的状态已存在。",
+        "emptyError": "名称不能为空。",
+        "emptyStates": "没有已存状态",
+        "removeConfirm": "您确定要删除 %s 吗？",
+        "removeError": "删除状态失败。",
+        "removeJoiner": "和",
+        "removeSubmit": "删除",
+        "removeTitle": "删除状态",
+        "renameButton": "重命名",
+        "renameLabel": "%s 的新名称:",
+        "renameTitle": "重命名状态"
+    }
+}

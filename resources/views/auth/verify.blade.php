@@ -18,7 +18,7 @@
 
                     {{ __('Before proceeding, please check your email for a verification link.') }}
                     {{ __('If you did not receive the email') }},
-                    <form class="d-inline" method="POST" action="{{ route('verification.resend') }}">
+                    <form class="d-inline" method="POST" action="{{ localized_url('verification.resend') }}">
                         @csrf
                         <button type="submit" class="btn btn-lg btn-danger p-0 m-0 align-baseline"><i class="fad fa-plus-circle"></i> {{ __('click here to request another') }}</button>.
                     </form>

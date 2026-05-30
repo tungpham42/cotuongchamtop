@@ -5,16 +5,16 @@
     <div class="row">
     @include('layout.partials.findMatch')
     </div>
-    <h2 class="h1-responsivefooter text-center my-4">Thành viên</h2>
+    <h2 class="h1-responsivefooter text-center my-4">{{ __('Thành viên') }}</h2>
     <div class="table-responsive">
       <table id="danh-sach-ky-thu" class="table table-bordered table-hover table-striped table-sm">
         <thead class="thead-light">
           <tr>
-            <th class="text-center" scope="col">Xếp hạng</th>
-            <th class="text-center" scope="col">Kỳ thủ</th>
-            <th class="text-center" scope="col">Elo</th>
-            <th class="text-center" scope="col">{{ __("Hành động") }}</th>
-            <th class="text-center" scope="col">Thời điểm tham gia</th>
+            <th class="text-center" scope="col">{{ __('Xếp hạng') }}</th>
+            <th class="text-center" scope="col">{{ __('Kỳ thủ') }}</th>
+            <th class="text-center" scope="col">{{ __('Elo') }}</th>
+            <th class="text-center" scope="col">{{ __('Hành động') }}</th>
+            <th class="text-center" scope="col">{{ __('Thời điểm tham gia') }}</th>
           </tr>
         </thead>
         <tbody style="background-color: whitesmoke;">
@@ -27,14 +27,14 @@
 @section('belowContent')
 <script>
 $(document).ready(function () {
-  console.log('List URL: ' + '{{ route('usersVi.list') }}');
+  console.log('List URL: ' + '{{ route('users' . ucfirst(app()->getLocale()) . '.list') }}');
   var table = $('#danh-sach-ky-thu').DataTable({
     processing: true,
     serverSide: true,
     ordering: true,
     searching: true,
     ajax: {
-      url: "{{ route('usersVi.list') }}"
+      url: "{{ route('users' . ucfirst(app()->getLocale()) . '.list') }}"
     },
     deferRender: true,
     columns: [
@@ -75,7 +75,7 @@ $(document).ready(function () {
       }
     ],
     'language': {
-      'url': '{{ url('/') }}/js/TableUserVn.json'
+      'url': '{{ url('/') }}/js/TableUser{{ ucfirst(app()->getLocale()) }}.json'
     },
     'order': [[ 2, 'desc' ]],
     'drawCallback': function() {
@@ -123,14 +123,14 @@ function compete(guestId) {
   }).done(function(data){
     if (data == 'no') {
       bootbox.prompt({
-        title: "Mời đặt tên cho Phòng thi {{ __("đấu") }}:",
-        locale: '{{ __("vi") }}',
+        title: "{{ __('Mời đặt tên cho Phòng thi đấu:') }}",
+        locale: '{{ app()->getLocale() }}',
         centerVertical: true,
         closeButton: false,
         maxlength: 32,
         buttons: {
           confirm: {
-            label: '<i class="fas fa-check"></i> Đặt tên',
+            label: '<i class="fas fa-check"></i> {{ __('Đặt tên') }}',
             className: 'btn-danger'
           },
           cancel: {
@@ -141,9 +141,9 @@ function compete(guestId) {
           if (roomName != null) {
             if (roomName.trim().length === 0 || roomName.length === 0) {
               bootbox.alert({
-                message: "Vui lòng đặt tên cho phòng!",
+                message: "{{ __('Vui lòng đặt tên cho phòng!') }}",
                 size: 'small',
-                locale: '{{ __("vi") }}',
+                locale: '{{ app()->getLocale() }}',
                 centerVertical: true,
                 closeButton: false,
                 buttons: {
@@ -170,7 +170,7 @@ function compete(guestId) {
                 dataType: 'text'
               }).done(function() {
                 bootbox.alert({
-                  message: "Bạn đã tạo phòng thành công.",
+                  message: "{{ __('Bạn đã tạo phòng thành công.') }}",
                   size: 'small',
                   centerVertical: true,
                   closeButton: false,
@@ -217,7 +217,7 @@ function compete(guestId) {
       });
     } else if (data == 'yes') {
       bootbox.alert({
-        message: "Mã phòng bị trùng, vui lòng thử lại.",
+        message: "{{ __('Mã phòng bị trùng, vui lòng thử lại.') }}",
         size: 'small',
         centerVertical: true,
         closeButton: false,

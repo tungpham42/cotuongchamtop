@@ -1,0 +1,220 @@
+{
+    "processing": "처리 중...",
+    "aria": {
+        "sortAscending": ": 오름차순 정렬",
+        "sortDescending": ": 내림차순 정렬"
+    },
+    "autoFill": {
+        "cancel": "취소",
+        "fill": "모든 셀을 <i>%d</i>(으)로 채우기",
+        "fillHorizontal": "가로로 셀 채우기",
+        "fillVertical": "세로로 셀 채우기"
+    },
+    "buttons": {
+        "collection": "컬렉션 <span class=\"ui-button-icon-primary ui-icon ui-icon-triangle-1-s\"></span>",
+        "colvis": "열 표시 여부",
+        "colvisRestore": "표시 여부 복원",
+        "copy": "복사",
+        "copyKeys": "Ctrl 또는 u2318 + C를 눌러 플레이어 테이블을 클립보드에 복사하세요.<br /><br />취소하려면 이 메시지를 클릭하거나 ESC를 누르세요.",
+        "copySuccess": {
+            "1": "1명의 플레이어 행을 클립보드에 복사했습니다",
+            "_": "%d명의 플레이어 행을 클립보드에 복사했습니다"
+        },
+        "copyTitle": "클립보드에 복사",
+        "pageLength": {
+            "-1": "모든 행 보기",
+            "_": "%d행 보기"
+        },
+        "print": "인쇄",
+        "createState": "상태 만들기",
+        "csv": "CSV",
+        "excel": "Excel",
+        "pdf": "PDF",
+        "removeAllStates": "모든 상태 제거",
+        "removeState": "제거",
+        "renameState": "이름 바꾸기",
+        "savedStates": "저장된 상태",
+        "stateRestore": "상태 %d",
+        "updateState": "업데이트"
+    },
+    "infoThousands": ",",
+    "select": {
+        "cells": {
+            "1": "1개 셀 선택됨",
+            "_": "%d개 셀 선택됨"
+        },
+        "columns": {
+            "1": "1개 열 선택됨",
+            "_": "%d개 열 선택됨"
+        },
+        "rows": {
+            "1": "1개 행 선택됨",
+            "_": "%d개 행 선택됨"
+        }
+    },
+    "thousands": ",",
+    "searchBuilder": {
+        "title": {
+            "_": "맞춤 검색 (%d)",
+            "0": "맞춤 검색"
+        },
+        "button": {
+            "0": "검색 빌더",
+            "_": "검색 빌더 (%d)"
+        },
+        "value": "값",
+        "clearAll": "모두 지우기",
+        "condition": "조건",
+        "conditions": {
+            "date": {
+                "after": "이후",
+                "before": "이전",
+                "between": "사이",
+                "empty": "비어 있음",
+                "equals": "같음",
+                "not": "아님",
+                "notBetween": "사이가 아님",
+                "notEmpty": "비어 있지 않음"
+            },
+            "number": {
+                "between": "사이",
+                "empty": "비어 있음",
+                "equals": "같음",
+                "gt": "보다 큼",
+                "gte": "크거나 같음",
+                "lt": "보다 작음",
+                "lte": "작거나 같음",
+                "not": "아님",
+                "notBetween": "사이가 아님",
+                "notEmpty": "비어 있지 않음"
+            },
+            "string": {
+                "contains": "포함",
+                "empty": "비어 있음",
+                "endsWith": "끝남",
+                "equals": "같음",
+                "not": "아님",
+                "notEmpty": "비어 있지 않음",
+                "startsWith": "시작함",
+                "notContains": "포함하지 않음",
+                "notEnds": "끝나지 않음",
+                "notStarts": "시작하지 않음"
+            },
+            "array": {
+                "equals": "같음",
+                "empty": "비어 있음",
+                "contains": "포함",
+                "not": "아님",
+                "notEmpty": "비어 있지 않음",
+                "without": "포함하지 않음"
+            }
+        },
+        "logicAnd": "그리고(And)",
+        "logicOr": "또는(Or)",
+        "add": "조건 추가",
+        "data": "플레이어",
+        "deleteTitle": "필터 규칙 삭제",
+        "leftTitle": "들여쓰기 내어쓰기",
+        "rightTitle": "들여쓰기"
+    },
+    "searchPanes": {
+        "countFiltered": "{shown} ({total})",
+        "emptyPanes": "검색창 없음",
+        "clearMessage": "모두 지우기",
+        "loadMessage": "검색창 로드 중",
+        "collapse": {
+            "0": "검색창",
+            "_": "검색창 (%d)"
+        },
+        "title": "활성 필터 - %d",
+        "count": "{total}",
+        "collapseMessage": "모두 축소",
+        "showMessage": "모두 표시"
+    },
+    "datetime": {
+        "hours": "시간",
+        "minutes": "분",
+        "next": "다음",
+        "previous": "이전",
+        "seconds": "초",
+        "amPm": ["오전", "오후"],
+        "unknown": "-",
+        "weekdays": ["일", "월", "화", "수", "목", "금", "토"]
+    },
+    "emptyTable": "플레이어가 없습니다",
+    "info": "_TOTAL_명의 플레이어 중 _START_에서 _END_까지 표시",
+    "infoEmpty": "0명의 플레이어 중 0에서 0까지 표시",
+    "lengthMenu": "_MENU_명의 플레이어 표시",
+    "loadingRecords": "로딩 중...",
+    "paginate": {
+        "first": "처음",
+        "last": "마지막",
+        "next": "다음",
+        "previous": "이전"
+    },
+    "search": "검색:",
+    "zeroRecords": "일치하는 레코드가 없습니다",
+    "decimal": ".",
+    "editor": {
+        "close": "닫기",
+        "create": {
+            "button": "새로 만들기",
+            "submit": "만들기",
+            "title": "새 항목 만들기"
+        },
+        "edit": {
+            "button": "편집",
+            "submit": "업데이트",
+            "title": "항목 편집"
+        },
+        "error": {
+            "system": "시스템 오류가 발생했습니다 (&lt;a target=\"\\\" rel=\"nofollow\" href=\"\\\"&gt;자세한 정보&lt;/a&gt;)."
+        },
+        "multi": {
+            "info": "선택한 항목에 이 입력에 대한 다른 값이 포함되어 있습니다. 이 입력에 대한 모든 항목을 동일한 값으로 편집하고 설정하려면 여기를 클릭하거나 탭하세요. 그렇지 않으면 개별 값이 유지됩니다.",
+            "noMulti": "이 입력은 개별적으로 편집할 수 있지만 그룹의 일부로는 편집할 수 없습니다.",
+            "restore": "변경 사항 실행 취소",
+            "title": "여러 값"
+        },
+        "remove": {
+            "button": "삭제",
+            "confirm": {
+                "_": "%d행을 삭제하시겠습니까?",
+                "1": "1행을 삭제하시겠습니까?"
+            },
+            "submit": "삭제",
+            "title": "삭제"
+        }
+    },
+    "infoFiltered": "(총 _MAX_명의 플레이어에서 필터링됨)",
+    "searchPlaceholder": "검색...",
+    "stateRestore": {
+        "creationModal": {
+            "button": "만들기",
+            "columns": {
+                "search": "열 검색",
+                "visible": "열 표시 여부"
+            },
+            "name": "이름:",
+            "order": "정렬",
+            "paging": "페이징",
+            "scroller": "스크롤 위치",
+            "search": "검색",
+            "searchBuilder": "검색 빌더",
+            "select": "선택",
+            "title": "상태 만들기",
+            "toggleLabel": "포함:"
+        },
+        "duplicateError": "이 이름의 상태가 이미 존재합니다.",
+        "emptyError": "이름은 비워둘 수 없습니다.",
+        "emptyStates": "저장된 상태가 없습니다",
+        "removeConfirm": "%s을(를) 제거하시겠습니까?",
+        "removeError": "상태를 제거하지 못했습니다.",
+        "removeJoiner": "및",
+        "removeSubmit": "제거",
+        "removeTitle": "상태 제거",
+        "renameButton": "이름 바꾸기",
+        "renameLabel": "%s의 새 이름:",
+        "renameTitle": "상태 이름 바꾸기"
+    }
+}

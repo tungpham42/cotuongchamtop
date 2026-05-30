@@ -22,7 +22,6 @@
     @if ($showAds ?? true)
     <div class="row justify-content-center text-center mb-4">
         <div class="col-12">
-            <!-- CO_res -->
             <ins class="adsbygoogle"
             style="display:block"
             data-ad-client="ca-pub-3585118770961536"
@@ -41,49 +40,49 @@
                 <div class="card-header">
                     <img src="{{ Avatar::create($player->name)->setDimension(48)->setFontSize(24) }}" />
                     @if ($player->id == auth()->id() && !str_contains(url()->current(), url('/ky-thu').'/'))
-                    Hồ sơ của tôi
+                    {{ __("Hồ sơ của tôi") }}
                     @else
-                    Hồ sơ kỳ thủ
+                    {{ __("Hồ sơ kỳ thủ") }}
                     @endif
                     {!! app('App\Http\Controllers\UserController')::onlineStatus($player->id) !!}
                     @include('layout.partials.app.tourBtn')
                     @if (auth()->check())
                         @if (auth()->id() != $player->id)
-                            <a class="btn btn-danger text-light mr-1" style="width: 140px;" href="javascript:compete({{ $player->id }});"><i class="far fa-mouse"></i> Thách {{ __("đấu") }}</a>
+                            <a class="btn btn-danger text-light mr-1" style="width: 140px;" href="javascript:compete({{ $player->id }});"><i class="far fa-mouse"></i> {{ __("Thách đấu") }}</a>
                         @else
-                            <a class="btn btn-dark text-light mr-1" style="width: 140px; cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> Thách {{ __("đấu") }}</a>
+                            <a class="btn btn-dark text-light mr-1" style="width: 140px; cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> {{ __("Thách đấu") }}</a>
                         @endif
                     @else
-                        <a class="btn btn-danger text-light mr-1" style="width: 140px;" href=" {{ url('/dang-nhap') }} "><i class="far fa-sign-in"></i> Thách {{ __("đấu") }}</a>
+                        <a class="btn btn-danger text-light mr-1" style="width: 140px;" href=" {{ localized_url('login') }} "><i class="far fa-sign-in"></i> {{ __("Thách đấu") }}</a>
                     @endif
                 </div>
                 <div class="card-body">
-                    <h5>Tên: {{ $player->name }}</h5>
+                    <h5>{{ __("Tên:") }} {{ $player->name }}</h5>
                     @if ($player->id == auth()->id() && !str_contains(url()->current(), url('/ky-thu').'/'))
-                    <h5>Email: {!! app('App\Http\Controllers\UserController')::renderPlayerEmail($player->id) !!}</h5>
+                    <h5>{{ __("Email:") }} {!! app('App\Http\Controllers\UserController')::renderPlayerEmail($player->id) !!}</h5>
                     @endif
-                    <h5>Ngày giờ gia nhập: {{ $player->created_at }}</h5>
-                    <h5>Lần trực tuyến gần nhất: {{ $player->last_seen_at }}</h5>
-                    <h5>Thứ hạng: {!! app('App\Http\Controllers\UserController')::renderPlayerRank($player->id) !!}</h5>
+                    <h5>{{ __("Ngày giờ gia nhập:") }} {{ $player->created_at }}</h5>
+                    <h5>{{ __("Lần trực tuyến gần nhất:") }} {{ $player->last_seen_at }}</h5>
+                    <h5>{{ __("Thứ hạng:") }} {!! app('App\Http\Controllers\UserController')::renderPlayerRank($player->id) !!}</h5>
                     <h5>Elo: <span id="elo">{!! app('App\Http\Controllers\UserController')::renderElo($player->id) !!}</span></h5>
-                    <h5>Số trận thắng: <span id="winPoints">{!! app('App\Http\Controllers\UserController')::renderWinMatchPoints($player->id) !!}</span></h5>
-                    <h5>Số trận hòa: <span id="drawPoints">{!! app('App\Http\Controllers\UserController')::renderDrawMatchPoints($player->id) !!}</span></h5>
-                    <h5>Số trận thua: <span id="losePoints">{!! app('App\Http\Controllers\UserController')::renderLoseMatchPoints($player->id) !!}</span></h5>
-                    <h5>Tổng số trận {{ __("đã đấu xong") }}: <span id="totalPoints">{!! app('App\Http\Controllers\UserController')::renderTotalMatchPoints($player->id) !!}</span></h5>
+                    <h5>{{ __("Số trận thắng:") }} <span id="winPoints">{!! app('App\Http\Controllers\UserController')::renderWinMatchPoints($player->id) !!}</span></h5>
+                    <h5>{{ __("Số trận hòa:") }} <span id="drawPoints">{!! app('App\Http\Controllers\UserController')::renderDrawMatchPoints($player->id) !!}</span></h5>
+                    <h5>{{ __("Số trận thua:") }} <span id="losePoints">{!! app('App\Http\Controllers\UserController')::renderLoseMatchPoints($player->id) !!}</span></h5>
+                    <h5>{{ __("Tổng số trận đã đấu xong:") }} <span id="totalPoints">{!! app('App\Http\Controllers\UserController')::renderTotalMatchPoints($player->id) !!}</span></h5>
                     @if (auth()->check() && $player->id === auth()->id())
                     <div id="standard-plan" class="alert alert-warning d-flex align-items-center justify-content-between mt-3">
                         <div class="text-left">
-                            <strong>Gói hiện tại:</strong>
+                            <strong>{{ __("Gói hiện tại:") }}</strong>
                             @if (auth()->user()->isStandard())
-                                Standard (đã ẩn quảng cáo)
+                                {{ __("Standard (đã ẩn quảng cáo)") }}
                                 @if (auth()->user()->subscription_started_at)
-                                    <small class="text-muted">(kích hoạt {{ auth()->user()->subscription_started_at->format('d/m/Y H:i') }})</small>
+                                    <small class="text-muted">({{ __("kích hoạt") }} {{ auth()->user()->subscription_started_at->format('d/m/Y H:i') }})</small>
                                 @endif
                             @else
-                                Miễn phí (đang hiển thị quảng cáo)
+                                {{ __("Miễn phí (đang hiển thị quảng cáo)") }}
                                 @php $latestPayment = auth()->user()->payosPayments()->latest()->first(); @endphp
                                 @if ($latestPayment && $latestPayment->status !== 'paid')
-                                    <br><small class="text-muted">Giao dịch gần nhất: {{ $latestPayment->status }} - mã {{ $latestPayment->order_code }}</small>
+                                    <br><small class="text-muted">{{ __("Giao dịch gần nhất:") }} {{ $latestPayment->status }} - mã {{ $latestPayment->order_code }}</small>
                                 @endif
                             @endif
                         </div>
@@ -92,7 +91,7 @@
                             @csrf
                             <button type="submit" class="btn btn-danger">
                                 <i class="far fa-crown"></i>
-                                Nâng cấp Standard - {{ number_format(config('payos.standard_amount', 100000), 0, ',', '.') }}đ
+                                {{ __("Nâng cấp Standard -") }} {{ number_format(config('payos.standard_amount', 100000), 0, ',', '.') }}đ
                             </button>
                         </form>
                         @else
@@ -102,9 +101,9 @@
                     @endif
                     @if ($player->id == auth()->id() && !str_contains(url()->current(), url('/ky-thu').'/'))
                     <p class="w-100 text-left">
-                        <a href="{{ url('/doi-ten') }}" class="btn btn-lg btn-dark showPromotion"><i class="fad fa-user-edit"></i> {{ __("Đổi") }} tên</a>
-                        <a href="{{ url('/doi-mat-khau') }}" class="btn btn-lg btn-dark showPromotion"><i class="fad fa-lock-alt"></i> {{ __("Đổi") }} mật khẩu</a>
-                        <a href="{{ url('/doi-giao-dien') }}" class="btn btn-lg btn-dark showPromotion"><i class="fad fa-palette"></i> {{ __("Đổi") }} giao diện</a>
+                        <a href="{{ url('/doi-ten') }}" class="btn btn-lg btn-dark showPromotion"><i class="fad fa-user-edit"></i> {{ __("Đổi tên") }}</a>
+                        <a href="{{ url('/doi-mat-khau') }}" class="btn btn-lg btn-dark showPromotion"><i class="fad fa-lock-alt"></i> {{ __("Đổi mật khẩu") }}</a>
+                        <a href="{{ url('/doi-giao-dien') }}" class="btn btn-lg btn-dark showPromotion"><i class="fad fa-palette"></i> {{ __("Đổi giao diện") }}</a>
                     </p>
                     @endif
                     @if (auth()->check())
@@ -121,14 +120,14 @@
                         }).done(function(data){
                             if (data == 'no') {
                                 bootbox.prompt({
-                                    title: "Mời đặt tên cho Phòng thi {{ __("đấu") }}:",
+                                    title: "{{ __("Mời đặt tên cho Phòng thi đấu:") }}",
                                     locale: '{{ __("vi") }}',
                                     centerVertical: true,
                                     closeButton: false,
                                     maxlength: 32,
                                     buttons: {
                                         confirm: {
-                                            label: '<i class="fas fa-check"></i> Đặt tên',
+                                            label: '<i class="fas fa-check"></i> {{ __("Đặt tên") }}',
                                             className: 'btn-danger'
                                         },
                                         cancel: {
@@ -139,7 +138,7 @@
                                     if (roomName != null) {
                                         if (roomName.trim().length === 0 || roomName.length === 0) {
                                             bootbox.alert({
-                                                message: "Vui lòng đặt tên cho phòng!",
+                                                message: "{{ __("Vui lòng đặt tên cho phòng!") }}",
                                                 size: 'small',
                                                 locale: '{{ __("vi") }}',
                                                 centerVertical: true,
@@ -168,14 +167,14 @@
                                                 dataType: 'text'
                                             }).done(function() {
                                                 bootbox.alert({
-                                                    message: "Bạn đã tạo phòng thành công.",
+                                                    message: "{{ __("Bạn đã tạo phòng thành công.") }}",
                                                     size: 'small',
                                                     centerVertical: true,
                                                     closeButton: false,
                                                     buttons: {
                                                         ok: {
                                                             className: 'btn-danger',
-                                                            label: 'Oki'
+                                                            label: '{{ __("Oki") }}'
                                                         }
                                                     },
                                                     callback: function(){
@@ -198,7 +197,7 @@
                                                                 buttons: {
                                                                     ok: {
                                                                         className: 'btn-danger',
-                                                                        label: 'Oki'
+                                                                        label: '{{ __("Oki") }}'
                                                                     }
                                                                 },
                                                                 callback: function(){
@@ -215,14 +214,14 @@
                             });
                             } else if (data == 'yes') {
                                 bootbox.alert({
-                                    message: "Mã phòng bị trùng, vui lòng thử lại.",
+                                    message: "{{ __("Mã phòng bị trùng, vui lòng thử lại.") }}",
                                     size: 'small',
                                     centerVertical: true,
                                     closeButton: false,
                                     buttons: {
                                         ok: {
                                             className: 'btn-danger',
-                                            label: 'Oki'
+                                            label: '{{ __("Oki") }}'
                                         }
                                     },
                                     callback: function(){
@@ -238,14 +237,14 @@
                     @endif
                     @if ($playerRooms->total() > 0)
                     <span style="background-color: #ffffff; margin-top: -70px;" class="d-block w-100 pb-5 mb-5" id="result-board"></span>
-                    <h2 data-step="1" data-intro="Danh sách các trận {{ __("đấu") }} của kỳ thủ '{{ $player->name }}'" class="mt-3"><i class="fas fa-list-ul"></i> {{ __("Kết quả") }} thi {{ __("đấu") }}</h2>
+                    <h2 data-step="1" data-intro="{{ __("Danh sách các trận đấu của kỳ thủ") }} '{{ $player->name }}'" class="mt-3"><i class="fas fa-list-ul"></i> {{ __("Kết quả thi đấu") }}</h2>
                     <div class="table-responsive mb-3">
                         <table class="table table-striped table-hover" id="results-table">
                             <thead>
                                 <tr>
                                     <th scope="col">{{ __("Tên phòng") }}</th>
-                                    <th scope="col">Chủ phòng</th>
-                                    <th scope="col">Khách</th>
+                                    <th scope="col">{{ __("Chủ phòng") }}</th>
+                                    <th scope="col">{{ __("Khách") }}</th>
                                     <th scope="col">{{ __("Tới lượt") }}</th>
                                     <th scope="col">{{ __("Kết quả") }}</th>
                                     <th scope="col">{{ __("Thi đấu") }}</th>
@@ -265,35 +264,35 @@
                                     </td>
                                     <td class="text-center">
                                         @if (str_contains($room->fen, ' r '))
-                                        <span class="text-danger">Đỏ</span>
+                                        <span class="text-danger">{{ __("Đỏ") }}</span>
                                         @elseif (str_contains($room->fen, ' b '))
                                         <span class="text-dark">{{ __("Đen") }}</span>
                                         @endif
                                     </td>
                                     <td>
                                         @if ($room->result == '1')
-                                            Chủ phòng thắng
+                                            {{ __("Chủ phòng thắng") }}
                                         @elseif ($room->result == '0')
                                             {{ __("Hòa") }}
                                         @elseif ($room->result == '-1')
-                                            Khách thắng
+                                            {{ __("Khách thắng") }}
                                         @else
-                                            Chưa có kết quả
+                                            {{ __("Chưa có kết quả") }}
                                         @endif
                                     </td>
                                     <td>
                                         @if (!isset($room->result))
                                             @if (auth()->check())
                                                 @if (isset($room->guest_id))
-                                                <a class="btn btn-sm btn-dark" href="javascript:joinMatch('{{ $room->code }}')"><i class="fad fa-mouse"></i> Chơi</a>
+                                                <a class="btn btn-sm btn-dark" href="javascript:joinMatch('{{ $room->code }}')"><i class="fad fa-mouse"></i> {{ __("Chơi") }}</a>
                                                 @else
-                                                <a class="btn btn-sm btn-danger pulse-red" href="javascript:joinMatch('{{ $room->code }}')"><i class="fad fa-mouse"></i> Chơi</a>
+                                                <a class="btn btn-sm btn-danger pulse-red" href="javascript:joinMatch('{{ $room->code }}')"><i class="fad fa-mouse"></i> {{ __("Chơi") }}</a>
                                                 @endif
                                             @else
                                                 @if (isset($room->guest_id))
-                                                <a class="btn btn-sm btn-dark showPromotion" href="{{ url('/dang-nhap') }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
+                                                <a class="btn btn-sm btn-dark showPromotion" href="{{ localized_url('login') }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
                                                 @else
-                                                <a class="btn btn-sm btn-danger pulse-red showPromotion" href="{{ url('/dang-nhap') }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
+                                                <a class="btn btn-sm btn-danger pulse-red showPromotion" href="{{ localized_url('login') }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
                                                 @endif
                                             @endif
                                         @else
@@ -330,14 +329,14 @@
                                                     dataType: 'text'
                                                 }).done(function() {
                                                     bootbox.alert({
-                                                        message: "Hãy chuẩn bị vào phòng!",
+                                                        message: "{{ __("Hãy chuẩn bị vào phòng!") }}",
                                                         size: 'small',
                                                         centerVertical: true,
                                                         closeButton: false,
                                                         buttons: {
                                                             ok: {
                                                                 className: 'btn-danger pulse-red',
-                                                                label: 'Oki'
+                                                                label: '{{ __("Oki") }}'
                                                             }
                                                         },
                                                         callback: function(){
@@ -347,14 +346,14 @@
                                                 });
                                             } else if (guestId == '{{ auth()->id() }}') {
                                                 bootbox.alert({
-                                                    message: "Mời bạn quay lại phòng!",
+                                                    message: "{{ __("Mời bạn quay lại phòng!") }}",
                                                     size: 'small',
                                                     centerVertical: true,
                                                     closeButton: false,
                                                     buttons: {
                                                         ok: {
                                                             className: 'btn-danger pulse-red',
-                                                            label: 'Oki'
+                                                            label: '{{ __("Oki") }}'
                                                         }
                                                     },
                                                     callback: function(){
@@ -363,14 +362,14 @@
                                                 });
                                             } else if (hostId == '{{ auth()->id() }}') {
                                                 bootbox.alert({
-                                                    message: "Mời bạn vào lại phòng của mình!",
+                                                    message: "{{ __("Mời bạn vào lại phòng của mình!") }}",
                                                     size: 'small',
                                                     centerVertical: true,
                                                     closeButton: false,
                                                     buttons: {
                                                         ok: {
                                                             className: 'btn-danger pulse-red',
-                                                            label: 'Oki'
+                                                            label: '{{ __("Oki") }}'
                                                         }
                                                     },
                                                     callback: function(){

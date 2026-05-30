@@ -134,6 +134,6 @@
     </script>
 @else
 <div class="alert alert-secondary" role="alert">
-    <a data-step="1" data-intro="Ấn vào đây để đăng nhập vào thi {{ __("đấu") }} xếp hạng" class="stopPromotion" href="{{ url('/dang-nhap') }}">{{ __("Đăng nhập") }}</a> để {{ __("tham gia") }} thi {{ __("đấu") }}
+    <a data-step="1" data-intro="Ấn vào đây để đăng nhập vào thi {{ __("đấu") }} xếp hạng" class="stopPromotion" href="{{ localized_url('login') }}">{{ __("Đăng nhập") }}</a> để {{ __("tham gia") }} thi {{ __("đấu") }}
 </div>
 @endif

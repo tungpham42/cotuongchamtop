@@ -5,7 +5,6 @@
     @if ($showAds ?? true)
     <div class="row justify-content-center text-center mb-4">
         <div class="col-12">
-            <!-- CO_res -->
             <ins class="adsbygoogle"
             style="display:block"
             data-ad-client="ca-pub-3585118770961536"
@@ -22,20 +21,20 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <i class="fas fa-archive"></i> Lịch sử thi {{ __("đấu") }}
+                    <i class="fas fa-archive"></i> {{ __("Lịch sử thi đấu") }}
                     @include('layout.partials.app.tourBtn')
                 </div>
                 <div class="card-body">
                     @include('layout.partials.app.createRoom')
                     <span style="background-color: #ffffff; margin-top: -70px;" class="d-block w-100 pb-5 mb-5" id="result-board"></span>
-                    <h2 data-step="2" data-intro="Danh sách các ván {{ __("đấu") }} đã hoàn tất" class="mt-3"><i class="fas fa-archive"></i> Lịch sử thi {{ __("đấu") }} ({{ $playedRooms->total() }} trận, {!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</h2>
+                    <h2 data-step="2" data-intro="{{ __("Danh sách các ván đấu đã hoàn tất") }}" class="mt-3"><i class="fas fa-archive"></i> {{ __("Lịch sử thi đấu") }} ({{ $playedRooms->total() }} {{ __("trận") }}, {!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</h2>
                     <div class="table-responsive mb-3">
                         <table class="table table-striped table-hover" id="results-table">
                             <thead>
                                 <tr>
                                     <th scope="col">{{ __("Tên phòng") }}</th>
-                                    <th scope="col">Chủ phòng</th>
-                                    <th scope="col">Khách</th>
+                                    <th scope="col">{{ __("Chủ phòng") }}</th>
+                                    <th scope="col">{{ __("Khách") }}</th>
                                     <th scope="col">{{ __("Kết quả") }}</th>
                                     <th scope="col">{{ __("Lần cuối chơi") }}</th>
                                 </tr>
@@ -53,13 +52,13 @@
                                     </td>
                                     <td>
                                         @if ($room->result == '1')
-                                            Chủ phòng thắng
+                                            {{ __("Chủ phòng thắng") }}
                                         @elseif ($room->result == '0')
                                             {{ __("Hòa") }}
                                         @elseif ($room->result == '-1')
-                                            Khách thắng
+                                            {{ __("Khách thắng") }}
                                         @else
-                                            Chưa có kết quả
+                                            {{ __("Chưa có kết quả") }}
                                         @endif
                                     </td>
                                     <td class="room-time">{{ $room->modified_at }}</td>

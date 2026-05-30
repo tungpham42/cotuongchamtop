@@ -258,7 +258,7 @@
                     }
                   </script>
                   @else
-                  <a class="btn btn-danger text-light btn-lg showPromotion thi-dau mx-2" href="{{ url('/dang-nhap') }}" data-toggle="tooltip" data-placement="top" title="{{ __('Đăng nhập để thi đấu') }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
+                  <a class="btn btn-danger text-light btn-lg showPromotion thi-dau mx-2" href="{{ localized_url('login') }}" data-toggle="tooltip" data-placement="top" title="{{ __('Đăng nhập để thi đấu') }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
                   @endif
                 @else
                 <a class="btn btn-danger text-light btn-lg showPromotion mx-2 rooms-list" href="{{ url(__('/sanh-cho')) }}"><i class="fad fa-chevron-circle-left"></i> {{ __("Quay lại sảnh chờ") }}</a>

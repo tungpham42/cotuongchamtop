@@ -1,0 +1,220 @@
+{
+    "processing": "Processing...",
+    "aria": {
+        "sortAscending": ": activate to sort column ascending",
+        "sortDescending": ": activate to sort column descending"
+    },
+    "autoFill": {
+        "cancel": "Cancel",
+        "fill": "Fill all cells with <i>%d</i>",
+        "fillHorizontal": "Fill cells horizontally",
+        "fillVertical": "Fill cells vertically"
+    },
+    "buttons": {
+        "collection": "Collection <span class=\"ui-button-icon-primary ui-icon ui-icon-triangle-1-s\"></span>",
+        "colvis": "Column Visibility",
+        "colvisRestore": "Restore visibility",
+        "copy": "Copy",
+        "copyKeys": "Press Ctrl or u2318 + C to copy the player table to your clipboard.<br /><br />To cancel, click this message or press ESC",
+        "copySuccess": {
+            "1": "Copied 1 player row to clipboard",
+            "_": "Copied %d player rows to clipboard"
+        },
+        "copyTitle": "Copy to Clipboard",
+        "pageLength": {
+            "-1": "Show all rows",
+            "_": "Show %d rows"
+        },
+        "print": "Print",
+        "createState": "Create State",
+        "csv": "CSV",
+        "excel": "Excel",
+        "pdf": "PDF",
+        "removeAllStates": "Remove All States",
+        "removeState": "Remove",
+        "renameState": "Rename",
+        "savedStates": "Saved States",
+        "stateRestore": "State %d",
+        "updateState": "Update"
+    },
+    "infoThousands": ",",
+    "select": {
+        "cells": {
+            "1": "1 cell selected",
+            "_": "%d cells selected"
+        },
+        "columns": {
+            "1": "1 column selected",
+            "_": "%d columns selected"
+        },
+        "rows": {
+            "1": "1 row selected",
+            "_": "%d rows selected"
+        }
+    },
+    "thousands": ",",
+    "searchBuilder": {
+        "title": {
+            "_": "Custom Search (%d)",
+            "0": "Custom Search"
+        },
+        "button": {
+            "0": "Search Builder",
+            "_": "Search Builder (%d)"
+        },
+        "value": "Value",
+        "clearAll": "Clear All",
+        "condition": "Condition",
+        "conditions": {
+            "date": {
+                "after": "After",
+                "before": "Before",
+                "between": "Between",
+                "empty": "Empty",
+                "equals": "Equals",
+                "not": "Not",
+                "notBetween": "Not Between",
+                "notEmpty": "Not Empty"
+            },
+            "number": {
+                "between": "Between",
+                "empty": "Empty",
+                "equals": "Equals",
+                "gt": "Greater Than",
+                "gte": "Greater Than Equal",
+                "lt": "Less Than",
+                "lte": "Less Than Equal",
+                "not": "Not",
+                "notBetween": "Not Between",
+                "notEmpty": "Not Empty"
+            },
+            "string": {
+                "contains": "Contains",
+                "empty": "Empty",
+                "endsWith": "Ends With",
+                "equals": "Equals",
+                "not": "Not",
+                "notEmpty": "Not Empty",
+                "startsWith": "Starts With",
+                "notContains": "Does Not Contain",
+                "notEnds": "Does Not End With",
+                "notStarts": "Does Not Start With"
+            },
+            "array": {
+                "equals": "Equals",
+                "empty": "Empty",
+                "contains": "Contains",
+                "not": "Not",
+                "notEmpty": "Not Empty",
+                "without": "Without"
+            }
+        },
+        "logicAnd": "And",
+        "logicOr": "Or",
+        "add": "Add Condition",
+        "data": "Player",
+        "deleteTitle": "Delete filter rule",
+        "leftTitle": "Outdent criteria",
+        "rightTitle": "Indent criteria"
+    },
+    "searchPanes": {
+        "countFiltered": "{shown} ({total})",
+        "emptyPanes": "No SearchPanes",
+        "clearMessage": "Clear All",
+        "loadMessage": "Loading SearchPanes",
+        "collapse": {
+            "0": "SearchPanes",
+            "_": "SearchPanes (%d)"
+        },
+        "title": "Filters Active - %d",
+        "count": "{total}",
+        "collapseMessage": "Collapse All",
+        "showMessage": "Show All"
+    },
+    "datetime": {
+        "hours": "Hour",
+        "minutes": "Minute",
+        "next": "Next",
+        "previous": "Previous",
+        "seconds": "Second",
+        "amPm": ["am", "pm"],
+        "unknown": "-",
+        "weekdays": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    },
+    "emptyTable": "No players available",
+    "info": "Showing _START_ to _END_ of _TOTAL_ players",
+    "infoEmpty": "Showing 0 to 0 of 0 players",
+    "lengthMenu": "Show _MENU_ players",
+    "loadingRecords": "Loading...",
+    "paginate": {
+        "first": "First",
+        "last": "Last",
+        "next": "Next",
+        "previous": "Previous"
+    },
+    "search": "Search:",
+    "zeroRecords": "No matching records found",
+    "decimal": ".",
+    "editor": {
+        "close": "Close",
+        "create": {
+            "button": "New",
+            "submit": "Create",
+            "title": "Create new entry"
+        },
+        "edit": {
+            "button": "Edit",
+            "submit": "Update",
+            "title": "Edit entry"
+        },
+        "error": {
+            "system": "A system error has occurred (&lt;a target=\"\\\" rel=\"nofollow\" href=\"\\\"&gt;More information&lt;/a&gt;)."
+        },
+        "multi": {
+            "info": "The selected items contain different values for this input. To edit and set all items for this input to the same value, click or tap here, otherwise they will retain their individual values.",
+            "noMulti": "This input can be edited individually, but not part of a group.",
+            "restore": "Undo changes",
+            "title": "Multiple values"
+        },
+        "remove": {
+            "button": "Delete",
+            "confirm": {
+                "_": "Are you sure you wish to delete %d rows?",
+                "1": "Are you sure you wish to delete 1 row?"
+            },
+            "submit": "Delete",
+            "title": "Delete"
+        }
+    },
+    "infoFiltered": "(filtered from _MAX_ total players)",
+    "searchPlaceholder": "Search...",
+    "stateRestore": {
+        "creationModal": {
+            "button": "Create",
+            "columns": {
+                "search": "Column Search",
+                "visible": "Column Visibility"
+            },
+            "name": "Name:",
+            "order": "Sorting",
+            "paging": "Paging",
+            "scroller": "Scroll Position",
+            "search": "Search",
+            "searchBuilder": "SearchBuilder",
+            "select": "Select",
+            "title": "Create State",
+            "toggleLabel": "Includes:"
+        },
+        "duplicateError": "A state with this name already exists.",
+        "emptyError": "Name cannot be empty.",
+        "emptyStates": "No saved states",
+        "removeConfirm": "Are you sure you want to remove %s?",
+        "removeError": "Failed to remove state.",
+        "removeJoiner": "and",
+        "removeSubmit": "Remove",
+        "removeTitle": "Remove State",
+        "renameButton": "Rename",
+        "renameLabel": "New name for %s:",
+        "renameTitle": "Rename State"
+    }
+}

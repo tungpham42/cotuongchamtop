@@ -137,14 +137,9 @@
         "next": "Sau",
         "previous": "Trước",
         "seconds": "Giây",
-        "amPm": [
-            "am",
-            "pm"
-        ],
+        "amPm": ["am", "pm"],
         "unknown": "-",
-        "weekdays": [
-            "Chủ nhật"
-        ]
+        "weekdays": ["Chủ nhật"]
     },
     "emptyTable": "Không có phòng",
     "info": "Hiển thị _START_ tới _END_ của _TOTAL_ phòng",

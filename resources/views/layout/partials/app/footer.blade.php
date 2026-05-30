@@ -10,25 +10,25 @@
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
         <ul class="list-unstyled">
           <li>
-            <a class="home showPromotion" href="{{ url('') }}"><i class="fal fa-home-lg-alt"></i> {{ __("Trang chủ") }}</a>
+            <a class="home showPromotion" href="{{ localized_url('home') }}"><i class="fal fa-home-lg-alt"></i> {{ __("Trang chủ") }}</a>
           </li>
           <li>
-            <a class="dashboard showPromotion" href="{{ url('/thi-dau') }}"><i class="fal fa-trophy-alt"></i> {{ __("Thi đấu") }}</a>
+            <a class="dashboard showPromotion" href="{{ localized_url('app.dashboard') }}"><i class="fal fa-trophy-alt"></i> {{ __("Thi đấu") }}</a>
           </li>
           <li>
-            <a class="trophy showPromotion" href="{{ url('/bang-xep-hang') }}"><i class="fal fa-star"></i> {{ __("Bảng xếp hạng") }}</a>
+            <a class="trophy showPromotion" href="{{ localized_url('app.ranking') }}"><i class="fal fa-star"></i> {{ __("Bảng xếp hạng") }}</a>
           </li>
           <li>
-            <a class="room showPromotion rooms-list" href="{{ url(__('/sanh-cho')) }}"><i class="fal fa-list-alt"></i> {{ __("Sảnh chờ") }}</a>
+            <a class="room showPromotion rooms-list" href="{{ localized_url('room.list') }}"><i class="fal fa-list-alt"></i> {{ __("Sảnh chờ") }}</a>
           </li>
           <li>
-            <a class="setup puzzle showPromotion" href="{{ url('/co-the') }}"><i class="fal fa-puzzle-piece"></i> {{ __("Cờ thế") }}</a>
+            <a class="setup puzzle showPromotion" href="{{ localized_url('puzzle.setup') }}"><i class="fal fa-puzzle-piece"></i> {{ __("Cờ thế") }}</a>
           </li>
           <li>
-            <a class="about showPromotion" href="{{ url('/gioi-thieu') }}"><i class="fal fa-info-square"></i> {{ __("Giới thiệu") }}</a>
+            <a class="about showPromotion" href="{{ localized_url('about') }}"><i class="fal fa-info-square"></i> {{ __("Giới thiệu") }}</a>
           </li>
           <li>
-            <a class="contact showPromotion" href="{{ url('/lien-he') }}"><i class="fal fa-envelope"></i> {{ __("Liên hệ") }}</a>
+            <a class="contact showPromotion" href="{{ localized_url('contact') }}"><i class="fal fa-envelope"></i> {{ __("Liên hệ") }}</a>
           </li>
           <li>
             <a target="_blank" class="game showPromotion" href="https://game.cotuong.top"><i class="fal fa-gamepad-alt"></i> {{ __("Trò chơi") }}</a>
@@ -41,18 +41,6 @@
           </li>
           <li>
             <a target="_blank" class="hololab showPromotion" href="https://hololab.vn/"><i class="fal fa-cube"></i> Hologram</a>
-          </li>
-          <li>
-            <a class="lang showPromotion" href="{{ url('/en') }}"><span class="fi fi-us"></span> English</a>
-          </li>
-          <li>
-            <a class="lang showPromotion" href="{{ url('/ja') }}"><span class="fi fi-jp"></span> 日本語</a>
-          </li>
-          <li>
-            <a class="lang showPromotion" href="{{ url('/ko') }}"><span class="fi fi-kr"></span> 한국어</a>
-          </li>
-          <li>
-            <a class="lang showPromotion" href="{{ url('/zh') }}"><span class="fi fi-cn"></span> 中文</a>
           </li>
         </ul>
       </div>
@@ -111,20 +99,12 @@ function showLatestRoom(offset, newCode) {
       dialog.find("#join-room").on('click', function() {
         if (data.color == 'red') {
           dialog.modal("hide");
-          // $('#AdSenseModal').attr('data-url', "{{ url('/') }}" + '/phong/' + data.room.code + '/do').modal('show');
-          // $('#AdSenseModal').on('shown.bs.modal', function (event) {
-          //   $('#adModalCloseBtn').attr('data-original-title', 'Mời Đỏ đi tiếp trong phòng "' + data.room.name + '"');
-          //   $('#adModalCloseBtn').tooltip();
-          // })
-          window.location.href = "{{ url('/') }}" + '/phong/' + data.room.code + '/do';
+          let url = '{{ localized_url("room.red", ["code" => ":code"]) }}';
+          window.location.href = url.replace(/%3Acode|:code/g, data.room.code);
         } else if (data.color == 'black') {
           dialog.modal("hide");
-          // $('#AdSenseModal').attr('data-url', "{{ url('/') }}" + '/phong/' + data.room.code + '/den').modal('show');
-          // $('#AdSenseModal').on('shown.bs.modal', function (event) {
-          //   $('#adModalCloseBtn').attr('data-original-title', 'Mời Đen đi tiếp trong phòng "' + data.room.name + '"');
-          //   $('#adModalCloseBtn').tooltip();
-          // })
-          window.location.href = "{{ url('/') }}" + '/phong/' + data.room.code + '/den';
+          let url = '{{ localized_url("room.black", ["code" => ":code"]) }}';
+          window.location.href = url.replace(/%3Acode|:code/g, data.room.code);
         }
       });
 
@@ -154,12 +134,7 @@ function showLatestRoom(offset, newCode) {
               },
               callback: function (result) {
                 if (result == true) {
-                  // $('#AdSenseModal').attr('data-url', "{{ url(__('/sanh-cho')) }}").modal('show');
-                  // $('#AdSenseModal').on('shown.bs.modal', function (event) {
-                  //   $('#adModalCloseBtn').attr('data-original-title', 'Mời vào {{ __("Sảnh chờ") }}!');
-                  //   $('#adModalCloseBtn').tooltip();
-                  // });
-                  window.location.href = "{{ url(__('/sanh-cho')) }}";
+                  window.location.href = "{{ localized_url('room.list') }}";
                 }
               }
             });
@@ -169,12 +144,7 @@ function showLatestRoom(offset, newCode) {
     }
   });
 }
-// window.onscroll = function() {
-//   if (window.innerHeight + window.pageYOffset >= (document.body.offsetHeight / 3)) {
-//     showLatestRoom(0);
-//     window.onscroll = null;
-//   }
-// }
+
 $(function () {
   $('.menu-toggle').on('click', function(){
     $(this).toggleClass('open close');
@@ -207,17 +177,8 @@ $(function () {
 </script>
 <script>
 $('.stopPromotion').each(function(){
-  // if (removeTrailingSlash($(this).attr('href')) == removeTrailingSlash(window.location.href) || $(this).attr('href') == window.location.href) {
-  //   $(this).css({'cursor': 'default', 'pointer-events': 'none'});
-  //   return false;
-  // }
   $(this).on('click auxclick', function(e){
-    // if (removeTrailingSlash($(this).attr('href')) !== removeTrailingSlash(window.location.href)) {
-    //   e.preventDefault();
-    //   $('#AdSenseModal').attr('data-url', $(this).attr('href')).modal('show');
-    // } else {
       window.location.href = $(this).attr('href');
-    // }
   });
 });
 $('#AdSenseModal').on('show.bs.modal', function(){
@@ -239,7 +200,6 @@ $('#AdSenseModal').on('show.bs.modal', function(){
   }, 1000);
 }).on('hidden.bs.modal', function() {
   $('#adModalCloseBtn').find('span').text('2 giây');
-  // window.open($(this).attr('data-url'), '_blank');
   window.location.href = $(this).attr('data-url');
 });
 $('#tourBtn').on('click', function(){
@@ -250,7 +210,6 @@ $('#tourBtn').on('click', function(){
   }).start();
 });
 </script>
-{{-- <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-62e5116d104f368b"></script> --}}
 <script src='https://platform-api.sharethis.com/js/sharethis.js#property=646aee4bd8c6d2001a06c2f8&product=sticky-share-buttons' async='async'></script>
 <a href="#0" class="cd-top js-cd-top rounded" style="background-image: url('{{ url('/') }}/img/cd-top-arrow.svg');">Top</a>
 <script src="{{ url('/') }}/js/to-top.js"></script>

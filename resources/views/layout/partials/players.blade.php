@@ -20,7 +20,7 @@
                             <a class="btn btn-dark text-light mr-1 w-100" style="cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> {{ __("Thách đấu") }}</a>
                         @endif
                     @else
-                        <a class="btn btn-danger text-light mr-1 w-100" href=" {{ url('/dang-nhap') }} "><i class="far fa-sign-in"></i> {{ __("Thách đấu") }}</a>
+                        <a class="btn btn-danger text-light mr-1 w-100" href=" {{ localized_url('login') }} "><i class="far fa-sign-in"></i> {{ __("Thách đấu") }}</a>
                     @endif
                 </div>
             </div>
@@ -181,7 +181,7 @@
                                 <a class="btn btn-dark text-light mr-1 w-100" style="cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> {{ __("Thách đấu") }}</a>
                             @endif
                         @else
-                            <a class="btn btn-danger text-light mr-1 w-100" href=" {{ url('/dang-nhap') }} "><i class="far fa-sign-in"></i> {{ __("Thách đấu") }}</a>
+                            <a class="btn btn-danger text-light mr-1 w-100" href=" {{ localized_url('login') }} "><i class="far fa-sign-in"></i> {{ __("Thách đấu") }}</a>
                         @endif
                     </div>
                 </div>

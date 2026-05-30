@@ -1,0 +1,220 @@
+{
+    "processing": "処理中...",
+    "aria": {
+        "sortAscending": ": 列を昇順に並べ替えるにはアクティブにする",
+        "sortDescending": ": 列を降順に並べ替えるにはアクティブにする"
+    },
+    "autoFill": {
+        "cancel": "キャンセル",
+        "fill": "すべてのセルに <i>%d</i> を入力",
+        "fillHorizontal": "水平方向にセルをコピー",
+        "fillVertical": "垂直方向にセルをコピー"
+    },
+    "buttons": {
+        "collection": "コレクション <span class=\"ui-button-icon-primary ui-icon ui-icon-triangle-1-s\"></span>",
+        "colvis": "列の表示",
+        "colvisRestore": "表示を復元",
+        "copy": "コピー",
+        "copyKeys": "パズルテーブルをクリップボードにコピーするには Ctrl または u2318 + C を押します。<br /><br />キャンセルするにはこのメッセージをクリックするか、ESCキーを押します。",
+        "copySuccess": {
+            "1": "1行のパズルをクリップボードにコピーしました",
+            "_": "%d行のパズルをクリップボードにコピーしました"
+        },
+        "copyTitle": "クリップボードにコピー",
+        "pageLength": {
+            "-1": "すべての行を表示",
+            "_": "%d 行を表示"
+        },
+        "print": "印刷",
+        "createState": "状態を作成",
+        "csv": "CSV",
+        "excel": "Excel",
+        "pdf": "PDF",
+        "removeAllStates": "すべての状態を削除",
+        "removeState": "削除",
+        "renameState": "名前の変更",
+        "savedStates": "保存された状態",
+        "stateRestore": "状態 %d",
+        "updateState": "更新"
+    },
+    "infoThousands": ",",
+    "select": {
+        "cells": {
+            "1": "1 セル選択",
+            "_": "%d セル選択"
+        },
+        "columns": {
+            "1": "1 列選択",
+            "_": "%d 列選択"
+        },
+        "rows": {
+            "1": "1 行選択",
+            "_": "%d 行選択"
+        }
+    },
+    "thousands": ",",
+    "searchBuilder": {
+        "title": {
+            "_": "カスタム検索 (%d)",
+            "0": "カスタム検索"
+        },
+        "button": {
+            "0": "検索ビルダー",
+            "_": "検索ビルダー (%d)"
+        },
+        "value": "値",
+        "clearAll": "すべてクリア",
+        "condition": "条件",
+        "conditions": {
+            "date": {
+                "after": "以降",
+                "before": "以前",
+                "between": "の間",
+                "empty": "空白",
+                "equals": "と等しい",
+                "not": "ではない",
+                "notBetween": "の間にない",
+                "notEmpty": "空白ではない"
+            },
+            "number": {
+                "between": "の間",
+                "empty": "空白",
+                "equals": "と等しい",
+                "gt": "より大きい",
+                "gte": "以上",
+                "lt": "より小さい",
+                "lte": "以下",
+                "not": "ではない",
+                "notBetween": "の間にない",
+                "notEmpty": "空白ではない"
+            },
+            "string": {
+                "contains": "を含む",
+                "empty": "空白",
+                "endsWith": "で終わる",
+                "equals": "と等しい",
+                "not": "ではない",
+                "notEmpty": "空白ではない",
+                "startsWith": "で始まる",
+                "notContains": "を含まない",
+                "notEnds": "で終わらない",
+                "notStarts": "で始まらない"
+            },
+            "array": {
+                "equals": "と等しい",
+                "empty": "空白",
+                "contains": "を含む",
+                "not": "ではない",
+                "notEmpty": "空白ではない",
+                "without": "含まない"
+            }
+        },
+        "logicAnd": "および(And)",
+        "logicOr": "または(Or)",
+        "add": "条件を追加",
+        "data": "パズル",
+        "deleteTitle": "フィルタールールを削除",
+        "leftTitle": "条件のインデントを減らす",
+        "rightTitle": "条件のインデントを増やす"
+    },
+    "searchPanes": {
+        "countFiltered": "{shown} ({total})",
+        "emptyPanes": "検索ペインなし",
+        "clearMessage": "すべてクリア",
+        "loadMessage": "検索ペインを読み込んでいます",
+        "collapse": {
+            "0": "検索ペイン",
+            "_": "検索ペイン (%d)"
+        },
+        "title": "アクティブなフィルター - %d",
+        "count": "{total}",
+        "collapseMessage": "すべて折りたたむ",
+        "showMessage": "すべて表示"
+    },
+    "datetime": {
+        "hours": "時",
+        "minutes": "分",
+        "next": "次へ",
+        "previous": "前へ",
+        "seconds": "秒",
+        "amPm": ["am", "pm"],
+        "unknown": "-",
+        "weekdays": ["日", "月", "火", "水", "木", "金", "土"]
+    },
+    "emptyTable": "パズルがありません",
+    "info": "_TOTAL_ 件のパズル中 _START_ から _END_ まで表示",
+    "infoEmpty": "0 件のパズル中 0 から 0 まで表示",
+    "lengthMenu": "_MENU_ 件のパズルを表示",
+    "loadingRecords": "読み込み中...",
+    "paginate": {
+        "first": "先頭",
+        "last": "最終",
+        "next": "次",
+        "previous": "前"
+    },
+    "search": "検索:",
+    "zeroRecords": "一致するレコードが見つかりません",
+    "decimal": ".",
+    "editor": {
+        "close": "閉じる",
+        "create": {
+            "button": "新規作成",
+            "submit": "作成",
+            "title": "新しいエントリの作成"
+        },
+        "edit": {
+            "button": "編集",
+            "submit": "更新",
+            "title": "エントリの編集"
+        },
+        "error": {
+            "system": "システムエラーが発生しました (&lt;a target=\"\\\" rel=\"nofollow\" href=\"\\\"&gt;詳細情報&lt;/a&gt;)."
+        },
+        "multi": {
+            "info": "選択された項目には、この入力について異なる値が含まれています。すべての項目のこの入力を同じ値にするには、ここをクリックまたはタップしてください。そうしないと、個々の値が保持されます。",
+            "noMulti": "この入力は個別に編集できますが、グループの一部として編集することはできません。",
+            "restore": "変更を元に戻す",
+            "title": "複数の値"
+        },
+        "remove": {
+            "button": "削除",
+            "confirm": {
+                "_": "%d 行を削除してもよろしいですか？",
+                "1": "1 行を削除してもよろしいですか？"
+            },
+            "submit": "削除",
+            "title": "削除"
+        }
+    },
+    "infoFiltered": "(全 _MAX_ 件のパズルからフィルタリング)",
+    "searchPlaceholder": "検索...",
+    "stateRestore": {
+        "creationModal": {
+            "button": "作成",
+            "columns": {
+                "search": "列検索",
+                "visible": "列の表示"
+            },
+            "name": "名前:",
+            "order": "並べ替え",
+            "paging": "ページング",
+            "scroller": "スクロール位置",
+            "search": "検索",
+            "searchBuilder": "検索ビルダー",
+            "select": "選択",
+            "title": "状態を作成",
+            "toggleLabel": "対象:"
+        },
+        "duplicateError": "この名前の状態はすでに存在します。",
+        "emptyError": "名前を空にすることはできません。",
+        "emptyStates": "保存された状態はありません",
+        "removeConfirm": "%s を削除してもよろしいですか？",
+        "removeError": "状態の削除に失敗しました。",
+        "removeJoiner": "および",
+        "removeSubmit": "削除",
+        "removeTitle": "状態の削除",
+        "renameButton": "名前の変更",
+        "renameLabel": "%s の新しい名前:",
+        "renameTitle": "状態の名前変更"
+    }
+}

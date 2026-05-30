@@ -16,9 +16,9 @@
     $siteTitle = '';
     if (isset($headTitle)) {
         $siteTitle = $headTitle;
-    } elseif (url()->current() == url('/dang-nhap')) {
+    } elseif (url()->current() == localized_url('login')) {
         $siteTitle = 'Đăng nhập';
-    } elseif (url()->current() == url('/dang-ky')) {
+    } elseif (url()->current() == localized_url('register')) {
         $siteTitle = 'Đăng ký';
     } elseif (url()->current() == url('/quen-mat-khau')) {
         $siteTitle = 'Quên mật khẩu';

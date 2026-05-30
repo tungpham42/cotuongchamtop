@@ -1,23 +1,30 @@
-<!-- Google Tag Manager (noscript) -->
 @php
   $homeUrl = localized_url('home');
   $roomListUrl = localized_url('room.list');
-  $membersUrl = url('/thanh-vien');
-  $puzzleListUrl = url('/tat-ca-the-co');
-  $playingUrl = url('/thi-dau');
-  $rankingUrl = url('/bang-xep-hang');
-  $searchUrl = url('/tim-kiem');
-  $historyUrl = url('/lich-su');
-  $currentLangViUrl = $langViUrl ?? localized_path('home', [], 'vi');
-  $currentLangEnUrl = $langEnUrl ?? localized_path('home', [], 'en');
-  $currentLangJaUrl = $langJaUrl ?? localized_path('home', [], 'ja');
-  $currentLangKoUrl = $langKoUrl ?? localized_path('home', [], 'ko');
-  $currentLangZhUrl = $langZhUrl ?? localized_path('home', [], 'zh');
-  $currentCanonicalUrl = $canonicalUrl ?? localized_path('home');
+  $membersUrl = localized_url('user.list');
+  $puzzleListUrl = localized_url('puzzle.list');
+  $playingUrl = localized_url('app.dashboard');
+  $rankingUrl = localized_url('app.ranking');
+  $searchUrl = localized_url('search');
+  $historyUrl = localized_url('app.history');
+
+  // 1. Get the raw route name and parameters
+  $rawRouteName = Route::currentRouteName() ?: 'home';
+  $currentParams = Route::current() ? Route::current()->parameters() : [];
+
+  // 2. Strip the locale prefix if it exists (e.g., transforms "ko.login" to "login")
+  $currentRoute = preg_replace('/^(vi|en|ja|ko|zh)\./', '', $rawRouteName);
+
+  // 3. Generate the clean URLs
+  $currentLangViUrl = $langViUrl ?? localized_path($currentRoute, $currentParams, 'vi');
+  $currentLangEnUrl = $langEnUrl ?? localized_path($currentRoute, $currentParams, 'en');
+  $currentLangJaUrl = $langJaUrl ?? localized_path($currentRoute, $currentParams, 'ja');
+  $currentLangKoUrl = $langKoUrl ?? localized_path($currentRoute, $currentParams, 'ko');
+  $currentLangZhUrl = $langZhUrl ?? localized_path($currentRoute, $currentParams, 'zh');
+  $currentCanonicalUrl = $canonicalUrl ?? localized_path($currentRoute, $currentParams);
 @endphp
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WM9GZXN"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
 <header class="site-header shadow-lg sticky-top">
   <div class="container mx-auto">
     <div class="row align-items-center">
@@ -39,7 +46,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <a class="showPromotion dropdown-item{{ url()->current() == $searchUrl ? ' active disabled' : '' }}" href="{{ $searchUrl }}"><i class="far fa-search"></i> {{ __("Tìm kiếm kỳ thủ") }}</a>
               <a class="showPromotion dropdown-item{{ url()->current() == $historyUrl ? ' active disabled' : '' }}" href="{{ $historyUrl }}"><i class="far fa-archive"></i> {{ __("Lịch sử thi đấu") }}</a>
               <a target="_blank" class="showPromotion dropdown-item" href="https://diendan.cotuong.top/"><i class="far fa-comments"></i> {{ __("Diễn đàn") }}</a>
-              <!-- <a target="_blank" class="dropdown-item" href="https://blog.cotuong.top/"><i class="far fa-blog"></i> {{ __("Tin tức") }}</a> -->
             </div>
           </li>
           <li class="nav-item">
@@ -48,15 +54,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           @guest
             @if (Route::has('login'))
               <li class="nav-item">
-                <a class="showPromotion login" href="{{ route('login') }}"><i class="far fa-sign-in"></i> {{ __('Login') }}</a>
+                <a class="showPromotion login" href="{{ localized_url('login') }}"><i class="far fa-sign-in"></i> {{ __('Đăng nhập') }}</a>
               </li>
             @endif
-
-            {{-- @if (Route::has('register'))
-              <li class="nav-item">
-                <a class="showPromotion register" href="{{ route('register') }}"><i class="far fa-user-plus"></i> {{ __('Register') }}</a>
-              </li>
-            @endif --}}
           @else
             <li class="dropdown">
               <a id="navbarDropdown" class="dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false">
@@ -67,14 +67,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 @if (Auth::user()->isStandard())
                   <span class="dropdown-item text-success"><i class="far fa-crown"></i> Standard (ẩn quảng cáo)</span>
                 @else
-                  <a href="{{ url('/ho-so-cua-toi') }}#standard-plan" class="showPromotion dropdown-item text-danger">
+                  <a href="{{ localized_url('app.profile') }}#standard-plan" class="showPromotion dropdown-item text-danger">
                     <i class="far fa-crown"></i> Nâng cấp Standard
                   </a>
                 @endif
-                <a href="{{ url('/ho-so-cua-toi') }}" class="showPromotion dropdown-item{{ url()->current() == url('/ho-so-cua-toi') ? ' active disabled' : '' }}"><i class="far fa-id-card"></i> {{ __("Hồ sơ của tôi") }}</a>
-                <a href="{{ url('/doi-ten') }}" class="showPromotion dropdown-item{{ url()->current() == url('/doi-ten') ? ' active disabled' : '' }}"><i class="far fa-user-edit"></i> {{ __("Đổi tên") }}</a>
-                <a href="{{ url('/doi-giao-dien') }}" class="showPromotion dropdown-item{{ url()->current() == url('/doi-giao-dien') ? ' active disabled' : '' }}"><i class="far fa-palette"></i> {{ __("Đổi giao diện") }}</a>
-                <a href="{{ url('/doi-mat-khau') }}" class="showPromotion dropdown-item{{ url()->current() == url('/doi-mat-khau') ? ' active disabled' : '' }}"><i class="far fa-lock-alt"></i> {{ __("Đổi mật khẩu") }}</a>
+                <a href="{{ localized_url('app.profile') }}" class="showPromotion dropdown-item{{ url()->current() == localized_url('app.profile') ? ' active disabled' : '' }}"><i class="far fa-id-card"></i> {{ __("Hồ sơ của tôi") }}</a>
+                <a href="{{ localized_url('app.name') }}" class="showPromotion dropdown-item{{ url()->current() == localized_url('app.name') ? ' active disabled' : '' }}"><i class="far fa-user-edit"></i> {{ __("Đổi tên") }}</a>
+                <a href="{{ localized_url('app.ui') }}" class="showPromotion dropdown-item{{ url()->current() == localized_url('app.ui') ? ' active disabled' : '' }}"><i class="far fa-palette"></i> {{ __("Đổi giao diện") }}</a>
+                <a href="{{ localized_url('app.password') }}" class="showPromotion dropdown-item{{ url()->current() == localized_url('app.password') ? ' active disabled' : '' }}"><i class="far fa-lock-alt"></i> {{ __("Đổi mật khẩu") }}</a>
                 <a class="dropdown-item" href="{{ route('logout') }}"
                   onclick="event.preventDefault();
                                 document.getElementById('logout-form').submit();">

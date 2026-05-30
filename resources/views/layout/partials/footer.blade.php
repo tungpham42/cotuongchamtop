@@ -10,25 +10,25 @@
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
         <ul class="list-unstyled">
           <li>
-            <a class="home showPromotion" href="{{ url(app()->getLocale() == 'vi' ? '' : app()->getLocale()) }}"><i class="fal fa-home-lg-alt"></i> {{ __("Trang chủ") }}</a>
+            <a class="home showPromotion" href="{{ localized_url('home') }}"><i class="fal fa-home-lg-alt"></i> {{ __("Trang chủ") }}</a>
           </li>
           <li>
-            <a class="dashboard showPromotion" href="{{ url(__('thi-dau')) }}"><i class="fal fa-trophy-alt"></i> {{ __("Thi đấu") }}</a>
+            <a class="dashboard showPromotion" href="{{ localized_url('app.dashboard') }}"><i class="fal fa-trophy-alt"></i> {{ __("Thi đấu") }}</a>
           </li>
           <li>
-            <a class="trophy showPromotion" href="{{ url(__('bang-xep-hang')) }}"><i class="fal fa-star"></i> {{ __("Bảng xếp hạng") }}</a>
+            <a class="trophy showPromotion" href="{{ localized_url('app.ranking') }}"><i class="fal fa-star"></i> {{ __("Bảng xếp hạng") }}</a>
           </li>
           <li>
-            <a class="room showPromotion rooms-list" href="{{ url(__('sanh-cho')) }}"><i class="fal fa-list-alt"></i> {{ __("Sảnh chờ") }}</a>
+            <a class="room showPromotion rooms-list" href="{{ localized_url('room.list') }}"><i class="fal fa-list-alt"></i> {{ __("Sảnh chờ") }}</a>
           </li>
           <li>
-            <a class="setup puzzle showPromotion" href="{{ url(__('co-the')) }}"><i class="fal fa-puzzle-piece"></i> {{ __("Cờ thế") }}</a>
+            <a class="setup puzzle showPromotion" href="{{ localized_url('puzzle.setup') }}"><i class="fal fa-puzzle-piece"></i> {{ __("Cờ thế") }}</a>
           </li>
           <li>
-            <a class="about showPromotion" href="{{ url(__('gioi-thieu')) }}"><i class="fal fa-info-square"></i> {{ __("Giới thiệu") }}</a>
+            <a class="about showPromotion" href="{{ localized_url('about') }}"><i class="fal fa-info-square"></i> {{ __("Giới thiệu") }}</a>
           </li>
           <li>
-            <a class="contact showPromotion" href="{{ url(__('lien-he')) }}"><i class="fal fa-envelope"></i> {{ __("Liên hệ") }}</a>
+            <a class="contact showPromotion" href="{{ localized_url('contact') }}"><i class="fal fa-envelope"></i> {{ __("Liên hệ") }}</a>
           </li>
           <li>
             <a target="_blank" class="game showPromotion" href="https://game.cotuong.top"><i class="fal fa-gamepad-alt"></i> {{ __("Trò chơi") }}</a>
@@ -42,33 +42,6 @@
           <li>
             <a target="_blank" class="hololab showPromotion" href="https://hololab.vn/"><i class="fal fa-cube"></i> Hologram</a>
           </li>
-          @if (isset($room->host_id))
-          <li>
-            <a class="lang showPromotion" href="{{ url('/en') }}"><span class="fi fi-us"></span> English</a>
-          </li>
-          <li>
-            <a class="lang showPromotion" href="{{ url('/ja') }}"><span class="fi fi-jp"></span> 日本語</a>
-          </li>
-          <li>
-            <a class="lang showPromotion" href="{{ url('/ko') }}"><span class="fi fi-kr"></span> 한국어</a>
-          </li>
-          <li>
-            <a class="lang showPromotion" href="{{ url('/zh') }}"><span class="fi fi-cn"></span> 中文</a>
-          </li>
-          @else
-          <li>
-            <a class="lang showPromotion" href="{{ url($langEnUrl) }}"><span class="fi fi-us"></span> English</a>
-          </li>
-          <li>
-            <a class="lang showPromotion" href="{{ url($langJaUrl) }}"><span class="fi fi-jp"></span> 日本語</a>
-          </li>
-          <li>
-            <a class="lang showPromotion" href="{{ url($langKoUrl) }}"><span class="fi fi-kr"></span> 한국어</a>
-          </li>
-          <li>
-            <a class="lang showPromotion" href="{{ url($langZhUrl) }}"><span class="fi fi-cn"></span> 中文</a>
-          </li>
-          @endif
         </ul>
       </div>
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">

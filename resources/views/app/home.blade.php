@@ -5,7 +5,6 @@
     @if ($showAds ?? true)
     <div class="row justify-content-center text-center mb-4">
         <div class="col-12">
-            <!-- CO_res -->
             <ins class="adsbygoogle"
             style="display:block"
             data-ad-client="ca-pub-3585118770961536"
@@ -22,22 +21,22 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <i class="fas fa-gamepad-alt"></i> {{ __("Thi đấu") }} xếp hạng
+                    <i class="fas fa-gamepad-alt"></i> {{ __("Thi đấu xếp hạng") }}
                     @include('layout.partials.app.tourBtn')
                 </div>
                 <div class="card-body">
                     @include('layout.partials.app.createRoom')
                     <span style="background-color: #ffffff; margin-top: -70px;" class="d-block w-100 pb-5 mb-5" id="result-board"></span>
-                    <h2 data-step="2" data-intro="Danh sách 10 kỳ thủ nhiều điểm nhất"><i class="fas fa-medal"></i> TOP 10</h2>
+                    <h2 data-step="2" data-intro="{{ __("Danh sách 10 kỳ thủ nhiều điểm nhất") }}"><i class="fas fa-medal"></i> {{ __("TOP 10") }}</h2>
                     <div class="table-responsive">
                         <table class="table table-striped table-hover" id="rankingTable">
                             <thead>
                                 <tr>
-                                    <th scope="col">Hạng</th>
-                                    <th scope="col">Tên</th>
+                                    <th scope="col">{{ __("Hạng") }}</th>
+                                    <th scope="col">{{ __("Tên") }}</th>
                                     <th scope="col">Elo</th>
-                                    <th scope="col">Ngày giờ gia nhập</th>
-                                    <th scope="col">Lần trực tuyến gần nhất</th>
+                                    <th scope="col">{{ __("Ngày giờ gia nhập") }}</th>
+                                    <th scope="col">{{ __("Lần trực tuyến gần nhất") }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -54,14 +53,14 @@
                         </table>
                     </div>
                     <span style="background-color: #ffffff; margin-top: -70px;" class="d-block w-100 pb-5 mb-5" id="result-board"></span>
-                    <h2 data-step="3" data-intro="Danh sách các ván {{ __("đấu") }} đang diễn ra" class="mt-3"><i class="fas fa-list"></i> {{ $playingRooms->total() }} {{ __("ván cờ") }} {{ __("đang thi đấu") }} ({!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</h2>
+                    <h2 data-step="3" data-intro="{{ __("Danh sách các ván đấu đang diễn ra") }}" class="mt-3"><i class="fas fa-list"></i> {{ $playingRooms->total() }} {{ __("ván cờ đang thi đấu") }} ({!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</h2>
                     <div class="table-responsive mb-3">
                         <table class="table table-striped table-hover" id="results-table">
                             <thead>
                                 <tr>
                                     <th scope="col">{{ __("Tên phòng") }}</th>
-                                    <th scope="col">Chủ phòng</th>
-                                    <th scope="col">Khách</th>
+                                    <th scope="col">{{ __("Chủ phòng") }}</th>
+                                    <th scope="col">{{ __("Khách") }}</th>
                                     <th scope="col">{{ __("Tới lượt") }}</th>
                                     <th scope="col">{{ __("Thi đấu") }}</th>
                                     <th scope="col">{{ __("Lần cuối chơi") }}</th>
@@ -80,7 +79,7 @@
                                     </td>
                                     <td class="text-center">
                                         @if (str_contains($room->fen, ' r '))
-                                        <span class="text-danger">Đỏ</span>
+                                        <span class="text-danger">{{ __("Đỏ") }}</span>
                                         @elseif (str_contains($room->fen, ' b '))
                                         <span class="text-dark">{{ __("Đen") }}</span>
                                         @endif
@@ -89,15 +88,15 @@
                                         @if (!isset($room->result))
                                             @if (auth()->check())
                                                 @if (isset($room->guest_id))
-                                                <a class="btn btn-sm btn-dark" href="javascript:joinMatch('{{ $room->code }}')"><i class="fad fa-mouse"></i> Chơi</a>
+                                                <a class="btn btn-sm btn-dark" href="javascript:joinMatch('{{ $room->code }}')"><i class="fad fa-mouse"></i> {{ __("Chơi") }}</a>
                                                 @else
-                                                <a class="btn btn-sm btn-danger pulse-red" href="javascript:joinMatch('{{ $room->code }}')"><i class="fad fa-mouse"></i> Chơi</a>
+                                                <a class="btn btn-sm btn-danger pulse-red" href="javascript:joinMatch('{{ $room->code }}')"><i class="fad fa-mouse"></i> {{ __("Chơi") }}</a>
                                                 @endif
                                             @else
                                                 @if (isset($room->guest_id))
-                                                <a class="btn btn-sm btn-dark showPromotion" href="{{ url('/dang-nhap') }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
+                                                <a class="btn btn-sm btn-dark showPromotion" href="{{ localized_url('login') }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
                                                 @else
-                                                <a class="btn btn-sm btn-danger pulse-red showPromotion" href="{{ url('/dang-nhap') }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
+                                                <a class="btn btn-sm btn-danger pulse-red showPromotion" href="{{ localized_url('login') }}"><i class="fad fa-sign-in"></i> {{ __("Đăng nhập") }}</a>
                                                 @endif
                                             @endif
                                         @else
@@ -139,14 +138,14 @@
                                     dataType: 'text'
                                 }).done(function() {
                                     bootbox.alert({
-                                        message: "Hãy chuẩn bị vào phòng!",
+                                        message: "{{ __("Hãy chuẩn bị vào phòng!") }}",
                                         size: 'small',
                                         centerVertical: true,
                                         closeButton: false,
                                         buttons: {
                                             ok: {
                                                 className: 'btn-danger pulse-red',
-                                                label: 'Oki'
+                                                label: '{{ __("Oki") }}'
                                             }
                                         },
                                         callback: function(){
@@ -156,14 +155,14 @@
                                 });
                             } else if (guestId == '{{ auth()->id() }}') {
                                 bootbox.alert({
-                                    message: "Mời bạn quay lại phòng!",
+                                    message: "{{ __("Mời bạn quay lại phòng!") }}",
                                     size: 'small',
                                     centerVertical: true,
                                     closeButton: false,
                                     buttons: {
                                         ok: {
                                             className: 'btn-danger pulse-red',
-                                            label: 'Oki'
+                                            label: '{{ __("Oki") }}'
                                         }
                                     },
                                     callback: function(){
@@ -172,14 +171,14 @@
                                 });
                             } else if (hostId == '{{ auth()->id() }}') {
                                 bootbox.alert({
-                                    message: "Mời bạn vào lại phòng của mình!",
+                                    message: "{{ __("Mời bạn vào lại phòng của mình!") }}",
                                     size: 'small',
                                     centerVertical: true,
                                     closeButton: false,
                                     buttons: {
                                         ok: {
                                             className: 'btn-danger pulse-red',
-                                            label: 'Oki'
+                                            label: '{{ __("Oki") }}'
                                         }
                                     },
                                     callback: function(){

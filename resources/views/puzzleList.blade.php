@@ -5,20 +5,20 @@
     <div class="row">
     @include('layout.partials.findMatch')
     </div>
-    <h2 class="h1-responsivefooter text-center my-4">Tất cả {{ __("thế cờ") }}</h2>
+    <h2 class="h1-responsivefooter text-center my-4">{{ __('Tất cả thế cờ') }}</h2>
     <div class="dropdown mx-auto text-center mb-3">
-      <a data-step="1" data-intro="Ấn vào đây để xếp {{ __("thế cờ") }} mới" id="setup" class="btn btn-danger btn-lg" href="{{ url('/') }}/co-the"><i class="fad fa-plus-hexagon"></i> Xếp ván mới</a>
+      <a data-step="1" data-intro="{{ __('Ấn vào đây để xếp thế cờ mới') }}" id="setup" class="btn btn-danger btn-lg" href="{{ url('/') }}/co-the"><i class="fad fa-plus-hexagon"></i> {{ __('Xếp ván mới') }}</a>
       @include('common.tourBtn')
     </div>
-    <div data-step="2" data-intro="Danh sách tất cả các {{ __("thế cờ") }}" class="table-responsive">
+    <div data-step="2" data-intro="{{ __('Danh sách tất cả các thế cờ') }}" class="table-responsive">
       <table id="danh-sach-the-co" class="table table-bordered table-hover table-striped table-sm">
         <thead class="thead-light">
           <tr>
-            <th class="text-center" scope="col">Xếp hạng</th>
-            <th class="text-center" scope="col">Tên {{ __("thế cờ") }}</th>
-            <th class="text-center" scope="col">Đánh giá</th>
-            <th class="text-center" scope="col">{{ __("Hành động") }}</th>
-            <th class="text-center" scope="col">Thời gian cập nhật</th>
+            <th class="text-center" scope="col">{{ __('Xếp hạng') }}</th>
+            <th class="text-center" scope="col">{{ __('Tên thế cờ') }}</th>
+            <th class="text-center" scope="col">{{ __('Đánh giá') }}</th>
+            <th class="text-center" scope="col">{{ __('Hành động') }}</th>
+            <th class="text-center" scope="col">{{ __('Thời gian cập nhật') }}</th>
           </tr>
         </thead>
         <tbody style="background-color: whitesmoke;">
@@ -33,7 +33,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 320px; margin: auto;">
     <div class="modal-content shadow-lg">
       <div class="modal-header">
-        <h5 class="modal-title"><i class="far fa-eye"></i> {{ __("Xem trước \"") }}<span></span>"</h5>
+        <h5 class="modal-title"><i class="far fa-eye"></i> {{ __('Xem trước') }} "<span></span>"</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -46,14 +46,14 @@
 </div>
 <script>
 $(document).ready(function () {
-  console.log('List URL: ' + '{{ route('puzzlesVi.list') }}');
+  console.log('List URL: ' + '{{ route('puzzles' . ucfirst(app()->getLocale()) . '.list') }}');
   var table = $('#danh-sach-the-co').DataTable({
     processing: true,
     serverSide: true,
     ordering: true,
     searching: true,
     ajax: {
-      url: "{{ route('puzzlesVi.list') }}"
+      url: "{{ route('puzzles' . ucfirst(app()->getLocale()) . '.list') }}"
     },
     deferRender: true,
     columns: [
@@ -94,7 +94,7 @@ $(document).ready(function () {
       }
     ],
     'language': {
-      'url': '{{ url('/') }}/js/TablePuzzleVn.json'
+      'url': '{{ url('/') }}/js/TablePuzzle{{ ucfirst(app()->getLocale()) }}.json'
     },
     'createdRow': function(row, data, dataIndex) {
       var selectedFen = $(row).find('td.room-code > a').attr('data-fen');

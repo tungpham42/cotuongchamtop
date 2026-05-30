@@ -5,7 +5,6 @@
     @if ($showAds ?? true)
     <div class="row justify-content-center text-center mb-4">
         <div class="col-12">
-            <!-- CO_res -->
             <ins class="adsbygoogle"
             style="display:block"
             data-ad-client="ca-pub-3585118770961536"
@@ -22,19 +21,19 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <i class="fas fa-search"></i> Tìm kiếm kỳ thủ
+                    <i class="fas fa-search"></i> {{ __("Tìm kiếm kỳ thủ") }}
                     @include('layout.partials.app.tourBtn')
                 </div>
                 <div class="card-body">
                     @include('layout.partials.app.createRoom')
                     <span style="background-color: #ffffff; margin-top: -70px;" class="d-block w-100 pb-5 mb-5" id="result-board"></span>
-                    <h2 data-step="2" data-intro="Tìm kiếm kỳ thủ theo tên và email"><i class="fas fa-search"></i> Tìm kiếm kỳ thủ ({!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</h2>
-                    <form action="{{ route('searchPlayers') }}" method="GET">
+                    <h2 data-step="2" data-intro="{{ __("Tìm kiếm kỳ thủ theo tên và email") }}"><i class="fas fa-search"></i> {{ __("Tìm kiếm kỳ thủ") }} ({!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</h2>
+                    <form action="{{ route('search') }}" method="GET">
                         @csrf
                         <div class="input-group mb-3" id="search-form">
-                            <input data-step="3" data-intro="Điền vào từ khóa cần tìm" name="query" type="text" class="form-control form-control-lg" id="keyword" aria-label="Bạn cần tìm ai?" placeholder="Bạn cần tìm ai?" value="{{ isset($_GET['query']) ? $_GET['query'] : '' }}">
-                            <button data-step="4" data-intro="Ấn để bắt đầu tìm kiếm" class="btn btn-danger btn-lg" type="submit"><i class="fad fa-search"></i><span> Tìm kiếm</span></button>
-                            <button data-step="5" data-intro="Ấn để quay lại trang mặc định" class="btn btn-dark btn-lg" type="button" onclick="javascript:window.location.href='{{ url('/tim-kiem') }}'"><i class="fad fa-chevron-left"></i><span> Quay lại</span></button>
+                            <input data-step="3" data-intro="{{ __("Điền vào từ khóa cần tìm") }}" name="query" type="text" class="form-control form-control-lg" id="keyword" aria-label="{{ __("Bạn cần tìm ai?") }}" placeholder="{{ __("Bạn cần tìm ai?") }}" value="{{ isset($_GET['query']) ? $_GET['query'] : '' }}">
+                            <button data-step="4" data-intro="{{ __("Ấn để bắt đầu tìm kiếm") }}" class="btn btn-danger btn-lg" type="submit"><i class="fad fa-search"></i><span> {{ __("Tìm kiếm") }}</span></button>
+                            <button data-step="5" data-intro="{{ __("Ấn để quay lại trang mặc định") }}" class="btn btn-dark btn-lg" type="button" onclick="javascript:window.location.href='{{ url('/tim-kiem') }}'"><i class="fad fa-chevron-left"></i><span> {{ __("Quay lại") }}</span></button>
                         </div>
                     </form>
                     <script>
@@ -43,15 +42,15 @@
                         });
                     </script>
                     @if (isset($results) && count($results) > 0)
-                    <span class="lead">Tìm được {{ $results->total() }} kỳ thủ</span>
-                    <div data-step="6" data-intro="{{ __("Kết quả") }} tìm kiếm" class="table-responsive">
+                    <span class="lead">{{ __("Tìm được") }} {{ $results->total() }} {{ __("kỳ thủ") }}</span>
+                    <div data-step="6" data-intro="{{ __("Kết quả tìm kiếm") }}" class="table-responsive">
                         <table class="table table-striped table-hover" id="rankingTable">
                             <thead>
                                 <tr>
-                                    <th scope="col">Tên</th>
+                                    <th scope="col">{{ __("Tên") }}</th>
                                     <th scope="col">Elo</th>
-                                    <th scope="col">Ngày giờ gia nhập</th>
-                                    <th scope="col">Lần trực tuyến gần nhất</th>
+                                    <th scope="col">{{ __("Ngày giờ gia nhập") }}</th>
+                                    <th scope="col">{{ __("Lần trực tuyến gần nhất") }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -69,7 +68,7 @@
                     </div>
                     @else
                     <div class="alert alert-secondary lead" role="alert">
-                        Không tìm thấy kỳ thủ nào
+                        {{ __("Không tìm thấy kỳ thủ nào") }}
                     </div>
                     @endif
                 </div>

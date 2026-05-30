@@ -337,13 +337,13 @@ foreach ($localizedRoomPages as $pageKey => $roomPage) {
 //     Voyager::routes();
 // });
 
-Route::get('/puzzles/vi', [PuzzleController::class, 'getPuzzlesVi'])->name('puzzlesVi.list');
-Route::get('/users/vi', [UserController::class, 'getUsersVi'])->name('usersVi.list');
-Route::get('/rooms/vi', [RoomController::class, 'getRoomsVi'])->name('roomsVi.list');
-Route::get('/rooms/en', [RoomController::class, 'getRoomsEn'])->name('roomsEn.list');
-Route::get('/rooms/ja', [RoomController::class, 'getRoomsJa'])->name('roomsJa.list');
-Route::get('/rooms/ko', [RoomController::class, 'getRoomsKo'])->name('roomsKo.list');
-Route::get('/rooms/zh', [RoomController::class, 'getRoomsZh'])->name('roomsZh.list');
+// Loop through supported locales to dynamically generate DataTables endpoints
+foreach (['vi', 'en', 'ja', 'ko', 'zh'] as $locale) {
+    $ucLocale = ucfirst($locale);
+    Route::get("/puzzles/{$locale}", [PuzzleController::class, "getPuzzles{$ucLocale}"])->name("puzzles{$ucLocale}.list");
+    Route::get("/users/{$locale}", [UserController::class, "getUsers{$ucLocale}"])->name("users{$ucLocale}.list");
+    Route::get("/rooms/{$locale}", [RoomController::class, "getRooms{$ucLocale}"])->name("rooms{$ucLocale}.list");
+}
 // Auth::routes();
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -351,44 +351,210 @@ Route::get('/rooms/zh', [RoomController::class, 'getRoomsZh'])->name('roomsZh.li
 Route::get('/home', function () {
   return redirect('/thi-dau', 301);
 });
-Route::get('/thi-dau', function() {
-  return view('app/home', ['bodyClass' => 'dashboard', 'matchUsers' => UserController::getMatchUsers(), 'matchRooms' => RoomController::getMatchRooms(), 'playingRooms' => RoomController::getPlayingRooms(), 'playedRooms' => RoomController::getPlayedRooms(), 'rankUsers' => UserController::getRankUsers(), 'onlinePlayers' => UserController::onlinePlayers()]);
-});
-Route::get('/lich-su', function() {
-  return view('app/history', ['headTitle' => 'Lịch sử thi đấu', 'bodyClass' => 'dashboard', 'matchUsers' => UserController::getMatchUsers(), 'matchRooms' => RoomController::getMatchRooms(), 'playingRooms' => RoomController::getPlayingRooms(), 'playedRooms' => RoomController::getPlayedRooms(), 'rankUsers' => UserController::getRankUsers()]);
-});
-Route::get('/bang-xep-hang', function() {
-  return view('app/ranking', ['headTitle' => 'Bảng xếp hạng', 'bodyClass' => 'dashboard', 'users' => UserController::getUsers(), 'matchRooms' => RoomController::getMatchRooms(), 'rankUsers' => UserController::getRankUsers()]);
-});
+
+// ==========================================
+// LOCALIZED APP PAGES (Dashboard, History, Profile, etc.)
+// ==========================================
+$localizedAppPages = [
+    'app.dashboard' => [
+        'view' => 'app/home',
+        'middleware' => [],
+        'titles' => ['vi' => 'Thi đấu', 'en' => 'Compete', 'ja' => '競技', 'ko' => '경쟁', 'zh' => '竞争'],
+        // We use closures for data so DB queries don't run on route registration
+        'data' => fn() => [
+            'bodyClass' => 'dashboard',
+            'matchUsers' => UserController::getMatchUsers(),
+            'matchRooms' => RoomController::getMatchRooms(),
+            'playingRooms' => RoomController::getPlayingRooms(),
+            'playedRooms' => RoomController::getPlayedRooms(),
+            'rankUsers' => UserController::getRankUsers(),
+            'onlinePlayers' => UserController::onlinePlayers()
+        ]
+    ],
+    'app.history' => [
+        'view' => 'app/history',
+        'middleware' => [],
+        'titles' => ['vi' => 'Lịch sử thi đấu', 'en' => 'Match History', 'ja' => '対戦履歴', 'ko' => '경기 기록', 'zh' => '比赛历史'],
+        'data' => fn() => [
+            'bodyClass' => 'dashboard',
+            'matchUsers' => UserController::getMatchUsers(),
+            'matchRooms' => RoomController::getMatchRooms(),
+            'playingRooms' => RoomController::getPlayingRooms(),
+            'playedRooms' => RoomController::getPlayedRooms(),
+            'rankUsers' => UserController::getRankUsers()
+        ]
+    ],
+    'app.ranking' => [
+        'view' => 'app/ranking',
+        'middleware' => [],
+        'titles' => ['vi' => 'Bảng xếp hạng', 'en' => 'Ranking', 'ja' => 'ランキング', 'ko' => '순위표', 'zh' => '排行榜'],
+        'data' => fn() => [
+            'bodyClass' => 'dashboard',
+            'users' => UserController::getUsers(),
+            'matchRooms' => RoomController::getMatchRooms(),
+            'rankUsers' => UserController::getRankUsers()
+        ]
+    ],
+    'app.password' => [
+        'view' => 'app/changePassword',
+        'middleware' => ['auth'],
+        'titles' => ['vi' => 'Đổi mật khẩu', 'en' => 'Change Password', 'ja' => 'パスワード変更', 'ko' => '비밀번호 변경', 'zh' => '更改密码'],
+        'data' => fn() => [
+            'bodyClass' => 'player profile',
+            'player' => Auth::user(),
+            'users' => UserController::getUsers(),
+            'matchRooms' => RoomController::getMatchRooms(),
+            'rankUsers' => UserController::getRankUsers(),
+            'playerRooms' => RoomController::getPlayerRooms(Auth::user()->id)
+        ]
+    ],
+    'app.name' => [
+        'view' => 'app/changeName',
+        'middleware' => ['auth'],
+        'titles' => ['vi' => 'Đổi tên', 'en' => 'Change Name', 'ja' => '名前変更', 'ko' => '이름 변경', 'zh' => '更改名称'],
+        'data' => fn() => [
+            'bodyClass' => 'player profile',
+            'player' => Auth::user(),
+            'users' => UserController::getUsers(),
+            'matchRooms' => RoomController::getMatchRooms(),
+            'rankUsers' => UserController::getRankUsers(),
+            'playerRooms' => RoomController::getPlayerRooms(Auth::user()->id)
+        ]
+    ],
+    'app.ui' => [
+        'view' => 'app/changeUi',
+        'middleware' => ['auth'],
+        'titles' => ['vi' => 'Đổi giao diện', 'en' => 'Change UI', 'ja' => 'UI変更', 'ko' => 'UI 변경', 'zh' => '更改界面'],
+        'data' => fn() => [
+            'bodyClass' => 'player profile',
+            'player' => Auth::user(),
+            'users' => UserController::getUsers(),
+            'matchRooms' => RoomController::getMatchRooms(),
+            'rankUsers' => UserController::getRankUsers(),
+            'playerRooms' => RoomController::getPlayerRooms(Auth::user()->id)
+        ]
+    ],
+    'app.profile' => [
+        'view' => 'app/player',
+        'middleware' => ['auth'],
+        'titles' => ['vi' => 'Hồ sơ của tôi', 'en' => 'My Profile', 'ja' => 'マイプロフィール', 'ko' => '내 프로필', 'zh' => '我的资料'],
+        'data' => fn() => [
+            'bodyClass' => 'player profile',
+            'player' => Auth::user(),
+            'users' => UserController::getUsers(),
+            'matchRooms' => RoomController::getMatchRooms(),
+            'rankUsers' => UserController::getRankUsers(),
+            'playerRooms' => RoomController::getPlayerRooms(Auth::user()->id)
+        ]
+    ],
+];
+
+// 1. Loop through static unparameterized app pages
+foreach ($localizedAppPages as $pageKey => $pageSettings) {
+    foreach (config('locales.supported', []) as $locale) {
+        $route = Route::match(['get', 'post'], localized_path($pageKey, [], $locale), function () use ($pageKey, $locale, $pageSettings) {
+
+            $data = $pageSettings['data'](); // Execute closure for fresh DB results
+            $data['headTitle'] = $pageSettings['titles'][$locale] ?? $pageSettings['titles']['vi'];
+
+            return view($pageSettings['view'], localized_page_data($pageKey, $locale, $data));
+        })->middleware("locale:{$locale}");
+
+        if (!empty($pageSettings['middleware'])) {
+            $route->middleware($pageSettings['middleware']);
+        }
+    }
+}
+
+// 2. Localized Parameterized Route (Player Profile by ID)
+$localizedPlayerPages = [
+    'app.player' => [
+        'view' => 'app/player',
+        'titles' => [
+            'vi' => fn($id) => 'Hồ sơ kỳ thủ "' . UserController::getUserName($id) . '"',
+            'en' => fn($id) => 'Player Profile "' . UserController::getUserName($id) . '"',
+            'ja' => fn($id) => 'プレイヤープロフィール "' . UserController::getUserName($id) . '"',
+            'ko' => fn($id) => '플레이어 프로필 "' . UserController::getUserName($id) . '"',
+            'zh' => fn($id) => '玩家资料 "' . UserController::getUserName($id) . '"',
+        ],
+    ]
+];
+
+foreach (config('locales.supported', []) as $locale) {
+    Route::match(['get', 'post'], localized_path('app.player', ['id' => '{id}'], $locale), function ($id) use ($locale, $localizedPlayerPages) {
+
+        $pageSettings = $localizedPlayerPages['app.player'];
+        $data = [
+            'headTitle' => $pageSettings['titles'][$locale]($id),
+            'bodyClass' => 'player',
+            'player' => User::firstWhere('id', $id),
+            'users' => UserController::getUsers(),
+            'matchRooms' => RoomController::getMatchRooms(),
+            'rankUsers' => UserController::getRankUsers(),
+            'playerRooms' => RoomController::getPlayerRooms($id)
+        ];
+
+        return view($pageSettings['view'], localized_page_data('app.player', $locale, $data, ['id' => $id]));
+    })->middleware("locale:{$locale}");
+}
+
+// Ensure this single standalone route stays as it acts as an internal API/Partial endpoint
 Route::get('/rankTableHtml', function() {
   return view('layout/partials/app/rankTableHtml', ['users' => UserController::getUsers(), 'matchRooms' => RoomController::getMatchRooms(), 'rankUsers' => UserController::getRankUsers()]);
 });
-Route::get('/doi-mat-khau', function() {
-  return view('app/changePassword', ['headTitle' => 'Đổi mật khẩu', 'bodyClass' => 'player profile', 'player' => Auth::user(), 'users' => UserController::getUsers(), 'matchRooms' => RoomController::getMatchRooms(), 'rankUsers' => UserController::getRankUsers(), 'playerRooms' => RoomController::getPlayerRooms(Auth::user()->id)]);
-})->middleware('auth');
-Route::get('/doi-ten', function() {
-  return view('app/changeName', ['headTitle' => 'Đổi tên', 'bodyClass' => 'player profile', 'player' => Auth::user(), 'users' => UserController::getUsers(), 'matchRooms' => RoomController::getMatchRooms(), 'rankUsers' => UserController::getRankUsers(), 'playerRooms' => RoomController::getPlayerRooms(Auth::user()->id)]);
-})->middleware('auth');
-Route::get('/doi-giao-dien', function() {
-  return view('app/changeUi', ['headTitle' => 'Đổi giao diện', 'bodyClass' => 'player profile', 'player' => Auth::user(), 'users' => UserController::getUsers(), 'matchRooms' => RoomController::getMatchRooms(), 'rankUsers' => UserController::getRankUsers(), 'playerRooms' => RoomController::getPlayerRooms(Auth::user()->id)]);
-})->middleware('auth');
-Route::get('/ho-so-cua-toi', function() {
-  return view('app/player', ['headTitle' => 'Hồ sơ của tôi', 'bodyClass' => 'player profile', 'player' => Auth::user(), 'users' => UserController::getUsers(), 'matchRooms' => RoomController::getMatchRooms(), 'rankUsers' => UserController::getRankUsers(), 'playerRooms' => RoomController::getPlayerRooms(Auth::user()->id)]);
-})->middleware('auth');
-Route::get('/ky-thu/{id}', function($id) {
-  return view('app/player', ['headTitle' => 'Hồ sơ kỳ thủ' . ' "' . UserController::getUserName($id) . '"', 'bodyClass' => 'player', 'player' => User::firstWhere('id', $id), 'users' => UserController::getUsers(), 'matchRooms' => RoomController::getMatchRooms(), 'rankUsers' => UserController::getRankUsers(), 'playerRooms' => RoomController::getPlayerRooms($id)]);
-});
+
+// ==========================================
+// LOCALIZED AUTH PAGES
+// ==========================================
+$localizedAuthPages = [
+    'login' => [
+        'action' => 'Auth\LoginController@showLoginForm',
+        'params' => [],
+    ],
+    'register' => [
+        'action' => 'Auth\RegisterController@showRegistrationForm',
+        'params' => [],
+    ],
+    'password.request' => [
+        'action' => 'Auth\ForgotPasswordController@showLinkRequestForm',
+        'params' => [],
+    ],
+    'password.create' => [
+        'action' => 'Auth\ForgotPasswordController@showLinkRequestForm',
+        'params' => [],
+    ],
+    'password.reset' => [
+        'action' => 'Auth\ResetPasswordController@showResetForm',
+        'params' => ['token' => '{token}'],
+    ],
+];
+
+foreach ($localizedAuthPages as $pageKey => $page) {
+    foreach (config('locales.supported', []) as $locale) {
+        $route = Route::get(localized_path($pageKey, $page['params'], $locale), $page['action'])
+            ->middleware("locale:{$locale}");
+
+        // Retain original route names for the default locale to prevent Auth component breaks.
+        // For localized versions, prefix them with the locale.
+        if ($locale === config('locales.default', 'vi')) {
+            $route->name($pageKey);
+        } else {
+            $route->name("{$locale}.{$pageKey}");
+        }
+    }
+}
+
 Route::post('dang-xuat', [LoginController::class, 'logout'])->name('logout');
-Route::get('dang-nhap', 'Auth\LoginController@showLoginForm')->name('login');
+// Route::get('dang-nhap', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('dang-nhap', 'Auth\LoginController@login');
 
-Route::get('dang-ky', 'Auth\RegisterController@showRegistrationForm')->name('register');
+// Route::get('dang-ky', 'Auth\RegisterController@showRegistrationForm')->name('register');
 Route::post('dang-ky', 'Auth\RegisterController@register');
 
-Route::get('quen-mat-khau', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
-Route::get('tao-mat-khau', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.create');
+// Route::get('quen-mat-khau', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+// Route::get('tao-mat-khau', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.create');
 Route::post('gui-duong-dan-tao-mat-khau', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
-Route::get('dat-lai-mat-khau/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+// Route::get('dat-lai-mat-khau/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
 Route::post('quen-mat-khau', 'Auth\ResetPasswordController@reset')->name('password.update');
 
 Route::middleware('auth')->post('/payos/standard', [PayOSController::class, 'createStandard'])->name('payos.standard');
@@ -399,8 +565,6 @@ Route::post('/payos/webhook', [PayOSController::class, 'webhook'])->name('payos.
 Route::post('doi-mat-khau', [UserController::class, 'changePassword'])->name('change.password');
 Route::post('doi-ten', [UserController::class, 'changeName'])->name('change.name');
 Route::post('doi-giao-dien', [UserController::class, 'changeUserInterface'])->name('change.ui');
-
-Route::get('tim-kiem', 'UserController@searchPlayers')->name('searchPlayers');
 
 Route::post('auth/google/onetap', [AuthController::class, 'handleOneTapCallback'])->name('login.google.onetap');
 
@@ -799,6 +963,27 @@ $localizedStaticPages = [
     'ko' => ['view' => 'contact', 'title' => '문의하기'],
     'zh' => ['view' => 'contact', 'title' => '联系我们'],
   ],
+  'puzzle.list' => [
+    'vi' => ['view' => 'puzzleList', 'title' => 'Tất cả thế cờ'],
+    'en' => ['view' => 'puzzleList', 'title' => 'All puzzles'],
+    'ja' => ['view' => 'puzzleList', 'title' => 'すべてのパズル'],
+    'ko' => ['view' => 'puzzleList', 'title' => '모든 퍼즐'],
+    'zh' => ['view' => 'puzzleList', 'title' => '所有谜题'],
+  ],
+  'user.list' => [
+    'vi' => ['view' => 'userList', 'title' => 'Tất cả kỳ thủ'],
+    'en' => ['view' => 'userList', 'title' => 'All players'],
+    'ja' => ['view' => 'userList', 'title' => 'すべてのプレイヤー'],
+    'ko' => ['view' => 'userList', 'title' => '모든 플레이어'],
+    'zh' => ['view' => 'userList', 'title' => '所有玩家'],
+  ],
+  'search' => [
+    'vi' => ['view' => 'app.search', 'title' => 'Tìm kiếm'],
+    'en' => ['view' => 'app.search', 'title' => 'Search'],
+    'ja' => ['view' => 'app.search', 'title' => '検索'],
+    'ko' => ['view' => 'app.search', 'title' => '검색'],
+    'zh' => ['view' => 'app.search', 'title' => '搜索'],
+  ],
 ];
 
 foreach ($localizedStaticPages as $pageKey => $localizedPages) {
@@ -837,9 +1022,3 @@ foreach ($localizedRoomListPages as $locale => $page) {
     return view($page['view'], localized_page_data('room.list', $locale, $data));
   })->middleware("locale:{$locale}");
 }
-Route::match(['get', 'post'], '/tat-ca-the-co', function () {
-  return view('puzzleList', ['headTitle' => 'Tất cả thế cờ', 'bodyClass' => 'puzzle setup', 'rooms' => Room::all(), 'roomCode' => '', 'randomRoom' => RoomController::getRandomRoom(), 'cdnUrl' => url(''), 'langViUrl' => '/tat-ca-the-co', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'canonicalUrl' => '/tat-ca-the-co']);
-});
-Route::match(['get', 'post'], '/thanh-vien', function () {
-  return view('userList', ['headTitle' => 'Tất cả kỳ thủ', 'bodyClass' => 'room', 'rooms' => Room::all(), 'roomCode' => '', 'randomRoom' => RoomController::getRandomRoom(), 'cdnUrl' => url(''), 'langViUrl' => '/thanh-vien', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'canonicalUrl' => '/thanh-vien']);
-});

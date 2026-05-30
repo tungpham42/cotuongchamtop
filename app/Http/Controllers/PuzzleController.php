@@ -69,6 +69,90 @@ class PuzzleController extends Controller
         }
     }
 
+    public function getPuzzlesEn(Request $request)
+    {
+        if ($request->ajax()) {
+            $puzzles = Puzzle::public()->select(['id', 'name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'updated_at']);
+            return Datatables::of($puzzles)
+                ->addColumn('rank', function($row){ return self::renderPuzzleRank($row->id); })
+                ->addColumn('name', function($row){
+                    return '<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/the-co/").$row->slug.'">'.$row->name.'</a>';
+                })
+                ->addColumn('rating', function($row){ return (int) $row->likes_count; })
+                ->addColumn('action', function($row){
+                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 140px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').'/giai-co-the/'.$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> Solve puzzle</a>';
+                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> Preview</a>';
+                    return $actionBtn;
+                })
+                ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->updated_at)); })
+                ->escapeColumns([])
+                ->make(true);
+        }
+    }
+
+    public function getPuzzlesJa(Request $request)
+    {
+        if ($request->ajax()) {
+            $puzzles = Puzzle::public()->select(['id', 'name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'updated_at']);
+            return Datatables::of($puzzles)
+                ->addColumn('rank', function($row){ return self::renderPuzzleRank($row->id); })
+                ->addColumn('name', function($row){
+                    return '<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/the-co/").$row->slug.'">'.$row->name.'</a>';
+                })
+                ->addColumn('rating', function($row){ return (int) $row->likes_count; })
+                ->addColumn('action', function($row){
+                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 140px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').'/giai-co-the/'.$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> パズルを解く</a>';
+                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> プレビュー</a>';
+                    return $actionBtn;
+                })
+                ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->updated_at)); })
+                ->escapeColumns([])
+                ->make(true);
+        }
+    }
+
+    public function getPuzzlesKo(Request $request)
+    {
+        if ($request->ajax()) {
+            $puzzles = Puzzle::public()->select(['id', 'name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'updated_at']);
+            return Datatables::of($puzzles)
+                ->addColumn('rank', function($row){ return self::renderPuzzleRank($row->id); })
+                ->addColumn('name', function($row){
+                    return '<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/the-co/").$row->slug.'">'.$row->name.'</a>';
+                })
+                ->addColumn('rating', function($row){ return (int) $row->likes_count; })
+                ->addColumn('action', function($row){
+                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 140px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').'/giai-co-the/'.$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> 퍼즐 풀기</a>';
+                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> 미리보기</a>';
+                    return $actionBtn;
+                })
+                ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->updated_at)); })
+                ->escapeColumns([])
+                ->make(true);
+        }
+    }
+
+    public function getPuzzlesZh(Request $request)
+    {
+        if ($request->ajax()) {
+            $puzzles = Puzzle::public()->select(['id', 'name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'updated_at']);
+            return Datatables::of($puzzles)
+                ->addColumn('rank', function($row){ return self::renderPuzzleRank($row->id); })
+                ->addColumn('name', function($row){
+                    return '<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/the-co/").$row->slug.'">'.$row->name.'</a>';
+                })
+                ->addColumn('rating', function($row){ return (int) $row->likes_count; })
+                ->addColumn('action', function($row){
+                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 140px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').'/giai-co-the/'.$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> 解谜</a>';
+                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> 预览</a>';
+                    return $actionBtn;
+                })
+                ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->updated_at)); })
+                ->escapeColumns([])
+                ->make(true);
+        }
+    }
+
     public static function renderPuzzleRank($id)
     {
         $puzzle = Puzzle::find($id);

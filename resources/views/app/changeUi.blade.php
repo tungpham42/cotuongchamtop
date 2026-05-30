@@ -5,7 +5,6 @@
     @if ($showAds ?? true)
     <div class="row justify-content-center text-center mb-4">
         <div class="col-12">
-            <!-- CO_res -->
             <ins class="adsbygoogle"
             style="display:block"
             data-ad-client="ca-pub-3585118770961536"
@@ -22,7 +21,7 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <i class="fas fa-palette"></i> Thay đổi giao diện
+                    <i class="fas fa-palette"></i> {{ __("Thay đổi giao diện") }}
                     @include('layout.partials.app.tourBtn')
                 </div>
                 <div class="card-body">
@@ -32,29 +31,29 @@
                             <input type="hidden" value="{{ auth()->user()->id }}" name="current_id">
                             <div class="form-group">
                                 <label for="board_theme">{{ __("Bàn cờ") }}</label>
-                                <select data-step="1" data-intro="Chọn giao diện bàn cờ" class="form-control form-control-lg" name="board_theme" id="board_theme">
-                                    <option value="xiangqi-board" @if(auth()->user()->board_theme === 'xiangqi-board') selected @endif>{{ __("Bàn cờ") }} mặc định</option>
-                                    <option value="ban-co-go" @if(auth()->user()->board_theme === 'ban-co-go') selected @endif>Gỗ nhạt</option>
-                                    <option value="wood-board" @if(auth()->user()->board_theme === 'wood-board') selected @endif>Gỗ đậm</option>
-                                    <option value="ban-co" @if(auth()->user()->board_theme === 'ban-co') selected @endif>Vàng chói</option>
-                                    <option value="banco" @if(auth()->user()->board_theme === 'banco') selected @endif>Sáng</option>
-                                    <option value="chess-board" @if(auth()->user()->board_theme === 'chess-board') selected @endif>Cam nhạt</option>
+                                <select data-step="1" data-intro="{{ __("Chọn giao diện bàn cờ") }}" class="form-control form-control-lg" name="board_theme" id="board_theme">
+                                    <option value="xiangqi-board" @if(auth()->user()->board_theme === 'xiangqi-board') selected @endif>{{ __("Bàn cờ mặc định") }}</option>
+                                    <option value="ban-co-go" @if(auth()->user()->board_theme === 'ban-co-go') selected @endif>{{ __("Gỗ nhạt") }}</option>
+                                    <option value="wood-board" @if(auth()->user()->board_theme === 'wood-board') selected @endif>{{ __("Gỗ đậm") }}</option>
+                                    <option value="ban-co" @if(auth()->user()->board_theme === 'ban-co') selected @endif>{{ __("Vàng chói") }}</option>
+                                    <option value="banco" @if(auth()->user()->board_theme === 'banco') selected @endif>{{ __("Sáng") }}</option>
+                                    <option value="chess-board" @if(auth()->user()->board_theme === 'chess-board') selected @endif>{{ __("Cam nhạt") }}</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="pieces_theme">Quân cờ</label>
-                                <select data-step="2" data-intro="Chọn giao diện quân cờ" class="form-control form-control-lg" name="pieces_theme" id="pieces_theme">
-                                    <option value="wiki" @if(auth()->user()->pieces_theme === 'wiki') selected @endif>Quân cờ mặc định</option>
-                                    <option value="tung" @if(auth()->user()->pieces_theme === 'tung') selected @endif>Đặc biệt</option>
-                                    <option value="do-den" @if(auth()->user()->pieces_theme === 'do-den') selected @endif>Đỏ đen</option>
-                                    <option value="graphic" @if(auth()->user()->pieces_theme === 'graphic') selected @endif>Phương Tây</option>
-                                    <option value="co" @if(auth()->user()->pieces_theme === 'co') selected @endif>Cam</option>
-                                    <option value="wikimedia" @if(auth()->user()->pieces_theme === 'wikimedia') selected @endif>Vàng đậm</option>
-                                    <option value="quan" @if(auth()->user()->pieces_theme === 'quan') selected @endif>Sáng</option>
-                                    <option value="traditional" @if(auth()->user()->pieces_theme === 'traditional') selected @endif>Truyền thống</option>
+                                <label for="pieces_theme">{{ __("Quân cờ") }}</label>
+                                <select data-step="2" data-intro="{{ __("Chọn giao diện quân cờ") }}" class="form-control form-control-lg" name="pieces_theme" id="pieces_theme">
+                                    <option value="wiki" @if(auth()->user()->pieces_theme === 'wiki') selected @endif>{{ __("Quân cờ mặc định") }}</option>
+                                    <option value="tung" @if(auth()->user()->pieces_theme === 'tung') selected @endif>{{ __("Đặc biệt") }}</option>
+                                    <option value="do-den" @if(auth()->user()->pieces_theme === 'do-den') selected @endif>{{ __("Đỏ đen") }}</option>
+                                    <option value="graphic" @if(auth()->user()->pieces_theme === 'graphic') selected @endif>{{ __("Phương Tây") }}</option>
+                                    <option value="co" @if(auth()->user()->pieces_theme === 'co') selected @endif>{{ __("Cam") }}</option>
+                                    <option value="wikimedia" @if(auth()->user()->pieces_theme === 'wikimedia') selected @endif>{{ __("Vàng đậm") }}</option>
+                                    <option value="quan" @if(auth()->user()->pieces_theme === 'quan') selected @endif>{{ __("Sáng") }}</option>
+                                    <option value="traditional" @if(auth()->user()->pieces_theme === 'traditional') selected @endif>{{ __("Truyền thống") }}</option>
                                 </select>
                             </div>
-                            <button data-step="3" data-intro="Ấn vào đây để đổi giao diện" type="submit" class="btn btn-lg btn-danger"><i class="fad fa-palette"></i> {{ __("Đổi") }} giao diện</button>
+                            <button data-step="3" data-intro="{{ __("Ấn vào đây để đổi giao diện") }}" type="submit" class="btn btn-lg btn-danger"><i class="fad fa-palette"></i> {{ __("Đổi giao diện") }}</button>
                         </form>
                     </div>
                 </div>
