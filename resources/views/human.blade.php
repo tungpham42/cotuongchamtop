@@ -15,6 +15,7 @@
     <span data-toggle="tooltip" data-placement="top" title="{{ __("Đấu với bạn bè trong phòng") }}"><i class="fad fa-gamepad-alt"></i> {{ __("Chơi online") }}</span>
   </button>
   <a id="switch" class="btn btn-dark btn-lg mx-auto"><i class="fad fa-sync"></i> {{ __("Đổi bên") }}</a>
+  <a id="toggle-highlight" class="btn btn-dark btn-lg mx-auto"><i class="fad fa-lightbulb-on"></i> {{ __("Bật/tắt đánh dấu") }}</a>
   @include('common.volumeBtn')
   @include('common.tourBtn')
   <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="hostDropdown" id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ url('/') }}/phong/{{ md5(time()) }}">
@@ -23,7 +24,6 @@
     @else
     <a data-toggle="tooltip" data-placement="bottom" title="{{ __("Thi đấu tính điểm và xếp hạng") }}" id="create-room" class="dropdown-item thi-dau" style="cursor: pointer !important;" href="javascript:createRoom();"><i class="fas fa-trophy-alt text-dark"></i> {{ __("Thi đấu") }}</a>
     @endif
-    {{-- <a data-toggle="tooltip" data-placement="bottom" title="Chơi không cần mật khẩu" id="tao-phong-public" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-globe text-dark"></i> Công khai</a> --}}
     <a data-toggle="tooltip" data-placement="bottom" title="Chơi cần mật khẩu" id="tao-phong-private" class="dropdown-item" style="cursor: pointer !important;"><i class="fas fa-lock text-dark"></i> {{ __("Riêng tư") }}</a>
     @if ($randomRoom != null)
     <a data-toggle="tooltip" data-placement="bottom" title="Chơi trong phòng Công khai ngẫu nhiên" id="random-room" class="dropdown-item" style="cursor: pointer !important;" href="{{ url('/') }}/phong/{{ $randomRoom['code'] }}/ngau-nhien"><i class="fas fa-random text-dark"></i> {{ __("Ngẫu nhiên") }}</a>
@@ -50,6 +50,7 @@ let kypho = null;
 let squareToHighlight = null;
 let colorToHighlight = null;
 let squareClass = 'square-2b8ce';
+let showHighlight = true;
 
 function removeHighlights (color) {
   $board.find('.' + squareClass).removeClass('highlight-' + color);
@@ -61,15 +62,12 @@ function removeGreySquares () {
 
 function greySquare (square) {
   let $square = $('#ban-co .square-' + square);
-
   $square.addClass('highlight');
 }
 
 function onDragStart (source, piece) {
-  // do not pick up pieces if the game is over
   if (game.game_over()) return false;
 
-  // or if it's not that side's turn
   if ((game.turn() === 'r' && piece.search(/^b/) !== -1) ||
       (game.turn() === 'b' && piece.search(/^r/) !== -1)) {
     return false;
@@ -79,12 +77,10 @@ function onDragStart (source, piece) {
 function onDrop (source, target) {
   removeGreySquares();
 
-  // see if the move is legal
   let move = game.move({
     from: source,
     to: target
   });
-  // illegal move
   if (move === null) return 'snapback';
   if (kypho) {
     kypho.recordMove(move);
@@ -92,14 +88,18 @@ function onDrop (source, target) {
 
   if (move.color === 'r') {
     removeHighlights('red');
-    $board.find('.square-' + source).addClass('highlight-red');
-    $board.find('.square-' + target).addClass('highlight-red');
+    if (showHighlight) {
+      $board.find('.square-' + source).addClass('highlight-red');
+      $board.find('.square-' + target).addClass('highlight-red');
+    }
     squareToHighlight = target;
     colorToHighlight = 'red';
   } else {
     removeHighlights('black');
-    $board.find('.square-' + source).addClass('highlight-black');
-    $board.find('.square-' + target).addClass('highlight-black');
+    if (showHighlight) {
+      $board.find('.square-' + source).addClass('highlight-black');
+      $board.find('.square-' + target).addClass('highlight-black');
+    }
     squareToHighlight = target;
     colorToHighlight = 'black';
   }
@@ -107,19 +107,17 @@ function onDrop (source, target) {
 }
 
 function onMouseoverSquare (square, piece) {
-  // get list of possible moves for this square
+  if (!showHighlight) return;
+
   let moves = game.moves({
     square: square,
     verbose: true
   });
 
-  // exit if there are no moves available for this square
   if (moves.length === 0) return;
 
-  // highlight the square they moused over
   greySquare(square);
 
-  // highlight the possible squares for this piece
   for (let i = 0; i < moves.length; i++) {
     greySquare(moves[i].to);
   }
@@ -137,7 +135,9 @@ function onSnapEnd () {
 }
 
 function onMoveEnd () {
-  $board.find('.square-' + squareToHighlight).addClass('highlight-' + colorToHighlight);
+  if (showHighlight && squareToHighlight) {
+    $board.find('.square-' + squareToHighlight).addClass('highlight-' + colorToHighlight);
+  }
 }
 
 function updateStatus () {
@@ -148,24 +148,16 @@ function updateStatus () {
     moveColor = '{{ __("Đen") }}'
   }
 
-  // checkmate?
   if (game.in_checkmate()) {
     status = moveColor + ' {{ __("bị chiếu bí") }}'
   }
-
-  // draw?
   else if (game.in_draw()) {
     status = '{{ __("Hòa") }}'
   }
-
-  // game still on
   else {
     status = '{{ __("Tới lượt:") }} ' + moveColor
-
-    // check?
     if (game.in_check()) {
       status += ', ' + moveColor + ' {{ __("đang bị chiếu") }}'
-
       if ((board.orientation() == 'red' && game.turn() === 'r') || (board.orientation() == 'black' && game.turn() === 'b')) {
         $('#checkmateText').show();
       }
@@ -217,7 +209,6 @@ let config = {
   onSnapEnd: onSnapEnd,
   onMoveEnd: onMoveEnd,
   showNotation: true
-  //pieceTheme: '/static/img/xiangqipieces/traditional/{piece}.svg'
 };
 board = Xiangqiboard('ban-co', config);
 $(window).resize(board.resize);
@@ -226,6 +217,20 @@ kypho = KyPho.initLocal({
   board: board,
   startFen: game.fen(),
   isLive: function() { return !game.game_over(); }
+});
+$('#toggle-highlight').on('click', function() {
+  showHighlight = !showHighlight;
+  if (!showHighlight) {
+    removeHighlights('red');
+    removeHighlights('black');
+    removeGreySquares();
+    $(this).removeClass('btn-dark').addClass('btn-secondary');
+  } else {
+    $(this).removeClass('btn-secondary').addClass('btn-dark');
+    if (squareToHighlight) {
+      $board.find('.square-' + squareToHighlight).addClass('highlight-' + colorToHighlight);
+    }
+  }
 });
 $('#resign').on('click', function() {
   game.load(game.fen() + ' resign');
@@ -254,11 +259,8 @@ $('#reset').on('click', function() {
   }
 });
 </script>
-{{-- @include('layout.partials.userPuzzlesWrapper') --}}
 @include('layout.partials.players')
 @include('layout.partials.userPuzzles')
 @include('layout.partials.boards')
 @include('layout.partials.playedBoards')
-{{-- @include('layout.partials.puzzles') --}}
-{{-- @include('layout.partials.books') --}}
 @endsection
