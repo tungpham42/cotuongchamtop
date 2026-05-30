@@ -224,9 +224,9 @@ $('#toggle-highlight').on('click', function() {
     removeHighlights('red');
     removeHighlights('black');
     removeGreySquares();
-    $(this).removeClass('btn-dark').addClass('btn-secondary');
+    $(this).removeClass('btn-dark').removeClass('btn-danger').addClass('btn-danger');
   } else {
-    $(this).removeClass('btn-secondary').addClass('btn-dark');
+    $(this).removeClass('btn-danger').removeClass('btn-dark').addClass('btn-dark');
     if (squareToHighlight) {
       $board.find('.square-' + squareToHighlight).addClass('highlight-' + colorToHighlight);
     }
