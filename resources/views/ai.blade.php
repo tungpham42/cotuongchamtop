@@ -184,15 +184,21 @@ function convertEngineMoveToXiangqiJS(engineMove) {
 }
 
 function getTimeoutByLevel(level) {
+  // Parse the level to ensure it's an integer, avoiding string-key lookup failures
+  const parsedLevel = parseInt(level, 10);
+
   const timeouts = {
-    1: 500,   // Mới chơi
-    2: 1000,  // Dễ
-    3: 1500,  // Bình thường
-    4: 2000,  // Khó
-    5: 2500,  // Khó nhất
-    6: 5000   // Kiện tướng (Max depth/timeout)
+    1: 500,    // Mới chơi
+    2: 1000,   // Dễ
+    3: 1500,   // Bình thường
+    4: 2000,   // Khó
+    5: 2500,   // Khó nhất
+    6: 5000,   // Kiện tướng
+    8: 10000   // Đại kiện tướng (Max depth/timeout)
   };
-  return timeouts[level] || 3000;
+
+  // Return the mapped timeout, or fallback to 1500ms if the level isn't found
+  return timeouts[parsedLevel] || 1500;
 }
 
 function makeRandomMove() {
