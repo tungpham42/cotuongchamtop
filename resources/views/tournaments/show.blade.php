@@ -63,7 +63,7 @@
 
 <div class="container mt-4">
     <div class="mb-3">
-        <a href="{{ route('tournaments.index') }}" class="btn btn-dark text-light"><i class="fad fa-arrow-left"></i> {{ __('Quay lại') }}</a>
+        <a href="{{ localized_url('tournaments.index') }}" class="btn btn-dark text-light"><i class="fad fa-arrow-left"></i> {{ __('Quay lại') }}</a>
     </div>
 
     <div class="card bg-secondary text-dark border-0 mb-4" style="border-radius: 12px; overflow: hidden;">
@@ -98,7 +98,7 @@
                                 <i class="fad fa-check-circle text-success"></i> {{ __('Đã tham gia') }}
                             </button>
                         @elseif($isOpen && !$isFull)
-                            <form action="{{ route('tournaments.join', $tournament->slug) }}" method="POST" class="d-inline-block mb-2">
+                            <form action="{{ localized_url('tournaments.join', $tournament->slug) }}" method="POST" class="d-inline-block mb-2">
                                 @csrf
                                 <button type="submit" class="btn btn-primary font-weight-bold pulse-red">
                                     <i class="fad fa-sign-in-alt"></i> {{ __('Tham gia') }}
@@ -114,7 +114,7 @@
                         @if(auth()->user()->is_admin)
                             <span class="text-muted mx-2">|</span>
                             @if($isOpen)
-                            <form action="{{ route('tournaments.generate', $tournament->slug) }}" method="POST" class="d-inline-block mb-2">
+                            <form action="{{ localized_url('tournaments.generate', $tournament->slug) }}" method="POST" class="d-inline-block mb-2">
                                 @csrf
                                 <button type="submit" class="btn btn-success font-weight-bold">
                                     <i class="fad fa-sitemap"></i> {{ __('Bốc thăm') }}
@@ -122,11 +122,11 @@
                             </form>
                             @endif
 
-                            <a href="{{ route('tournaments.edit', $tournament->slug) }}" class="btn btn-warning text-dark font-weight-bold d-inline-block">
+                            <a href="{{ localized_url('tournaments.edit', $tournament->slug) }}" class="btn btn-warning text-dark font-weight-bold d-inline-block">
                                 <i class="fad fa-edit"></i>
                             </a>
 
-                            <form action="{{ route('tournaments.destroy', $tournament->slug) }}" method="POST" class="d-inline-block mb-2" onsubmit="return confirm('{{ __('Bạn có chắc chắn muốn xóa giải đấu này không?') }}');">
+                            <form action="{{ localized_url('tournaments.destroy', $tournament->slug) }}" method="POST" class="d-inline-block mb-2" onsubmit="return confirm('{{ __('Bạn có chắc chắn muốn xóa giải đấu này không?') }}');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger font-weight-bold">
@@ -138,10 +138,10 @@
                         {{-- CHƯA ĐĂNG NHẬP --}}
                         <div class="d-inline-flex align-items-center bg-dark p-2" style="border-radius: 8px; border: 1px solid #3a3f4c;">
                             <span class="text-muted small mr-3 ml-2"><i class="fad fa-lock-alt"></i> {{ __('Yêu cầu tài khoản') }}</span>
-                            <a href="{{ route('register') }}" class="btn btn-primary font-weight-bold btn-sm mr-2" style="box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);">
+                            <a href="{{ localized_url('register') }}" class="btn btn-primary font-weight-bold btn-sm mr-2" style="box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);">
                                 <i class="fad fa-user-plus"></i> {{ __('Đăng ký') }}
                             </a>
-                            <a href="{{ route('login') }}" class="btn btn-outline-light font-weight-bold btn-sm">
+                            <a href="{{ localized_url('login') }}" class="btn btn-outline-light font-weight-bold btn-sm">
                                 {{ __('Đăng nhập') }}
                             </a>
                         </div>

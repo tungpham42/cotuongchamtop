@@ -9,7 +9,7 @@
         </div>
         @if(auth()->check() && auth()->user()->is_admin)
         <div class="col-md-4 text-right">
-            <a href="{{ route('tournaments.create') }}" class="btn btn-warning text-dark font-weight-bold">
+            <a href="{{ localized_url('tournaments.create') }}" class="btn btn-warning text-dark font-weight-bold">
                 <i class="fad fa-plus-circle"></i> {{ __('Tạo Giải Đấu') }}
             </a>
         </div>
@@ -23,7 +23,7 @@
             <h5 class="text-info font-weight-bold mb-1"><i class="fad fa-chess-knight"></i> {{ __('Sẵn sàng thử thách bản thân?') }}</h5>
             <p class="mb-0 text-muted">{{ __('Tạo tài khoản miễn phí để ghi danh vào các giải đấu, cạnh tranh với cao thủ và khắc tên lên bảng vàng.') }}</p>
         </div>
-        <a href="{{ route('register') }}" class="btn btn-info text-dark font-weight-bold px-4 py-2" style="white-space: nowrap; transition: 0.3s;">
+        <a href="{{ localized_url('register') }}" class="btn btn-info text-dark font-weight-bold px-4 py-2" style="white-space: nowrap; transition: 0.3s;">
             <i class="fad fa-user-plus"></i> {{ __('Tạo tài khoản miễn phí') }}
         </a>
     </div>
@@ -46,11 +46,11 @@
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card bg-secondary text-dark h-100 border-0 shadow-sm" style="border-radius: 12px;">
                     @if($tournament->cover_photo)
-                        <a href="{{ route('tournaments.show', $tournament->slug) }}">
+                        <a href="{{ localized_url('tournaments.show', $tournament->slug) }}">
                             <img src="{{ asset('storage/' . $tournament->cover_photo) }}" class="card-img-top w-100" alt="{{ $tournament->name }}" style="aspect-ratio: 16/9; object-fit: cover; border-top-left-radius: 12px; border-top-right-radius: 12px;">
                         </a>
                     @else
-                        <a href="{{ route('tournaments.show', $tournament->slug) }}">
+                        <a href="{{ localized_url('tournaments.show', $tournament->slug) }}">
                             <div class="card-img-top bg-dark d-flex align-items-center justify-content-center w-100" style="aspect-ratio: 16/9; border-top-left-radius: 12px; border-top-right-radius: 12px;">
                                 <i class="fad fa-trophy-alt fa-4x text-muted"></i>
                             </div>
@@ -58,7 +58,7 @@
                     @endif
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-2">
-                            <a href="{{ route('tournaments.show', $tournament->slug) }}" class="text-decoration-none">
+                            <a href="{{ localized_url('tournaments.show', $tournament->slug) }}" class="text-decoration-none">
                                 <h5 class="card-title text-warning font-weight-bold mb-0">{{ $tournament->name }}</h5>
                             </a>
                             @if($tournament->status === 'open')
@@ -79,7 +79,7 @@
 
                     <div class="card-footer bg-transparent border-0 pt-0">
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('tournaments.show', $tournament->slug) }}" class="btn btn-outline-light btn-sm w-100 text-dark mr-2">
+                            <a href="{{ localized_url('tournaments.show', $tournament->slug) }}" class="btn btn-outline-light btn-sm w-100 text-dark mr-2">
                                 <i class="fad fa-eye"></i> {{ __('Xem chi tiết') }}
                             </a>
                             @php
@@ -94,7 +94,7 @@
                                     <i class="fad fa-check-circle text-success"></i> {{ __('Đã tham gia') }}
                                 </button>
                             @elseif($isOpen && !$isFull)
-                                <form action="{{ route('tournaments.join', $tournament->slug) }}" method="POST" class="w-100 ml-2">
+                                <form action="{{ localized_url('tournaments.join', $tournament->slug) }}" method="POST" class="w-100 ml-2">
                                     @csrf
                                     <button type="submit" class="btn btn-danger btn-sm w-100">
                                         <i class="fad fa-sign-in-alt"></i> {{ __('Tham gia') }}
