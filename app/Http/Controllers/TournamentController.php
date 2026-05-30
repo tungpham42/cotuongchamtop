@@ -107,7 +107,6 @@ class TournamentController extends Controller
         $tournaments = Tournament::withCount('users')->orderBy('start_date', 'desc')->paginate(10);
 
         return view('tournaments.index', [
-            'headTitle' => 'Danh sách Giải đấu',
             'bodyClass' => 'dashboard',
             'tournaments' => $tournaments,
             'canonicalUrl' => url('/giai-dau'),
