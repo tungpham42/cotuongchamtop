@@ -129,7 +129,7 @@
             Your browser does not support the audio element.
           </audio>
           @guest
-            @if(app()->getLocale() === 'vi')
+            {{-- @if(app()->getLocale() === 'vi') --}}
             <div class="row mb-4 justify-content-center">
               <div class="col-lg-8 col-md-10 col-12 text-center">
                 <div class="card text-light shadow-lg" style="border-radius: 15px; background: linear-gradient(145deg, #252a36 0%, #1a1c23 100%); border: 1px solid #3a3f4c; overflow: hidden;">
@@ -158,9 +158,9 @@
                 </div>
               </div>
             </div>
-            @endif
+            {{-- @endif --}}
           @else
-            @if(app()->getLocale() === 'vi')
+            {{-- @if(app()->getLocale() === 'vi') --}}
             <div class="row mb-4 justify-content-center">
               <div class="col-lg-8 col-md-10 col-12 text-center">
                 <div class="card text-light shadow-lg" style="border-radius: 15px; background: linear-gradient(145deg, #252a36 0%, #1a1c23 100%); border: 1px solid #3a3f4c; overflow: hidden;">
@@ -189,7 +189,7 @@
                 </div>
               </div>
             </div>
-            @endif
+            {{-- @endif --}}
           @endguest
           <div class="row">
             @include('layout.partials.findMatch')
