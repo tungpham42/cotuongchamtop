@@ -9,7 +9,7 @@
         </div>
         @if(auth()->check() && auth()->user()->is_admin)
         <div class="col-md-4 text-right">
-            <a href="{{ localized_url('tournaments.create') }}" class="btn btn-warning text-dark font-weight-bold">
+            <a href="{{ route('tournaments.create') }}" class="btn btn-warning text-dark font-weight-bold">
                 <i class="fad fa-plus-circle"></i> {{ __('Tạo Giải Đấu') }}
             </a>
         </div>
@@ -94,7 +94,7 @@
                                     <i class="fad fa-check-circle text-success"></i> {{ __('Đã tham gia') }}
                                 </button>
                             @elseif($isOpen && !$isFull)
-                                <form action="{{ localized_url('tournaments.join', ['slug' => $tournament->slug]) }}" method="POST" class="w-100 ml-2">
+                                <form action="{{ route('tournaments.join', $tournament->slug) }}" method="POST" class="w-100 ml-2">
                                     @csrf
                                     <button type="submit" class="btn btn-danger btn-sm w-100">
                                         <i class="fad fa-sign-in-alt"></i> {{ __('Tham gia') }}
