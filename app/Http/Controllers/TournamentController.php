@@ -126,7 +126,8 @@ class TournamentController extends Controller
         $rounds = $tournament->rooms->groupBy('tournament_round')->sortKeys();
 
         return view('tournaments.show', [
-            'headTitle' => 'Giải đấu - ' . $tournament->name,
+            'tournament' => $tournament,
+            'headTitle'  => $tournament->name,
             'bodyClass' => 'dashboard',
             'tournament' => $tournament,
             'rounds' => $rounds,

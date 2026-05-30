@@ -631,5 +631,9 @@
     "Mật khẩu phải trùng nhau.": "비밀번호가 일치해야 합니다.",
     "No credential provided.": "자격 증명이 제공되지 않았습니다.",
     "Invalid Google Token.": "유효하지 않은 Google 토큰입니다.",
-    "Login failed: :message": "로그인 실패: :message"
+    "Login failed: :message": "로그인 실패: :message",
+    "Cờ tướng 2 người": "2인용 장기",
+    "Cùng chơi với nhiều tính năng hấp dẫn như cờ tướng 2 người, cờ tướng online, chơi cờ tướng với máy, cờ thế và Thi đấu xếp hạng!": "2인용 장기, 온라인 장기, AI와 대전, 퍼즐, 랭크 매치 등 다양하고 흥미로운 기능과 함께 플레이하세요!",
+    "Kết quả tìm kiếm cho từ khóa \":query\"": "\":query\" 검색 결과",
+    ":title - Cờ tướng 2 người, đánh cờ tướng online, chơi cờ tướng với máy miễn phí": ":title - 2인용 장기, 온라인 장기, 무료 AI 대전"
 }

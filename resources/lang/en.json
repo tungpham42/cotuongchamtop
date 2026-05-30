@@ -631,5 +631,9 @@
     "Mật khẩu phải trùng nhau.": "Passwords must match.",
     "No credential provided.": "No credential provided.",
     "Invalid Google Token.": "Invalid Google Token.",
-    "Login failed: :message": "Login failed: :message"
+    "Login failed: :message": "Login failed: :message",
+    "Cờ tướng 2 người": "2-player Xiangqi",
+    "Cùng chơi với nhiều tính năng hấp dẫn như cờ tướng 2 người, cờ tướng online, chơi cờ tướng với máy, cờ thế và Thi đấu xếp hạng!": "Enjoy many exciting features such as 2-player Xiangqi, online matches, playing against AI, puzzles, and Ranked matches!",
+    "Kết quả tìm kiếm cho từ khóa \":query\"": "Search results for \":query\"",
+    ":title - Cờ tướng 2 người, đánh cờ tướng online, chơi cờ tướng với máy miễn phí": ":title - 2-player Xiangqi, play online, play with AI for free"
 }

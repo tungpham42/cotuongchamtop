@@ -1,39 +1,39 @@
 <meta charset="utf-8">
-<meta property="article:tag" content="{{ __("cờ tướng") }}">
+<meta property="article:tag" content="{{ __('cờ tướng') }}">
 <meta property="og:image" content="@yield('og_image', url('/') . '/img/1200x630.jpg')">
 <meta property="og:image:width" content="@yield('og_image_width', '1200')" >
 <meta property="og:image:height" content="@yield('og_image_height', '630')" >
-<meta property="og:image:alt" content="@yield('og_image_alt', 'Cờ tướng 2 người')" >
+<meta property="og:image:alt" content="@yield('og_image_alt', __('Cờ tướng 2 người'))" >
 <meta property="og:image:type" content="@yield('og_image_type', 'image/jpeg')" />
 @hasSection('meta_description')
 <meta name="description" content="@yield('meta_description')" >
 <meta property="og:description" content="@yield('meta_description')" >
 @else
-<meta name="description" content="Cùng {{ __("chơi") }} với nhiều tính năng hấp dẫn như {{ __("cờ tướng") }} 2 người, {{ __("cờ tướng") }} online, {{ __("chơi") }} {{ __("cờ tướng") }} {{ __("với máy") }}, cờ thế và {{ __("Thi đấu") }} xếp hạng!" >
-<meta property="og:description" content="Cùng {{ __("chơi") }} với nhiều tính năng hấp dẫn như {{ __("cờ tướng") }} 2 người, {{ __("cờ tướng") }} online, {{ __("chơi") }} {{ __("cờ tướng") }} {{ __("với máy") }}, cờ thế và {{ __("Thi đấu") }} xếp hạng!" >
+<meta name="description" content="{{ __('Cùng chơi với nhiều tính năng hấp dẫn như cờ tướng 2 người, cờ tướng online, chơi cờ tướng với máy, cờ thế và Thi đấu xếp hạng!') }}" >
+<meta property="og:description" content="{{ __('Cùng chơi với nhiều tính năng hấp dẫn như cờ tướng 2 người, cờ tướng online, chơi cờ tướng với máy, cờ thế và Thi đấu xếp hạng!') }}" >
 @endif
 
 @php
     // Fetch title from passed variable or route defaults
-    $siteTitle = $headTitle ?? request()->route('headTitle') ?? 'Thi đấu xếp hạng';
+    $siteTitle = $headTitle ?? request()->route('headTitle') ?? __('Thi đấu xếp hạng');
 
     // Append the dynamic query if on the search route
     if (request()->routeIs('search', '*.search') && request()->filled('query')) {
-        $siteTitle = 'Kết quả tìm kiếm cho từ khóa "' . request()->query('query') . '"';
+        $siteTitle = __('Kết quả tìm kiếm cho từ khóa ":query"', ['query' => request()->query('query')]);
     }
 @endphp
 
-<meta property="og:title" content="{{ $siteTitle }} - {{ __("Cờ tướng") }} 2 người, đánh {{ __("cờ tướng") }} online, {{ __("chơi") }} {{ __("cờ tướng") }} {{ __("với máy") }} miễn phí" >
-<title>{{ $siteTitle }} - {{ __("Cờ tướng") }} 2 người, đánh {{ __("cờ tướng") }} online, {{ __("chơi") }} {{ __("cờ tướng") }} {{ __("với máy") }} miễn phí</title>
+<meta property="og:title" content="{{ __(':title - Cờ tướng 2 người, đánh cờ tướng online, chơi cờ tướng với máy miễn phí', ['title' => $siteTitle]) }}" >
+<title>{{ __(':title - Cờ tướng 2 người, đánh cờ tướng online, chơi cờ tướng với máy miễn phí', ['title' => $siteTitle]) }}</title>
 @include('common.head')
 @include('common.scripts')
 <script>
 var locale = {
-    OK: '<i class="fas fa-check"></i> Đồng ý',
-    CONFIRM: '<i class="fas fa-check"></i> Chấp nhận',
-    CANCEL: '<i class="fas fa-times"></i> Hủy'
+    OK: '<i class="fas fa-check"></i> {{ __('Đồng ý') }}',
+    CONFIRM: '<i class="fas fa-check"></i> {{ __('Chấp nhận') }}',
+    CANCEL: '<i class="fas fa-times"></i> {{ __('Hủy') }}'
 };
-bootbox.addLocale('vi', locale);
+bootbox.addLocale('{{ app()->getLocale() }}', locale);
 function time()
 {
     var timestamp = Math.floor(new Date().getTime() / 1000);

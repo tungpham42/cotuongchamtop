@@ -109,17 +109,35 @@ $localizedTournamentPages = [
     'tournaments.index' => [
         'action' => [TournamentController::class, 'index'],
         'params' => [],
+        'titles' => [
+            'vi' => 'Danh sách Giải đấu',
+            'en' => 'Tournament List',
+            'ja' => 'トーナメント一覧',
+            'ko' => '토너먼트 목록',
+            'zh' => '锦标赛列表',
+        ],
     ],
     'tournaments.show' => [
         'action' => [TournamentController::class, 'show'],
         'params' => ['slug' => '{slug}'],
+        'titles' => [
+            'vi' => 'Chi tiết Giải đấu',
+            'en' => 'Tournament Details',
+            'ja' => 'トーナメントの詳細',
+            'ko' => '토너먼트 세부 정보',
+            'zh' => '锦标赛详情',
+        ],
     ],
 ];
 
 foreach ($localizedTournamentPages as $pageKey => $page) {
     foreach (config('locales.supported', []) as $locale) {
+        // Fetch the translated title or fallback to Vietnamese
+        $headTitle = $page['titles'][$locale] ?? $page['titles']['vi'];
+
         $route = Route::get(localized_path($pageKey, $page['params'], $locale), $page['action'])
-            ->middleware("locale:{$locale}");
+            ->middleware("locale:{$locale}")
+            ->defaults('headTitle', $headTitle); // Inject the title into the route
 
         // Retain original route names for the default locale to prevent component breaks.
         // For localized versions, prefix them with the locale.

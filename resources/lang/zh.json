@@ -634,5 +634,9 @@
     "Mật khẩu phải trùng nhau.": "两次输入的密码必须匹配。",
     "No credential provided.": "未提供凭据。",
     "Invalid Google Token.": "无效的Google令牌。",
-    "Login failed: :message": "登录失败：:message"
+    "Login failed: :message": "登录失败：:message",
+    "Cờ tướng 2 người": "双人象棋",
+    "Cùng chơi với nhiều tính năng hấp dẫn như cờ tướng 2 người, cờ tướng online, chơi cờ tướng với máy, cờ thế và Thi đấu xếp hạng!": "一起来玩吧，享受双人象棋、在线对战、人机对战、残局挑战和排位赛等众多激动人心的功能！",
+    "Kết quả tìm kiếm cho từ khóa \":query\"": "\":query\" 的搜索结果",
+    ":title - Cờ tướng 2 người, đánh cờ tướng online, chơi cờ tướng với máy miễn phí": ":title - 双人象棋，在线下棋，免费人机对战"
 }
