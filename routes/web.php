@@ -459,23 +459,26 @@ Route::match(['get', 'post'], '/thach-dau/{board}', function ($board) {
 return view('puzzleCompete', ['headTitle' => 'Thách đấu', 'bodyClass' => 'puzzle', 'board' => $board, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'canonicalUrl' => '/thach-dau/'.$board]);
 })->where(['board' => $fenRegex]);
 
-$puzzleRatingRoutes = [
-    'vi' => ['prefix' => '/the-co/{slug}', 'title' => 'Thế cờ'],
-    'en' => ['prefix' => '/puzzle-record/{slug}', 'title' => 'Puzzle'],
-    'ja' => ['prefix' => '/pazuru-kiroku/{slug}', 'title' => 'パズル'],
-    'ko' => ['prefix' => '/peojeul-girog/{slug}', 'title' => '퍼즐'],
-    'zh' => ['prefix' => '/mi-jilu/{slug}', 'title' => '谜'],
+// Define the titles for your puzzle rating routes
+$localizedPuzzleRatingPages = [
+    'puzzle.rating' => [
+        'titles' => [
+            'vi' => 'Thế cờ',
+            'en' => 'Puzzle',
+            'ja' => 'パズル',
+            'ko' => '퍼즐',
+            'zh' => '谜',
+        ]
+    ]
 ];
 
-foreach ($puzzleRatingRoutes as $locale => $routeInfo) {
-    Route::match(['get', 'post'], $routeInfo['prefix'], function ($slug) use ($locale, $routeInfo) {
+foreach ($localizedPuzzleRatingPages['puzzle.rating']['titles'] as $locale => $title) {
+    Route::match(['get', 'post'], localized_path('puzzle.rating', ['slug' => '{slug}'], $locale), function ($slug) use ($locale, $title) {
         $puzzle = Puzzle::where('slug', $slug)->firstOrFail();
-        $headTitle = $puzzle->name ? $routeInfo['title'] . ' "' . $puzzle->name . '"' : $routeInfo['title'];
 
-        // Dynamically replace {slug} with the actual slug for the canonical URL
-        $canonicalUrl = str_replace('{slug}', $puzzle->slug, $routeInfo['prefix']);
+        $headTitle = $puzzle->name ? $title . ' "' . $puzzle->name . '"' : $title;
 
-        return view('puzzleRating', [
+        return view('puzzleRating', localized_page_data('puzzle.rating', $locale, [
             'headTitle' => $headTitle,
             'bodyClass' => 'puzzle',
             'puzzle' => $puzzle,
@@ -492,14 +495,8 @@ foreach ($puzzleRatingRoutes as $locale => $routeInfo) {
             ],
             'randomRoom' => RoomController::getRandomRoom(),
             'roomCode' => '',
-            'cdnUrl' => url(''),
-            'langViUrl' => '/the-co/' . $puzzle->slug,
-            'langEnUrl' => '/puzzle-record/' . $puzzle->slug,
-            'langJaUrl' => '/pazuru-kiroku/' . $puzzle->slug,
-            'langKoUrl' => '/peojeul-girog/' . $puzzle->slug,
-            'langZhUrl' => '/mi-jilu/' . $puzzle->slug,
-            'canonicalUrl' => $canonicalUrl,
-        ]);
+            'cdnUrl' => url(''), // Retained here as it relies on the dynamic url() helper
+        ], ['slug' => $puzzle->slug]));
     })->middleware("locale:{$locale}");
 }
 

@@ -195,6 +195,13 @@ return [
             'ko' => 'pojeureul-pulda/{fen}',
             'zh' => 'jiejuenanti/{fen}',
         ],
+        'puzzle.rating' => [
+            'vi' => 'the-co/{slug}',
+            'en' => 'puzzle-record/{slug}',
+            'ja' => 'pazuru-kiroku/{slug}',
+            'ko' => 'peojeul-girog/{slug}',
+            'zh' => 'mi-jilu/{slug}',
+        ],
         'ai.home' => [
             'vi' => '/',
             'en' => 'en',
