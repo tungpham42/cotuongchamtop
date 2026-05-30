@@ -86,6 +86,20 @@ class PuzzleController extends Controller
                 })
                 ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->updated_at)); })
                 ->escapeColumns([])
+                ->orderColumn('name', 'name $1')
+                ->orderColumn('rating', 'likes_count $1')
+                ->orderColumn('time', 'updated_at $1')
+                ->filterColumn('name', function($query, $keyword) {
+                    $query->where(function($query) use ($keyword) {
+                        $query->orWhere('name', 'like', '%' . $keyword . '%')
+                              ->orWhere('slug', 'like', '%' . $keyword . '%');
+                    });
+                })
+                ->filterColumn('time', function($query, $keyword) {
+                    $sql = "updated_at like ?";
+                    $query->whereRaw($sql, ["%{$keyword}%"]);
+                })
+                ->rawColumns(['rank', 'name', 'rating', 'action', 'time'])
                 ->make(true);
         }
     }
@@ -107,6 +121,20 @@ class PuzzleController extends Controller
                 })
                 ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->updated_at)); })
                 ->escapeColumns([])
+                ->orderColumn('name', 'name $1')
+                ->orderColumn('rating', 'likes_count $1')
+                ->orderColumn('time', 'updated_at $1')
+                ->filterColumn('name', function($query, $keyword) {
+                    $query->where(function($query) use ($keyword) {
+                        $query->orWhere('name', 'like', '%' . $keyword . '%')
+                              ->orWhere('slug', 'like', '%' . $keyword . '%');
+                    });
+                })
+                ->filterColumn('time', function($query, $keyword) {
+                    $sql = "updated_at like ?";
+                    $query->whereRaw($sql, ["%{$keyword}%"]);
+                })
+                ->rawColumns(['rank', 'name', 'rating', 'action', 'time'])
                 ->make(true);
         }
     }
@@ -128,6 +156,20 @@ class PuzzleController extends Controller
                 })
                 ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->updated_at)); })
                 ->escapeColumns([])
+                ->orderColumn('name', 'name $1')
+                ->orderColumn('rating', 'likes_count $1')
+                ->orderColumn('time', 'updated_at $1')
+                ->filterColumn('name', function($query, $keyword) {
+                    $query->where(function($query) use ($keyword) {
+                        $query->orWhere('name', 'like', '%' . $keyword . '%')
+                              ->orWhere('slug', 'like', '%' . $keyword . '%');
+                    });
+                })
+                ->filterColumn('time', function($query, $keyword) {
+                    $sql = "updated_at like ?";
+                    $query->whereRaw($sql, ["%{$keyword}%"]);
+                })
+                ->rawColumns(['rank', 'name', 'rating', 'action', 'time'])
                 ->make(true);
         }
     }
@@ -149,6 +191,20 @@ class PuzzleController extends Controller
                 })
                 ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->updated_at)); })
                 ->escapeColumns([])
+                ->orderColumn('name', 'name $1')
+                ->orderColumn('rating', 'likes_count $1')
+                ->orderColumn('time', 'updated_at $1')
+                ->filterColumn('name', function($query, $keyword) {
+                    $query->where(function($query) use ($keyword) {
+                        $query->orWhere('name', 'like', '%' . $keyword . '%')
+                              ->orWhere('slug', 'like', '%' . $keyword . '%');
+                    });
+                })
+                ->filterColumn('time', function($query, $keyword) {
+                    $sql = "updated_at like ?";
+                    $query->whereRaw($sql, ["%{$keyword}%"]);
+                })
+                ->rawColumns(['rank', 'name', 'rating', 'action', 'time'])
                 ->make(true);
         }
     }

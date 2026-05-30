@@ -100,6 +100,19 @@ class UserController extends Controller
                 })
                 ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->created_at)); })
                 ->escapeColumns([])
+                ->orderColumn('name', 'name $1')
+                ->orderColumn('elo', 'elo $1')
+                ->orderColumn('time', 'created_at $1')
+                ->filterColumn('name', function($query, $keyword) {
+                    $query->where(function($query) use ($keyword) {
+                        $query->orWhere('name', 'like', '%' . $keyword . '%');
+                    });
+                })
+                ->filterColumn('time', function($query, $keyword) {
+                    $sql = "created_at like ?";
+                    $query->whereRaw($sql, ["%{$keyword}%"]);
+                })
+                ->rawColumns(['rank', 'name', 'elo', 'action', 'time'])
                 ->make(true);
         }
     }
@@ -131,6 +144,19 @@ class UserController extends Controller
                 })
                 ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->created_at)); })
                 ->escapeColumns([])
+                ->orderColumn('name', 'name $1')
+                ->orderColumn('elo', 'elo $1')
+                ->orderColumn('time', 'created_at $1')
+                ->filterColumn('name', function($query, $keyword) {
+                    $query->where(function($query) use ($keyword) {
+                        $query->orWhere('name', 'like', '%' . $keyword . '%');
+                    });
+                })
+                ->filterColumn('time', function($query, $keyword) {
+                    $sql = "created_at like ?";
+                    $query->whereRaw($sql, ["%{$keyword}%"]);
+                })
+                ->rawColumns(['rank', 'name', 'elo', 'action', 'time'])
                 ->make(true);
         }
     }
@@ -162,6 +188,19 @@ class UserController extends Controller
                 })
                 ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->created_at)); })
                 ->escapeColumns([])
+                ->orderColumn('name', 'name $1')
+                ->orderColumn('elo', 'elo $1')
+                ->orderColumn('time', 'created_at $1')
+                ->filterColumn('name', function($query, $keyword) {
+                    $query->where(function($query) use ($keyword) {
+                        $query->orWhere('name', 'like', '%' . $keyword . '%');
+                    });
+                })
+                ->filterColumn('time', function($query, $keyword) {
+                    $sql = "created_at like ?";
+                    $query->whereRaw($sql, ["%{$keyword}%"]);
+                })
+                ->rawColumns(['rank', 'name', 'elo', 'action', 'time'])
                 ->make(true);
         }
     }
@@ -193,6 +232,19 @@ class UserController extends Controller
                 })
                 ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->created_at)); })
                 ->escapeColumns([])
+                ->orderColumn('name', 'name $1')
+                ->orderColumn('elo', 'elo $1')
+                ->orderColumn('time', 'created_at $1')
+                ->filterColumn('name', function($query, $keyword) {
+                    $query->where(function($query) use ($keyword) {
+                        $query->orWhere('name', 'like', '%' . $keyword . '%');
+                    });
+                })
+                ->filterColumn('time', function($query, $keyword) {
+                    $sql = "created_at like ?";
+                    $query->whereRaw($sql, ["%{$keyword}%"]);
+                })
+                ->rawColumns(['rank', 'name', 'elo', 'action', 'time'])
                 ->make(true);
         }
     }
