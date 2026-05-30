@@ -23,7 +23,12 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+                $locale = app()->getLocale();
+
+                // If the locale is 'vi', redirect to '/', otherwise redirect to '/{locale}'
+                $localizedHome = ($locale === 'vi') ? '/' : '/' . $locale;
+
+                return redirect($localizedHome);
             }
         }
 

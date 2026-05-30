@@ -14,15 +14,17 @@ class AuthController extends Controller
 {
     public function handleOneTapCallback(Request $request)
     {
-        // Because One Tap posts directly from the current page, url()->previous()
-        // will naturally contain the exact page the user was looking at.
-        $previousUrl = Session::get('previousUrl', url()->previous());
+        $locale = app()->getLocale();
+        $localizedHome = ($locale === 'vi') ? '/' : '/' . $locale;
+
+        // Use the conditional localized home as the fallback
+        $previousUrl = Session::get('previousUrl', $localizedHome);
 
         // 1. Get the ID Token sent by Google
         $token = $request->input('credential'); // Google sends this field via POST
 
         if (!$token) {
-            return Redirect::to($previousUrl)->with('error', 'No credential provided.');
+            return Redirect::to($previousUrl)->with('error', __('No credential provided.'));
         }
 
         try {
@@ -52,13 +54,13 @@ class AuthController extends Controller
                 Auth::login($user);
 
                 // 6. Redirect back to the previous page
-                return Redirect::to($previousUrl)->with('success', 'Bạn đã đăng nhập bằng Google thành công!');
+                return Redirect::to($previousUrl)->with('success', __('Bạn đã đăng nhập bằng Google thành công!'));
             } else {
-                return Redirect::to($previousUrl)->with('error', 'Invalid Google Token.');
+                return Redirect::to($previousUrl)->with('error', __('Invalid Google Token.'));
             }
 
         } catch (\Exception $e) {
-            return Redirect::to($previousUrl)->with('error', 'Login failed: ' . $e->getMessage());
+            return Redirect::to($previousUrl)->with('error', __('Login failed: :message', ['message' => $e->getMessage()]));
         }
     }
 }

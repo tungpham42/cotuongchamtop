@@ -470,6 +470,17 @@ $localizedAppPages = [
             'playerRooms' => RoomController::getPlayerRooms(Auth::user()->id)
         ]
     ],
+    'search' => [
+        'view' => 'app.search',
+        'middleware' => [],
+        'titles' => ['vi' => 'Tìm kiếm', 'en' => 'Search', 'ja' => '検索', 'ko' => '검색', 'zh' => '搜索'],
+        'data' => fn() => [
+            'bodyClass' => 'search',
+            // Included common app layout data variables if your app.search view relies on them
+            'matchRooms' => RoomController::getMatchRooms(),
+            'rankUsers' => UserController::getRankUsers()
+        ]
+    ],
 ];
 
 // 1. Loop through static unparameterized app pages
@@ -533,29 +544,67 @@ $localizedAuthPages = [
     'login' => [
         'action' => 'Auth\LoginController@showLoginForm',
         'params' => [],
+        'titles' => [
+            'vi' => 'Đăng nhập',
+            'en' => 'Login',
+            'ja' => 'ログイン',
+            'ko' => '로그인',
+            'zh' => '登录',
+        ],
     ],
     'register' => [
         'action' => 'Auth\RegisterController@showRegistrationForm',
         'params' => [],
+        'titles' => [
+            'vi' => 'Đăng ký',
+            'en' => 'Register',
+            'ja' => '登録',
+            'ko' => '회원가입',
+            'zh' => '注册',
+        ],
     ],
     'password.request' => [
         'action' => 'Auth\ForgotPasswordController@showLinkRequestForm',
         'params' => [],
+        'titles' => [
+            'vi' => 'Quên mật khẩu',
+            'en' => 'Forgot Password',
+            'ja' => 'パスワードを忘れた場合',
+            'ko' => '비밀번호 찾기',
+            'zh' => '忘记密码',
+        ],
     ],
     'password.create' => [
         'action' => 'Auth\ForgotPasswordController@showLinkRequestForm',
         'params' => [],
+        'titles' => [
+            'vi' => 'Tạo mật khẩu',
+            'en' => 'Create Password',
+            'ja' => 'パスワード作成',
+            'ko' => '비밀번호 생성',
+            'zh' => '创建密码',
+        ],
     ],
     'password.reset' => [
         'action' => 'Auth\ResetPasswordController@showResetForm',
         'params' => ['token' => '{token}'],
+        'titles' => [
+            'vi' => 'Đặt lại mật khẩu',
+            'en' => 'Reset Password',
+            'ja' => 'パスワードリセット',
+            'ko' => '비밀번호 재설정',
+            'zh' => '重置密码',
+        ],
     ],
 ];
 
 foreach ($localizedAuthPages as $pageKey => $page) {
     foreach (config('locales.supported', []) as $locale) {
+        $headTitle = $page['titles'][$locale] ?? $page['titles']['vi'];
+
         $route = Route::get(localized_path($pageKey, $page['params'], $locale), $page['action'])
-            ->middleware("locale:{$locale}");
+            ->middleware("locale:{$locale}")
+            ->defaults('headTitle', $headTitle);
 
         // Retain original route names for the default locale to prevent Auth component breaks.
         // For localized versions, prefix them with the locale.
@@ -999,13 +1048,6 @@ $localizedStaticPages = [
     'ja' => ['view' => 'userList', 'title' => 'すべてのプレイヤー'],
     'ko' => ['view' => 'userList', 'title' => '모든 플레이어'],
     'zh' => ['view' => 'userList', 'title' => '所有玩家'],
-  ],
-  'search' => [
-    'vi' => ['view' => 'app.search', 'title' => 'Tìm kiếm'],
-    'en' => ['view' => 'app.search', 'title' => 'Search'],
-    'ja' => ['view' => 'app.search', 'title' => '検索'],
-    'ko' => ['view' => 'app.search', 'title' => '검색'],
-    'zh' => ['view' => 'app.search', 'title' => '搜索'],
   ],
 ];
 

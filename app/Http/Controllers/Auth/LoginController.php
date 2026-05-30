@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 
@@ -24,9 +23,24 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+    /**
+     * Helper method to get the correct previous URL or localized home fallback.
+     */
+    private function getRedirectUrl()
+    {
+        $locale = app()->getLocale();
+        $localizedHome = ($locale === 'vi') ? '/' : '/' . $locale;
+
+        return Session::get('previousUrl', $localizedHome);
+    }
+
     public function showLoginForm()
     {
-        Session::put('previousUrl', url()->previous());
+        // Only update the previous URL if the user didn't just come from a failed login attempt
+        if (!str_contains(url()->previous(), 'login')) {
+            Session::put('previousUrl', url()->previous());
+        }
+
         return view('auth.login');
     }
 
@@ -43,11 +57,10 @@ class LoginController extends Controller
             $user = User::where('email', $request->email)->first();
             Auth::login($user);
 
-            $previousUrl = Session::get('previousUrl', '/');
-            return Redirect::to($previousUrl);
+            return Redirect::to($this->getRedirectUrl());
         } else {
             return back()->withErrors([
-                'email' => 'Thông tin đăng nhập được cung cấp không khớp với hồ sơ của chúng tôi.',
+                'email' => __('Thông tin đăng nhập được cung cấp không khớp với hồ sơ của chúng tôi.'),
             ]);
         }
     }
@@ -56,12 +69,12 @@ class LoginController extends Controller
     {
         Auth::logout();
 
-        $previousUrl = Session::get('previousUrl', '/');
+        $previousUrl = $this->getRedirectUrl();
 
         // Update the previous URL for the next potential action after logout
         Session::put('previousUrl', url()->previous());
 
-        return Redirect::to($previousUrl)->with('success', 'Bạn đã đăng xuất thành công!');
+        return Redirect::to($previousUrl)->with('success', __('Bạn đã đăng xuất thành công!'));
     }
 
     /*
@@ -71,14 +84,16 @@ class LoginController extends Controller
     */
     public function redirectToFacebook()
     {
-        Session::put('previousUrl', url()->previous());
+        if (!str_contains(url()->previous(), 'login')) {
+            Session::put('previousUrl', url()->previous());
+        }
         return Socialite::driver('facebook')->redirect();
     }
 
     public function handleFacebookCallback()
     {
         $facebookUser = Socialite::driver('facebook')->user();
-        $previousUrl = Session::get('previousUrl', '/');
+        $redirectUrl = $this->getRedirectUrl();
 
         if (null !== $facebookUser->getEmail()) {
             $user = User::firstOrCreate(
@@ -87,10 +102,10 @@ class LoginController extends Controller
             );
 
             Auth::login($user, true);
-            return Redirect::to($previousUrl)->with('success', 'Bạn đã đăng nhập bằng Facebook thành công!');
+            return Redirect::to($redirectUrl)->with('success', __('Bạn đã đăng nhập bằng Facebook thành công!'));
         }
 
-        return Redirect::to($previousUrl)->withErrors(['message' => 'Email của bạn không hợp lệ.']);
+        return Redirect::to($redirectUrl)->withErrors(['message' => __('Email của bạn không hợp lệ.')]);
     }
 
     /*
@@ -100,14 +115,16 @@ class LoginController extends Controller
     */
     public function redirectToGoogle()
     {
-        Session::put('previousUrl', url()->previous());
+        if (!str_contains(url()->previous(), 'login')) {
+            Session::put('previousUrl', url()->previous());
+        }
         return Socialite::driver('google')->redirect();
     }
 
     public function handleGoogleCallback()
     {
         $googleUser = Socialite::driver('google')->user();
-        $previousUrl = Session::get('previousUrl', '/');
+        $redirectUrl = $this->getRedirectUrl();
 
         if (null !== $googleUser->getEmail()) {
             $user = User::firstOrCreate(
@@ -116,10 +133,10 @@ class LoginController extends Controller
             );
 
             Auth::login($user, true);
-            return Redirect::to($previousUrl)->with('success', 'Bạn đã đăng nhập bằng Google thành công!');
+            return Redirect::to($redirectUrl)->with('success', __('Bạn đã đăng nhập bằng Google thành công!'));
         }
 
-        return Redirect::to($previousUrl)->withErrors(['message' => 'Email của bạn không hợp lệ.']);
+        return Redirect::to($redirectUrl)->withErrors(['message' => __('Email của bạn không hợp lệ.')]);
     }
 
     /*
@@ -129,14 +146,16 @@ class LoginController extends Controller
     */
     public function redirectToGithub()
     {
-        Session::put('previousUrl', url()->previous());
+        if (!str_contains(url()->previous(), 'login')) {
+            Session::put('previousUrl', url()->previous());
+        }
         return Socialite::driver('github')->redirect();
     }
 
     public function handleGithubCallback()
     {
         $githubUser = Socialite::driver('github')->user();
-        $previousUrl = Session::get('previousUrl', '/');
+        $redirectUrl = $this->getRedirectUrl();
 
         if (null !== $githubUser->getEmail()) {
             $user = User::firstOrCreate(
@@ -145,10 +164,10 @@ class LoginController extends Controller
             );
 
             Auth::login($user, true);
-            return Redirect::to($previousUrl)->with('success', 'Bạn đã đăng nhập bằng GitHub thành công!');
+            return Redirect::to($redirectUrl)->with('success', __('Bạn đã đăng nhập bằng GitHub thành công!'));
         }
 
-        return Redirect::to($previousUrl)->withErrors(['message' => 'Email của bạn không hợp lệ.']);
+        return Redirect::to($redirectUrl)->withErrors(['message' => __('Email của bạn không hợp lệ.')]);
     }
 
     /*
@@ -158,14 +177,16 @@ class LoginController extends Controller
     */
     public function redirectToLinkedin()
     {
-        Session::put('previousUrl', url()->previous());
+        if (!str_contains(url()->previous(), 'login')) {
+            Session::put('previousUrl', url()->previous());
+        }
         return Socialite::driver('linkedin')->redirect();
     }
 
     public function handleLinkedinCallback()
     {
         $linkedinUser = Socialite::driver('linkedin')->user();
-        $previousUrl = Session::get('previousUrl', '/');
+        $redirectUrl = $this->getRedirectUrl();
 
         if (null !== $linkedinUser->getEmail()) {
             $user = User::firstOrCreate(
@@ -174,10 +195,10 @@ class LoginController extends Controller
             );
 
             Auth::login($user, true);
-            return Redirect::to($previousUrl)->with('success', 'Bạn đã đăng nhập bằng LinkedIn thành công!');
+            return Redirect::to($redirectUrl)->with('success', __('Bạn đã đăng nhập bằng LinkedIn thành công!'));
         }
 
-        return Redirect::to($previousUrl)->withErrors(['message' => 'Email của bạn không hợp lệ.']);
+        return Redirect::to($redirectUrl)->withErrors(['message' => __('Email của bạn không hợp lệ.')]);
     }
 
     /*
@@ -187,14 +208,16 @@ class LoginController extends Controller
     */
     public function redirectToGitlab()
     {
-        Session::put('previousUrl', url()->previous());
+        if (!str_contains(url()->previous(), 'login')) {
+            Session::put('previousUrl', url()->previous());
+        }
         return Socialite::driver('gitlab')->redirect();
     }
 
     public function handleGitlabCallback()
     {
         $gitlabUser = Socialite::driver('gitlab')->user();
-        $previousUrl = Session::get('previousUrl', '/');
+        $redirectUrl = $this->getRedirectUrl();
 
         if (null !== $gitlabUser->getEmail()) {
             $user = User::firstOrCreate(
@@ -203,10 +226,10 @@ class LoginController extends Controller
             );
 
             Auth::login($user, true);
-            return Redirect::to($previousUrl)->with('success', 'Bạn đã đăng nhập bằng GitLab thành công!');
+            return Redirect::to($redirectUrl)->with('success', __('Bạn đã đăng nhập bằng GitLab thành công!'));
         }
 
-        return Redirect::to($previousUrl)->withErrors(['message' => 'Email của bạn không hợp lệ.']);
+        return Redirect::to($redirectUrl)->withErrors(['message' => __('Email của bạn không hợp lệ.')]);
     }
 
     /*
@@ -216,14 +239,16 @@ class LoginController extends Controller
     */
     public function redirectToBitbucket()
     {
-        Session::put('previousUrl', url()->previous());
+        if (!str_contains(url()->previous(), 'login')) {
+            Session::put('previousUrl', url()->previous());
+        }
         return Socialite::driver('bitbucket')->redirect();
     }
 
     public function handleBitbucketCallback()
     {
         $bitbucketUser = Socialite::driver('bitbucket')->user();
-        $previousUrl = Session::get('previousUrl', '/');
+        $redirectUrl = $this->getRedirectUrl();
 
         if (null !== $bitbucketUser->getEmail()) {
             $user = User::firstOrCreate(
@@ -232,10 +257,10 @@ class LoginController extends Controller
             );
 
             Auth::login($user, true);
-            return Redirect::to($previousUrl)->with('success', 'Bạn đã đăng nhập bằng Bitbucket thành công!');
+            return Redirect::to($redirectUrl)->with('success', __('Bạn đã đăng nhập bằng Bitbucket thành công!'));
         }
 
-        return Redirect::to($previousUrl)->withErrors(['message' => 'Email của bạn không hợp lệ.']);
+        return Redirect::to($redirectUrl)->withErrors(['message' => __('Email của bạn không hợp lệ.')]);
     }
 
     /*
@@ -245,14 +270,16 @@ class LoginController extends Controller
     */
     public function redirectToZalo()
     {
-        Session::put('previousUrl', url()->previous());
+        if (!str_contains(url()->previous(), 'login')) {
+            Session::put('previousUrl', url()->previous());
+        }
         return Socialite::driver('zalo')->redirect();
     }
 
     public function handleZaloCallback()
     {
         $zaloUser = Socialite::driver('zalo')->user();
-        $previousUrl = Session::get('previousUrl', '/');
+        $redirectUrl = $this->getRedirectUrl();
 
         if (null !== $zaloUser->getId()) {
             $user = User::firstOrCreate(
@@ -261,9 +288,9 @@ class LoginController extends Controller
             );
 
             Auth::login($user, true);
-            return Redirect::to($previousUrl)->with('success', 'Bạn đã đăng nhập bằng Zalo thành công!');
+            return Redirect::to($redirectUrl)->with('success', __('Bạn đã đăng nhập bằng Zalo thành công!'));
         }
 
-        return Redirect::to($previousUrl)->withErrors(['message' => 'Tài khoản của bạn không hợp lệ.']);
+        return Redirect::to($redirectUrl)->withErrors(['message' => __('Tài khoản của bạn không hợp lệ.')]);
     }
 }

@@ -5,17 +5,13 @@
 </head>
 
 @php
-    $currentPath = request()->path();
     $bodyClassToApply = $bodyClass ?? '';
 
-    // Define route patterns for specific body classes
-    $loginRoutes = ['dang-nhap', 'dang-ky', 'quen-mat-khau', 'tao-mat-khau', 'dat-lai-mat-khau*'];
-    $dashboardRoutes = ['thi-dau', 'bang-xep-hang', 'lich-su', __('sanh-cho'), 'co-the', 'tim-kiem'];
-
     if (!$bodyClassToApply) {
-        if (request()->is($loginRoutes)) {
+        // Check using route names (with wildcard for locales) instead of hardcoded paths
+        if (request()->routeIs('login', '*.login', 'register', '*.register', 'password.*', '*.password.*')) {
             $bodyClassToApply = 'login';
-        } elseif (request()->is($dashboardRoutes)) {
+        } elseif (request()->routeIs('app.dashboard', '*.app.dashboard', 'app.ranking', '*.app.ranking', 'app.history', '*.app.history', 'room.list', '*.room.list', 'puzzle.list', '*.puzzle.list', 'search', '*.search')) {
             $bodyClassToApply = 'dashboard';
         }
     }

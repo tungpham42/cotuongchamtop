@@ -12,30 +12,17 @@
 <meta name="description" content="Cùng {{ __("chơi") }} với nhiều tính năng hấp dẫn như {{ __("cờ tướng") }} 2 người, {{ __("cờ tướng") }} online, {{ __("chơi") }} {{ __("cờ tướng") }} {{ __("với máy") }}, cờ thế và {{ __("Thi đấu") }} xếp hạng!" >
 <meta property="og:description" content="Cùng {{ __("chơi") }} với nhiều tính năng hấp dẫn như {{ __("cờ tướng") }} 2 người, {{ __("cờ tướng") }} online, {{ __("chơi") }} {{ __("cờ tướng") }} {{ __("với máy") }}, cờ thế và {{ __("Thi đấu") }} xếp hạng!" >
 @endif
+
 @php
-    $siteTitle = '';
-    if (isset($headTitle)) {
-        $siteTitle = $headTitle;
-    } elseif (url()->current() == localized_url('login')) {
-        $siteTitle = 'Đăng nhập';
-    } elseif (url()->current() == localized_url('register')) {
-        $siteTitle = 'Đăng ký';
-    } elseif (url()->current() == url('/quen-mat-khau')) {
-        $siteTitle = 'Quên mật khẩu';
-    } elseif (url()->current() == url('/tao-mat-khau')) {
-        $siteTitle = 'Tạo mật khẩu';
-    } elseif (url()->current() == url('/tim-kiem')) {
-        if (isset($_GET['query']) && $_GET['query'] != '') {
-            $siteTitle = 'Kết quả tìm kiếm cho từ khóa "'.$_GET['query'].'"';
-        } else {
-            $siteTitle = 'Tìm kiếm kỳ thủ';
-        }
-    } elseif (str_contains(url()->current(), url('/dat-lai-mat-khau').'/')) {
-        $siteTitle = 'Đặt lại mật khẩu';
-    } else {
-        $siteTitle = 'Thi đấu xếp hạng';
+    // Fetch title from passed variable or route defaults
+    $siteTitle = $headTitle ?? request()->route('headTitle') ?? 'Thi đấu xếp hạng';
+
+    // Append the dynamic query if on the search route
+    if (request()->routeIs('search', '*.search') && request()->filled('query')) {
+        $siteTitle = 'Kết quả tìm kiếm cho từ khóa "' . request()->query('query') . '"';
     }
 @endphp
+
 <meta property="og:title" content="{{ $siteTitle }} - {{ __("Cờ tướng") }} 2 người, đánh {{ __("cờ tướng") }} online, {{ __("chơi") }} {{ __("cờ tướng") }} {{ __("với máy") }} miễn phí" >
 <title>{{ $siteTitle }} - {{ __("Cờ tướng") }} 2 người, đánh {{ __("cờ tướng") }} online, {{ __("chơi") }} {{ __("cờ tướng") }} {{ __("với máy") }} miễn phí</title>
 @include('common.head')
