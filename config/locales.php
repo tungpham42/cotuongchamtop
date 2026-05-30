@@ -342,5 +342,19 @@ return [
             'ko' => 'geomsaeg',
             'zh' => 'sousuo',
         ],
+        'tournaments.index' => [
+            'vi' => 'giai-dau',
+            'en' => 'tournaments',
+            'ja' => 'tonamento',
+            'ko' => 'toneomeonteu',
+            'zh' => 'jinbiaosai',
+        ],
+        'tournaments.show' => [
+            'vi' => 'giai-dau/{slug}',
+            'en' => 'tournaments/{slug}',
+            'ja' => 'tonamento/{slug}',
+            'ko' => 'toneomeonteu/{slug}',
+            'zh' => 'jinbiaosai/{slug}',
+        ],
     ],
 ];
