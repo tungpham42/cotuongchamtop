@@ -98,7 +98,7 @@
                                 <i class="fad fa-check-circle text-success"></i> {{ __('Đã tham gia') }}
                             </button>
                         @elseif($isOpen && !$isFull)
-                            <form action="{{ route('tournaments.join', $tournament->slug) }}" method="POST" class="d-inline-block mb-2">
+                            <form action="{{ localized_url('tournaments.join', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block mb-2">
                                 @csrf
                                 <button type="submit" class="btn btn-primary font-weight-bold pulse-red">
                                     <i class="fad fa-sign-in-alt"></i> {{ __('Tham gia') }}
@@ -114,7 +114,7 @@
                         @if(auth()->user()->is_admin)
                             <span class="text-muted mx-2">|</span>
                             @if($isOpen)
-                            <form action="{{ route('tournaments.generate', $tournament->slug) }}" method="POST" class="d-inline-block mb-2">
+                            <form action="{{ localized_url('tournaments.generate', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block mb-2">
                                 @csrf
                                 <button type="submit" class="btn btn-success font-weight-bold">
                                     <i class="fad fa-sitemap"></i> {{ __('Bốc thăm') }}
@@ -122,11 +122,11 @@
                             </form>
                             @endif
 
-                            <a href="{{ route('tournaments.edit', $tournament->slug) }}" class="btn btn-warning text-dark font-weight-bold d-inline-block">
+                            <a href="{{ localized_url('tournaments.edit', ['slug' => $tournament->slug]) }}" class="btn btn-warning text-dark font-weight-bold d-inline-block">
                                 <i class="fad fa-edit"></i>
                             </a>
 
-                            <form action="{{ route('tournaments.destroy', $tournament->slug) }}" method="POST" class="d-inline-block mb-2" onsubmit="return confirm('{{ __('Bạn có chắc chắn muốn xóa giải đấu này không?') }}');">
+                            <form action="{{ localized_url('tournaments.destroy', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block mb-2" onsubmit="return confirm('{{ __('Bạn có chắc chắn muốn xóa giải đấu này không?') }}');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger font-weight-bold">

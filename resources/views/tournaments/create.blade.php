@@ -9,7 +9,7 @@
                     <h4 class="mb-0"><i class="fad fa-plus-circle"></i> {{ __('Tạo Giải Đấu Mới') }}</h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('tournaments.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ localized_url('tournaments.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group text-dark">
                             <label>{{ __('Tên Giải Đấu') }} <span class="text-danger">*</span></label>
@@ -48,7 +48,7 @@
                         </div>
 
                         <div class="mt-4 text-right">
-                            <a href="{{ route('tournaments.index') }}" class="btn text-dark btn-outline-light mr-2">{{ __('Hủy') }}</a>
+                            <a href="{{ localized_url('tournaments.index') }}" class="btn text-dark btn-outline-light mr-2">{{ __('Hủy') }}</a>
                             <button type="submit" class="btn btn-warning text-dark font-weight-bold"><i class="fad fa-save"></i> {{ __('Lưu Giải Đấu') }}</button>
                         </div>
                     </form>

@@ -103,44 +103,102 @@ Route::get('/sitemap-the-co.xml', function() {
 });
 
 // ==========================================
-// PUBLIC TOURNAMENT ROUTES (Visible to Guests) - LOCALIZED
+// TOURNAMENT ROUTES (Unified Localized Setup)
 // ==========================================
 $localizedTournamentPages = [
+    // --- PUBLIC ROUTES ---
     'tournaments.index' => [
         'action' => [TournamentController::class, 'index'],
         'params' => [],
+        'methods' => ['get'],
+        'middleware' => [],
         'titles' => [
-            'vi' => 'Danh sách Giải đấu',
-            'en' => 'Tournament List',
-            'ja' => 'トーナメント一覧',
-            'ko' => '토너먼트 목록',
-            'zh' => '锦标赛列表',
+            'vi' => 'Danh sách Giải đấu', 'en' => 'Tournament List', 'ja' => 'トーナメント一覧', 'ko' => '토너먼트 목록', 'zh' => '锦标赛列表',
         ],
     ],
     'tournaments.show' => [
         'action' => [TournamentController::class, 'show'],
         'params' => ['slug' => '{slug}'],
+        'methods' => ['get'],
+        'middleware' => [],
         'titles' => [
-            'vi' => 'Chi tiết Giải đấu',
-            'en' => 'Tournament Details',
-            'ja' => 'トーナメントの詳細',
-            'ko' => '토너먼트 세부 정보',
-            'zh' => '锦标赛详情',
+            'vi' => 'Chi tiết Giải đấu', 'en' => 'Tournament Details', 'ja' => 'トーナメントの詳細', 'ko' => '토너먼트 세부 정보', 'zh' => '锦标赛详情',
         ],
+    ],
+
+    // --- AUTHENTICATED ROUTES (Player Actions) ---
+    'tournaments.join' => [
+        'action' => [TournamentController::class, 'join'],
+        'params' => ['slug' => '{slug}'],
+        'methods' => ['post'],
+        'middleware' => ['auth'],
+    ],
+
+    // --- AUTHENTICATED ROUTES (Admin Actions) ---
+    'tournaments.generate' => [
+        'action' => [TournamentController::class, 'generateBracket'],
+        'params' => ['slug' => '{slug}'],
+        'methods' => ['post'],
+        'middleware' => ['auth'],
+    ],
+    'tournaments.create' => [
+        'action' => [TournamentController::class, 'create'],
+        'params' => [],
+        'methods' => ['get'],
+        'middleware' => ['auth'],
+        'titles' => [
+            'vi' => 'Tạo Giải đấu', 'en' => 'Create Tournament', 'ja' => 'トーナメント作成', 'ko' => '토너먼트 만들기', 'zh' => '创建锦标赛',
+        ],
+    ],
+    'tournaments.store' => [
+        'action' => [TournamentController::class, 'store'],
+        'params' => [],
+        'methods' => ['post'],
+        'middleware' => ['auth'],
+    ],
+    'tournaments.edit' => [
+        'action' => [TournamentController::class, 'edit'],
+        'params' => ['slug' => '{slug}'],
+        'methods' => ['get'],
+        'middleware' => ['auth'],
+        'titles' => [
+            'vi' => 'Sửa Giải đấu', 'en' => 'Edit Tournament', 'ja' => 'トーナメント編集', 'ko' => '토너먼트 편집', 'zh' => '编辑锦标赛',
+        ],
+    ],
+    'tournaments.update' => [
+        'action' => [TournamentController::class, 'update'],
+        'params' => ['slug' => '{slug}'],
+        'methods' => ['put'],
+        'middleware' => ['auth'],
+    ],
+    'tournaments.destroy' => [
+        'action' => [TournamentController::class, 'destroy'],
+        'params' => ['slug' => '{slug}'],
+        'methods' => ['delete'],
+        'middleware' => ['auth'],
     ],
 ];
 
 foreach ($localizedTournamentPages as $pageKey => $page) {
     foreach (config('locales.supported', []) as $locale) {
-        // Fetch the translated title or fallback to Vietnamese
-        $headTitle = $page['titles'][$locale] ?? $page['titles']['vi'];
 
-        $route = Route::get(localized_path($pageKey, $page['params'], $locale), $page['action'])
-            ->middleware("locale:{$locale}")
-            ->defaults('headTitle', $headTitle); // Inject the title into the route
+        $methods = $page['methods'] ?? ['get'];
+
+        $route = Route::match($methods, localized_path($pageKey, $page['params'], $locale), $page['action'])
+            ->middleware("locale:{$locale}");
+
+        // Inject the translated head title if applicable
+        if (isset($page['titles'])) {
+            $headTitle = $page['titles'][$locale] ?? $page['titles']['vi'];
+            $route->defaults('headTitle', $headTitle);
+        }
+
+        // Apply specific middleware (like 'auth')
+        if (!empty($page['middleware'])) {
+            $route->middleware($page['middleware']);
+        }
 
         // Retain original route names for the default locale to prevent component breaks.
-        // For localized versions, prefix them with the locale.
         if ($locale === config('locales.default', 'vi')) {
             $route->name($pageKey);
         } else {
@@ -148,24 +206,6 @@ foreach ($localizedTournamentPages as $pageKey => $page) {
         }
     }
 }
-
-// ==========================================
-// PROTECTED TOURNAMENT ROUTES (Requires Login)
-// ==========================================
-Route::middleware('auth')->group(function () {
-    // Player Actions
-    Route::post('/giai-dau/{slug}/tham-gia', [TournamentController::class, 'join'])->name('tournaments.join');
-
-    // Admin / Organizer Actions
-    Route::post('/giai-dau/{slug}/tao-bang', [TournamentController::class, 'generateBracket'])->name('tournaments.generate');
-
-    // --- CÁC ROUTE ADMIN ---
-    Route::get('/admin/giai-dau/tao-moi', [TournamentController::class, 'create'])->name('tournaments.create');
-    Route::post('/admin/giai-dau', [TournamentController::class, 'store'])->name('tournaments.store');
-    Route::get('/admin/giai-dau/{slug}/sua', [TournamentController::class, 'edit'])->name('tournaments.edit');
-    Route::put('/admin/giai-dau/{slug}', [TournamentController::class, 'update'])->name('tournaments.update');
-    Route::delete('/admin/giai-dau/{slug}', [TournamentController::class, 'destroy'])->name('tournaments.destroy');
-});
 
 Route::post('/startTimer/{roomCode}/{player}', [RoomController::class, 'startTimer']);
 Route::post('/pauseTimer/{roomCode}/{player}', [RoomController::class, 'pauseTimer']);
