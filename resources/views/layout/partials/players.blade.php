@@ -38,7 +38,7 @@
                 }).done(function(data){
                     if (data == 'no') {
                         bootbox.prompt({
-                            title: "Mời đặt tên cho Phòng thi {{ __("đấu") }}:",
+                            title: "{{ __("Mời đặt tên cho Phòng thi đấu:") }}",
                             locale: '{{ __("vi") }}',
                             centerVertical: true,
                             closeButton: false,
@@ -199,7 +199,7 @@
                     }).done(function(data){
                         if (data == 'no') {
                             bootbox.prompt({
-                                title: "Mời đặt tên cho Phòng thi {{ __("đấu") }}:",
+                                title: "{{ __("Mời đặt tên cho Phòng thi đấu:") }}",
                                 locale: '{{ __("vi") }}',
                                 centerVertical: true,
                                 closeButton: false,
