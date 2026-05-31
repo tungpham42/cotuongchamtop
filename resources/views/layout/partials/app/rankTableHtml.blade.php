@@ -2,10 +2,10 @@
     <table class="table" id="rankingTable">
         <thead>
             <tr>
-                <th scope="col">Tên</th>
-                <th scope="col">Email</th>
-                <th scope="col">Ngày giờ gia nhập</th>
-                <th scope="col">Điểm</th>
+                <th scope="col">{{ __("Tên") }}</th>
+                <th scope="col">{{ __("Email") }}</th>
+                <th scope="col">{{ __("Ngày giờ gia nhập") }}</th>
+                <th scope="col">{{ __("Điểm") }}</th>
             </tr>
         </thead>
         <tbody>

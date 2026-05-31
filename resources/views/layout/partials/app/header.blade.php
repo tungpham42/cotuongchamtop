@@ -65,10 +65,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
               <div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="navbarDropdown">
                 @if (Auth::user()->isStandard())
-                  <span class="dropdown-item text-success"><i class="far fa-crown"></i> Standard (ẩn quảng cáo)</span>
+                  <span class="dropdown-item text-success"><i class="far fa-crown"></i> {{ __("Standard (ẩn quảng cáo)") }}</span>
                 @else
                   <a href="{{ localized_url('app.profile') }}#standard-plan" class="showPromotion dropdown-item text-danger">
-                    <i class="far fa-crown"></i> Nâng cấp Standard
+                    <i class="far fa-crown"></i> {{ __("Nâng cấp Standard") }}
                   </a>
                 @endif
                 <a href="{{ localized_url('app.profile') }}" class="showPromotion dropdown-item{{ url()->current() == localized_url('app.profile') ? ' active disabled' : '' }}"><i class="far fa-id-card"></i> {{ __("Hồ sơ của tôi") }}</a>
@@ -88,13 +88,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </li>
           @endguest
           <li class="dropdown language-switcher">
-            <a class="lang dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false"><i class="far fa-language"></i> {{ $localeLabels[$locale] ?? 'Tiếng Việt' }}</a>
+            <a class="lang dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false"><i class="far fa-language"></i> {{ $localeLabels[$locale] ?? __('Tiếng Việt') }}</a>
             <div class="dropdown-menu dropdown-menu-right shadow">
-              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangViUrl ? ' active disabled' : '' }}" href="{{ url($currentLangViUrl) }}"><span class="shadow-sm fi fi-vn"></span> Tiếng Việt</a>
-              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangEnUrl ? ' active disabled' : '' }}" href="{{ url($currentLangEnUrl) }}"><span class="shadow-sm fi fi-us"></span> English</a>
-              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangJaUrl ? ' active disabled' : '' }}" href="{{ url($currentLangJaUrl) }}"><span class="shadow-sm fi fi-jp"></span> 日本語</a>
-              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangKoUrl ? ' active disabled' : '' }}" href="{{ url($currentLangKoUrl) }}"><span class="shadow-sm fi fi-kr"></span> 한국어</a>
-              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangZhUrl ? ' active disabled' : '' }}" href="{{ url($currentLangZhUrl) }}"><span class="shadow-sm fi fi-cn"></span> 中文</a>
+              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangViUrl ? ' active disabled' : '' }}" href="{{ url($currentLangViUrl) }}"><span class="shadow-sm fi fi-vn"></span> {{ __("Tiếng Việt") }}</a>
+              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangEnUrl ? ' active disabled' : '' }}" href="{{ url($currentLangEnUrl) }}"><span class="shadow-sm fi fi-us"></span> {{ __("English") }}</a>
+              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangJaUrl ? ' active disabled' : '' }}" href="{{ url($currentLangJaUrl) }}"><span class="shadow-sm fi fi-jp"></span> {{ __("日本語") }}</a>
+              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangKoUrl ? ' active disabled' : '' }}" href="{{ url($currentLangKoUrl) }}"><span class="shadow-sm fi fi-kr"></span> {{ __("한국어") }}</a>
+              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangZhUrl ? ' active disabled' : '' }}" href="{{ url($currentLangZhUrl) }}"><span class="shadow-sm fi fi-cn"></span> {{ __("中文") }}</a>
             </div>
           </li>
         </ul>

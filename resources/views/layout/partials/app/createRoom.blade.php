@@ -18,19 +18,19 @@
     </div>
 @endif
 @if(auth()->check())
-    <h2 class="mt-3"><i class="fas fa-gamepad-alt"></i> {{ __("Thi đấu") }} xếp hạng</h2>
+    <h2 class="mt-3"><i class="fas fa-gamepad-alt"></i> {{ __("Thi đấu xếp hạng") }}</h2>
     <form method="POST" id="create-form">
         <div class="form-group">
             @csrf
             <input name="ma-phong" type="hidden" value="{{ md5(time()) }}" disabled readonly>
-            <button data-step="1" data-intro="Ấn vào đây để tạo phòng thi {{ __("đấu") }} với các kỳ thủ khác" type="submit" class="btn btn-danger btn-lg my-3"><i class="fad fa-plus-octagon"></i> Tạo phòng mới</button>
+            <button data-step="1" data-intro="{{ __("Ấn vào đây để tạo phòng thi đấu với các kỳ thủ khác") }}" type="submit" class="btn btn-danger btn-lg my-3"><i class="fad fa-plus-octagon"></i> {{ __("Tạo phòng mới") }}</button>
         </div>
     </form>
     <script>
     var locale = {
-        OK: '<i class="fas fa-check"></i> Đồng ý',
-        CONFIRM: '<i class="fas fa-check"></i> Chấp nhận',
-        CANCEL: '<i class="fas fa-times"></i> Hủy'
+        OK: '<i class="fas fa-check"></i> {{ __("Đồng ý") }}',
+        CONFIRM: '<i class="fas fa-check"></i> {{ __("Chấp nhận") }}',
+        CANCEL: '<i class="fas fa-times"></i> {{ __("Hủy") }}'
     };
     bootbox.addLocale('vi', locale);
     $('#create-form').on('submit', function(e){
@@ -45,14 +45,14 @@
         }).done(function(data){
             if (data == 'no') {
                 bootbox.prompt({
-                    title: "Mời đặt tên cho Phòng thi {{ __("đấu") }}:",
+                    title: '{{ __("Mời đặt tên cho Phòng thi đấu:") }}',
                     locale: '{{ __("vi") }}',
                     centerVertical: true,
                     closeButton: false,
                     maxlength: 32,
                     buttons: {
                         confirm: {
-                            label: '<i class="fas fa-check"></i> Đặt tên',
+                            label: '<i class="fas fa-check"></i> {{ __("Đặt tên") }}',
                             className: 'btn-lg btn-danger pulse-red'
                         },
                         cancel: {
@@ -63,7 +63,7 @@
                         if (roomName != null) {
                             if (roomName.trim().length === 0 || roomName.length === 0) {
                                 bootbox.alert({
-                                    message: "Vui lòng đặt tên cho phòng!",
+                                    message: '{{ __("Vui lòng đặt tên cho phòng!") }}',
                                     size: 'small',
                                     locale: '{{ __("vi") }}',
                                     centerVertical: true,
@@ -91,14 +91,14 @@
                                     dataType: 'text'
                                 }).done(function() {
                                     bootbox.alert({
-                                        message: "Bạn đã tạo phòng thành công.",
+                                        message: '{{ __("Bạn đã tạo phòng thành công.") }}',
                                         size: 'small',
                                         centerVertical: true,
                                         closeButton: false,
                                         buttons: {
                                             ok: {
                                                 className: 'btn-lg btn-danger pulse-red',
-                                                label: 'Oki'
+                                                label: '{{ __("Oki") }}'
                                             }
                                         },
                                         callback: function(){
@@ -112,14 +112,14 @@
                 });
             } else if (data == 'yes') {
                 bootbox.alert({
-                    message: "Mã phòng bị trùng, vui lòng thử lại.",
+                    message: '{{ __("Mã phòng bị trùng, vui lòng thử lại.") }}',
                     size: 'small',
                     centerVertical: true,
                     closeButton: false,
                     buttons: {
                         ok: {
                             className: 'btn-lg btn-danger pulse-red',
-                            label: 'Oki'
+                            label: '{{ __("Oki") }}'
                         }
                     },
                     callback: function(){
@@ -134,6 +134,6 @@
     </script>
 @else
 <div class="alert alert-secondary" role="alert">
-    <a data-step="1" data-intro="Ấn vào đây để đăng nhập vào thi {{ __("đấu") }} xếp hạng" class="stopPromotion" href="{{ localized_url('login') }}">{{ __("Đăng nhập") }}</a> để {{ __("tham gia") }} thi {{ __("đấu") }}
+    <a data-step="1" data-intro="{{ __("Ấn vào đây để đăng nhập vào thi đấu xếp hạng") }}" class="stopPromotion" href="{{ localized_url('login') }}">{{ __("Đăng nhập") }}</a> {{ __("để tham gia thi đấu") }}
 </div>
 @endif

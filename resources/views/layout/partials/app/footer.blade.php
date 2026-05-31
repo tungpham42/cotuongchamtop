@@ -51,7 +51,7 @@
         <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.linkedin.com/company/cotuong/"><i class="fab fa-linkedin rounded"></i></a>
       </div>
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
-        <p>Đã xác thực HTML5 và CSS3</p>
+        <p>{{ __("Đã xác thực HTML5 và CSS3") }}</p>
         <a title="Valid HTML5" class="w-100 mr-2 display-4 text-decoration-none showPromotion" target="_blank" href="https://validator.w3.org/check?uri=referer">
           <i class="fab fa-html5"></i>
         </a>
@@ -69,9 +69,9 @@ $.ajaxSetup({
   }
 });
 var locale = {
-  OK: '<i class="fas fa-check"></i> Đồng ý',
-  CONFIRM: '<i class="fas fa-check"></i> Chấp nhận',
-  CANCEL: '<i class="fas fa-times"></i> Hủy'
+  OK: '<i class="fas fa-check"></i> {{ __("Đồng ý") }}',
+  CONFIRM: '<i class="fas fa-check"></i> {{ __("Chấp nhận") }}',
+  CANCEL: '<i class="fas fa-times"></i> {{ __("Hủy") }}'
 };
 bootbox.addLocale('vi', locale);
 function showLatestRoom(offset, newCode) {
@@ -85,11 +85,11 @@ function showLatestRoom(offset, newCode) {
   }).done(function(data){
     if (data.room.code != newCode) {
       var htmlContent = `
-        <button id="join-room" class="btn btn-lg btn-danger float-right ml-2"><i class="fas fa-sign-in-alt"></i> Vào</button>
-        <button id="cancel-room" class="btn btn-lg btn-dark float-right"><i class="fas fa-times"></i> Hủy</button>
+        <button id="join-room" class="btn btn-lg btn-danger float-right ml-2"><i class="fas fa-sign-in-alt"></i> {{ __("Vào") }}</button>
+        <button id="cancel-room" class="btn btn-lg btn-dark float-right"><i class="fas fa-times"></i> {{ __("Hủy") }}</button>
       `;
       var dialog = bootbox.dialog({
-        title: 'Bạn được thách {{ __("đấu") }} tại "' + data.room.name + '"!',
+        title: '{{ __("Bạn được thách đấu tại") }} "' + data.room.name + '"!',
         message: htmlContent,
         locale: '{{ __("vi") }}',
         size: 'small',
@@ -118,14 +118,14 @@ function showLatestRoom(offset, newCode) {
             showLatestRoom(offset + 1, data.room.code);
           } else if (offset == {{ env('ROOM_OFFSET') }} && !window.location.href.toLowerCase().includes('sanh-cho')) {
             bootbox.confirm({
-              message: "Vào sảnh chờ!",
+              message: '{{ __("Vào sảnh chờ!") }}',
               size: 'small',
               locale: '{{ __("vi") }}',
               centerVertical: true,
               closeButton: false,
               buttons: {
                 confirm: {
-                  label: '<i class="fas fa-check"></i> Vào',
+                  label: '<i class="fas fa-check"></i> {{ __("Vào") }}',
                   className: 'btn-lg btn-danger pulse-red'
                 },
                 cancel: {
@@ -186,24 +186,24 @@ $('#AdSenseModal').on('show.bs.modal', function(){
     $('#AdSenseModal').find('ins').attr('data-ad-status', 'unfilled');
   }
 }).on('shown.bs.modal', function() {
-  $('#adModalCloseBtn').attr('data-original-title', 'Đi đến: ' + $(this).attr('data-url')).css('cursor', 'wait').prop('disabled', true);
+  $('#adModalCloseBtn').attr('data-original-title', '{{ __("Đi đến:") }} ' + $(this).attr('data-url')).css('cursor', 'wait').prop('disabled', true);
   $('#adModalCloseBtn').tooltip();
   let i = 2;
   let timer = setInterval(function() {
     console.log(--i);
-    $('#adModalCloseBtn').find('span').text(i + ' giây');
+    $('#adModalCloseBtn').find('span').text(i + ' {{ __("giây") }}');
     if (i === -1) {
       $('#adModalCloseBtn').find('i').removeClass('fa-clock').addClass('fa-link');
-      $('#adModalCloseBtn').css('cursor', 'pointer').removeClass('disabled').removeAttr('disabled').addClass('pulse-red').find('span').text('Đến ngay');
+      $('#adModalCloseBtn').css('cursor', 'pointer').removeClass('disabled').removeAttr('disabled').addClass('pulse-red').find('span').text('{{ __("Đến ngay") }}');
       clearInterval(timer);
     }
   }, 1000);
 }).on('hidden.bs.modal', function() {
-  $('#adModalCloseBtn').find('span').text('2 giây');
+  $('#adModalCloseBtn').find('span').text('2 {{ __("giây") }}');
   window.location.href = $(this).attr('data-url');
 });
 $('#tourBtn').on('click', function(){
-  introJs().setOptions({"nextLabel": "{{ __("Sau") }}", "prevLabel": "{{ __("Trước") }}", "skipLabel": "Bỏ qua", "doneLabel": "Hoàn tất", "showProgress": true, "showButtons": true, "showBullets": true, "exitOnOverlayClick": true, "hidePrev": true, "hideNext": true, "disableInteraction": true}).onskip(function(){
+  introJs().setOptions({"nextLabel": "{{ __("Sau") }}", "prevLabel": "{{ __("Trước") }}", "skipLabel": "{{ __("Bỏ qua") }}", "doneLabel": "{{ __("Hoàn tất") }}", "showProgress": true, "showButtons": true, "showBullets": true, "exitOnOverlayClick": true, "hidePrev": true, "hideNext": true, "disableInteraction": true}).onskip(function(){
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }).onexit(function(){
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -211,5 +211,5 @@ $('#tourBtn').on('click', function(){
 });
 </script>
 <script src='https://platform-api.sharethis.com/js/sharethis.js#property=646aee4bd8c6d2001a06c2f8&product=sticky-share-buttons' async='async'></script>
-<a href="#0" class="cd-top js-cd-top rounded" style="background-image: url('{{ url('/') }}/img/cd-top-arrow.svg');">Top</a>
+<a href="#0" class="cd-top js-cd-top rounded" style="background-image: url('{{ url('/') }}/img/cd-top-arrow.svg');">{{ __("Top") }}</a>
 <script src="{{ url('/') }}/js/to-top.js"></script>
