@@ -16,6 +16,22 @@ use Carbon\Carbon;
 
 class TournamentController extends Controller
 {
+    // Helper method to resolve localized route names for redirects
+    private function getRouteName($key)
+    {
+        $locale = app()->getLocale();
+        $defaultLocale = config('locales.default', 'vi');
+        return $locale === $defaultLocale ? $key : "{$locale}.{$key}";
+    }
+
+    // Bổ sung hàm kiểm tra quyền Admin
+    private function checkAdmin()
+    {
+        if (!auth()->check() || !auth()->user()->is_admin) {
+            abort(403, __('Bạn không có quyền truy cập trang này.'));
+        }
+    }
+
     // Register a user for the tournament
     public function join(Request $request, $slug)
     {
@@ -40,6 +56,8 @@ class TournamentController extends Controller
     // Generate Single Elimination Bracket
     public function generateBracket($slug)
     {
+        $this->checkAdmin(); // CRITICAL FIX: Admin protection added
+
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
 
         if ($tournament->status !== 'open') {
@@ -47,12 +65,9 @@ class TournamentController extends Controller
         }
 
         $players = $tournament->users()->inRandomOrder()->get();
-        // Note: For simplicity, this assumes a perfect power of 2 (4, 8, 16).
-        // You will need bye-logic for uneven player counts.
 
         $tournament->update(['status' => 'in_progress']);
 
-        // Generate rooms recursively or iteratively to map the bracket tree
         $this->createBracketNodes($tournament, $players);
 
         return back()->with('success', 'Bracket generated successfully!');
@@ -61,7 +76,9 @@ class TournamentController extends Controller
     private function createBracketNodes(Tournament $tournament, $players)
     {
         $totalPlayers = $players->count();
-        $totalRounds = log($totalPlayers, 2);
+        if ($totalPlayers < 2) return;
+
+        $totalRounds = max(1, log($totalPlayers, 2));
 
         $previousRoundRooms = [];
 
@@ -72,7 +89,7 @@ class TournamentController extends Controller
 
             for ($i = 0; $i < $matchesInRound; $i++) {
                 $room = Room::create([
-                    'code' => md5(time() . uniqid()), // Leveraging your existing unique code logic
+                    'code' => md5(time() . uniqid()),
                     'fen' => env('INITIAL_FEN'),
                     'tournament_id' => $tournament->id,
                     'tournament_round' => $round,
@@ -89,9 +106,9 @@ class TournamentController extends Controller
                     $p2 = $players->pop();
 
                     $room->update([
-                        'host_id' => $p1->id,
-                        'guest_id' => $p2->id,
-                        'name' => "{$p1->name} vs {$p2->name}"
+                        'host_id' => $p1 ? $p1->id : null,
+                        'guest_id' => $p2 ? $p2->id : null,
+                        'name' => ($p1 && $p2) ? "{$p1->name} vs {$p2->name}" : "TBD"
                     ]);
                 }
 
@@ -102,21 +119,22 @@ class TournamentController extends Controller
     }
 
     // List all tournaments
-    public function index()
+    public function index(Request $request)
     {
         $tournaments = Tournament::withCount('users')->orderBy('start_date', 'desc')->paginate(10);
 
         return view('tournaments.index', [
+            'headTitle' => $request->route('headTitle'), // Dynamically injected by web.php
             'bodyClass' => 'dashboard',
             'tournaments' => $tournaments,
-            'canonicalUrl' => url('/giai-dau'),
+            'canonicalUrl' => $request->url(), // Dynamic URL retrieval
             'randomRoom' => RoomController::getRandomRoom(),
             'roomCode' => '',
             'cdnUrl' => url(''),
         ]);
     }
 
-    public function show($slug)
+    public function show(Request $request, $slug)
     {
         $tournament = Tournament::with(['users', 'rooms.host', 'rooms.guest'])
             ->where('slug', $slug)
@@ -125,35 +143,26 @@ class TournamentController extends Controller
         $rounds = $tournament->rooms->groupBy('tournament_round')->sortKeys();
 
         return view('tournaments.show', [
-            'tournament' => $tournament,
             'headTitle'  => $tournament->name,
             'bodyClass' => 'dashboard',
-            'tournament' => $tournament,
+            'tournament' => $tournament, // Fixed duplicate array key
             'rounds' => $rounds,
-            'canonicalUrl' => url('/giai-dau/' . $tournament->slug),
+            'canonicalUrl' => $request->url(),
             'randomRoom' => RoomController::getRandomRoom(),
             'roomCode' => '',
             'cdnUrl' => url(''),
         ]);
     }
 
-    // Bổ sung hàm kiểm tra quyền Admin
-    private function checkAdmin()
-    {
-        if (!auth()->check() || !auth()->user()->is_admin) {
-            abort(403, 'Bạn không có quyền truy cập trang này.');
-        }
-    }
-
     // 1. Giao diện Tạo mới
-    public function create()
+    public function create(Request $request)
     {
         $this->checkAdmin();
 
         return view('tournaments.create', [
-            'headTitle' => 'Tạo Giải đấu mới',
+            'headTitle' => $request->route('headTitle'),
             'bodyClass' => 'dashboard',
-            'canonicalUrl' => url('/admin/giai-dau/tao-moi'),
+            'canonicalUrl' => $request->url(),
             'randomRoom' => RoomController::getRandomRoom(),
             'roomCode' => '',
             'cdnUrl' => url(''),
@@ -168,7 +177,7 @@ class TournamentController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20480', // Validate ảnh
+            'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20480',
             'start_date' => 'required|date',
             'status' => 'required|in:open,in_progress,completed',
             'max_players' => 'required|integer|min:2',
@@ -176,27 +185,26 @@ class TournamentController extends Controller
 
         $data = $request->all();
 
-        // Xử lý upload ảnh
         if ($request->hasFile('cover_photo')) {
             $data['cover_photo'] = $request->file('cover_photo')->store('tournaments', 'public');
         }
 
         Tournament::create($data);
 
-        return redirect()->route('tournaments.index')->with('success', 'Tạo giải đấu thành công!');
+        return redirect()->route($this->getRouteName('tournaments.index'))->with('success', 'Tạo giải đấu thành công!');
     }
 
     // 3. Giao diện Sửa
-    public function edit($slug)
+    public function edit(Request $request, $slug)
     {
         $this->checkAdmin();
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
 
         return view('tournaments.edit', [
-            'headTitle' => 'Sửa Giải đấu: ' . $tournament->name,
+            'headTitle' => $request->route('headTitle') . ': ' . $tournament->name,
             'bodyClass' => 'dashboard',
             'tournament' => $tournament,
-            'canonicalUrl' => url('/admin/giai-dau/' . $tournament->slug . '/sua'),
+            'canonicalUrl' => $request->url(),
             'randomRoom' => RoomController::getRandomRoom(),
             'roomCode' => '',
             'cdnUrl' => url(''),
@@ -212,7 +220,7 @@ class TournamentController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20480', // Validate ảnh
+            'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20480',
             'start_date' => 'required|date',
             'status' => 'required|in:open,in_progress,completed',
             'max_players' => 'required|integer|min:2',
@@ -220,9 +228,7 @@ class TournamentController extends Controller
 
         $data = $request->all();
 
-        // Xử lý upload ảnh mới
         if ($request->hasFile('cover_photo')) {
-            // Xóa ảnh cũ nếu có
             if ($tournament->cover_photo) {
                 Storage::disk('public')->delete($tournament->cover_photo);
             }
@@ -231,7 +237,7 @@ class TournamentController extends Controller
 
         $tournament->update($data);
 
-        return redirect()->route('tournaments.show', $tournament->slug)->with('success', 'Cập nhật giải đấu thành công!');
+        return redirect()->route($this->getRouteName('tournaments.show'), $tournament->slug)->with('success', 'Cập nhật giải đấu thành công!');
     }
 
     // 5. Xử lý Xóa
@@ -240,13 +246,12 @@ class TournamentController extends Controller
         $this->checkAdmin();
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
 
-        // Xóa ảnh khi xóa giải đấu
         if ($tournament->cover_photo) {
             Storage::disk('public')->delete($tournament->cover_photo);
         }
 
         $tournament->delete();
 
-        return redirect()->route('tournaments.index')->with('success', 'Đã xóa giải đấu!');
+        return redirect()->route($this->getRouteName('tournaments.index'))->with('success', 'Đã xóa giải đấu!');
     }
 }
