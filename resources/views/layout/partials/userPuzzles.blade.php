@@ -12,7 +12,7 @@
             <div data-likes="{{ $userPuzzle->likes_count }}" data-hard="{{ $userPuzzle->hard_count }}" data-unsolved="{{ $userPuzzle->unsolved_count }}" class="puzzle-div col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-4">
                 <div id="board-{{ md5($userPuzzle->slug) }}" class="card shadow-lg rounded border-dark" style="width: 100%; height: auto; cursor: pointer;background-color: transparent;"></div>
                 <div class="bg-dark p-2">
-                    <h5 class="mx-auto text-light m-0 font-weight-light text-center" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title='{{ __("Thế cờ") }} "{{ $userPuzzle->name }}"'>{{ $userPuzzle->name }}</h5>
+                    <h5 class="mx-auto text-light m-0 font-weight-light text-center" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title='{{ __("Thế cờ:") }} "{{ $userPuzzle->name }}"'>{{ $userPuzzle->name }}</h5>
                 </div>
                 <div class="row mx-0">
                     <a class="py-2 col-3 btn btn-dark btn-sm text-light solve-puzzle-btn" href="javascript:solvePuzzle('{{ $userPuzzle->fen }}')" data-toggle="tooltip" data-placement="top" title='{{ __("Giải") }} {{ __("thế cờ") }} "{{ $userPuzzle->name }}"'><i class="fad fa-mouse"></i></a>
@@ -66,7 +66,7 @@
                 <div data-likes="{{ $userPuzzle->likes_count }}" data-hard="{{ $userPuzzle->hard_count }}" data-unsolved="{{ $userPuzzle->unsolved_count }}" class="puzzle-div col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-4">
                     <div id="board-{{ md5($userPuzzle->slug) }}" class="card shadow-lg rounded border-dark" style="width: 100%; height: auto; cursor: pointer;background-color: transparent;"></div>
                     <div class="bg-dark p-2">
-                        <h5 class="mx-auto text-light m-0 font-weight-light text-center" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title='{{ __("Thế cờ") }} "{{ $userPuzzle->name }}"'>{{ $userPuzzle->name }}</h5>
+                        <h5 class="mx-auto text-light m-0 font-weight-light text-center" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title='{{ __("Thế cờ:") }} "{{ $userPuzzle->name }}"'>{{ $userPuzzle->name }}</h5>
                     </div>
                     <div class="row mx-0">
                         <a class="py-2 col-3 btn btn-dark btn-sm text-light solve-puzzle-btn" href="javascript:solvePuzzle('{{ $userPuzzle->fen }}')" data-toggle="tooltip" data-placement="top" title='{{ __("Giải") }} {{ __("thế cờ") }} "{{ $userPuzzle->name }}"'><i class="fad fa-mouse"></i></a>
