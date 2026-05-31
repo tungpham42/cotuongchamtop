@@ -73,11 +73,9 @@
                         <div class="col-md-6 d-flex flex-column align-items-center justify-content-center bg-light rounded p-4">
                             <h6 class="mb-3 font-weight-bold text-secondary">{{ __("Xem trước giao diện") }}</h6>
 
-                            <div id="ui-preview-board" class="shadow-sm" style="width: 100%; max-width: 280px; aspect-ratio: 9/10; position: relative; background-size: 100% 100%; background-repeat: no-repeat; background-position: center; transition: background-image 0.3s ease; border-radius: 4px;">
-
-                                <img id="ui-preview-piece-red" alt="Tướng Đỏ" style="position: absolute; bottom: 5%; left: 45%; width: 11%; transform: translateX(-50%); opacity: 1; transition: opacity 0.2s ease; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));">
-                                <img id="ui-preview-piece-black" alt="Tướng Đen" style="position: absolute; top: 5%; left: 45%; width: 11%; transform: translateX(-50%); opacity: 1; transition: opacity 0.2s ease; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));">
-
+                            <div id="ui-preview-board" class="shadow-sm" style="width: 100%; max-width: 280px; aspect-ratio: 9/10; min-height: 310px; position: relative; background-size: 100% 100%; background-repeat: no-repeat; background-position: center; transition: background-image 0.3s ease; border-radius: 4px;">
+                                <img id="ui-preview-piece-red" alt="Tướng Đỏ" style="position: absolute; bottom: 3%; left: 50%; width: 11%; transform: translateX(-50%); opacity: 0; transition: opacity 0.2s ease; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));">
+                                <img id="ui-preview-piece-black" alt="Tướng Đen" style="position: absolute; top: 3%; left: 50%; width: 11%; transform: translateX(-50%); opacity: 0; transition: opacity 0.2s ease; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));">
                             </div>
                         </div>
 
@@ -91,8 +89,8 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // FIXED: rtrim prevents issues where url('/') sometimes adds a trailing slash, resulting in double slashes (//) in the final URL.
-        const baseUrl = "{{ rtrim(url('/'), '/') }}";
+        // Safely resolve the base path for images using Laravel's asset helper
+        const imgBaseUrl = "{{ asset('img') }}";
 
         // DOM Elements
         const boardSelect = document.getElementById('board_theme');
@@ -105,21 +103,25 @@
             const selectedBoard = boardSelect.value;
             const selectedPiece = pieceSelect.value;
 
-            // Reset opacity to 1 immediately to bypass the caching onload bug
-            previewPieceRed.style.opacity = 1;
-            previewPieceBlack.style.opacity = 1;
+            // Reset opacity to 0 before loading new assets for a smooth transition
+            previewPieceRed.style.opacity = 0;
+            previewPieceBlack.style.opacity = 0;
 
             // Update Board Background
-            previewBoard.style.backgroundImage = `url('${baseUrl}/img/xiangqiboards/${selectedBoard}.svg')`;
+            previewBoard.style.backgroundImage = `url('${imgBaseUrl}/xiangqiboards/${selectedBoard}.svg')`;
 
             // Update Pieces
-            previewPieceRed.src = `${baseUrl}/img/xiangqipieces/${selectedPiece}/rK.svg`;
-            previewPieceBlack.src = `${baseUrl}/img/xiangqipieces/${selectedPiece}/bK.svg`;
-
-            // Only hide them if they actually throw an error (e.g., file doesn't exist)
-            previewPieceRed.onerror = () => previewPieceRed.style.opacity = 0;
-            previewPieceBlack.onerror = () => previewPieceBlack.style.opacity = 0;
+            previewPieceRed.src = `${imgBaseUrl}/xiangqipieces/${selectedPiece}/rK.svg`;
+            previewPieceBlack.src = `${imgBaseUrl}/xiangqipieces/${selectedPiece}/bK.svg`;
         }
+
+        // Only fade pieces in once they have successfully loaded
+        previewPieceRed.onload = () => previewPieceRed.style.opacity = 1;
+        previewPieceBlack.onload = () => previewPieceBlack.style.opacity = 1;
+
+        // Keep pieces hidden if the asset cannot be found
+        previewPieceRed.onerror = () => previewPieceRed.style.opacity = 0;
+        previewPieceBlack.onerror = () => previewPieceBlack.style.opacity = 0;
 
         // Listen for user changes
         boardSelect.addEventListener('change', updatePreview);
