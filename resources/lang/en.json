@@ -653,5 +653,17 @@
     "Tôi chưa giải được": "I haven't solved it yet",
     "Bàn cờ thế không hợp lệ": "Invalid puzzle board",
     "Đen thắng": "Black wins",
-    "Đỏ thắng": "Red wins"
+    "Đỏ thắng": "Red wins",
+    "Mật khẩu hiện tại bắt buộc điền.": "Current password is required.",
+    "Mật khẩu mới bắt buộc điền.": "New password is required.",
+    "Mật khẩu lặp lại bắt buộc điền.": "Password confirmation is required.",
+    "Mật khẩu lặp lại và mật khẩu mới phải giống nhau.": "Confirmed password and new password must match.",
+    "Mật khẩu hiện tại không khớp.": "Current password does not match.",
+    "Mật khẩu đã thay đổi thành công!": "Password changed successfully!",
+    "Tên hiện tại bắt buộc.": "Current name is required.",
+    "Tên mới bắt buộc điền.": "New name is required.",
+    "Tên mới phải ít nhất 3 ký tự.": "New name must be at least 3 characters.",
+    "Tên mới phải ít hơn 16 ký tự.": "New name must be less than 16 characters.",
+    "Bạn đã thay đổi tên thành công!": "Name changed successfully!",
+    "Bạn đã thay đổi giao diện thành công!": "Theme changed successfully!"
 }

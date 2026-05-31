@@ -656,5 +656,17 @@
     "Tôi chưa giải được": "我还没解开",
     "Bàn cờ thế không hợp lệ": "无效的残局棋盘",
     "Đen thắng": "黑方胜",
-    "Đỏ thắng": "红方胜"
+    "Đỏ thắng": "红方胜",
+    "Mật khẩu hiện tại bắt buộc điền.": "当前密码为必填项。",
+    "Mật khẩu mới bắt buộc điền.": "新密码为必填项。",
+    "Mật khẩu lặp lại bắt buộc điền.": "确认密码为必填项。",
+    "Mật khẩu lặp lại và mật khẩu mới phải giống nhau.": "确认密码和新密码必须匹配。",
+    "Mật khẩu hiện tại không khớp.": "当前密码不匹配。",
+    "Mật khẩu đã thay đổi thành công!": "密码修改成功！",
+    "Tên hiện tại bắt buộc.": "当前名称为必填项。",
+    "Tên mới bắt buộc điền.": "新名称为必填项。",
+    "Tên mới phải ít nhất 3 ký tự.": "新名称必须至少包含3个字符。",
+    "Tên mới phải ít hơn 16 ký tự.": "新名称必须少于16个字符。",
+    "Bạn đã thay đổi tên thành công!": "您已成功更改名字！",
+    "Bạn đã thay đổi giao diện thành công!": "您已成功更改主题！"
 }

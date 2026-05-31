@@ -355,27 +355,24 @@ class UserController extends Controller
             'new_confirm_password' => 'required|same:new_password',
         ],
         [
-            'current_password.required' => 'Mật khẩu hiện tại bắt buộc điền.',
-            'new_password.required' => 'Mật khẩu mới bắt buộc điền.',
-            'new_password.min' => 'Mật khẩu mới phải ít nhất 8 ký tự.',
-            'new_confirm_password.required' => 'Mật khẩu lặp lại bắt buộc điền',
-            'new_confirm_password.same' => 'Mật khẩu lặp lại và mật khẩu mới phải giống nhau.',
+            'current_password.required' => __('Mật khẩu hiện tại bắt buộc điền.'),
+            'new_password.required' => __('Mật khẩu mới bắt buộc điền.'),
+            'new_password.min' => __('Mật khẩu mới phải ít nhất 8 ký tự.'),
+            'new_confirm_password.required' => __('Mật khẩu lặp lại bắt buộc điền.'),
+            'new_confirm_password.same' => __('Mật khẩu lặp lại và mật khẩu mới phải giống nhau.'),
         ]);
 
         $oldId = $request->input('current_id');
         $user = User::find($oldId);
 
         if (!Hash::check($request->input('current_password'), $user->password)) {
-            return back()->withErrors(['current_password' => 'Mật khẩu hiện tại không khớp']);
+            return back()->withErrors(['current_password' => __('Mật khẩu hiện tại không khớp.')]);
         }
+
         $user->password = Hash::make($request->input('new_password'));
         $user->save();
 
-        // return redirect('/thi-dau')->with('success', 'Mật khẩu đã thay đổi thành công!');
-        $previousUrl = Session::get('previousUrl');
-
-        // Redirect the user to the previous URL
-        return Redirect::to($previousUrl)->with('success', 'Mật khẩu đã thay đổi thành công!');
+        return back()->with('success', __('Mật khẩu đã thay đổi thành công!'));
     }
 
     public function changeName(Request $request)
@@ -385,43 +382,33 @@ class UserController extends Controller
             'new_name' => 'required|min:3|max:15|unique:users,name',
         ],
         [
-            'current_name.required' => 'Tên hiện tại bắt buộc.',
-            'new_name.required' => 'Tên mới bắt buộc điền.',
-            'new_name.min' => 'Tên mới phải ít nhất 3 ký tự.',
-            'new_name.max' => 'Tên mới phải ít hơn 16 ký tự.',
-            'new_name.unique' => 'Tên này đã được sử dụng.',
+            'current_name.required' => __('Tên hiện tại bắt buộc.'),
+            'new_name.required' => __('Tên mới bắt buộc điền.'),
+            'new_name.min' => __('Tên mới phải ít nhất 3 ký tự.'),
+            'new_name.max' => __('Tên mới phải ít hơn 16 ký tự.'),
+            'new_name.unique' => __('Tên này đã được sử dụng.'),
         ]);
 
         $oldId = $request->input('current_id');
-        $oldName = $request->input('current_name');
         $newName = $request->input('new_name');
 
         $user = User::find($oldId);
-
         $user->name = $newName;
-
         $user->save();
 
-        // return redirect('/thi-dau')->with('success', 'Bạn đã thay đổi tên thành công!');
-        $previousUrl = Session::get('previousUrl');
-
-        // Redirect the user to the previous URL
-        return Redirect::to($previousUrl)->with('success', 'Bạn đã thay đổi tên thành công!');
+        return back()->with('success', __('Bạn đã thay đổi tên thành công!'));
     }
 
     public function changeUserInterface(Request $request)
     {
         $currentId = $request->input('current_id');
         $user = User::find($currentId);
+
         $user->board_theme = $request->input('board_theme');
         $user->pieces_theme = $request->input('pieces_theme');
         $user->save();
 
-        // return redirect('/thi-dau')->with('success', 'Bạn đã thay đổi giao diện thành công!');
-        $previousUrl = Session::get('previousUrl');
-
-        // Redirect the user to the previous URL
-        return Redirect::to($previousUrl)->with('success', 'Bạn đã thay đổi giao diện thành công!');
+        return back()->with('success', __('Bạn đã thay đổi giao diện thành công!'));
     }
 
     public static function renderName($id)

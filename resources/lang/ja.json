@@ -654,5 +654,17 @@
     "Tôi chưa giải được": "まだ解けていません",
     "Bàn cờ thế không hợp lệ": "無効なパズル盤",
     "Đen thắng": "黒の勝ち",
-    "Đỏ thắng": "赤の勝ち"
+    "Đỏ thắng": "赤の勝ち",
+    "Mật khẩu hiện tại bắt buộc điền.": "現在のパスワードは必須です。",
+    "Mật khẩu mới bắt buộc điền.": "新しいパスワードは必須です。",
+    "Mật khẩu lặp lại bắt buộc điền.": "パスワードの確認は必須です。",
+    "Mật khẩu lặp lại và mật khẩu mới phải giống nhau.": "確認用パスワードと新しいパスワードが一致する必要があります。",
+    "Mật khẩu hiện tại không khớp.": "現在のパスワードが一致しません。",
+    "Mật khẩu đã thay đổi thành công!": "パスワードが正常に変更されました！",
+    "Tên hiện tại bắt buộc.": "現在の名前は必須です。",
+    "Tên mới bắt buộc điền.": "新しい名前は必須です。",
+    "Tên mới phải ít nhất 3 ký tự.": "新しい名前は3文字以上である必要があります。",
+    "Tên mới phải ít hơn 16 ký tự.": "新しい名前は16文字未満である必要があります。",
+    "Bạn đã thay đổi tên thành công!": "名前が正常に変更されました！",
+    "Bạn đã thay đổi giao diện thành công!": "テーマが正常に変更されました！"
 }
