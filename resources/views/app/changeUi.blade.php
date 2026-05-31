@@ -85,8 +85,6 @@
         </div>
     </div>
 </div>
-
-@push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Safely resolve the base path for images using Laravel's asset helper
@@ -131,5 +129,4 @@
         updatePreview();
     });
 </script>
-@endpush
 @endsection
