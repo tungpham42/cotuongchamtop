@@ -418,7 +418,7 @@ class UserController extends Controller
         if ($user) {
             $onlineStatus = self::onlineStatus($id);
             $avatar = Avatar::create($user->name)->setDimension(38)->setFontSize(19);
-            $profileLink = url('/ky-thu/') . '/' . $id;
+            $profileLink = localized_url('app.player', ['id' => $id]);
 
             return '<img src="' . $avatar . '" />&nbsp;<a class="text-light showPromotion animate-light" href="' . $profileLink . '">' . $user->name . '</a>&nbsp;' . $onlineStatus;
         } else {
@@ -439,7 +439,7 @@ class UserController extends Controller
         if ($user) {
             $onlineStatus = self::onlineStatus($id);
             $avatar = Avatar::create($user->name)->setDimension(38)->setFontSize(19);
-            $profileLink = url('/ky-thu/') . '/' . $id;
+            $profileLink = localized_url('app.player', ['id' => $id]);
 
             return '<img src="' . $avatar . '" />&nbsp;<a class="text-danger showPromotion animate" href="' . $profileLink . '">' . '# ' . $id . '  ' . $user->name . '</a>&nbsp;' . $onlineStatus;
         } else {
@@ -500,7 +500,7 @@ class UserController extends Controller
         if ($user) {
             $onlineStatus = self::onlineStatus($id);
             $avatar = Avatar::create($user->name)->setDimension(28)->setFontSize(14);
-            $profileLink = url('/ky-thu/') . '/' . $id;
+            $profileLink = localized_url('app.player', ['id' => $id]);
 
             return '<img alt="' . $user->name . '" src="' . $avatar . '">&nbsp;<a class="text-light showPromotion animate-light" href="' . $profileLink . '">' . '# ' . $id . '  ' . $user->name . '</a>&nbsp;' . $onlineStatus;
         } else {
