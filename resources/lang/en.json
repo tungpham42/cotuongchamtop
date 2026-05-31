@@ -647,5 +647,11 @@
     "Top": "Top",
     "Logout": "Logout",
     "Điểm": "Points",
-    "messages.players_online_count": "{0} No players online|[1] 1 player online|[2,*] :count players online"
+    "messages.players_online_count": "{0} No players online|[1] 1 player online|[2,*] :count players online",
+    "là hay": "is interesting",
+    "là khó": "is hard",
+    "Tôi chưa giải được": "I haven't solved it yet",
+    "Bàn cờ thế không hợp lệ": "Invalid puzzle board",
+    "Đen thắng": "Black wins",
+    "Đỏ thắng": "Red wins"
 }

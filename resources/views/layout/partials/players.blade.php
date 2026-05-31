@@ -56,7 +56,7 @@
                             if (roomName != null) {
                                 if (roomName.trim().length === 0 || roomName.length === 0) {
                                     bootbox.alert({
-                                        message: "Vui lòng đặt tên cho phòng!",
+                                        message: "{{ __('Vui lòng đặt tên cho phòng!') }}",
                                         size: 'small',
                                         locale: '{{ __("vi") }}',
                                         centerVertical: true,
@@ -85,14 +85,14 @@
                                         dataType: 'text'
                                     }).done(function() {
                                         bootbox.alert({
-                                            message: "Bạn đã tạo phòng thành công.",
+                                            message: "{{ __('Bạn đã tạo phòng thành công.') }}",
                                             size: 'small',
                                             centerVertical: true,
                                             closeButton: false,
                                             buttons: {
                                                 ok: {
                                                     className: 'btn-danger',
-                                                    label: 'Oki'
+                                                    label: '{{ __('Oki') }}'
                                                 }
                                             },
                                             callback: function(){
@@ -115,11 +115,11 @@
                                                         buttons: {
                                                             ok: {
                                                                 className: 'btn-danger',
-                                                                label: 'Oki'
+                                                                label: '{{ __('Oki') }}'
                                                             }
                                                         },
                                                         callback: function(){
-                                                            window.location.href = '{{ url('/phong/') }}' + '/' + maPhong;
+                                                            window.location.href = '{{ url(__('/phong/')) }}' + '/' + maPhong;
                                                         }
                                                     });
                                                 });
@@ -132,14 +132,14 @@
                     });
                     } else if (data == 'yes') {
                         bootbox.alert({
-                            message: "Mã phòng bị trùng, vui lòng thử lại.",
+                            message: "{{ __('Mã phòng bị trùng, vui lòng thử lại.') }}",
                             size: 'small',
                             centerVertical: true,
                             closeButton: false,
                             buttons: {
                                 ok: {
                                     className: 'btn-danger',
-                                    label: 'Oki'
+                                    label: '{{ __('Oki') }}'
                                 }
                             },
                             callback: function(){
@@ -217,7 +217,7 @@
                                 if (roomName != null) {
                                     if (roomName.trim().length === 0 || roomName.length === 0) {
                                         bootbox.alert({
-                                            message: "Vui lòng đặt tên cho phòng!",
+                                            message: "{{ __('Vui lòng đặt tên cho phòng!') }}",
                                             size: 'small',
                                             locale: '{{ __("vi") }}',
                                             centerVertical: true,
@@ -234,7 +234,7 @@
                                     } else {
                                         $.ajax({
                                             type: "POST",
-                                            url: '{{ url('/api') }}/compete',
+                                            url: '{{ url(__('/api')) }}{{ __('/compete') }}',
                                             data: {
                                                 'ma-phong': maPhong,
                                                 'ten-phong': roomName,
@@ -246,14 +246,14 @@
                                             dataType: 'text'
                                         }).done(function() {
                                             bootbox.alert({
-                                                message: "Bạn đã tạo phòng thành công.",
+                                                message: "{{ __('Bạn đã tạo phòng thành công.') }}",
                                                 size: 'small',
                                                 centerVertical: true,
                                                 closeButton: false,
                                                 buttons: {
                                                     ok: {
                                                         className: 'btn-danger',
-                                                        label: 'Oki'
+                                                        label: '{{ __('Oki') }}'
                                                     }
                                                 },
                                                 callback: function(){
@@ -276,11 +276,11 @@
                                                             buttons: {
                                                                 ok: {
                                                                     className: 'btn-danger',
-                                                                    label: 'Oki'
+                                                                    label: '{{ __('Oki') }}'
                                                                 }
                                                             },
                                                             callback: function(){
-                                                                window.location.href = '{{ url('/phong/') }}' + '/' + maPhong;
+                                                                window.location.href = '{{ url(__('/phong/')) }}' + '/' + maPhong;
                                                             }
                                                         });
                                                     });
@@ -293,14 +293,14 @@
                         });
                         } else if (data == 'yes') {
                             bootbox.alert({
-                                message: "Mã phòng bị trùng, vui lòng thử lại.",
+                                message: "{{ __('Mã phòng bị trùng, vui lòng thử lại.') }}",
                                 size: 'small',
                                 centerVertical: true,
                                 closeButton: false,
                                 buttons: {
                                     ok: {
                                         className: 'btn-danger',
-                                        label: 'Oki'
+                                        label: '{{ __('Oki') }}'
                                     }
                                 },
                                 callback: function(){

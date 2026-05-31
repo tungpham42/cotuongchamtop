@@ -4,7 +4,7 @@
     <div class="container mx-auto px-3 pt-0">
         <div class="row my-0">
             <h2 class="d-block w-100 text-light ml-3 mb-4">
-                <i class="fas fa-archive"></i> {{ $firstPagePlayedBoards->total() }} {{ __("ván cờ") }} <a class="text-light animate-light stopPromotion" href="{{ url('/lich-su') }}">{{ __("đã đấu xong") }}</a>
+                <i class="fas fa-archive"></i> {{ $firstPagePlayedBoards->total() }} {{ __("ván cờ") }} <a class="text-light animate-light stopPromotion" href="{{ localized_url('app.history') }}">{{ __("đã đấu xong") }}</a>
             </h2>
             {{ $firstPagePlayedBoards->links('vendor.pagination.playedBoardVi') }}
             @foreach($firstPagePlayedBoards as $board)
@@ -12,7 +12,7 @@
                 <div id="board-{{ $board->code }}" class="card shadow-lg rounded border-dark" style="cursor: pointer;background-color: transparent;">
                 </div>
                 <div class="bg-dark p-2 text-center">
-                    <a href="{{ url('/phong/') }}/{{ $board->code }}/theo-doi" target="_blank" class="py-1 text-light animate-light w-100 text-center stopPromotion">{{ $board->name }}</a>
+                    <a href="{{ url(__('/phong/')) }}/{{ $board->code }}{{ __('/theo-doi') }}" target="_blank" class="py-1 text-light animate-light w-100 text-center stopPromotion">{{ $board->name }}</a>
                 </div>
                 <div class="bg-dark row mx-0">
                     <span class="py-1 col-12 text-light text-center host-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->host_id) !!}</span>
@@ -30,13 +30,13 @@
                     <span class="py-1 col-12 text-light text-center">
                         @switch ($board->result)
                             @case('-1')
-                                Đen thắng
+                                {{ __('Đen thắng') }}
                                 @break
                             @case('0')
-                                Hòa
+                                {{ __('Hòa') }}
                                 @break
                             @case('1')
-                                Đỏ thắng
+                                {{ __('Đỏ thắng') }}
                                 @break
                         @endswitch
                     </span>
@@ -68,8 +68,7 @@
                 $(window).resize(board{{ $board->code }}.resize);
                 $('#board-{{ $board->code }}').on('click auxclick', function(e){
                     e.preventDefault();
-                    // $('#AdSenseModal').attr('data-url', '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/theo-doi').modal('show');
-                    window.location.href = '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/theo-doi';
+                    window.location.href = '{{ url(__('/phong/')) }}' + '/' + '{{ $board->code }}' + '{{ __('/theo-doi') }}';
                 });
             </script>
             @endforeach
@@ -84,7 +83,7 @@
         <div class="container mx-auto px-3 pt-0">
             <div class="row my-0">
                 <h2 class="d-block w-100 text-light ml-3 mb-4">
-                    <i class="fas fa-archive"></i> {{ $playedBoards->total() }} {{ __("ván cờ") }} <a class="text-light animate-light stopPromotion" href="{{ url('/lich-su') }}">{{ __("đã đấu xong") }}</a>
+                    <i class="fas fa-archive"></i> {{ $playedBoards->total() }} {{ __("ván cờ") }} <a class="text-light animate-light stopPromotion" href="{{ localized_url('app.history') }}">{{ __("đã đấu xong") }}</a>
                 </h2>
                 {{ $playedBoards->links('vendor.pagination.playedBoardVi') }}
                 @foreach($playedBoards as $board)
@@ -92,7 +91,7 @@
                     <div id="board-{{ $board->code }}" class="card shadow-lg rounded border-dark" style="cursor: pointer;background-color: transparent;">
                     </div>
                     <div class="bg-dark p-2 text-center">
-                        <a href="{{ url('/phong/') }}/{{ $board->code }}/theo-doi" target="_blank" class="py-1 text-light animate-light w-100 text-center stopPromotion">{{ $board->name }}</a>
+                        <a href="{{ url(__('/phong/')) }}/{{ $board->code }}{{ __('/theo-doi') }}" target="_blank" class="py-1 text-light animate-light w-100 text-center stopPromotion">{{ $board->name }}</a>
                     </div>
                     <div class="bg-dark row mx-0">
                         <span class="py-1 col-12 text-light text-center host-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->host_id) !!}</span>
@@ -110,13 +109,13 @@
                         <span class="py-1 col-12 text-light text-center">
                             @switch ($board->result)
                                 @case('-1')
-                                    Đen thắng
+                                    {{ __('Đen thắng') }}
                                     @break
                                 @case('0')
-                                    Hòa
+                                    {{ __('Hòa') }}
                                     @break
                                 @case('1')
-                                    Đỏ thắng
+                                    {{ __('Đỏ thắng') }}
                                     @break
                             @endswitch
                         </span>
@@ -148,8 +147,7 @@
                     $(window).resize(board{{ $board->code }}.resize);
                     $('#board-{{ $board->code }}').on('click auxclick', function(e){
                         e.preventDefault();
-                        // $('#AdSenseModal').attr('data-url', '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/theo-doi').modal('show');
-                        window.location.href = '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/theo-doi';
+                        window.location.href = '{{ url(__('/phong/')) }}' + '/' + '{{ $board->code }}' + '{{ __('/theo-doi') }}';
                     });
                 </script>
                 @endforeach

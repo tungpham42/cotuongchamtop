@@ -1594,5 +1594,11 @@
     "Đến ngay": "Đến ngay",
     "Top": "Top",
     "Điểm": "Điểm",
-    "messages.players_online_count": "{0} Không có kỳ thủ nào trực tuyến|[1] 1 kỳ thủ đang trực tuyến|[2,*] :count kỳ thủ đang trực tuyến"
+    "messages.players_online_count": "{0} Không có kỳ thủ nào trực tuyến|[1] 1 kỳ thủ đang trực tuyến|[2,*] :count kỳ thủ đang trực tuyến",
+    "là hay": "là hay",
+    "là khó": "là khó",
+    "Tôi chưa giải được": "Tôi chưa giải được",
+    "Bàn cờ thế không hợp lệ": "Bàn cờ thế không hợp lệ",
+    "Đen thắng": "Đen thắng",
+    "Đỏ thắng": "Đỏ thắng"
 }

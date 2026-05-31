@@ -650,5 +650,11 @@
     "Top": "顶部",
     "Logout": "登出",
     "Điểm": "分数",
-    "messages.players_online_count": "{0} 当前无玩家在线|[1] 1 名玩家在线|[2,*] :count 名玩家在线"
+    "messages.players_online_count": "{0} 当前无玩家在线|[1] 1 名玩家在线|[2,*] :count 名玩家在线",
+    "là hay": "很有趣",
+    "là khó": "很难",
+    "Tôi chưa giải được": "我还没解开",
+    "Bàn cờ thế không hợp lệ": "无效的残局棋盘",
+    "Đen thắng": "黑方胜",
+    "Đỏ thắng": "红方胜"
 }

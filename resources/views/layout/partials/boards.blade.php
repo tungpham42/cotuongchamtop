@@ -4,7 +4,7 @@
     <div class="container mx-auto px-3 pt-0">
         <div class="row my-0">
             <h2 class="d-block w-100 text-light ml-3 mb-4">
-                <i class="fas fa-trophy-alt"></i> {{ $firstPageBoards->total() }} {{ __('ván cờ') }} <a class="text-light animate-light showPromotion" href="{{ url('/thanh-vien') }}">{{ __('đang thi đấu') }}</a>
+                <i class="fas fa-trophy-alt"></i> {{ $firstPageBoards->total() }} {{ __('ván cờ') }} <a class="text-light animate-light showPromotion" href="{{ localized_url('user.list') }}">{{ __('đang thi đấu') }}</a>
             </h2>
             {{ $firstPageBoards->links('vendor.pagination.boardVi') }}
             @foreach($firstPageBoards as $board)
@@ -13,11 +13,11 @@
                 </div>
                 <div class="bg-dark p-2 text-center">
                     @if (auth()->id() == $board->host_id)
-                        <a href="{{ url('/phong/') }}/{{ $board->code }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                        <a href="{{ url(__('/phong/')) }}/{{ $board->code }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
                     @elseif (auth()->id() == $board->guest_id)
-                        <a href="{{ url('/phong/') }}/{{ $board->code }}/khach" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                        <a href="{{ url(__('/phong/')) }}/{{ $board->code }}{{ __('/khach') }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
                     @else
-                        <a href="{{ url('/phong/') }}/{{ $board->code }}/theo-doi" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                        <a href="{{ url(__('/phong/')) }}/{{ $board->code }}{{ __('/theo-doi') }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
                     @endif
                 </div>
                 <div class="bg-dark row mx-0">
@@ -61,13 +61,12 @@
                 $(window).resize(board{{ $board->code }}.resize);
                 $('#board-{{ $board->code }}').on('click auxclick', function(e){
                     e.preventDefault();
-                    // $('#AdSenseModal').attr('data-url', '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/theo-doi').modal('show');
                     @if (auth()->id() == $board->host_id)
-                        window.location.href = '{{ url('/phong/') }}' + '/' + '{{ $board->code }}';
+                        window.location.href = '{{ url(__('/phong/')) }}' + '/' + '{{ $board->code }}';
                     @elseif (auth()->id() == $board->guest_id)
-                        window.location.href = '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/khach';
+                        window.location.href = '{{ url(__('/phong/')) }}' + '/' + '{{ $board->code }}' + '{{ __('/khach') }}';
                     @else
-                        window.location.href = '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/theo-doi';
+                        window.location.href = '{{ url(__('/phong/')) }}' + '/' + '{{ $board->code }}' + '{{ __('/theo-doi') }}';
                     @endif
                 });
             </script>
@@ -83,7 +82,7 @@
         <div class="container mx-auto px-3 pt-0">
             <div class="row my-0">
                 <h2 class="d-block w-100 text-light ml-3 mb-4">
-                    <i class="fas fa-trophy-alt"></i> {{ $boards->total() }} {{ __('ván cờ') }} <a class="text-light animate-light showPromotion" href="{{ url('/thanh-vien') }}">{{ __('đang thi đấu') }}</a>
+                    <i class="fas fa-trophy-alt"></i> {{ $boards->total() }} {{ __('ván cờ') }} <a class="text-light animate-light showPromotion" href="{{ localized_url('user.list') }}">{{ __('đang thi đấu') }}</a>
                 </h2>
                 {{ $boards->links('vendor.pagination.boardVi') }}
                 @foreach($boards as $board)
@@ -92,11 +91,11 @@
                     </div>
                     <div class="bg-dark p-2 text-center">
                         @if (auth()->id() == $board->host_id)
-                            <a href="{{ url('/phong/') }}/{{ $board->code }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                            <a href="{{ url(__('/phong/')) }}/{{ $board->code }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
                         @elseif (auth()->id() == $board->guest_id)
-                            <a href="{{ url('/phong/') }}/{{ $board->code }}/khach" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                            <a href="{{ url(__('/phong/')) }}/{{ $board->code }}{{ __('/khach') }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
                         @else
-                            <a href="{{ url('/phong/') }}/{{ $board->code }}/theo-doi" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                            <a href="{{ url(__('/phong/')) }}/{{ $board->code }}{{ __('/theo-doi') }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
                         @endif
                     </div>
                     <div class="bg-dark row mx-0">
@@ -140,13 +139,12 @@
                     $(window).resize(board{{ $board->code }}.resize);
                     $('#board-{{ $board->code }}').on('click auxclick', function(e){
                         e.preventDefault();
-                        // $('#AdSenseModal').attr('data-url', '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/theo-doi').modal('show');
                         @if (auth()->id() == $board->host_id)
-                            window.location.href = '{{ url('/phong/') }}' + '/' + '{{ $board->code }}';
+                            window.location.href = '{{ url(__('/phong/')) }}' + '/' + '{{ $board->code }}';
                         @elseif (auth()->id() == $board->guest_id)
-                            window.location.href = '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/khach';
+                            window.location.href = '{{ url(__('/phong/')) }}' + '/' + '{{ $board->code }}' + '{{ __('/khach') }}';
                         @else
-                            window.location.href = '{{ url('/phong/') }}' + '/' + '{{ $board->code }}' + '/theo-doi';
+                            window.location.href = '{{ url(__('/phong/')) }}' + '/' + '{{ $board->code }}' + '{{ __('/theo-doi') }}';
                         @endif
                     });
                 </script>
