@@ -45,7 +45,7 @@
                             maxlength: 32,
                             buttons: {
                                 confirm: {
-                                    label: '<i class="fas fa-check"></i> Đặt tên',
+                                    label: '<i class="fas fa-check"></i> {{ __("Đặt tên") }}',
                                     className: 'btn-danger'
                                 },
                                 cancel: {
@@ -206,7 +206,7 @@
                                 maxlength: 32,
                                 buttons: {
                                     confirm: {
-                                        label: '<i class="fas fa-check"></i> Đặt tên',
+                                        label: '<i class="fas fa-check"></i> {{ __("Đặt tên") }}',
                                         className: 'btn-danger'
                                     },
                                     cancel: {
