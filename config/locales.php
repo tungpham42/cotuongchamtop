@@ -405,5 +405,26 @@ return [
             'ko' => 'admin/toneomeonteu/{slug}',
             'zh' => 'admin/jinbiaosai/{slug}',
         ],
+        'change.password' => [
+            'vi' => 'doi-mat-khau',
+            'en' => 'change-password',
+            'ja' => 'pasuwado-henko',
+            'ko' => 'bimilbeonho-byeongyeong',
+            'zh' => 'genggaimima',
+        ],
+        'change.name' => [
+            'vi' => 'doi-ten',
+            'en' => 'change-name',
+            'ja' => 'namae-henko',
+            'ko' => 'ileum-byeongyeong',
+            'zh' => 'genggaimingcheng',
+        ],
+        'change.ui' => [
+            'vi' => 'doi-giao-dien',
+            'en' => 'change-ui',
+            'ja' => 'ui-henko',
+            'ko' => 'ui-byeongyeong',
+            'zh' => 'genggai-ui',
+        ],
     ],
 ];

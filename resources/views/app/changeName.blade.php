@@ -27,7 +27,7 @@
                 <div class="card-body">
                     @if ($player->id == auth()->id() && !str_contains(url()->current(), url('/ky-thu').'/'))
                     <div class="col-md-12">
-                        <form method="POST" action="{{ route('change.name') }}">
+                        <form method="POST" action="{{ localized_url('change.name') }}">
                             @csrf
                             <input type="hidden" value="{{ auth()->user()->id }}" name="current_id">
                             <div class="row mb-3">

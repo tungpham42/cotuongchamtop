@@ -692,9 +692,35 @@ Route::get('/payos/return', [PayOSController::class, 'handleReturn'])->name('pay
 Route::get('/payos/cancel', [PayOSController::class, 'handleCancel'])->name('payos.cancel');
 Route::post('/payos/webhook', [PayOSController::class, 'webhook'])->name('payos.webhook');
 
-Route::post('doi-mat-khau', [UserController::class, 'changePassword'])->name('change.password');
-Route::post('doi-ten', [UserController::class, 'changeName'])->name('change.name');
-Route::post('doi-giao-dien', [UserController::class, 'changeUserInterface'])->name('change.ui');
+// ==========================================
+// LOCALIZED SETTING PAGES (Form Actions)
+// ==========================================
+$localizedSettingPages = [
+    'change.password' => [
+        'action' => [UserController::class, 'changePassword'],
+    ],
+    'change.name' => [
+        'action' => [UserController::class, 'changeName'],
+    ],
+    'change.ui' => [
+        'action' => [UserController::class, 'changeUserInterface'],
+    ],
+];
+
+foreach ($localizedSettingPages as $pageKey => $page) {
+    foreach (config('locales.supported', []) as $locale) {
+        // We use POST since these are form submission actions
+        $route = Route::post(localized_path($pageKey, [], $locale), $page['action'])
+            ->middleware("locale:{$locale}");
+
+        // Retain original route names for the default locale to prevent blade component breaks
+        if ($locale === config('locales.default', 'vi')) {
+            $route->name($pageKey);
+        } else {
+            $route->name("{$locale}.{$pageKey}");
+        }
+    }
+}
 
 Route::post('auth/google/onetap', [AuthController::class, 'handleOneTapCallback'])->name('login.google.onetap');
 
