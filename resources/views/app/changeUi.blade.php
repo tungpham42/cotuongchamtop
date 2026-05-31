@@ -1,4 +1,4 @@
-@extends('layout.app')
+change.ui@extends('layout.app')
 
 @section('content')
 <div class="container">
@@ -34,7 +34,7 @@
                     <div class="row">
 
                         <div class="col-md-6 mb-4 mb-md-0 border-right">
-                            <form method="POST" action="{{ localized_url('app.ui') }}">
+                            <form method="POST" action="{{ route('change.ui') }}">
                                 @csrf
                                 <input type="hidden" value="{{ auth()->user()->id ?? '' }}" name="current_id">
 
