@@ -177,7 +177,7 @@
                                     <tr style="border-bottom: 1px solid #e9ecef;">
                                         <td class="pl-4 align-middle text-muted">{{ $index + 1 }}</td>
                                         <td class="align-middle">
-                                            <a href="{{ url('/ky-thu/'.$player->id) }}" class="text-primary font-weight-bold" style="text-decoration: none;">
+                                            <a href="{{ localized_url('app.player', ['id' => $player->id]) }}" class="text-primary font-weight-bold" style="text-decoration: none;">
                                                 {{ $player->name }}
                                             </a>
                                         </td>
