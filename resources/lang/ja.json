@@ -666,5 +666,6 @@
     "Tên mới phải ít nhất 3 ký tự.": "新しい名前は3文字以上である必要があります。",
     "Tên mới phải ít hơn 16 ký tự.": "新しい名前は16文字未満である必要があります。",
     "Bạn đã thay đổi tên thành công!": "名前が正常に変更されました！",
-    "Bạn đã thay đổi giao diện thành công!": "テーマが正常に変更されました！"
+    "Bạn đã thay đổi giao diện thành công!": "テーマが正常に変更されました！",
+    "Xem trước giao diện": "テーマのプレビュー"
 }

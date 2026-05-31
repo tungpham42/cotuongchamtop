@@ -665,5 +665,6 @@
     "Tên mới phải ít nhất 3 ký tự.": "New name must be at least 3 characters.",
     "Tên mới phải ít hơn 16 ký tự.": "New name must be less than 16 characters.",
     "Bạn đã thay đổi tên thành công!": "Name changed successfully!",
-    "Bạn đã thay đổi giao diện thành công!": "Theme changed successfully!"
+    "Bạn đã thay đổi giao diện thành công!": "Theme changed successfully!",
+    "Xem trước giao diện": "Preview theme"
 }
