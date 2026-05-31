@@ -12,13 +12,13 @@
             <div data-likes="{{ $userPuzzle->likes_count }}" data-hard="{{ $userPuzzle->hard_count }}" data-unsolved="{{ $userPuzzle->unsolved_count }}" class="puzzle-div col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-4">
                 <div id="board-{{ md5($userPuzzle->slug) }}" class="card shadow-lg rounded border-dark" style="width: 100%; height: auto; cursor: pointer;background-color: transparent;"></div>
                 <div class="bg-dark p-2">
-                    <h5 class="mx-auto text-light m-0 font-weight-light text-center" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title='Thế cờ "{{ $userPuzzle->name }}"'>{{ $userPuzzle->name }}</h5>
+                    <h5 class="mx-auto text-light m-0 font-weight-light text-center" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title='{{ __("Thế cờ") }} "{{ $userPuzzle->name }}"'>{{ $userPuzzle->name }}</h5>
                 </div>
                 <div class="row mx-0">
-                    <a class="py-2 col-3 btn btn-dark btn-sm text-light solve-puzzle-btn" href="javascript:solvePuzzle('{{ $userPuzzle->fen }}')" data-toggle="tooltip" data-placement="top" title='Giải {{ __("thế cờ") }} "{{ $userPuzzle->name }}"'><i class="fad fa-mouse"></i></a>
-                    <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='Đánh giá "{{ $userPuzzle->name }}" là hay' data-reaction="like" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-thumbs-up"></i> <span class="puzzle-reaction-count" id="reaction-like-{{ $puzzleMd5 }}">{{ $userPuzzle->likes_count }}</span></a>
-                    <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='Đánh giá "{{ $userPuzzle->name }}" là khó' data-reaction="hard" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-heart"></i> <span class="puzzle-reaction-count" id="reaction-hard-{{ $puzzleMd5 }}">{{ $userPuzzle->hard_count }}</span></a>
-                    <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='Tôi chưa giải được "{{ $userPuzzle->name }}"' data-reaction="unsolved" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-question-circle"></i> <span class="puzzle-reaction-count" id="reaction-unsolved-{{ $puzzleMd5 }}">{{ $userPuzzle->unsolved_count }}</span></a>
+                    <a class="py-2 col-3 btn btn-dark btn-sm text-light solve-puzzle-btn" href="javascript:solvePuzzle('{{ $userPuzzle->fen }}')" data-toggle="tooltip" data-placement="top" title='{{ __("Giải") }} {{ __("thế cờ") }} "{{ $userPuzzle->name }}"'><i class="fad fa-mouse"></i></a>
+                    <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='{{ __("Đánh giá") }} "{{ $userPuzzle->name }}" {{ __("là hay") }}' data-reaction="like" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-thumbs-up"></i> <span class="puzzle-reaction-count" id="reaction-like-{{ $puzzleMd5 }}">{{ $userPuzzle->likes_count }}</span></a>
+                    <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='{{ __("Đánh giá") }} "{{ $userPuzzle->name }}" {{ __("là khó") }}' data-reaction="hard" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-heart"></i> <span class="puzzle-reaction-count" id="reaction-hard-{{ $puzzleMd5 }}">{{ $userPuzzle->hard_count }}</span></a>
+                    <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='{{ __("Tôi chưa giải được") }} "{{ $userPuzzle->name }}"' data-reaction="unsolved" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-question-circle"></i> <span class="puzzle-reaction-count" id="reaction-unsolved-{{ $puzzleMd5 }}">{{ $userPuzzle->unsolved_count }}</span></a>
                 </div>
             </div>
             <style>
@@ -39,12 +39,10 @@
             $(window).resize(board{{ md5($userPuzzle->slug) }}.resize);
             $('#board-{{ md5($userPuzzle->slug) }}').on('click auxclick', function(e){
                 e.preventDefault();
-                // $('#AdSenseModal').attr('data-url', '{{ url('/') }}' + '{{ __("/the-co/") }}' + '{{ $userPuzzle->slug }}').modal('show');
                 window.location.href = '{{ url('/') }}' + '{{ __("/the-co/") }}' + '{{ $userPuzzle->slug }}';
             });
             $('#board-{{ md5($userPuzzle->slug) }} + div h5').on('click auxclick', function(e){
                 e.preventDefault();
-                // $('#AdSenseModal').attr('data-url', '{{ url('/') }}' + '{{ __("/the-co/") }}' + '{{ $userPuzzle->slug }}').modal('show');
                 window.location.href = '{{ url('/') }}' + '{{ __("/the-co/") }}' + '{{ $userPuzzle->slug }}';
             });
             </script>
@@ -68,13 +66,13 @@
                 <div data-likes="{{ $userPuzzle->likes_count }}" data-hard="{{ $userPuzzle->hard_count }}" data-unsolved="{{ $userPuzzle->unsolved_count }}" class="puzzle-div col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-4">
                     <div id="board-{{ md5($userPuzzle->slug) }}" class="card shadow-lg rounded border-dark" style="width: 100%; height: auto; cursor: pointer;background-color: transparent;"></div>
                     <div class="bg-dark p-2">
-                        <h5 class="mx-auto text-light m-0 font-weight-light text-center" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title='Thế cờ "{{ $userPuzzle->name }}"'>{{ $userPuzzle->name }}</h5>
+                        <h5 class="mx-auto text-light m-0 font-weight-light text-center" style="cursor: pointer;" data-toggle="tooltip" data-placement="top" title='{{ __("Thế cờ") }} "{{ $userPuzzle->name }}"'>{{ $userPuzzle->name }}</h5>
                     </div>
                     <div class="row mx-0">
-                        <a class="py-2 col-3 btn btn-dark btn-sm text-light solve-puzzle-btn" href="javascript:solvePuzzle('{{ $userPuzzle->fen }}')" data-toggle="tooltip" data-placement="top" title='Giải {{ __("thế cờ") }} "{{ $userPuzzle->name }}"'><i class="fad fa-mouse"></i></a>
-                        <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='Đánh giá "{{ $userPuzzle->name }}" là hay' data-reaction="like" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-thumbs-up"></i> <span class="puzzle-reaction-count" id="reaction-like-{{ $puzzleMd5 }}">{{ $userPuzzle->likes_count }}</span></a>
-                        <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='Đánh giá "{{ $userPuzzle->name }}" là khó' data-reaction="hard" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-heart"></i> <span class="puzzle-reaction-count" id="reaction-hard-{{ $puzzleMd5 }}">{{ $userPuzzle->hard_count }}</span></a>
-                        <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='Tôi chưa giải được "{{ $userPuzzle->name }}"' data-reaction="unsolved" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-question-circle"></i> <span class="puzzle-reaction-count" id="reaction-unsolved-{{ $puzzleMd5 }}">{{ $userPuzzle->unsolved_count }}</span></a>
+                        <a class="py-2 col-3 btn btn-dark btn-sm text-light solve-puzzle-btn" href="javascript:solvePuzzle('{{ $userPuzzle->fen }}')" data-toggle="tooltip" data-placement="top" title='{{ __("Giải") }} {{ __("thế cờ") }} "{{ $userPuzzle->name }}"'><i class="fad fa-mouse"></i></a>
+                        <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='{{ __("Đánh giá") }} "{{ $userPuzzle->name }}" {{ __("là hay") }}' data-reaction="like" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-thumbs-up"></i> <span class="puzzle-reaction-count" id="reaction-like-{{ $puzzleMd5 }}">{{ $userPuzzle->likes_count }}</span></a>
+                        <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='{{ __("Đánh giá") }} "{{ $userPuzzle->name }}" {{ __("là khó") }}' data-reaction="hard" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-heart"></i> <span class="puzzle-reaction-count" id="reaction-hard-{{ $puzzleMd5 }}">{{ $userPuzzle->hard_count }}</span></a>
+                        <a class="py-2 col-3 btn btn-dark btn-sm text-light puzzle-reaction-btn" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title='{{ __("Tôi chưa giải được") }} "{{ $userPuzzle->name }}"' data-reaction="unsolved" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}"><i class="fas fa-question-circle"></i> <span class="puzzle-reaction-count" id="reaction-unsolved-{{ $puzzleMd5 }}">{{ $userPuzzle->unsolved_count }}</span></a>
                     </div>
                 </div>
                 <style>
@@ -95,12 +93,10 @@
                 $(window).resize(board{{ md5($userPuzzle->slug) }}.resize);
                 $('#board-{{ md5($userPuzzle->slug) }}').on('click auxclick', function(e){
                     e.preventDefault();
-                    // $('#AdSenseModal').attr('data-url', '{{ url('/') }}' + '{{ __("/the-co/") }}' + '{{ $userPuzzle->slug }}').modal('show');
                     window.location.href = '{{ url('/') }}' + '{{ __("/the-co/") }}' + '{{ $userPuzzle->slug }}';
                 });
                 $('#board-{{ md5($userPuzzle->slug) }} + div h5').on('click auxclick', function(e){
                     e.preventDefault();
-                    // $('#AdSenseModal').attr('data-url', '{{ url('/') }}' + '{{ __("/the-co/") }}' + '{{ $userPuzzle->slug }}').modal('show');
                     window.location.href = '{{ url('/') }}' + '{{ __("/the-co/") }}' + '{{ $userPuzzle->slug }}';
                 });
                 </script>
@@ -115,7 +111,7 @@
 function solvePuzzle(fenCode) {
     if (!game.validate_fen(fenCode + ' r - - 0 1').valid) {
         bootbox.alert({
-        message: "Bàn cờ thế không hợp lệ",
+        message: '{{ __("Bàn cờ thế không hợp lệ") }}',
         locale: '{{ __("vi") }}',
         centerVertical: true,
         closeButton: false,
@@ -126,7 +122,6 @@ function solvePuzzle(fenCode) {
         }
         });
     } else {
-        // $('#AdSenseModal').attr('data-url', '{{ url('/giai-co-the') }}/' + fenCode + ' r - - 0 1').modal('show');
         window.location.href = '{{ url(__("/giai-co-the")) }}/' + fenCode + ' r - - 0 1';
     }
 }
@@ -164,7 +159,7 @@ $('.puzzle-reaction-btn').on('click', function() {
         $('#reaction-hard-' + md5).text(response.hard ?? 0);
         $('#reaction-unsolved-' + md5).text(response.unsolved ?? 0);
     }).fail(function(xhr) {
-        let message = 'Không thể ghi nhận phản hồi, vui lòng thử lại.';
+        let message = '{{ __("Không thể ghi nhận phản hồi, vui lòng thử lại.") }}';
         if (xhr.responseJSON && xhr.responseJSON.message) {
             message = xhr.responseJSON.message;
         }
