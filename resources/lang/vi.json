@@ -1593,5 +1593,6 @@
     "giây": "giây",
     "Đến ngay": "Đến ngay",
     "Top": "Top",
-    "Điểm": "Điểm"
+    "Điểm": "Điểm",
+    "messages.players_online_count": "{0} Không có kỳ thủ nào trực tuyến|[1] 1 kỳ thủ đang trực tuyến|[2,*] :count kỳ thủ đang trực tuyến"
 }

@@ -649,5 +649,6 @@
     "Đến ngay": "立即前往",
     "Top": "顶部",
     "Logout": "登出",
-    "Điểm": "分数"
+    "Điểm": "分数",
+    "messages.players_online_count": "{0} 当前无玩家在线|[1] 1 名玩家在线|[2,*] :count 名玩家在线"
 }

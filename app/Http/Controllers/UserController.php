@@ -344,7 +344,7 @@ class UserController extends Controller
         $onlinePlayers = User::where('last_seen_at', '>=', Carbon::now()->subMinutes(2))
                 ->count();
 
-        return (($onlinePlayers == 0) ? 'không có ai': numberToWordsVi($onlinePlayers).' kỳ thủ').' đang trực tuyến';
+        return trans_choice('messages.players_online_count', $onlinePlayers, ['count' => $onlinePlayers]);
     }
 
     public function changePassword(Request $request)

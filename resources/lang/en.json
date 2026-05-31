@@ -646,5 +646,6 @@
     "Đến ngay": "Go now",
     "Top": "Top",
     "Logout": "Logout",
-    "Điểm": "Points"
+    "Điểm": "Points",
+    "messages.players_online_count": "{0} No players online|[1] 1 player online|[2,*] :count players online"
 }
