@@ -231,18 +231,18 @@
                             </div>
                             @php
                                 // Mặc định link là vào xem phòng
-                                $roomUrl = url('/phong/'.$match->code.'/theo-doi');
+                                $roomUrl = url(__('/phong/') . $match->code . __('/theo-doi'));
 
                                 // Nếu đã đăng nhập, kiểm tra xem có phải là người chơi trong phòng không
                                 if (auth()->check()) {
                                     if (auth()->id() === $match->host_id && $match->result === null) {
-                                        $roomUrl = url('/phong/'.$match->code.'/do'); // Chủ phòng (Bên đỏ)
+                                        $roomUrl = url(__('/phong/') . $match->code . __('/do')); // Chủ phòng (Bên đỏ)
                                     } elseif (auth()->id() === $match->guest_id && $match->result === null) {
-                                        $roomUrl = url('/phong/'.$match->code.'/den'); // Khách (Bên đen)
+                                        $roomUrl = url(__('/phong/') . $match->code . __('/den')); // Khách (Bên đen)
                                     } elseif ($match->result !== null) {
-                                    // Nếu chưa đăng nhập nhưng trận đấu đã có kết quả, vẫn cho phép xem kết quả
-                                    $roomUrl = url('/phong/'.$match->code.'/theo-doi');
-                                }
+                                        // Dù đã đăng nhập nhưng trận đấu đã có kết quả, vẫn chuyển về chế độ xem
+                                        $roomUrl = url(__('/phong/') . $match->code . __('/theo-doi'));
+                                    }
                                 }
                             @endphp
                             <a href="{{ $roomUrl }}" class="bracket-room-link bg-light text-dark font-weight-bold">
