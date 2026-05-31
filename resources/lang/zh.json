@@ -670,5 +670,15 @@
     "Bạn đã thay đổi tên thành công!": "您已成功更改名字！",
     "Bạn đã thay đổi giao diện thành công!": "您已成功更改主题！",
     "Xem trước giao diện": "预览主题",
-    "Thế cờ:": "残局："
+    "Thế cờ:": "残局：",
+    "Bạn không có quyền truy cập trang này.": "您没有权限访问此页面。",
+    "Registration is closed.": "注册已关闭。",
+    "Tournament is full.": "锦标赛已满员。",
+    "You have successfully joined the tournament!": "您已成功加入锦标赛！",
+    "Tournament has already started.": "锦标赛已经开始。",
+    "Bracket generated successfully!": "对阵图生成成功！",
+    "TBD": "待定",
+    "Tạo giải đấu thành công!": "锦标赛创建成功！",
+    "Cập nhật giải đấu thành công!": "锦标赛更新成功！",
+    "Đã xóa giải đấu!": "锦标赛已删除！"
 }

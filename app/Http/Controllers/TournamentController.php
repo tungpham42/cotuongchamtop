@@ -39,18 +39,18 @@ class TournamentController extends Controller
         $userId = auth()->id();
 
         if ($tournament->status !== 'open') {
-            return back()->with('error', 'Registration is closed.');
+            return back()->with('error', __('Registration is closed.'));
         }
 
         if ($tournament->users()->count() >= $tournament->max_players) {
-            return back()->with('error', 'Tournament is full.');
+            return back()->with('error', __('Tournament is full.'));
         }
 
         if (!$tournament->users()->where('user_id', $userId)->exists()) {
             $tournament->users()->attach($userId);
         }
 
-        return back()->with('success', 'You have successfully joined the tournament!');
+        return back()->with('success', __('You have successfully joined the tournament!'));
     }
 
     // Generate Single Elimination Bracket
@@ -61,7 +61,7 @@ class TournamentController extends Controller
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
 
         if ($tournament->status !== 'open') {
-            return back()->with('error', 'Tournament has already started.');
+            return back()->with('error', __('Tournament has already started.'));
         }
 
         $players = $tournament->users()->inRandomOrder()->get();
@@ -70,7 +70,7 @@ class TournamentController extends Controller
 
         $this->createBracketNodes($tournament, $players);
 
-        return back()->with('success', 'Bracket generated successfully!');
+        return back()->with('success', __('Bracket generated successfully!'));
     }
 
     private function createBracketNodes(Tournament $tournament, $players)
@@ -108,7 +108,7 @@ class TournamentController extends Controller
                     $room->update([
                         'host_id' => $p1 ? $p1->id : null,
                         'guest_id' => $p2 ? $p2->id : null,
-                        'name' => ($p1 && $p2) ? "{$p1->name} vs {$p2->name}" : "TBD"
+                        'name' => ($p1 && $p2) ? "{$p1->name} vs {$p2->name}" : __('TBD')
                     ]);
                 }
 
@@ -191,7 +191,7 @@ class TournamentController extends Controller
 
         Tournament::create($data);
 
-        return redirect()->route($this->getRouteName('tournaments.index'))->with('success', 'Tạo giải đấu thành công!');
+        return redirect()->route($this->getRouteName('tournaments.index'))->with('success', __('Tạo giải đấu thành công!'));
     }
 
     // 3. Giao diện Sửa
@@ -237,7 +237,7 @@ class TournamentController extends Controller
 
         $tournament->update($data);
 
-        return redirect()->route($this->getRouteName('tournaments.show'), $tournament->slug)->with('success', 'Cập nhật giải đấu thành công!');
+        return redirect()->route($this->getRouteName('tournaments.show'), $tournament->slug)->with('success', __('Cập nhật giải đấu thành công!'));
     }
 
     // 5. Xử lý Xóa
@@ -252,6 +252,6 @@ class TournamentController extends Controller
 
         $tournament->delete();
 
-        return redirect()->route($this->getRouteName('tournaments.index'))->with('success', 'Đã xóa giải đấu!');
+        return redirect()->route($this->getRouteName('tournaments.index'))->with('success', __('Đã xóa giải đấu!'));
     }
 }

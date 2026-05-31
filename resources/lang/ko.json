@@ -655,5 +655,15 @@
     "Đen thắng": "검은색 승리",
     "Đỏ thắng": "빨간색 승리",
     "Xem trước giao diện": "미리보기",
-    "Thế cờ:": "퍼즐:"
+    "Thế cờ:": "퍼즐:",
+    "Bạn không có quyền truy cập trang này.": "이 페이지에 액세스할 수 있는 권한이 없습니다.",
+    "Registration is closed.": "등록이 마감되었습니다.",
+    "Tournament is full.": "토너먼트가 꽉 찼습니다.",
+    "You have successfully joined the tournament!": "토너먼트에 성공적으로 참여했습니다!",
+    "Tournament has already started.": "토너먼트가 이미 시작되었습니다.",
+    "Bracket generated successfully!": "대진표가 성공적으로 생성되었습니다!",
+    "TBD": "미정",
+    "Tạo giải đấu thành công!": "토너먼트가 성공적으로 생성되었습니다!",
+    "Cập nhật giải đấu thành công!": "토너먼트가 성공적으로 업데이트되었습니다!",
+    "Đã xóa giải đấu!": "토너먼트가 삭제되었습니다!"
 }

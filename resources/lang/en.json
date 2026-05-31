@@ -667,5 +667,15 @@
     "Bạn đã thay đổi tên thành công!": "Name changed successfully!",
     "Bạn đã thay đổi giao diện thành công!": "Theme changed successfully!",
     "Xem trước giao diện": "Preview theme",
-    "Thế cờ:": "Puzzle:"
+    "Thế cờ:": "Puzzle:",
+    "Bạn không có quyền truy cập trang này.": "You do not have permission to access this page.",
+    "Registration is closed.": "Registration is closed.",
+    "Tournament is full.": "Tournament is full.",
+    "You have successfully joined the tournament!": "You have successfully joined the tournament!",
+    "Tournament has already started.": "Tournament has already started.",
+    "Bracket generated successfully!": "Bracket generated successfully!",
+    "TBD": "TBD",
+    "Tạo giải đấu thành công!": "Tournament created successfully!",
+    "Cập nhật giải đấu thành công!": "Tournament updated successfully!",
+    "Đã xóa giải đấu!": "Tournament deleted!"
 }

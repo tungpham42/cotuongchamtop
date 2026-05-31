@@ -668,5 +668,15 @@
     "Bạn đã thay đổi tên thành công!": "名前が正常に変更されました！",
     "Bạn đã thay đổi giao diện thành công!": "テーマが正常に変更されました！",
     "Xem trước giao diện": "テーマのプレビュー",
-    "Thế cờ:": "パズル："
+    "Thế cờ:": "パズル：",
+    "Bạn không có quyền truy cập trang này.": "このページにアクセスする権限がありません。",
+    "Registration is closed.": "登録は締め切られました。",
+    "Tournament is full.": "トーナメントは定員に達しました。",
+    "You have successfully joined the tournament!": "トーナメントに正常に参加しました！",
+    "Tournament has already started.": "トーナメントはすでに開始されています。",
+    "Bracket generated successfully!": "トーナメント表が正常に生成されました！",
+    "TBD": "未定",
+    "Tạo giải đấu thành công!": "トーナメントが正常に作成されました！",
+    "Cập nhật giải đấu thành công!": "トーナメントが正常に更新されました！",
+    "Đã xóa giải đấu!": "トーナメントが削除されました！"
 }
