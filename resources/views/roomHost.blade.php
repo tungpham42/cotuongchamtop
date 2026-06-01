@@ -34,12 +34,10 @@
 @endif
 @endsection
 @section('belowContent')
-@if (!isset($room->tournament_id))
-  @if (!auth()->check() || (isset($room->guest_id) && auth()->id() == $room->host_id))
-    <p class="w-100 text-center">
-      <a data-step="4" data-intro="{{ __("Ấn vào đây nếu bạn không biết đi nước nào") }}" id="resign" class="w-25 btn btn-dark btn-lg"><i class="fad fa-flag"></i> {{ __("Bỏ cuộc") }}</a>
-    </p>
-  @endif
+@if (!auth()->check() || (isset($room->guest_id) && auth()->id() == $room->host_id))
+  <p class="w-100 text-center">
+    <a data-step="4" data-intro="{{ __("Ấn vào đây nếu bạn không biết đi nước nào") }}" id="resign" class="w-25 btn btn-dark btn-lg"><i class="fad fa-flag"></i> {{ __("Bỏ cuộc") }}</a>
+  </p>
 @endif
 @include('layout.partials.kypho')
 <script>
@@ -589,14 +587,12 @@ updateStatus()
 //     });
 // });
 @endif
-@if (!isset($room->tournament_id))
-  $('#resign').on('click', function() {
-    // Append the specific color of the person resigning
-    game.load(game.fen() + ' resign-' + board.orientation());
-    updateFenCode('{{ $roomCode }}');
-    updateStatus();
-  });
-@endif
+$('#resign').on('click', function() {
+  // Append the specific color of the person resigning
+  game.load(game.fen() + ' resign-' + board.orientation());
+  updateFenCode('{{ $roomCode }}');
+  updateStatus();
+});
 @if (isset($room->host_id) && auth()->id() == $room->host_id)
 $('#choi').removeClass('pulse-red').addClass('disabled');
 @endif

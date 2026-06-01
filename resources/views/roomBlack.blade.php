@@ -17,12 +17,10 @@
 </p>
 @endsection
 @section('belowContent')
-@if (!isset($room->tournament_id))
-  @if (!auth()->check() || (isset($room->guest_id) && auth()->id() == $room->guest_id))
-    <p class="w-100 text-center">
-      <a data-step="2" data-intro="{{ __("Ấn vào đây nếu bạn không biết đi nước nào") }}" id="resign" class="btn btn-dark btn-lg"><i class="fad fa-flag"></i> {{ __("Bỏ cuộc") }}</a>
-    </p>
-  @endif
+@if (!auth()->check() || (isset($room->guest_id) && auth()->id() == $room->guest_id))
+  <p class="w-100 text-center">
+    <a data-step="2" data-intro="{{ __("Ấn vào đây nếu bạn không biết đi nước nào") }}" id="resign" class="btn btn-dark btn-lg"><i class="fad fa-flag"></i> {{ __("Bỏ cuộc") }}</a>
+  </p>
 @endif
 @include('layout.partials.kypho')
 <script>
@@ -546,14 +544,12 @@ $('#choi').removeClass('pulse-red').addClass('disabled');
 //     });
 // });
 @endif
-@if (!isset($room->tournament_id))
-  $('#resign').on('click', function() {
-    // Append the specific color of the person resigning
-    game.load(game.fen() + ' resign-' + board.orientation());
-    updateFenCode('{{ $roomCode }}');
-    updateStatus();
-  });
-@endif
+$('#resign').on('click', function() {
+  // Append the specific color of the person resigning
+  game.load(game.fen() + ' resign-' + board.orientation());
+  updateFenCode('{{ $roomCode }}');
+  updateStatus();
+});
 
 // Add CSS for loading state
 const style = document.createElement('style');

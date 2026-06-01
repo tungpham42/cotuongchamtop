@@ -13,11 +13,9 @@
 </p>
 @endsection
 @section('belowContent')
-@if (!isset($room->tournament_id))
-  <p class="w-100 text-center">
-    <a data-step="1" data-intro="{{ __("Ấn vào đây nếu bạn không biết đi nước nào") }}" id="resign" class="btn btn-dark btn-lg"><i class="fad fa-flag"></i> {{ __("Bỏ cuộc") }}</a>
-  </p>
-@endif
+<p class="w-100 text-center">
+  <a data-step="1" data-intro="{{ __("Ấn vào đây nếu bạn không biết đi nước nào") }}" id="resign" class="btn btn-dark btn-lg"><i class="fad fa-flag"></i> {{ __("Bỏ cuộc") }}</a>
+</p>
 @include('layout.partials.kypho')
 <script>
 @if ($room['pass'] != null)
@@ -442,14 +440,12 @@ updateStatus();
 //   }
 //   updateStatus();
 // };
-@if (!isset($room->tournament_id))
-  $('#resign').on('click', function() {
-    // Append the specific color of the person resigning
-    game.load(game.fen() + ' resign-' + board.orientation());
-    updateFenCode('{{ $roomCode }}');
-    updateStatus();
-  });
-@endif
+$('#resign').on('click', function() {
+  // Append the specific color of the person resigning
+  game.load(game.fen() + ' resign-' + board.orientation());
+  updateFenCode('{{ $roomCode }}');
+  updateStatus();
+});
 
 // Add CSS for loading state
 const style = document.createElement('style');
