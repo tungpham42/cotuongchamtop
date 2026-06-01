@@ -97,7 +97,6 @@ let lastMoveIccs = null;
 
 function updateFenCode(roomCode, moveIccs) {
   currentFEN = game.fen();
-  // board.position(currentFEN, true);
 
   const payload = {
     'ma-phong': roomCode,
@@ -106,66 +105,65 @@ function updateFenCode(roomCode, moveIccs) {
   if (moveIccs) {
     payload.move = moveIccs;
   }
+
   $.ajax({
     type: "POST",
     url: '{{ url('/api') }}/updateFEN',
     data: payload,
     dataType: 'text'
   }).done(function() {
+
+    // ĐIỂM QUAN TRỌNG: Chỉ đổi đồng hồ sau khi FEN mới đã được lưu thành công trên Server.
+    // Điều này chặn đứng hoàn toàn lỗi Server gửi nhầm FEN cũ về trình duyệt.
+    @if (!isset($room->tournament_id))
+      if (!game.game_over()) {
+        switchTurn('{{ $roomCode }}', game.turn() === 'b' ? 'red' : 'black');
+      }
+    @endif
+
     if (kypho) {
       kypho.syncMoves('{{ url('/api') }}/readMoves/' + roomCode);
     }
   });
 }
 
-function manipulateRoom(roomCode) {
-  $.ajax({
-    type: "GET",
-    url: '{{ url('/api') }}/readFEN/' + roomCode,
-    dataType: 'text',
-    timeout: 3000 // Prevent hanging requests if the network stutters
-  }).done(function(newFEN) {
-    // Guard clause: ensure we actually received data
-    if (!newFEN) return;
+// WEBSOCKET: Listen for real-time game updates
+if (typeof Echo !== 'undefined') {
+  Echo.channel('room.{{ $roomCode }}')
+    .listen('.room.updated', (e) => {
+      let newFEN = e.room.fen;
 
-    // Check if the server's state differs from our currently tracked state
-    if (newFEN !== currentFEN) {
-      // Determine if this change was triggered by the opponent
-      // (If we made the move locally, game.fen() would already match newFEN)
-      let isOpponentMove = (newFEN !== game.fen());
+      if (!newFEN) return;
 
-      // 1. Update the local tracking variable to the new state
-      currentFEN = newFEN;
+      if (newFEN !== game.fen()) {
+        // ĐIỂM MẤU CHỐT: Nếu FEN từ server gửi về giống hệt FEN trước khi ta đi (currentFEN)
+        // Nghĩa là server đang bị trễ và gửi tiếng vọng FEN cũ của lệnh đổi lượt. Ta bỏ qua ngay!
+        if (newFEN === currentFEN) return;
 
-      // 2. Update the game logic and visual board
-      game.load(newFEN);
-      board.position(newFEN, true);
+        currentFEN = newFEN;
+        game.load(newFEN);
+        board.position(newFEN, true);
 
-      // 3. Play the sound ONLY if it's the opponent's move (and no one resigned)
-      if (isOpponentMove && !newFEN.includes('resign')) {
-        if (typeof nuocCo !== 'undefined') {
-          let playPromise = nuocCo.play();
-          // Catch DOMExceptions if the browser blocks uninitiated audio
-          if (playPromise !== undefined) {
-            playPromise.catch(error => {
-               console.warn("Audio playback prevented by browser:", error);
-            });
+        if (!newFEN.includes('resign')) {
+          if (typeof nuocCo !== 'undefined') {
+            let playPromise = nuocCo.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(error => {
+                console.warn("Audio playback prevented by browser:", error);
+              });
+            }
           }
         }
+
+        if (typeof kypho !== 'undefined' && kypho !== null) {
+          kypho.syncMoves('{{ url('/api') }}/readMoves/{{ $roomCode }}');
+        }
+      } else {
+        currentFEN = newFEN;
       }
 
-      // 4. Sync the move history (kypho)
-      if (typeof kypho !== 'undefined' && kypho !== null) {
-        kypho.syncMoves('{{ url('/api') }}/readMoves/' + roomCode);
-      }
-    }
-
-    // Always update status to reflect checks, checkmates, or draws
-    updateStatus();
-
-  }).fail(function(jqXHR, textStatus, errorThrown) {
-    console.error("Failed to fetch room FEN:", textStatus, errorThrown);
-  });
+      updateStatus();
+    });
 }
 
 function updateResult(roomCode, result) {
@@ -273,23 +271,21 @@ function onDragStart (source, piece) {
 function onDrop (source, target) {
   removeGreySquares();
 
-  // see if the move is legal
+  // Kiểm tra nước đi có hợp lệ không
   let move = game.move({
     from: source,
     to: target
   });
 
   if (move !== null) {
-    // trước khi update trạng thái, đổi timer trước
-    @if (!isset($room->tournament_id))
-      switchTurn('{{ $roomCode }}', game.turn() === 'b' ? 'red' : 'black');
-    @endif
+    // Đã xóa switchTurn ở đây đi để không bị racy!
     lastMoveIccs = move.iccs;
+  } else {
+    // Nếu đi sai luật, bật trả quân cờ lại vị trí cũ
+    return 'snapback';
   }
 
-  // illegal move
-  //if (move === null) return 'snapback';
-  updateStatus()
+  updateStatus();
 }
 
 function onMouseoverSquare (square, piece) {
@@ -335,9 +331,7 @@ function updatePlayersTitle() {
   });
 }
 
-const updateBoard = setInterval(function() {
-  manipulateRoom('{{ $roomCode }}');
-}, 1000);
+
 
 @if (isset($room->host_id))
 const updatePlayers = setInterval(function() {
@@ -406,7 +400,10 @@ function updateStatus () {
     $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> {{ __("Hết trận") }}');
     $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
     // evtSource.close();
-    clearInterval(updateBoard);
+    // ADD THIS TO DISCONNECT THE WEBSOCKET
+    if (typeof Echo !== 'undefined') {
+      Echo.leave('room.{{ $roomCode }}');
+    }
     @if (isset($room->host_id))
     clearInterval(updatePlayers);
     @endif
