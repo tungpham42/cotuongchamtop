@@ -680,5 +680,12 @@
     "TBD": "待定",
     "Tạo giải đấu thành công!": "锦标赛创建成功！",
     "Cập nhật giải đấu thành công!": "锦标赛更新成功！",
-    "Đã xóa giải đấu!": "锦标赛已删除！"
+    "Đã xóa giải đấu!": "锦标赛已删除！",
+    "Bạn không có quyền cập nhật ván này.": "您没有权限更新此比赛。",
+    "Chủ phòng thua! Cố lên nhé!": "房主输了！下次好运！",
+    "Hòa.": "平局。",
+    "Chủ phòng thắng. Xin chúc mừng!": "房主赢了。恭喜！",
+    "Khách thắng. Xin chúc mừng!": "访客赢了。恭喜！",
+    "Khách thua! Cố lên nhé!": "访客输了！下次好运！",
+    "You are not authorized to update this room.": "您无权更新此房间。"
 }

@@ -1624,5 +1624,12 @@
     "TBD": "Chưa xác định",
     "Tạo giải đấu thành công!": "Tạo giải đấu thành công!",
     "Cập nhật giải đấu thành công!": "Cập nhật giải đấu thành công!",
-    "Đã xóa giải đấu!": "Đã xóa giải đấu!"
+    "Đã xóa giải đấu!": "Đã xóa giải đấu!",
+    "Bạn không có quyền cập nhật ván này.": "Bạn không có quyền cập nhật ván này.",
+    "Chủ phòng thua! Cố lên nhé!": "Chủ phòng thua! Cố lên nhé!",
+    "Hòa.": "Hòa.",
+    "Chủ phòng thắng. Xin chúc mừng!": "Chủ phòng thắng. Xin chúc mừng!",
+    "Khách thắng. Xin chúc mừng!": "Khách thắng. Xin chúc mừng!",
+    "Khách thua! Cố lên nhé!": "Khách thua! Cố lên nhé!",
+    "You are not authorized to update this room.": "Bạn không có quyền cập nhật phòng này."
 }

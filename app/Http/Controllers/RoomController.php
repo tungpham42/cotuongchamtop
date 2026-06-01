@@ -857,7 +857,7 @@ class RoomController extends Controller
 
         if (!$auth_id || !in_array($auth_id, [$host_id, $guest_id])) {
             return response()->json([
-                'success' => 'Bạn không có quyền cập nhật ván này.'
+                'success' => __('Bạn không có quyền cập nhật ván này.')
             ], 403);
         }
 
@@ -885,7 +885,7 @@ class RoomController extends Controller
                     $nextRoom->update([
                         'guest_id' => $winnerId,
                         // Optional: Update name dynamically once both are present
-                        'name' => $room->name . " - Vòng " . $nextRoom->tournament_round
+                        'name' => $room->name . " - " . __('Vòng') . " " . $nextRoom->tournament_round
                     ]);
                 }
             }
@@ -894,14 +894,14 @@ class RoomController extends Controller
         // Define success messages
         $successMessages = [
             'host' => [
-                '-1' => 'Chủ phòng thua! Cố lên nhé!',
-                '0' => 'Hòa.',
-                '1' => 'Chủ phòng thắng. Xin chúc mừng!',
+                '-1' => __('Chủ phòng thua! Cố lên nhé!'),
+                '0'  => __('Hòa.'),
+                '1'  => __('Chủ phòng thắng. Xin chúc mừng!'),
             ],
             'guest' => [
-                '-1' => 'Khách thắng. Xin chúc mừng!',
-                '0' => 'Hòa.',
-                '1' => 'Khách thua! Cố lên nhé!',
+                '-1' => __('Khách thắng. Xin chúc mừng!'),
+                '0'  => __('Hòa.'),
+                '1'  => __('Khách thua! Cố lên nhé!'),
             ],
         ];
 
@@ -912,7 +912,7 @@ class RoomController extends Controller
             $success_message = $successMessages['guest'][$result] ?? '';
         } else {
             // Handle the case when the user is neither the host nor the guest
-            $success_message = 'You are not authorized to update this room.';
+            $success_message = __('You are not authorized to update this room.');
         }
 
         //self::updateElo($code); // Update the Elo ratings of the host and guest
