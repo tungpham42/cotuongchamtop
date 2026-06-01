@@ -381,6 +381,13 @@ foreach ($localizedRoomPages as $pageKey => $roomPage) {
         abort(404);
       }
 
+      // --- ANTI-CHEAT: Prevent re-entering finished tournament rooms as a player ---
+      if (!is_null($room->tournament_id) && !is_null($room->result)) {
+        if (in_array($pageKey, ['room.host', 'room.guest', 'room.red', 'room.black'])) {
+          abort(403, __('Trận đấu giải này đã kết thúc. Bạn chỉ có thể xem lại ở chế độ theo dõi.'));
+        }
+      }
+
       // --- ANTI-CHEAT: Prevent URL manipulation to join specific sides ---
       if (isset($room->host_id)) {
         // Block unauthorized access to the Red/Host side
