@@ -216,8 +216,8 @@
 
                     @foreach($matches as $match)
                         @php
-                            $hostIsWinner = $match->result === 1;
-                            $guestIsWinner = $match->result === -1;
+                            $hostIsWinner = $match->result == 1;
+                            $guestIsWinner = $match->result == -1;
                         @endphp
                         <div class="match-card bg-light shadow-sm">
                             <div class="match-player text-danger {{ $hostIsWinner ? 'match-winner' : '' }}">
