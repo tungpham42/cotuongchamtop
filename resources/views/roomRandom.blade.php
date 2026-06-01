@@ -114,25 +114,49 @@ function manipulateRoom(roomCode) {
   $.ajax({
     type: "GET",
     url: '{{ url('/api') }}/readFEN/' + roomCode,
-    dataType: 'text'
+    dataType: 'text',
+    timeout: 3000 // Prevent hanging requests if the network stutters
   }).done(function(newFEN) {
-    if (newFEN != currentFEN) {
-      currentFEN = game.fen();
-      if (newFEN == game.fen()) {
-        // my move
-        board.position(newFEN, true);
-        game.load(newFEN);
-      } else {
-        // opponent's move
-        board.position(newFEN, true);
-        game.load(newFEN);
-        nuocCo.play();
+    // Guard clause: ensure we actually received data
+    if (!newFEN) return;
+
+    // Check if the server's state differs from our currently tracked state
+    if (newFEN !== currentFEN) {
+      // Determine if this change was triggered by the opponent
+      // (If we made the move locally, game.fen() would already match newFEN)
+      let isOpponentMove = (newFEN !== game.fen());
+
+      // 1. Update the local tracking variable to the new state
+      currentFEN = newFEN;
+
+      // 2. Update the game logic and visual board
+      game.load(newFEN);
+      board.position(newFEN, true);
+
+      // 3. Play the sound ONLY if it's the opponent's move (and no one resigned)
+      if (isOpponentMove && !newFEN.includes('resign')) {
+        if (typeof nuocCo !== 'undefined') {
+          let playPromise = nuocCo.play();
+          // Catch DOMExceptions if the browser blocks uninitiated audio
+          if (playPromise !== undefined) {
+            playPromise.catch(error => {
+               console.warn("Audio playback prevented by browser:", error);
+            });
+          }
+        }
       }
-      if (kypho) {
+
+      // 4. Sync the move history (kypho)
+      if (typeof kypho !== 'undefined' && kypho !== null) {
         kypho.syncMoves('{{ url('/api') }}/readMoves/' + roomCode);
       }
     }
-    updateStatus()
+
+    // Always update status to reflect checks, checkmates, or draws
+    updateStatus();
+
+  }).fail(function(jqXHR, textStatus, errorThrown) {
+    console.error("Failed to fetch room FEN:", textStatus, errorThrown);
   });
 }
 
