@@ -10,7 +10,6 @@ use App\Console\Commands\CensorBadWordsCommand;
 use App\Console\Commands\UpdatePointsCommand;
 use App\Console\Commands\UpdatePuzzleSlugsCommand;
 // use App\Console\Commands\UpdateSitemapCommand;
-// use App\Console\Commands\UpdateRoomsCommand;
 use App\Console\Commands\CreateNewRoom;
 
 class Kernel extends ConsoleKernel
@@ -27,7 +26,6 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\UpdatePointsCommand::class,
         \App\Console\Commands\UpdatePuzzleSlugsCommand::class,
         // \App\Console\Commands\UpdateSitemapCommand::class,
-        // \App\Console\Commands\UpdateRoomsCommand::class,
         \App\Console\Commands\CreateNewRoom::class,
     ];
 
@@ -44,7 +42,6 @@ class Kernel extends ConsoleKernel
         $schedule->command(DeleteNonameRoomsCommand::class)->hourly();
         $schedule->command(UpdatePointsCommand::class)->hourly();
         $schedule->command(UpdatePuzzleSlugsCommand::class)->hourly();
-        // $schedule->command(UpdateRoomsCommand::class)->hourly();
         $schedule->command(CreateNewRoom::class)->everySixHours($minutes = 0);
         // $schedule->command(UpdateSitemapCommand::class)->daily();
     }
