@@ -125,52 +125,22 @@ function manipulateRoom(roomCode) {
     dataType: 'text'
   }).done(function(newFEN) {
     if (newFEN != currentFEN) {
-      let isMyMove = (newFEN == game.fen()); // Kiểm tra xem có phải do mình vừa đi không
-      currentFEN = newFEN;
-      board.position(newFEN, true);
-
-      // Gọi API lấy mảng lịch sử nước đi (ICCS) từ server
-      $.ajax({
-        type: "GET",
-        url: '{{ url('/api') }}/readMoves/' + roomCode,
-        dataType: 'json'
-      }).done(function(moves) {
-        let lastMove = (moves && moves.length > 0) ? moves[moves.length - 1] : null;
-        let tempGame = new Xiangqi(game.fen());
-
-        if (lastMove) {
-          tempGame.move(lastMove);
-        }
-
-        if (lastMove && tempGame.fen() === newFEN) {
-          game.move(lastMove);
-        } else {
-          game.reset();
-          if (moves && Array.isArray(moves)) {
-            moves.forEach(function(m) {
-              game.move(m);
-            });
-          }
-        }
-
-        if (!isMyMove) {
-          nuocCo.play();
-        }
-
-        const currentPlayer = game.turn() === 'b' ? 'red' : 'black';
-        @if (!isset($room->tournament_id))
-          switchTurn(roomCode, currentPlayer);
-        @endif
-
-        if (kypho) {
-          kypho.syncMoves('{{ url('/api') }}/readMoves/' + roomCode);
-        }
-
-        updateStatus();
-      });
-    } else {
-      updateStatus();
+      currentFEN = game.fen();
+      if (newFEN == game.fen()) {
+        // my move
+        board.position(newFEN, true);
+        game.load(newFEN);
+      } else {
+        // opponent's move
+        board.position(newFEN, true);
+        game.load(newFEN);
+        nuocCo.play();
+      }
+      if (kypho) {
+        kypho.syncMoves('{{ url('/api') }}/readMoves/' + roomCode);
+      }
     }
+    updateStatus()
   });
 }
 
