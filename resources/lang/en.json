@@ -684,5 +684,14 @@
     "Chủ phòng thắng. Xin chúc mừng!": "Host won. Congratulations!",
     "Khách thắng. Xin chúc mừng!": "Guest won. Congratulations!",
     "Khách thua! Cố lên nhé!": "Guest lost! Better luck next time!",
-    "You are not authorized to update this room.": "You are not authorized to update this room."
+    "You are not authorized to update this room.": "You are not authorized to update this room.",
+    "Lỗi 403 - Cờ tướng": "Error 403 - Xiangqi",
+    "Oops!": "Oops!",
+    "Lỗi 403 - Từ chối truy cập": "Error 403 - Access Denied",
+    "Bạn không có quyền truy cập vào khu vực này.": "You do not have permission to access this area.",
+    "Về trang chủ": "Back to Home",
+    "Lỗi 404 - Không tìm thấy trang": "Error 404 - Page Not Found",
+    "Trận đấu giải này đã kết thúc. Bạn chỉ có thể xem lại ở chế độ theo dõi.": "This tournament match has ended. You can only review it in watch mode.",
+    "Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.": "You do not have permission to access the Red / Host side.",
+    "Bạn không có quyền truy cập vào phe Đen / Khách.": "You do not have permission to access the Black / Guest side."
 }

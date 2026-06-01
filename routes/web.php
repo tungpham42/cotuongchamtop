@@ -393,13 +393,13 @@ foreach ($localizedRoomPages as $pageKey => $roomPage) {
         // Block unauthorized access to the Red/Host side
         if (in_array($pageKey, ['room.host', 'room.red'])) {
           if (!auth()->check() || auth()->id() != $room->host_id) {
-            abort(403, 'Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.');
+            abort(403, __('Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.'));
           }
         }
         // Block unauthorized access to the Black/Guest side
         elseif (in_array($pageKey, ['room.guest', 'room.black'])) {
           if (!auth()->check() || auth()->id() != $room->guest_id) {
-            abort(403, 'Bạn không có quyền truy cập vào phe Đen / Khách.');
+            abort(403, __('Bạn không có quyền truy cập vào phe Đen / Khách.'));
           }
         }
       }

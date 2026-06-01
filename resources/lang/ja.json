@@ -685,5 +685,14 @@
     "Chủ phòng thắng. Xin chúc mừng!": "ホストが勝ちました。おめでとうございます！",
     "Khách thắng. Xin chúc mừng!": "ゲストが勝ちました。おめでとうございます！",
     "Khách thua! Cố lên nhé!": "ゲストが負けました！次は頑張ってください！",
-    "You are not authorized to update this room.": "この部屋を更新する権限がありません。"
+    "You are not authorized to update this room.": "この部屋を更新する権限がありません。",
+    "Lỗi 403 - Cờ tướng": "エラー 403 - シャンチー",
+    "Oops!": "おっと！",
+    "Lỗi 403 - Từ chối truy cập": "エラー 403 - アクセス拒否",
+    "Bạn không có quyền truy cập vào khu vực này.": "このエリアにアクセスする権限がありません。",
+    "Về trang chủ": "ホームに戻る",
+    "Lỗi 404 - Không tìm thấy trang": "エラー 404 - ページが見つかりません",
+    "Trận đấu giải này đã kết thúc. Bạn chỉ có thể xem lại ở chế độ theo dõi.": "このトーナメント戦は終了しました。観戦モードでのみ振り返ることができます。",
+    "Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.": "赤 / ホスト側にアクセスする権限がありません。",
+    "Bạn không có quyền truy cập vào phe Đen / Khách.": "黒 / ゲスト側にアクセスする権限がありません。"
 }

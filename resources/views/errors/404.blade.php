@@ -1,18 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<title>{{ __('Lỗi 404 - Không tìm thấy trang') }}</title>
 
-	<title>Lỗi 404 - Cờ tướng</title>
-
-	<!-- Google font -->
 	<link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700&display=swap&subset=latin-ext,vietnamese" rel="stylesheet">
   <link rel="icon" sizes="32x32" href="{{ url('/') }}/img/favicon-32x32-game.png" />
-	<!-- Custom stlylesheet -->
 	<style>
   * {
     -webkit-box-sizing: border-box;
@@ -126,24 +122,17 @@
   }
   </style>
 
-	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-	<!--[if lt IE 9]>
-		  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-		<![endif]-->
-
-</head>
+	</head>
 
 <body>
 
 	<div id="notfound">
 		<div class="notfound">
 			<div class="notfound-404">
-				<h1>Oops!</h1>
-				<h2>Lỗi 404 - Không tìm thấy trang</h2>
+				<h1>{{ __('Oops!') }}</h1>
+				<h2>{{ __('Lỗi 404 - Không tìm thấy trang') }}</h2>
 			</div>
-			<a href="{{ url('/') }}">Về trang chủ</a>
+			<a href="{{ url('/') }}">{{ __('Về trang chủ') }}</a>
 		</div>
 	</div>
 

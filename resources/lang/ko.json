@@ -672,5 +672,14 @@
     "Chủ phòng thắng. Xin chúc mừng!": "호스트가 이겼습니다. 축하합니다!",
     "Khách thắng. Xin chúc mừng!": "게스트가 이겼습니다. 축하합니다!",
     "Khách thua! Cố lên nhé!": "게스트가 패배했습니다! 다음엔 더 잘할 수 있을 거예요!",
-    "You are not authorized to update this room.": "이 방을 업데이트할 권한이 없습니다."
+    "You are not authorized to update this room.": "이 방을 업데이트할 권한이 없습니다.",
+    "Lỗi 403 - Cờ tướng": "오류 403 - 장기",
+    "Oops!": "앗!",
+    "Lỗi 403 - Từ chối truy cập": "오류 403 - 접근 거부",
+    "Bạn không có quyền truy cập vào khu vực này.": "이 영역에 접근할 권한이 없습니다.",
+    "Về trang chủ": "홈으로 돌아가기",
+    "Lỗi 404 - Không tìm thấy trang": "오류 404 - 페이지를 찾을 수 없음",
+    "Trận đấu giải này đã kết thúc. Bạn chỉ có thể xem lại ở chế độ theo dõi.": "이 토너먼트 경기는 종료되었습니다. 관전 모드에서만 리뷰할 수 있습니다.",
+    "Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.": "빨간색 / 호스트 진영에 접근할 권한이 없습니다.",
+    "Bạn không có quyền truy cập vào phe Đen / Khách.": "검은색 / 게스트 진영에 접근할 권한이 없습니다."
 }

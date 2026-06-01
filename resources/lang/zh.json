@@ -687,5 +687,14 @@
     "Chủ phòng thắng. Xin chúc mừng!": "房主赢了。恭喜！",
     "Khách thắng. Xin chúc mừng!": "访客赢了。恭喜！",
     "Khách thua! Cố lên nhé!": "访客输了！下次好运！",
-    "You are not authorized to update this room.": "您无权更新此房间。"
+    "You are not authorized to update this room.": "您无权更新此房间。",
+    "Lỗi 403 - Cờ tướng": "错误 403 - 象棋",
+    "Oops!": "哎呀！",
+    "Lỗi 403 - Từ chối truy cập": "错误 403 - 拒绝访问",
+    "Bạn không có quyền truy cập vào khu vực này.": "您没有权限访问此区域。",
+    "Về trang chủ": "返回首页",
+    "Lỗi 404 - Không tìm thấy trang": "错误 404 - 找不到页面",
+    "Trận đấu giải này đã kết thúc. Bạn chỉ có thể xem lại ở chế độ theo dõi.": "此锦标赛对局已结束。您只能在观看模式下进行回顾。",
+    "Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.": "您没有权限访问红方 / 房主一侧。",
+    "Bạn không có quyền truy cập vào phe Đen / Khách.": "您没有权限访问黑方 / 访客一侧。"
 }

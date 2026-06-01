@@ -1631,5 +1631,14 @@
     "Chủ phòng thắng. Xin chúc mừng!": "Chủ phòng thắng. Xin chúc mừng!",
     "Khách thắng. Xin chúc mừng!": "Khách thắng. Xin chúc mừng!",
     "Khách thua! Cố lên nhé!": "Khách thua! Cố lên nhé!",
-    "You are not authorized to update this room.": "Bạn không có quyền cập nhật phòng này."
+    "You are not authorized to update this room.": "Bạn không có quyền cập nhật phòng này.",
+    "Lỗi 403 - Cờ tướng": "Lỗi 403 - Cờ tướng",
+    "Oops!": "Oops!",
+    "Lỗi 403 - Từ chối truy cập": "Lỗi 403 - Từ chối truy cập",
+    "Bạn không có quyền truy cập vào khu vực này.": "Bạn không có quyền truy cập vào khu vực này.",
+    "Về trang chủ": "Về trang chủ",
+    "Lỗi 404 - Không tìm thấy trang": "Lỗi 404 - Không tìm thấy trang",
+    "Trận đấu giải này đã kết thúc. Bạn chỉ có thể xem lại ở chế độ theo dõi.": "Trận đấu giải này đã kết thúc. Bạn chỉ có thể xem lại ở chế độ theo dõi.",
+    "Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.": "Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.",
+    "Bạn không có quyền truy cập vào phe Đen / Khách.": "Bạn không có quyền truy cập vào phe Đen / Khách."
 }

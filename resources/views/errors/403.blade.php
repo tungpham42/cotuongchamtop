@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="{{ app()->getLocale() }}">
 
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<title>Lỗi 403 - Cờ tướng</title>
+	<title>{{ __('Lỗi 403 - Cờ tướng') }}</title>
 
 	<link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,600,700&display=swap&subset=latin-ext,vietnamese" rel="stylesheet">
 	<link rel="icon" sizes="32x32" href="{{ url('/') }}/img/favicon-32x32-game.png" />
@@ -144,16 +144,16 @@
 	<div id="notfound">
 		<div class="notfound">
 			<div class="notfound-404">
-				<h1>Oops!</h1>
-				<h2>Lỗi 403 - Từ chối truy cập</h2>
+				<h1>{{ __('Oops!') }}</h1>
+				<h2>{{ __('Lỗi 403 - Từ chối truy cập') }}</h2>
 			</div>
 
 			<p>
-				{{ isset($exception) && $exception->getMessage() ? $exception->getMessage() : 'Bạn không có quyền truy cập vào khu vực này.' }}
+				{{ isset($exception) && $exception->getMessage() ? $exception->getMessage() : __('Bạn không có quyền truy cập vào khu vực này.') }}
 			</p>
 
-			<a href="javascript:history.back()">Quay lại</a>
-			<a href="{{ url('/') }}">Về trang chủ</a>
+			<a href="javascript:history.back()">{{ __('Quay lại') }}</a>
+			<a href="{{ url('/') }}">{{ __('Về trang chủ') }}</a>
 		</div>
 	</div>
 
