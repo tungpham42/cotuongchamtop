@@ -155,7 +155,7 @@
     <div class="card bg-white text-dark mb-4 shadow-sm" style="border-radius: 12px; overflow: hidden; border: 1px solid #dee2e6;">
         <div class="card-header bg-light border-bottom" style="border-color: #dee2e6 !important;">
             <h5 class="mb-0 text-dark font-weight-bold">
-                <i class="fad fa-users-cog text-primary"></i> {{ __('Danh sách kỳ thủ đã đăng ký (Góc nhìn Admin)') }}
+                <i class="fad fa-users-cog text-primary"></i> {{ __('Danh sách kỳ thủ đã đăng ký') }}
             </h5>
         </div>
         <div class="card-body p-0">
