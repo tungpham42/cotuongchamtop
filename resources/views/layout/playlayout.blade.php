@@ -443,5 +443,6 @@
         </div>
       </div>
     </main>
+    @include('layout.partials.playFooter')
   </body>
 </html>
