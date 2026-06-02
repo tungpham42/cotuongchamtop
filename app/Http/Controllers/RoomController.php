@@ -335,6 +335,12 @@ class RoomController extends Controller
         $move = $request->input('move');
 
         $room = Room::firstOrNew(['code' => $code]);
+
+        // BẢO VỆ: Không cập nhật FEN nếu ván cờ đã kết thúc
+        if (!is_null($room->result)) {
+            return response()->json(['success' => false, 'message' => __('Game already finished')], 400);
+        }
+
         $room->fen = $fen;
         $room->modified_at = now();
 
@@ -417,12 +423,21 @@ class RoomController extends Controller
             ->where('code', $code)
             ->first();
 
+        // BẢO VỆ: Nếu đã có kết quả thì không được ghi đè nữa
+        if ($roomData && !is_null($roomData->result)) {
+            return response()->json([
+                'success' => false,
+                'message' => __('Trận đấu đã kết thúc trước đó.')
+            ], 403);
+        }
+
         $host_id = $roomData->host_id ?? null;
         $guest_id = $roomData->guest_id ?? null;
 
         if (!$auth_id || !in_array($auth_id, [$host_id, $guest_id])) {
             return response()->json([
-                'success' => __('Bạn không có quyền cập nhật ván này.')
+                'success' => false,
+                'message' => __('Bạn không có quyền cập nhật ván này.')
             ], 403);
         }
 
@@ -483,7 +498,8 @@ class RoomController extends Controller
         //self::updateElo($code); // Update the Elo ratings of the host and guest
 
         return response()->json([
-            'success' => $success_message
+            'success' => true,
+            'message' => $success_message
         ]);
     }
 
@@ -493,6 +509,16 @@ class RoomController extends Controller
         $result = $request->input('result');
         $lang = $request->input('lang');
         $side = $request->input('side');
+
+        // BẢO VỆ: Truy vấn trước để kiểm tra trạng thái
+        $roomData = Room::select('result')->where('code', $code)->first();
+        if ($roomData && !is_null($roomData->result)) {
+            return response()->json([
+                'success' => false,
+                'message' => __('Trận đấu đã kết thúc trước đó.')
+            ], 403);
+        }
+
         Room::updateOrInsert(
             ['code' => $code],
             ['result' => $result, 'modified_at' => date('Y-m-d H:i:s')]

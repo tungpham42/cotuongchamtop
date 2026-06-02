@@ -381,6 +381,13 @@ foreach ($localizedRoomPages as $pageKey => $roomPage) {
         abort(404);
       }
 
+      // --- ANTI-CHEAT: Prevent re-entering finished rooms as a player ---
+      if (!is_null($room->result)) {
+        if (in_array($pageKey, ['room.host', 'room.guest', 'room.red', 'room.black'])) {
+          return redirect()->to(localized_path('room.watch', ['code' => $code], $locale));
+        }
+      }
+
       // --- ANTI-CHEAT: Prevent re-entering finished tournament rooms as a player ---
       if (!is_null($room->tournament_id) && !is_null($room->result)) {
         if (in_array($pageKey, ['room.host', 'room.guest', 'room.red', 'room.black'])) {
