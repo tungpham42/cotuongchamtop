@@ -78,7 +78,7 @@ class UserController extends Controller
                     } else {
                         $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 140px;" href="'.localized_url('login').'"><i class="far fa-sign-in"></i> '.$challengeText.'</a>';
                     }
-                    $actionBtn .= '<a class="btn btn-dark text-light" style="width: 90px;" href="'.url('/').'/ky-thu/'.$row->id.'"><i class="far fa-user-alt"></i> '.$profileText.'</a>';
+                    $actionBtn .= '<a class="btn btn-dark text-light" style="width: 90px;" href="'.localized_url('app.player', ['id' => $row->id]).'"><i class="far fa-user-alt"></i> '.$profileText.'</a>';
                     return $actionBtn;
                 })
                 ->addColumn('time', function($row){
