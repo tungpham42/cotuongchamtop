@@ -63,7 +63,7 @@ class UserController extends Controller
                 ->addColumn('name', function($row){
                     $onlineStatus = self::onlineStatus($row->id);
                     $avatar = Avatar::create($row->name)->setDimension(28)->setFontSize(14);
-                    return '<img src="' . $avatar . '" />&nbsp;<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" href="'.url('/').'/ky-thu/'.$row->id.'">'.$row->name.'</a>&nbsp;' . $onlineStatus;
+                    return '<img src="' . $avatar . '" />&nbsp;<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" href="'.localized_url('app.player', ['id' => $row->id]).'">'.$row->name.'</a>&nbsp;' . $onlineStatus;
                 })
                 ->addColumn('elo', function($row){
                     return self::renderElo($row->id);
