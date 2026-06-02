@@ -106,16 +106,13 @@ class RoomController extends Controller
                     }
                     return '';
                 })
-                ->addColumn('action', function($row) use ($t, $locale) {
-                    // Bypasses route() names entirely to prevent "Route not defined" errors.
-                    // Builds the URLs explicitly using your locales.php config file.
-                    $prefix = $locale === config('locales.default', 'vi') ? '' : $locale . '/';
-
-                    $urlRed   = url($prefix . str_replace('{code}', $row->code, config("locales.paths.room.red.{$locale}", "room/{$row->code}/red")));
-                    $urlBlack = url($prefix . str_replace('{code}', $row->code, config("locales.paths.room.black.{$locale}", "room/{$row->code}/black")));
-                    $urlWatch = url($prefix . str_replace('{code}', $row->code, config("locales.paths.room.watch.{$locale}", "room/{$row->code}/watch")));
-                    $urlHost  = url($prefix . str_replace('{code}', $row->code, config("locales.paths.room.host.{$locale}", "room/{$row->code}")));
-                    $urlLogin = url($prefix . config("locales.paths.login.{$locale}", "login"));
+               ->addColumn('action', function($row) use ($t, $locale) {
+                    // Build the localized URLs using the localized_url helper
+                    $urlRed   = localized_url('room.red', ['code' => $row->code], $locale);
+                    $urlBlack = localized_url('room.black', ['code' => $row->code], $locale);
+                    $urlWatch = localized_url('room.watch', ['code' => $row->code], $locale);
+                    $urlHost  = localized_url('room.host', ['code' => $row->code], $locale);
+                    $urlLogin = localized_url('login', [], $locale);
 
                     $actionBtn = '';
 
