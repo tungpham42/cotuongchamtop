@@ -699,5 +699,7 @@
     "Lỗi 404 - Không tìm thấy trang": "错误 404 - 找不到页面",
     "Trận đấu giải này đã kết thúc. Bạn chỉ có thể xem lại ở chế độ theo dõi.": "此锦标赛对局已结束。您只能在观看模式下进行回顾。",
     "Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.": "您没有权限访问红方 / 房主一侧。",
-    "Bạn không có quyền truy cập vào phe Đen / Khách.": "您没有权限访问黑方 / 访客一侧。"
+    "Bạn không có quyền truy cập vào phe Đen / Khách.": "您没有权限访问黑方 / 访客一侧。",
+    "Mật khẩu không được để trống.": "密码不能为空。",
+    "Đổi mật khẩu thành công!": "密码修改成功！"
 }

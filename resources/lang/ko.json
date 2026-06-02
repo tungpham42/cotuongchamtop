@@ -684,5 +684,7 @@
     "Lỗi 404 - Không tìm thấy trang": "오류 404 - 페이지를 찾을 수 없음",
     "Trận đấu giải này đã kết thúc. Bạn chỉ có thể xem lại ở chế độ theo dõi.": "이 토너먼트 경기는 종료되었습니다. 관전 모드에서만 리뷰할 수 있습니다.",
     "Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.": "빨간색 / 호스트 진영에 접근할 권한이 없습니다.",
-    "Bạn không có quyền truy cập vào phe Đen / Khách.": "검은색 / 게스트 진영에 접근할 권한이 없습니다."
+    "Bạn không có quyền truy cập vào phe Đen / Khách.": "검은색 / 게스트 진영에 접근할 권한이 없습니다.",
+    "Mật khẩu không được để trống.": "비밀번호는 비워둘 수 없습니다.",
+    "Đổi mật khẩu thành công!": "비밀번호가 성공적으로 변경되었습니다!"
 }

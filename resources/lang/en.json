@@ -695,5 +695,7 @@
     "Lỗi 404 - Không tìm thấy trang": "Error 404 - Page Not Found",
     "Trận đấu giải này đã kết thúc. Bạn chỉ có thể xem lại ở chế độ theo dõi.": "This tournament match has ended. You can only review it in watch mode.",
     "Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.": "You do not have permission to access the Red / Host side.",
-    "Bạn không có quyền truy cập vào phe Đen / Khách.": "You do not have permission to access the Black / Guest side."
+    "Bạn không có quyền truy cập vào phe Đen / Khách.": "You do not have permission to access the Black / Guest side.",
+    "Mật khẩu không được để trống.": "Password cannot be empty.",
+    "Đổi mật khẩu thành công!": "Password changed successfully!"
 }

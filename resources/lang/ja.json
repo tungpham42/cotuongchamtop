@@ -697,5 +697,7 @@
     "Lỗi 404 - Không tìm thấy trang": "エラー 404 - ページが見つかりません",
     "Trận đấu giải này đã kết thúc. Bạn chỉ có thể xem lại ở chế độ theo dõi.": "このトーナメント戦は終了しました。観戦モードでのみ振り返ることができます。",
     "Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.": "赤 / ホスト側にアクセスする権限がありません。",
-    "Bạn không có quyền truy cập vào phe Đen / Khách.": "黒 / ゲスト側にアクセスする権限がありません。"
+    "Bạn không có quyền truy cập vào phe Đen / Khách.": "黒 / ゲスト側にアクセスする権限がありません。",
+    "Mật khẩu không được để trống.": "パスワードは空にできません。",
+    "Đổi mật khẩu thành công!": "パスワードが正常に変更されました！"
 }

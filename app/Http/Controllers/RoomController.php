@@ -928,11 +928,11 @@ class RoomController extends Controller
         $code = $request->input('ma-phong');
         $pass = $request->input('pass');
         if (!$request->input('pass') || $pass === '') {
-            echo json_encode(array('message' => 'Mật khẩu không được để trống', 'code' => 0));
+            echo json_encode(array('message' => __('Mật khẩu không được để trống'), 'code' => 0));
             exit();
         } else {
             DB::update('update rooms set pass = ? where code = ?', [$pass, $code]);
-            echo json_encode(array('message' => 'Đổi mật khẩu thành công!', 'code' => 1));
+            echo json_encode(array('message' => __('Đổi mật khẩu thành công!'), 'code' => 1));
             exit();
         }
     }
