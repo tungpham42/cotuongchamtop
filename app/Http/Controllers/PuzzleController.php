@@ -28,168 +28,55 @@ class PuzzleController extends Controller
 
     public function getPuzzlesVi(Request $request)
     {
+        return $this->getPuzzlesDatatable($request, 'Giải cờ thế', 'Xem trước');
+    }
+
+    public function getPuzzlesEn(Request $request)
+    {
+        return $this->getPuzzlesDatatable($request, 'Solve puzzle', 'Preview');
+    }
+
+    public function getPuzzlesJa(Request $request)
+    {
+        return $this->getPuzzlesDatatable($request, 'パズルを解く', 'プレビュー');
+    }
+
+    public function getPuzzlesKo(Request $request)
+    {
+        return $this->getPuzzlesDatatable($request, '퍼즐 풀기', '미리보기');
+    }
+
+    public function getPuzzlesZh(Request $request)
+    {
+        return $this->getPuzzlesDatatable($request, '解谜', '预览');
+    }
+
+    /**
+     * Shared logic to generate the DataTables response for puzzles.
+     */
+    private function getPuzzlesDatatable(Request $request, string $solveText, string $previewText)
+    {
         if ($request->ajax()) {
             $puzzles = Puzzle::public()->select(['id', 'name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'updated_at']);
+
             return Datatables::of($puzzles)
                 ->addColumn('rank', function($row){
-                    $puzzleRank = self::renderPuzzleRank($row->id);
-                    return $puzzleRank;
+                    return self::renderPuzzleRank($row->id);
                 })
                 ->addColumn('name', function($row){
-                    $puzzleName = '<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/the-co/").$row->slug.'">'.$row->name.'</a>';
-                    return $puzzleName;
+                    return '<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/the-co/").$row->slug.'">'.$row->name.'</a>';
                 })
                 ->addColumn('rating', function($row){
                     return (int) $row->likes_count;
                 })
-                ->addColumn('action', function($row){
-                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 140px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').'/giai-co-the/'.$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> Giải cờ thế</a>';
-                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> Xem trước</a>';
+                ->addColumn('action', function($row) use ($solveText, $previewText) {
+                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 140px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').'/giai-co-the/'.$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> '.$solveText.'</a>';
+                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> '.$previewText.'</a>';
                     return $actionBtn;
                 })
                 ->addColumn('time', function($row){
                     return date('Y-m-d | H:i:s', strtotime($row->updated_at));
                 })
-                ->escapeColumns([])
-                ->orderColumn('name', 'name $1')
-                ->orderColumn('rating', 'likes_count $1')
-                ->orderColumn('time', 'updated_at $1')
-                ->filterColumn('name', function($query, $keyword) {
-                    $query->where(function($query) use ($keyword) {
-                        $query->orWhere('name', 'like', '%' . $keyword . '%')
-                              ->orWhere('slug', 'like', '%' . $keyword . '%');
-                    });
-                })
-                ->filterColumn('time', function($query, $keyword) {
-                    $sql = "updated_at like ?";
-                    $query->whereRaw($sql, ["%{$keyword}%"]);
-                })
-                ->rawColumns(['rank', 'name', 'rating', 'action', 'time'])
-                ->make(true);
-        }
-    }
-
-    public function getPuzzlesEn(Request $request)
-    {
-        if ($request->ajax()) {
-            $puzzles = Puzzle::public()->select(['id', 'name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'updated_at']);
-            return Datatables::of($puzzles)
-                ->addColumn('rank', function($row){ return self::renderPuzzleRank($row->id); })
-                ->addColumn('name', function($row){
-                    return '<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/the-co/").$row->slug.'">'.$row->name.'</a>';
-                })
-                ->addColumn('rating', function($row){ return (int) $row->likes_count; })
-                ->addColumn('action', function($row){
-                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 140px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').'/giai-co-the/'.$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> Solve puzzle</a>';
-                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> Preview</a>';
-                    return $actionBtn;
-                })
-                ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->updated_at)); })
-                ->escapeColumns([])
-                ->orderColumn('name', 'name $1')
-                ->orderColumn('rating', 'likes_count $1')
-                ->orderColumn('time', 'updated_at $1')
-                ->filterColumn('name', function($query, $keyword) {
-                    $query->where(function($query) use ($keyword) {
-                        $query->orWhere('name', 'like', '%' . $keyword . '%')
-                              ->orWhere('slug', 'like', '%' . $keyword . '%');
-                    });
-                })
-                ->filterColumn('time', function($query, $keyword) {
-                    $sql = "updated_at like ?";
-                    $query->whereRaw($sql, ["%{$keyword}%"]);
-                })
-                ->rawColumns(['rank', 'name', 'rating', 'action', 'time'])
-                ->make(true);
-        }
-    }
-
-    public function getPuzzlesJa(Request $request)
-    {
-        if ($request->ajax()) {
-            $puzzles = Puzzle::public()->select(['id', 'name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'updated_at']);
-            return Datatables::of($puzzles)
-                ->addColumn('rank', function($row){ return self::renderPuzzleRank($row->id); })
-                ->addColumn('name', function($row){
-                    return '<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/the-co/").$row->slug.'">'.$row->name.'</a>';
-                })
-                ->addColumn('rating', function($row){ return (int) $row->likes_count; })
-                ->addColumn('action', function($row){
-                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 140px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').'/giai-co-the/'.$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> パズルを解く</a>';
-                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> プレビュー</a>';
-                    return $actionBtn;
-                })
-                ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->updated_at)); })
-                ->escapeColumns([])
-                ->orderColumn('name', 'name $1')
-                ->orderColumn('rating', 'likes_count $1')
-                ->orderColumn('time', 'updated_at $1')
-                ->filterColumn('name', function($query, $keyword) {
-                    $query->where(function($query) use ($keyword) {
-                        $query->orWhere('name', 'like', '%' . $keyword . '%')
-                              ->orWhere('slug', 'like', '%' . $keyword . '%');
-                    });
-                })
-                ->filterColumn('time', function($query, $keyword) {
-                    $sql = "updated_at like ?";
-                    $query->whereRaw($sql, ["%{$keyword}%"]);
-                })
-                ->rawColumns(['rank', 'name', 'rating', 'action', 'time'])
-                ->make(true);
-        }
-    }
-
-    public function getPuzzlesKo(Request $request)
-    {
-        if ($request->ajax()) {
-            $puzzles = Puzzle::public()->select(['id', 'name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'updated_at']);
-            return Datatables::of($puzzles)
-                ->addColumn('rank', function($row){ return self::renderPuzzleRank($row->id); })
-                ->addColumn('name', function($row){
-                    return '<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/the-co/").$row->slug.'">'.$row->name.'</a>';
-                })
-                ->addColumn('rating', function($row){ return (int) $row->likes_count; })
-                ->addColumn('action', function($row){
-                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 140px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').'/giai-co-the/'.$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> 퍼즐 풀기</a>';
-                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> 미리보기</a>';
-                    return $actionBtn;
-                })
-                ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->updated_at)); })
-                ->escapeColumns([])
-                ->orderColumn('name', 'name $1')
-                ->orderColumn('rating', 'likes_count $1')
-                ->orderColumn('time', 'updated_at $1')
-                ->filterColumn('name', function($query, $keyword) {
-                    $query->where(function($query) use ($keyword) {
-                        $query->orWhere('name', 'like', '%' . $keyword . '%')
-                              ->orWhere('slug', 'like', '%' . $keyword . '%');
-                    });
-                })
-                ->filterColumn('time', function($query, $keyword) {
-                    $sql = "updated_at like ?";
-                    $query->whereRaw($sql, ["%{$keyword}%"]);
-                })
-                ->rawColumns(['rank', 'name', 'rating', 'action', 'time'])
-                ->make(true);
-        }
-    }
-
-    public function getPuzzlesZh(Request $request)
-    {
-        if ($request->ajax()) {
-            $puzzles = Puzzle::public()->select(['id', 'name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'updated_at']);
-            return Datatables::of($puzzles)
-                ->addColumn('rank', function($row){ return self::renderPuzzleRank($row->id); })
-                ->addColumn('name', function($row){
-                    return '<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/the-co/").$row->slug.'">'.$row->name.'</a>';
-                })
-                ->addColumn('rating', function($row){ return (int) $row->likes_count; })
-                ->addColumn('action', function($row){
-                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 140px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').'/giai-co-the/'.$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> 解谜</a>';
-                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> 预览</a>';
-                    return $actionBtn;
-                })
-                ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->updated_at)); })
                 ->escapeColumns([])
                 ->orderColumn('name', 'name $1')
                 ->orderColumn('rating', 'likes_count $1')

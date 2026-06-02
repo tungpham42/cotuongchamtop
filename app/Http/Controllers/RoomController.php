@@ -22,123 +22,153 @@ use Illuminate\Support\Facades\Schema;
 
 class RoomController extends Controller
 {
-    public function getRoomsVi(Request $request)
+    /**
+     * Shared logic for generating Room DataTables across all locales.
+     * Applies Auth logic uniformly and dynamically generates localized routes.
+     */
+    private function getRoomsData(Request $request, string $locale)
     {
         if ($request->ajax()) {
-            // $data = Room::orderBy('modified_at', 'desc')->get();
             $rooms = Room::select(['fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at']);
+
+            // Localized text dictionary mapped exactly to original translations
+            $texts = [
+                'vi' => ['public' => 'Công khai', 'private' => 'Riêng tư', 'red' => 'Đỏ', 'black' => 'Đen', 'guest_won' => 'Đen thắng', 'draw' => 'Hòa', 'host_won' => 'Đỏ thắng', 'not_started' => 'Chưa bắt đầu', 'ongoing' => 'Đang đấu', 'play' => 'Chơi', 'watch' => 'Theo dõi', 'finished_btn' => 'Đã xong', 'finished_auth' => 'Đã đấu xong', 'play_now' => 'Chơi nào', 'login' => 'Đăng nhập', 'preview' => 'Xem trước'],
+                'en' => ['public' => 'Public', 'private' => 'Private', 'red' => 'Red', 'black' => 'Black', 'guest_won' => 'Guest won', 'draw' => 'Draw', 'host_won' => 'Host won', 'not_started' => 'Not started', 'ongoing' => 'Ongoing', 'play' => 'Play', 'watch' => 'Watch', 'finished_btn' => 'Finished', 'finished_auth' => 'Finished', 'play_now' => 'Play now', 'login' => 'Login', 'preview' => 'Preview'],
+                'ja' => ['public' => '公衆', 'private' => '民間', 'red' => '赤', 'black' => '黒', 'guest_won' => 'ゲストが勝ちました', 'draw' => 'ドローです', 'host_won' => 'ホストが勝ちました', 'not_started' => '開始されていない', 'ongoing' => '現在進行中', 'play' => '加入', 'watch' => '見る', 'finished_btn' => '終わり', 'finished_auth' => '終わり', 'play_now' => '加入', 'login' => 'ログイン', 'preview' => 'プレビュー'],
+                'ko' => ['public' => '공공의', 'private' => '사적인', 'red' => '홍', 'black' => '검', 'guest_won' => '손님이 이겼어요', 'draw' => '동점입니다', 'host_won' => '주최자가 이겼어요', 'not_started' => '아직 시작되지 않음', 'ongoing' => '진행 중인', 'play' => '참여', 'watch' => '보다', 'finished_btn' => '끝났다', 'finished_auth' => '끝났다', 'play_now' => '참여', 'login' => '로그인', 'preview' => '미리보기'],
+                'zh' => ['public' => '平民的', 'private' => '私有的', 'red' => '红', 'black' => '黑', 'guest_won' => '客人赢了', 'draw' => '平局', 'host_won' => '主办方赢了', 'not_started' => '未开始', 'ongoing' => '进行中的', 'play' => '参加', 'watch' => '看', 'finished_btn' => '结束', 'finished_auth' => '结束', 'play_now' => '参加', 'login' => '登录', 'preview' => '预览'],
+            ];
+
+            $t = $texts[$locale] ?? $texts['en'];
+            $routePrefix = ($locale === 'vi') ? '' : "{$locale}."; // Matches web.php naming convention
+
             return Datatables::of($rooms)
-                ->addColumn('code', function($row){
+                ->addColumn('code', function($row) use ($t) {
                     if (!isset($row->host_id)) {
                         if ($row->fen == env('INITIAL_FEN') || str_contains($row->fen, ' r ')) {
                             $roomCode = '<a class="text-danger disabled" style="cursor: default !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0)">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a>';
                             if ($row->pass == '') {
-                                $roomCode .= '<i class="ml-3 far fa-globe text-danger" data-toggle="tooltip" data-placement="top" data-original-title="Công khai"></i>';
+                                $roomCode .= '<i class="ml-3 far fa-globe text-danger" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['public'].'"></i>';
                             } else {
-                                $roomCode .= '<i class="ml-3 far fa-lock text-danger" data-toggle="tooltip" data-placement="top" data-original-title="Riêng tư"></i>';
+                                $roomCode .= '<i class="ml-3 far fa-lock text-danger" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['private'].'"></i>';
                             }
                         } else {
                             $roomCode = '<a style="color: #222222 !important; cursor: default !important; text-decoration: none !important;" class="disabled" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0)">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a>';
                             if ($row->pass == '') {
-                                $roomCode .= '<i class="ml-3 far fa-globe text-dark" data-toggle="tooltip" data-placement="top" data-original-title="Công khai"></i>';
+                                $roomCode .= '<i class="ml-3 far fa-globe text-dark" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['public'].'"></i>';
                             } else {
-                                $roomCode .= '<i class="ml-3 far fa-lock text-dark" data-toggle="tooltip" data-placement="top" data-original-title="Riêng tư"></i>';
+                                $roomCode .= '<i class="ml-3 far fa-lock text-dark" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['private'].'"></i>';
+                            }
+                        }
+                    } else {
+                        // Replaced Switch Language text -> Proper cross-locale auth capabilities
+                        if (auth()->check()) {
+                            if (isset($row->result)) {
+                                $roomCode = '<a class="text-dark showPromotion" href="javascript:void(0)" style="color: #222!important; cursor: default !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a><i class="ml-3 far fa-archive text-dark" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['finished_auth'].'"></i>';
+                            } else {
+                                $roomCode = '<a class="text-warning" href="javascript:joinMatch(`'.$row->code.'`)" data-fen="'.$row->fen.'" data-code="'.$row->code.'">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a><i class="ml-3 far fa-mouse text-warning" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['play_now'].'"></i>';
+                            }
+                        } else {
+                            if (str_contains($row->fen, ' r ')) {
+                                $roomCode = '<a style="cursor: default !important; text-decoration: none !important;" class="text-danger" href="javascript:void(0)" data-fen="'.$row->fen.'" data-code="'.$row->code.'">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a><i class="ml-3 far fa-sign-in text-danger" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['login'].'"></i>';
+                            } else if (str_contains($row->fen, ' b ')) {
+                                $roomCode = '<a style="cursor: default !important; text-decoration: none !important;" class="text-dark" href="javascript:void(0)" data-fen="'.$row->fen.'" data-code="'.$row->code.'">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a><i class="ml-3 far fa-sign-in text-dark" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['login'].'"></i>';
+                            } else {
+                                $roomCode = '<a style="cursor: default !important; text-decoration: none !important;" class="text-dark" href="javascript:void(0)" data-fen="'.$row->fen.'" data-code="'.$row->code.'">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a><i class="ml-3 far fa-sign-in text-dark" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['login'].'"></i>';
+                            }
+                        }
+                    }
+                    return $roomCode;
+                })
+                ->addColumn('turn', function($row) use ($t) {
+                    if (str_contains($row->fen, ' r ')) {
+                        return '<span class="text-danger">'.$t['red'].'</span>';
+                    } else if (str_contains($row->fen, ' b ')) {
+                        return '<span class="text-dark">'.$t['black'].'</span>';
+                    }
+                    return '';
+                })
+                ->addColumn('result', function($row) use ($t) {
+                    if (isset($row->result)) {
+                        switch ($row->result) {
+                            case '-1':
+                                return '<span class="text-dark">'.$t['guest_won'].'</span>';
+                            case '0':
+                                return '<span class="text-warning">'.$t['draw'].'</span>';
+                            case '1':
+                                return '<span class="text-danger">'.$t['host_won'].'</span>';
+                        }
+                    } else if ($row->fen == env('INITIAL_FEN')) {
+                        return '<span class="text-secondary">'.$t['not_started'].'</span>';
+                    } else {
+                        return '<span class="text-warning">'.$t['ongoing'].'</span>';
+                    }
+                    return '';
+                })
+                ->addColumn('action', function($row) use ($t, $locale) {
+                    // Bypasses route() names entirely to prevent "Route not defined" errors.
+                    // Builds the URLs explicitly using your locales.php config file.
+                    $prefix = $locale === config('locales.default', 'vi') ? '' : $locale . '/';
+
+                    $urlRed   = url($prefix . str_replace('{code}', $row->code, config("locales.paths.room.red.{$locale}", "room/{$row->code}/red")));
+                    $urlBlack = url($prefix . str_replace('{code}', $row->code, config("locales.paths.room.black.{$locale}", "room/{$row->code}/black")));
+                    $urlWatch = url($prefix . str_replace('{code}', $row->code, config("locales.paths.room.watch.{$locale}", "room/{$row->code}/watch")));
+                    $urlHost  = url($prefix . str_replace('{code}', $row->code, config("locales.paths.room.host.{$locale}", "room/{$row->code}")));
+                    $urlLogin = url($prefix . config("locales.paths.login.{$locale}", "login"));
+
+                    $actionBtn = '';
+
+                    if (!isset($row->host_id)) {
+                        if ($row->fen == env('INITIAL_FEN')) {
+                            if ($row->pass == '') {
+                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="min-width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$urlRed.'"><i class="far fa-mouse"></i> '.$t['play'].'</a>';
+                            } else {
+                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="min-width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$urlHost.'"><i class="far fa-mouse"></i> '.$t['play'].'</a>';
+                            }
+                            if ($row->pass == '') {
+                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$urlWatch.'" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['public'].'"><i class="far fa-globe"></i> '.$t['watch'].'</a>';
+                            } else {
+                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$urlWatch.'" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['private'].'"><i class="far fa-lock"></i> '.$t['watch'].'</a>';
+                            }
+                        } else {
+                            if (isset($row->result)) {
+                                if (str_contains($row->fen, ' b ')) {
+                                    $actionBtn = '<a class="btn btn-dark text-light mr-1" style="min-width: 100px; cursor: not-allowed !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0);"><i class="far fa-ban"></i> '.$t['finished_btn'].'</a>';
+                                } else if (str_contains($row->fen, ' r ')) {
+                                    $actionBtn = '<a class="btn btn-danger text-light mr-1" style="min-width: 100px; cursor: not-allowed !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0);"><i class="far fa-ban"></i> '.$t['finished_btn'].'</a>';
+                                }
+                            } else {
+                                if (str_contains($row->fen, ' b ')) {
+                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion" style="min-width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$urlBlack.'"><i class="far fa-mouse"></i> '.$t['play'].'</a>';
+                                } else if (str_contains($row->fen, ' r ')) {
+                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="min-width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$urlRed.'"><i class="far fa-mouse"></i> '.$t['play'].'</a>';
+                                }
+                            }
+                            if ($row->pass == '') {
+                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$urlWatch.'" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['public'].'"><i class="far fa-globe"></i> '.$t['watch'].'</a>';
+                            } else {
+                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$urlWatch.'" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['private'].'"><i class="far fa-lock"></i> '.$t['watch'].'</a>';
                             }
                         }
                     } else {
                         if (auth()->check()) {
                             if (isset($row->result)) {
-                                $roomCode = '<a class="text-dark showPromotion" href="javascript:void(0)" style="color: #222!important; cursor: default !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a><i class="ml-3 far fa-archive text-dark" data-toggle="tooltip" data-placement="top" data-original-title="Đã đấu xong"></i>';
+                                $actionBtn = '<a class="btn btn-dark text-light showPromotion" style="min-width: 200px;" href="'.$urlWatch.'"><i class="far fa-archive"></i> '.$t['finished_auth'].'</a>';
                             } else {
-                                $roomCode = '<a class="text-warning" href="javascript:joinMatch(`'.$row->code.'`)" data-fen="'.$row->fen.'" data-code="'.$row->code.'">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a><i class="ml-3 far fa-mouse text-warning" data-toggle="tooltip" data-placement="top" data-original-title="Chơi nào"></i>';
+                                $actionBtn = '<a class="btn btn-danger text-light pulse-red" style="min-width: 200px;" href="javascript:joinMatch(`'.$row->code.'`)"><i class="far fa-mouse"></i> '.$t['play_now'].'</a>';
                             }
                         } else {
                             if (str_contains($row->fen, ' r ')) {
-                                $roomCode = '<a style="cursor: default !important; text-decoration: none !important;" class="text-danger" href="javascript:void(0)" data-fen="'.$row->fen.'" data-code="'.$row->code.'">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a><i class="ml-3 far fa-sign-in text-danger" data-toggle="tooltip" data-placement="top" data-original-title="Đăng nhập"></i>';
+                                $actionBtn = '<a class="btn btn-danger text-light showPromotion pulse-red" style="min-width: 200px;" href="'.$urlLogin.'"><i class="far fa-sign-in"></i> '.$t['login'].'</a>';
                             } else if (str_contains($row->fen, ' b ')) {
-                                $roomCode = '<a style="cursor: default !important; text-decoration: none !important;" class="text-dark" href="javascript:void(0)" data-fen="'.$row->fen.'" data-code="'.$row->code.'">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a><i class="ml-3 far fa-sign-in text-dark" data-toggle="tooltip" data-placement="top" data-original-title="Đăng nhập"></i>';
+                                $actionBtn = '<a class="btn btn-dark text-light showPromotion pulse-dark" style="min-width: 200px;" href="'.$urlLogin.'"><i class="far fa-sign-in"></i> '.$t['login'].'</a>';
+                            } else {
+                                $actionBtn = '<a class="btn btn-secondary text-light showPromotion" style="min-width: 200px;" href="'.$urlLogin.'"><i class="far fa-sign-in"></i> '.$t['login'].'</a>';
                             }
                         }
                     }
-                    return $roomCode;
-                })
-                ->addColumn('result', function($row){
-                    if (isset($row->result)) {
-                        switch ($row->result) {
-                            case '-1':
-                                $roomResult = '<span class="text-dark">Đen thắng</span>';
-                                break;
-                            case '0':
-                                $roomResult = '<span class="text-warning">Hòa</span>';
-                                break;
-                            case '1':
-                                $roomResult = '<span class="text-danger">Đỏ thắng</span>';
-                                break;
-                        }
-                    } else if ($row->fen == env('INITIAL_FEN')) {
-                        $roomResult = '<span class="text-secondary">Chưa bắt đầu</span>';
-                    } else {
-                        $roomResult = '<span class="text-warning">Đang đấu</span>';
-                    }
-                    return $roomResult;
-                })
-                ->addColumn('turn', function($row){
-                    if (str_contains($row->fen, ' r ')) {
-                        $playerTurn = '<span class="text-danger">Đỏ</span>';
-                    } else if (str_contains($row->fen, ' b ')) {
-                        $playerTurn = '<span class="text-dark">Đen</span>';
-                    }
-                    return $playerTurn;
-                })
-                ->addColumn('action', function($row){
-                    if (!isset($row->host_id)) {
-                        if ($row->fen == env('INITIAL_FEN')) {
-                            if ($row->pass == '') {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/phong/'.$row->code.'/do"><i class="far fa-mouse"></i> Chơi</a>';
-                            } else {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/phong/'.$row->code.'"><i class="far fa-mouse"></i> Chơi</a>';
-                            }
-                            if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/phong/'.$row->code.'/theo-doi" data-toggle="tooltip" data-placement="top" data-original-title="Công khai"><i class="far fa-globe"></i> Theo dõi</a>';
-                            } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/phong/'.$row->code.'/theo-doi" data-toggle="tooltip" data-placement="top" data-original-title="Riêng tư"><i class="far fa-lock"></i> Theo dõi</a>';
-                            }
-                        } else {
-                            if (isset($row->result)) {
-                                if (str_contains($row->fen, ' b ')) {
-                                    $actionBtn = '<a class="btn btn-dark text-light mr-1" style="width: 100px; cursor: not-allowed !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0);"><i class="far fa-ban"></i> Đã xong</a>';
-                                } else if (str_contains($row->fen, ' r ')) {
-                                    $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 100px; cursor: not-allowed !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0);"><i class="far fa-ban"></i> Đã xong</a>';
-                                }
-                            } else {
-                                if (str_contains($row->fen, ' b ')) {
-                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/phong/'.$row->code.'/den"><i class="far fa-mouse"></i> Chơi</a>';
-                                } else if (str_contains($row->fen, ' r ')) {
-                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/phong/'.$row->code.'/do"><i class="far fa-mouse"></i> Chơi</a>';
-                                }
-                            }
-                            if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/phong/'.$row->code.'/theo-doi" data-toggle="tooltip" data-placement="top" data-original-title="Công khai"><i class="far fa-globe"></i> Theo dõi</a>';
-                            } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/phong/'.$row->code.'/theo-doi" data-toggle="tooltip" data-placement="top" data-original-title="Riêng tư"><i class="far fa-lock"></i> Theo dõi</a>';
-                            }
-                        }
-                    } else {
-                        if (auth()->check()) {
-                            if (isset($row->result)) {
-                                $actionBtn = '<a class="btn btn-dark text-light showPromotion" style="width: 200px;" href="'.url('/').'/phong/'.$row->code.'/theo-doi"><i class="far fa-archive"></i> Đã đấu xong</a>';
-                            } else {
-                                $actionBtn = '<a class="btn btn-danger text-light pulse-red" style="width: 200px;" href="javascript:joinMatch(`'.$row->code.'`)"><i class="far fa-mouse"></i> Chơi nào</a>';
-                            }
-                        } else {
-                            if (str_contains($row->fen, ' r ')) {
-                                $actionBtn = '<a class="btn btn-danger text-light showPromotion pulse-red" style="width: 200px;" href="'.url('/dang-nhap/').'"><i class="far fa-sign-in"></i> Đăng nhập</a>';
-                            } else if (str_contains($row->fen, ' b ')) {
-                                $actionBtn = '<a class="btn btn-dark text-light showPromotion pulse-dark" style="width: 200px;" href="'.url('/dang-nhap/').'"><i class="far fa-sign-in"></i> Đăng nhập</a>';
-                            }
-                        }
-                    }
-                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> Xem trước</a>';
+                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye"></i> '.$t['preview'].'</a>';
                     return $actionBtn;
                 })
                 ->addColumn('time', function($row){
@@ -163,473 +193,11 @@ class RoomController extends Controller
         }
     }
 
-    public function getRoomsEn(Request $request)
-    {
-        if ($request->ajax()) {
-            // $data = Room::orderBy('modified_at', 'desc')->get();
-            $rooms = Room::select(['fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at']);
-            return Datatables::of($rooms)
-                ->addColumn('code', function($row){
-                    if (!isset($row->host_id)) {
-                        if ($row->fen == env('INITIAL_FEN') || str_contains($row->fen, ' r ')) {
-                            $roomCode = '<a class="text-danger disabled" style="cursor: default !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0)">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a>';
-                            if ($row->pass == '') {
-                                $roomCode .= '<i class="ml-3 far fa-globe text-danger" data-toggle="tooltip" data-placement="top" data-original-title="Public"></i>';
-                            } else {
-                                $roomCode .= '<i class="ml-3 far fa-lock text-danger" data-toggle="tooltip" data-placement="top" data-original-title="Private"></i>';
-                            }
-                        } else {
-                            $roomCode = '<a style="color: #222222 !important; cursor: default !important; text-decoration: none !important;" class="disabled" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0)">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a>';
-                            if ($row->pass == '') {
-                                $roomCode .= '<i class="ml-3 far fa-globe text-dark" data-toggle="tooltip" data-placement="top" data-original-title="Public"></i>';
-                            } else {
-                                $roomCode .= '<i class="ml-3 far fa-lock text-dark" data-toggle="tooltip" data-placement="top" data-original-title="Private"></i>';
-                            }
-                        }
-                    } else {
-                        $roomCode = '<span class="text-dark showPromotion">This room is only available in Vietnamese</span>';
-                    }
-                    return $roomCode;
-                })
-                ->addColumn('turn', function($row){
-                    if (str_contains($row->fen, ' r ')) {
-                        $playerTurn = '<span class="text-danger">Red</span>';
-                    } else if (str_contains($row->fen, ' b ')) {
-                        $playerTurn = '<span class="text-dark">Black</span>';
-                    }
-                    return $playerTurn;
-                })
-                ->addColumn('result', function($row){
-                    if (isset($row->result)) {
-                        switch ($row->result) {
-                            case '-1':
-                                $roomResult = '<span class="text-dark">Guest won</span>';
-                                break;
-                            case '0':
-                                $roomResult = '<span class="text-warning">Draw</span>';
-                                break;
-                            case '1':
-                                $roomResult = '<span class="text-danger">Host won</span>';
-                                break;
-                        }
-                    } else if ($row->fen == env('INITIAL_FEN')) {
-                        $roomResult = '<span class="text-secondary">Not started</span>';
-                    } else {
-                        $roomResult = '<span class="text-warning">Ongoing</span>';
-                    }
-                    return $roomResult;
-                })
-                ->addColumn('action', function($row){
-                    if (!isset($row->host_id)) {
-                        if ($row->fen == env('INITIAL_FEN')) {
-                            if ($row->pass == '') {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/room/'.$row->code.'/red"><i class="far fa-mouse"></i> Play</a>';
-                            } else {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/room/'.$row->code.'"><i class="far fa-mouse"></i> Play</a>';
-                            }
-                            if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/room/'.$row->code.'/watch" data-toggle="tooltip" data-placement="top" data-original-title="Public"><i class="far fa-globe"></i> Watch</a>';
-                            } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/room/'.$row->code.'/watch" data-toggle="tooltip" data-placement="top" data-original-title="Private"><i class="far fa-lock"></i> Watch</a>';
-                            }
-                        } else {
-                            if (isset($row->result)) {
-                                if (str_contains($row->fen, ' b ')) {
-                                    $actionBtn = '<a class="btn btn-dark text-light mr-1" style="width: 100px; cursor: not-allowed !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0);"><i class="far fa-ban"></i> Finished</a>';
-                                } else if (str_contains($row->fen, ' r ')) {
-                                    $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 100px; cursor: not-allowed !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0);"><i class="far fa-ban"></i> Finished</a>';
-                                }
-                            } else {
-                                if (str_contains($row->fen, ' b ')) {
-                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/room/'.$row->code.'/black"><i class="far fa-mouse"></i> Play</a>';
-                                } else if (str_contains($row->fen, ' r ')) {
-                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/room/'.$row->code.'/red"><i class="far fa-mouse"></i> Play</a>';
-                                }
-                            }
-                            if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/room/'.$row->code.'/watch" data-toggle="tooltip" data-placement="top" data-original-title="Public"><i class="far fa-globe"></i> Watch</a>';
-                            } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/room/'.$row->code.'/watch" data-toggle="tooltip" data-placement="top" data-original-title="Private"><i class="far fa-lock"></i> Watch</a>';
-                            }
-                        }
-                    } else {
-                        $actionBtn = '<a class="btn btn-dark text-light showPromotion" style="width: 182px;" href="'.url('/sanh-cho/').'"><i class="far fa-language"></i> Switch language</a>';
-                    }
-                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> Preview</a>';
-                    return $actionBtn;
-                })
-                ->addColumn('time', function($row){
-                    return date('Y-m-d | H:i:s', strtotime($row->modified_at));
-                })
-                ->escapeColumns([])
-                ->orderColumn('code', 'code $1')
-                ->orderColumn('result', 'result $1')
-                ->orderColumn('time', 'modified_at $1')
-                ->filterColumn('code', function($query, $keyword) {
-                    $query->where(function($query) use ($keyword) {
-                        $query->orWhere('code', 'like', '%' . $keyword . '%')
-                              ->orWhere('name', 'like', '%' . $keyword . '%');
-                    });
-                })
-                ->filterColumn('time', function($query, $keyword) {
-                    $sql = "modified_at like ?";
-                    $query->whereRaw($sql, ["%{$keyword}%"]);
-                })
-                ->rawColumns(['code', 'turn', 'result', 'action', 'time'])
-                ->make(true);
-        }
-    }
-
-    public function getRoomsJa(Request $request)
-    {
-        if ($request->ajax()) {
-            // $data = Room::orderBy('modified_at', 'desc')->get();
-            $rooms = Room::select(['fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at']);
-            return Datatables::of($rooms)
-                ->addColumn('code', function($row){
-                    if (!isset($row->host_id)) {
-                        if ($row->fen == env('INITIAL_FEN') || str_contains($row->fen, ' r ')) {
-                            $roomCode = '<a class="text-danger disabled" style="cursor: default !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0)">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a>';
-                            if ($row->pass == '') {
-                                $roomCode .= '<i class="ml-3 far fa-globe text-danger" data-toggle="tooltip" data-placement="top" data-original-title="公衆"></i>';
-                            } else {
-                                $roomCode .= '<i class="ml-3 far fa-lock text-danger" data-toggle="tooltip" data-placement="top" data-original-title="民間"></i>';
-                            }
-                        } else {
-                            $roomCode = '<a style="color: #222222 !important; cursor: default !important; text-decoration: none !important;" class="disabled" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0)">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a>';
-                            if ($row->pass == '') {
-                                $roomCode .= '<i class="ml-3 far fa-globe text-dark" data-toggle="tooltip" data-placement="top" data-original-title="公衆"></i>';
-                            } else {
-                                $roomCode .= '<i class="ml-3 far fa-lock text-dark" data-toggle="tooltip" data-placement="top" data-original-title="民間"></i>';
-                            }
-                        }
-                    } else {
-                        $roomCode = '<span class="text-dark showPromotion">この部屋はベトナム語でしか利用できません</span>';
-                    }
-                    return $roomCode;
-                })
-                ->addColumn('turn', function($row){
-                    if (str_contains($row->fen, ' r ')) {
-                        $playerTurn = '<span class="text-danger">赤</span>';
-                    } else if (str_contains($row->fen, ' b ')) {
-                        $playerTurn = '<span class="text-dark">黒</span>';
-                    }
-                    return $playerTurn;
-                })
-                ->addColumn('result', function($row){
-                    if (isset($row->result)) {
-                        switch ($row->result) {
-                            case '-1':
-                                $roomResult = '<span class="text-dark">ゲストが勝ちました</span>';
-                                break;
-                            case '0':
-                                $roomResult = '<span class="text-warning">ドローです</span>';
-                                break;
-                            case '1':
-                                $roomResult = '<span class="text-danger">ホストが勝ちました</span>';
-                                break;
-                        }
-                    } else if ($row->fen == env('INITIAL_FEN')) {
-                        $roomResult = '<span class="text-secondary">開始されていない</span>';
-                    } else {
-                        $roomResult = '<span class="text-warning">現在進行中</span>';
-                    }
-                    return $roomResult;
-                })
-                ->addColumn('action', function($row){
-                    if (!isset($row->host_id)) {
-                        if ($row->fen == env('INITIAL_FEN')) {
-                            if ($row->pass == '') {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/rumu/'.$row->code.'/kuro"><i class="far fa-mouse"></i> 加入</a>';
-                            } else {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/rumu/'.$row->code.'"><i class="far fa-mouse"></i> 加入</a>';
-                            }
-                            if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/rumu/'.$row->code.'/miru" data-toggle="tooltip" data-placement="top" data-original-title="公衆"><i class="far fa-globe"></i> 見る</a>';
-                            } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/rumu/'.$row->code.'/miru" data-toggle="tooltip" data-placement="top" data-original-title="民間"><i class="far fa-lock"></i> 見る</a>';
-                            }
-                        } else {
-                            if (isset($row->result)) {
-                                if (str_contains($row->fen, ' b ')) {
-                                    $actionBtn = '<a class="btn btn-dark text-light mr-1" style="width: 100px; cursor: not-allowed !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0);"><i class="far fa-ban"></i> 終わり</a>';
-                                } else if (str_contains($row->fen, ' r ')) {
-                                    $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 100px; cursor: not-allowed !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0);"><i class="far fa-ban"></i> 終わり</a>';
-                                }
-                            } else {
-                                if (str_contains($row->fen, ' b ')) {
-                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/rumu/'.$row->code.'/aka"><i class="far fa-mouse"></i> 加入</a>';
-                                } else if (str_contains($row->fen, ' r ')) {
-                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/rumu/'.$row->code.'/kuro"><i class="far fa-mouse"></i> 加入</a>';
-                                }
-                            }
-                            if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/rumu/'.$row->code.'/miru" data-toggle="tooltip" data-placement="top" data-original-title="公衆"><i class="far fa-globe"></i> 見る</a>';
-                            } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/rumu/'.$row->code.'/miru" data-toggle="tooltip" data-placement="top" data-original-title="民間"><i class="far fa-lock"></i> 見る</a>';
-                            }
-                        }
-                    } else {
-                        $actionBtn = '<a class="btn btn-dark text-light showPromotion" style="width: 170px;" href="'.url('/sanh-cho/').'"><i class="far fa-language"></i> 言語を切り替える</a>';
-                    }
-                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> プレビュー</a>';
-                    return $actionBtn;
-                })
-                ->addColumn('time', function($row){
-                    return date('Y-m-d | H:i:s', strtotime($row->modified_at));
-                })
-                ->escapeColumns([])
-                ->orderColumn('code', 'code $1')
-                ->orderColumn('result', 'result $1')
-                ->orderColumn('time', 'modified_at $1')
-                ->filterColumn('code', function($query, $keyword) {
-                    $query->where(function($query) use ($keyword) {
-                        $query->orWhere('code', 'like', '%' . $keyword . '%')
-                              ->orWhere('name', 'like', '%' . $keyword . '%');
-                    });
-                })
-                ->filterColumn('time', function($query, $keyword) {
-                    $sql = "modified_at like ?";
-                    $query->whereRaw($sql, ["%{$keyword}%"]);
-                })
-                ->rawColumns(['code', 'turn', 'result', 'action', 'time'])
-                ->make(true);
-        }
-    }
-
-    public function getRoomsKo(Request $request)
-    {
-        if ($request->ajax()) {
-            // $data = Room::orderBy('modified_at', 'desc')->get();
-            $rooms = Room::select(['fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at']);
-            return Datatables::of($rooms)
-                ->addColumn('code', function($row){
-                    if (!isset($row->host_id)) {
-                        if ($row->fen == env('INITIAL_FEN') || str_contains($row->fen, ' r ')) {
-                            $roomCode = '<a class="text-danger disabled" style="cursor: default !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0)">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a>';
-                            if ($row->pass == '') {
-                                $roomCode .= '<i class="ml-3 far fa-globe text-danger" data-toggle="tooltip" data-placement="top" data-original-title="공공의"></i>';
-                            } else {
-                                $roomCode .= '<i class="ml-3 far fa-lock text-danger" data-toggle="tooltip" data-placement="top" data-original-title="사적인"></i>';
-                            }
-                        } else {
-                            $roomCode = '<a style="color: #222222 !important; cursor: default !important; text-decoration: none !important;" class="disabled" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0)">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a>';
-                            if ($row->pass == '') {
-                                $roomCode .= '<i class="ml-3 far fa-globe text-dark" data-toggle="tooltip" data-placement="top" data-original-title="공공의"></i>';
-                            } else {
-                                $roomCode .= '<i class="ml-3 far fa-lock text-dark" data-toggle="tooltip" data-placement="top" data-original-title="사적인"></i>';
-                            }
-                        }
-                    } else {
-                        $roomCode = '<span class="text-dark showPromotion">이 방은 베트남어로만 이용 가능합니다</span>';
-                    }
-                    return $roomCode;
-                })
-                ->addColumn('turn', function($row){
-                    if (str_contains($row->fen, ' r ')) {
-                        $playerTurn = '<span class="text-danger">홍</span>';
-                    } else if (str_contains($row->fen, ' b ')) {
-                        $playerTurn = '<span class="text-dark">검</span>';
-                    }
-                    return $playerTurn;
-                })
-                ->addColumn('result', function($row){
-                    if (isset($row->result)) {
-                        switch ($row->result) {
-                            case '-1':
-                                $roomResult = '<span class="text-danger">손님이 이겼어요</span>';
-                                break;
-                            case '0':
-                                $roomResult = '<span class="text-warning">동점입니다</span>';
-                                break;
-                            case '1':
-                                $roomResult = '<span class="text-dark">주최자가 이겼어요</span>';
-                                break;
-                        }
-                    } else if ($row->fen == env('INITIAL_FEN')) {
-                        $roomResult = '<span class="text-secondary">아직 시작되지 않음</span>';
-                    } else {
-                        $roomResult = '<span class="text-warning">진행 중인</span>';
-                    }
-                    return $roomResult;
-                })
-                ->addColumn('action', function($row){
-                    if (!isset($row->host_id)) {
-                        if ($row->fen == env('INITIAL_FEN')) {
-                            if ($row->pass == '') {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/bang/'.$row->code.'/geom-eunsaeg"><i class="far fa-mouse"></i> 참여</a>';
-                            } else {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/bang/'.$row->code.'"><i class="far fa-mouse"></i> 참여</a>';
-                            }
-                            if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/bang/'.$row->code.'/boda" data-toggle="tooltip" data-placement="top" data-original-title="공공의"><i class="far fa-globe"></i> 보다</a>';
-                            } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/bang/'.$row->code.'/boda" data-toggle="tooltip" data-placement="top" data-original-title="사적인"><i class="far fa-lock"></i> 보다</a>';
-                            }
-                        } else {
-                            if (isset($row->result)) {
-                                if (str_contains($row->fen, ' b ')) {
-                                    $actionBtn = '<a class="btn btn-dark text-light mr-1" style="width: 100px; cursor: not-allowed !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0);"><i class="far fa-ban"></i> 끝났다</a>';
-                                } else if (str_contains($row->fen, ' r ')) {
-                                    $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 100px; cursor: not-allowed !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0);"><i class="far fa-ban"></i> 끝났다</a>';
-                                }
-                            } else {
-                                if (str_contains($row->fen, ' b ')) {
-                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/bang/'.$row->code.'/ppalgan"><i class="far fa-mouse"></i> 참여</a>';
-                                } else if (str_contains($row->fen, ' r ')) {
-                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/bang/'.$row->code.'/geom-eunsaeg"><i class="far fa-mouse"></i> 참여</a>';
-                                }
-                            }
-                            if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/bang/'.$row->code.'/boda" data-toggle="tooltip" data-placement="top" data-original-title="공공의"><i class="far fa-globe"></i> 보다</a>';
-                            } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/bang/'.$row->code.'/boda" data-toggle="tooltip" data-placement="top" data-original-title="사적인"><i class="far fa-lock"></i> 보다</a>';
-                            }
-                        }
-                    } else {
-                        $actionBtn = '<a class="btn btn-dark text-light showPromotion" style="width: 168px;" href="'.url('/sanh-cho/').'"><i class="far fa-language"></i> 언어 변경</a>';
-                    }
-                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> 미리보기</a>';
-                    return $actionBtn;
-                })
-                ->addColumn('time', function($row){
-                    return date('Y-m-d | H:i:s', strtotime($row->modified_at));
-                })
-                ->escapeColumns([])
-                ->orderColumn('code', 'code $1')
-                ->orderColumn('result', 'result $1')
-                ->orderColumn('time', 'modified_at $1')
-                ->filterColumn('code', function($query, $keyword) {
-                    $query->where(function($query) use ($keyword) {
-                        $query->orWhere('code', 'like', '%' . $keyword . '%')
-                              ->orWhere('name', 'like', '%' . $keyword . '%');
-                    });
-                })
-                ->filterColumn('time', function($query, $keyword) {
-                    $sql = "modified_at like ?";
-                    $query->whereRaw($sql, ["%{$keyword}%"]);
-                })
-                ->rawColumns(['code', 'turn', 'result', 'action', 'time'])
-                ->make(true);
-        }
-    }
-
-    public function getRoomsZh(Request $request)
-    {
-        if ($request->ajax()) {
-            // $data = Room::orderBy('modified_at', 'desc')->get();
-            $rooms = Room::select(['fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at']);
-            return Datatables::of($rooms)
-                ->addColumn('code', function($row){
-                    if (!isset($row->host_id)) {
-                        if ($row->fen == env('INITIAL_FEN') || str_contains($row->fen, ' r ')) {
-                            $roomCode = '<a class="text-danger disabled" style="cursor: default !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0)">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a>';
-                            if ($row->pass == '') {
-                                $roomCode .= '<i class="ml-3 far fa-globe text-danger" data-toggle="tooltip" data-placement="top" data-original-title="平民的"></i>';
-                            } else {
-                                $roomCode .= '<i class="ml-3 far fa-lock text-danger" data-toggle="tooltip" data-placement="top" data-original-title="私有的"></i>';
-                            }
-                        } else {
-                            $roomCode = '<a style="color: #222222 !important; cursor: default !important; text-decoration: none !important;" class="disabled" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0)">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a>';
-                            if ($row->pass == '') {
-                                $roomCode .= '<i class="ml-3 far fa-globe text-dark" data-toggle="tooltip" data-placement="top" data-original-title="平民的"></i>';
-                            } else {
-                                $roomCode .= '<i class="ml-3 far fa-lock text-dark" data-toggle="tooltip" data-placement="top" data-original-title="私有的"></i>';
-                            }
-                        }
-                    } else {
-                        $roomCode = '<span class="text-dark showPromotion">这个房间只提供越南语服务</span>';
-                    }
-                    return $roomCode;
-                })
-                ->addColumn('turn', function($row){
-                    if (str_contains($row->fen, ' r ')) {
-                        $playerTurn = '<span class="text-danger">红</span>';
-                    } else if (str_contains($row->fen, ' b ')) {
-                        $playerTurn = '<span class="text-dark">黑</span>';
-                    }
-                    return $playerTurn;
-                })
-                ->addColumn('result', function($row){
-                    if (isset($row->result)) {
-                        switch ($row->result) {
-                            case '-1':
-                                $roomResult = '<span class="text-dark">客人赢了</span>';
-                                break;
-                            case '0':
-                                $roomResult = '<span class="text-warning">平局</span>';
-                                break;
-                            case '1':
-                                $roomResult = '<span class="text-danger">主办方赢了</span>';
-                                break;
-                        }
-                    } else if ($row->fen == env('INITIAL_FEN')) {
-                        $roomResult = '<span class="text-secondary">未开始</span>';
-                    } else {
-                        $roomResult = '<span class="text-warning">进行中的</span>';
-                    }
-                    return $roomResult;
-                })
-                ->addColumn('action', function($row){
-                    if (!isset($row->host_id)) {
-                        if ($row->fen == env('INITIAL_FEN')) {
-                            if ($row->pass == '') {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 70px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/fangjian/'.$row->code.'/heise"><i class="far fa-mouse"></i> 参加</a>';
-                            } else {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 70px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/fangjian/'.$row->code.'"><i class="far fa-mouse"></i> 参加</a>';
-                            }
-                            if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" style="width: 60px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/fangjian/'.$row->code.'/kan" data-toggle="tooltip" data-placement="top" data-original-title="平民的"><i class="far fa-globe"></i> 看</a>';
-                            } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" style="width: 60px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/fangjian/'.$row->code.'/kan" data-toggle="tooltip" data-placement="top" data-original-title="私有的"><i class="far fa-lock"></i> 看</a>';
-                            }
-                        } else {
-                            if (isset($row->result)) {
-                                if (str_contains($row->fen, ' b ')) {
-                                    $actionBtn = '<a class="btn btn-dark text-light mr-1" style="width: 70px; cursor: not-allowed !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0);"><i class="far fa-ban"></i> 结束</a>';
-                                } else if (str_contains($row->fen, ' r ')) {
-                                    $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 70px; cursor: not-allowed !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0);"><i class="far fa-ban"></i> 结束</a>';
-                                }
-                            } else {
-                                if (str_contains($row->fen, ' b ')) {
-                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion" style="width: 70px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/fangjian/'.$row->code.'/hongse"><i class="far fa-mouse"></i> 参加</a>';
-                                } else if (str_contains($row->fen, ' r ')) {
-                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 70px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/fangjian/'.$row->code.'/heise"><i class="far fa-mouse"></i> 参加</a>';
-                                }
-                            }
-                            if ($row->pass == '') {
-                                $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" style="width: 60px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/fangjian/'.$row->code.'/kan" data-toggle="tooltip" data-placement="top" data-original-title="平民的"><i class="far fa-globe"></i> 看</a>';
-                            } else {
-                                $actionBtn .= '<a class="btn btn-warning text-light watch-btn border-warning showPromotion" style="width: 60px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.url('/').'/fangjian/'.$row->code.'/kan" data-toggle="tooltip" data-placement="top" data-original-title="私有的"><i class="far fa-lock"></i> 看</a>';
-                            }
-                        }
-                    } else {
-                        $actionBtn = '<a class="btn btn-dark text-light showPromotion" style="width: 134px;" href="'.url('/sanh-cho/').'"><i class="far fa-language"></i> 切换语言</a>';
-                    }
-                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> 预览</a>';
-                    return $actionBtn;
-                })
-                ->addColumn('time', function($row){
-                    return date('Y-m-d | H:i:s', strtotime($row->modified_at));
-                })
-                ->escapeColumns([])
-                ->orderColumn('code', 'code $1')
-                ->orderColumn('result', 'result $1')
-                ->orderColumn('time', 'modified_at $1')
-                ->filterColumn('code', function($query, $keyword) {
-                    $query->where(function($query) use ($keyword) {
-                        $query->orWhere('code', 'like', '%' . $keyword . '%')
-                              ->orWhere('name', 'like', '%' . $keyword . '%');
-                    });
-                })
-                ->filterColumn('time', function($query, $keyword) {
-                    $sql = "modified_at like ?";
-                    $query->whereRaw($sql, ["%{$keyword}%"]);
-                })
-                ->rawColumns(['code', 'turn', 'result', 'action', 'time'])
-                ->make(true);
-        }
-    }
+    public function getRoomsVi(Request $request) { return $this->getRoomsData($request, 'vi'); }
+    public function getRoomsEn(Request $request) { return $this->getRoomsData($request, 'en'); }
+    public function getRoomsJa(Request $request) { return $this->getRoomsData($request, 'ja'); }
+    public function getRoomsKo(Request $request) { return $this->getRoomsData($request, 'ko'); }
+    public function getRoomsZh(Request $request) { return $this->getRoomsData($request, 'zh'); }
 
     public static function quickMatch()
     {

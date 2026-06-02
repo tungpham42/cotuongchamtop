@@ -22,215 +22,68 @@ class UserController extends Controller
 {
     public function getUsersVi(Request $request)
     {
+        return $this->getUsersDatatable($request, 'Thách đấu', 'Hồ sơ');
+    }
+
+    public function getUsersEn(Request $request)
+    {
+        return $this->getUsersDatatable($request, 'Challenge', 'Profile');
+    }
+
+    public function getUsersJa(Request $request)
+    {
+        return $this->getUsersDatatable($request, '挑戦', 'プロフィール');
+    }
+
+    public function getUsersKo(Request $request)
+    {
+        return $this->getUsersDatatable($request, '도전', '프로필');
+    }
+
+    public function getUsersZh(Request $request)
+    {
+        return $this->getUsersDatatable($request, '挑战', '个人资料');
+    }
+
+    /**
+     * Shared logic to generate the DataTables response for users.
+     * * @param Request $request
+     * @param string $challengeText Localized text for the Challenge button
+     * @param string $profileText Localized text for the Profile button
+     */
+    private function getUsersDatatable(Request $request, string $challengeText, string $profileText)
+    {
         if ($request->ajax()) {
             $users = User::select(['id', 'name', 'email', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at']);
+
             return Datatables::of($users)
                 ->addColumn('rank', function($row){
-                    $userRank = self::renderUserRank($row->id);
-                    return $userRank;
+                    return self::renderUserRank($row->id);
                 })
                 ->addColumn('name', function($row){
                     $onlineStatus = self::onlineStatus($row->id);
                     $avatar = Avatar::create($row->name)->setDimension(28)->setFontSize(14);
-                    $userName = '<img src="' . $avatar . '" />&nbsp;<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" href="'.url('/').'/ky-thu/'.$row->id.'">'.$row->name.'</a>&nbsp;' . $onlineStatus;
-                    return $userName;
+                    return '<img src="' . $avatar . '" />&nbsp;<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" href="'.url('/').'/ky-thu/'.$row->id.'">'.$row->name.'</a>&nbsp;' . $onlineStatus;
                 })
                 ->addColumn('elo', function($row){
-                    $userElo = self::renderElo($row->id);
-                    return $userElo;
+                    return self::renderElo($row->id);
                 })
-                ->addColumn('action', function($row){
+                ->addColumn('action', function($row) use ($challengeText, $profileText) {
                     if (auth()->check()) {
                         if (auth()->id() != $row->id) {
-                            $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 140px;" href="javascript:compete('.$row->id.');"><i class="far fa-mouse"></i> Thách đấu</a>';
+                            $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 140px;" href="javascript:compete('.$row->id.');"><i class="far fa-mouse"></i> '.$challengeText.'</a>';
                         } else {
-                            $actionBtn = '<a class="btn btn-dark text-light mr-1" style="width: 140px; cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> Thách đấu</a>';
+                            $actionBtn = '<a class="btn btn-dark text-light mr-1" style="width: 140px; cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> '.$challengeText.'</a>';
                         }
                     } else {
-                        $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 140px;" href="'.localized_url('login').'"><i class="far fa-sign-in"></i> Thách đấu</a>';
+                        $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 140px;" href="'.localized_url('login').'"><i class="far fa-sign-in"></i> '.$challengeText.'</a>';
                     }
-                    $actionBtn .= '<a class="btn btn-dark text-light" style="width: 90px;" href="'.url('/').'/ky-thu/'.$row->id.'"><i class="far fa-user-alt"></i> Hồ sơ</a>';
+                    $actionBtn .= '<a class="btn btn-dark text-light" style="width: 90px;" href="'.url('/').'/ky-thu/'.$row->id.'"><i class="far fa-user-alt"></i> '.$profileText.'</a>';
                     return $actionBtn;
                 })
                 ->addColumn('time', function($row){
                     return date('Y-m-d | H:i:s', strtotime($row->created_at));
                 })
-                ->escapeColumns([])
-                ->orderColumn('name', 'name $1')
-                ->orderColumn('elo', 'elo $1')
-                ->orderColumn('time', 'created_at $1')
-                ->filterColumn('name', function($query, $keyword) {
-                    $query->where(function($query) use ($keyword) {
-                        $query->orWhere('name', 'like', '%' . $keyword . '%');
-                    });
-                })
-                ->filterColumn('time', function($query, $keyword) {
-                    $sql = "created_at like ?";
-                    $query->whereRaw($sql, ["%{$keyword}%"]);
-                })
-                ->rawColumns(['rank', 'name', 'elo', 'action', 'time'])
-                ->make(true);
-        }
-    }
-
-    public function getUsersEn(Request $request)
-    {
-        if ($request->ajax()) {
-            $users = User::select(['id', 'name', 'email', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at']);
-            return Datatables::of($users)
-                ->addColumn('rank', function($row){ return self::renderUserRank($row->id); })
-                ->addColumn('name', function($row){
-                    $onlineStatus = self::onlineStatus($row->id);
-                    $avatar = Avatar::create($row->name)->setDimension(28)->setFontSize(14);
-                    return '<img src="' . $avatar . '" />&nbsp;<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" href="'.url('/').'/ky-thu/'.$row->id.'">'.$row->name.'</a>&nbsp;' . $onlineStatus;
-                })
-                ->addColumn('elo', function($row){ return self::renderElo($row->id); })
-                ->addColumn('action', function($row){
-                    if (auth()->check()) {
-                        if (auth()->id() != $row->id) {
-                            $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 140px;" href="javascript:compete('.$row->id.');"><i class="far fa-mouse"></i> Challenge</a>';
-                        } else {
-                            $actionBtn = '<a class="btn btn-dark text-light mr-1" style="width: 140px; cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> Challenge</a>';
-                        }
-                    } else {
-                        $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 140px;" href="'.localized_url('login').'"><i class="far fa-sign-in"></i> Challenge</a>';
-                    }
-                    $actionBtn .= '<a class="btn btn-dark text-light" style="width: 90px;" href="'.url('/').'/ky-thu/'.$row->id.'"><i class="far fa-user-alt"></i> Profile</a>';
-                    return $actionBtn;
-                })
-                ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->created_at)); })
-                ->escapeColumns([])
-                ->orderColumn('name', 'name $1')
-                ->orderColumn('elo', 'elo $1')
-                ->orderColumn('time', 'created_at $1')
-                ->filterColumn('name', function($query, $keyword) {
-                    $query->where(function($query) use ($keyword) {
-                        $query->orWhere('name', 'like', '%' . $keyword . '%');
-                    });
-                })
-                ->filterColumn('time', function($query, $keyword) {
-                    $sql = "created_at like ?";
-                    $query->whereRaw($sql, ["%{$keyword}%"]);
-                })
-                ->rawColumns(['rank', 'name', 'elo', 'action', 'time'])
-                ->make(true);
-        }
-    }
-
-    public function getUsersJa(Request $request)
-    {
-        if ($request->ajax()) {
-            $users = User::select(['id', 'name', 'email', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at']);
-            return Datatables::of($users)
-                ->addColumn('rank', function($row){ return self::renderUserRank($row->id); })
-                ->addColumn('name', function($row){
-                    $onlineStatus = self::onlineStatus($row->id);
-                    $avatar = Avatar::create($row->name)->setDimension(28)->setFontSize(14);
-                    return '<img src="' . $avatar . '" />&nbsp;<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" href="'.url('/').'/ky-thu/'.$row->id.'">'.$row->name.'</a>&nbsp;' . $onlineStatus;
-                })
-                ->addColumn('elo', function($row){ return self::renderElo($row->id); })
-                ->addColumn('action', function($row){
-                    if (auth()->check()) {
-                        if (auth()->id() != $row->id) {
-                            $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 140px;" href="javascript:compete('.$row->id.');"><i class="far fa-mouse"></i> 挑戦</a>';
-                        } else {
-                            $actionBtn = '<a class="btn btn-dark text-light mr-1" style="width: 140px; cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> 挑戦</a>';
-                        }
-                    } else {
-                        $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 140px;" href="'.localized_url('login').'"><i class="far fa-sign-in"></i> 挑戦</a>';
-                    }
-                    $actionBtn .= '<a class="btn btn-dark text-light" style="width: 90px;" href="'.url('/').'/ky-thu/'.$row->id.'"><i class="far fa-user-alt"></i> プロフィール</a>';
-                    return $actionBtn;
-                })
-                ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->created_at)); })
-                ->escapeColumns([])
-                ->orderColumn('name', 'name $1')
-                ->orderColumn('elo', 'elo $1')
-                ->orderColumn('time', 'created_at $1')
-                ->filterColumn('name', function($query, $keyword) {
-                    $query->where(function($query) use ($keyword) {
-                        $query->orWhere('name', 'like', '%' . $keyword . '%');
-                    });
-                })
-                ->filterColumn('time', function($query, $keyword) {
-                    $sql = "created_at like ?";
-                    $query->whereRaw($sql, ["%{$keyword}%"]);
-                })
-                ->rawColumns(['rank', 'name', 'elo', 'action', 'time'])
-                ->make(true);
-        }
-    }
-
-    public function getUsersKo(Request $request)
-    {
-        if ($request->ajax()) {
-            $users = User::select(['id', 'name', 'email', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at']);
-            return Datatables::of($users)
-                ->addColumn('rank', function($row){ return self::renderUserRank($row->id); })
-                ->addColumn('name', function($row){
-                    $onlineStatus = self::onlineStatus($row->id);
-                    $avatar = Avatar::create($row->name)->setDimension(28)->setFontSize(14);
-                    return '<img src="' . $avatar . '" />&nbsp;<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" href="'.url('/').'/ky-thu/'.$row->id.'">'.$row->name.'</a>&nbsp;' . $onlineStatus;
-                })
-                ->addColumn('elo', function($row){ return self::renderElo($row->id); })
-                ->addColumn('action', function($row){
-                    if (auth()->check()) {
-                        if (auth()->id() != $row->id) {
-                            $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 140px;" href="javascript:compete('.$row->id.');"><i class="far fa-mouse"></i> 도전</a>';
-                        } else {
-                            $actionBtn = '<a class="btn btn-dark text-light mr-1" style="width: 140px; cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> 도전</a>';
-                        }
-                    } else {
-                        $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 140px;" href="'.localized_url('login').'"><i class="far fa-sign-in"></i> 도전</a>';
-                    }
-                    $actionBtn .= '<a class="btn btn-dark text-light" style="width: 90px;" href="'.url('/').'/ky-thu/'.$row->id.'"><i class="far fa-user-alt"></i> 프로필</a>';
-                    return $actionBtn;
-                })
-                ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->created_at)); })
-                ->escapeColumns([])
-                ->orderColumn('name', 'name $1')
-                ->orderColumn('elo', 'elo $1')
-                ->orderColumn('time', 'created_at $1')
-                ->filterColumn('name', function($query, $keyword) {
-                    $query->where(function($query) use ($keyword) {
-                        $query->orWhere('name', 'like', '%' . $keyword . '%');
-                    });
-                })
-                ->filterColumn('time', function($query, $keyword) {
-                    $sql = "created_at like ?";
-                    $query->whereRaw($sql, ["%{$keyword}%"]);
-                })
-                ->rawColumns(['rank', 'name', 'elo', 'action', 'time'])
-                ->make(true);
-        }
-    }
-
-    public function getUsersZh(Request $request)
-    {
-        if ($request->ajax()) {
-            $users = User::select(['id', 'name', 'email', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at']);
-            return Datatables::of($users)
-                ->addColumn('rank', function($row){ return self::renderUserRank($row->id); })
-                ->addColumn('name', function($row){
-                    $onlineStatus = self::onlineStatus($row->id);
-                    $avatar = Avatar::create($row->name)->setDimension(28)->setFontSize(14);
-                    return '<img src="' . $avatar . '" />&nbsp;<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" href="'.url('/').'/ky-thu/'.$row->id.'">'.$row->name.'</a>&nbsp;' . $onlineStatus;
-                })
-                ->addColumn('elo', function($row){ return self::renderElo($row->id); })
-                ->addColumn('action', function($row){
-                    if (auth()->check()) {
-                        if (auth()->id() != $row->id) {
-                            $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 140px;" href="javascript:compete('.$row->id.');"><i class="far fa-mouse"></i> 挑战</a>';
-                        } else {
-                            $actionBtn = '<a class="btn btn-dark text-light mr-1" style="width: 140px; cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> 挑战</a>';
-                        }
-                    } else {
-                        $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 140px;" href="'.localized_url('login').'"><i class="far fa-sign-in"></i> 挑战</a>';
-                    }
-                    $actionBtn .= '<a class="btn btn-dark text-light" style="width: 90px;" href="'.url('/').'/ky-thu/'.$row->id.'"><i class="far fa-user-alt"></i> 个人资料</a>';
-                    return $actionBtn;
-                })
-                ->addColumn('time', function($row){ return date('Y-m-d | H:i:s', strtotime($row->created_at)); })
                 ->escapeColumns([])
                 ->orderColumn('name', 'name $1')
                 ->orderColumn('elo', 'elo $1')
