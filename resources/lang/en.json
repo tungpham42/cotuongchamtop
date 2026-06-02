@@ -697,5 +697,10 @@
     "Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.": "You do not have permission to access the Red / Host side.",
     "Bạn không có quyền truy cập vào phe Đen / Khách.": "You do not have permission to access the Black / Guest side.",
     "Mật khẩu không được để trống.": "Password cannot be empty.",
-    "Đổi mật khẩu thành công!": "Password changed successfully!"
+    "Đổi mật khẩu thành công!": "Password changed successfully!",
+    "Red lost!": "Red lost!",
+    "Draw.": "Draw.",
+    "Red won!": "Red won!",
+    "Black won!": "Black won!",
+    "Black lost!": "Black lost!"
 }

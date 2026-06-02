@@ -699,5 +699,10 @@
     "Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.": "赤 / ホスト側にアクセスする権限がありません。",
     "Bạn không có quyền truy cập vào phe Đen / Khách.": "黒 / ゲスト側にアクセスする権限がありません。",
     "Mật khẩu không được để trống.": "パスワードは空にできません。",
-    "Đổi mật khẩu thành công!": "パスワードが正常に変更されました！"
+    "Đổi mật khẩu thành công!": "パスワードが正常に変更されました！",
+    "Red lost!": "赤が負けました！",
+    "Draw.": "引き分け。",
+    "Red won!": "赤が勝ちました！",
+    "Black won!": "黒が勝ちました！",
+    "Black lost!": "黒が負けました！"
 }

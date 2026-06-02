@@ -701,5 +701,10 @@
     "Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.": "您没有权限访问红方 / 房主一侧。",
     "Bạn không có quyền truy cập vào phe Đen / Khách.": "您没有权限访问黑方 / 访客一侧。",
     "Mật khẩu không được để trống.": "密码不能为空。",
-    "Đổi mật khẩu thành công!": "密码修改成功！"
+    "Đổi mật khẩu thành công!": "密码修改成功！",
+    "Red lost!": "红方输了！",
+    "Draw.": "平局。",
+    "Red won!": "红方赢了！",
+    "Black won!": "黑方赢了！",
+    "Black lost!": "黑方输了！"
 }

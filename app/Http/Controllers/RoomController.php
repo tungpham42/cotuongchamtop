@@ -510,6 +510,11 @@ class RoomController extends Controller
         $lang = $request->input('lang');
         $side = $request->input('side');
 
+        // Dynamically set the locale based on the request to ensure translations match the user's frontend language
+        if ($lang) {
+            app()->setLocale($lang);
+        }
+
         // BẢO VỆ: Truy vấn trước để kiểm tra trạng thái
         $roomData = Room::select('result')->where('code', $code)->first();
         if ($roomData && !is_null($roomData->result)) {
@@ -521,148 +526,26 @@ class RoomController extends Controller
 
         Room::updateOrInsert(
             ['code' => $code],
-            ['result' => $result, 'modified_at' => date('Y-m-d H:i:s')]
+            ['result' => $result, 'modified_at' => now()]
         );
 
-        $success_message = '';
+        // Map sides and results to their respective translation keys
+        $successMessages = [
+            'red' => [
+                '-1' => __('Red lost!'),
+                '0'  => __('Draw.'),
+                '1'  => __('Red won!'),
+            ],
+            'black' => [
+                '-1' => __('Black won!'),
+                '0'  => __('Draw.'),
+                '1'  => __('Black lost!'),
+            ],
+        ];
 
-        switch ($lang) {
-            case 'vi':
-                if ($side == 'red') {
-                    switch ($result) {
-                        case '-1':
-                            $success_message = 'Đỏ thua! Cố lên nhé!';
-                            break;
-                        case '0':
-                            $success_message = 'Hòa.';
-                            break;
-                        case '1':
-                            $success_message = 'Đỏ thắng. Xin chúc mừng!';
-                            break;
-                    }
-                } elseif ($side == 'black') {
-                    switch ($result) {
-                        case '-1':
-                            $success_message = 'Đen thắng. Xin chúc mừng!';
-                            break;
-                        case '0':
-                            $success_message = 'Hòa.';
-                            break;
-                        case '1':
-                            $success_message = 'Đen thua! Cố lên nhé!';
-                            break;
-                    }
-                }
-                break;
-            case 'en':
-                if ($side == 'red') {
-                    switch ($result) {
-                        case '-1':
-                            $success_message = 'Red lost!';
-                            break;
-                        case '0':
-                            $success_message = 'Draw.';
-                            break;
-                        case '1':
-                            $success_message = 'Red won!';
-                            break;
-                    }
-                } elseif ($side == 'black') {
-                    switch ($result) {
-                        case '-1':
-                            $success_message = 'Black won!';
-                            break;
-                        case '0':
-                            $success_message = 'Draw.';
-                            break;
-                        case '1':
-                            $success_message = 'Black lost!';
-                            break;
-                    }
-                }
-                break;
-            case 'ja':
-                if ($side == 'red') {
-                    switch ($result) {
-                        case '-1':
-                            $success_message = 'ホストが切断されました！';
-                            break;
-                        case '0':
-                            $success_message = '描く';
-                            break;
-                        case '1':
-                            $success_message = 'ホストが勝ちました！';
-                            break;
-                    }
-                } elseif ($side == 'black') {
-                    switch ($result) {
-                        case '-1':
-                            $success_message = 'ゲストが勝ちました！';
-                            break;
-                        case '0':
-                            $success_message = '描く';
-                            break;
-                        case '1':
-                            $success_message = 'ゲストが負けました！';
-                            break;
-                    }
-                }
-                break;
-            case 'ko':
-                if ($side == 'red') {
-                    switch ($result) {
-                        case '-1':
-                            $success_message = '호스트가 패배했습니다!';
-                            break;
-                        case '0':
-                            $success_message = '그리다';
-                            break;
-                        case '1':
-                            $success_message = '호스트가 이겼습니다!';
-                            break;
-                    }
-                } elseif ($side == 'black') {
-                    switch ($result) {
-                        case '-1':
-                            $success_message = '게스트가 이겼습니다!';
-                            break;
-                        case '0':
-                            $success_message = '그리다';
-                            break;
-                        case '1':
-                            $success_message = '게스트가 졌습니다!';
-                            break;
-                    }
-                }
-                break;
-            case 'zh':
-                if ($side == 'red') {
-                    switch ($result) {
-                        case '-1':
-                            $success_message = '主机失败了！';
-                            break;
-                        case '0':
-                            $success_message = '画';
-                            break;
-                        case '1':
-                            $success_message = '主机获胜了！';
-                            break;
-                    }
-                } elseif ($side == 'black') {
-                    switch ($result) {
-                        case '-1':
-                            $success_message = '客人获胜了！';
-                            break;
-                        case '0':
-                            $success_message = '画';
-                            break;
-                        case '1':
-                            $success_message = '客人失败了！';
-                            break;
-                    }
-                }
-                break;
-        }
+        // Retrieve the appropriate message, falling back to a default if side/result is unexpected
+        $success_message = $successMessages[$side][$result] ?? __('Result recorded.');
+
         return response()->json([
             'success' => $success_message
         ]);

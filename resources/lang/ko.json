@@ -686,5 +686,10 @@
     "Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.": "빨간색 / 호스트 진영에 접근할 권한이 없습니다.",
     "Bạn không có quyền truy cập vào phe Đen / Khách.": "검은색 / 게스트 진영에 접근할 권한이 없습니다.",
     "Mật khẩu không được để trống.": "비밀번호는 비워둘 수 없습니다.",
-    "Đổi mật khẩu thành công!": "비밀번호가 성공적으로 변경되었습니다!"
+    "Đổi mật khẩu thành công!": "비밀번호가 성공적으로 변경되었습니다!",
+    "Red lost!": "빨간색이 패배했습니다!",
+    "Draw.": "무승부.",
+    "Red won!": "빨간색이 승리했습니다!",
+    "Black won!": "검은색이 승리했습니다!",
+    "Black lost!": "검은색이 패배했습니다!"
 }
