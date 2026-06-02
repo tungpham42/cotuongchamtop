@@ -36,6 +36,15 @@
 <script>
 let board = null;
 let game = new Xiangqi();
+
+// FIX: Inject current FEN from the backend. Clean out 'resign' if the game ended that way.
+let serverFen = '{!! $room->fen !!}';
+let cleanFen = serverFen ? serverFen.replace(' resign', '') : null;
+
+if (cleanFen) {
+    game.load(cleanFen);
+}
+
 let currentFEN = game.fen();
 let hasGameOverSound = false;
 let kypho = null;
@@ -63,8 +72,6 @@ if (typeof Echo !== 'undefined') {
       if (!newFEN) return;
 
       if (newFEN !== game.fen()) {
-        // ĐIỂM MẤU CHỐT: Nếu FEN từ server gửi về giống hệt FEN trước khi ta đi (currentFEN)
-        // Nghĩa là server đang bị trễ và gửi tiếng vọng FEN cũ của lệnh đổi lượt. Ta bỏ qua ngay!
         if (newFEN === currentFEN) return;
 
         currentFEN = newFEN;
@@ -173,8 +180,6 @@ function updatePlayersTitle() {
   });
 }
 
-
-
 @if (isset($room->host_id))
 const updatePlayers = setInterval(function() {
   updatePlayersTitle();
@@ -215,10 +220,8 @@ function updateStatus () {
     }
   }
   if (game.turn() === 'r') {
-    // $('#join-link').removeClass('disabled').addClass('disabled');
     $('#game-status').removeClass('black').addClass('red');
   } else if (game.turn() === 'b') {
-    // $('#join-link').removeClass('disabled');
     $('#game-status').removeClass('red').addClass('black');
   }
   $('#game-status').html(status);
@@ -230,8 +233,7 @@ function updateStatus () {
     }
     $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> {{ __("Hết trận") }}');
     $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
-    // evtSource.close();
-    // ADD THIS TO DISCONNECT THE WEBSOCKET
+
     if (typeof Echo !== 'undefined') {
       Echo.leave('room.{{ $roomCode }}');
     }
@@ -262,7 +264,8 @@ function updateStatus () {
 }
 let config = {
   draggable: false,
-  position: 'start',
+  // FIX: Make sure the board draws the loaded FEN, not just 'start'
+  position: cleanFen ? cleanFen : 'start',
   onDragStart: onDragStart,
   onDrop: onDrop,
   onMouseoutSquare: onMouseoutSquare,
@@ -274,7 +277,6 @@ let config = {
   @elseif (str_contains($room->fen, ' b '))
   orientation: "black"
   @endif
-  //pieceTheme: '/static/img/xiangqipieces/traditional/{piece}.svg'
 
 };
 board = Xiangqiboard('ban-co', config);
@@ -288,79 +290,5 @@ if (kypho) {
   kypho.syncMoves('{{ url('/api') }}/readMoves/{{ $roomCode }}');
 }
 updateStatus()
-// window.onload = function(){
-//   if (board.orientation() == 'red' && game.turn() === 'b') {
-//     location.href = $('#black-link').attr('href');
-//   }
-// };
-// let evtSource = new EventSource("{{ url('/api') }}/getFEN/{{ $roomCode }}");
-
-// evtSource.onmessage = function (e) {
-//   let newFEN = e.data;
-//   console.log(newFEN);
-//   if (newFEN != currentFEN) {
-//     currentFEN = game.fen();
-//     $.ajax({
-//       type: "POST",
-//       url: '{{ url('/api') }}/updateFEN',
-//       data: {
-//         'ma-phong': '{{ $roomCode }}',
-//         'FEN': newFEN
-//       },
-//       dataType: 'text'
-//     });
-//     if (newFEN == game.fen()) {
-//       // my move
-//       board.position(newFEN, true);
-//       game.load(newFEN);
-//     } else {
-//       // opponent's move
-//       board.position(newFEN, true);
-//       game.load(newFEN);
-//       if (!game.fen().includes('resign')) {
-//         nuocCo.play();
-//       }
-//     }
-//   }
-//   updateStatus();
-// };
-// $('#resign').on('click', function() {
-//   game.load(game.fen() + ' resign');
-//   updateFenCode('{{ $roomCode }}');
-//   updateStatus();
-// });
-// @if (isset($room->host_id))
-// $.ajax({
-//     type: "POST",
-//     url: '{{ url('/api') }}/getNameEmail',
-//     data: {
-//         'id': '{{ $room->host_id }}'
-//     },
-//     dataType: 'json'
-// }).done(function(hostData){
-//     $('#host-title').html('<a class="text-light" target="_blank" href="{{ url('/ky-thu/') }}/{{ $room->host_id }}">' + '<img src="' + get_gravatar_image_url(hostData.email, 25) + '" />' + '# {{ $room->host_id }}  ' + hostData.name + '</a>');
-//     $.ajax({
-//         type: "POST",
-//         url: '{{ url('/api') }}/getNameEmail',
-//         data: {
-//             'id': '{{ $room->guest_id }}'
-//         },
-//         dataType: 'json'
-//     }).done(function(guestData){
-//       if (guestData && guestData != '') {
-//         $('#guest-title').html('<a class="text-light" target="_blank" href="{{ url('/ky-thu/') }}/{{ $room->guest_id }}">' + '<img src="' + get_gravatar_image_url(guestData.email, 25) + '" />' + '# {{ $room->guest_id }}  ' + guestData.name + '</a>');
-//       } else {
-//         $('#guest-title').text('đang đợi');
-//       }
-//     });
-// });
-// @endif
 </script>
-{{-- @include('layout.partials.userPuzzlesWrapper') --}}
-{{-- @include('layout.partials.players') --}}
-{{-- @include('layout.partials.userPuzzles') --}}
-{{-- @include('layout.partials.boards') --}}
-{{-- @include('layout.partials.playedBoards') --}}
-{{-- @include('layout.partials.puzzles') --}}
-{{-- @include('layout.partials.comments') --}}
 @endsection
