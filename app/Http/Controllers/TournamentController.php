@@ -75,6 +75,9 @@ class TournamentController extends Controller
             return back()->with('error', __('Tournament has already started.'));
         }
 
+        // FIX: Delete existing rooms to prevent duplication when regenerating the bracket
+        $tournament->rooms()->delete();
+
         $players = $tournament->users()->inRandomOrder()->get();
 
         $tournament->update(['status' => 'in_progress']);
