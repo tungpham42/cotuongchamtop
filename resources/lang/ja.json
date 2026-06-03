@@ -704,5 +704,6 @@
     "Draw.": "引き分け。",
     "Red won!": "赤が勝ちました！",
     "Black won!": "黒が勝ちました！",
-    "Black lost!": "黒が負けました！"
+    "Black lost!": "黒が負けました！",
+    "Bạn không có quyền quản lý giải đấu này.": "このトーナメントを管理する権限がありません。"
 }

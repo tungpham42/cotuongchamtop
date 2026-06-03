@@ -706,5 +706,6 @@
     "Draw.": "平局。",
     "Red won!": "红方赢了！",
     "Black won!": "黑方赢了！",
-    "Black lost!": "黑方输了！"
+    "Black lost!": "黑方输了！",
+    "Bạn không có quyền quản lý giải đấu này.": "您没有权限管理此锦标赛。"
 }

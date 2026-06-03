@@ -32,6 +32,14 @@ class TournamentController extends Controller
         }
     }
 
+    // Bổ sung hàm kiểm tra quyền Admin
+    private function checkAuth()
+    {
+        if (!auth()->check()) {
+            abort(403, __('Bạn không có quyền truy cập trang này.'));
+        }
+    }
+
     // Register a user for the tournament
     public function join(Request $request, $slug)
     {
@@ -56,7 +64,7 @@ class TournamentController extends Controller
     // Generate Single Elimination Bracket
     public function generateBracket($slug)
     {
-        $this->checkAdmin(); // CRITICAL FIX: Admin protection added
+        $this->checkAuth(); // CRITICAL FIX: Admin protection added
 
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
 
@@ -157,7 +165,7 @@ class TournamentController extends Controller
     // 1. Giao diện Tạo mới
     public function create(Request $request)
     {
-        $this->checkAdmin();
+        $this->checkAuth();
 
         return view('tournaments.create', [
             'headTitle' => $request->route('headTitle'),
@@ -172,7 +180,7 @@ class TournamentController extends Controller
     // 2. Xử lý lưu Tạo mới
     public function store(Request $request)
     {
-        $this->checkAdmin();
+        $this->checkAuth();
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -197,7 +205,7 @@ class TournamentController extends Controller
     // 3. Giao diện Sửa
     public function edit(Request $request, $slug)
     {
-        $this->checkAdmin();
+        $this->checkAuth();
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
 
         return view('tournaments.edit', [
@@ -214,7 +222,7 @@ class TournamentController extends Controller
     // 4. Xử lý cập nhật Sửa
     public function update(Request $request, $slug)
     {
-        $this->checkAdmin();
+        $this->checkAuth();
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
 
         $request->validate([
@@ -243,7 +251,7 @@ class TournamentController extends Controller
     // 5. Xử lý Xóa
     public function destroy($slug)
     {
-        $this->checkAdmin();
+        $this->checkAuth();
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
 
         if ($tournament->cover_photo) {

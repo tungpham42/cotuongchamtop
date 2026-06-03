@@ -111,7 +111,7 @@
                         @endif
 
                         {{-- CÁC NÚT QUẢN LÝ DÀNH RIÊNG CHO ADMIN --}}
-                        @if(auth()->user()->is_admin)
+                        @if(auth()->check())
                             <span class="text-muted mx-2">|</span>
                             @if($isOpen)
                             <form action="{{ localized_url('tournaments.generate', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block mb-2">
