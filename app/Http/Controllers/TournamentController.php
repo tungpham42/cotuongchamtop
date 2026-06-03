@@ -154,7 +154,8 @@ class TournamentController extends Controller
 
     public function show(Request $request, $slug)
     {
-        $tournament = Tournament::with(['users', 'rooms.host', 'rooms.guest'])
+        // Thêm 'creator' vào mảng with()
+        $tournament = Tournament::with(['creator', 'users', 'rooms.host', 'rooms.guest'])
             ->where('slug', $slug)
             ->firstOrFail();
 

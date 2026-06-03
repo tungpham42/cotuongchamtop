@@ -706,5 +706,7 @@
     "Black won!": "黒が勝ちました！",
     "Black lost!": "黒が負けました！",
     "Bạn không có quyền quản lý giải đấu này.": "このトーナメントを管理する権限がありません。",
-    "Not enough players to generate a bracket.": "トーナメント表を生成するのに十分なプレイヤーがいません。"
+    "Not enough players to generate a bracket.": "トーナメント表を生成するのに十分なプレイヤーがいません。",
+    "Người tạo:": "作成者：",
+    "Hệ thống": "システム"
 }

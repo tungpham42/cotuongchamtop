@@ -79,6 +79,18 @@
 
             <div class="row mt-4">
                 <div class="col-md-3">
+                    <p>
+                        <i class="fad fa-user-crown text-muted"></i> <strong>{{ __('Người tạo:') }}</strong>
+                        @if($tournament->creator)
+                            <a href="{{ localized_url('app.player', ['id' => $tournament->creator->id]) }}" class="text-warning font-weight-bold" style="text-decoration: none;">
+                                {{ $tournament->creator->name }}
+                            </a>
+                        @else
+                            <span class="text-muted">{{ __('Hệ thống') }}</span>
+                        @endif
+                    </p>
+                </div>
+                <div class="col-md-3">
                     <p><i class="fad fa-calendar text-muted"></i> <strong>{{ __('Khởi tranh:') }}</strong> {{ \Carbon\Carbon::parse($tournament->start_date)->format('d/m/Y H:i') }}</p>
                 </div>
                 <div class="col-md-2">
