@@ -692,5 +692,6 @@
     "Red won!": "빨간색이 승리했습니다!",
     "Black won!": "검은색이 승리했습니다!",
     "Black lost!": "검은색이 패배했습니다!",
-    "Bạn không có quyền quản lý giải đấu này.": "이 토너먼트를 관리할 권한이 없습니다."
+    "Bạn không có quyền quản lý giải đấu này.": "이 토너먼트를 관리할 권한이 없습니다.",
+    "Not enough players to generate a bracket.": "대진표를 생성하기에 충분한 플레이어가 없습니다."
 }

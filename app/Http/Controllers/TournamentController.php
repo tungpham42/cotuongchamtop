@@ -71,6 +71,10 @@ class TournamentController extends Controller
         // Double-check ownership
         $this->authorizeCreator($tournament);
 
+        if ($tournament->users()->count() < 2) {
+            return back()->with('error', __('Not enough players to generate a bracket.'));
+        }
+
         if ($tournament->status !== 'open') {
             return back()->with('error', __('Tournament has already started.'));
         }

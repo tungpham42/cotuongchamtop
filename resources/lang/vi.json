@@ -1650,5 +1650,6 @@
     "Red won!": "Đỏ thắng!",
     "Black won!": "Đen thắng!",
     "Black lost!": "Đen thua!",
-    "Bạn không có quyền quản lý giải đấu này.": "Bạn không có quyền quản lý giải đấu này."
+    "Bạn không có quyền quản lý giải đấu này.": "Bạn không có quyền quản lý giải đấu này.",
+    "Not enough players to generate a bracket.": "Không đủ kỳ thủ để tạo sơ đồ thi đấu."
 }
