@@ -114,7 +114,7 @@ Route::aliasMiddleware('tournament.creator', function ($request, $next) {
 
     // Check if the authenticated user is the owner.
     // IMPORTANT: Change 'user_id' below to match your database column (e.g., 'host_id' or 'creator_id')
-    if ($tournament->user_id !== auth()->id()) {
+    if ($tournament->user_id !== auth()->id() && auth()->user()->is_admin !== true) {
         abort(403, __('Bạn không có quyền quản lý giải đấu này.'));
     }
 
