@@ -24,19 +24,19 @@ class TournamentController extends Controller
         return $locale === $defaultLocale ? $key : "{$locale}.{$key}";
     }
 
-    // Bổ sung hàm kiểm tra quyền Admin
-    private function checkAdmin()
-    {
-        if (!auth()->check() || !auth()->user()->is_admin) {
-            abort(403, __('Bạn không có quyền truy cập trang này.'));
-        }
-    }
-
-    // Bổ sung hàm kiểm tra quyền Admin
+    // Check Auth
     private function checkAuth()
     {
         if (!auth()->check()) {
             abort(403, __('Bạn không có quyền truy cập trang này.'));
+        }
+    }
+
+    // NEW: Helper method to verify tournament ownership in the controller
+    private function authorizeCreator(Tournament $tournament)
+    {
+        if ($tournament->user_id !== auth()->id()) {
+            abort(403, __('Bạn không có quyền quản lý giải đấu này.'));
         }
     }
 
@@ -64,9 +64,12 @@ class TournamentController extends Controller
     // Generate Single Elimination Bracket
     public function generateBracket($slug)
     {
-        $this->checkAuth(); // CRITICAL FIX: Admin protection added
+        $this->checkAuth();
 
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
+
+        // Double-check ownership
+        $this->authorizeCreator($tournament);
 
         if ($tournament->status !== 'open') {
             return back()->with('error', __('Tournament has already started.'));
@@ -132,10 +135,10 @@ class TournamentController extends Controller
         $tournaments = Tournament::withCount('users')->orderBy('start_date', 'desc')->paginate(10);
 
         return view('tournaments.index', [
-            'headTitle' => $request->route('headTitle'), // Dynamically injected by web.php
+            'headTitle' => $request->route('headTitle'),
             'bodyClass' => 'dashboard',
             'tournaments' => $tournaments,
-            'canonicalUrl' => $request->url(), // Dynamic URL retrieval
+            'canonicalUrl' => $request->url(),
             'randomRoom' => RoomController::getRandomRoom(),
             'roomCode' => '',
             'cdnUrl' => url(''),
@@ -153,7 +156,7 @@ class TournamentController extends Controller
         return view('tournaments.show', [
             'headTitle'  => $tournament->name,
             'bodyClass' => 'dashboard',
-            'tournament' => $tournament, // Fixed duplicate array key
+            'tournament' => $tournament,
             'rounds' => $rounds,
             'canonicalUrl' => $request->url(),
             'randomRoom' => RoomController::getRandomRoom(),
@@ -193,6 +196,9 @@ class TournamentController extends Controller
 
         $data = $request->all();
 
+        // INTEGRATE USER_ID: Assign the currently authenticated user as the creator
+        $data['user_id'] = auth()->id();
+
         if ($request->hasFile('cover_photo')) {
             $data['cover_photo'] = $request->file('cover_photo')->store('tournaments', 'public');
         }
@@ -207,6 +213,9 @@ class TournamentController extends Controller
     {
         $this->checkAuth();
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
+
+        // Double-check ownership
+        $this->authorizeCreator($tournament);
 
         return view('tournaments.edit', [
             'headTitle' => $request->route('headTitle') . ': ' . $tournament->name,
@@ -224,6 +233,9 @@ class TournamentController extends Controller
     {
         $this->checkAuth();
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
+
+        // Double-check ownership
+        $this->authorizeCreator($tournament);
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -253,6 +265,9 @@ class TournamentController extends Controller
     {
         $this->checkAuth();
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
+
+        // Double-check ownership
+        $this->authorizeCreator($tournament);
 
         if ($tournament->cover_photo) {
             Storage::disk('public')->delete($tournament->cover_photo);
