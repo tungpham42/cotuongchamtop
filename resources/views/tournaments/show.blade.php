@@ -78,7 +78,7 @@
             <p>{{ $tournament->description }}</p>
 
             <div class="row mt-4">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <p>
                         <i class="fad fa-user-crown text-muted"></i> <strong>{{ __('Người tạo:') }}</strong>
                         @if($tournament->creator)
@@ -90,13 +90,13 @@
                         @endif
                     </p>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <p><i class="fad fa-calendar text-muted"></i> <strong>{{ __('Khởi tranh:') }}</strong> {{ \Carbon\Carbon::parse($tournament->start_date)->format('d/m/Y H:i') }}</p>
                 </div>
                 <div class="col-md-2">
                     <p><i class="fad fa-users text-muted"></i> <strong>{{ __('Số lượng:') }}</strong> {{ $tournament->users->count() }} / {{ $tournament->max_players }}</p>
                 </div>
-                <div class="col-md-7 text-right">
+                <div class="col-md-6 text-right">
                     {{-- NÚT THAM GIA CHO NGƯỜI CHƠI --}}
                     @if(auth()->check())
                         @php
