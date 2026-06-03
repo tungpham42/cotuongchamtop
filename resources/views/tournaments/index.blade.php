@@ -21,7 +21,7 @@
     <div class="alert alert-info bg-dark border-info text-light d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 p-4 shadow" style="border-radius: 12px; border-left: 5px solid #17a2b8 !important;">
         <div class="mb-3 mb-md-0">
             <h5 class="text-info font-weight-bold mb-1"><i class="fad fa-chess-knight"></i> {{ __('Sẵn sàng thử thách bản thân?') }}</h5>
-            <p class="mb-0 text-muted">{{ __('Tạo tài khoản miễn phí để ghi danh vào các giải đấu, cạnh tranh với cao thủ và khắc tên lên bảng vàng.') }}</p>
+            <p class="mb-0 text-muted">{{ __('Tạo tài khoản miễn phí để Tạo giải đấu, ghi danh vào các giải đấu, cạnh tranh với cao thủ và khắc tên lên bảng vàng.') }}</p>
         </div>
         <a href="{{ localized_url('register') }}" class="btn btn-info text-dark font-weight-bold px-4 py-2" style="white-space: nowrap; transition: 0.3s;">
             <i class="fad fa-user-plus"></i> {{ __('Tạo tài khoản miễn phí') }}
