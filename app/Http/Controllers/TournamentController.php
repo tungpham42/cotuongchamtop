@@ -35,7 +35,7 @@ class TournamentController extends Controller
     // NEW: Helper method to verify tournament ownership in the controller
     private function authorizeCreator(Tournament $tournament)
     {
-        if ($tournament->user_id !== auth()->id()) {
+        if ($tournament->user_id !== auth()->id() && !auth()->user()->is_admin) {
             abort(403, __('Bạn không có quyền quản lý giải đấu này.'));
         }
     }
