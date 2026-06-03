@@ -66,6 +66,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Tournament::class, 'tournament_user')->withTimestamps();
     }
 
+    public function createdTournaments()
+    {
+        return $this->hasMany(Tournament::class, 'user_id');
+    }
+
     public function payosPayments()
     {
         return $this->hasMany(PayosPayment::class);

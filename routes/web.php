@@ -3,6 +3,7 @@
 use App\Models\Room;
 use App\Models\User;
 use App\Models\Puzzle;
+use App\Models\Tournament;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Auth\LoginController;
@@ -109,11 +110,11 @@ Route::get('/sitemap-the-co.xml', function() {
 // 1. Register an inline middleware to verify tournament ownership
 Route::aliasMiddleware('tournament.creator', function ($request, $next) {
     $slug = $request->route('slug');
-    $tournament = \App\Models\Tournament::where('slug', $slug)->firstOrFail();
+    $tournament = Tournament::where('slug', $slug)->firstOrFail();
 
     // Check if the authenticated user is the owner.
     // IMPORTANT: Change 'user_id' below to match your database column (e.g., 'host_id' or 'creator_id')
-    if ($tournament->user_id !== auth()->id()) {
+    if ($tournament->creator->id !== auth()->id()) {
         abort(403, __('Bạn không có quyền quản lý giải đấu này.'));
     }
 

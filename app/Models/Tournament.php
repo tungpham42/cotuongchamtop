@@ -7,8 +7,8 @@ use Illuminate\Support\Str;
 
 class Tournament extends Model
 {
-    // Thêm 'cover_photo' vào mảng fillable
-    protected $fillable = ['name', 'slug', 'description', 'cover_photo', 'start_date', 'status', 'max_players'];
+    // Added 'user_id' into fillable
+    protected $fillable = ['user_id', 'name', 'slug', 'description', 'cover_photo', 'start_date', 'status', 'max_players'];
 
     protected static function boot()
     {
@@ -22,6 +22,13 @@ class Tournament extends Model
         });
     }
 
+    // Relationship: The user who CREATED the tournament
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    // Relationship: The users PARTICIPATING in the tournament
     public function users()
     {
         return $this->belongsToMany(User::class, 'tournament_user')->withTimestamps();
