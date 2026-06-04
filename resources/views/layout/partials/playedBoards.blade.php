@@ -12,7 +12,7 @@
                 <div id="board-{{ $board->code }}" class="card shadow-lg rounded border-dark" style="cursor: pointer;background-color: transparent;">
                 </div>
                 <div class="bg-dark p-2 text-center">
-                    <a href="{{ url(__('/phong/')) }}/{{ $board->code }}{{ __('/theo-doi') }}" target="_blank" class="py-1 text-light animate-light w-100 text-center stopPromotion">{{ $board->name }}</a>
+                    <a href="{{ localized_url('room.watch', ['code' => $board->code])) }}" target="_blank" class="py-1 text-light animate-light w-100 text-center stopPromotion">{{ $board->name }}</a>
                 </div>
                 <div class="bg-dark row mx-0">
                     <span class="py-1 col-12 text-light text-center host-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->host_id) !!}</span>
@@ -68,7 +68,7 @@
                 $(window).resize(board{{ $board->code }}.resize);
                 $('#board-{{ $board->code }}').on('click auxclick', function(e){
                     e.preventDefault();
-                    window.location.href = '{{ url(__('/phong/')) }}' + '/' + '{{ $board->code }}' + '{{ __('/theo-doi') }}';
+                    window.location.href = '{{ localized_url('room.watch', ['code' => $board->code])) }}';
                 });
             </script>
             @endforeach
@@ -91,7 +91,7 @@
                     <div id="board-{{ $board->code }}" class="card shadow-lg rounded border-dark" style="cursor: pointer;background-color: transparent;">
                     </div>
                     <div class="bg-dark p-2 text-center">
-                        <a href="{{ url(__('/phong/')) }}/{{ $board->code }}{{ __('/theo-doi') }}" target="_blank" class="py-1 text-light animate-light w-100 text-center stopPromotion">{{ $board->name }}</a>
+                        <a href="{{ localized_url('room.watch', ['code' => $board->code])) }}" target="_blank" class="py-1 text-light animate-light w-100 text-center stopPromotion">{{ $board->name }}</a>
                     </div>
                     <div class="bg-dark row mx-0">
                         <span class="py-1 col-12 text-light text-center host-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->host_id) !!}</span>
@@ -147,7 +147,7 @@
                     $(window).resize(board{{ $board->code }}.resize);
                     $('#board-{{ $board->code }}').on('click auxclick', function(e){
                         e.preventDefault();
-                        window.location.href = '{{ url(__('/phong/')) }}' + '/' + '{{ $board->code }}' + '{{ __('/theo-doi') }}';
+                        window.location.href = '{{ localized_url('room.watch', ['code' => $board->code])) }}';
                     });
                 </script>
                 @endforeach

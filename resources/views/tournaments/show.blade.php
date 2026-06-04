@@ -246,14 +246,14 @@
                                 @if($guestIsWinner) <i class="fad fa-crown" style="color: var(--royal-gold);"></i> @endif
                             </div>
                             @php
-                                $roomUrl = url(__('/phong/') . $match->code . __('/theo-doi'));
+                                $roomUrl = localized_url(__('room.watch', ['code' => $match->code]));
                                 if (auth()->check()) {
                                     if (auth()->id() === $match->host_id && $match->result === null) {
-                                        $roomUrl = url(__('/phong/') . $match->code . __('/do'));
+                                        $roomUrl = localized_url(__('room.red', ['code' => $match->code]));
                                     } elseif (auth()->id() === $match->guest_id && $match->result === null) {
-                                        $roomUrl = url(__('/phong/') . $match->code . __('/den'));
+                                        $roomUrl = localized_url(__('room.black', ['code' => $match->code]));
                                     } elseif ($match->result !== null) {
-                                        $roomUrl = url(__('/phong/') . $match->code . __('/theo-doi'));
+                                        $roomUrl = localized_url(__('room.watch', ['code' => $match->code]));
                                     }
                                 }
                             @endphp

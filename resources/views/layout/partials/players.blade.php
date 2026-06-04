@@ -234,7 +234,7 @@
                                     } else {
                                         $.ajax({
                                             type: "POST",
-                                            url: '{{ url(__('/api')) }}{{ __('/compete') }}',
+                                            url: '{{ url('/api/compete') }}',
                                             data: {
                                                 'ma-phong': maPhong,
                                                 'ten-phong': roomName,
