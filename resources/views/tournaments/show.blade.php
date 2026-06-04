@@ -148,7 +148,7 @@
                             <form action="{{ localized_url('tournaments.destroy', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block mb-2" onsubmit="return confirm('{{ __('Bạn có chắc chắn muốn xóa giải đấu này không?') }}');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger font-weight-bold" style="border-radius: 4px;">
+                                <button type="submit" class="btn btn-danger font-weight-bold mb-2" style="border-radius: 4px;">
                                     <i class="fad fa-trash-alt"></i>
                                 </button>
                             </form>
