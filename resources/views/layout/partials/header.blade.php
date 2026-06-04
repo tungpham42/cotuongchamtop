@@ -15,7 +15,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="row align-items-center">
       <a class="navbar-brand small mr-auto my-0 showPromotion" href="{{ $homeUrl }}"><img src="{{ url('/') }}/img/app-icons/logo.png" class="xiangqi-logo" alt="xiangqi logo"><h1 class="d-inline" style="font-size: inherit !important;"><strong>{{ __("Cờ tướng") }}</strong></h1>
         @if ($roomCode != '')
-        <span id="header-status"></span>
+        {{-- <span id="header-status"></span> --}}
         @endif
       </a>
       <div class="menu-toggle open" title="Trình đơn"></div>
