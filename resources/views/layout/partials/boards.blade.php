@@ -13,11 +13,11 @@
                 </div>
                 <div class="bg-dark p-2 text-center">
                     @if (auth()->id() == $board->host_id)
-                        <a href="{{ localized_url('room.host', ['code' => $board->code])) }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                        <a href="{{ localized_url('room.host', ['code' => $board->code]) }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
                     @elseif (auth()->id() == $board->guest_id)
-                        <a href="{{ localized_url('room.guest', ['code' => $board->code])) }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                        <a href="{{ localized_url('room.guest', ['code' => $board->code]) }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
                     @else
-                        <a href="{{ localized_url('room.watch', ['code' => $board->code])) }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                        <a href="{{ localized_url('room.watch', ['code' => $board->code]) }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
                     @endif
                 </div>
                 <div class="bg-dark row mx-0">
@@ -62,11 +62,11 @@
                 $('#board-{{ $board->code }}').on('click auxclick', function(e){
                     e.preventDefault();
                     @if (auth()->id() == $board->host_id)
-                        window.location.href = '{{ localized_url('room.host', ['code' => $board->code])) }}';
+                        window.location.href = '{{ localized_url('room.host', ['code' => $board->code]) }}';
                     @elseif (auth()->id() == $board->guest_id)
-                        window.location.href = '{{ localized_url('room.guest', ['code' => $board->code])) }}';
+                        window.location.href = '{{ localized_url('room.guest', ['code' => $board->code]) }}';
                     @else
-                        window.location.href = '{{ localized_url('room.watch', ['code' => $board->code])) }}';
+                        window.location.href = '{{ localized_url('room.watch', ['code' => $board->code]) }}';
                     @endif
                 });
             </script>
@@ -91,11 +91,11 @@
                     </div>
                     <div class="bg-dark p-2 text-center">
                         @if (auth()->id() == $board->host_id)
-                            <a href="{{ localized_url('room.host', ['code' => $board->code])) }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                            <a href="{{ localized_url('room.host', ['code' => $board->code]) }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
                         @elseif (auth()->id() == $board->guest_id)
-                            <a href="{{ localized_url('room.guest', ['code' => $board->code])) }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                            <a href="{{ localized_url('room.guest', ['code' => $board->code]) }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
                         @else
-                            <a href="{{ localized_url('room.watch', ['code' => $board->code])) }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
+                            <a href="{{ localized_url('room.watch', ['code' => $board->code]) }}" target="_blank" class="py-1 text-light animate-light w-100 text-center showPromotion">{{ $board->name }}</a>
                         @endif
                     </div>
                     <div class="bg-dark row mx-0">
@@ -140,11 +140,11 @@
                     $('#board-{{ $board->code }}').on('click auxclick', function(e){
                         e.preventDefault();
                         @if (auth()->id() == $board->host_id)
-                            window.location.href = '{{ localized_url('room.host', ['code' => $board->code])) }}';
+                            window.location.href = '{{ localized_url('room.host', ['code' => $board->code]) }}';
                         @elseif (auth()->id() == $board->guest_id)
-                            window.location.href = '{{ localized_url('room.guest', ['code' => $board->code])) }}';
+                            window.location.href = '{{ localized_url('room.guest', ['code' => $board->code]) }}';
                         @else
-                            window.location.href = '{{ localized_url('room.watch', ['code' => $board->code])) }}';
+                            window.location.href = '{{ localized_url('room.watch', ['code' => $board->code]) }}';
                         @endif
                     });
                 </script>
