@@ -201,9 +201,9 @@ function updateResult(roomCode, result) {
         }).always(function(){
           setTimeout(function(){
             @if (!isset($room->tournament_id))
-            window.location.href = "{{ url('/thi-dau') }}";
+            window.location.href = "{{ localized_url('app.dashboard') }}";
             @else
-            window.location.href = "{{ url('/giai-dau') }}" + "/" + "{{ $room->tournament->slug }}";
+            window.location.href = "{{ localized_url('tournaments.show', ['slug' => $tournament->slug]) }}";
             @endif
           }, 500);
         });
@@ -233,7 +233,7 @@ function updateResult(roomCode, result) {
       locale: '{{ __("vi") }}',
       buttons: { ok: { className: 'btn-danger pulse-red' } },
       callback: function () {
-        window.location.href = "{{ url(__('/sanh-cho')) }}";
+        window.location.href = "{{ localized_url('room.list') }}";
       }
     });
   });

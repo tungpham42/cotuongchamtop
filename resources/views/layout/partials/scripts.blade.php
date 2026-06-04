@@ -247,7 +247,7 @@ function showLatestRoom(offset, newCode) {
               },
               callback: function (result) {
                 if (result == true) {
-                  window.location.href = "{{ url(__('/sanh-cho')) }}";
+                  window.location.href = "{{ localized_url('room.list') }}";
                 }
               }
             });

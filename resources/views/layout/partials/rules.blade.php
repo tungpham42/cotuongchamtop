@@ -99,10 +99,10 @@
         <h2>{{ __("Chế độ chơi") }}</h2>
         <p>{{ __("guide_mode_desc") }}</p>
         <ol>
-          <li><u>{{ __("Chơi một mình") }}:</u> {!! __('guide_mode_alone_html', ['url' => url(__('/choi-mot-minh'))]) !!}</li>
-          <li><u>{{ __("Luyện với máy") }}:</u> {!! __('guide_mode_bot_html', ['url1' => url(__('/moi-choi')), 'url2' => url(__('/de')), 'url3' => url(__('/binh-thuong')), 'url4' => url(__('/kho')), 'url5' => url(__('/kho-nhat'))]) !!}</li>
-          <li><u>{{ __("Chơi online") }}:</u> {!! __('guide_mode_online_html', ['url' => url(__('/sanh-cho'))]) !!}</li>
-          <li><u>{{ __("Cờ thế") }}:</u> {!! __('guide_mode_puzzle_html', ['url' => url(__('/co-the'))]) !!}</li>
+          <li><u>{{ __("Chơi một mình") }}:</u> {!! __('guide_mode_alone_html', ['url' => localized_url('human.play')]) !!}</li>
+          <li><u>{{ __("Luyện với máy") }}:</u> {!! __('guide_mode_bot_html', ['url1' => localized_url('ai.newbie'), 'url2' => localized_url('ai.easy'), 'url3' => localized_url('ai.normal'), 'url4' => localized_url('ai.hard'), 'url5' => localized_url('ai.hardest')]) !!}</li>
+          <li><u>{{ __("Chơi online") }}:</u> {!! __('guide_mode_online_html', ['url' => localized_url('room.list')]) !!}</li>
+          <li><u>{{ __("Cờ thế") }}:</u> {!! __('guide_mode_puzzle_html', ['url' => localized_url('puzzle.setup')]) !!}</li>
         </ol>
       </div>
       <div class="modal-footer">

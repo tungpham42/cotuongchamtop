@@ -183,7 +183,7 @@ function updateResult(roomCode, result) {
       locale: '{{ __("vi") }}',
       buttons: { ok: { className: 'btn-danger pulse-red' } },
       callback: function () {
-        window.location.href = "{{ url(__('/sanh-cho')) }}";
+        window.location.href = "{{ localized_url('room.list') }}";
       }
     });
   });
