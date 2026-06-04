@@ -135,7 +135,7 @@
                             @if($isOpen && $tournament->users->count() >= 2)
                             <form action="{{ localized_url('tournaments.generate', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block mb-2">
                                 @csrf
-                                <button type="submit" class="btn btn-success font-weight-bold pulse">
+                                <button type="submit" class="btn btn-success font-weight-bold pulse mb-2">
                                     <i class="fad fa-sitemap"></i> {{ __('Bốc thăm') }}
                                 </button>
                             </form>
