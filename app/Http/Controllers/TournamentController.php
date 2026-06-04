@@ -196,7 +196,7 @@ class TournamentController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20480',
+            'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:20480',
             'start_date' => 'required|date',
             'status' => 'required|in:open,in_progress,completed',
             'max_players' => 'required|integer|min:2',
@@ -248,7 +248,7 @@ class TournamentController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20480',
+            'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:20480',
             'start_date' => 'required|date',
             'status' => 'required|in:open,in_progress,completed',
             'max_players' => 'required|integer|min:2',
