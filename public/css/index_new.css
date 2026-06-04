@@ -1,0 +1,1399 @@
+/* ==========================================================================
+   GIAO DIỆN CUNG ĐÌNH HUẾ - NHÀ NGUYỄN (XIANGQI ROYAL THEME)
+   ========================================================================== */
+:root {
+    --royal-red: #8a1515; /* Đỏ chu sa */
+    --royal-red-light: #b72222; /* Đỏ tươi hơn chút cho hover */
+    --royal-gold: #d4af37; /* Vàng kim */
+    --royal-gold-light: #f3e5d8; /* Vàng lụa / ngà voi */
+    --royal-bg: #1c110a; /* Đen gỗ mun */
+    --royal-wood: #4a2511; /* Nâu gỗ trắc */
+    --royal-border: double 4px var(--royal-gold); /* Viền kép hoàng gia */
+}
+
+* {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+input,
+input:before,
+input:after,
+textarea {
+    -webkit-user-select: initial !important;
+    -khtml-user-select: initial !important;
+    -moz-user-select: initial !important;
+    -ms-user-select: initial !important;
+    user-select: initial !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    border: 1px solid var(--royal-gold) !important;
+    -webkit-text-fill-color: var(--royal-bg) !important;
+    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25) !important;
+    -webkit-box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25) !important;
+    transition: background-color 1000s ease-in-out 0s;
+}
+
+body {
+    font-family:
+        "Plus Jakarta Sans", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
+        sans-serif !important;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    background-color: var(--royal-bg) !important;
+    /* Thêm vân nền tinh tế (tuỳ chọn, nếu bạn có ảnh pattern gấm vóc) */
+    background-image: radial-gradient(
+        circle at center,
+        #2a1910 0%,
+        #1c110a 100%
+    ) !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+    font-family:
+        "Texturina", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC", serif !important;
+    color: var(--royal-gold); /* Chữ tiêu đề mạ vàng */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.form-control,
+input:-internal-autofill-selected {
+    background-color: var(--royal-gold-light) !important;
+    border: 1px solid var(--royal-wood) !important;
+}
+.form-control:focus,
+input:-internal-autofill-selected:focus {
+    border-color: var(--royal-gold) !important;
+    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25) !important;
+}
+
+/* ==========================================================================
+   HEADER / LẦU NGŨ PHỤNG
+   ========================================================================== */
+header.site-header {
+    width: 100%;
+    background: linear-gradient(
+        to bottom,
+        #8a1515,
+        #5c0a0a
+    ); /* Đỏ son đậm dần */
+    border-bottom: 3px solid var(--royal-gold);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+    z-index: 999;
+    user-select: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+#header-status {
+    font-size: 15px !important;
+    color: var(--royal-gold-light);
+}
+
+header.site-header ul.navbar-nav li.dropdown.language-switcher > a {
+    border-left: 2px solid var(--royal-gold);
+    padding-left: 1rem;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+}
+
+header.site-header ul.navbar-nav:hover a:before,
+header.site-header ul.navbar-nav:hover a::before {
+    width: 0;
+}
+header.site-header ul.navbar-nav .dropdown-menu {
+    position: absolute;
+    margin-top: -7px;
+    border: 2px solid var(--royal-gold);
+    background-color: var(--royal-red);
+}
+
+header.site-header a {
+    color: var(--royal-gold-light);
+    position: relative;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+header.site-header a:not(.navbar-brand) {
+    top: -5px;
+}
+
+header.site-header a:not(.navbar-brand):before,
+header.site-header a:not(.navbar-brand)::before {
+    content: "";
+    position: absolute;
+    height: 3px;
+    left: 50%;
+    background-color: var(--royal-gold);
+    bottom: -5px;
+    width: 0;
+    transition: width 0.3s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+    transform: translateX(-50%);
+}
+
+header.site-header a:not(.navbar-brand):hover {
+    text-decoration: none;
+    font-weight: 700;
+    color: var(--royal-gold);
+}
+
+header.site-header a:not(.navbar-brand):hover:before,
+header.site-header a:not(.navbar-brand):hover::before {
+    width: 100% !important;
+}
+
+/* Menu states active */
+body.home header.site-header a.home,
+body.puzzle header.site-header a.puzzle,
+body.setup header.site-header a.setup,
+body.about header.site-header a.about,
+body.bmi header.site-header a.bmi,
+body.game header.site-header a.game,
+body.room header.site-header a.room,
+body.dashboard header.site-header a.dashboard,
+body.login header.site-header a.login,
+body.news header.site-header a.news,
+body.contact header.site-header a.contact {
+    font-weight: 700;
+    color: var(--royal-gold);
+}
+body.home header.site-header a.home:before,
+body.puzzle header.site-header a.puzzle:before,
+body.setup header.site-header a.setup:before,
+body.about header.site-header a.about:before,
+body.bmi header.site-header a.bmi:before,
+body.game header.site-header a.game:before,
+body.room header.site-header a.room:before,
+body.dashboard header.site-header a.dashboard:before,
+body.login header.site-header a.login:before,
+body.news header.site-header a.news:before,
+body.contact header.site-header a.contact:before {
+    width: 100%;
+}
+
+/* Nút Đăng ký / Đăng nhập phong cách Ấn Triện */
+header.site-header a.register {
+    background: linear-gradient(to bottom, #d4af37, #b89020) !important;
+    color: var(--royal-red) !important;
+    font-weight: 800;
+    padding: 8px 16px;
+    border-radius: 4px; /* Vuông vức hơn */
+    border: 2px solid #fff;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    text-shadow: none;
+    transition: all 0.3s ease;
+}
+header.site-header a.register::before {
+    display: none !important;
+}
+header.site-header a.register:hover {
+    background: #fff !important;
+    border-color: var(--royal-gold) !important;
+}
+
+header.site-header a.login {
+    background: linear-gradient(to bottom, #8a1515, #5c0a0a) !important;
+    color: var(--royal-gold) !important;
+    font-weight: 800;
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: 2px solid var(--royal-gold);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+header.site-header a.login::before {
+    display: none !important;
+}
+header.site-header a.login:hover {
+    background: var(--royal-gold) !important;
+    color: var(--royal-red) !important;
+}
+
+/* Logo quay quay */
+body.loading .navbar-brand img {
+    animation: spin 0.24s linear 0s infinite;
+}
+header.site-header .navbar-brand img {
+    margin-right: 12px;
+    filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5));
+}
+header.site-header .navbar-brand img:hover {
+    animation: spin 1.2s linear 0s infinite;
+}
+header.site-header .navbar-brand img:active {
+    animation: spin 0.42s linear 0s infinite;
+}
+
+header.site-header .navbar {
+    box-shadow: none !important;
+    border: none !important;
+}
+header.site-header .navbar ul {
+    display: flex;
+    flex-flow: row wrap;
+    margin: 0 -14px;
+}
+header.site-header .navbar li {
+    padding: 30px 12.5px 20px;
+}
+header.site-header .navbar li a {
+    font-size: 14px;
+}
+header.site-header .navbar li a.waves-effect {
+    display: inline !important;
+}
+
+/* Dropdown */
+header.site-header .dropdown-menu a {
+    color: var(--royal-gold-light);
+    top: 0 !important;
+}
+header.site-header .dropdown-menu a:hover {
+    background-color: var(--royal-red-light);
+    color: var(--royal-gold);
+}
+header.site-header .dropdown-menu a:before {
+    display: none !important;
+}
+header.site-header .dropdown-menu .dropdown-item.active,
+header.site-header .dropdown-menu .dropdown-item:active {
+    background-color: var(--royal-gold) !important;
+    color: var(--royal-red) !important;
+}
+
+/* Menu toggle mobile */
+header.site-header .menu-toggle {
+    display: none;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 37px;
+    z-index: 3;
+}
+/* Thay màu icon svg beige thành gold nếu được, ở đây mượn style cũ */
+header.site-header .menu-toggle.open {
+    background-image: url(/img/ic-menu-open-beige.svg);
+    width: 20px;
+    height: 12px;
+}
+header.site-header .menu-toggle.close {
+    background-image: url(/img/ic-menu-close-beige.svg);
+    width: 20px;
+    height: 15px;
+}
+
+@media (max-width: 1199.98px) {
+    header.site-header ul.navbar-nav {
+        overflow-y: auto !important;
+        max-height: calc(100vh - 74px);
+    }
+    header.site-header ul.navbar-nav li.dropdown.language-switcher > a {
+        border-left: none;
+        padding: 0 !important;
+    }
+    header.site-header ul.navbar-nav .dropdown-menu {
+        position: static;
+        background-color: var(--royal-bg);
+        border: none;
+    }
+    header.site-header .navbar-brand {
+        margin-left: auto;
+    }
+    header.site-header .navbar-brand h1,
+    header.site-header .navbar-brand span {
+        display: none !important;
+    }
+    header.site-header .navbar-brand img {
+        margin-right: 0;
+    }
+    header.site-header .menu-toggle {
+        display: block;
+    }
+    header.site-header .menu-toggle.open ~ nav.navbar {
+        display: none;
+    }
+    header.site-header .menu-toggle.close ~ nav.navbar {
+        display: block;
+        position: absolute;
+        background: linear-gradient(to bottom, #8a1515, #5c0a0a);
+        top: 74px;
+        left: 0;
+        z-index: 2;
+        width: 100%;
+        border-bottom: 2px solid var(--royal-gold);
+    }
+    header.site-header .menu-toggle.close ~ nav.navbar ul li {
+        width: 100%;
+        margin: 0;
+        padding: 12px 24px;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    }
+    header.site-header .menu-toggle.close ~ nav.navbar ul li a {
+        color: var(--royal-gold-light);
+    }
+    header.site-header .menu-toggle.close ~ nav.navbar ul li .dropdown-menu a {
+        color: var(--royal-gold-light);
+    }
+    header.site-header
+        .menu-toggle.close
+        ~ nav.navbar
+        ul
+        li
+        .dropdown-menu
+        .dropdown-item.active {
+        background-color: var(--royal-gold);
+        color: var(--royal-red);
+    }
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+footer {
+    background-color: #0f0805;
+    border-top: 3px solid var(--royal-gold);
+    color: var(--royal-gold-light);
+    z-index: 123456789;
+    user-select: none;
+}
+footer a {
+    color: #aa8c4a;
+}
+footer a:hover {
+    color: var(--royal-gold);
+}
+footer ul li {
+    margin-bottom: 0.7em;
+}
+body.home footer a.home,
+body.puzzle footer a.puzzle,
+body.setup footer a.setup,
+body.about footer a.about,
+body.bmi footer a.bmi,
+body.game footer a.game,
+body.room footer a.room,
+body.news footer a.news,
+body.contact footer a.contact {
+    text-decoration: underline;
+    color: var(--royal-gold);
+}
+footer ul.list-unstyled:hover a {
+    text-decoration: none;
+}
+footer ul.list-unstyled > li > a:hover {
+    text-decoration: underline !important;
+}
+
+/* ==========================================================================
+   LAYOUTS & HERO (Cuốn thư / Tấm liễn)
+   ========================================================================== */
+.hero {
+    background-color: transparent;
+}
+.hero .hero-box {
+    background: rgba(28, 17, 10, 0.85); /* Nền gỗ trong suốt */
+    border: 2px solid var(--royal-gold);
+    box-shadow:
+        0 0 20px rgba(0, 0, 0, 0.8),
+        inset 0 0 15px rgba(212, 175, 55, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+}
+.hero .hero-box .nav-tabs {
+    border-bottom: 2px solid var(--royal-gold);
+}
+.hero .hero-box .nav-tabs li a {
+    cursor: pointer;
+    padding: 12px 24px;
+    display: block;
+    color: var(--royal-gold-light);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.hero .hero-box .nav-tabs li.active a {
+    background: linear-gradient(to bottom, #8a1515, #5c0a0a);
+    color: var(--royal-gold);
+    border: 1px solid var(--royal-gold);
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+}
+.hero .hero-box .nav-tabs li:not(.active) a {
+    color: #aa8c4a;
+}
+.hero .hero-box .desc {
+    color: var(--royal-gold-light);
+    font-style: italic;
+}
+
+.comments {
+    background-color: var(--royal-bg);
+}
+
+/* Hình nền chung - Nếu có ảnh cung đình tĩnh thì thay URL ở đây */
+.container-fluid.about,
+.container-fluid.bmi,
+.container-fluid.game,
+.container-fluid.news,
+.container-fluid.contact,
+body.dashboard main,
+body.login main,
+body.register main {
+    background-image: none !important; /* Tạm ẩn ảnh cũ, dùng nền royal-bg */
+    background-color: var(--royal-bg) !important;
+    color: var(--royal-gold-light);
+    isolation: isolate !important;
+    position: relative !important;
+}
+
+.container-fluid.bmi-explanation,
+.container-fluid.game-explanation {
+    background-color: #2a1910;
+    border-top: 1px solid var(--royal-gold);
+    border-bottom: 1px solid var(--royal-gold);
+}
+
+/* ==========================================================================
+   COMPONENTS
+   ========================================================================== */
+#tao-phong a {
+    color: var(--royal-gold) !important;
+    font-weight: bold;
+}
+#tao-phong a i {
+    color: var(--royal-gold) !important;
+}
+#tao-phong a:active {
+    background-color: var(--royal-red) !important;
+    color: var(--royal-gold-light) !important;
+}
+#tao-phong a:active i {
+    color: var(--royal-gold-light) !important;
+}
+
+/* Câu tục ngữ kiểu thư pháp */
+#proverb {
+    color: var(--royal-gold);
+    font-size: 18px;
+    font-family: "Texturina", serif;
+    font-style: italic;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    background: rgba(138, 21, 21, 0.2);
+    padding: 10px 20px;
+    border-left: 4px solid var(--royal-gold);
+    border-right: 4px solid var(--royal-gold);
+}
+#proverb #proverb_content:before,
+#proverb #proverb_content::before {
+    content: "“";
+    position: relative;
+    top: 15px;
+    font-size: 32px;
+    color: var(--royal-red-light);
+}
+#proverb span.content {
+    cursor: pointer;
+}
+#proverb span.content.introjs-relativePosition {
+    color: var(--royal-gold);
+}
+#proverb_refresh {
+    display: inline-block;
+    cursor: pointer;
+}
+#proverb_refresh i {
+    color: var(--royal-gold);
+    font-size: 29px;
+}
+#proverb_refresh:hover i {
+    animation: spin 900ms linear 0s infinite;
+}
+
+#result,
+#compatibility,
+#ket-qua,
+#ghep-cap {
+    height: 74px;
+    margin-top: -74px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.chart,
+.adsense {
+    background-color: var(--royal-bg);
+}
+.chart #main_chart {
+    height: 480px;
+    width: calc(100% - 100px);
+    user-select: none;
+}
+
+/* Nút chung */
+.btn {
+    cursor: pointer;
+    color: var(--royal-gold-light);
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+.btn-danger {
+    background: linear-gradient(to bottom, #8a1515, #5c0a0a) !important;
+    border: 1px solid var(--royal-gold) !important;
+    color: var(--royal-gold) !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
+}
+.btn-danger:hover {
+    background: linear-gradient(to bottom, #b72222, #8a1515) !important;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+.btn-success {
+    background: linear-gradient(to bottom, #2d6a4f, #1b4332) !important;
+    border: 1px solid var(--royal-gold) !important;
+    color: var(--royal-gold) !important;
+}
+
+.btn.bootbox-cancel {
+    color: #fff !important;
+    background-color: #333 !important;
+    border-color: #555 !important;
+}
+
+.custom-select,
+#dob,
+#change-date {
+    cursor: pointer;
+}
+.chart-nav {
+    font-size: 48px;
+    color: #aa8c4a;
+    top: 288px;
+    cursor: pointer;
+    user-select: none;
+    filter: drop-shadow(2px 3px 6px rgba(0, 0, 0, 0.5));
+}
+.chart-nav:hover {
+    color: var(--royal-gold);
+}
+#ajax-chart {
+    padding-top: 60px !important;
+    padding-bottom: 60px !important;
+}
+
+#info {
+    user-select: none;
+}
+#info p {
+    font-size: 20px;
+    color: var(--royal-gold-light);
+}
+.info {
+    background-color: #2a1910;
+    border: 1px solid var(--royal-gold);
+    padding: 10px;
+    border-radius: 4px;
+}
+.info .controls {
+    max-height: 0;
+    overflow-y: hidden;
+    transition: max-height 420ms ease-in-out;
+    height: 64px;
+}
+.info .controls:hover,
+.info .controls:active,
+.info .controls:focus {
+    max-height: 420px;
+}
+.info:hover .controls,
+.info:active .controls,
+.info:focus .controls {
+    max-height: 420px;
+}
+
+.page-item.active .page-link {
+    background-color: var(--royal-red) !important;
+    border-color: var(--royal-gold) !important;
+    color: var(--royal-gold) !important;
+}
+.page-link {
+    background-color: #2a1910;
+    border-color: var(--royal-wood);
+    color: var(--royal-gold-light);
+}
+.page-link:focus,
+.form-check-input:focus {
+    border-color: var(--royal-gold) !important;
+    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25) !important;
+}
+
+/* ==========================================================================
+   BÀN CỜ / KHUNG BÀN CỜ HOÀNG GIA (GAME BOARD)
+   ========================================================================== */
+#ban-co {
+    touch-action: none !important;
+    pointer-events: all;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto !important;
+    /* Hiệu ứng khung gỗ hoàng gia */
+    border: var(--royal-border);
+    border-radius: 6px;
+    box-shadow:
+        0 0 0 4px var(--royal-red),
+        0 15px 25px rgba(0, 0, 0, 0.8);
+    background-color: #c79a5e; /* Màu gỗ sáng/cói dệt làm nền mộc */
+    padding: 5px;
+}
+#ban-co:has(.notation-8c7a2) {
+    padding: 25px 5px !important;
+    background-color: #dfbd85 !important;
+}
+#ban-co:has(.notation-8c7a2):has(.spare-pieces-9e77b) {
+    padding: 5px !important;
+}
+body.setup #ban-co {
+    max-width: 310px !important;
+}
+
+.side-color {
+    font-weight: bolder;
+    font-size: 42px;
+    text-align: center;
+    line-height: 1.2em;
+    display: block;
+    cursor: default !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+.side-color.red {
+    color: #ff3333;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+.side-color.black {
+    color: #111;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+#game-status {
+    background: linear-gradient(
+        to right,
+        transparent,
+        rgba(138, 21, 21, 0.8),
+        transparent
+    ) !important;
+    padding: 12px 24px;
+    font-size: 17px;
+    font-weight: bolder;
+    color: var(--royal-gold);
+    cursor: default !important;
+    display: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+#game-over {
+    color: var(--royal-gold);
+    border: 2px solid var(--royal-gold);
+    padding: 12px 24px;
+    background-color: var(--royal-bg);
+    font-weight: bolder;
+    cursor: default !important;
+    text-transform: uppercase;
+}
+#game-over:hover {
+    background-color: var(--royal-red);
+}
+
+/* Checkmate - Chiếu Tướng (Phong cách sắc phong đỏ) */
+#checkmateText {
+    font-size: 10vw;
+    font-family: "Texturina", serif;
+    font-weight: 900;
+    color: var(--royal-gold);
+    text-shadow:
+        0 0 20px var(--royal-red),
+        4px 4px 0px #4a0000;
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    animation:
+        fadeInAnimation 1s ease-in forwards,
+        pulse-gold 2s infinite;
+}
+
+/* ==========================================================================
+   ANIMATIONS (Hiệu ứng tỏa sáng hoàng kim/châu sa)
+   ========================================================================== */
+.pulse,
+.pulse-gold,
+.pulse-red,
+.pulse-light,
+.pulse-dark {
+    position: relative;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.pulse {
+    box-shadow: 0 0 0 0 rgba(45, 106, 79, 0.84);
+    animation: pulse 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+.pulse-gold {
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.84);
+    animation: pulse-gold 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+.pulse-red {
+    box-shadow: 0 0 0 0 rgba(138, 21, 21, 0.84);
+    animation: pulse-red 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+.pulse-light {
+    box-shadow: 0 0 0 0 rgba(243, 229, 216, 0.84);
+    animation: pulse-light 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+.pulse-dark {
+    box-shadow: 0 0 0 0 rgba(28, 17, 10, 0.84);
+    animation: pulse-dark 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+.pulse:hover,
+.pulse-gold:hover,
+.pulse-red:hover,
+.pulse-light:hover,
+.pulse-dark:hover {
+    animation: none;
+}
+
+@keyframes pulse {
+    to {
+        box-shadow: 0 0 0 15px rgba(45, 106, 79, 0);
+    }
+}
+@keyframes pulse-gold {
+    to {
+        box-shadow: 0 0 0 15px rgba(212, 175, 55, 0);
+    }
+}
+@keyframes pulse-red {
+    to {
+        box-shadow: 0 0 0 15px rgba(138, 21, 21, 0);
+    }
+}
+@keyframes pulse-light {
+    to {
+        box-shadow: 0 0 0 15px rgba(243, 229, 216, 0);
+    }
+}
+@keyframes pulse-dark {
+    to {
+        box-shadow: 0 0 0 15px rgba(28, 17, 10, 0);
+    }
+}
+@keyframes fadeInAnimation {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+@keyframes fade {
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+}
+
+/* ==========================================================================
+   BẢNG & DATA TABLES
+   ========================================================================== */
+.table {
+    color: var(--royal-gold-light);
+}
+.table td,
+.table th {
+    vertical-align: middle !important;
+    border-top: 1px solid var(--royal-wood);
+}
+.table thead th {
+    border-bottom: 2px solid var(--royal-gold);
+    color: var(--royal-gold);
+    text-transform: uppercase;
+}
+.table td.room-code a {
+    color: var(--royal-gold);
+    font-family: "Noto Sans Mono", monospace;
+    font-weight: bold;
+}
+.table td.room-code span {
+    padding: 4px 7px 5px;
+    background: rgba(212, 175, 55, 0.2);
+    border-radius: 4px;
+    border: 1px solid var(--royal-gold);
+}
+.table td.room-time {
+    font-family: "Noto Sans Mono", monospace;
+    color: #aa8c4a;
+}
+
+/* ==========================================================================
+   TIỆN ÍCH KHÁC (Socials, Highlights, Toggles)
+   ========================================================================== */
+body.login .btn-facebook,
+body.login .btn-google,
+body.login .btn-github,
+body.login .btn-linkedin,
+body.login .btn-gitlab,
+body.login .btn-bitbucket,
+body.login .btn-zalo {
+    width: 330px;
+}
+body.register .btn-facebook,
+body.register .btn-google,
+body.register .btn-github,
+body.register .btn-linkedin,
+body.register .btn-gitlab,
+body.register .btn-bitbucket,
+body.register .btn-zalo {
+    width: 280px;
+}
+
+/* Chỉnh nút mxh vuông vắn, cứng cáp hơn */
+.btn-facebook,
+.btn-google,
+.btn-github,
+.btn-linkedin,
+.btn-gitlab,
+.btn-bitbucket,
+.btn-zalo {
+    border-radius: 2px !important;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+.btn-facebook {
+    background-color: #3b5998 !important;
+    border: 1px solid #3b5998 !important;
+    color: #fff !important;
+}
+.btn-google {
+    background-color: #ea4335 !important;
+    border: 1px solid #ea4335 !important;
+    color: #fff !important;
+}
+.btn-github {
+    background-color: #222 !important;
+    border: 1px solid #000 !important;
+    color: #fff !important;
+}
+.btn-zalo {
+    background-color: #0067ff !important;
+    border: 1px solid #0067ff !important;
+    color: #fff !important;
+}
+
+a.animate {
+    box-shadow: inset 0 0 0 0 var(--royal-gold);
+    font-weight: bolder;
+    color: var(--royal-gold);
+    text-decoration: none !important;
+    padding: 0 0.25rem;
+    margin: 0 -0.25rem;
+    border-radius: 0.5rem;
+    transition:
+        color 666ms ease-in-out,
+        box-shadow 666ms ease-in-out;
+}
+a.animate:hover {
+    color: var(--royal-bg) !important;
+    box-shadow: inset 100em 0 0 0 var(--royal-gold);
+    border-radius: 2px;
+}
+
+.highlight {
+    box-shadow: inset 0 0 3px 3px var(--royal-gold) !important;
+    background-color: rgba(212, 175, 55, 0.4) !important;
+    opacity: 1;
+}
+.highlight-red {
+    box-shadow: inset 0 0 3px 3px #ff0000;
+}
+.highlight-black {
+    box-shadow: inset 0 0 3px 3px #000;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before,
+.custom-control-input:active ~ .custom-control-label::before,
+.custom-control-input:focus ~ .custom-control-label::before {
+    background-color: var(--royal-red) !important;
+    border-color: var(--royal-gold) !important;
+    box-shadow: rgba(212, 175, 55, 0.5) 0px 0px 0px 0.2rem;
+}
+
+/* ==========================================================================
+   PUZZLE LAYOUT / XIANGQIBOARD / INTROJS OVERRIDES
+   ========================================================================== */
+.puzzle-layout-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+    align-items: flex-start;
+}
+.puzzle-layout-board {
+    flex: 1 1 520px;
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+}
+.puzzle-layout-panel {
+    flex: 1 1 360px;
+    min-width: 320px;
+    background: rgba(28, 17, 10, 0.8);
+    border: 1px solid var(--royal-wood);
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.board-1ef78 {
+    box-sizing: content-box;
+    pointer-events: none !important;
+    margin: auto;
+}
+.board-1ef78 .row-cb702:first-of-type .square-2b8ce .notation-8c7a2 {
+    top: -21px !important;
+    bottom: auto !important;
+}
+.board-1ef78 .row-cb702:last-of-type .square-2b8ce .notation-8c7a2 {
+    bottom: -21px !important;
+    top: auto !important;
+}
+.xiangqiboard-8ddcb .spare-pieces-top-e4b47 {
+    margin-bottom: 21px !important;
+}
+.xiangqiboard-8ddcb .spare-pieces-bottom-29dac {
+    margin-top: 21px !important;
+}
+.square-2b8ce {
+    float: left;
+    position: relative;
+    user-select: none;
+    pointer-events: none !important;
+}
+.square-2b8ce img {
+    pointer-events: all !important;
+}
+.square-2b8ce:hover {
+    z-index: 2;
+}
+.square-2b8ce:hover img {
+    cursor: pointer;
+    filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.8));
+} /* Sáng lên khi di chuột */
+.highlight1-e13fc,
+.highlight2-e0a03 {
+    box-shadow: inset 0 0 3px 3px var(--royal-gold);
+    background: rgba(212, 175, 55, 0.2);
+}
+.notation-8c7a2 {
+    cursor: default;
+    font-family: serif;
+    font-size: 14px;
+    position: absolute;
+    color: #333;
+    font-weight: bold;
+}
+.alpha-f4ef2 {
+    bottom: 1px;
+    right: 40%;
+}
+.numeric-fe76e {
+    top: 40%;
+    left: 1px;
+}
+
+.introjs-helperLayer {
+    background-color: rgba(28, 17, 10, 0.9);
+    border: 2px solid var(--royal-gold);
+    border-radius: 4px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+}
+.introjs-tooltip {
+    color: var(--royal-gold-light);
+    background-color: rgba(28, 17, 10, 0.95);
+    font-family: serif;
+}
+.introjs-button {
+    text-shadow: none;
+    font-weight: bold;
+    color: var(--royal-red);
+    background: var(--royal-gold);
+    border-radius: 2px;
+}
+.introjs-button:hover {
+    background: var(--royal-red);
+    color: var(--royal-gold) !important;
+    border: 1px solid var(--royal-gold);
+}
+.introjs-progressbar {
+    background-color: var(--royal-gold) !important;
+}
+
+/* Nút Cuộn Lên (Scroll Top) hoàng gia */
+.cd-top {
+    display: inline-block;
+    height: 40px;
+    width: 40px;
+    position: fixed;
+    bottom: 40px;
+    left: 10px;
+    z-index: 42;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+    text-indent: 100%;
+    white-space: nowrap;
+    background: rgba(138, 21, 21, 0.9) url(/img/cd-top-arrow.svg) no-repeat
+        center 50%;
+    border: 2px solid var(--royal-gold);
+    border-radius: 4px;
+    visibility: hidden;
+    opacity: 0;
+    transition:
+        opacity 0.3s,
+        visibility 0s,
+        background-color 0.3s;
+}
+.cd-top.cd-top--show {
+    visibility: visible;
+    opacity: 1;
+}
+.cd-top:hover {
+    background-color: var(--royal-gold);
+    border-color: var(--royal-red);
+    opacity: 1;
+}
+
+/* Waiting Indicator Dot */
+body.player .waitingIndicator .indicator,
+body.dashboard .waitingIndicator .indicator {
+    background-color: var(--royal-gold);
+}
+.waitingIndicator {
+    position: relative;
+    display: inline;
+}
+.waitingIndicator .indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    display: inline-block;
+    margin: 3px;
+    opacity: 0;
+}
+.waitingIndicator .indicator:nth-child(1) {
+    animation: fade 3s ease 0s infinite;
+}
+.waitingIndicator .indicator:nth-child(2) {
+    animation: fade 3s ease 250ms infinite;
+}
+.waitingIndicator .indicator:nth-child(3) {
+    animation: fade 3s ease 500ms infinite;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 991px) {
+    #copy-url,
+    #copy-url-red,
+    #copy-url-black,
+    #change-pass {
+        width: 100% !important;
+    }
+    .btn.w-25 {
+        width: 49% !important;
+    }
+    .btn.w-25.btn-success {
+        width: 75% !important;
+    }
+    #ban-co {
+        height: auto !important;
+    }
+    .puzzle-layout-panel,
+    .puzzle-layout-board {
+        width: 100%;
+    }
+}
+@media screen and (max-width: 380px) {
+    #ban-co {
+        width: calc(100% - 15px) !important;
+    }
+}
+@media (max-width: 413px) {
+    .hero .hero-box,
+    .hero #proverb {
+        width: 100% !important;
+    }
+    .hero .hero-box .nav-tabs li {
+        width: 100%;
+    }
+    .hero .hero-box .nav-tabs li a {
+        text-align: center;
+    }
+}
+@media screen and (min-width: 1400px) {
+    .container {
+        max-width: 1320px !important;
+    }
+}
+.clearfix-5f3b5 {
+    clear: both;
+}
+.board-1ef78 {
+    box-sizing: content-box;
+    pointer-events: none !important;
+    margin: auto;
+}
+.board-1ef78 .row-cb702:first-of-type .square-2b8ce .notation-8c7a2 {
+    top: -21px !important;
+    bottom: auto !important;
+}
+.board-1ef78 .row-cb702:last-of-type .square-2b8ce .notation-8c7a2 {
+    bottom: -21px !important;
+    top: auto !important;
+}
+.xiangqiboard-8ddcb .spare-pieces-top-e4b47 {
+    margin-bottom: 21px !important;
+}
+.xiangqiboard-8ddcb .spare-pieces-bottom-29dac {
+    margin-top: 21px !important;
+}
+.square-2b8ce {
+    float: left;
+    position: relative;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: none !important;
+}
+.square-2b8ce img {
+    pointer-events: all !important;
+}
+.square-2b8ce:hover {
+    z-index: 2;
+}
+.square-2b8ce:hover img {
+    cursor: pointer;
+}
+.highlight1-e13fc,
+.highlight2-e0a03 {
+    box-shadow: inset 0 0 3px 3px #daa520;
+}
+.notation-8c7a2 {
+    cursor: default;
+    font-family:
+        "Plus Jakarta Sans", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
+        sans-serif;
+    font-size: 14px;
+    position: absolute;
+    color: #000;
+}
+.alpha-f4ef2 {
+    bottom: 1px;
+    right: 40%;
+}
+.numeric-fe76e {
+    top: 40%;
+    left: 1px;
+}
+.piece-1e8b9 {
+    cursor: pointer;
+}
+th[role="columnheader"]:not(.no-sort) {
+    cursor: pointer;
+}
+th[role="columnheader"]:not(.no-sort):after {
+    content: "";
+    float: right;
+    margin-top: 7px;
+    border-width: 0 4px 4px;
+    border-style: solid;
+    border-color: #404040 transparent;
+    visibility: hidden;
+    opacity: 0;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+th[role="columnheader"]:not(.no-sort):hover:after {
+    visibility: visible;
+    opacity: 1;
+}
+th[aria-sort="ascending"]:not(.no-sort):after {
+    border-bottom: none;
+    border-width: 4px 4px 0;
+}
+th[aria-sort]:not(.no-sort):after {
+    visibility: visible;
+    opacity: 0.4;
+}
+table th.no-sort {
+    cursor: default !important;
+    pointer-events: none !important;
+}
+table th.no-sort::before,
+table th.no-sort::after {
+    display: none !important;
+} /*# sourceMappingURL=index.css.map */
+
+.puzzle-layout-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+    align-items: flex-start;
+}
+.puzzle-layout-board {
+    flex: 1 1 520px;
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+}
+.puzzle-layout-panel {
+    flex: 1 1 360px;
+    min-width: 320px;
+}
+@media (max-width: 991.98px) {
+    .puzzle-layout-panel,
+    .puzzle-layout-board {
+        width: 100%;
+    }
+}
+
+.puzzle-layout-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+    align-items: flex-start;
+}
+.puzzle-layout-board {
+    flex: 1 1 520px;
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+}
+.puzzle-layout-panel {
+    flex: 1 1 360px;
+    min-width: 320px;
+}
+@media (max-width: 991.98px) {
+    .puzzle-layout-panel,
+    .puzzle-layout-board {
+        width: 100%;
+    }
+}
+.custom-control-input:checked ~ .custom-control-label::before,
+.custom-control-input:active ~ .custom-control-label::before,
+.custom-control-input:focus ~ .custom-control-label::before {
+    background-color: #f04124 !important;
+    border-color: #f04124 !important;
+    box-shadow: rgba(240, 65, 36, 0.25) 0px 0px 0px 0.2rem;
+}
+.comment-action.liked {
+    color: #f87171;
+    cursor: default;
+}
+.comment-action.liked i {
+    color: #f87171;
+}
+.comment-action:not(.liked):hover {
+    color: #f87171;
+    cursor: pointer;
+}
+.comment-action:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+.fa-spinner {
+    margin-left: 5px;
+}
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+.highlight {
+    background-color: #ffeb3b !important;
+    opacity: 0.6;
+}
+.st-count,
+.st-text {
+    color: var(--royal-gold-light) !important;
+}
+
+.card-header {
+    background-color: #2a1910;
+    border: 1px solid var(--royal-gold);
+    color: var(--royal-gold);
+    font-weight: bold;
+}
+
+form label {
+    font-weight: bold;
+    color: var(--royal-gold);
+}

@@ -161,6 +161,7 @@ if (typeof Echo !== 'undefined') {
 function updateResult(roomCode, result) {
   if (alertShown) return;
   alertShown = true;
+  let sideMsg = '{{ __("Trận đấu kết thúc") }}';
   $.ajax({
     type: "POST",
     url: '{{ url('/api') }}/updateSideResult',
@@ -172,17 +173,15 @@ function updateResult(roomCode, result) {
     },
     dataType: 'json'
   }).done(function(data) {
+    if (data && data.success) sideMsg = data.success;
+  }).always(function() {
     bootbox.alert({
-      message: data.success,
+      message: sideMsg,
       size: 'small',
       centerVertical: true,
       closeButton: false,
       locale: '{{ __("vi") }}',
-      buttons: {
-        ok: {
-          className: 'btn-danger pulse-red'
-        }
-      },
+      buttons: { ok: { className: 'btn-danger pulse-red' } },
       callback: function () {
         window.location.href = "{{ url(__('/sanh-cho')) }}";
       }

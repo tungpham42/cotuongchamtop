@@ -170,6 +170,7 @@ function updateResult(roomCode, result) {
   if (alertShown) return;
   alertShown = true;
   @if(auth()->check() && (auth()->id() == $room->host_id || auth()->id() == $room->guest_id))
+  let successMsg = '{{ __("Trận đấu kết thúc") }}';
   $.ajax({
     type: "POST",
     url: '{{ url('/api') }}/updateResult',
@@ -180,28 +181,25 @@ function updateResult(roomCode, result) {
     },
     dataType: 'json'
   }).done(function(data) {
+    if (data && data.success) successMsg = data.success;
+  }).always(function() {
     bootbox.alert({
-      message: data.success,
+      message: successMsg,
       size: 'small',
       centerVertical: true,
       closeButton: false,
       locale: '{{ __("vi") }}',
       buttons: {
-        ok: {
-          className: 'btn-danger pulse-red'
-        }
+        ok: { className: 'btn-danger pulse-red' }
       },
       callback: function () {
         $.ajax({
           type: "POST",
           url: '{{ url('/api') }}/updateElo',
-          data: {
-            'ma-phong': roomCode,
-            'result': result,
-          },
+          data: { 'ma-phong': roomCode, 'result': result },
           dataType: 'json'
-        }).done(function(){
-          const updatePointsTimeout = setTimeout(function(){
+        }).always(function(){
+          setTimeout(function(){
             @if (!isset($room->tournament_id))
             window.location.href = "{{ url('/thi-dau') }}";
             @else
@@ -213,6 +211,7 @@ function updateResult(roomCode, result) {
     });
   });
   @elseif(!isset($room->host_id))
+  let sideMsg = '{{ __("Trận đấu kết thúc") }}';
   $.ajax({
     type: "POST",
     url: '{{ url('/api') }}/updateSideResult',
@@ -224,17 +223,15 @@ function updateResult(roomCode, result) {
     },
     dataType: 'json'
   }).done(function(data) {
+    if (data && data.success) sideMsg = data.success;
+  }).always(function() {
     bootbox.alert({
-      message: data.success,
+      message: sideMsg,
       size: 'small',
       centerVertical: true,
       closeButton: false,
       locale: '{{ __("vi") }}',
-      buttons: {
-        ok: {
-          className: 'btn-danger pulse-red'
-        }
-      },
+      buttons: { ok: { className: 'btn-danger pulse-red' } },
       callback: function () {
         window.location.href = "{{ url(__('/sanh-cho')) }}";
       }
@@ -351,16 +348,16 @@ function updateStatus () {
   if (game.in_checkmate()) {
     status = moveColor + ' {{ __("bị chiếu bí") }}';
     if (game.turn() === 'b') {
-      updateResult('{{ $roomCode }}', '1');
+      setTimeout(function() { updateResult('{{ $roomCode }}', '1'); }, 1000);
     } else if (game.turn() === 'r') {
-      updateResult('{{ $roomCode }}', '-1');
+      setTimeout(function() { updateResult('{{ $roomCode }}', '-1'); }, 1000);
     }
   }
 
   // draw?
   else if (game.in_draw()) {
     status = '{{ __("Hòa") }}';
-    updateResult('{{ $roomCode }}', '0');
+    setTimeout(function() { updateResult('{{ $roomCode }}', '0'); }, 1000);
   }
 
   // game still on
@@ -368,9 +365,9 @@ function updateStatus () {
     status = '{{ __("Tới lượt:") }} ' + moveColor
     if (game.game_over() && !game.in_draw() && !game.fen().includes('resign')) {
       if (game.turn() === 'b') {
-        updateResult('{{ $roomCode }}', '1');
+        setTimeout(function() { updateResult('{{ $roomCode }}', '1'); }, 1000);
       } else if (game.turn() === 'r') {
-        updateResult('{{ $roomCode }}', '-1');
+        setTimeout(function() { updateResult('{{ $roomCode }}', '-1'); }, 1000);
       }
     }
     // check?

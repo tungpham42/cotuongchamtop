@@ -418,18 +418,9 @@ class RoomController extends Controller
         $result = $request->input('result');
         $auth_id = auth()->id() ?? $request->input('id');
 
-        // Retrieve host and guest IDs for the room
-        $roomData = Room::select('host_id', 'guest_id')
+        $roomData = Room::select('host_id', 'guest_id', 'result', 'name', 'tournament_id', 'next_room_code', 'tournament_round')
             ->where('code', $code)
             ->first();
-
-        // BẢO VỆ: Nếu đã có kết quả thì không được ghi đè nữa
-        if ($roomData && !is_null($roomData->result)) {
-            return response()->json([
-                'success' => false,
-                'message' => __('Trận đấu đã kết thúc trước đó.')
-            ], 403);
-        }
 
         $host_id = $roomData->host_id ?? null;
         $guest_id = $roomData->guest_id ?? null;
@@ -441,37 +432,33 @@ class RoomController extends Controller
             ], 403);
         }
 
-        // Update or insert the room result
-        Room::updateOrInsert(
-            ['code' => $code],
-            ['result' => $result, 'modified_at' => now()]
-        );
+        // FIX: Only update DB and advance tournament if the result is NOT set yet.
+        if ($roomData && is_null($roomData->result)) {
+            Room::updateOrInsert(
+                ['code' => $code],
+                ['result' => $result, 'modified_at' => now()]
+            );
 
-        // --- NEW: TOURNAMENT ADVANCEMENT LOGIC ---
-        $room = Room::where('code', $code)->first();
+            // --- TOURNAMENT ADVANCEMENT LOGIC ---
+            $room = Room::where('code', $code)->first();
 
-        if ($room->tournament_id && $room->next_room_code && $result !== '0') {
-            // Determine winner
-            $winnerId = ($result === '1') ? $room->host_id : $room->guest_id;
+            if ($room->tournament_id && $room->next_room_code && $result !== '0') {
+                $winnerId = ($result === '1') ? $room->host_id : $room->guest_id;
+                $nextRoom = Room::where('code', $room->next_room_code)->first();
 
-            $nextRoom = Room::where('code', $room->next_room_code)->first();
-
-            // FIX: Check if the winner is already in the next room to prevent duplicate entry
-            if ($nextRoom->host_id !== $winnerId && $nextRoom->guest_id !== $winnerId) {
-                // Place winner in the next room (host if empty, else guest)
-                if (is_null($nextRoom->host_id)) {
-                    $nextRoom->update(['host_id' => $winnerId]);
-                } else {
-                    $nextRoom->update([
-                        'guest_id' => $winnerId,
-                        // Optional: Update name dynamically once both are present
-                        'name' => $room->name . " - " . __('Vòng') . " " . $nextRoom->tournament_round
-                    ]);
+                if ($nextRoom->host_id !== $winnerId && $nextRoom->guest_id !== $winnerId) {
+                    if (is_null($nextRoom->host_id)) {
+                        $nextRoom->update(['host_id' => $winnerId]);
+                    } else {
+                        $nextRoom->update([
+                            'guest_id' => $winnerId,
+                            'name' => $room->name . " - " . __('Vòng') . " " . $nextRoom->tournament_round
+                        ]);
+                    }
                 }
             }
         }
 
-        // Define success messages
         $successMessages = [
             'host' => [
                 '-1' => __('Chủ phòng thua! Cố lên nhé!'),
@@ -485,21 +472,17 @@ class RoomController extends Controller
             ],
         ];
 
-        // Determine the success message based on the user's role (host or guest) and the result
         if ($auth_id == $host_id) {
             $success_message = $successMessages['host'][$result] ?? '';
         } elseif ($auth_id == $guest_id) {
             $success_message = $successMessages['guest'][$result] ?? '';
         } else {
-            // Handle the case when the user is neither the host nor the guest
             $success_message = __('You are not authorized to update this room.');
         }
 
-        //self::updateElo($code); // Update the Elo ratings of the host and guest
-
+        // FIX: Change 'message' to 'success' to match the frontend expectations: message: data.success
         return response()->json([
-            'success' => true,
-            'message' => $success_message
+            'success' => $success_message
         ]);
     }
 
@@ -510,26 +493,20 @@ class RoomController extends Controller
         $lang = $request->input('lang');
         $side = $request->input('side');
 
-        // Dynamically set the locale based on the request to ensure translations match the user's frontend language
         if ($lang) {
             app()->setLocale($lang);
         }
 
-        // BẢO VỆ: Truy vấn trước để kiểm tra trạng thái
         $roomData = Room::select('result')->where('code', $code)->first();
-        if ($roomData && !is_null($roomData->result)) {
-            return response()->json([
-                'success' => false,
-                'message' => __('Trận đấu đã kết thúc trước đó.')
-            ], 403);
+
+        // FIX: Skip database update if a result already exists instead of returning 403
+        if (!$roomData || is_null($roomData->result)) {
+            Room::updateOrInsert(
+                ['code' => $code],
+                ['result' => $result, 'modified_at' => now()]
+            );
         }
 
-        Room::updateOrInsert(
-            ['code' => $code],
-            ['result' => $result, 'modified_at' => now()]
-        );
-
-        // Map sides and results to their respective translation keys
         $successMessages = [
             'red' => [
                 '-1' => __('Red lost!'),
@@ -543,7 +520,6 @@ class RoomController extends Controller
             ],
         ];
 
-        // Retrieve the appropriate message, falling back to a default if side/result is unexpected
         $success_message = $successMessages[$side][$result] ?? __('Result recorded.');
 
         return response()->json([
@@ -1044,7 +1020,7 @@ class RoomController extends Controller
 
         return response()->json([
             'code' => 1,
-            'message' => $matched ? 'Đã tìm thấy đối thủ!' : 'Đang tìm trận...',
+            'message' => $matched ? __('Đã tìm thấy đối thủ!') : __('Đang tìm trận...'),
             'session_id' => $sessionId,
             'matched' => $matched,
             'room_code' => $room->code,

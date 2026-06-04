@@ -22,24 +22,6 @@
         padding: 5px;
         margin-bottom: 15px;
       }
-
-      /* Nút bấm (Buttons) hiện đại hơn */
-      .btn-danger {
-        background: linear-gradient(145deg, #d32f2f, #b71c1c) !important;
-        border: none !important;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-      }
-      .btn-danger:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(211, 47, 47, 0.6);
-        background: linear-gradient(145deg, #f44336, #d32f2f) !important;
-      }
-
       /* Tùy chỉnh Alerts cho Dark Theme */
       .alert {
         border-radius: 8px;
