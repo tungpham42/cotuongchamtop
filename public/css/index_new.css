@@ -868,6 +868,7 @@ body.setup #ban-co {
 .table th {
     vertical-align: middle !important;
     border-top: 1px solid var(--royal-wood);
+    color: var(--royal-gold);
 }
 .table thead th {
     border-bottom: 2px solid var(--royal-gold);
