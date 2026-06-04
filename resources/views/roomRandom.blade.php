@@ -292,7 +292,7 @@ function updateStatus () {
 
   // game still on
   else {
-    status = '{{ __("Tới lượt:") }} ' + moveColor
+    status = moveColor
     if (game.game_over() && !game.in_draw() && !game.fen().includes('resign')) {
       if (game.turn() === 'b') {
         updateResult('{{ $roomCode }}', '1');

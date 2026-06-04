@@ -202,7 +202,7 @@ function updateStatus () {
 
   // game still on
   else {
-    status = '{{ __("Tới lượt:") }} ' + moveColor
+    status = moveColor
 
     // check?
     if (game.in_check()) {

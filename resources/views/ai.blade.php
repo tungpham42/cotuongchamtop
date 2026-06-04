@@ -265,7 +265,7 @@ function updateStatus () {
   } else if (game.in_draw()) {
     status = '{{ __("Hòa") }}';
   } else {
-    status = '{{ __("Tới lượt:") }} ' + moveColor;
+    status = moveColor;
     if (game.in_check()) {
       status += ', ' + moveColor + ' {{ __("đang bị chiếu") }}';
       if ((board.orientation() == 'red' && game.turn() === 'r') ||

@@ -155,7 +155,7 @@ function updateStatus () {
     status = '{{ __("Hòa") }}'
   }
   else {
-    status = '{{ __("Tới lượt:") }} ' + moveColor
+    status = moveColor
     if (game.in_check()) {
       status += ', ' + moveColor + ' {{ __("đang bị chiếu") }}'
       if ((board.orientation() == 'red' && game.turn() === 'r') || (board.orientation() == 'black' && game.turn() === 'b')) {
