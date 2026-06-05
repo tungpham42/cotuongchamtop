@@ -87,7 +87,7 @@
             <p style="color: var(--royal-gold-light);">{{ $tournament->description }}</p>
 
             <div class="row mt-4" style="color: #aa8c4a;">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <p>
                         <i class="fad fa-user-crown"></i> <strong>{{ __('Người tạo:') }}</strong>
                         @if($tournament->creator)
@@ -105,7 +105,7 @@
                 <div class="col-md-2">
                     <p><i class="fad fa-users"></i> <strong>{{ __('Số lượng:') }}</strong> {{ $tournament->users->count() }} / {{ $tournament->max_players }}</p>
                 </div>
-                <div class="col-md-5 text-right">
+                <div class="col-md-6 text-right">
                     @if(auth()->check())
                         @php
                             $isJoined = $tournament->users->contains(auth()->id());
