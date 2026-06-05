@@ -1,258 +1,168 @@
-<div class="timer-container">
-    <div class="player-timer red-player">
+<div class="mini-timer">
+    <div id="red-box" class="ptimer">
         <span class="icon">⏳</span> {{ __("Đỏ") }}: <span id="red-clock">0:00</span>
     </div>
-    <div class="player-timer black-player">
+    <div id="black-box" class="ptimer">
         <span class="icon">⏳</span> {{ __("Đen") }}: <span id="black-clock">0:00</span>
     </div>
 </div>
 
 <style>
-    .timer-container {
+    .mini-timer {
         display: flex;
         justify-content: center;
-        gap: 40px;
-        margin: 20px auto;
-        font-family: "Texturina", "Noto Sans JP", serif; /* Matches royal headings */
-        font-size: 1.5rem;
+        gap: 12px; /* Reduced from 40px */
+        margin: 10px auto; /* Reduced margin */
+        font-family: "Texturina", "Noto Sans JP", serif;
+        font-size: 1.1rem; /* Reduced from 1.5rem */
         font-weight: bold;
-        color: var(--royal-gold-light); /* Ivory/Gold text */
+        color: var(--royal-gold-light);
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
     }
 
-    .timer-container .player-timer {
-        padding: 12px 24px;
-        border-radius: 8px;
-        min-width: 160px;
-        text-align: center;
-        background: rgba(28, 17, 10, 0.85); /* Transparent dark wood background */
-        border: var(--royal-border); /* Royal double gold border */
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(212, 175, 55, 0.1);
-        transition: all 0.4s ease-in-out;
+    .ptimer {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px; /* Tighter padding */
+        border-radius: 6px;
+        min-width: 130px; /* Reduced from 160px */
+        background: rgba(28, 17, 10, 0.85);
+        border: var(--royal-border);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), inset 0 0 5px rgba(212, 175, 55, 0.1);
+        transition: all 0.3s ease;
     }
 
-    .timer-container .player-timer .icon {
-        filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.8));
-    }
+    .ptimer .icon { filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.8)); }
 
     #red-clock, #black-clock {
-        border-radius: 4px;
-        padding: 6px 12px;
-        display: inline-block;
+        border-radius: 3px;
+        padding: 3px 8px; /* Tighter padding */
         border: 1px solid var(--royal-gold);
-        font-family: "Noto Sans Mono", monospace; /* Monospace for numbers */
+        font-family: "Noto Sans Mono", monospace;
         font-weight: 800;
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     }
 
-    #red-clock {
-        color: var(--royal-gold-light);
-        background: linear-gradient(to bottom, var(--royal-red), #5c0a0a); /* Red gradient */
-    }
-
-    #black-clock {
-        color: var(--royal-gold);
-        background: linear-gradient(to bottom, #2a1910, var(--royal-bg)); /* Dark wood gradient */
-    }
+    #red-clock { background: linear-gradient(to bottom, var(--royal-red), #5c0a0a); }
+    #black-clock { color: var(--royal-gold); background: linear-gradient(to bottom, #2a1910, var(--royal-bg)); }
 
     /* Active State Glow */
-    .timer-container .player-timer.active {
+    .ptimer.active {
         border-color: var(--royal-gold);
-        background: rgba(74, 37, 17, 0.9); /* Lighter royal wood background */
-        box-shadow: 0 0 20px rgba(212, 175, 55, 0.6), inset 0 0 15px rgba(212, 175, 55, 0.2);
-        transform: scale(1.05);
+        background: rgba(74, 37, 17, 0.9);
+        box-shadow: 0 0 12px rgba(212, 175, 55, 0.5), inset 0 0 8px rgba(212, 175, 55, 0.2);
+        transform: scale(1.03); /* Subtler scale to save layout shifting */
     }
 </style>
 
 <script>
-    const roomCode = "{{ $roomCode }}"; // Transmitted from Controller to view
-    let redTime = 0;
-    let blackTime = 0;
-    let activePlayer = null;
-    let saveInterval = null;
-    let tickInterval = null; // Interval for local ticking
-    let isGameOver = false;
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-    const defaultHeaders = {
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': csrfToken || '',
-        'X-Requested-With': 'XMLHttpRequest',
+    const roomCode = "{{ $roomCode }}";
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+    const headers = { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest' };
+
+    // Cache DOM to save space and processing
+    const ui = {
+        red: { clock: document.getElementById("red-clock"), box: document.getElementById("red-box") },
+        black: { clock: document.getElementById("black-clock"), box: document.getElementById("black-box") }
     };
 
-    // --- Time Ticking Logic ---
+    let time = { red: 0, black: 0 };
+    let activePlayer = null, isGameOver = false;
+    let intervals = { tick: null, save: null };
 
-    function startLocalTick() {
-        if (tickInterval) clearInterval(tickInterval);
-        tickInterval = setInterval(() => {
-            if (isGameOver || !activePlayer) return;
+    // --- Helpers ---
+    const formatTime = (s) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
 
-            if (activePlayer === 'red') {
-                redTime = Math.max(0, redTime - 1);
-            } else if (activePlayer === 'black') {
-                blackTime = Math.max(0, blackTime - 1);
-            }
-
-            updateClockDisplay();
-        }, 1000);
-    }
-
-    function stopLocalTick() {
-        if (tickInterval) clearInterval(tickInterval);
-    }
-
-    // --- Server Communication ---
-
-    function startRealtimeSave() {
-        if (saveInterval) clearInterval(saveInterval);
-        saveInterval = setInterval(async () => {
-            if (!activePlayer || isGameOver) return;
-
-            await fetch(`/saveTime/${roomCode}`, {
-                method: 'POST',
-                headers: defaultHeaders,
-                credentials: 'same-origin',
-                body: JSON.stringify({ red_time: redTime, black_time: blackTime }),
+    // Unified API caller
+    const apiReq = async (endpoint, body = null) => {
+        try {
+            const res = await fetch(endpoint, {
+                method: body ? 'POST' : 'GET',
+                headers, credentials: 'same-origin',
+                body: body ? JSON.stringify(body) : null
             });
-        }, 5000); // Save every 5 seconds
-    }
+            if (!res.ok) throw new Error('API Error');
+            return await res.json();
+        } catch (err) { console.error(err); }
+    };
 
-    function stopRealtimeSave() {
-        if (saveInterval) clearInterval(saveInterval);
-    }
-
-    async function pauseTimer(roomCode, player) {
-        try {
-            const response = await fetch(`/pauseTimer/${roomCode}/${player}`, { method: "POST", headers: defaultHeaders, credentials: 'same-origin' });
-            if (!response.ok) throw new Error('Failed to pause timer');
-            return response.json();
-        } catch (err) {
-            console.error("Error pausing timer:", err);
-        }
-    }
-
-    async function startTimer(roomCode, player) {
-        try {
-            const response = await fetch(`/startTimer/${roomCode}/${player}`, { method: "POST", headers: defaultHeaders, credentials: 'same-origin' });
-            if (!response.ok) throw new Error('Failed to start timer');
-            return response.json();
-        } catch (err) {
-            console.error("Error starting timer:", err);
-        }
-    }
-
-    async function switchTurn(roomCode, currentPlayer) {
-        stopLocalTick();
-        stopRealtimeSave();
-        try {
-            const res = await fetch(`/switchTurn/${roomCode}`, {
-                method: "POST",
-                headers: defaultHeaders,
-                credentials: 'same-origin',
-                body: JSON.stringify({ current_player: currentPlayer }),
-            });
-
-            if (!res.ok) throw new Error('Failed to switch turn');
-            const data = await res.json();
-
-            redTime = data.red_time;
-            blackTime = data.black_time;
-            activePlayer = data.active_player;
-            updateClockDisplay();
-
-            startLocalTick();
-            startRealtimeSave();
-        } catch (err) {
-            console.error("Error switching turn:", err);
-        }
-    }
-
-    async function fetchTime() {
+    // --- Core Logic ---
+    const updateUI = () => {
         if (isGameOver) return;
-        try {
-            const res = await fetch(`/getTime/${roomCode}`, { credentials: 'same-origin' });
-            if (!res.ok) throw new Error('Failed to fetch time');
-            const data = await res.json();
+        ui.red.clock.innerText = formatTime(time.red);
+        ui.black.clock.innerText = formatTime(time.black);
 
-            if (data.error) {
-                console.error("Fetch time error:", data.error);
-                return;
-            }
-
-            redTime = data.red_time;
-            blackTime = data.black_time;
-            const previousActivePlayer = activePlayer;
-            activePlayer = data.active_player;
-
-            updateClockDisplay();
-
-            if (activePlayer && activePlayer !== previousActivePlayer) {
-                 stopLocalTick();
-                 startLocalTick();
-            } else if (!activePlayer) {
-                 stopLocalTick();
-                 stopRealtimeSave();
-            }
-
-            return data;
-        } catch (err) {
-            console.error("Error fetching time:", err);
-            updateClockDisplay();
-        }
-    }
-
-    function updateClockDisplay() {
-        if (isGameOver) return;
-
-        document.getElementById("red-clock").innerText = formatTime(redTime);
-        document.getElementById("black-clock").innerText = formatTime(blackTime);
-
-        // Check for game over due to time
-        if (redTime <= 0 || blackTime <= 0) {
+        if (time.red <= 0 || time.black <= 0) {
             isGameOver = true;
-            stopLocalTick();
-            stopRealtimeSave();
+            stopAll();
             activePlayer = null;
+            ui.red.box.classList.remove("active");
+            ui.black.box.classList.remove("active");
 
-            document.getElementById("red-clock").parentElement.classList.remove("active");
-            document.getElementById("black-clock").parentElement.classList.remove("active");
-
-            let result;
-            if (redTime <= 0 && blackTime <= 0) {
-                result = '0'; // Draw
-            } else if (redTime <= 0) {
-                result = '-1'; // Black wins
-            } else if (blackTime <= 0) {
-                result = '1'; // Red wins
-            }
             if (typeof updateResult === 'function') {
-                updateResult('{{ $roomCode }}', result);
+                const result = time.red <= 0 && time.black <= 0 ? '0' : (time.red <= 0 ? '-1' : '1');
+                updateResult(roomCode, result);
             }
         } else {
-            // This is the line that triggers the smooth CSS transition
-            document.getElementById("red-clock").parentElement.classList.toggle("active", activePlayer === "red");
-            document.getElementById("black-clock").parentElement.classList.toggle("active", activePlayer === "black");
+            ui.red.box.classList.toggle("active", activePlayer === "red");
+            ui.black.box.classList.toggle("active", activePlayer === "black");
         }
-    }
+    };
 
-    function formatTime(seconds) {
-        let m = Math.floor(seconds / 60);
-        let s = seconds % 60;
-        return `${m}:${s.toString().padStart(2, '0')}`;
-    }
+    const stopAll = () => { clearInterval(intervals.tick); clearInterval(intervals.save); };
+
+    const startAll = () => {
+        stopAll();
+        intervals.tick = setInterval(() => {
+            if (!isGameOver && activePlayer) {
+                time[activePlayer] = Math.max(0, time[activePlayer] - 1);
+                updateUI();
+            }
+        }, 1000);
+
+        intervals.save = setInterval(() => {
+            if (!isGameOver && activePlayer) apiReq(`/saveTime/${roomCode}`, { red_time: time.red, black_time: time.black });
+        }, 5000);
+    };
+
+    // --- Server Communication ---
+    window.pauseTimer = (rc, p) => apiReq(`/pauseTimer/${rc}/${p}`);
+    window.startTimer = (rc, p) => apiReq(`/startTimer/${rc}/${p}`);
+
+    window.switchTurn = async (rc, currentPlayer) => {
+        stopAll();
+        const data = await apiReq(`/switchTurn/${rc}`, { current_player: currentPlayer });
+        if (data) {
+            time.red = data.red_time; time.black = data.black_time;
+            activePlayer = data.active_player;
+            updateUI();
+            startAll();
+        }
+    };
+
+    const fetchTime = async () => {
+        if (isGameOver) return;
+        const data = await apiReq(`/getTime/${roomCode}`);
+        if (!data || data.error) return;
+
+        const prevActive = activePlayer;
+        activePlayer = data.active_player;
+        time.red = data.red_time; time.black = data.black_time;
+
+        updateUI();
+
+        if (activePlayer && activePlayer !== prevActive) startAll();
+        else if (!activePlayer) stopAll();
+        return data;
+    };
 
     // --- Initialization ---
-
-    async function initializeTimer() {
+    (async () => {
         const data = await fetchTime();
-        if (data && data.active_player) {
-            startLocalTick();
-            startRealtimeSave();
-        }
-    }
+        if (data && data.active_player) startAll();
+    })();
 
-    initializeTimer();
-
-    // Sync with server every 10 seconds as a safety net
-    setInterval(fetchTime, 10000);
+    setInterval(fetchTime, 10000); // 10s safety sync
 </script>
