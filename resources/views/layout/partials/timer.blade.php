@@ -1,6 +1,10 @@
 <div class="timer-container">
-    <div>⏳ {{ __("Đỏ") }}: <span id="red-clock">0:00</span></div>
-    <div>⏳ {{ __("Đen") }}: <span id="black-clock">0:00</span></div>
+    <div class="player-timer red-player">
+        <span class="icon">⏳</span> {{ __("Đỏ") }}: <span id="red-clock">0:00</span>
+    </div>
+    <div class="player-timer black-player">
+        <span class="icon">⏳</span> {{ __("Đen") }}: <span id="black-clock">0:00</span>
+    </div>
 </div>
 
 <style>
@@ -9,45 +13,55 @@
         justify-content: center;
         gap: 40px;
         margin: 20px auto;
-        font-family: 'Arial', sans-serif;
+        font-family: "Texturina", "Noto Sans JP", serif; /* Matches royal headings */
         font-size: 1.5rem;
         font-weight: bold;
+        color: var(--royal-gold-light); /* Ivory/Gold text */
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
 
-    .timer-container div {
+    .timer-container .player-timer {
         padding: 12px 24px;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        min-width: 120px;
+        border-radius: 8px;
+        min-width: 160px;
         text-align: center;
+        background: rgba(28, 17, 10, 0.85); /* Transparent dark wood background */
+        border: var(--royal-border); /* Royal double gold border */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(212, 175, 55, 0.1);
+        transition: all 0.4s ease-in-out;
+    }
 
-        /* FIX 1: Initialize border to maintain size */
-        border: 3px solid transparent;
+    .timer-container .player-timer .icon {
+        filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.8));
+    }
 
-        /* FIX 2: Add transition for smooth animation */
-        transition: border 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+    #red-clock, #black-clock {
+        border-radius: 4px;
+        padding: 6px 12px;
+        display: inline-block;
+        border: 1px solid var(--royal-gold);
+        font-family: "Noto Sans Mono", monospace; /* Monospace for numbers */
+        font-weight: 800;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     }
 
     #red-clock {
-        color: #fff;
-        background: #d9534f;
-        border-radius: 8px;
-        padding: 6px 12px;
-        display: inline-block;
+        color: var(--royal-gold-light);
+        background: linear-gradient(to bottom, var(--royal-red), #5c0a0a); /* Red gradient */
     }
 
     #black-clock {
-        color: #fff;
-        background: #343a40;
-        border-radius: 8px;
-        padding: 6px 12px;
-        display: inline-block;
+        color: var(--royal-gold);
+        background: linear-gradient(to bottom, #2a1910, var(--royal-bg)); /* Dark wood gradient */
     }
 
-    .timer-container div.active {
-        border: 3px solid gold;
-        /* Optional: enhance the active visual state with a glow */
-        box-shadow: 0 0 15px rgba(255, 215, 0, 0.7), 0 2px 8px rgba(0,0,0,0.15);
+    /* Active State Glow */
+    .timer-container .player-timer.active {
+        border-color: var(--royal-gold);
+        background: rgba(74, 37, 17, 0.9); /* Lighter royal wood background */
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.6), inset 0 0 15px rgba(212, 175, 55, 0.2);
+        transform: scale(1.05);
     }
 </style>
 
