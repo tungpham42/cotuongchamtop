@@ -1398,3 +1398,9 @@ form label {
     font-weight: bold;
     color: var(--royal-gold);
 }
+
+.dropdown-item.active,
+.dropdown-item:active {
+    background-color: var(--royal-red) !important;
+    color: var(--royal-gold) !important;
+}
