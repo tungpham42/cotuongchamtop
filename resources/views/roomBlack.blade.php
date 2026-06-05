@@ -17,11 +17,9 @@
 </p>
 @endsection
 @section('belowContent')
-@if (!auth()->check() || (isset($room->guest_id) && auth()->id() == $room->guest_id))
-  <p class="w-100 text-center">
-    <a data-step="2" data-intro="{{ __("Ấn vào đây nếu bạn không biết đi nước nào") }}" id="resign" class="btn btn-dark btn-lg"><i class="fad fa-flag"></i> {{ __("Bỏ cuộc") }}</a>
-  </p>
-@endif
+<p class="w-100 text-center">
+  <a data-step="2" data-intro="{{ __("Ấn vào đây nếu bạn không biết đi nước nào") }}" id="resign" class="btn btn-dark btn-lg"><i class="fad fa-flag"></i> {{ __("Bỏ cuộc") }}</a>
+</p>
 @include('layout.partials.kypho')
 <script>
 @if ($room['pass'] != null)
