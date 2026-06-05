@@ -169,7 +169,7 @@
               @include('layout.partials.analyzeBtn')
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-0">
-              @include('layout.partials.comments')
+              @include('layout.partials.chat')
               {{-- @include('common.sideAds') --}}
             </div>
           </div>
