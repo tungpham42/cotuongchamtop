@@ -11,10 +11,10 @@
     .mini-timer {
         display: flex;
         justify-content: center;
-        gap: 12px; /* Reduced from 40px */
-        margin: 10px auto; /* Reduced margin */
+        gap: 12px;
+        margin: 10px auto;
         font-family: "Texturina", "Noto Sans JP", serif;
-        font-size: 1.1rem; /* Reduced from 1.5rem */
+        font-size: 1.1rem;
         font-weight: bold;
         color: var(--royal-gold-light);
         text-transform: uppercase;
@@ -25,9 +25,9 @@
         display: flex;
         align-items: center;
         gap: 6px;
-        padding: 6px 14px; /* Tighter padding */
+        padding: 6px 14px;
         border-radius: 6px;
-        min-width: 130px; /* Reduced from 160px */
+        min-width: 130px;
         background: rgba(28, 17, 10, 0.85);
         border: var(--royal-border);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), inset 0 0 5px rgba(212, 175, 55, 0.1);
@@ -38,7 +38,7 @@
 
     #red-clock, #black-clock {
         border-radius: 3px;
-        padding: 3px 8px; /* Tighter padding */
+        padding: 3px 8px;
         border: 1px solid var(--royal-gold);
         font-family: "Noto Sans Mono", monospace;
         font-weight: 800;
@@ -48,12 +48,11 @@
     #red-clock { background: linear-gradient(to bottom, var(--royal-red), #5c0a0a); }
     #black-clock { color: var(--royal-gold); background: linear-gradient(to bottom, #2a1910, var(--royal-bg)); }
 
-    /* Active State Glow */
     .ptimer.active {
         border-color: var(--royal-gold);
         background: rgba(74, 37, 17, 0.9);
         box-shadow: 0 0 12px rgba(212, 175, 55, 0.5), inset 0 0 8px rgba(212, 175, 55, 0.2);
-        transform: scale(1.03); /* Subtler scale to save layout shifting */
+        transform: scale(1.03);
     }
 </style>
 
@@ -62,7 +61,6 @@
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
     const headers = { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest' };
 
-    // Cache DOM to save space and processing
     const ui = {
         red: { clock: document.getElementById("red-clock"), box: document.getElementById("red-box") },
         black: { clock: document.getElementById("black-clock"), box: document.getElementById("black-box") }
@@ -70,12 +68,11 @@
 
     let time = { red: 0, black: 0 };
     let activePlayer = null, isGameOver = false;
-    let intervals = { tick: null, save: null };
+    let intervals = { tick: null };
+    let localLastUpdate = Date.now(); // Anchor for smooth 100ms interpolation
 
-    // --- Helpers ---
-    const formatTime = (s) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
+    const formatTime = (s) => `${Math.floor(s / 60)}:${(Math.floor(s) % 60).toString().padStart(2, '0')}`;
 
-    // Unified API caller
     const apiReq = async (endpoint, body = null) => {
         try {
             const res = await fetch(endpoint, {
@@ -88,13 +85,23 @@
         } catch (err) { console.error(err); }
     };
 
-    // --- Core Logic ---
+    // --- Core UI Logic ---
     const updateUI = () => {
         if (isGameOver) return;
-        ui.red.clock.innerText = formatTime(time.red);
-        ui.black.clock.innerText = formatTime(time.black);
 
-        if (time.red <= 0 || time.black <= 0) {
+        let currentRed = time.red;
+        let currentBlack = time.black;
+
+        if (activePlayer) {
+            let elapsed = (Date.now() - localLastUpdate) / 1000;
+            if (activePlayer === 'red') currentRed = Math.max(0, currentRed - elapsed);
+            if (activePlayer === 'black') currentBlack = Math.max(0, currentBlack - elapsed);
+        }
+
+        ui.red.clock.innerText = formatTime(Math.ceil(currentRed));
+        ui.black.clock.innerText = formatTime(Math.ceil(currentBlack));
+
+        if (currentRed <= 0 || currentBlack <= 0) {
             isGameOver = true;
             stopAll();
             activePlayer = null;
@@ -102,7 +109,7 @@
             ui.black.box.classList.remove("active");
 
             if (typeof updateResult === 'function') {
-                const result = time.red <= 0 && time.black <= 0 ? '0' : (time.red <= 0 ? '-1' : '1');
+                const result = currentRed <= 0 && currentBlack <= 0 ? '0' : (currentRed <= 0 ? '-1' : '1');
                 updateResult(roomCode, result);
             }
         } else {
@@ -111,20 +118,26 @@
         }
     };
 
-    const stopAll = () => { clearInterval(intervals.tick); clearInterval(intervals.save); };
+    const stopAll = () => clearInterval(intervals.tick);
 
     const startAll = () => {
         stopAll();
-        intervals.tick = setInterval(() => {
-            if (!isGameOver && activePlayer) {
-                time[activePlayer] = Math.max(0, time[activePlayer] - 1);
-                updateUI();
-            }
-        }, 1000);
+        localLastUpdate = Date.now();
+        intervals.tick = setInterval(updateUI, 100);
+    };
 
-        intervals.save = setInterval(() => {
-            if (!isGameOver && activePlayer) apiReq(`/saveTime/${roomCode}`, { red_time: time.red, black_time: time.black });
-        }, 5000);
+    // --- State Synchronization ---
+    const syncTimerState = (serverData) => {
+        if (isGameOver) return;
+        time.red = parseFloat(serverData.red_time);
+        time.black = parseFloat(serverData.black_time);
+        activePlayer = serverData.active_player;
+        localLastUpdate = Date.now(); // Snap our local anchor back to reality
+
+        updateUI();
+
+        if (activePlayer) startAll();
+        else stopAll();
     };
 
     // --- Server Communication ---
@@ -132,37 +145,37 @@
     window.startTimer = (rc, p) => apiReq(`/startTimer/${rc}/${p}`);
 
     window.switchTurn = async (rc, currentPlayer) => {
-        stopAll();
-        const data = await apiReq(`/switchTurn/${rc}`, { current_player: currentPlayer });
-        if (data) {
-            time.red = data.red_time; time.black = data.black_time;
-            activePlayer = data.active_player;
-            updateUI();
-            startAll();
-        }
-    };
+        // 1. Optimistic Update (Immediate UI response for the player who just moved)
+        const elapsed = (Date.now() - localLastUpdate) / 1000;
+        if (currentPlayer === 'red') time.red = Math.max(0, time.red - elapsed);
+        if (currentPlayer === 'black') time.black = Math.max(0, time.black - elapsed);
 
-    const fetchTime = async () => {
-        if (isGameOver) return;
-        const data = await apiReq(`/getTime/${roomCode}`);
-        if (!data || data.error) return;
-
-        const prevActive = activePlayer;
-        activePlayer = data.active_player;
-        time.red = data.red_time; time.black = data.black_time;
-
+        activePlayer = currentPlayer === 'red' ? 'black' : 'red';
+        localLastUpdate = Date.now();
         updateUI();
+        startAll();
 
-        if (activePlayer && activePlayer !== prevActive) startAll();
-        else if (!activePlayer) stopAll();
-        return data;
+        // 2. Trigger the server (The server will process this and fire the Pusher event to everyone)
+        await apiReq(`/switchTurn/${rc}`, { current_player: currentPlayer });
     };
 
-    // --- Initialization ---
-    (async () => {
-        const data = await fetchTime();
-        if (data && data.active_player) startAll();
-    })();
+    // --- PUSHER (Laravel Echo) WebSocket Listener ---
+    if (typeof Echo !== 'undefined') {
+        Echo.channel(`room.${roomCode}`)
+            .listen('.room.updated', (e) => {
+                if (e.room) {
+                    syncTimerState({
+                        red_time: e.room.red_time,
+                        black_time: e.room.black_time,
+                        active_player: e.room.active_player
+                    });
+                }
+            });
+    }
 
-    setInterval(fetchTime, 10000); // 10s safety sync
+    // --- Initialization (Load initial time on mount) ---
+    (async () => {
+        const data = await apiReq(`/getTime/${roomCode}`);
+        if (data && !data.error) syncTimerState(data);
+    })();
 </script>

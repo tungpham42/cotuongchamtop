@@ -1153,30 +1153,35 @@ class RoomController extends Controller
         }
 
         $now = now();
-        $lastUpdate = $room->last_update ?: $now;
-        $elapsed = $now->diffInSeconds($lastUpdate);
+        $lastUpdate = $room->last_update ? \Carbon\Carbon::parse($room->last_update) : $now;
 
-        // Trừ thời gian của người vừa đi
+        // Calculate exact elapsed time using milliseconds to avoid rounding drift
+        $elapsed = $lastUpdate->diffInMilliseconds($now) / 1000;
+
+        // Subtract exact elapsed time from the player who just finished their turn
         if ($elapsed > 0) {
             if ($currentPlayer === 'red') {
-                $room->red_time = max(0, ($room->red_time ?? 0) - $elapsed);
+                $room->red_time = max(0, floatval($room->red_time) - $elapsed);
             } else {
-                $room->black_time = max(0, ($room->black_time ?? 0) - $elapsed);
+                $room->black_time = max(0, floatval($room->black_time) - $elapsed);
             }
         }
 
+        // Switch to the next player
         $room->active_player = $currentPlayer === 'red' ? 'black' : 'red';
         $room->last_update = $now;
         $room->modified_at = $now;
         $room->save();
 
         $freshRoom = $room->fresh();
+
+        // Push the mathematically verified time to all clients
         broadcast(new RoomUpdated($freshRoom));
 
         return response()->json([
             'success'       => true,
-            'red_time'      => $freshRoom->red_time,
-            'black_time'    => $freshRoom->black_time,
+            'red_time'      => round($freshRoom->red_time, 3),
+            'black_time'    => round($freshRoom->black_time, 3),
             'active_player' => $freshRoom->active_player,
             'last_update'   => optional($freshRoom->last_update)->toDateTimeString(),
         ]);
@@ -1187,10 +1192,11 @@ class RoomController extends Controller
         $room = Room::where('code', $roomCode)->first();
         if (!$room) return response()->json(['error' => 'Room not found'], 404);
 
-        // Cập nhật last_update
         $room->active_player = $player;
         $room->last_update = now();
         $room->save();
+
+        broadcast(new RoomUpdated($room->fresh()));
 
         return response()->json(['success' => true, 'active_player' => $player]);
     }
@@ -1201,19 +1207,20 @@ class RoomController extends Controller
         if (!$room) return response()->json(['error' => 'Room not found'], 404);
 
         if ($room->active_player === $player) {
-            // Tính thời gian đã chạy
-            $lastUpdate = $room->last_update ?: now();
-            $elapsed = now()->diffInSeconds($lastUpdate);
+            $lastUpdate = $room->last_update ? \Carbon\Carbon::parse($room->last_update) : now();
+            $elapsed = $lastUpdate->diffInMilliseconds(now()) / 1000;
 
             if ($player === 'red') {
-                $room->red_time = max(0, $room->red_time - $elapsed);
+                $room->red_time = max(0, floatval($room->red_time) - $elapsed);
             } else {
-                $room->black_time = max(0, $room->black_time - $elapsed);
+                $room->black_time = max(0, floatval($room->black_time) - $elapsed);
             }
 
             $room->active_player = null;
             $room->last_update = now();
             $room->save();
+
+            broadcast(new RoomUpdated($room->fresh()));
         }
 
         return response()->json(['success' => true]);
@@ -1224,33 +1231,26 @@ class RoomController extends Controller
         $room = Room::where('code', $roomCode)->first();
         if (!$room) return response()->json(['error' => 'Room not found'], 404);
 
-        // Nếu có player đang chạy → tính realtime
-        if ($room->active_player) {
-            $lastUpdate = $room->last_update ?: now();
-            $elapsed = now()->diffInSeconds($lastUpdate);
+        $redTime = floatval($room->red_time);
+        $blackTime = floatval($room->black_time);
 
-            $redTime = $room->red_time;
-            $blackTime = $room->black_time;
+        // If the game is actively running, mathematically determine the exact remaining time
+        if ($room->active_player) {
+            $lastUpdate = $room->last_update ? \Carbon\Carbon::parse($room->last_update) : now();
+            $elapsed = $lastUpdate->diffInMilliseconds(now()) / 1000;
 
             if ($room->active_player === 'red') {
-                $redTime = max(0, $room->red_time - $elapsed);
+                $redTime = max(0, $redTime - $elapsed);
             } elseif ($room->active_player === 'black') {
-                $blackTime = max(0, $room->black_time - $elapsed);
+                $blackTime = max(0, $blackTime - $elapsed);
             }
-
-            return response()->json([
-                'red_time' => $redTime,
-                'black_time' => $blackTime,
-                'active_player' => $room->active_player,
-                'last_update' => $room->last_update,
-            ]);
         }
 
         return response()->json([
-            'red_time' => $room->red_time,
-            'black_time' => $room->black_time,
-            'active_player' => null,
-            'last_update' => $room->last_update,
+            'red_time' => round($redTime, 3),
+            'black_time' => round($blackTime, 3),
+            'active_player' => $room->active_player,
+            'last_update' => optional($room->last_update)->toDateTimeString(),
         ]);
     }
 
@@ -1261,13 +1261,8 @@ class RoomController extends Controller
             return response()->json(['error' => 'Room not found'], 404);
         }
 
-        // Lấy thời gian từ request hoặc giữ nguyên nếu không có
-        $redTime = $request->input('red_time', $room->red_time);
-        $blackTime = $request->input('black_time', $room->black_time);
-
-        // Kiểm tra và đảm bảo thời gian không âm
-        $room->red_time = max(0, $redTime);
-        $room->black_time = max(0, $blackTime);
+        $room->red_time = max(0, $request->input('red_time', $room->red_time));
+        $room->black_time = max(0, $request->input('black_time', $room->black_time));
         $room->last_update = now();
         $room->save();
 
