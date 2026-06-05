@@ -88,6 +88,9 @@ $(document).ready(function() {
 @endif
 let board = null;
 let game = new Xiangqi();
+@if (!empty($room->fen))
+  game.load('{!! $room->fen !!}');
+@endif
 let currentFEN = game.fen();
 let alertShown = false;
 let hasGameOverSound = false;
@@ -445,12 +448,8 @@ function updateStatus () {
   }
 }
 let config = {
-  @if ($room->red_time == 0 || $room->black_time == 0)
-  draggable: false,
-  @else
   draggable: true,
-  @endif
-  position: 'start',
+  position: game.fen(),
   onDragStart: onDragStart,
   onDrop: onDrop,
   onMouseoutSquare: onMouseoutSquare,
