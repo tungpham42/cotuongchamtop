@@ -107,6 +107,7 @@ $action = $actionMap[$level ?? '3'] ?? 'chơi';
 let board = null;
 let game = new Xiangqi();
 let isComputerThinking = false;
+let aiAbortController = null;
 let resignAlertShown = false;
 let kypho = null;
 
@@ -132,6 +133,15 @@ async function makeBestMove() {
   isComputerThinking = true;
   $('#game-status').html('{{ __("Đang suy nghĩ") }}... <i class="fas fa-spinner fa-spin"></i>');
 
+  // Abort any previously hanging AI requests
+  if (aiAbortController) {
+    aiAbortController.abort();
+  }
+  aiAbortController = new AbortController();
+
+  // Create a timeout signal that forces the fetch to fail if the backend hangs
+  const timeoutId = setTimeout(() => aiAbortController.abort(), getTimeoutByLevel({{ $level ?? 3 }}) + 5000);
+
   try {
     const response = await fetch('/api/xiangqi/best-move', {
       method: 'POST',
@@ -142,8 +152,13 @@ async function makeBestMove() {
       body: JSON.stringify({
         fen: game.fen(),
         timeout: getTimeoutByLevel({{ $level ?? 3 }})
-      })
+      }),
+      signal: aiAbortController.signal
     });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) throw new Error('Network response was not ok');
 
     const data = await response.json();
 
@@ -153,9 +168,7 @@ async function makeBestMove() {
       if (move) {
         const moveResult = game.move(move);
         if (moveResult !== null) {
-          if (kypho) {
-            kypho.recordMove(moveResult);
-          }
+          if (kypho) kypho.recordMove(moveResult);
           board.position(game.fen());
           if (typeof nuocCo !== 'undefined') nuocCo.play();
           updateStatus();
@@ -169,9 +182,15 @@ async function makeBestMove() {
       makeRandomMove();
     }
   } catch (error) {
-    makeRandomMove();
+    // If the error was an intentional abort, don't trigger a random move just yet
+    if (error.name === 'AbortError') {
+      console.warn('AI request timed out or was aborted.');
+    } else {
+      makeRandomMove();
+    }
   } finally {
     isComputerThinking = false;
+    aiAbortController = null;
   }
 }
 
