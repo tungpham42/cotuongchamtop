@@ -4,16 +4,6 @@
     @include('layout.partials.head')
 
     <style>
-      /* Tổng thể body và Typography */
-      body {
-        background-color: #121418 !important; /* Nền tối sâu giảm mỏi mắt */
-      }
-
-      /* Khu vực chứa game chính */
-      .game.container-fluid {
-        background: linear-gradient(135deg, #1a1c23 0%, #121418 100%);
-        min-height: calc(100vh - 80px);
-      }
 
       /* Khung bao quanh Bàn cờ */
       #ban-co {

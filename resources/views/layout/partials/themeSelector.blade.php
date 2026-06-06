@@ -85,13 +85,16 @@
     </div>
   </div>
 
-  <button class="theme-toggle-btn" id="theme-toggle-btn">
+  <button class="theme-toggle-btn btn btn-dark" id="theme-toggle-btn">
     <i class="fas fa-palette"></i>
     <span class="theme-toggle-text">{{ __("Tùy chỉnh") }}</span>
   </button>
 </div>
 
 <style>
+/* ==========================================================================
+   THEME SELECTOR WRAPPER & PANEL
+   ========================================================================== */
 .theme-selector-wrapper {
   position: relative;
   display: block;
@@ -103,146 +106,200 @@
   pointer-events: none;
 }
 
-.theme-toggle-btn {
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 20px;
-  padding: 8px 16px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0 auto;
-  flex-shrink: 0;
-  pointer-events: all;
-}
-
-.theme-toggle-btn:hover {
-  background: rgba(0, 0, 0, 0.9);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-2px);
-}
-
 .theme-selector-panel {
   position: absolute;
-  bottom: 45px;
+  bottom: 60px; /* Lifted slightly for the bigger button */
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  padding: 16px;
+
+  /* Glassmorphism Panel */
+  background: rgba(18, 20, 24, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 6px;
+  padding: 20px;
   display: none;
-  min-width: 320px;
-  max-width: 400px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  min-width: 340px;
+  max-width: 420px;
+
+  /* Deep cinematic shadow */
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.9),
+    0 0 30px rgba(212, 175, 55, 0.05);
   z-index: 1000;
   pointer-events: all;
 }
 
 .theme-selector-panel.show {
   display: block;
-  animation: fadeInUp 0.3s ease;
+  animation: floatUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+@keyframes floatUp {
+  from { opacity: 0; transform: translate(-50%, 20px) scale(0.95); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
 }
 
-.theme-section {
-  margin-bottom: 16px;
-}
-
-.theme-section:last-child {
-  margin-bottom: 0;
-}
-
+/* Titles */
 .theme-title {
-  color: #f8f9fa;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 8px;
+  color: #fff2cc; /* Royal Gold Light */
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
 }
 
+/* ==========================================================================
+   THE THEME TOGGLE BUTTON (.theme-toggle-btn)
+   ========================================================================== */
+.theme-toggle-btn {
+  /* Obsidian stone base */
+  background: linear-gradient(145deg, #252a36, #121418);
+  color: var(--royal-gold-light);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 6px;
+  padding: 10px 24px;
+  font-size: 15px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto;
+  pointer-events: all;
+
+  /* Multilayer glow */
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.6),
+    0 0 15px rgba(212, 175, 55, 0.15);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.theme-toggle-btn:hover {
+  background: linear-gradient(145deg, #2c3240, #1a1c23);
+  border-color: rgba(212, 175, 55, 0.9);
+  color: #fff;
+  transform: translateY(-4px) scale(1.02);
+  box-shadow:
+    0 12px 25px rgba(0, 0, 0, 0.8),
+    0 0 25px rgba(212, 175, 55, 0.4);
+}
+
+/* ==========================================================================
+   THE THEME THUMBNAILS (.theme-option)
+   ========================================================================== */
 .theme-options {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
+  gap: 12px;
   justify-items: center;
 }
 
 .theme-option {
-  width: 60px;
-  height: 60px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  background: transparent;
+  width: 65px;
+  height: 65px;
+  /* Dark glass tiles */
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s ease;
   position: relative;
-  overflow: hidden;
-  padding: 4px;
+  padding: 5px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+/* Hover: Lift and slight gold reflection */
 .theme-option:hover {
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: scale(1.05);
+  border-color: rgba(212, 175, 55, 0.5);
+  background: rgba(212, 175, 55, 0.05);
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
 }
 
+/* Active State: The Golden Igniter */
 .theme-option.active {
-  border-color: #dc3545;
-  box-shadow: 0 0 10px rgba(220, 53, 69, 0.5);
+  border-color: #ffd700;
+  background: rgba(212, 175, 55, 0.15);
+  transform: scale(1.05);
+  box-shadow:
+    inset 0 0 15px rgba(212, 175, 55, 0.4),
+    0 0 20px rgba(212, 175, 55, 0.6);
 }
 
 .theme-preview {
   width: 100%;
   height: 100%;
-  border-radius: 4px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .board-preview img, .piece-preview img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+  transition: transform 0.3s ease;
 }
 
+.theme-option:hover img {
+  transform: scale(1.15);
+}
+
+/* ==========================================================================
+   THE APPLY BUTTON (#apply-theme-btn)
+   ========================================================================== */
+#apply-theme-btn {
+  background: linear-gradient(to right, #8a1515, #e63946);
+  color: #fff;
+  border: 1px solid #ff5252;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 6px;
+  padding: 10px 30px;
+  box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+#apply-theme-btn:hover {
+  background: linear-gradient(to right, #e63946, #ff5252);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(230, 57, 70, 0.6), 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+#apply-theme-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 5px rgba(230, 57, 70, 0.4);
+}
+
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
   .theme-selector-panel {
-    min-width: 280px;
-    padding: 12px;
+    min-width: 300px;
+    padding: 15px;
+    bottom: 55px;
   }
-
   .theme-option {
-    width: 50px;
-    height: 50px;
-    padding: 3px;
+    width: 55px;
+    height: 55px;
+    padding: 4px;
   }
-
   .theme-toggle-btn {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
-
-  .theme-options {
-    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-    gap: 6px;
+    padding: 8px 18px;
+    font-size: 13px;
   }
 }
 </style>

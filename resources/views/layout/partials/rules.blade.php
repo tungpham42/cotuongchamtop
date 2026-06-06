@@ -1,4 +1,4 @@
-<div class="container-fluid about px-0 font-weight-bold text-center py-0">
+<div class="container-fluid px-0 font-weight-bold text-center py-0">
   <p class="w-100 text-center my-1">
     <a id="share-board" class="w-25 btn btn-dark btn-lg" href="{{ url(__('/ban-co/')) }}"><i class="fad fa-abacus"></i> {{ __("Giải bàn cờ") }}</a>
     <button type="button" class="w-25 btn btn-dark btn-lg" data-toggle="modal" data-target="#GuideModal"><i class="fad fa-info-circle"></i> {{ __("Hướng dẫn") }}</button>
