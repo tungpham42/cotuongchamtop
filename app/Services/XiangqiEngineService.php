@@ -100,17 +100,12 @@ class XiangqiEngineService
         usleep(100000); // 100ms delay
     }
 
-    private function readOutput(int $timeoutSeconds = 0, int $timeoutMicroseconds = 200000): string
+    private function readOutput(): string
     {
         $output = '';
-        if (!is_resource($this->pipes[1])) return $output;
 
-        $read = [$this->pipes[1]];
-        $write = null;
-        $except = null;
-
-        // stream_select waits efficiently without maxing out CPU
-        if (stream_select($read, $write, $except, $timeoutSeconds, $timeoutMicroseconds) > 0) {
+        if (is_resource($this->pipes[1])) {
+            // Read from stdout
             while (($line = fgets($this->pipes[1])) !== false) {
                 $output .= $line;
             }
@@ -125,15 +120,17 @@ class XiangqiEngineService
         $startTime = microtime(true);
 
         while ((microtime(true) - $startTime) < $timeoutSeconds) {
-            // Wait up to 100ms for data
-            $output .= $this->readOutput(0, 100000);
+            $output .= $this->readOutput();
 
             if (strpos($output, $expected) !== false) {
+                Log::debug("Found expected response: " . $expected);
                 return $output;
             }
+
+            usleep(100000); // 100ms
         }
 
-        Log::warning("Timeout waiting for: " . $expected);
+        Log::warning("Timeout waiting for: " . $expected . ". Got: " . substr($output, 0, 200));
         return $output;
     }
 
@@ -143,12 +140,14 @@ class XiangqiEngineService
         $startTime = microtime(true);
 
         while ((microtime(true) - $startTime) < $timeoutSeconds) {
-            // Wait up to 50ms for data per iteration
-            $output .= $this->readOutput(0, 50000);
+            $output .= $this->readOutput();
 
+            // If we got a bestmove, return immediately
             if (strpos($output, 'bestmove') !== false) {
                 return $output;
             }
+
+            usleep(50000); // 50ms
         }
 
         return $output;

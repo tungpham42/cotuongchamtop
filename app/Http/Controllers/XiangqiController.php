@@ -7,7 +7,6 @@ use App\Helpers\XiangqiHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cache;
 
 class XiangqiController extends Controller
 {
@@ -39,28 +38,43 @@ class XiangqiController extends Controller
             $timeout = $request->input('timeout', 3000);
             $level = $request->input('level', 3);
 
+            Log::info('Best move request received', [
+                'fen' => $fen,
+                'timeout' => $timeout,
+                'level' => $level,
+                'engine_available' => $this->engineAvailable
+            ]);
+
             if (!XiangqiHelper::validateFen($fen)) {
-                return response()->json(['success' => false, 'error' => 'Invalid Xiangqi FEN position'], 422);
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Invalid Xiangqi FEN position'
+                ], 422);
             }
 
+            // Adjust timeout based on level
             $adjustedTimeout = $this->getAdjustedTimeout($timeout, $level);
 
-            // CREATE A CACHE KEY based on the board state and difficulty
-            $cacheKey = 'xiangqi_move_' . md5($fen . '_' . $adjustedTimeout);
-
-            // ATTEMPT TO FETCH FROM CACHE FIRST
-            $bestMove = Cache::remember($cacheKey, now()->addDays(30), function () use ($fen, $adjustedTimeout) {
-                if ($this->engineAvailable && $this->xiangqiEngine->isReady()) {
-                    return $this->xiangqiEngine->getBestMove($fen, $adjustedTimeout);
-                }
-                return null;
-            });
-
+            $bestMove = null;
             $usedFallback = false;
 
-            // If cache/engine failed, use fallback
+            if ($this->engineAvailable && $this->xiangqiEngine->isReady()) {
+                Log::info('Attempting to get best move from engine');
+                $bestMove = $this->xiangqiEngine->getBestMove($fen, $adjustedTimeout);
+
+                if ($bestMove) {
+                    Log::info('Engine returned best move: ' . $bestMove);
+                } else {
+                    Log::warning('Engine failed to return a best move');
+                    $usedFallback = true;
+                }
+            } else {
+                Log::warning('Engine not available, using fallback');
+                $usedFallback = true;
+            }
+
+            // If engine failed or is not available, use fallback
             if (!$bestMove) {
-                Cache::forget($cacheKey); // Don't cache the failure
                 $bestMove = $this->getFallbackMove($fen);
                 $usedFallback = true;
                 Log::info('Using fallback move: ' . $bestMove);
@@ -79,13 +93,17 @@ class XiangqiController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Xiangqi controller error: ' . $e->getMessage());
+
+            // Try fallback move
             $fallbackMove = $this->getFallbackMove($request->input('fen'));
 
             return response()->json([
                 'success' => $fallbackMove !== null,
                 'best_move' => $fallbackMove,
+                'fen' => $request->input('fen'),
                 'fallback' => true,
-                'error' => 'Engine error: ' . $e->getMessage()
+                'engine_available' => $this->engineAvailable,
+                'error' => $fallbackMove ? 'Engine error, using fallback move' : 'Engine error: ' . $e->getMessage()
             ]);
         }
     }
