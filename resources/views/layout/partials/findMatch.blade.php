@@ -105,16 +105,35 @@
         const modalHTML = `
             <div class="modal fade" id="countdownModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
                 <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content text-center p-4" style="background-color: #E1BF85; border-radius: 15px;">
-                        <h4 class="mb-3 text-danger">
-                            <img width="42" height="42" src="/img/xiangqipieces/wiki/rK.svg" alt="{{ __("Cờ tướng") }}" class="mr-2">
-                            ${matchTitle}
-                        </h4>
-                        <p class="fs-5 mb-3 text-danger">{{ __("Ván cờ sẽ bắt đầu sau:") }}</p>
-                        <div class="display-4 fw-bold text-danger" id="countdownNumber">${countdown}</div>
-                        <p class="mt-3" style="color: #413E3C;">
-                            <i class="fas fa-clock"></i> {{ __("Chuẩn bị sẵn sàng...") }}
-                        </p>
+                    <div class="modal-content text-center" style="background-color: #f4dca6; border: 4px solid #8b4513; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); overflow: hidden;">
+
+                        <!-- Thematic Header -->
+                        <div style="background-color: #8b4513; color: #f4dca6; padding: 15px 0; border-bottom: 2px solid #5c2c16;">
+                            <h4 class="mb-0" style="font-weight: bold; letter-spacing: 0.5px;">
+                                <img width="38" height="38" src="/img/xiangqipieces/wiki/rK.svg" alt="{{ __("Cờ tướng") }}" class="mr-2" style="filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5));">
+                                ${matchTitle}
+                            </h4>
+                        </div>
+
+                        <!-- Modal Body -->
+                        <div class="p-4" style="background-image: radial-gradient(circle, #fcf0d8 0%, #E1BF85 100%);">
+                            <p class="h5 mb-3" style="color: #5c2c16; font-weight: 600;">
+                                {{ __("Ván cờ sẽ bắt đầu sau:") }}
+                            </p>
+
+                            <!-- Countdown Number -->
+                            <div class="display-2 font-weight-bold mb-3" id="countdownNumber" style="color: #b30000; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
+                                ${countdown}
+                            </div>
+
+                            <hr style="border-top: 1px dashed #c09060; margin: 20px 0;">
+
+                            <!-- Footer Text -->
+                            <p class="mb-0" style="color: #704214; font-size: 1.1rem; font-weight: 500;">
+                                <i class="fas fa-hourglass-half fa-spin mr-2" style="animation-duration: 2s;"></i> {{ __("Chuẩn bị sẵn sàng...") }}
+                            </p>
+                        </div>
+
                     </div>
                 </div>
             </div>
