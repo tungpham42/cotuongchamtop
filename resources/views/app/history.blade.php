@@ -26,7 +26,6 @@
                 </div>
                 <div class="card-body">
                     @include('layout.partials.app.createRoom')
-                    <span style="background-color: #ffffff; margin-top: -70px;" class="d-block w-100 pb-5 mb-5" id="result-board"></span>
                     <h2 data-step="2" data-intro="{{ __("Danh sách các ván đấu đã hoàn tất") }}" class="mt-3"><i class="fas fa-archive"></i> {{ __("Lịch sử thi đấu") }} ({{ $playedRooms->total() }} {{ __("trận") }}, {!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</h2>
                     <div class="table-responsive mb-3">
                         <table class="table table-striped table-hover" id="results-table">

@@ -26,7 +26,6 @@
                 </div>
                 <div class="card-body">
                     @include('layout.partials.app.createRoom')
-                    <span style="background-color: #ffffff; margin-top: -70px;" class="d-block w-100 pb-5 mb-5" id="result-board"></span>
                     <h2 data-step="2" data-intro="{{ __("Danh sách 10 kỳ thủ nhiều điểm nhất") }}"><i class="fas fa-medal"></i> {{ __("TOP 10") }}</h2>
                     <div class="table-responsive">
                         <table class="table table-striped table-hover" id="rankingTable">
@@ -52,7 +51,6 @@
                             </tbody>
                         </table>
                     </div>
-                    <span style="background-color: #ffffff; margin-top: -70px;" class="d-block w-100 pb-5 mb-5" id="result-board"></span>
                     <h2 data-step="3" data-intro="{{ __("Danh sách các ván đấu đang diễn ra") }}" class="mt-3"><i class="fas fa-list"></i> {{ $playingRooms->total() }} {{ __("ván cờ đang thi đấu") }} ({!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</h2>
                     <div class="table-responsive mb-3">
                         <table class="table table-striped table-hover" id="results-table">

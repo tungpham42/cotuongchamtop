@@ -26,7 +26,6 @@
                 </div>
                 <div class="card-body">
                     @include('layout.partials.app.createRoom')
-                    <span style="background-color: #ffffff; margin-top: -70px;" class="d-block w-100 pb-5 mb-5" id="result-board"></span>
                     <h2 data-step="2" data-intro="{{ __("Tìm kiếm kỳ thủ theo tên và email") }}"><i class="fas fa-search"></i> {{ __("Tìm kiếm kỳ thủ") }} ({!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</h2>
                     <form action="{{ route('search') }}" method="GET">
                         @csrf

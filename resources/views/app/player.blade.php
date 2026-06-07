@@ -236,7 +236,6 @@
                     </script>
                     @endif
                     @if ($playerRooms->total() > 0)
-                    <span style="background-color: #ffffff; margin-top: -70px;" class="d-block w-100 pb-5 mb-5" id="result-board"></span>
                     <h2 data-step="1" data-intro="{{ __("Danh sách các trận đấu của kỳ thủ") }} '{{ $player->name }}'" class="mt-3"><i class="fas fa-list-ul"></i> {{ __("Kết quả thi đấu") }}</h2>
                     <div class="table-responsive mb-3">
                         <table class="table table-striped table-hover" id="results-table">
