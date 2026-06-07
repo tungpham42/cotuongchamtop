@@ -112,7 +112,8 @@ $(document).ready(function () {
       }
     ],
     'language': {
-      'url': '{{ url('/') }}{{ __('table_lang_url') }}'
+      'url': '{{ url('/') }}{{ __('table_lang_url') }}',
+      processing: '{{ __("Đang tải") }} <span class="indicator"></span><span class="indicator"></span><span class="indicator"></span>'
     },
     'createdRow': function(row, data, dataIndex) {
       var selectedFen = $(row).find('td.room-code > a').attr('data-fen');

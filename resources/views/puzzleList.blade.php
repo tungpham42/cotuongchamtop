@@ -99,7 +99,8 @@ $(document).ready(function () {
       }
     ],
     'language': {
-      'url': '{{ url('/') }}/js/TablePuzzle{{ ucfirst(app()->getLocale()) }}.json'
+      'url': '{{ url('/') }}/js/TablePuzzle{{ ucfirst(app()->getLocale()) }}.json',
+      processing: '{{ __("Đang tải") }} <span class="indicator"></span><span class="indicator"></span><span class="indicator"></span>'
     },
     'createdRow': function(row, data, dataIndex) {
       var selectedFen = $(row).find('td.room-code > a').attr('data-fen');

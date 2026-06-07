@@ -80,7 +80,8 @@ $(document).ready(function () {
       }
     ],
     'language': {
-      'url': '{{ url('/') }}/js/TableUser{{ ucfirst(app()->getLocale()) }}.json'
+      'url': '{{ url('/') }}/js/TableUser{{ ucfirst(app()->getLocale()) }}.json',
+      processing: '{{ __("Đang tải") }} <span class="indicator"></span><span class="indicator"></span><span class="indicator"></span>'
     },
     'order': [[ 2, 'desc' ]],
     'drawCallback': function() {

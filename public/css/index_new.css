@@ -1990,3 +1990,71 @@ div.dataTables_wrapper div.dataTables_filter label {
 .modal.show .modal-dialog {
     transform: scale(1);
 }
+
+/* ==========================================================================
+   DATATABLES ROYAL PROCESSING INDICATOR
+   ========================================================================== */
+div.dataTables_wrapper div.dataTables_processing {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 260px;
+    margin-left: -130px;
+    margin-top: -30px;
+    text-align: center;
+    padding: 16px 0;
+
+    /* Royal Glassmorphism Background */
+    background: linear-gradient(
+        145deg,
+        rgba(20, 22, 28, 0.98),
+        rgba(11, 12, 16, 0.98)
+    ) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    /* Gold Trim & Shape */
+    border: 2px solid var(--royal-gold) !important;
+    border-radius: 8px;
+
+    /* Deep Shadow & Inner Glow */
+    box-shadow:
+        0 15px 50px rgba(0, 0, 0, 0.9),
+        0 0 20px rgba(212, 175, 55, 0.15) !important;
+
+    /* Royal Typography */
+    color: var(--royal-gold) !important;
+    font-family: "Texturina", serif !important;
+    font-weight: 700;
+    font-size: 1.25rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+
+    /* Golden Aura Animation */
+    animation: pulse-gold 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+    z-index: 1050; /* Keep above table elements */
+}
+
+/* 
+   Royal Waiting Indicator Dots (Optional)
+   Matches the theme's custom fade animation for loading states
+*/
+div.dataTables_wrapper div.dataTables_processing .indicator {
+    width: 6px;
+    height: 6px;
+    background-color: var(--royal-gold);
+    border-radius: 3px;
+    display: inline-block;
+    margin: 3px;
+    opacity: 0;
+}
+div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(1) {
+    animation: fade 1.5s ease 0s infinite;
+}
+div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(2) {
+    animation: fade 1.5s ease 250ms infinite;
+}
+div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(3) {
+    animation: fade 1.5s ease 500ms infinite;
+}
