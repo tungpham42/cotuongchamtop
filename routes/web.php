@@ -249,6 +249,9 @@ Route::get('/getUserPuzzlesTemplate', function(){
   return view('layout.partials.userPuzzles')->render();
 });
 
+Route::get('/rooms', function () {
+  return redirect('/lobby', 301);
+});
 Route::get('/forum', function () {
   return redirect('/sanh-cho', 301);
 });

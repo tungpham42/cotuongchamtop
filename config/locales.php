@@ -41,7 +41,7 @@ return [
 
         'room.list' => [
             'vi' => 'sanh-cho',
-            'en' => 'rooms',
+            'en' => 'lobby',
             'ja' => 'heya-ichiran',
             'ko' => 'bang-moglog',
             'zh' => 'fangjianliebiao',
