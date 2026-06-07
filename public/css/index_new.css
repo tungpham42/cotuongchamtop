@@ -1742,3 +1742,82 @@ div.dataTables_wrapper div.dataTables_filter label {
 .badge-offline i {
     color: var(--royal-wood);
 }
+
+/* ==========================================================================
+   ROYAL WATCH & PREVIEW BUTTONS (Overrides for roomList)
+   ========================================================================== */
+
+/* 1. The Preview Button (Eye) - Solid Royal Gold */
+.btn.previewBtn {
+    background: linear-gradient(to bottom, #d4af37, #b89020) !important;
+    border: 1px solid #fff !important;
+    color: var(--royal-bg) !important; /* Ebony text for high contrast */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    font-weight: 800;
+    text-shadow: none;
+    letter-spacing: 0.5px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn.previewBtn:hover {
+    background: linear-gradient(to bottom, #ffd700, #d4af37) !important;
+    border-color: var(--royal-gold) !important;
+    box-shadow:
+        0 6px 15px rgba(0, 0, 0, 0.8),
+        0 0 10px rgba(212, 175, 55, 0.6);
+    transform: translateY(-2px);
+}
+
+.btn.previewBtn i {
+    color: var(--royal-bg) !important;
+}
+
+/* 2. Public Watch Button (Glass Gold) */
+.btn.watch-btn.btn-light {
+    background: rgba(212, 175, 55, 0.1) !important; /* Glassmorphism tint */
+    border: 1px solid var(--royal-gold) !important;
+    color: var(--royal-gold) !important;
+    box-shadow: inset 0 0 10px rgba(212, 175, 55, 0.05);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+}
+
+/* 3. Private Watch Button or Hovered Public Watch (Solid Royal Wood) */
+.btn.watch-btn.btn-warning {
+    background: linear-gradient(
+        145deg,
+        #4a2511,
+        #2a1910
+    ) !important; /* Rosewood base */
+    border: 1px solid var(--royal-gold) !important;
+    color: var(--royal-gold-light) !important;
+    box-shadow:
+        2px 2px 8px rgba(0, 0, 0, 0.8),
+        inset 0 0 5px rgba(212, 175, 55, 0.2);
+    transition: all 0.3s ease;
+}
+
+/* 4. Force override the text-color utility classes set in the controller */
+.btn.watch-btn.text-warning {
+    color: var(--royal-gold) !important;
+}
+.btn.watch-btn.text-light {
+    color: var(--royal-gold-light) !important;
+}
+
+.btn.watch-btn i {
+    transition: transform 0.3s ease;
+}
+
+/* 5. Hover state for Watch buttons - Levitate and Glow */
+.btn.watch-btn:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.8),
+        0 0 12px rgba(212, 175, 55, 0.4) !important;
+    border-color: #fff !important;
+}
+
+.btn.watch-btn:hover i {
+    transform: scale(1.1);
+}
