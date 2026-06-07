@@ -14,7 +14,7 @@
 
 {{-- Set the dynamic Open Graph Image and Alt text using a placeholder service --}}
 @if($puzzleName && !containsCJK($puzzleName))
-    @section('og_image', 'https://placehold.co/1080x1080/8A1515/D4AF37/jpeg?font=roboto&text=' . urlencode(__("Thế cờ") . "\n" . $puzzleName))
+    @section('og_image', 'https://placehold.co/1080x1080/8a1515/ffd700/jpeg?font=roboto&text=' . urlencode(__("Thế cờ") . "\n" . $puzzleName))
     @section('og_image_alt', $puzzleName)
     @section('og_image_width', '1080')
     @section('og_image_height', '1080')
