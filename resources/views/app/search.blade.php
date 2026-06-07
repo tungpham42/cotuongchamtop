@@ -27,7 +27,7 @@
                 <div class="card-body">
                     @include('layout.partials.app.createRoom')
                     <h2 data-step="2" data-intro="{{ __("Tìm kiếm kỳ thủ theo tên và email") }}"><i class="fas fa-search"></i> {{ __("Tìm kiếm kỳ thủ") }} ({!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</h2>
-                    <form action="{{ route('search') }}" method="GET">
+                    <form action="{{ localized_url('search') }}" method="GET">
                         @csrf
                         <div class="input-group mb-3" id="search-form">
                             <input data-step="3" data-intro="{{ __("Điền vào từ khóa cần tìm") }}" name="query" type="text" class="form-control form-control-lg" id="keyword" aria-label="{{ __("Bạn cần tìm ai?") }}" placeholder="{{ __("Bạn cần tìm ai?") }}" value="{{ isset($_GET['query']) ? $_GET['query'] : '' }}">
@@ -53,7 +53,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{ $results->links('vendor.pagination.search') }}
+                                {{ $results->links('vendor.pagination.match') }}
                                 @foreach ($results as $result)
                                 <tr data-user="{{ $result->id }}">
                                     <th scope="row" class="name">{!! app('App\Http\Controllers\UserController')::renderPlayerName($result->id) !!}</th>
