@@ -24,6 +24,66 @@
     user-select: none;
 }
 
+/* ==========================================================================
+   ROYAL SCROLLBAR (CUNG ĐÌNH HUẾ THEME)
+   ========================================================================== */
+
+/* Firefox Fallback */
+html,
+body {
+    scrollbar-width: thin;
+    scrollbar-color: var(--royal-red) var(--royal-bg);
+}
+
+/* WebKit Base (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 12px; /* Vertical scrollbar width */
+    height: 12px; /* Horizontal scrollbar height */
+}
+
+/* Scrollbar Track (The background) */
+::-webkit-scrollbar-track {
+    background: var(--royal-bg); /* Deep ebony */
+    border-left: 1px solid rgba(212, 175, 55, 0.2); /* Subtle gold separator line */
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.9); /* Inner depth */
+}
+
+/* Scrollbar Thumb (The draggable piece) */
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+        180deg,
+        var(--royal-red),
+        #5c0a0a
+    ); /* Royal red gradient */
+    border: 1px solid var(--royal-gold); /* Gold trim */
+    border-radius: 6px;
+    box-shadow: inset 0 0 5px rgba(255, 215, 0, 0.3); /* Inner gold glow */
+}
+
+/* Scrollbar Thumb - Hover State */
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+        180deg,
+        #d4af37,
+        #b89020
+    ); /* Switches to liquid gold on hover */
+    border-color: #fff; /* Bright white border for emphasis */
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.8); /* Stronger glow */
+}
+
+/* Scrollbar Thumb - Active/Click State */
+::-webkit-scrollbar-thumb:active {
+    background: var(--royal-gold);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8); /* Pressed-in effect */
+}
+
+/* Corner where vertical and horizontal scrollbars meet */
+::-webkit-scrollbar-corner {
+    background: var(--royal-bg);
+    border-left: 1px solid rgba(212, 175, 55, 0.2);
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+}
+
 input,
 input:before,
 input:after,
@@ -768,6 +828,17 @@ body.register main {
     background-color: #2a1910;
     border-color: var(--royal-wood);
     color: var(--royal-gold-light);
+}
+.page-link:hover {
+    background-color: var(--royal-red) !important;
+    border-color: var(--royal-gold) !important;
+    color: var(--royal-gold) !important;
+}
+.page-item.disabled .page-link {
+    background-color: #1a1c23;
+    border-color: #1a1c23;
+    color: var(--royal-gold-light) !important;
+    cursor: not-allowed;
 }
 .page-link:focus,
 .form-check-input:focus {
@@ -1695,6 +1766,10 @@ div.dataTables_wrapper div.dataTables_filter label {
     padding-top: 1rem;
 }
 
+.dataTables_info {
+    padding-bottom: 1rem;
+    padding-left: 1rem;
+}
 /* ==========================================================================
    TRẠNG THÁI BADGES (STATUS INDICATORS)
    ========================================================================== */
@@ -1820,4 +1895,96 @@ div.dataTables_wrapper div.dataTables_filter label {
 
 .btn.watch-btn:hover i {
     transform: scale(1.1);
+}
+
+/* ==========================================================================
+   ROYAL MODALS (CUNG ĐÌNH HUẾ THEME OVERRIDES)
+   ========================================================================== */
+
+/* 1. Modal Backdrop - Deep ebony with a subtle blur */
+.modal-backdrop.show {
+    opacity: 0.85 !important;
+    background-color: var(--royal-bg) !important;
+    backdrop-filter: blur(4px);
+}
+
+/* 2. Modal Content - The Royal Panel (Glassmorphism & Gold Borders) */
+.modal-content {
+    background: linear-gradient(
+        145deg,
+        rgba(20, 22, 28, 0.98),
+        rgba(11, 12, 16, 0.98)
+    ) !important;
+    backdrop-filter: blur(12px);
+    border: 2px solid var(--royal-gold) !important;
+    border-radius: 8px;
+    box-shadow:
+        0 15px 50px rgba(0, 0, 0, 0.9),
+        0 0 20px rgba(212, 175, 55, 0.15) !important;
+    color: var(--royal-gold-light);
+    overflow: hidden; /* Ensures headers/footers respect border-radius */
+}
+
+/* 3. Modal Header - Royal Red Banner */
+.modal-header {
+    background: linear-gradient(
+        90deg,
+        #8a1515,
+        #5c0a0a
+    ) !important; /* Royal red gradient */
+    border-bottom: 2px solid var(--royal-gold) !important;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+}
+
+/* 4. Modal Title - Texturina Font & Glowing Gold */
+.modal-title {
+    font-family: "Texturina", serif !important;
+    color: var(--royal-gold) !important;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    margin: 0;
+}
+
+/* Modal Close Button ("X") inside Header */
+.modal-header .close {
+    color: var(--royal-gold-light) !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.modal-header .close:hover {
+    color: var(--royal-gold) !important;
+    opacity: 1;
+    transform: scale(1.1); /* Playful majestic spin on hover */
+}
+
+/* 5. Modal Body - Content Area */
+.modal-body {
+    background-color: transparent !important;
+    color: var(--royal-gold-light);
+    padding: 24px;
+    font-family: "Plus Jakarta Sans", sans-serif !important;
+}
+
+/* 6. Modal Footer - Subtle Divider */
+.modal-footer {
+    border-top: 1px solid rgba(212, 175, 55, 0.3) !important; /* Faded gold line */
+    background-color: transparent !important;
+    padding: 16px 24px;
+}
+
+/* Modal Dialog adjustments for smooth scaling */
+.modal.fade .modal-dialog {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: scale(0.9);
+}
+
+.modal.show .modal-dialog {
+    transform: scale(1);
 }
