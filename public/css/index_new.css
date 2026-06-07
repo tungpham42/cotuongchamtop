@@ -819,15 +819,15 @@ body.register main {
     max-height: 420px;
 }
 
+.page-link {
+    background-color: var(--royal-wood);
+    border-color: var(--royal-wood);
+    color: var(--royal-gold-light);
+}
 .page-item.active .page-link {
     background-color: var(--royal-red) !important;
     border-color: var(--royal-gold) !important;
     color: var(--royal-gold) !important;
-}
-.page-link {
-    background-color: #2a1910;
-    border-color: var(--royal-wood);
-    color: var(--royal-gold-light);
 }
 .page-link:hover,
 .bg-dark.page-link:hover {
