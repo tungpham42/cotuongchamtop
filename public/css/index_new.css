@@ -820,8 +820,8 @@ body.register main {
 }
 
 .page-link {
-    background-color: var(--royal-wood);
-    border-color: var(--royal-wood);
+    background-color: var(--royal-bg);
+    border-color: var(--royal-border);
     color: var(--royal-gold-light);
 }
 .page-item.active .page-link {
