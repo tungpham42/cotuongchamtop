@@ -1158,8 +1158,6 @@ a.animate:hover {
 .puzzle-layout-panel {
     flex: 1 1 360px;
     min-width: 320px;
-    background: rgba(28, 17, 10, 0.8);
-    border: 1px solid var(--royal-wood);
     padding: 15px;
     border-radius: 4px;
 }
