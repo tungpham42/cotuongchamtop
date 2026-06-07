@@ -791,6 +791,17 @@ class UserController extends Controller
         return $totalMatchPoints;
     }
 
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+
+        $results = User::where('name', 'LIKE', '%'.$query.'%')
+            ->orWhere('email', 'LIKE', '%'.$query.'%')
+            ->paginate(10);
+
+        return view('app.search', compact('results'));
+    }
+
     /**
      * Show the form for creating a new resource.
      *
