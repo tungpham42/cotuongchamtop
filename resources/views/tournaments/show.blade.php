@@ -95,7 +95,7 @@
                                 {{ $tournament->creator->name }}
                             </a>
                         @else
-                            <span style="color: var(--royal-wood);">{{ __('Hệ thống') }}</span>
+                            <span style="color: var(--royal-gold-light);">{{ __('Hệ thống') }}</span>
                         @endif
                     </p>
                 </div>
