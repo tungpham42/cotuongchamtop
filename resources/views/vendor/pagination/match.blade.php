@@ -4,7 +4,7 @@
             {{-- Previous Page Link --}}
             @if ($paginator->onFirstPage())
                 <li class="page-item disabled" aria-disabled="true">
-                    <span class="page-link btn-md bg-light text-secondary" aria-hidden="true"><i class="fas fa-chevron-left"></i> {{ __("Trước") }}</span>
+                    <span class="page-link btn-md bg-dark" aria-hidden="true"><i class="fas fa-chevron-left"></i> {{ __("Trước") }}</span>
                 </li>
             @else
                 <li class="page-item">
@@ -44,7 +44,7 @@
                 </li>
             @else
                 <li class="page-item disabled" aria-disabled="true">
-                    <span class="page-link btn-md bg-light text-secondary" aria-hidden="true">{{ __("Sau") }} <i class="fas fa-chevron-right"></i></span>
+                    <span class="page-link btn-md bg-dark" aria-hidden="true">{{ __("Sau") }} <i class="fas fa-chevron-right"></i></span>
                 </li>
             @endif
         </ul>
