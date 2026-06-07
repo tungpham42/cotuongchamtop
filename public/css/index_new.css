@@ -1019,7 +1019,7 @@ body.setup #ban-co {
     border-top: 1px solid var(--royal-wood);
     color: var(--royal-wood) !important;
 }
-#app .table th {
+#app .table th, #app .table t {
     color: var(--royal-gold) !important;
 }
 .table thead th {
