@@ -66,7 +66,7 @@
                         </table>
                     </div>
                     @else
-                    <div class="alert alert-secondary lead" role="alert">
+                    <div class="alert alert-dark border-dark lead" role="alert">
                         {{ __("Không tìm thấy kỳ thủ nào") }}
                     </div>
                     @endif

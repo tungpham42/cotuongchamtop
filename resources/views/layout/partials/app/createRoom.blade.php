@@ -133,7 +133,7 @@
     })
     </script>
 @else
-<div class="alert alert-secondary" role="alert">
-    <a data-step="1" data-intro="{{ __("Ấn vào đây để đăng nhập vào thi đấu xếp hạng") }}" class="stopPromotion" href="{{ localized_url('login') }}">{{ __("Đăng nhập") }}</a> {{ __("để tham gia thi đấu") }}
+<div class="alert alert-dark border-dark" role="alert">
+    <a data-step="1" data-intro="{{ __("Ấn vào đây để đăng nhập vào thi đấu xếp hạng") }}" class="stopPromotion btn btn-danger" href="{{ localized_url('login') }}">{{ __("Đăng nhập") }}</a> {{ __("để tham gia thi đấu") }}
 </div>
 @endif
