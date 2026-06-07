@@ -829,7 +829,8 @@ body.register main {
     border-color: var(--royal-wood);
     color: var(--royal-gold-light);
 }
-.page-link:hover {
+.page-link:hover,
+.bg-dark.page-link:hover {
     background-color: var(--royal-red) !important;
     border-color: var(--royal-gold) !important;
     color: var(--royal-gold) !important;
@@ -841,6 +842,7 @@ body.register main {
     cursor: not-allowed;
 }
 .page-link:focus,
+.bg-dark.page-link:focus,
 .form-check-input:focus {
     border-color: var(--royal-gold) !important;
     box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25) !important;
