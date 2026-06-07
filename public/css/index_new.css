@@ -2059,6 +2059,10 @@ div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(3) {
     animation: fade 1.5s ease 500ms infinite;
 }
 
+.puzzle-reaction-btn {
+    text-decoration: none !important;
+}
+
 /* ==========================================================================
    ROYAL GRID CARDS (Kỳ Thủ, Thế Cờ, Ván Đấu)
    ========================================================================== */
@@ -2090,6 +2094,10 @@ div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(3) {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     letter-spacing: 1px;
     font-weight: 700;
+}
+
+.royal-card-title:hover {
+    color: var(--royal-gold-light);
 }
 
 .royal-vs-text {
