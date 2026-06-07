@@ -70,7 +70,7 @@ class PuzzleController extends Controller
                     return (int) $row->likes_count;
                 })
                 ->addColumn('action', function($row) use ($solveText, $previewText) {
-                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 140px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/giai-co-the/").$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> '.$solveText.'</a>';
+                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 160px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/giai-co-the/").$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> '.$solveText.'</a>';
                     $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> '.$previewText.'</a>';
                     return $actionBtn;
                 })
