@@ -2058,3 +2058,61 @@ div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(2) {
 div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(3) {
     animation: fade 1.5s ease 500ms infinite;
 }
+
+/* ==========================================================================
+   ROYAL GRID CARDS (Kỳ Thủ, Thế Cờ, Ván Đấu)
+   ========================================================================== */
+.royal-grid-card {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.6),
+        inset 0 0 15px rgba(255, 215, 0, 0.05);
+}
+
+.royal-grid-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: rgba(212, 175, 55, 0.6) !important;
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.9),
+        0 0 20px rgba(212, 175, 55, 0.3) !important;
+}
+
+.royal-card-title {
+    font-family: "Texturina", serif;
+    color: var(--royal-gold);
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.royal-vs-text {
+    font-family: "Texturina", serif;
+    color: var(--royal-red-light);
+    font-size: 1.2rem;
+    font-style: italic;
+    text-shadow: 0 0 8px rgba(230, 57, 70, 0.5);
+}
+
+/* Elegant Board Wrapper replacing the ugly #e1bd86 hardcoded colors */
+.royal-board-wrapper {
+    background: linear-gradient(145deg, #2a1910, #0b0c10) !important;
+    border-bottom: 2px solid var(--royal-gold);
+    padding: 15px;
+}
+
+.royal-board-wrapper .xiangqiboard-8ddcb {
+    background: transparent !important;
+    margin: auto !important;
+}
+
+.royal-board-wrapper .xiangqiboard-8ddcb .board-1ef78 {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8) !important;
+    border-radius: 4px;
+}

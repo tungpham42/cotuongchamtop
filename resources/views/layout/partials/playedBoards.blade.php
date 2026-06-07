@@ -9,51 +9,55 @@
             {{ $firstPagePlayedBoards->links('vendor.pagination.playedBoardVi') }}
             @foreach($firstPagePlayedBoards as $board)
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-4">
-                <div id="board-{{ $board->code }}" class="card shadow-lg rounded border-dark" style="cursor: pointer;background-color: transparent;">
-                </div>
-                <div class="bg-dark p-2 text-center">
-                    <a href="{{ localized_url('room.watch', ['code' => $board->code]) }}" target="_blank" class="py-1 text-light animate-light w-100 text-center stopPromotion">{{ $board->name }}</a>
-                </div>
-                <div class="bg-dark row mx-0">
-                    <span class="py-1 col-12 text-light text-center host-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->host_id) !!}</span>
-                    <span class="py-1 col-12 text-light text-center guest-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->guest_id) !!}</span>
-                    <span class="py-1 col-12 text-light text-center">{{ $board->modified_at }}</span>
-                    <span class="py-1 col-12 text-light text-center ">
-                        {{ __('Tới lượt') }}
-                        @if (str_contains($board->fen, ' r '))
-                        {{ __('Đỏ') }}
-                        @elseif (str_contains($board->fen, ' b '))
-                        {{ __('Đen') }}
-                        @endif
-                        {{ __('đi') }}
-                    </span>
-                    <span class="py-1 col-12 text-light text-center">
-                        @switch ($board->result)
-                            @case('-1')
-                                {{ __('Đen thắng') }}
-                                @break
-                            @case('0')
-                                {{ __('Hòa') }}
-                                @break
-                            @case('1')
-                                {{ __('Đỏ thắng') }}
-                                @break
-                        @endswitch
-                    </span>
+                <div class="royal-grid-card h-100 d-flex flex-column">
+                    <div class="royal-board-wrapper" style="cursor: pointer;">
+                        <div id="board-{{ $board->code }}" style="width: 100%; height: auto;"></div>
+                    </div>
+                    
+                    <div class="text-center py-2" style="background: linear-gradient(90deg, transparent, rgba(138, 21, 21, 0.6), transparent);">
+                        @php
+                            $route = localized_url('room.watch', ['code' => $board->code]);
+                        @endphp
+                        <a href="{{ $route }}" target="_blank" class="royal-card-title text-decoration-none" style="font-size: 1.1rem; text-transform: none;">{{ $board->name }}</a>
+                    </div>
+                    
+                    <div class="p-3 text-center d-flex flex-column justify-content-center flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-center mb-3 px-2">
+                            <div class="w-45 text-right text-truncate">
+                                <span class="host-title" style="color: #ff3333; font-weight: 800; text-shadow: 0 0 5px rgba(255,0,0,0.4); font-size: 1.1rem;">
+                                    {!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->host_id) !!}
+                                </span>
+                            </div>
+                            <div class="w-10">
+                                <span class="royal-vs-text">VS</span>
+                            </div>
+                            <div class="w-45 text-left text-truncate">
+                                <span class="guest-title" style="color: var(--royal-gold-light); font-weight: bold; font-size: 1.1rem;">
+                                    {!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->guest_id) !!}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <span class="badge badge-status badge-offline mb-2" style="font-size: 0.7rem;">
+                                <i class="fas fa-clock"></i> {{ $board->modified_at }}
+                            </span>
+                            <br>
+                            @switch ($board->result)
+                                @case('-1')
+                                    <span class="badge badge-status" style="background: #111; color: #fff; border: 1px solid #444;"><i class="fas fa-flag"></i> {{ __('Đen thắng') }}</span>
+                                    @break
+                                @case('0')
+                                    <span class="badge badge-status badge-offline"><i class="fas fa-handshake"></i> {{ __('Hòa') }}</span>
+                                    @break
+                                @case('1')
+                                    <span class="badge badge-status badge-online"><i class="fas fa-trophy"></i> {{ __('Đỏ thắng') }}</span>
+                                    @break
+                            @endswitch
+                        </div>
+                    </div>
                 </div>
             </div>
-            <style>
-            #board-{{ $board->code }} {
-                background-color: #e1bd86 !important;
-            }
-            #board-{{ $board->code }} .xiangqiboard-8ddcb {
-                margin: auto !important;
-                background-color: #e1bd86 !important;
-            }
-            #board-{{ $board->code }} .xiangqiboard-8ddcb .board-1ef78 {
-                box-shadow: none !important;
-            }
-            </style>
             <script>
                 let board{{ $board->code }}Config = {
                     position: '{{ $board->fen }}',
@@ -66,9 +70,10 @@
                 const board{{ $board->code }} = Xiangqiboard('board-{{ $board->code }}', board{{ $board->code }}Config);
                 board{{ $board->code }}.resize();
                 $(window).resize(board{{ $board->code }}.resize);
-                $('#board-{{ $board->code }}').on('click auxclick', function(e){
+                
+                $('#board-{{ $board->code }}').parent().on('click auxclick', function(e){
                     e.preventDefault();
-                    window.location.href = '{{ localized_url('room.watch', ['code' => $board->code]) }}';
+                    window.open('{{ $route }}', '_blank');
                 });
             </script>
             @endforeach
@@ -88,51 +93,55 @@
                 {{ $playedBoards->links('vendor.pagination.playedBoardVi') }}
                 @foreach($playedBoards as $board)
                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-4">
-                    <div id="board-{{ $board->code }}" class="card shadow-lg rounded border-dark" style="cursor: pointer;background-color: transparent;">
-                    </div>
-                    <div class="bg-dark p-2 text-center">
-                        <a href="{{ localized_url('room.watch', ['code' => $board->code]) }}" target="_blank" class="py-1 text-light animate-light w-100 text-center stopPromotion">{{ $board->name }}</a>
-                    </div>
-                    <div class="bg-dark row mx-0">
-                        <span class="py-1 col-12 text-light text-center host-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->host_id) !!}</span>
-                        <span class="py-1 col-12 text-light text-center guest-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->guest_id) !!}</span>
-                        <span class="py-1 col-12 text-light text-center">{{ $board->modified_at }}</span>
-                        <span class="py-1 col-12 text-light text-center ">
-                            {{ __('Tới lượt') }}
-                            @if (str_contains($board->fen, ' r '))
-                            {{ __('Đỏ') }}
-                            @elseif (str_contains($board->fen, ' b '))
-                            {{ __('Đen') }}
-                            @endif
-                            {{ __('đi') }}
-                        </span>
-                        <span class="py-1 col-12 text-light text-center">
-                            @switch ($board->result)
-                                @case('-1')
-                                    {{ __('Đen thắng') }}
-                                    @break
-                                @case('0')
-                                    {{ __('Hòa') }}
-                                    @break
-                                @case('1')
-                                    {{ __('Đỏ thắng') }}
-                                    @break
-                            @endswitch
-                        </span>
+                    <div class="royal-grid-card h-100 d-flex flex-column">
+                        <div class="royal-board-wrapper" style="cursor: pointer;">
+                            <div id="board-{{ $board->code }}" style="width: 100%; height: auto;"></div>
+                        </div>
+                        
+                        <div class="text-center py-2" style="background: linear-gradient(90deg, transparent, rgba(138, 21, 21, 0.6), transparent);">
+                            @php
+                                $route = localized_url('room.watch', ['code' => $board->code]);
+                            @endphp
+                            <a href="{{ $route }}" target="_blank" class="royal-card-title text-decoration-none" style="font-size: 1.1rem; text-transform: none;">{{ $board->name }}</a>
+                        </div>
+                        
+                        <div class="p-3 text-center d-flex flex-column justify-content-center flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-3 px-2">
+                                <div class="w-45 text-right text-truncate">
+                                    <span class="host-title" style="color: #ff3333; font-weight: 800; text-shadow: 0 0 5px rgba(255,0,0,0.4); font-size: 1.1rem;">
+                                        {!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->host_id) !!}
+                                    </span>
+                                </div>
+                                <div class="w-10">
+                                    <span class="royal-vs-text">VS</span>
+                                </div>
+                                <div class="w-45 text-left text-truncate">
+                                    <span class="guest-title" style="color: var(--royal-gold-light); font-weight: bold; font-size: 1.1rem;">
+                                        {!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->guest_id) !!}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <span class="badge badge-status badge-offline mb-2" style="font-size: 0.7rem;">
+                                    <i class="fas fa-clock"></i> {{ $board->modified_at }}
+                                </span>
+                                <br>
+                                @switch ($board->result)
+                                    @case('-1')
+                                        <span class="badge badge-status" style="background: #111; color: #fff; border: 1px solid #444;"><i class="fas fa-flag"></i> {{ __('Đen thắng') }}</span>
+                                        @break
+                                    @case('0')
+                                        <span class="badge badge-status badge-offline"><i class="fas fa-handshake"></i> {{ __('Hòa') }}</span>
+                                        @break
+                                    @case('1')
+                                        <span class="badge badge-status badge-online"><i class="fas fa-trophy"></i> {{ __('Đỏ thắng') }}</span>
+                                        @break
+                                @endswitch
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <style>
-                #board-{{ $board->code }} {
-                    background-color: #e1bd86 !important;
-                }
-                #board-{{ $board->code }} .xiangqiboard-8ddcb {
-                    margin: auto !important;
-                    background-color: #e1bd86 !important;
-                }
-                #board-{{ $board->code }} .xiangqiboard-8ddcb .board-1ef78 {
-                    box-shadow: none !important;
-                }
-                </style>
                 <script>
                     let board{{ $board->code }}Config = {
                         position: '{{ $board->fen }}',
@@ -145,9 +154,10 @@
                     const board{{ $board->code }} = Xiangqiboard('board-{{ $board->code }}', board{{ $board->code }}Config);
                     board{{ $board->code }}.resize();
                     $(window).resize(board{{ $board->code }}.resize);
-                    $('#board-{{ $board->code }}').on('click auxclick', function(e){
+                    
+                    $('#board-{{ $board->code }}').parent().on('click auxclick', function(e){
                         e.preventDefault();
-                        window.location.href = '{{ localized_url('room.watch', ['code' => $board->code]) }}';
+                        window.open('{{ $route }}', '_blank');
                     });
                 </script>
                 @endforeach

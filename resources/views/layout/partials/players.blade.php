@@ -10,18 +10,33 @@
             {{ $firstPagePlayers->links('vendor.pagination.playerVi') }}
             @foreach($firstPagePlayers as $player)
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-4">
-                <div class="bg-dark row mx-0">
-                    <h4 class="py-2 col-12 text-light text-left">{!! app('App\Http\Controllers\UserController')::renderName($player->id) !!}</h4>
-                    <span class="py-2 col-12 text-light text-left lead">Elo: {!! app('App\Http\Controllers\UserController')::renderElo($player->id) !!}</span>
-                    @if (auth()->check())
-                        @if (auth()->id() != $player->id)
-                            <a class="btn btn-danger text-light mr-1 w-100" href="javascript:compete({{ $player->id }});"><i class="far fa-mouse"></i> {{ __("Thách đấu") }}</a>
+                <div class="royal-grid-card h-100 d-flex flex-column text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-chess-king fa-3x" style="color: var(--royal-gold); filter: drop-shadow(0 0 10px rgba(212,175,55,0.5));"></i>
+                    </div>
+                    
+                    <h4 class="royal-card-title mb-1">{!! app('App\Http\Controllers\UserController')::renderName($player->id) !!}</h4>
+                    <p class="mb-4" style="color: var(--royal-gold-light); font-size: 1.1rem;">
+                        Elo: <span class="font-weight-bold" style="color: var(--royal-gold);">{!! app('App\Http\Controllers\UserController')::renderElo($player->id) !!}</span>
+                    </p>
+                    
+                    <div class="mt-auto">
+                        @if (auth()->check())
+                            @if (auth()->id() != $player->id)
+                                <a class="btn btn-danger w-100 py-2 pulse-red" href="javascript:compete({{ $player->id }});" style="font-weight: 800;">
+                                    <i class="fas fa-swords"></i> {{ __("Thách đấu") }}
+                                </a>
+                            @else
+                                <a class="btn btn-dark w-100 py-2 disabled" style="cursor: not-allowed !important;" href="javascript:void(0);">
+                                    <i class="fas fa-ban"></i> {{ __("Bản thân") }}
+                                </a>
+                            @endif
                         @else
-                            <a class="btn btn-dark text-light mr-1 w-100" style="cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> {{ __("Thách đấu") }}</a>
+                            <a class="btn btn-danger w-100 py-2 pulse-red" href="{{ localized_url('login') }}" style="font-weight: 800;">
+                                <i class="fas fa-sign-in-alt"></i> {{ __("Thách đấu") }}
+                            </a>
                         @endif
-                    @else
-                        <a class="btn btn-danger text-light mr-1 w-100" href=" {{ localized_url('login') }} "><i class="far fa-sign-in"></i> {{ __("Thách đấu") }}</a>
-                    @endif
+                    </div>
                 </div>
             </div>
             @if (auth()->check())
@@ -171,18 +186,33 @@
                 {{ $players->links('vendor.pagination.playerVi') }}
                 @foreach($players as $player)
                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-4">
-                    <div class="bg-dark row mx-0">
-                        <h4 class="py-2 col-12 text-light text-left">{!! app('App\Http\Controllers\UserController')::renderName($player->id) !!}</h4>
-                        <span class="py-2 col-12 text-light text-left lead">Elo: {!! app('App\Http\Controllers\UserController')::renderElo($player->id) !!}</span>
-                        @if (auth()->check())
-                            @if (auth()->id() != $player->id)
-                                <a class="btn btn-danger text-light mr-1 w-100" href="javascript:compete({{ $player->id }});"><i class="far fa-mouse"></i> {{ __("Thách đấu") }}</a>
+                    <div class="royal-grid-card h-100 d-flex flex-column text-center p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-chess-king fa-3x" style="color: var(--royal-gold); filter: drop-shadow(0 0 10px rgba(212,175,55,0.5));"></i>
+                        </div>
+                        
+                        <h4 class="royal-card-title mb-1">{!! app('App\Http\Controllers\UserController')::renderName($player->id) !!}</h4>
+                        <p class="mb-4" style="color: var(--royal-gold-light); font-size: 1.1rem;">
+                            Elo: <span class="font-weight-bold" style="color: var(--royal-gold);">{!! app('App\Http\Controllers\UserController')::renderElo($player->id) !!}</span>
+                        </p>
+                        
+                        <div class="mt-auto">
+                            @if (auth()->check())
+                                @if (auth()->id() != $player->id)
+                                    <a class="btn btn-danger w-100 py-2 pulse-red" href="javascript:compete({{ $player->id }});" style="font-weight: 800;">
+                                        <i class="fas fa-swords"></i> {{ __("Thách đấu") }}
+                                    </a>
+                                @else
+                                    <a class="btn btn-dark w-100 py-2 disabled" style="cursor: not-allowed !important;" href="javascript:void(0);">
+                                        <i class="fas fa-ban"></i> {{ __("Bản thân") }}
+                                    </a>
+                                @endif
                             @else
-                                <a class="btn btn-dark text-light mr-1 w-100" style="cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> {{ __("Thách đấu") }}</a>
+                                <a class="btn btn-danger w-100 py-2 pulse-red" href="{{ localized_url('login') }}" style="font-weight: 800;">
+                                    <i class="fas fa-sign-in-alt"></i> {{ __("Thách đấu") }}
+                                </a>
                             @endif
-                        @else
-                            <a class="btn btn-danger text-light mr-1 w-100" href=" {{ localized_url('login') }} "><i class="far fa-sign-in"></i> {{ __("Thách đấu") }}</a>
-                        @endif
+                        </div>
                     </div>
                 </div>
                 @if (auth()->check())
