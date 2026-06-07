@@ -33,7 +33,7 @@
                 <div class="card-body">
                     <div class="row">
 
-                        <div class="col-md-6 mb-4 mb-md-0 border-right">
+                        <div class="col-md-6 mb-4 mb-md-0">
                             <form method="POST" action="{{ localized_url('change.ui') }}">
                                 @csrf
                                 <input type="hidden" value="{{ auth()->user()->id ?? '' }}" name="current_id">
@@ -70,8 +70,8 @@
                             </form>
                         </div>
 
-                        <div class="col-md-6 d-flex flex-column align-items-center justify-content-center bg-light rounded p-4">
-                            <h6 class="mb-3 font-weight-bold text-secondary">{{ __("Xem trước giao diện") }}</h6>
+                        <div class="col-md-6 d-flex flex-column align-items-center justify-content-center rounded p-4">
+                            <h6 class="mb-3 font-weight-bold text-light">{{ __("Xem trước giao diện") }}</h6>
 
                             <div id="ui-preview-board" class="shadow-sm" style="width: 100%; max-width: 280px; aspect-ratio: 9/10; min-height: 310px; position: relative; background-size: 100% 100%; background-repeat: no-repeat; background-position: center; transition: background-image 0.3s ease; border-radius: 4px;">
                                 <img id="ui-preview-piece-red" alt="Tướng Đỏ" style="position: absolute; bottom: 0; left: 50%; width: 11%; transform: translateX(-50%); opacity: 0; transition: opacity 0.2s ease; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));">
