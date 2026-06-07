@@ -202,9 +202,9 @@
                                     <td class="align-middle" style="color: var(--royal-gold-light);">{{ $player->pivot->created_at->format('d/m/Y H:i') }}</td>
                                     <td class="pr-4 text-right align-middle">
                                         @if($player->last_seen_at && \Carbon\Carbon::parse($player->last_seen_at)->diffInMinutes() < 5)
-                                            <span><i class="fad fa-circle" style="font-size: 0.7rem;"></i> Online</span>
+                                            <span class="badge-status badge-online"><i class="fad fa-circle"></i> Online</span>
                                         @else
-                                            <span><i class="fad fa-circle" style="font-size: 0.7rem;"></i> Offline</span>
+                                            <span class="badge-status badge-offline"><i class="fad fa-circle"></i> Offline</span>
                                         @endif
                                     </td>
                                 </tr>
