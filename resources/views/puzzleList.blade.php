@@ -10,20 +10,25 @@
       <a data-step="1" data-intro="{{ __('Ấn vào đây để xếp thế cờ mới') }}" id="setup" class="btn btn-danger btn-lg" href="{{ url('/') }}/co-the"><i class="fad fa-plus-hexagon"></i> {{ __('Xếp ván mới') }}</a>
       @include('common.tourBtn')
     </div>
-    <div data-step="2" data-intro="{{ __('Danh sách tất cả các thế cờ') }}" class="table-responsive">
-      <table id="danh-sach-the-co" class="table table-bordered table-hover table-striped table-sm">
-        <thead class="thead-light">
-          <tr>
-            <th class="text-center" scope="col">{{ __('Xếp hạng') }}</th>
-            <th class="text-center" scope="col">{{ __('Tên thế cờ') }}</th>
-            <th class="text-center" scope="col">{{ __('Đánh giá') }}</th>
-            <th class="text-center" scope="col">{{ __('Hành động') }}</th>
-            <th class="text-center" scope="col">{{ __('Thời gian cập nhật') }}</th>
-          </tr>
-        </thead>
-        <tbody style="background-color: whitesmoke;">
-        </tbody>
-      </table>
+    <div data-step="2" data-intro="{{ __('Danh sách tất cả các thế cờ') }}" class="card shadow-lg mb-4">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table id="danh-sach-the-co" class="table table-hover table-sm mb-0">
+            <thead>
+              <tr>
+                <th class="text-center" scope="col">{{ __('Xếp hạng') }}</th>
+                <th class="text-center" scope="col">{{ __('Tên thế cờ') }}</th>
+                <th class="text-center" scope="col">{{ __('Đánh giá') }}</th>
+                <th class="text-center" scope="col">{{ __('Hành động') }}</th>
+                <th class="text-center" scope="col">{{ __('Thời gian cập nhật') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- DataTables will populate this natively utilizing the theme's text colors -->
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>

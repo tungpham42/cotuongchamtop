@@ -6,20 +6,25 @@
     @include('layout.partials.findMatch')
     </div>
     <h2 class="h1-responsivefooter text-center my-4">{{ __('Thành viên') }}</h2>
-    <div class="table-responsive">
-      <table id="danh-sach-ky-thu" class="table table-bordered table-hover table-striped table-sm">
-        <thead class="thead-light">
-          <tr>
-            <th class="text-center" scope="col">{{ __('Xếp hạng') }}</th>
-            <th class="text-center" scope="col">{{ __('Kỳ thủ') }}</th>
-            <th class="text-center" scope="col">{{ __('Elo') }}</th>
-            <th class="text-center" scope="col">{{ __('Hành động') }}</th>
-            <th class="text-center" scope="col">{{ __('Thời điểm tham gia') }}</th>
-          </tr>
-        </thead>
-        <tbody style="background-color: whitesmoke;">
-        </tbody>
-      </table>
+    <div class="card shadow-lg mb-4">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table id="danh-sach-ky-thu" class="table table-hover table-sm mb-0">
+            <thead>
+              <tr>
+                <th class="text-center" scope="col">{{ __('Xếp hạng') }}</th>
+                <th class="text-center" scope="col">{{ __('Kỳ thủ') }}</th>
+                <th class="text-center" scope="col">{{ __('Elo') }}</th>
+                <th class="text-center" scope="col">{{ __('Hành động') }}</th>
+                <th class="text-center" scope="col">{{ __('Thời điểm tham gia') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- DataTables will populate this natively utilizing the theme's text colors -->
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>

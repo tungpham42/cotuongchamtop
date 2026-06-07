@@ -45,64 +45,56 @@ class RoomController extends Controller
 
             return Datatables::of($rooms)
                 ->addColumn('code', function($row) use ($t) {
+                    $roomNameRaw = (isset($row->name) && $row->name != '') ? $row->name : $row->code;
+                    // Bọc tên phòng trong Span Glass-Gold nổi bật
+                    $roomNameHtml = '<span style="padding: 4px 10px; background: rgba(212, 175, 55, 0.15); border-radius: 4px; border: 1px solid #ffd700; color: #ffd700; font-weight: bold; text-shadow: 1px 1px 2px #000; letter-spacing: 0.5px;">' . $roomNameRaw . '</span>';
+                    
+                    // Đồng bộ Icon luôn sử dụng màu sáng
+                    $iconClass = ($row->pass == '') ? 'fa-globe' : 'fa-lock';
+                    $iconTooltip = ($row->pass == '') ? $t['public'] : $t['private'];
+                    $iconHtml = '<i class="ml-2 far ' . $iconClass . ' text-warning" data-toggle="tooltip" data-placement="top" data-original-title="' . $iconTooltip . '"></i>';
+
                     if (!isset($row->host_id)) {
-                        if ($row->fen == env('INITIAL_FEN') || str_contains($row->fen, ' r ')) {
-                            $roomCode = '<a class="text-danger disabled" style="cursor: default !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0)">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a>';
-                            if ($row->pass == '') {
-                                $roomCode .= '<i class="ml-3 far fa-globe text-danger" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['public'].'"></i>';
-                            } else {
-                                $roomCode .= '<i class="ml-3 far fa-lock text-danger" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['private'].'"></i>';
-                            }
-                        } else {
-                            $roomCode = '<a style="color: #222222 !important; cursor: default !important; text-decoration: none !important;" class="disabled" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0)">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a>';
-                            if ($row->pass == '') {
-                                $roomCode .= '<i class="ml-3 far fa-globe text-dark" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['public'].'"></i>';
-                            } else {
-                                $roomCode .= '<i class="ml-3 far fa-lock text-dark" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['private'].'"></i>';
-                            }
-                        }
+                        return '<a style="text-decoration: none !important;" class="disabled" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0)">' . $roomNameHtml . '</a>' . $iconHtml;
                     } else {
-                        // Replaced Switch Language text -> Proper cross-locale auth capabilities
                         if (auth()->check()) {
                             if (isset($row->result)) {
-                                $roomCode = '<a class="text-dark showPromotion" href="javascript:void(0)" style="color: #222!important; cursor: default !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a><i class="ml-3 far fa-archive text-dark" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['finished_auth'].'"></i>';
+                                $statusIcon = '<i class="ml-2 far fa-archive text-secondary" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['finished_auth'].'"></i>';
+                                return '<a class="showPromotion" href="javascript:void(0)" style="text-decoration: none !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'">' . $roomNameHtml . '</a>' . $statusIcon;
                             } else {
-                                $roomCode = '<a class="text-warning" href="javascript:joinMatch(`'.$row->code.'`)" data-fen="'.$row->fen.'" data-code="'.$row->code.'">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a><i class="ml-3 far fa-mouse text-warning" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['play_now'].'"></i>';
+                                $statusIcon = '<i class="ml-2 far fa-mouse text-warning" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['play_now'].'"></i>';
+                                return '<a href="javascript:joinMatch(`'.$row->code.'`)" style="text-decoration: none !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'">' . $roomNameHtml . '</a>' . $statusIcon;
                             }
                         } else {
-                            if (str_contains($row->fen, ' r ')) {
-                                $roomCode = '<a style="cursor: default !important; text-decoration: none !important;" class="text-danger" href="javascript:void(0)" data-fen="'.$row->fen.'" data-code="'.$row->code.'">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a><i class="ml-3 far fa-sign-in text-danger" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['login'].'"></i>';
-                            } else if (str_contains($row->fen, ' b ')) {
-                                $roomCode = '<a style="cursor: default !important; text-decoration: none !important;" class="text-dark" href="javascript:void(0)" data-fen="'.$row->fen.'" data-code="'.$row->code.'">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a><i class="ml-3 far fa-sign-in text-dark" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['login'].'"></i>';
-                            } else {
-                                $roomCode = '<a style="cursor: default !important; text-decoration: none !important;" class="text-dark" href="javascript:void(0)" data-fen="'.$row->fen.'" data-code="'.$row->code.'">'.((isset($row->name) && $row->name != '') ? $row->name: $row->code).'</a><i class="ml-3 far fa-sign-in text-dark" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['login'].'"></i>';
-                            }
+                            $statusIcon = '<i class="ml-2 far fa-sign-in text-warning" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['login'].'"></i>';
+                            return '<a style="text-decoration: none !important;" href="javascript:void(0)" data-fen="'.$row->fen.'" data-code="'.$row->code.'">' . $roomNameHtml . '</a>' . $statusIcon;
                         }
                     }
-                    return $roomCode;
                 })
                 ->addColumn('turn', function($row) use ($t) {
                     if (str_contains($row->fen, ' r ')) {
-                        return '<span class="text-danger">'.$t['red'].'</span>';
+                        // Nền đỏ hoàng gia, chữ vàng
+                        return '<span class="badge" style="background-color: #8a1515; color: #ffd700; border: 1px solid #ffd700; font-size: 13px; padding: 5px 10px; box-shadow: 0 0 5px rgba(212,175,55,0.4);">'.$t['red'].'</span>';
                     } else if (str_contains($row->fen, ' b ')) {
-                        return '<span class="text-dark">'.$t['black'].'</span>';
+                        // Nền bạc sáng (silver/grey), chữ đen mun (Cực kỳ nổi bật trên nền đen)
+                        return '<span class="badge" style="background-color: #e5e7eb; color: #111827; border: 1px solid #4b5563; font-size: 13px; padding: 5px 10px; box-shadow: 0 0 5px rgba(255,255,255,0.4);">'.$t['black'].'</span>';
                     }
                     return '';
                 })
                 ->addColumn('result', function($row) use ($t) {
                     if (isset($row->result)) {
                         switch ($row->result) {
-                            case '-1':
-                                return '<span class="text-dark">'.$t['guest_won'].'</span>';
-                            case '0':
-                                return '<span class="text-warning">'.$t['draw'].'</span>';
-                            case '1':
-                                return '<span class="text-danger">'.$t['host_won'].'</span>';
+                            case '-1': // Đen thắng
+                                return '<span class="badge" style="background-color: #e5e7eb; color: #111827; border: 1px solid #4b5563; font-size: 13px; padding: 5px 10px; box-shadow: 0 0 5px rgba(255,255,255,0.4);">'.$t['guest_won'].'</span>';
+                            case '0': // Hòa
+                                return '<span class="badge" style="background-color: #4a2511; color: #ffd700; border: 1px solid #ffd700; font-size: 13px; padding: 5px 10px; box-shadow: 0 0 5px rgba(212,175,55,0.4);">'.$t['draw'].'</span>';
+                            case '1': // Đỏ thắng
+                                return '<span class="badge" style="background-color: #8a1515; color: #ffd700; border: 1px solid #ffd700; font-size: 13px; padding: 5px 10px; box-shadow: 0 0 5px rgba(212,175,55,0.4);">'.$t['host_won'].'</span>';
                         }
-                    } else if ($row->fen == env('INITIAL_FEN')) {
-                        return '<span class="text-secondary">'.$t['not_started'].'</span>';
-                    } else {
-                        return '<span class="text-warning">'.$t['ongoing'].'</span>';
+                    } else if ($row->fen == env('INITIAL_FEN')) { // Chưa bắt đầu
+                        return '<span class="badge" style="background-color: rgba(255,255,255,0.1); color: #e5e7eb; border: 1px dashed #9ca3af; font-size: 13px; padding: 5px 10px;">'.$t['not_started'].'</span>';
+                    } else { // Đang diễn ra
+                        return '<span class="badge" style="background-color: rgba(45, 106, 79, 0.9); color: #ffd700; border: 1px solid #ffd700; font-size: 13px; padding: 5px 10px; box-shadow: 0 0 8px rgba(45,106,79,0.8);">'.$t['ongoing'].'</span>';
                     }
                     return '';
                 })

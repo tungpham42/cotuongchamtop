@@ -69,7 +69,7 @@ $action = $actionMap[$level ?? '3'] ?? 'chơi';
     <a class="dropdown-item{{ request()->is($urls[3]) ? ' active disabled' : '' }}" href="{{ url('/' . $urls[3]) }}" style="cursor: pointer !important;">{{ __("Khó") }}</a>
     <a class="dropdown-item{{ request()->is($urls[4]) ? ' active disabled' : '' }}" href="{{ url('/' . $urls[4]) }}" style="cursor: pointer !important;">{{ __("Khó nhất") }}</a>
     <div class="dropdown-divider"></div>
-    <a class="dropdown-item text-danger font-weight-bold{{ request()->is($urls[5]) ? ' active disabled' : '' }}" href="{{ url('/' . $urls[5]) }}" style="cursor: pointer !important;"><i class="fas fa-crown"></i> {{ __("Kiện tướng") }}</a>
+    <a class="dropdown-item font-weight-bold{{ request()->is($urls[5]) ? ' active disabled' : '' }}" href="{{ url('/' . $urls[5]) }}" style="cursor: pointer !important;"><i class="fas fa-crown"></i> {{ __("Kiện tướng") }}</a>
 </div>
 </div>
 <div class="dropup mx-auto text-center my-1">

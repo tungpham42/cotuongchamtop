@@ -1016,8 +1016,8 @@ body.setup #ban-co {
 .table td,
 .table th {
     vertical-align: middle !important;
-    border-top: 1px solid var(--royal-wood);
-    color: var(--royal-wood) !important;
+    border-top: 1px solid var(--royal-gold);
+    color: var(--royal-gold) !important;
 }
 #app table th,
 #app table td,
@@ -1588,4 +1588,111 @@ form label {
 .dropdown-item:active {
     background-color: var(--royal-red) !important;
     color: var(--royal-gold) !important;
+}
+
+/* ==========================================================================
+   DROPDOWNS HOÀNG GIA (ROYAL DROPDOWNS)
+   ========================================================================== */
+/* Khung nền Dropdown */
+.dropdown-menu {
+    background-color: rgba(11, 12, 16, 0.95) !important; /* Đen mun bóng */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--royal-gold) !important;
+    border-radius: 6px;
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.8),
+        0 0 15px rgba(212, 175, 55, 0.2) !important;
+    padding: 0.5rem 0;
+    animation: fadeInMenu 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1050; /* Đảm bảo luôn đè lên các phần tử khác */
+}
+
+/* Hiệu ứng xuất hiện mượt mà */
+@keyframes fadeInMenu {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Các thẻ a (item) bên trong Dropdown */
+.dropdown-item {
+    color: var(--royal-gold-light) !important;
+    font-weight: 500;
+    padding: 10px 20px;
+    transition: all 0.25s ease-in-out;
+    background-color: transparent !important;
+    display: flex;
+    align-items: center;
+}
+
+/* Icon bên trong Dropdown item */
+.dropdown-item i,
+.dropdown-item svg {
+    color: var(--royal-gold) !important;
+    width: 20px;
+    text-align: center;
+    margin-right: 12px;
+    transition: all 0.25s ease-in-out;
+}
+
+/* Hiệu ứng Hover - Lướt sáng phong cách hoàng gia */
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background: linear-gradient(
+        90deg,
+        rgba(138, 21, 21, 0.1),
+        rgba(138, 21, 21, 0.85),
+        rgba(138, 21, 21, 0.1)
+    ) !important;
+    color: var(--royal-gold) !important;
+    text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+    transform: translateX(6px); /* Item trượt nhẹ sang phải */
+}
+
+.dropdown-item:hover i,
+.dropdown-item:focus i {
+    color: var(--royal-gold-light) !important;
+    text-shadow: 0 0 12px rgba(212, 175, 55, 1);
+    transform: scale(1.1); /* Icon to lên một chút */
+}
+
+/* Trạng thái Đang chọn (Active/Clicked) */
+.dropdown-item.active,
+.dropdown-item:active {
+    background: linear-gradient(
+        to right,
+        var(--royal-gold),
+        #b89020
+    ) !important;
+    color: var(--royal-bg) !important; /* Chữ chuyển sang đen mun */
+    font-weight: bold;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    transform: translateX(0); /* Reset trượt khi click */
+}
+
+.dropdown-item.active i,
+.dropdown-item:active i {
+    color: var(--royal-red-dark) !important;
+}
+
+/* Đường kẻ phân cách */
+.dropdown-divider {
+    border-top: 1px solid rgba(212, 175, 55, 0.2) !important;
+    margin: 0.5rem 0;
+}
+
+div.dataTables_wrapper div.dataTables_length label {
+    padding-left: 1rem;
+    padding-top: 1rem;
+}
+
+div.dataTables_wrapper div.dataTables_filter label {
+    padding-right: 1rem;
+    padding-top: 1rem;
 }

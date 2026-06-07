@@ -23,20 +23,25 @@
       </div>
       @include('common.tourBtn')
     </div>
-    <div data-step="2" data-intro="{{ __("Danh sách tất cả các trận đấu") }}" class="table-responsive">
-      <table id="danh-sach-phong" class="table table-bordered table-hover table-striped table-sm">
-        <thead class="thead-light">
-          <tr>
-            <th class="text-center" scope="col">{{ __("Tên phòng") }}</th>
-            <th class="text-center" scope="col">{{ __("Tới lượt") }}</th>
-            <th class="text-center" scope="col">{{ __("Kết quả") }}</th>
-            <th class="text-center" scope="col">{{ __("Hành động") }}</th>
-            <th class="text-center" scope="col">{{ __("Lần cuối chơi") }}</th>
-          </tr>
-        </thead>
-        <tbody style="background-color: whitesmoke;">
-        </tbody>
-      </table>
+    <div data-step="2" data-intro="{{ __("Danh sách tất cả các trận đấu") }}" class="card shadow-lg mb-4">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table id="danh-sach-phong" class="table table-hover table-sm mb-0">
+            <thead>
+              <tr>
+                <th class="text-center" scope="col">{{ __("Tên phòng") }}</th>
+                <th class="text-center" scope="col">{{ __("Tới lượt") }}</th>
+                <th class="text-center" scope="col">{{ __("Kết quả") }}</th>
+                <th class="text-center" scope="col">{{ __("Hành động") }}</th>
+                <th class="text-center" scope="col">{{ __("Lần cuối chơi") }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- DataTables will populate this natively utilizing the theme's text colors -->
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
