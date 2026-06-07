@@ -820,9 +820,9 @@ body.register main {
 }
 
 .page-link {
-    background-color: var(--royal-bg);
-    border-color: var(--royal-border);
-    color: var(--royal-gold-light);
+    background-color: var(--royal-bg) !important;
+    border-color: var(--royal-border) !important;
+    color: var(--royal-gold-light) !important;
 }
 .page-item.active .page-link {
     background-color: var(--royal-red) !important;
