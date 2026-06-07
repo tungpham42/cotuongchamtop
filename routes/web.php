@@ -572,7 +572,13 @@ $localizedAppPages = [
             'bodyClass' => 'search',
             // Included common app layout data variables if your app.search view relies on them
             'matchRooms' => RoomController::getMatchRooms(),
-            'rankUsers' => UserController::getRankUsers()
+            'rankUsers' => UserController::getRankUsers(),
+            'results' => request('query') 
+                ? User::where('name', 'LIKE', '%'.request('query').'%')
+                    ->orWhere('email', 'LIKE', '%'.request('query').'%')
+                    ->paginate(10)
+                    ->appends(['query' => request('query')])
+                : null
         ]
     ],
 ];
