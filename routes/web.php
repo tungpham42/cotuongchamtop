@@ -1187,7 +1187,7 @@ foreach ($localizedStaticPages as $pageKey => $localizedPages) {
 
 $localizedRoomListPages = [
   'vi' => ['view' => 'roomList', 'title' => 'Sảnh chờ'],
-  'en' => ['view' => 'roomList', 'title' => "Rooms' list"],
+  'en' => ['view' => 'roomList', 'title' => "Lobby"],
   'ja' => ['view' => 'roomList', 'title' => '部屋一覧'],
   'ko' => ['view' => 'roomList', 'title' => '방 목록'],
   'zh' => ['view' => 'roomList', 'title' => '房间列表'],

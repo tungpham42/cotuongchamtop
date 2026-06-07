@@ -102,7 +102,7 @@
     "Bạn đang đánh ngẫu nhiên": "너는 무작위로 놀고 있다",
     "Bạn đã được mời": "초대합니다",
     "Bạn đang theo dõi": "보고 있잖아요",
-    "Vào trận": "--}}\nBLADE_DIRECTIVE (!isset($room->host_id) && !isset($room->result))",
+    "Vào trận": "게임에 입장",
     "Quan sát hai kỳ thủ đang chơi": "게임 종료",
     "Đến lược bạn đi": "두 명의 플레이어가 플레이하는 것 보기",
     "Chọn cấp độ máy": "레벨 선택",

@@ -102,7 +102,7 @@
     "Bạn đang đánh ngẫu nhiên": "You are playing randomly",
     "Bạn đã được mời": "You are invited",
     "Bạn đang theo dõi": "You are watching",
-    "Vào trận": "--}}\nBLADE_DIRECTIVE (!isset($room->host_id) && !isset($room->result))",
+    "Vào trận": "Enter match",
     "Quan sát hai kỳ thủ đang chơi": "Game finished",
     "Đến lược bạn đi": "Viewing two players playing",
     "Chọn cấp độ máy": "Choose level",

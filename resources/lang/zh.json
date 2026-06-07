@@ -103,7 +103,7 @@
     "Bạn đang đánh ngẫu nhiên": "你在随机玩",
     "Bạn đã được mời": "你被邀请了",
     "Bạn đang theo dõi": "你在看",
-    "Vào trận": "--}}\nBLADE_DIRECTIVE (!isset($room->host_id) && !isset($room->result))",
+    "Vào trận": "进入比赛",
     "Quan sát hai kỳ thủ đang chơi": "游戏结束",
     "Đến lược bạn đi": "观看两名球员的比赛",
     "Chọn cấp độ máy": "选择级别",
