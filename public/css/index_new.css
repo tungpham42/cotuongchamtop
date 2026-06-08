@@ -1650,7 +1650,7 @@ table th.no-sort::after {
     color: var(--royal-gold-light) !important;
 }
 
-.card a:hover {
+.card > a:hover {
     color: transparent !important;
 }
 
