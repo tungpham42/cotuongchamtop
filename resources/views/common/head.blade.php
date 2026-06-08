@@ -11,6 +11,27 @@
 <meta property="og:image:height" content="@yield('og_image_height', '630')" >
 <meta property="og:image:alt" content="@yield('og_image_alt', 'Cờ tướng 2 người')" >
 <meta property="og:image:type" content="@yield('og_image_type', 'image/jpeg')" />
+
+{{-- SEO: Canonical and Hreflang Tags --}}
+@isset($canonicalUrl)
+<link rel="canonical" href="{{ url($canonicalUrl) }}" >
+@endisset
+
+@isset($alternateUrls)
+    @foreach($alternateUrls as $locale => $url)
+<link rel="alternate" hreflang="{{ $locale }}" href="{{ $url }}" />
+    @endforeach
+<link rel="alternate" hreflang="x-default" href="{{ $alternateUrls[config('locales.default', 'vi')] ?? url('/') }}" />
+@else
+    {{-- Fallback using localized path variables --}}
+    @isset($langViUrl)<link rel="alternate" hreflang="vi" href="{{ url($langViUrl) }}" />@endisset
+    @isset($langEnUrl)<link rel="alternate" hreflang="en" href="{{ url($langEnUrl) }}" />@endisset
+    @isset($langJaUrl)<link rel="alternate" hreflang="ja" href="{{ url($langJaUrl) }}" />@endisset
+    @isset($langKoUrl)<link rel="alternate" hreflang="ko" href="{{ url($langKoUrl) }}" />@endisset
+    @isset($langZhUrl)<link rel="alternate" hreflang="zh" href="{{ url($langZhUrl) }}" />@endisset
+    @isset($langViUrl)<link rel="alternate" hreflang="x-default" href="{{ url($langViUrl) }}" />@endisset
+@endisset
+
 <link rel="apple-touch-icon" href="{{ url('/') }}/img/app-icons/apple-touch-icon-iphone-game.png">
 <link rel="apple-touch-icon" sizes="76x76" href="{{ url('/') }}/img/app-icons/apple-touch-icon-ipad-game.png">
 <link rel="apple-touch-icon" sizes="120x120" href="{{ url('/') }}/img/app-icons/apple-touch-icon-iphone-retina-game.png">

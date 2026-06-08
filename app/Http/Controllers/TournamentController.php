@@ -141,26 +141,26 @@ class TournamentController extends Controller
     {
         $tournaments = Tournament::withCount('users')->orderBy('start_date', 'desc')->paginate(10);
 
-        return view('tournaments.index', [
+        return view('tournaments.index', localized_page_data('tournaments.index', app()->getLocale(), [
             'headTitle' => $request->route('headTitle'),
             'bodyClass' => 'dashboard',
             'tournaments' => $tournaments,
             'randomRoom' => RoomController::getRandomRoom(),
             'roomCode' => '',
             'cdnUrl' => url(''),
-        ]);
+        ]));
     }
 
     public function show(Request $request, $slug)
     {
-        // Thêm 'creator' vào mảng with()
         $tournament = Tournament::with(['creator', 'users', 'rooms.host', 'rooms.guest'])
             ->where('slug', $slug)
             ->firstOrFail();
 
         $rounds = $tournament->rooms->groupBy('tournament_round')->sortKeys();
 
-        return view('tournaments.show', [
+        // Pass 'slug' parameter to resolve dynamic URLs in hreflang
+        return view('tournaments.show', localized_page_data('tournaments.show', app()->getLocale(), [
             'headTitle'  => $tournament->name,
             'bodyClass' => 'dashboard',
             'tournament' => $tournament,
@@ -168,7 +168,7 @@ class TournamentController extends Controller
             'randomRoom' => RoomController::getRandomRoom(),
             'roomCode' => '',
             'cdnUrl' => url(''),
-        ]);
+        ], ['slug' => $slug]));
     }
 
     // 1. Giao diện Tạo mới
@@ -176,13 +176,13 @@ class TournamentController extends Controller
     {
         $this->checkAuth();
 
-        return view('tournaments.create', [
+        return view('tournaments.create', localized_page_data('tournaments.create', app()->getLocale(), [
             'headTitle' => $request->route('headTitle'),
             'bodyClass' => 'dashboard',
             'randomRoom' => RoomController::getRandomRoom(),
             'roomCode' => '',
             'cdnUrl' => url(''),
-        ]);
+        ]));
     }
 
     // 2. Xử lý lưu Tạo mới
@@ -219,17 +219,17 @@ class TournamentController extends Controller
         $this->checkAuth();
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
 
-        // Double-check ownership
         $this->authorizeCreator($tournament);
 
-        return view('tournaments.edit', [
+        // Pass 'slug' parameter to resolve dynamic URLs in hreflang
+        return view('tournaments.edit', localized_page_data('tournaments.edit', app()->getLocale(), [
             'headTitle' => $request->route('headTitle') . ': ' . $tournament->name,
             'bodyClass' => 'dashboard',
             'tournament' => $tournament,
             'randomRoom' => RoomController::getRandomRoom(),
             'roomCode' => '',
             'cdnUrl' => url(''),
-        ]);
+        ], ['slug' => $slug]));
     }
 
     // 4. Xử lý cập nhật Sửa

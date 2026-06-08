@@ -6,4 +6,3 @@
 <meta property="og:title" content="{{ url()->current() == url('') ? __('Cờ tướng 2 người, cờ tướng online, chơi cờ tướng với máy') : __(':title - Cờ tướng 2 người, Cờ thế, đánh cờ tướng online, chơi cờ tướng với máy miễn phí', ['title' => $headTitle]) }}" >
 <meta property="og:description" content="{{ __('Cùng chơi với nhiều tính năng hấp dẫn như cờ tướng 2 người, cờ tướng online, chơi cờ tướng với máy, cờ thế và Thi đấu xếp hạng!') }}" >
 @include('common.head')
-@include('common.url')

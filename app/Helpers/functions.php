@@ -32,10 +32,10 @@ if (!function_exists('localized_page_data')) {
         return array_merge([
             'locale' => $locale,
             'langViUrl' => $paths['vi'] ?? '/',
-            'langEnUrl' => $paths['en'] ?? '/',
-            'langJaUrl' => $paths['ja'] ?? '/',
-            'langKoUrl' => $paths['ko'] ?? '/',
-            'langZhUrl' => $paths['zh'] ?? '/',
+            'langEnUrl' => $paths['en'] ?? '/en',
+            'langJaUrl' => $paths['ja'] ?? '/ja',
+            'langKoUrl' => $paths['ko'] ?? '/ko',
+            'langZhUrl' => $paths['zh'] ?? '/zh',
             'canonicalUrl' => $paths[$locale] ?? ($paths[config('locales.default', 'vi')] ?? '/'),
             'alternateUrls' => app(LocalizedUrlService::class)->alternateUrls($key, $parameters),
         ], $data);

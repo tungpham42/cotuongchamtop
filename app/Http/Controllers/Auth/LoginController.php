@@ -23,9 +23,6 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    /**
-     * Helper method to get the correct previous URL or localized home fallback.
-     */
     private function getRedirectUrl()
     {
         $locale = app()->getLocale();
@@ -36,12 +33,12 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
-        // Only update the previous URL if the user didn't just come from a failed login attempt
         if (!str_contains(url()->previous(), 'login')) {
             Session::put('previousUrl', url()->previous());
         }
 
-        return view('auth.login');
+        // Added localized_page_data helper for hreflang tags
+        return view('auth.login', localized_page_data('login', app()->getLocale()));
     }
 
     public function login(Request $request)
@@ -71,7 +68,6 @@ class LoginController extends Controller
 
         $previousUrl = $this->getRedirectUrl();
 
-        // Update the previous URL for the next potential action after logout
         Session::put('previousUrl', url()->previous());
 
         return Redirect::to($previousUrl)->with('success', __('Bạn đã đăng xuất thành công!'));
