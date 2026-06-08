@@ -641,12 +641,17 @@ $("#capture").on('click', function() {
         context.textBaseline = 'middle';
         context.fillText('{{ $name }}', finalCanvas.width / 2, originalCanvas.height / 2);
 
-        // 2. COTUONG.TOP drawn in the newly padded bottom space
+        // 2. COTUONG.TOP drawn in the newly padded bottom space - MOVED TO BOTTOM RIGHT
         context.globalCompositeOperation = 'source-over'; // Standard composite for solid text
-        context.font = 'bold 18px sans-serif';
+        context.font = 'bold 16px sans-serif';
         context.fillStyle = '#444422'; // Adjust color if needed against the background
+
+        // Change text alignment to right
+        context.textAlign = 'right';
         context.textBaseline = 'middle';
-        context.fillText('COTUONG.TOP', finalCanvas.width / 2, originalCanvas.height + (paddingBottom / 2));
+
+        // Shift X coordinate to the right edge with a 10px margin
+        context.fillText('COTUONG.TOP', finalCanvas.width - 10, originalCanvas.height + (paddingBottom / 2));
 
         finalCanvas.toBlob(function(blob) {
           saveAs(blob, "ban-co-{{ date('Y-m-d h:i:s A') }}.png");
