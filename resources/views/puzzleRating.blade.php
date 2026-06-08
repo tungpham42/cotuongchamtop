@@ -619,8 +619,13 @@ $("#capture").on('click', function() {
         finalCanvas.height = originalCanvas.height + paddingBottom;
         var context = finalCanvas.getContext('2d');
 
-        // Fill the new canvas background so the padding isn't transparent (using white here)
-        context.fillStyle = '#ffffff';
+        // Sample a pixel near the bottom edge of the original canvas to dynamically match the board's background color
+        var origCtx = originalCanvas.getContext('2d');
+        var pixel = origCtx.getImageData(5, originalCanvas.height - 5, 1, 1).data;
+        var bgColor = 'rgba(' + pixel[0] + ', ' + pixel[1] + ', ' + pixel[2] + ', ' + (pixel[3] / 255) + ')';
+
+        // Fill the new canvas background so the padding visually matches the board
+        context.fillStyle = bgColor;
         context.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
 
         // Draw the original board capture onto the new canvas
@@ -639,7 +644,7 @@ $("#capture").on('click', function() {
         // 2. COTUONG.TOP drawn in the newly padded bottom space
         context.globalCompositeOperation = 'source-over'; // Standard composite for solid text
         context.font = 'bold 18px sans-serif';
-        context.fillStyle = '#444422'; // Adjust color if needed against the white background
+        context.fillStyle = '#444422'; // Adjust color if needed against the background
         context.textBaseline = 'middle';
         context.fillText('COTUONG.TOP', finalCanvas.width / 2, originalCanvas.height + (paddingBottom / 2));
 
