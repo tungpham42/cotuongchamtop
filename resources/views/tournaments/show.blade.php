@@ -286,6 +286,7 @@
 
             bootbox.confirm({
                 message: "{{ __('Bạn có chắc chắn muốn xóa giải đấu này không?') }}",
+                centerVertical: true,
                 buttons: {
                     confirm: {
                         label: '{{ __("Có") }}',
