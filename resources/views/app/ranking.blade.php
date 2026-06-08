@@ -19,43 +19,53 @@
     @endif
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-star"></i> {{ __("Bảng xếp hạng") }}
+            <!-- Royal Glassmorphism Card -->
+            <div class="card shadow-lg mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="fas fa-star text-gold"></i> {{ __("Bảng xếp hạng") }}</h4>
                     @include('layout.partials.app.tourBtn')
                 </div>
-                <div class="card-body">
-                    @include('layout.partials.app.createRoom')
-                    <h2 data-step="2" data-intro="{{ __("Danh sách xếp hạng đầy đủ") }}" class="mt-3"><i class="fas fa-star"></i> {{ __("Bảng xếp hạng của") }} {{ $users->total() }} {{ __("kỳ thủ") }} ({!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</h2>
+                <div class="card-body p-0">
+                    <div class="p-3 border-bottom" style="border-color: rgba(212, 175, 55, 0.2) !important;">
+                        @include('layout.partials.app.createRoom')
+                        <h2 data-step="2" data-intro="{{ __("Danh sách xếp hạng đầy đủ") }}" class="mt-4 mb-0 h4">
+                            <i class="fas fa-star text-gold"></i> {{ __("Bảng xếp hạng của") }} {{ $users->total() }} {{ __("kỳ thủ") }} <small class="text-muted">({!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</small>
+                        </h2>
+                    </div>
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover" id="rankingTable">
+                        <table class="table table-hover table-sm mb-0" id="rankingTable">
                             <thead>
                                 <tr>
-                                    <th scope="col">{{ __("Hạng") }}</th>
-                                    <th scope="col">{{ __("Tên") }}</th>
-                                    <th scope="col">Elo</th>
-                                    <th scope="col">{{ __("Ngày giờ gia nhập") }}</th>
-                                    <th scope="col">{{ __("Lần trực tuyến gần nhất") }}</th>
+                                    <th class="text-center" scope="col">{{ __("Hạng") }}</th>
+                                    <th class="text-center" scope="col">{{ __("Tên") }}</th>
+                                    <th class="text-center" scope="col">Elo</th>
+                                    <th class="text-center" scope="col">{{ __("Ngày giờ gia nhập") }}</th>
+                                    <th class="text-center" scope="col">{{ __("Lần trực tuyến gần nhất") }}</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {{ $users->links('vendor.pagination.match') }}
                                 @foreach($users as $user)
                                 <tr data-user="{{ $user->id }}">
-                                    <th scope="row">{!! app('App\Http\Controllers\UserController')::renderUserRank($user->id) !!}</th>
-                                    <td class="name">{!! app('App\Http\Controllers\UserController')::renderPlayerName($user->id) !!}</td>
-                                    <td class="elo">{!! app('App\Http\Controllers\UserController')::renderElo($user->id) !!}</td>
-                                    <td class="room-time">{{ $user->created_at }}</td>
-                                    <td class="room-time">{{ $user->last_seen_at }}</td>
+                                    <td class="text-center font-weight-bold">
+                                        <span class="badge badge-status" style="background: linear-gradient(to bottom, #d4af37, #b89020); color: #0b0c10; box-shadow: 0 0 5px rgba(212, 175, 55, 0.6);"><i class="fas fa-trophy"></i> {!! app('App\Http\Controllers\UserController')::renderUserRank($user->id) !!}</span>
+                                    </td>
+                                    <td class="text-center name">{!! app('App\Http\Controllers\UserController')::renderPlayerName($user->id) !!}</td>
+                                    <td class="text-center elo text-gold font-weight-bold" style="font-size: 1.1em;">{!! app('App\Http\Controllers\UserController')::renderElo($user->id) !!}</td>
+                                    <td class="text-center room-time">{{ $user->created_at }}</td>
+                                    <td class="text-center room-time">{{ $user->last_seen_at }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
+                @if ($users->hasPages())
+                <div class="card-footer d-flex justify-content-center pt-3 pb-1 border-top" style="border-color: rgba(212, 175, 55, 0.2) !important;">
+                    {{ $users->links('vendor.pagination.match') }}
+                </div>
+                @endif
             </div>
         </div>
     </div>
 </div>
-{{-- @include('layout.partials.app.fb') --}}
 @endsection

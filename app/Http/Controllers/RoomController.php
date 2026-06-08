@@ -41,15 +41,14 @@ class RoomController extends Controller
             ];
 
             $t = $texts[$locale] ?? $texts['en'];
-            $routePrefix = ($locale === 'vi') ? '' : "{$locale}."; // Matches web.php naming convention
+            $routePrefix = ($locale === 'vi') ? '' : "{$locale}.";
 
             return Datatables::of($rooms)
                 ->addColumn('code', function($row) use ($t) {
                     $roomNameRaw = (isset($row->name) && $row->name != '') ? $row->name : $row->code;
-                    // Bọc tên phòng trong Span Glass-Gold nổi bật
-                    $roomNameHtml = '<span style="padding: 4px 10px; background: rgba(212, 175, 55, 0.15); border-radius: 4px; border: 1px solid #ffd700; color: #ffd700; font-weight: bold; text-shadow: 1px 1px 2px #000; letter-spacing: 0.5px;">' . $roomNameRaw . '</span>';
-                    
-                    // Đồng bộ Icon luôn sử dụng màu sáng
+                    // Royal Theme Room Badge
+                    $roomNameHtml = '<span class="badge badge-status" style="background: rgba(20, 22, 28, 0.85); border: 1px solid var(--royal-gold); color: var(--royal-gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);"><i class="fas fa-chess-board"></i> ' . $roomNameRaw . '</span>';
+
                     $iconClass = ($row->pass == '') ? 'fa-globe' : 'fa-lock';
                     $iconTooltip = ($row->pass == '') ? $t['public'] : $t['private'];
                     $iconHtml = '<i class="ml-2 far ' . $iconClass . ' text-warning" data-toggle="tooltip" data-placement="top" data-original-title="' . $iconTooltip . '"></i>';
@@ -62,7 +61,7 @@ class RoomController extends Controller
                                 $statusIcon = '<i class="ml-2 far fa-archive text-secondary" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['finished_auth'].'"></i>';
                                 return '<a class="showPromotion" href="javascript:void(0)" style="text-decoration: none !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'">' . $roomNameHtml . '</a>' . $statusIcon;
                             } else {
-                                $statusIcon = '<i class="ml-2 far fa-mouse text-warning" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['play_now'].'"></i>';
+                                $statusIcon = '<i class="ml-2 far fa-mouse text-warning pulse-gold" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['play_now'].'"></i>';
                                 return '<a href="javascript:joinMatch(`'.$row->code.'`)" style="text-decoration: none !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'">' . $roomNameHtml . '</a>' . $statusIcon;
                             }
                         } else {
@@ -73,33 +72,32 @@ class RoomController extends Controller
                 })
                 ->addColumn('turn', function($row) use ($t) {
                     if (str_contains($row->fen, ' r ')) {
-                        // Nền đỏ hoàng gia, chữ vàng
-                        return '<span class="badge" style="background-color: #8a1515; color: #ffd700; border: 1px solid #ffd700; font-size: 13px; padding: 5px 10px; box-shadow: 0 0 5px rgba(212,175,55,0.4);">'.$t['red'].'</span>';
+                        // Royal Red gradient
+                        return '<span class="badge badge-status" style="background: linear-gradient(to bottom, #8a1515, #5c0a0a); color: var(--royal-gold); border: 1px solid var(--royal-gold); box-shadow: 0 0 8px rgba(138, 21, 21, 0.6);"><i class="fas fa-chess-knight"></i> '.$t['red'].'</span>';
                     } else if (str_contains($row->fen, ' b ')) {
-                        // Nền bạc sáng (silver/grey), chữ đen mun (Cực kỳ nổi bật trên nền đen)
-                        return '<span class="badge" style="background-color: #e5e7eb; color: #111827; border: 1px solid #4b5563; font-size: 13px; padding: 5px 10px; box-shadow: 0 0 5px rgba(255,255,255,0.4);">'.$t['black'].'</span>';
+                        // Deep Obsidian gradient
+                        return '<span class="badge badge-status" style="background: linear-gradient(145deg, #252a36, #121418); color: var(--royal-gold-light); border: 1px solid rgba(212, 175, 55, 0.3); box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);"><i class="fas fa-chess-knight"></i> '.$t['black'].'</span>';
                     }
                     return '';
                 })
                 ->addColumn('result', function($row) use ($t) {
                     if (isset($row->result)) {
                         switch ($row->result) {
-                            case '-1': // Đen thắng
-                                return '<span class="badge" style="background-color: #e5e7eb; color: #111827; border: 1px solid #4b5563; font-size: 13px; padding: 5px 10px; box-shadow: 0 0 5px rgba(255,255,255,0.4);">'.$t['guest_won'].'</span>';
-                            case '0': // Hòa
-                                return '<span class="badge" style="background-color: #4a2511; color: #ffd700; border: 1px solid #ffd700; font-size: 13px; padding: 5px 10px; box-shadow: 0 0 5px rgba(212,175,55,0.4);">'.$t['draw'].'</span>';
-                            case '1': // Đỏ thắng
-                                return '<span class="badge" style="background-color: #8a1515; color: #ffd700; border: 1px solid #ffd700; font-size: 13px; padding: 5px 10px; box-shadow: 0 0 5px rgba(212,175,55,0.4);">'.$t['host_won'].'</span>';
+                            case '-1': // Đen thắng (Guest Won)
+                                return '<span class="badge badge-status" style="background: linear-gradient(145deg, #252a36, #121418); color: var(--royal-gold); border: 1px solid var(--royal-gold);"><i class="fas fa-crown"></i> '.$t['guest_won'].'</span>';
+                            case '0': // Hòa (Draw)
+                                return '<span class="badge badge-status badge-offline"><i class="fas fa-handshake"></i> '.$t['draw'].'</span>';
+                            case '1': // Đỏ thắng (Host Won)
+                                return '<span class="badge badge-status" style="background: linear-gradient(to bottom, #8a1515, #5c0a0a); color: var(--royal-gold); border: 1px solid var(--royal-gold);"><i class="fas fa-crown"></i> '.$t['host_won'].'</span>';
                         }
                     } else if ($row->fen == env('INITIAL_FEN')) { // Chưa bắt đầu
-                        return '<span class="badge" style="background-color: rgba(255,255,255,0.1); color: #e5e7eb; border: 1px dashed #9ca3af; font-size: 13px; padding: 5px 10px;">'.$t['not_started'].'</span>';
+                        return '<span class="badge badge-status" style="background: rgba(255,255,255,0.05); color: #aaa; border: 1px dashed rgba(212, 175, 55, 0.3);"><i class="fas fa-hourglass-start"></i> '.$t['not_started'].'</span>';
                     } else { // Đang diễn ra
-                        return '<span class="badge" style="background-color: rgba(45, 106, 79, 0.9); color: #ffd700; border: 1px solid #ffd700; font-size: 13px; padding: 5px 10px; box-shadow: 0 0 8px rgba(45,106,79,0.8);">'.$t['ongoing'].'</span>';
+                        return '<span class="badge badge-status badge-online"><i class="fas fa-circle"></i> '.$t['ongoing'].'</span>';
                     }
                     return '';
                 })
                ->addColumn('action', function($row) use ($t, $locale) {
-                    // Build the localized URLs using the localized_url helper
                     $urlRed   = localized_url('room.red', ['code' => $row->code], $locale);
                     $urlBlack = localized_url('room.black', ['code' => $row->code], $locale);
                     $urlWatch = localized_url('room.watch', ['code' => $row->code], $locale);
@@ -108,12 +106,13 @@ class RoomController extends Controller
 
                     $actionBtn = '';
 
+                    // Adding pulse animations to primary CTAs
                     if (!isset($row->host_id)) {
                         if ($row->fen == env('INITIAL_FEN')) {
                             if ($row->pass == '') {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="min-width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$urlRed.'"><i class="far fa-mouse"></i> '.$t['play'].'</a>';
+                                $actionBtn = '<a class="btn btn-danger pulse-red text-light mr-1 showPromotion" style="min-width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$urlRed.'"><i class="far fa-mouse"></i> '.$t['play'].'</a>';
                             } else {
-                                $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="min-width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$urlHost.'"><i class="far fa-mouse"></i> '.$t['play'].'</a>';
+                                $actionBtn = '<a class="btn btn-danger pulse-red text-light mr-1 showPromotion" style="min-width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$urlHost.'"><i class="far fa-mouse"></i> '.$t['play'].'</a>';
                             }
                             if ($row->pass == '') {
                                 $actionBtn .= '<a class="btn btn-light text-warning watch-btn border-warning showPromotion" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$urlWatch.'" data-toggle="tooltip" data-placement="top" data-original-title="'.$t['public'].'"><i class="far fa-globe"></i> '.$t['watch'].'</a>';
@@ -122,16 +121,14 @@ class RoomController extends Controller
                             }
                         } else {
                             if (isset($row->result)) {
-                                if (str_contains($row->fen, ' b ')) {
+                                if (str_contains($row->fen, ' b ') || str_contains($row->fen, ' r ')) {
                                     $actionBtn = '<a class="btn btn-dark text-light mr-1" style="min-width: 100px; cursor: not-allowed !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0);"><i class="far fa-ban"></i> '.$t['finished_btn'].'</a>';
-                                } else if (str_contains($row->fen, ' r ')) {
-                                    $actionBtn = '<a class="btn btn-danger text-light mr-1" style="min-width: 100px; cursor: not-allowed !important;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="javascript:void(0);"><i class="far fa-ban"></i> '.$t['finished_btn'].'</a>';
                                 }
                             } else {
                                 if (str_contains($row->fen, ' b ')) {
-                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion" style="min-width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$urlBlack.'"><i class="far fa-mouse"></i> '.$t['play'].'</a>';
+                                    $actionBtn = '<a class="btn btn-dark text-light mr-1 showPromotion pulse-dark" style="min-width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$urlBlack.'"><i class="far fa-mouse"></i> '.$t['play'].'</a>';
                                 } else if (str_contains($row->fen, ' r ')) {
-                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="min-width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$urlRed.'"><i class="far fa-mouse"></i> '.$t['play'].'</a>';
+                                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion pulse-red" style="min-width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$urlRed.'"><i class="far fa-mouse"></i> '.$t['play'].'</a>';
                                 }
                             }
                             if ($row->pass == '') {
@@ -157,7 +154,9 @@ class RoomController extends Controller
                             }
                         }
                     }
-                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye"></i> '.$t['preview'].'</a>';
+
+                    // Implementing the Royal Custom Eye Button
+                    $actionBtn .= '<a class="ml-1 btn previewBtn"><i class="far fa-eye"></i> '.$t['preview'].'</a>';
                     return $actionBtn;
                 })
                 ->addColumn('time', function($row){

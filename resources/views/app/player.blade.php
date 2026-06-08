@@ -41,11 +41,11 @@
             <div class="card shadow-lg mb-4">
                 <div class="card-header d-flex align-items-center">
                     <img src="{{ Avatar::create($player->name)->setDimension(48)->setFontSize(24) }}" class="mr-2 rounded" />
-                    <h4 class="mb-0">
+                    <h4 class="mb-0 text-gold">
                         @if ($player->id == auth()->id() && !str_contains(url()->current(), url('/ky-thu').'/'))
-                            {{ __("Hồ sơ của tôi") }}
+                            <i class="fas fa-user-circle"></i> {{ __("Hồ sơ của tôi") }}
                         @else
-                            {{ __("Hồ sơ kỳ thủ") }}
+                            <i class="fas fa-user"></i> {{ __("Hồ sơ kỳ thủ") }}
                         @endif
                     </h4>
                     <div class="ml-2">
@@ -56,33 +56,34 @@
                         @include('layout.partials.app.tourBtn')
                         @if (auth()->check())
                             @if (auth()->id() != $player->id)
-                                <a class="btn btn-danger text-light ml-2" style="width: 140px;" href="javascript:compete({{ $player->id }});"><i class="far fa-mouse"></i> {{ __("Thách đấu") }}</a>
+                                <a class="btn btn-danger text-light ml-2 pulse-red" style="width: 140px;" href="javascript:compete({{ $player->id }});"><i class="far fa-mouse"></i> {{ __("Thách đấu") }}</a>
                             @else
                                 <a class="btn btn-dark text-light ml-2" style="width: 140px; cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> {{ __("Thách đấu") }}</a>
                             @endif
                         @else
-                            <a class="btn btn-danger text-light ml-2" style="width: 140px;" href=" {{ localized_url('login') }} "><i class="far fa-sign-in"></i> {{ __("Thách đấu") }}</a>
+                            <a class="btn btn-danger text-light ml-2 pulse-red" style="width: 140px;" href=" {{ localized_url('login') }} "><i class="far fa-sign-in"></i> {{ __("Thách đấu") }}</a>
                         @endif
                     </div>
                 </div>
                 <div class="card-body">
-                    <h5>{{ __("Tên:") }} <span class="text-gold">{{ $player->name }}</span></h5>
+                    <h5>{{ __("Tên:") }} <span class="text-gold font-weight-bold">{{ $player->name }}</span></h5>
                     @if ($player->id == auth()->id() && !str_contains(url()->current(), url('/ky-thu').'/'))
                     <h5>{{ __("Email:") }} {!! app('App\Http\Controllers\UserController')::renderPlayerEmail($player->id) !!}</h5>
                     @endif
                     <h5>{{ __("Ngày giờ gia nhập:") }} <span class="text-light">{{ $player->created_at }}</span></h5>
                     <h5>{{ __("Lần trực tuyến gần nhất:") }} <span class="text-light">{{ $player->last_seen_at }}</span></h5>
                     <h5>{{ __("Thứ hạng:") }} {!! app('App\Http\Controllers\UserController')::renderPlayerRank($player->id) !!}</h5>
-                    <h5>Elo: <span id="elo" class="text-gold font-weight-bold">{!! app('App\Http\Controllers\UserController')::renderElo($player->id) !!}</span></h5>
-                    <h5>{{ __("Số trận thắng:") }} <span id="winPoints" class="text-success">{!! app('App\Http\Controllers\UserController')::renderWinMatchPoints($player->id) !!}</span></h5>
-                    <h5>{{ __("Số trận hòa:") }} <span id="drawPoints" class="text-warning">{!! app('App\Http\Controllers\UserController')::renderDrawMatchPoints($player->id) !!}</span></h5>
-                    <h5>{{ __("Số trận thua:") }} <span id="losePoints" class="text-danger">{!! app('App\Http\Controllers\UserController')::renderLoseMatchPoints($player->id) !!}</span></h5>
-                    <h5>{{ __("Tổng số trận đã đấu xong:") }} <span id="totalPoints" class="text-light">{!! app('App\Http\Controllers\UserController')::renderTotalMatchPoints($player->id) !!}</span></h5>
+                    <h5>Elo: <span id="elo" class="text-gold font-weight-bold" style="font-size: 1.2em;">{!! app('App\Http\Controllers\UserController')::renderElo($player->id) !!}</span></h5>
+                    <hr style="border-color: rgba(212, 175, 55, 0.2);">
+                    <h5>{{ __("Số trận thắng:") }} <span id="winPoints" class="text-success font-weight-bold">{!! app('App\Http\Controllers\UserController')::renderWinMatchPoints($player->id) !!}</span></h5>
+                    <h5>{{ __("Số trận hòa:") }} <span id="drawPoints" class="text-warning font-weight-bold">{!! app('App\Http\Controllers\UserController')::renderDrawMatchPoints($player->id) !!}</span></h5>
+                    <h5>{{ __("Số trận thua:") }} <span id="losePoints" class="text-danger font-weight-bold">{!! app('App\Http\Controllers\UserController')::renderLoseMatchPoints($player->id) !!}</span></h5>
+                    <h5>{{ __("Tổng số trận đã đấu xong:") }} <span id="totalPoints" class="text-light font-weight-bold">{!! app('App\Http\Controllers\UserController')::renderTotalMatchPoints($player->id) !!}</span></h5>
 
                     @if (auth()->check() && $player->id === auth()->id())
-                    <div id="standard-plan" class="alert alert-warning d-flex align-items-center justify-content-between mt-3 mb-0" style="background: rgba(212, 175, 55, 0.1); border-color: var(--royal-gold); color: var(--royal-gold-light);">
+                    <div id="standard-plan" class="alert alert-warning d-flex align-items-center justify-content-between mt-4 mb-0 shadow-lg" style="background: rgba(212, 175, 55, 0.1); border: 1px solid var(--royal-gold); color: var(--royal-gold-light);">
                         <div class="text-left">
-                            <strong class="text-gold">{{ __("Gói hiện tại:") }}</strong>
+                            <strong class="text-gold"><i class="fas fa-crown"></i> {{ __("Gói hiện tại:") }}</strong>
                             @if (auth()->user()->isStandard())
                                 {{ __("Standard (đã ẩn quảng cáo)") }}
                                 @if (auth()->user()->subscription_started_at)
@@ -252,9 +253,9 @@
 
             <!-- Royal Matches History Card -->
             @if ($playerRooms->total() > 0)
-            <div data-step="1" data-intro="{{ __("Danh sách các trận đấu của kỳ thủ") }} '{{ $player->name }}'" class="card shadow-lg mb-4 mt-3">
+            <div data-step="1" data-intro="{{ __("Danh sách các trận đấu của kỳ thủ") }} '{{ $player->name }}'" class="card shadow-lg mb-4 mt-4">
                 <div class="card-header">
-                    <h4 class="mb-0"><i class="fas fa-list-ul"></i> {{ __("Kết quả thi đấu") }}</h4>
+                    <h4 class="mb-0"><i class="fas fa-list-ul text-gold"></i> {{ __("Kết quả thi đấu") }}</h4>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -274,7 +275,7 @@
                                 @foreach($playerRooms as $room)
                                 <tr data-code="{{ $room->code }}" data-fen="{{ $room->fen }}">
                                     <td class="text-center room-code">
-                                        <span><a class="animate" href="{{ url('/phong/') }}/{{ $room->code }}/theo-doi">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></span>
+                                        <span><a class="animate text-gold" href="{{ url('/phong/') }}/{{ $room->code }}/theo-doi">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></span>
                                     </td>
                                     <td class="text-center host-name">
                                         {!! app('App\Http\Controllers\UserController')::renderPlayerName($room->host_id) !!}
@@ -284,20 +285,20 @@
                                     </td>
                                     <td class="text-center">
                                         @if (str_contains($room->fen, ' r '))
-                                        <span class="side-color red" style="font-size: 16px;">{{ __("Đỏ") }}</span>
+                                        <span class="badge badge-status" style="background: linear-gradient(to bottom, #8a1515, #5c0a0a); color: var(--royal-gold); border: 1px solid var(--royal-gold);"><i class="fas fa-chess-knight"></i> {{ __("Đỏ") }}</span>
                                         @elseif (str_contains($room->fen, ' b '))
-                                        <span class="side-color black" style="font-size: 16px;">{{ __("Đen") }}</span>
+                                        <span class="badge badge-status" style="background: linear-gradient(145deg, #252a36, #121418); color: var(--royal-gold-light); border: 1px solid rgba(212, 175, 55, 0.3);"><i class="fas fa-chess-knight"></i> {{ __("Đen") }}</span>
                                         @endif
                                     </td>
                                     <td class="text-center">
                                         @if ($room->result == '1')
-                                            {{ __("Chủ phòng thắng") }}
+                                            <span class="badge badge-status" style="background: linear-gradient(to bottom, #8a1515, #5c0a0a); color: var(--royal-gold);"><i class="fas fa-crown"></i> {{ __("Chủ phòng thắng") }}</span>
                                         @elseif ($room->result == '0')
-                                            {{ __("Hòa") }}
+                                            <span class="badge badge-status badge-offline"><i class="fas fa-handshake"></i> {{ __("Hòa") }}</span>
                                         @elseif ($room->result == '-1')
-                                            {{ __("Khách thắng") }}
+                                            <span class="badge badge-status" style="background: linear-gradient(145deg, #252a36, #121418); color: var(--royal-gold);"><i class="fas fa-crown"></i> {{ __("Khách thắng") }}</span>
                                         @else
-                                            <span class="text-muted">{{ __("Chưa có kết quả") }}</span>
+                                            <span class="text-muted"><i class="fas fa-hourglass-half"></i> {{ __("Chưa có kết quả") }}</span>
                                         @endif
                                     </td>
                                     <td class="text-center">
@@ -316,7 +317,7 @@
                                                 @endif
                                             @endif
                                         @else
-                                            <span class="badge badge-status badge-offline p-2 text-danger"><i class="fas fa-flag-checkered"></i> {{ __("Đã đấu xong") }}</span>
+                                            <span class="badge badge-status badge-offline p-2 text-danger"><i class="fas fa-flag-checkered"></i> {{ __("Đã xong") }}</span>
                                         @endif
                                     </td>
                                     <td class="text-center room-time">{{ $room->modified_at }}</td>
@@ -333,90 +334,9 @@
                 </div>
                 @endif
             </div>
-
-            <script>
-                function joinMatch(roomCode) {
-                    var hostId = '';
-                    var guestId = '';
-                    $.ajax({
-                        type: "POST",
-                        url: '{{ url('/api') }}/getRoomIds',
-                        data: {
-                            'ma-phong': roomCode
-                        },
-                        dataType: 'json'
-                    }).done(function(data){
-                        hostId = data.host_id;
-                        guestId = data.guest_id;
-                        console.log(data);
-                        console.log(data.host_id);
-                        console.log(data.guest_id);
-                        if (hostId != '{{ auth()->id() }}' && guestId != '{{ auth()->id() }}') {
-                            $.ajax({
-                                type: "POST",
-                                url: '{{ url('/api') }}/joinRoom',
-                                data: {
-                                    'ma-phong': roomCode,
-                                    'guest_id': '{{ auth()->id() }}'
-                                },
-                                dataType: 'text'
-                            }).done(function() {
-                                bootbox.alert({
-                                    message: "{{ __("Hãy chuẩn bị vào phòng!") }}",
-                                    size: 'small',
-                                    centerVertical: true,
-                                    closeButton: false,
-                                    buttons: {
-                                        ok: {
-                                            className: 'btn-danger pulse-red',
-                                            label: '{{ __("Oki") }}'
-                                        }
-                                    },
-                                    callback: function(){
-                                        window.location.href = '{{ url('/phong/') }}' + '/' + roomCode + '/khach';
-                                    }
-                                });
-                            });
-                        } else if (guestId == '{{ auth()->id() }}') {
-                            bootbox.alert({
-                                message: "{{ __("Mời bạn quay lại phòng!") }}",
-                                size: 'small',
-                                centerVertical: true,
-                                closeButton: false,
-                                buttons: {
-                                    ok: {
-                                        className: 'btn-danger pulse-red',
-                                        label: '{{ __("Oki") }}'
-                                    }
-                                },
-                                callback: function(){
-                                    window.location.href = '{{ url('/phong/') }}' + '/' + roomCode + '/khach';
-                                }
-                            });
-                        } else if (hostId == '{{ auth()->id() }}') {
-                            bootbox.alert({
-                                message: "{{ __("Mời bạn vào lại phòng của mình!") }}",
-                                size: 'small',
-                                centerVertical: true,
-                                closeButton: false,
-                                buttons: {
-                                    ok: {
-                                        className: 'btn-danger pulse-red',
-                                        label: '{{ __("Oki") }}'
-                                    }
-                                },
-                                callback: function(){
-                                    window.location.href = '{{ url('/phong/') }}' + '/' + roomCode;
-                                }
-                            });
-                        }
-                    });
-                }
-            </script>
             @endif
 
         </div>
     </div>
 </div>
-{{-- @include('layout.partials.app.fb') --}}
 @endsection

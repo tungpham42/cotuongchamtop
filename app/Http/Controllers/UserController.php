@@ -58,25 +58,27 @@ class UserController extends Controller
 
             return Datatables::of($users)
                 ->addColumn('rank', function($row){
-                    return self::renderUserRank($row->id);
+                    return '<span class="badge badge-status" style="background: linear-gradient(to bottom, #d4af37, #b89020); color: #0b0c10; box-shadow: 0 0 5px rgba(212, 175, 55, 0.6);"><i class="fas fa-medal"></i> ' . self::renderUserRank($row->id) . '</span>';
                 })
                 ->addColumn('name', function($row){
                     $onlineStatus = self::onlineStatus($row->id);
                     $avatar = Avatar::create($row->name)->setDimension(28)->setFontSize(14);
-                    return '<img src="' . $avatar . '" />&nbsp;<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" href="'.localized_url('app.player', ['id' => $row->id]).'">'.$row->name.'</a>&nbsp;' . $onlineStatus;
+                    // Framed royal avatar
+                    $avatarHtml = '<img src="' . $avatar . '" style="border: 1px solid var(--royal-gold); border-radius: 4px; box-shadow: 0 0 5px rgba(212,175,55,0.5);" />';
+                    return $avatarHtml . '&nbsp;<a class="text-warning font-weight-bold animate showPromotion" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.8); text-decoration: none !important;" href="'.localized_url('app.player', ['id' => $row->id]).'">'.$row->name.'</a>&nbsp;' . $onlineStatus;
                 })
                 ->addColumn('elo', function($row){
-                    return self::renderElo($row->id);
+                    return '<strong style="color: var(--royal-gold);">' . self::renderElo($row->id) . '</strong>';
                 })
                 ->addColumn('action', function($row) use ($challengeText, $profileText) {
                     if (auth()->check()) {
                         if (auth()->id() != $row->id) {
-                            $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 140px;" href="javascript:compete('.$row->id.');"><i class="far fa-mouse"></i> '.$challengeText.'</a>';
+                            $actionBtn = '<a class="btn btn-danger text-light mr-1 pulse-red" style="width: 140px;" href="javascript:compete('.$row->id.');"><i class="far fa-mouse"></i> '.$challengeText.'</a>';
                         } else {
                             $actionBtn = '<a class="btn btn-dark text-light mr-1" style="width: 140px; cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> '.$challengeText.'</a>';
                         }
                     } else {
-                        $actionBtn = '<a class="btn btn-danger text-light mr-1" style="width: 140px;" href="'.localized_url('login').'"><i class="far fa-sign-in"></i> '.$challengeText.'</a>';
+                        $actionBtn = '<a class="btn btn-danger text-light mr-1 pulse-red" style="width: 140px;" href="'.localized_url('login').'"><i class="far fa-sign-in"></i> '.$challengeText.'</a>';
                     }
                     $actionBtn .= '<a class="btn btn-dark text-light" style="width: 140px;" href="'.localized_url('app.player', ['id' => $row->id]).'"><i class="far fa-user-alt"></i> '.$profileText.'</a>';
                     return $actionBtn;

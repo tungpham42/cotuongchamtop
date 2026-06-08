@@ -19,70 +19,85 @@
     @endif
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-gamepad-alt"></i> {{ __("Thi đấu xếp hạng") }}
+            <!-- Royal Glassmorphism Card -->
+            <div class="card shadow-lg mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="fas fa-gamepad-alt text-gold"></i> {{ __("Thi đấu xếp hạng") }}</h4>
                     @include('layout.partials.app.tourBtn')
                 </div>
-                <div class="card-body">
-                    @include('layout.partials.app.createRoom')
-                    <h2 data-step="2" data-intro="{{ __("Danh sách 10 kỳ thủ nhiều điểm nhất") }}"><i class="fas fa-medal"></i> {{ __("TOP 10") }}</h2>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover" id="rankingTable">
-                            <thead>
-                                <tr>
-                                    <th scope="col">{{ __("Hạng") }}</th>
-                                    <th scope="col">{{ __("Tên") }}</th>
-                                    <th scope="col">Elo</th>
-                                    <th scope="col">{{ __("Ngày giờ gia nhập") }}</th>
-                                    <th scope="col">{{ __("Lần trực tuyến gần nhất") }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($matchUsers as $user)
-                                <tr data-user="{{ $user->id }}">
-                                    <th scope="row">{!! app('App\Http\Controllers\UserController')::renderUserRank($user->id) !!}</th>
-                                    <td class="name">{!! app('App\Http\Controllers\UserController')::renderPlayerName($user->id) !!}</td>
-                                    <td class="elo">{!! app('App\Http\Controllers\UserController')::renderElo($user->id) !!}</td>
-                                    <td class="room-time">{{ $user->created_at }}</td>
-                                    <td class="room-time">{{ $user->last_seen_at }}</td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                <div class="card-body p-0">
+                    <div class="p-3 border-bottom" style="border-color: rgba(212, 175, 55, 0.2) !important;">
+                        @include('layout.partials.app.createRoom')
+                        <h2 data-step="2" data-intro="{{ __("Danh sách 10 kỳ thủ nhiều điểm nhất") }}" class="mt-4 mb-3 h4">
+                            <i class="fas fa-medal text-gold"></i> {{ __("TOP 10") }}
+                        </h2>
+
+                        <!-- Top 10 Table -->
+                        <div class="table-responsive rounded border border-warning" style="border-color: rgba(212, 175, 55, 0.3) !important;">
+                            <table class="table table-hover table-sm mb-0" id="rankingTable">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" scope="col">{{ __("Hạng") }}</th>
+                                        <th class="text-center" scope="col">{{ __("Tên") }}</th>
+                                        <th class="text-center" scope="col">Elo</th>
+                                        <th class="text-center" scope="col">{{ __("Ngày giờ gia nhập") }}</th>
+                                        <th class="text-center" scope="col">{{ __("Lần trực tuyến gần nhất") }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($matchUsers as $user)
+                                    <tr data-user="{{ $user->id }}">
+                                        <td class="text-center font-weight-bold">
+                                            <span class="badge badge-status" style="background: linear-gradient(to bottom, #d4af37, #b89020); color: #0b0c10; box-shadow: 0 0 5px rgba(212, 175, 55, 0.6);"><i class="fas fa-trophy"></i> {!! app('App\Http\Controllers\UserController')::renderUserRank($user->id) !!}</span>
+                                        </td>
+                                        <td class="text-center name">{!! app('App\Http\Controllers\UserController')::renderPlayerName($user->id) !!}</td>
+                                        <td class="text-center elo text-gold font-weight-bold">{!! app('App\Http\Controllers\UserController')::renderElo($user->id) !!}</td>
+                                        <td class="text-center room-time">{{ $user->created_at }}</td>
+                                        <td class="text-center room-time">{{ $user->last_seen_at }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h2 data-step="3" data-intro="{{ __("Danh sách các ván đấu đang diễn ra") }}" class="mt-5 mb-3 h4">
+                            <i class="fas fa-list text-gold"></i> {{ $playingRooms->total() }} {{ __("ván cờ đang thi đấu") }} <small class="text-muted">({!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</small>
+                        </h2>
                     </div>
-                    <h2 data-step="3" data-intro="{{ __("Danh sách các ván đấu đang diễn ra") }}" class="mt-3"><i class="fas fa-list"></i> {{ $playingRooms->total() }} {{ __("ván cờ đang thi đấu") }} ({!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</h2>
-                    <div class="table-responsive mb-3">
-                        <table class="table table-striped table-hover" id="results-table">
+
+                    <!-- Playing Rooms Table -->
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm mb-0" id="results-table">
                             <thead>
                                 <tr>
-                                    <th scope="col">{{ __("Tên phòng") }}</th>
-                                    <th scope="col">{{ __("Chủ phòng") }}</th>
-                                    <th scope="col">{{ __("Khách") }}</th>
-                                    <th scope="col">{{ __("Tới lượt") }}</th>
-                                    <th scope="col">{{ __("Thi đấu") }}</th>
-                                    <th scope="col">{{ __("Lần cuối chơi") }}</th>
+                                    <th class="text-center" scope="col">{{ __("Tên phòng") }}</th>
+                                    <th class="text-center" scope="col">{{ __("Chủ phòng") }}</th>
+                                    <th class="text-center" scope="col">{{ __("Khách") }}</th>
+                                    <th class="text-center" scope="col">{{ __("Tới lượt") }}</th>
+                                    <th class="text-center" scope="col">{{ __("Thi đấu") }}</th>
+                                    <th class="text-center" scope="col">{{ __("Lần cuối chơi") }}</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {{ $playingRooms->links('vendor.pagination.match') }}
                                 @foreach($playingRooms as $room)
                                 <tr data-code="{{ $room->code }}" data-fen="{{ $room->fen }}" data-name="{{ $room->name }}">
-                                    <th scope="row" class="roomCode"><a class="text-danger showPromotion animate" href="{{ url('/phong/') }}/{{ $room->code }}/theo-doi">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></th>
-                                    <td class="host-name">
+                                    <td class="text-center room-code">
+                                        <span><a class="animate text-gold" href="{{ url('/phong/') }}/{{ $room->code }}/theo-doi">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></span>
+                                    </td>
+                                    <td class="text-center host-name">
                                         {!! app('App\Http\Controllers\UserController')::renderPlayerName($room->host_id) !!}
                                     </td>
-                                    <td class="guest-name">
+                                    <td class="text-center guest-name">
                                         {!! app('App\Http\Controllers\UserController')::renderPlayerName($room->guest_id) !!}
                                     </td>
                                     <td class="text-center">
                                         @if (str_contains($room->fen, ' r '))
-                                        <span class="text-danger">{{ __("Đỏ") }}</span>
+                                        <span class="badge badge-status" style="background: linear-gradient(to bottom, #8a1515, #5c0a0a); color: var(--royal-gold); border: 1px solid var(--royal-gold); box-shadow: 0 0 8px rgba(138, 21, 21, 0.6);"><i class="fas fa-chess-knight"></i> {{ __("Đỏ") }}</span>
                                         @elseif (str_contains($room->fen, ' b '))
-                                        <span class="text-dark">{{ __("Đen") }}</span>
+                                        <span class="badge badge-status" style="background: linear-gradient(145deg, #252a36, #121418); color: var(--royal-gold-light); border: 1px solid rgba(212, 175, 55, 0.3); box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);"><i class="fas fa-chess-knight"></i> {{ __("Đen") }}</span>
                                         @endif
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         @if (!isset($room->result))
                                             @if (auth()->check())
                                                 @if (isset($room->guest_id))
@@ -98,109 +113,109 @@
                                                 @endif
                                             @endif
                                         @else
-                                            <span class="text-danger">{{ __("Đã đấu xong") }}</span>
+                                            <span class="badge badge-status badge-offline p-2 text-danger"><i class="fas fa-flag-checkered"></i> {{ __("Đã đấu xong") }}</span>
                                         @endif
                                     </td>
-                                    <td class="room-time">{{ $room->modified_at }}</td>
+                                    <td class="text-center room-time">{{ $room->modified_at }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
-                    @if (auth()->check())
-                    <script>
-                    function joinMatch(roomCode) {
-                        var hostId = '';
-                        var guestId = '';
+                </div>
+                @if ($playingRooms->hasPages())
+                <div class="card-footer d-flex justify-content-center pt-3 pb-1 border-top" style="border-color: rgba(212, 175, 55, 0.2) !important;">
+                    {{ $playingRooms->links('vendor.pagination.match') }}
+                </div>
+                @endif
+            </div>
+
+            @if (auth()->check())
+            <script>
+            function joinMatch(roomCode) {
+                var hostId = '';
+                var guestId = '';
+                $.ajax({
+                    type: "POST",
+                    url: '{{ url('/api') }}/getRoomIds',
+                    data: {
+                        'ma-phong': roomCode
+                    },
+                    dataType: 'json'
+                }).done(function(data){
+                    hostId = data.host_id;
+                    guestId = data.guest_id;
+                    if (hostId != '{{ auth()->id() }}' && guestId != '{{ auth()->id() }}') {
                         $.ajax({
                             type: "POST",
-                            url: '{{ url('/api') }}/getRoomIds',
+                            url: '{{ url('/api') }}/joinRoom',
                             data: {
-                                'ma-phong': roomCode
+                                'ma-phong': roomCode,
+                                'guest_id': '{{ auth()->id() }}'
                             },
-                            dataType: 'json'
-                        }).done(function(data){
-                            hostId = data.host_id;
-                            guestId = data.guest_id;
-                            console.log(data);
-                            console.log(data.host_id);
-                            console.log(data.guest_id);
-                            if (hostId != '{{ auth()->id() }}' && guestId != '{{ auth()->id() }}') {
-                                $.ajax({
-                                    type: "POST",
-                                    url: '{{ url('/api') }}/joinRoom',
-                                    data: {
-                                        'ma-phong': roomCode,
-                                        'guest_id': '{{ auth()->id() }}'
-                                    },
-                                    dataType: 'text'
-                                }).done(function() {
-                                    bootbox.alert({
-                                        message: "{{ __("Hãy chuẩn bị vào phòng!") }}",
-                                        size: 'small',
-                                        centerVertical: true,
-                                        closeButton: false,
-                                        buttons: {
-                                            ok: {
-                                                className: 'btn-danger pulse-red',
-                                                label: '{{ __("Oki") }}'
-                                            }
-                                        },
-                                        callback: function(){
-                                            window.location.href = '{{ url('/phong/') }}' + '/' + roomCode + '/khach';
-                                        }
-                                    });
-                                });
-                            } else if (guestId == '{{ auth()->id() }}') {
-                                bootbox.alert({
-                                    message: "{{ __("Mời bạn quay lại phòng!") }}",
-                                    size: 'small',
-                                    centerVertical: true,
-                                    closeButton: false,
-                                    buttons: {
-                                        ok: {
-                                            className: 'btn-danger pulse-red',
-                                            label: '{{ __("Oki") }}'
-                                        }
-                                    },
-                                    callback: function(){
-                                        window.location.href = '{{ url('/phong/') }}' + '/' + roomCode + '/khach';
+                            dataType: 'text'
+                        }).done(function() {
+                            bootbox.alert({
+                                message: "{{ __("Hãy chuẩn bị vào phòng!") }}",
+                                size: 'small',
+                                centerVertical: true,
+                                closeButton: false,
+                                buttons: {
+                                    ok: {
+                                        className: 'btn-danger pulse-red',
+                                        label: '{{ __("Oki") }}'
                                     }
-                                });
-                            } else if (hostId == '{{ auth()->id() }}') {
-                                bootbox.alert({
-                                    message: "{{ __("Mời bạn vào lại phòng của mình!") }}",
-                                    size: 'small',
-                                    centerVertical: true,
-                                    closeButton: false,
-                                    buttons: {
-                                        ok: {
-                                            className: 'btn-danger pulse-red',
-                                            label: '{{ __("Oki") }}'
-                                        }
-                                    },
-                                    callback: function(){
-                                        window.location.href = '{{ url('/phong/') }}' + '/' + roomCode;
-                                    }
-                                });
+                                },
+                                callback: function(){
+                                    window.location.href = '{{ url('/phong/') }}' + '/' + roomCode + '/khach';
+                                }
+                            });
+                        });
+                    } else if (guestId == '{{ auth()->id() }}') {
+                        bootbox.alert({
+                            message: "{{ __("Mời bạn quay lại phòng!") }}",
+                            size: 'small',
+                            centerVertical: true,
+                            closeButton: false,
+                            buttons: {
+                                ok: {
+                                    className: 'btn-danger pulse-red',
+                                    label: '{{ __("Oki") }}'
+                                }
+                            },
+                            callback: function(){
+                                window.location.href = '{{ url('/phong/') }}' + '/' + roomCode + '/khach';
+                            }
+                        });
+                    } else if (hostId == '{{ auth()->id() }}') {
+                        bootbox.alert({
+                            message: "{{ __("Mời bạn vào lại phòng của mình!") }}",
+                            size: 'small',
+                            centerVertical: true,
+                            closeButton: false,
+                            buttons: {
+                                ok: {
+                                    className: 'btn-danger pulse-red',
+                                    label: '{{ __("Oki") }}'
+                                }
+                            },
+                            callback: function(){
+                                window.location.href = '{{ url('/phong/') }}' + '/' + roomCode;
                             }
                         });
                     }
-                    </script>
-                    <script>
-                        $(document).ajaxStart(function(){
-                            $('body').addClass('waiting');
-                        }).ajaxComplete(function(){
-                            $('body').removeClass('waiting');
-                        })
-                    </script>
-                    @endif
-
-                    {{-- {{ __('You are logged in!') }} --}}
-                </div>
-            </div>
+                });
+            }
+            </script>
+            <script>
+                $(document).ajaxStart(function(){
+                    $('body').addClass('waiting');
+                }).ajaxComplete(function(){
+                    $('body').removeClass('waiting');
+                })
+            </script>
+            @endif
         </div>
     </div>
 </div>
-{{-- @include('layout.partials.app.fb') --}}
 @endsection
