@@ -114,18 +114,18 @@
                         @endphp
 
                         @if($isJoined)
-                            <button class="btn d-inline-block mb-2" disabled style="background: var(--royal-wood); color: var(--royal-gold-light); opacity: 0.8; border: 1px solid var(--royal-gold);">
+                            <button class="btn d-inline-block" disabled style="background: var(--royal-wood); color: var(--royal-gold-light); opacity: 0.8; border: 1px solid var(--royal-gold);">
                                 <i class="fad fa-check-circle" style="color: var(--royal-gold);"></i> {{ __('Đã tham gia') }}
                             </button>
                         @elseif($isOpen && !$isFull)
-                            <form action="{{ localized_url('tournaments.join', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block mb-2">
+                            <form action="{{ localized_url('tournaments.join', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block">
                                 @csrf
                                 <button type="submit" class="btn btn-danger font-weight-bold pulse-red">
                                     <i class="fad fa-sign-in-alt"></i> {{ __('Tham gia') }}
                                 </button>
                             </form>
                         @elseif($isOpen && $isFull)
-                            <button class="btn d-inline-block mb-2" disabled style="background: var(--royal-wood); color: var(--royal-gold-light);">
+                            <button class="btn d-inline-block" disabled style="background: var(--royal-wood); color: var(--royal-gold-light);">
                                 <i class="fad fa-users-slash"></i> {{ __('Đã đầy') }}
                             </button>
                         @endif
@@ -133,22 +133,22 @@
                         @if(auth()->check() && (auth()->user()->is_admin || $tournament->user_id === auth()->id()))
                             <span style="color: var(--royal-wood);" class="mx-2">|</span>
                             @if($isOpen && $tournament->users->count() >= 2)
-                            <form action="{{ localized_url('tournaments.generate', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block mb-2">
+                            <form action="{{ localized_url('tournaments.generate', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block">
                                 @csrf
-                                <button type="submit" class="btn btn-success font-weight-bold pulse mb-2">
+                                <button type="submit" class="btn btn-success font-weight-bold pulse">
                                     <i class="fad fa-sitemap"></i> {{ __('Bốc thăm') }}
                                 </button>
                             </form>
                             @endif
 
-                            <a href="{{ localized_url('tournaments.edit', ['slug' => $tournament->slug]) }}" class="btn font-weight-bold d-inline-block mb-2" style="background: linear-gradient(to bottom, #d4af37, #b89020); color: var(--royal-red); border: 1px solid #fff; border-radius: 4px;">
+                            <a href="{{ localized_url('tournaments.edit', ['slug' => $tournament->slug]) }}" class="btn font-weight-bold d-inline-block" style="background: linear-gradient(to bottom, #d4af37, #b89020); color: var(--royal-red); border: 1px solid #fff; border-radius: 4px;">
                                 <i class="fad fa-edit"></i>
                             </a>
 
-                            <form action="{{ localized_url('tournaments.destroy', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block mb-2 delete-form">
+                            <form action="{{ localized_url('tournaments.destroy', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block delete-form">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger font-weight-bold mb-2" style="border-radius: 4px;">
+                                <button type="submit" class="btn btn-danger font-weight-bold" style="border-radius: 4px;">
                                     <i class="fad fa-trash-alt"></i>
                                 </button>
                             </form>
@@ -214,7 +214,7 @@
                 </div>
             @else
                 <div class="p-4 text-center" style="background: #2a1910;">
-                    <i class="fad fa-box-open fa-2x mb-2" style="color: var(--royal-wood);"></i>
+                    <i class="fad fa-box-open fa-2x" style="color: var(--royal-wood);"></i>
                     <p class="mb-0" style="color: var(--royal-gold-light);">{{ __('Chưa có kỳ thủ nào tham gia giải đấu này.') }}</p>
                 </div>
             @endif
