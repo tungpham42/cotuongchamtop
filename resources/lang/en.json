@@ -708,5 +708,7 @@
     "Not enough players to generate a bracket.": "Not enough players to generate a bracket.",
     "Người tạo:": "Creator:",
     "Hệ thống": "System",
-    "Đang tải": "Processing"
+    "Đang tải": "Processing",
+    "Có": "Yes",
+    "Không": "No"
 }

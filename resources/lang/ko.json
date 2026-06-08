@@ -697,5 +697,7 @@
     "Not enough players to generate a bracket.": "대진표를 생성하기에 충분한 플레이어가 없습니다.",
     "Người tạo:": "생성자:",
     "Hệ thống": "시스템",
-    "Đang tải": "로딩 중"
+    "Đang tải": "로딩 중",
+    "Có": "예",
+    "Không": "아니요"
 }

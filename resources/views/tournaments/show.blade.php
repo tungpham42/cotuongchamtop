@@ -145,7 +145,7 @@
                                 <i class="fad fa-edit"></i>
                             </a>
 
-                            <form action="{{ localized_url('tournaments.destroy', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block mb-2" onsubmit="return confirm('{{ __('Bạn có chắc chắn muốn xóa giải đấu này không?') }}');">
+                            <form action="{{ localized_url('tournaments.destroy', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block mb-2 delete-form">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger font-weight-bold mb-2" style="border-radius: 4px;">
@@ -278,4 +278,31 @@
         </div>
     @endif
 </div>
+<script>
+    $(document).ready(function() {
+        $('.delete-form').on('submit', function(e) {
+            e.preventDefault(); // Prevent the form from submitting immediately
+            var form = this;
+
+            bootbox.confirm({
+                message: "{{ __('Bạn có chắc chắn muốn xóa giải đấu này không?') }}",
+                buttons: {
+                    confirm: {
+                        label: '{{ __("Có") }}',
+                        className: 'btn-danger'
+                    },
+                    cancel: {
+                        label: '{{ __("Không") }}',
+                        className: 'btn-dark'
+                    }
+                },
+                callback: function(result) {
+                    if (result) {
+                        form.submit(); // Submit the form if the user clicks "Có"
+                    }
+                }
+            });
+        });
+    });
+</script>
 @endsection
