@@ -38,7 +38,7 @@
                             <div class="input-group shadow-lg" id="search-form" style="border-radius: 6px; overflow: hidden; border: 2px solid var(--royal-gold); box-shadow: 0 0 15px rgba(212, 175, 55, 0.3) !important;">
                                 <input data-step="3" data-intro="{{ __("Điền vào từ khóa cần tìm") }}"
                                        name="query" type="text" class="form-control form-control-lg border-0"
-                                       style="background: rgba(11, 12, 16, 0.85); color: var(--royal-gold-light);"
+                                       style="background: rgba(11, 12, 16, 0.85); color: var(--royal-wood);"
                                        id="keyword" aria-label="{{ __("Bạn cần tìm ai?") }}" placeholder="{{ __("Bạn cần tìm ai?") }}"
                                        value="{{ isset($_GET['query']) ? $_GET['query'] : '' }}">
                                 <div class="input-group-append">
