@@ -199,7 +199,7 @@
                                         </a>
                                     </td>
                                     <td class="font-weight-bold align-middle" style="color: #ff3333;">{{ intval($player->elo) }}</td>
-                                    <td class="align-middle" style="color: var(--royal-gold-light);">{{ $player->pivot->created_at->format('d/m/Y h:i:s A') }}</td>
+                                    <td class="align-middle" style="color: var(--royal-gold-light);">{{ $player->pivot->created_at->format('d/m/Y h:i A') }}</td>
                                     <td class="pr-4 text-right align-middle">
                                         @if($player->last_seen_at && \Carbon\Carbon::parse($player->last_seen_at)->diffInMinutes() < 5)
                                             <span class="badge-status badge-online"><i class="fad fa-circle"></i> Online</span>

@@ -77,7 +77,7 @@
                         <p class="card-text small" style="color: var(--royal-gold-light);">{{ $tournament->description ?? __('Không có mô tả.') }}</p>
 
                         <ul class="list-unstyled mb-4 small" style="color: #aa8c4a;">
-                            <li><i class="fad fa-calendar-alt w-20px text-center"></i> <strong>{{ __('Bắt đầu:') }}</strong> {{ \Carbon\Carbon::parse($tournament->start_date)->format('d/m/Y h:i:s A') }}</li>
+                            <li><i class="fad fa-calendar-alt w-20px text-center"></i> <strong>{{ __('Bắt đầu:') }}</strong> {{ \Carbon\Carbon::parse($tournament->start_date)->format('d/m/Y h:i A') }}</li>
                             <li><i class="fad fa-users w-20px text-center"></i> <strong>{{ __('Kỳ thủ:') }}</strong> {{ $tournament->users_count }} / {{ $tournament->max_players }}</li>
                         </ul>
                     </div>
