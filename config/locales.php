@@ -351,7 +351,7 @@ return [
         ],
         'tournaments.show' => [
             'vi' => 'giai-dau/{slug}',
-            'en' => 'tournaments/{slug}',
+            'en' => 'tournament/{slug}',
             'ja' => 'tonamento/{slug}',
             'ko' => 'toneomeonteu/{slug}',
             'zh' => 'jinbiaosai/{slug}',
