@@ -1650,6 +1650,10 @@ table th.no-sort::after {
     color: var(--royal-gold-light) !important;
 }
 
+.card a:hover {
+    color: transparent !important;
+}
+
 form label {
     font-weight: bold;
     color: var(--royal-gold);
@@ -2036,7 +2040,7 @@ div.dataTables_wrapper div.dataTables_processing {
     z-index: 1050; /* Keep above table elements */
 }
 
-/* 
+/*
    Royal Waiting Indicator Dots (Optional)
    Matches the theme's custom fade animation for loading states
 */
