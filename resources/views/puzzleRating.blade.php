@@ -297,7 +297,6 @@
   </div>
 </div>
 
-
 <div class="puzzle-side-panel">
   <div class="puzzle-side-card">
     <div class="card-body text-center">
@@ -612,18 +611,39 @@ $("#capture").on('click', function() {
       windowHeight: document.getElementById("ban-co").scrollHeight,
       allowTaint: true,
       useCORS: true,
-      onrendered: function(canvas) {
-        var context = canvas.getContext('2d');
+      onrendered: function(originalCanvas) {
+        // Create a new canvas with added bottom padding
+        var paddingBottom = 40;
+        var finalCanvas = document.createElement('canvas');
+        finalCanvas.width = originalCanvas.width;
+        finalCanvas.height = originalCanvas.height + paddingBottom;
+        var context = finalCanvas.getContext('2d');
 
-        // Draw the Watermark
-        context.font = '18px sans-serif';
-        context.globalCompositeOperation = 'multiply';
-        context.fillStyle = '#444422';
+        // Fill the new canvas background so the padding isn't transparent (using white here)
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+
+        // Draw the original board capture onto the new canvas
+        context.drawImage(originalCanvas, 0, 0);
+
+        // Context general settings
         context.textAlign = 'center';
-        context.textBaseline = 'middle';
-        context.fillText('{{ $name }}', canvas.width / 2, canvas.height / 2);
 
-        canvas.toBlob(function(blob) {
+        // 1. Puzzle Name right in the middle of the BOARD area
+        context.globalCompositeOperation = 'multiply';
+        context.font = '18px sans-serif';
+        context.fillStyle = '#444422';
+        context.textBaseline = 'middle';
+        context.fillText('{{ $name }}', finalCanvas.width / 2, originalCanvas.height / 2);
+
+        // 2. COTUONG.TOP drawn in the newly padded bottom space
+        context.globalCompositeOperation = 'source-over'; // Standard composite for solid text
+        context.font = 'bold 18px sans-serif';
+        context.fillStyle = '#444422'; // Adjust color if needed against the white background
+        context.textBaseline = 'middle';
+        context.fillText('COTUONG.TOP', finalCanvas.width / 2, originalCanvas.height + (paddingBottom / 2));
+
+        finalCanvas.toBlob(function(blob) {
           saveAs(blob, "ban-co-{{ date('Y-m-d h:i:s A') }}.png");
         });
       }
