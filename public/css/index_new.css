@@ -2272,3 +2272,12 @@ div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(3) {
     padding: 0;
     border: none !important;
 }
+
+.fa,
+.fab,
+.fad,
+.fal,
+.far,
+.fas {
+    margin-right: 0.2rem !important;
+}
