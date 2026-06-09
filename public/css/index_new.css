@@ -516,7 +516,7 @@ footer ul.list-unstyled > li > a:hover {
     padding: 12px 24px;
     display: block;
     color: var(--royal-gold-light);
-    font-weight: bold;
+    font-weight: 600;
     text-transform: uppercase;
 }
 .hero .hero-box .nav-tabs li.active a {
@@ -573,7 +573,7 @@ body.register main {
    ========================================================================== */
 #tao-phong a {
     color: var(--royal-gold) !important;
-    font-weight: bold;
+    font-weight: 600;
 }
 #tao-phong a i {
     color: var(--royal-gold) !important;
@@ -592,7 +592,7 @@ body.register main {
     font-size: 18px;
     font-family: "Texturina", serif;
     font-style: italic;
-    font-weight: bold;
+    font-weight: 600;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     background: rgba(138, 21, 21, 0.2);
     padding: 10px 20px;
@@ -651,7 +651,7 @@ body.register main {
     color: var(--royal-gold-light);
     border-radius: 4px;
     text-transform: uppercase;
-    font-weight: bold;
+    font-weight: 600;
     letter-spacing: 1px;
 }
 /* ==========================================================================
@@ -1129,7 +1129,7 @@ body.setup #ban-co {
 .table td.room-code a {
     color: var(--royal-gold);
     font-family: "Noto Sans Mono", monospace;
-    font-weight: bold;
+    font-weight: 600;
 }
 .table td.room-code span {
     padding: 4px 7px 5px;
@@ -1173,7 +1173,7 @@ body.register .btn-zalo {
 .btn-bitbucket,
 .btn-zalo {
     border-radius: 2px !important;
-    font-weight: bold;
+    font-weight: 600;
     letter-spacing: 0.5px;
 }
 .btn-facebook {
@@ -1304,7 +1304,7 @@ a.animate:hover {
     font-size: 14px;
     position: absolute;
     color: #333;
-    font-weight: bold;
+    font-weight: 600;
 }
 .alpha-f4ef2 {
     bottom: 1px;
@@ -1328,7 +1328,7 @@ a.animate:hover {
 }
 .introjs-button {
     text-shadow: none;
-    font-weight: bold;
+    font-weight: 600;
     color: var(--royal-red);
     background: var(--royal-gold);
     border-radius: 2px;
@@ -1702,7 +1702,7 @@ table th.no-sort::after {
 }
 
 form label {
-    font-weight: bold;
+    font-weight: 600;
     color: var(--royal-gold);
 }
 
@@ -1805,7 +1805,7 @@ form label {
         #b89020
     ) !important;
     color: var(--royal-bg) !important; /* Chữ chuyển sang đen mun */
-    font-weight: bold;
+    font-weight: 600;
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
     transform: translateX(0); /* Reset trượt khi click */
 }
@@ -1841,7 +1841,7 @@ div.dataTables_wrapper div.dataTables_filter label {
 .badge-status {
     padding: 4px 10px;
     border-radius: 4px;
-    font-weight: bold;
+    font-weight: 600;
     font-size: 0.75rem;
     display: inline-flex;
     align-items: center;
