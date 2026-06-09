@@ -259,6 +259,11 @@ class TournamentController extends Controller
             $data['cover_photo'] = $request->file('cover_photo')->store('tournaments', 'public');
         }
 
+        // --- ADDED LOGIC: Clear bracket if status is reverted/updated to 'open' ---
+        if (isset($data['status']) && $data['status'] === 'open' && $tournament->status !== 'open') {
+            $tournament->rooms()->delete();
+        }
+
         $tournament->update($data);
 
         return redirect()->route($this->getRouteName('tournaments.show'), $tournament->slug)->with('success', __('Cập nhật giải đấu thành công!'));

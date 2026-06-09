@@ -222,7 +222,7 @@
     </div>
 
     {{-- SƠ ĐỒ THI ĐẤU --}}
-    @if($rounds->count() > 0)
+    @if($tournament->status !== 'open' && $rounds->count() > 0)
         <h4 class="mb-4" style="color: var(--royal-gold); font-family: 'Texturina', serif; text-transform: uppercase;"><i class="fad fa-sitemap" style="color: var(--royal-red-light);"></i> {{ __('Sơ đồ thi đấu') }}</h4>
         <div class="bracket-container custom-scrollbar">
 
