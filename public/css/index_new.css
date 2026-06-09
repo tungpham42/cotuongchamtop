@@ -239,7 +239,7 @@ header.site-header a:not(.navbar-brand)::before {
 
 header.site-header a:not(.navbar-brand):hover {
     text-decoration: none;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--royal-gold);
 }
 
@@ -260,7 +260,7 @@ body.dashboard header.site-header a.dashboard,
 body.login header.site-header a.login,
 body.news header.site-header a.news,
 body.contact header.site-header a.contact {
-    font-weight: 700;
+    font-weight: 600;
     color: var(--royal-gold);
 }
 body.home header.site-header a.home:before,
@@ -700,7 +700,7 @@ body.register main {
         inset 0 2px 5px var(--liquid-highlight);
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .btn-dark:hover {
@@ -2010,7 +2010,7 @@ div.dataTables_wrapper div.dataTables_filter label {
     text-transform: uppercase;
     letter-spacing: 1px;
     font-size: 1.25rem;
-    font-weight: 700;
+    font-weight: 600;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     margin: 0;
 }
@@ -2088,7 +2088,7 @@ div.dataTables_wrapper div.dataTables_processing {
     /* Royal Typography */
     color: var(--royal-gold) !important;
     font-family: "Texturina", serif !important;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 1.25rem;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -2156,7 +2156,7 @@ div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(3) {
     text-transform: uppercase;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     letter-spacing: 1px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .royal-card-title:hover {
@@ -2256,7 +2256,7 @@ div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(3) {
     /* Royal Typography[cite: 1] */
     font-family: "Texturina", serif;
     color: var(--royal-gold) !important;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
     text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
