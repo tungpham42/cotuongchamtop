@@ -643,7 +643,7 @@ $("#capture").on('click', function() {
         context.fillText('{{ $name }}', finalCanvas.width / 2, paddingTop / 2);
 
         // 2. COTUONG.TOP drawn in the newly padded bottom space - MOVED TO BOTTOM RIGHT
-        context.font = 'bold 16px sans-serif';
+        context.font = 'bold 16px serif';
         context.textAlign = 'right';
 
         // Shift X coordinate to the right edge with a 10px margin, adjusting the Y position to account for the new height offset
