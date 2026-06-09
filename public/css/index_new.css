@@ -281,7 +281,7 @@ body.contact header.site-header a.contact:before {
 header.site-header a.register {
     background: linear-gradient(to bottom, #d4af37, #b89020) !important;
     color: var(--royal-red) !important;
-    font-weight: 800;
+    font-weight: 600;
     padding: 8px 16px;
     border-radius: 4px; /* Vuông vức hơn */
     border: 2px solid #fff;
@@ -300,7 +300,7 @@ header.site-header a.register:hover {
 header.site-header a.login {
     background: linear-gradient(to bottom, #8a1515, #5c0a0a) !important;
     color: var(--royal-gold) !important;
-    font-weight: 800;
+    font-weight: 600;
     padding: 8px 16px;
     border-radius: 4px;
     border: 2px solid var(--royal-gold);
@@ -862,7 +862,7 @@ body.setup #ban-co {
 }
 
 .side-color {
-    font-weight: bolder;
+    font-weight: 600;
     font-size: 42px;
     text-align: center;
     line-height: 1.2em;
@@ -888,7 +888,7 @@ body.setup #ban-co {
     ) !important;
     padding: 12px 24px;
     font-size: 17px;
-    font-weight: bolder;
+    font-weight: 600;
     color: var(--royal-gold);
     cursor: default !important;
     display: none;
@@ -900,7 +900,7 @@ body.setup #ban-co {
     border: 2px solid var(--royal-gold);
     padding: 12px 24px;
     background-color: var(--royal-bg);
-    font-weight: bolder;
+    font-weight: 600;
     cursor: default !important;
     text-transform: uppercase;
 }
@@ -1199,7 +1199,7 @@ body.register .btn-zalo {
 
 a.animate {
     box-shadow: inset 0 0 0 0 var(--royal-gold);
-    font-weight: bolder;
+    font-weight: 600;
     color: var(--royal-gold);
     text-decoration: none !important;
     padding: 0 0.25rem;
@@ -1747,7 +1747,7 @@ form label {
    ========================================================================== */
 .dropdown-item {
     color: var(--royal-gold-light) !important;
-    font-weight: 500;
+    font-weight: 600;
     padding: 10px 20px;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     background-color: transparent !important;
@@ -1893,7 +1893,7 @@ div.dataTables_wrapper div.dataTables_filter label {
     border: 1px solid #fff !important;
     color: var(--royal-bg) !important; /* Ebony text for high contrast */
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-    font-weight: 800;
+    font-weight: 600;
     text-shadow: none;
     letter-spacing: 0.5px;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
