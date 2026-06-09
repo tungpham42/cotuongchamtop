@@ -29,17 +29,6 @@ $action = $actionMap[$level ?? '3'] ?? 'chơi';
         <h4 class="text-uppercase font-weight-bold mb-1"><i class="fas fa-crown"></i> {{ __("Đại Kiện Tướng") }} Phạm Tùng</h4>
         <p class="m-0 small text-light">{{ __("Bạn đang khiêu chiến với đối thủ mạnh nhất.") }}</p>
     </div>
-    <style>
-        body.home { background-color: #120808 !important; color: #fff !important; }
-        #ban-co { box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); border: 2px solid #ffd700; }
-        .btn-dark { background-color: #2b0a0a !important; border-color: #ffd700 !important; color: #ffd700 !important; }
-        .btn-dark i * { color: #ffd700 !important; }
-        .btn-dark:hover i, .btn-dark.text-light:hover i, .btn-dark:hover i *, .btn-dark.text-light:hover i *, .btn-danger i, .btn-danger.text-light i, .btn-danger i *, .btn-danger.text-light i * { color: #2b0a0a !important; }
-        .btn:hover, .btn-danger, .btn-danger:hover { background-color: #ffd700 !important; background-image: linear-gradient(45deg, #ffd700, #ffaa00) !important; color: #2b0a0a !important; }
-        .btn-danger { background: linear-gradient(45deg, #ffd700, #ffaa00) !important; color: #000 !important; border: none !important; }
-        #game-status.black { color: #ffd700 !important; } /* Make black text visible on dark bg */
-        #game-status.red { color: #ff4444 !important; }
-    </style>
 @else
     {{-- STANDARD AI UI --}}
     <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Cấp độ") }} máy: {{ __($levelTxt) }}">{{ __('Bạn đang') }} {{ __($action) }} {{ __('với máy') }}<span id="puzzle-title"></span></h5>
@@ -69,7 +58,7 @@ $action = $actionMap[$level ?? '3'] ?? 'chơi';
     <a class="dropdown-item{{ request()->is($urls[3]) ? ' active disabled' : '' }}" href="{{ url('/' . $urls[3]) }}" style="cursor: pointer !important;">{{ __("Khó") }}</a>
     <a class="dropdown-item{{ request()->is($urls[4]) ? ' active disabled' : '' }}" href="{{ url('/' . $urls[4]) }}" style="cursor: pointer !important;">{{ __("Khó nhất") }}</a>
     <div class="dropdown-divider"></div>
-    <a class="dropdown-item font-weight-bold{{ request()->is($urls[5]) ? ' active disabled' : '' }}" href="{{ url('/' . $urls[5]) }}" style="cursor: pointer !important;"><i class="fas fa-crown"></i> {{ __("Kiện tướng") }}</a>
+    <a class="dropdown-item font-weight-bold{{ request()->is($urls[5]) ? ' active disabled' : '' }}" href="{{ url('/' . $urls[5]) }}" style="cursor: pointer !important;">{{ __("Kiện tướng") }}</a>
 </div>
 </div>
 <div class="dropup mx-auto text-center my-1">

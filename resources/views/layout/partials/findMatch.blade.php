@@ -1,7 +1,10 @@
-<button id="find-match-btn" class="px-5 py-2 mx-auto mt-3 btn btn-lg btn-danger d-inline-block">
+<!-- Added the pulse-red class and a subtle inner glow -->
+<button id="find-match-btn" class="px-5 py-2 mx-auto mt-3 btn btn-lg btn-danger d-inline-block" style="text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);">
     <i class="fad fa-play mr-2"></i> {{ __("Tìm trận") }}
 </button>
-<span id="match-status" class="mt-3 d-inline w-100 text-center"></span>
+<div class="mt-4 w-100 text-center">
+    <span id="match-status" class="d-inline-block"></span>
+</div>
 
 <script>
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -96,40 +99,41 @@
         document.getElementById('find-match-btn').disabled = false;
     }
 
+    // Replace your existing showMatchFoundModal function
     function showMatchFoundModal(data, isBot = false) {
         let countdown = 5;
 
-        // Dynamically set modal text to show "Phạm Tùng" instead of "Máy"
         const matchTitle = isBot ? '{{ __("Đã ghép với Phạm Tùng!") }}' : '{{ __("Đã tìm thấy đối thủ!") }}';
 
+        // Upgraded to Liquid Glass UI
         const modalHTML = `
             <div class="modal fade" id="countdownModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
                 <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content text-center" style="background-color: #f4dca6; border: 4px solid #8b4513; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); overflow: hidden;">
+                    <div class="modal-content text-center" style="background: var(--glass-bg-dark); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-top: 2px solid rgba(255, 215, 0, 0.5); border-radius: 12px; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), inset 0 3px 15px var(--liquid-highlight); overflow: hidden;">
 
-                        <!-- Thematic Header -->
-                        <div style="background-color: #8b4513; color: #f4dca6; padding: 15px 0; border-bottom: 2px solid #5c2c16;">
-                            <h4 class="mb-0" style="font-weight: bold; letter-spacing: 0.5px;">
-                                <img width="38" height="38" src="/img/xiangqipieces/wiki/rK.svg" alt="{{ __("Cờ tướng") }}" class="mr-2" style="filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5));">
+                        <!-- Thematic Glass Header -->
+                        <div style="background: linear-gradient(90deg, rgba(138, 21, 21, 0.5), rgba(92, 10, 10, 0.3)); border-bottom: 1px solid var(--glass-border); padding: 16px 0;">
+                            <h4 class="mb-0" style="font-family: 'Texturina', serif; color: var(--royal-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);">
+                                <img width="38" height="38" src="/img/xiangqipieces/wiki/rK.svg" alt="{{ __("Cờ tướng") }}" class="mr-2" style="filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.8));">
                                 ${matchTitle}
                             </h4>
                         </div>
 
                         <!-- Modal Body -->
-                        <div class="p-4" style="background-image: radial-gradient(circle, #fcf0d8 0%, #E1BF85 100%);">
-                            <p class="h5 mb-3" style="color: #5c2c16; font-weight: 600;">
+                        <div class="p-4" style="background: transparent;">
+                            <p class="h5 mb-3" style="color: var(--royal-gold-light); font-weight: 600; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);">
                                 {{ __("Ván cờ sẽ bắt đầu sau:") }}
                             </p>
 
-                            <!-- Countdown Number -->
-                            <div class="display-2 font-weight-bold mb-3" id="countdownNumber" style="color: #b30000; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">
+                            <!-- Glossy Countdown Number (Epic Glow) -->
+                            <div class="display-1 font-weight-bold mb-3" id="countdownNumber" style="font-family: 'Texturina', serif; background: linear-gradient(to bottom, #fff, var(--royal-gold)); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 0 30px var(--royal-red-light), 0 0 60px var(--royal-red-dark); line-height: 1.2;">
                                 ${countdown}
                             </div>
 
-                            <hr style="border-top: 1px dashed #c09060; margin: 20px 0;">
+                            <hr style="border-top: 1px solid rgba(255, 215, 0, 0.2); box-shadow: 0 1px 2px rgba(0,0,0,0.5); margin: 20px 0;">
 
                             <!-- Footer Text -->
-                            <p class="mb-0" style="color: #704214; font-size: 1.1rem; font-weight: 500;">
+                            <p class="mb-0" style="color: var(--royal-gold); font-size: 1.1rem; font-weight: 500; text-shadow: 0 0 5px rgba(255, 215, 0, 0.4);">
                                 <i class="fas fa-hourglass-half fa-spin mr-2" style="animation-duration: 2s;"></i> {{ __("Chuẩn bị sẵn sàng...") }}
                             </p>
                         </div>
@@ -143,7 +147,7 @@
             document.body.insertAdjacentHTML("beforeend", modalHTML);
         } else {
             document.querySelector('#countdownModal h4').innerHTML = `
-                <img width="42" height="42" src="/img/xiangqipieces/wiki/rK.svg" alt="{{ __("Cờ tướng") }}" class="mr-2">
+                <img width="42" height="42" src="/img/xiangqipieces/wiki/rK.svg" alt="{{ __("Cờ tướng") }}" class="mr-2" style="filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.8));">
                 ${matchTitle}
             `;
         }
@@ -152,6 +156,7 @@
         const $modal = $('#countdownModal');
         $modal.modal('show');
 
+        // ... (Keep the rest of your countdown Interval logic exactly the same)
         const countdownEl = document.getElementById("countdownNumber");
         const countdownInterval = setInterval(() => {
             countdown--;
@@ -162,16 +167,13 @@
             if (countdown <= 0) {
                 clearInterval(countdownInterval);
                 $modal.modal('hide');
-                $modal.remove(); // Prevent DOM clutter on repeated matches
+                $modal.remove();
                 $('.modal-backdrop').remove();
                 $('body').removeClass('modal-open');
 
                 let targetUrl = '';
-
-                // Route user appropriately based on match type
                 if (isBot) {
                     targetUrl = aiTargetUrl;
-                    // Update the loading text to mention Phạm Tùng
                     document.getElementById('match-status').innerText = '{{ __("Đang vào trận với Phạm Tùng...") }}';
                 } else {
                     targetUrl = (data.side === 'red')
@@ -181,7 +183,6 @@
                     document.getElementById('match-status').innerText =
                         `{{ __("Đã tìm thấy!") }} {{ __("Vào phòng") }} "${data.room_name}".`;
                 }
-
                 window.location.href = targetUrl;
             }
         }, 1000);

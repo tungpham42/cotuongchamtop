@@ -61,7 +61,7 @@ if (isset($_POST['enter'])) {
 
 <style>
 /* *==========================================================================
-   * GIAO DIỆN CHAT CUNG ĐÌNH HUẾ - ROYAL THEME
+   * GIAO DIỆN CHAT HOÀNG GIA - LIQUID GLASS THEME
    *========================================================================== */
 
 #chat-wrapper {
@@ -70,11 +70,16 @@ if (isset($_POST['enter'])) {
     width: 100%;
     max-width: 420px;
     height: 550px;
-    background-color: var(--royal-bg);
-    background-image: radial-gradient(circle at center, #2a1910 0%, #1c110a 100%);
-    border: var(--royal-border);
-    border-radius: 6px;
-    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(212, 175, 55, 0.1);
+
+    /* Liquid Glass Enclosure */
+    background: var(--glass-bg-dark);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-top: 1px solid rgba(255, 215, 0, 0.5); /* Glossy top edge */
+    border-radius: 12px;
+    box-shadow: var(--liquid-shadow), inset 0 2px 15px var(--liquid-highlight);
+
     overflow: hidden;
     font-family: "Plus Jakarta Sans", "Noto Sans JP", sans-serif;
     justify-content: space-between;
@@ -101,7 +106,7 @@ if (isset($_POST['enter'])) {
     text-transform: uppercase;
     margin-bottom: 2rem;
     letter-spacing: 1px;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
 }
 #loginform form {
     width: 100%;
@@ -111,63 +116,70 @@ if (isset($_POST['enter'])) {
 }
 #loginform label { display: none; }
 
-#name {
+/* Glossy Inputs */
+#name, #usermsg {
     width: 100%;
-    background-color: var(--royal-gold-light);
-    border: 1px solid var(--royal-wood);
-    color: var(--royal-bg);
+    background: rgba(11, 12, 16, 0.5);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: var(--royal-gold-light);
     padding: 14px 18px;
     font-size: 16px;
     font-weight: 600;
-    border-radius: 4px;
-    transition: all 0.3s ease-in-out;
+    border-radius: 8px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     outline: none;
 }
-#name::placeholder { color: var(--royal-wood); opacity: 0.7; }
-#name:focus {
+#name::placeholder, #usermsg::placeholder { color: var(--royal-gold-light); opacity: 0.5; }
+#name:focus, #usermsg:focus {
     border-color: var(--royal-gold);
-    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.4), inset 0 2px 5px rgba(0,0,0,0.5);
+    background: rgba(11, 12, 16, 0.7);
 }
 
-#enter {
-    background: linear-gradient(to bottom, #8a1515, #5c0a0a);
+/* Ruby Glass Buttons */
+#enter, #submitmsg {
+    background: var(--glass-bg-red);
     color: var(--royal-gold);
-    border: 1px solid var(--royal-gold);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    border-radius: 8px;
+    box-shadow: inset 0 2px 8px rgba(255, 215, 0, 0.2), 0 4px 10px rgba(0,0,0,0.5);
     padding: 14px;
-    border-radius: 4px;
-    font-weight: bold;
+    font-weight: 700;
     font-size: 16px;
     cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 1px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-#enter:hover {
-    background: linear-gradient(to bottom, #b72222, #8a1515);
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+#enter:hover, #submitmsg:hover {
+    background: rgba(183, 34, 34, 0.6);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5), inset 0 2px 10px rgba(255, 215, 0, 0.4);
+    transform: translateY(-2px);
 }
 .error {
-    color: var(--royal-gold);
-    background: rgba(138, 21, 21, 0.8);
-    padding: 5px 10px;
-    border: 1px solid var(--royal-gold);
-    border-radius: 4px;
+    color: #fff;
+    background: rgba(183, 34, 34, 0.8);
+    backdrop-filter: blur(4px);
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 215, 0, 0.5);
+    border-radius: 8px;
     font-size: 14px;
     margin-top: 12px;
     font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
 
-/* Chat Header */
+/* Glassy Chat Header */
 #menu {
-    background: linear-gradient(to bottom, #8a1515, #5c0a0a);
+    background: linear-gradient(90deg, rgba(138, 21, 21, 0.5), rgba(92, 10, 10, 0.3));
     padding: 16px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid var(--royal-gold);
+    border-bottom: 1px solid var(--glass-border);
     z-index: 10;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
 }
 #menu p.welcome {
     margin: 0;
@@ -179,23 +191,26 @@ if (isset($_POST['enter'])) {
     color: var(--royal-gold);
     font-weight: bold;
     text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(255,215,0,0.4);
 }
 a#exit {
     color: var(--royal-gold-light);
-    background-color: #333;
+    background: rgba(11, 12, 16, 0.6);
+    backdrop-filter: blur(4px);
     padding: 6px 14px;
-    border-radius: 4px;
+    border-radius: 6px;
     font-weight: bold;
     font-size: 13px;
     text-decoration: none;
     text-transform: uppercase;
-    border: 1px solid #555;
-    transition: all 0.2s;
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
 }
 a#exit:hover {
-    background-color: var(--royal-red-light);
+    background: rgba(183, 34, 34, 0.6);
     border-color: var(--royal-gold);
     color: var(--royal-gold);
+    box-shadow: 0 0 10px rgba(255,215,0,0.3);
 }
 
 /* Chat Content Area */
@@ -209,11 +224,11 @@ a#exit:hover {
     gap: 16px;
 }
 
-/* Custom Scrollbar */
-#chatbox::-webkit-scrollbar { width: 8px; }
-#chatbox::-webkit-scrollbar-track { background: var(--royal-bg); }
-#chatbox::-webkit-scrollbar-thumb { background: var(--royal-wood); border: 1px solid var(--royal-gold); border-radius: 4px; }
-#chatbox::-webkit-scrollbar-thumb:hover { background: var(--royal-gold); }
+/* Custom Scrollbar for Chatbox */
+#chatbox::-webkit-scrollbar { width: 6px; }
+#chatbox::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
+#chatbox::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.5); border-radius: 4px; }
+#chatbox::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.8); }
 
 /* Chat Bubbles Container */
 .msg-container {
@@ -223,19 +238,19 @@ a#exit:hover {
     animation: slideUpFade 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Other Player (Left) */
-.message-theirs {
-    align-self: flex-start;
-}
+/* Other Player (Obsidian Glass Bubbles) */
+.message-theirs { align-self: flex-start; }
 .message-theirs .msg-content {
-    background: #2a1910;
+    background: rgba(37, 42, 54, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     color: var(--royal-gold-light);
-    border: 1px solid var(--royal-wood);
+    border: 1px solid rgba(255, 215, 0, 0.15);
     border-radius: 4px 12px 12px 12px;
     padding: 10px 14px;
     font-size: 15px;
     line-height: 1.4;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+    box-shadow: inset 0 2px 5px rgba(255,255,255,0.1), 0 4px 10px rgba(0,0,0,0.4);
 }
 .message-theirs .msg-meta {
     font-size: 12px;
@@ -246,19 +261,19 @@ a#exit:hover {
 }
 .message-theirs .msg-meta b { color: var(--royal-gold); }
 
-/* Current Player (Right) */
-.message-mine {
-    align-self: flex-end;
-}
+/* Current Player (Ruby Glass Bubbles) */
+.message-mine { align-self: flex-end; }
 .message-mine .msg-content {
-    background: linear-gradient(to bottom, #8a1515, #5c0a0a);
-    color: var(--royal-gold);
-    border: 1px solid var(--royal-gold);
+    background: rgba(138, 21, 21, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #fff;
+    border: 1px solid rgba(255, 215, 0, 0.3);
     border-radius: 12px 4px 12px 12px;
     padding: 10px 14px;
     font-size: 15px;
     line-height: 1.4;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
+    box-shadow: inset 0 2px 5px rgba(255,255,255,0.15), 0 4px 10px rgba(0,0,0,0.4);
 }
 .message-mine .msg-meta {
     font-size: 12px;
@@ -273,73 +288,46 @@ a#exit:hover {
 .message-system {
     align-self: center;
     background: rgba(138, 21, 21, 0.2);
-    border-left: 4px solid var(--royal-gold);
-    border-right: 4px solid var(--royal-gold);
+    border-left: 2px solid var(--royal-gold);
+    border-right: 2px solid var(--royal-gold);
+    backdrop-filter: blur(4px);
     color: var(--royal-gold);
     font-family: "Texturina", serif;
     font-style: italic;
     font-weight: bold;
     font-size: 14px;
     padding: 8px 20px;
-    border-radius: 2px;
+    border-radius: 4px;
     margin: 10px 0;
     max-width: 90%;
     text-align: center;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 .message-system .welcome-info { color: var(--royal-gold-light); }
-.message-system .enter-info { color: var(--royal-gold); }
-.message-system .left-info { color: var(--royal-red-light); }
+.message-system .enter-info { color: var(--royal-gold); text-shadow: 0 0 5px rgba(255,215,0,0.5); }
+.message-system .left-info { color: #ff6b6b; }
 
 /* Input Area */
 #message-form {
     display: flex;
     padding: 15px;
-    background: #2a1910;
-    border-top: 1px solid var(--royal-gold);
+    background: rgba(11, 12, 16, 0.4);
+    border-top: 1px solid rgba(255, 215, 0, 0.2);
     align-items: center;
     gap: 12px;
 }
-#usermsg {
-    flex: 1;
-    background-color: var(--royal-gold-light);
-    border: 1px solid var(--royal-wood);
-    color: var(--royal-bg);
-    border-radius: 4px;
-    padding: 12px 16px;
-    font-size: 15px;
-    font-weight: 600;
-    outline: none;
-    transition: all 0.3s ease;
-}
-#usermsg::placeholder { color: var(--royal-wood); opacity: 0.8;}
-#usermsg:focus {
-    border-color: var(--royal-gold);
-    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25);
-}
 #submitmsg {
-    background: linear-gradient(to bottom, #8a1515, #5c0a0a);
-    color: var(--royal-gold);
-    border: 1px solid var(--royal-gold);
-    border-radius: 4px;
-    width: 46px;
-    height: 46px;
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
 }
-#submitmsg:hover {
-    background: linear-gradient(to bottom, #b72222, #8a1515);
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-}
-#submitmsg i { font-size: 18px; }
+#submitmsg i { font-size: 18px; filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)); }
 
 /* Animations */
 @keyframes slideUpFade {
-    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    from { opacity: 0; transform: translateY(15px) scale(0.95); }
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
 </style>
@@ -392,7 +380,7 @@ $(document).ready(function () {
                 <form id="login-form" method="post" action="{{ url()->current() }}">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <input type="text" name="name" id="name" placeholder="{{ __('Tên') }}..." value="${defaultName}" />
-                    <input type="submit" name="enter" id="enter" value="{{ __('Nhập') }}" />
+                    <input class="btn btn-danger" type="submit" name="enter" id="enter" value="{{ __('Nhập') }}" />
                 </form>
                 <div id="login-error" class="error" style="display:none;"></div>
             </div>
