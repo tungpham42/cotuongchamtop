@@ -7,69 +7,6 @@
 @section('og_image_height', '630')
 
 @section('content')
-<style>
-    /* Visual Bracket Styles (Royal Theme) */
-    .bracket-container {
-        display: flex;
-        flex-direction: row;
-        overflow-x: auto;
-        padding: 20px 0;
-        gap: 30px;
-    }
-    .bracket-round {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        min-width: 260px;
-        gap: 20px;
-    }
-    .match-card {
-        background-color: var(--royal-gold-light);
-        border: 2px solid var(--royal-wood);
-        border-radius: 4px;
-        overflow: hidden;
-        position: relative;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
-    }
-    .match-player {
-        padding: 10px 15px;
-        border-bottom: 1px solid rgba(74, 37, 17, 0.2);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-weight: bold;
-    }
-    .match-player:last-child {
-        border-bottom: none;
-    }
-    .match-player.red-side {
-        color: var(--royal-red);
-    }
-    .match-player.black-side {
-        color: #111;
-    }
-    .match-winner {
-        background-color: rgba(212, 175, 55, 0.4) !important;
-        box-shadow: inset 0 0 3px 3px var(--royal-gold);
-    }
-    .bracket-room-link {
-        display: block;
-        text-align: center;
-        background: linear-gradient(to bottom, #8a1515, #5c0a0a);
-        padding: 8px;
-        font-size: 0.85rem;
-        text-decoration: none !important;
-        color: var(--royal-gold);
-        text-transform: uppercase;
-        border-top: 2px solid var(--royal-wood);
-        transition: 0.3s ease;
-    }
-    .bracket-room-link:hover {
-        background: var(--royal-gold);
-        color: var(--royal-red);
-    }
-</style>
-
 <div class="container mt-4">
     <div class="mb-3">
         <a href="{{ localized_url('tournaments.index') }}" class="btn" style="color: var(--royal-gold-light); border: 1px solid var(--royal-wood);"><i class="fad fa-arrow-left"></i> {{ __('Quay lại') }}</a>
