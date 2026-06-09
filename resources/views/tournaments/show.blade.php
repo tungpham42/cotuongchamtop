@@ -223,7 +223,9 @@
 
     {{-- SƠ ĐỒ THI ĐẤU --}}
     @if($tournament->status !== 'open' && $rounds->count() > 0)
-        <h4 class="mb-4" style="color: var(--royal-gold); font-family: 'Texturina', serif; text-transform: uppercase;"><i class="fad fa-sitemap" style="color: var(--royal-red-light);"></i> {{ __('Sơ đồ thi đấu') }}</h4>
+        <h4 class="mb-4" style="color: var(--royal-gold); font-family: 'Texturina', serif; text-transform: uppercase; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);">
+            <i class="fad fa-sitemap" style="color: var(--royal-red-light);"></i> {{ __('Sơ đồ thi đấu') }}
+        </h4>
         <div class="bracket-container custom-scrollbar">
 
             @foreach($rounds as $roundNumber => $matches)
@@ -238,12 +240,12 @@
                         <div class="match-card">
                             <div class="match-player red-side {{ $hostIsWinner ? 'match-winner' : '' }}">
                                 <span><i class="fad fa-chess-pawn"></i> {{ $match->host->name ?? __('Chờ đối thủ...') }}</span>
-                                @if($hostIsWinner) <i class="fad fa-crown" style="color: var(--royal-gold);"></i> @endif
+                                @if($hostIsWinner) <i class="fad fa-crown" style="color: var(--royal-gold); filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.8));"></i> @endif
                             </div>
 
                             <div class="match-player black-side {{ $guestIsWinner ? 'match-winner' : '' }}">
                                 <span><i class="fad fa-chess-pawn"></i> {{ $match->guest->name ?? __('Chờ đối thủ...') }}</span>
-                                @if($guestIsWinner) <i class="fad fa-crown" style="color: var(--royal-gold);"></i> @endif
+                                @if($guestIsWinner) <i class="fad fa-crown" style="color: var(--royal-gold); filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.8));"></i> @endif
                             </div>
                             @php
                                 $roomUrl = localized_url('room.watch', ['code' => $match->code]);
@@ -271,8 +273,8 @@
 
         </div>
     @else
-        <div class="p-5 mt-4 text-center shadow-lg" style="background: rgba(28, 17, 10, 0.85); border: 2px solid var(--royal-gold); border-radius: 4px;">
-            <i class="fad fa-project-diagram fa-4x mb-3" style="color: var(--royal-wood);"></i>
+        <div class="p-5 mt-4 text-center shadow-lg" style="background: var(--glass-bg-dark); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-top: 2px solid rgba(255, 215, 0, 0.5); border-radius: 12px; box-shadow: var(--liquid-shadow), inset 0 2px 15px var(--liquid-highlight);">
+            <i class="fad fa-project-diagram fa-4x mb-3" style="color: var(--royal-gold); filter: drop-shadow(0 0 10px rgba(212,175,55,0.5));"></i>
             <h5 style="color: var(--royal-gold); font-family: 'Texturina', serif; text-transform: uppercase;">{{ __('Sơ đồ giải đấu chưa được tạo.') }}</h5>
             <p style="color: var(--royal-gold-light);">{{ __('Sơ đồ sẽ xuất hiện khi giải đấu bắt đầu và bốc thăm hoàn tất.') }}</p>
         </div>
