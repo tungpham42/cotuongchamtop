@@ -108,7 +108,7 @@
 
 .theme-selector-panel {
   position: absolute;
-  bottom: 60px; /* Lifted slightly for the bigger button */
+  bottom: 60px;
   left: 50%;
   transform: translateX(-50%);
 
@@ -143,7 +143,7 @@
 
 /* Titles */
 .theme-title {
-  color: #fff2cc; /* Royal Gold Light */
+  color: #fff2cc;
   font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
@@ -159,9 +159,8 @@
    THE THEME TOGGLE BUTTON (.theme-toggle-btn)
    ========================================================================== */
 .theme-toggle-btn {
-  /* Obsidian stone base */
   background: linear-gradient(145deg, #252a36, #121418);
-  color: var(--royal-gold-light);
+  color: var(--royal-gold-light, #fff2cc);
   border: 1px solid rgba(212, 175, 55, 0.4);
   border-radius: 6px;
   padding: 10px 24px;
@@ -176,7 +175,6 @@
   margin: 0 auto;
   pointer-events: all;
 
-  /* Multilayer glow */
   box-shadow:
     0 8px 20px rgba(0, 0, 0, 0.6),
     0 0 15px rgba(212, 175, 55, 0.15);
@@ -206,7 +204,6 @@
 .theme-option {
   width: 65px;
   height: 65px;
-  /* Dark glass tiles */
   background: rgba(255, 255, 255, 0.03);
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
@@ -216,7 +213,6 @@
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Hover: Lift and slight gold reflection */
 .theme-option:hover {
   border-color: rgba(212, 175, 55, 0.5);
   background: rgba(212, 175, 55, 0.05);
@@ -224,7 +220,6 @@
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
 }
 
-/* Active State: The Golden Igniter */
 .theme-option.active {
   border-color: #ffd700;
   background: rgba(212, 175, 55, 0.15);
@@ -323,24 +318,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Load guest theme preferences first (if not logged in)
-  @if (!auth()->check())
-  const savedBoardTheme = localStorage.getItem('guest_board_theme');
-  const savedPiecesTheme = localStorage.getItem('guest_pieces_theme');
+  // 1. Initialize preferences based on login state
+  let currentBoardTheme = 'xiangqi-board';
+  let currentPiecesTheme = 'wiki';
 
-  if (savedBoardTheme) {
-    const boardInput = document.getElementById('boardTheme');
-    if (boardInput) boardInput.value = savedBoardTheme;
-  }
-
-  if (savedPiecesTheme) {
-    const piecesInput = document.getElementById('piecesTheme');
-    if (piecesInput) piecesInput.value = savedPiecesTheme;
-  }
+  @if(auth()->check())
+    // Logged-in user: Pull existing preferences directly from the user's database record
+    currentBoardTheme = '{{ auth()->user()->board_theme ?? "xiangqi-board" }}';
+    currentPiecesTheme = '{{ auth()->user()->pieces_theme ?? "wiki" }}';
+  @else
+    // Guest user: Pull from LocalStorage
+    currentBoardTheme = localStorage.getItem('guest_board_theme') || 'xiangqi-board';
+    currentPiecesTheme = localStorage.getItem('guest_pieces_theme') || 'wiki';
   @endif
 
-  // Set active theme visual state on page load
-  updateActiveThemes();
+  // Sync initialization to hidden inputs if they exist elsewhere on the page
+  const boardInput = document.getElementById('boardTheme');
+  const piecesInput = document.getElementById('piecesTheme');
+  if (boardInput) boardInput.value = currentBoardTheme;
+  if (piecesInput) piecesInput.value = currentPiecesTheme;
+
+  // 2. Set active theme visual state on page load
+  updateActiveThemes(currentBoardTheme, currentPiecesTheme);
 
   // Handle theme selection (update active state and button style)
   themeOptions.forEach(option => {
@@ -366,9 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const selectedBoardTheme = document.querySelector('.theme-option[data-theme-type="board"].active')?.dataset.theme || 'xiangqi-board';
       const selectedPiecesTheme = document.querySelector('.theme-option[data-theme-type="pieces"].active')?.dataset.theme || 'wiki';
 
-      // Update hidden inputs if they exist (for form consistency)
-      const boardInput = document.getElementById('boardTheme');
-      const piecesInput = document.getElementById('piecesTheme');
+      // Update hidden inputs if they exist
       if (boardInput) boardInput.value = selectedBoardTheme;
       if (piecesInput) piecesInput.value = selectedPiecesTheme;
 
@@ -418,11 +415,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  function updateActiveThemes() {
-    // Read from hidden inputs (populated by server or localStorage above)
-    const boardTheme = document.getElementById('boardTheme')?.value || 'xiangqi-board';
-    const piecesTheme = document.getElementById('piecesTheme')?.value || 'wiki';
-
+  // Helper to sync visual active states
+  function updateActiveThemes(boardTheme, piecesTheme) {
     themeOptions.forEach(option => {
       const themeType = option.dataset.themeType;
       const themeName = option.dataset.theme;
@@ -430,7 +424,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Remove all active states first
       option.classList.remove('active');
 
-      // Set active based on current values
+      // Set active based on initialized values
       if ((themeType === 'board' && themeName === boardTheme) ||
           (themeType === 'pieces' && themeName === piecesTheme)) {
         option.classList.add('active');
