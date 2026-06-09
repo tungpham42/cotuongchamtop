@@ -612,11 +612,12 @@ $("#capture").on('click', function() {
       allowTaint: true,
       useCORS: true,
       onrendered: function(originalCanvas) {
-        // Create a new canvas with added bottom padding
+        // Create a new canvas with added top and bottom padding
+        var paddingTop = 40;
         var paddingBottom = 40;
         var finalCanvas = document.createElement('canvas');
         finalCanvas.width = originalCanvas.width;
-        finalCanvas.height = originalCanvas.height + paddingBottom;
+        finalCanvas.height = originalCanvas.height + paddingTop + paddingBottom;
         var context = finalCanvas.getContext('2d');
 
         // Sample a pixel near the bottom edge of the original canvas to dynamically match the board's background color
@@ -628,30 +629,25 @@ $("#capture").on('click', function() {
         context.fillStyle = bgColor;
         context.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
 
-        // Draw the original board capture onto the new canvas
-        context.drawImage(originalCanvas, 0, 0);
+        // Draw the original board capture onto the new canvas, offsetting it to make room for the top padding
+        context.drawImage(originalCanvas, 0, paddingTop);
 
         // Context general settings
         context.textAlign = 'center';
-
-        // 1. Puzzle Name right in the middle of the BOARD area
-        context.globalCompositeOperation = 'multiply';
-        context.font = '18px sans-serif';
-        context.fillStyle = '#444422';
         context.textBaseline = 'middle';
-        context.fillText('{{ $name }}', finalCanvas.width / 2, originalCanvas.height / 2);
+
+        // 1. Puzzle Name right in the middle of the TOP padded area
+        context.globalCompositeOperation = 'source-over';
+        context.font = 'bold 18px sans-serif';
+        context.fillStyle = '#444422';
+        context.fillText('{{ $name }}', finalCanvas.width / 2, paddingTop / 2);
 
         // 2. COTUONG.TOP drawn in the newly padded bottom space - MOVED TO BOTTOM RIGHT
-        context.globalCompositeOperation = 'source-over'; // Standard composite for solid text
         context.font = 'bold 16px sans-serif';
-        context.fillStyle = '#444422'; // Adjust color if needed against the background
-
-        // Change text alignment to right
         context.textAlign = 'right';
-        context.textBaseline = 'middle';
 
-        // Shift X coordinate to the right edge with a 10px margin
-        context.fillText('COTUONG.TOP', finalCanvas.width - 10, originalCanvas.height + (paddingBottom / 2));
+        // Shift X coordinate to the right edge with a 10px margin, adjusting the Y position to account for the new height offset
+        context.fillText('COTUONG.TOP', finalCanvas.width - 10, originalCanvas.height + paddingTop + (paddingBottom / 2));
 
         finalCanvas.toBlob(function(blob) {
           saveAs(blob, "ban-co-{{ date('Y-m-d h:i:s A') }}.png");
