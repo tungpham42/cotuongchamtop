@@ -1,6 +1,6 @@
 <footer>
   <div class="container">
-    @include('common.adsenseBetween')
+    @include('common.adsenseBottom')
     <div class="row py-5 px-0">
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3 vcard">
         <p>{{ __("Email liên hệ") }}</p>
