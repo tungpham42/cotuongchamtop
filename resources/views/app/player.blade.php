@@ -106,9 +106,9 @@
                         <a href="{{ localized_url('app.ui') }}" class="btn btn-dark showPromotion"><i class="fad fa-palette"></i> {{ __("Đổi giao diện") }}</a>
 
                         <!-- Upload Image Form -->
-                        <form action="{{ route('profile.picture.upload') }}" method="POST" enctype="multipart/form-data" class="d-inline-block">
+                        <form action="{{ localized_url('profile.picture.upload') }}" method="POST" enctype="multipart/form-data" class="d-inline-block">
                             @csrf
-                            <label class="btn btn-info showPromotion mb-0" style="cursor: pointer;">
+                            <label class="btn btn-dark showPromotion mb-0" style="cursor: pointer;">
                                 <i class="fad fa-upload"></i> {{ __("Đổi ảnh đại diện") }}
                                 <input type="file" name="profile_picture" class="d-none" onchange="this.form.submit()" accept="image/png, image/jpeg, image/gif">
                             </label>
@@ -116,7 +116,7 @@
 
                         <!-- Remove Image Form -->
                         @if(auth()->user()->profile_picture)
-                        <form action="{{ route('profile.picture.remove') }}" method="POST" class="d-inline-block">
+                        <form action="{{ localized_url('profile.picture.remove') }}" method="POST" class="d-inline-block">
                             @csrf
                             <button type="submit" class="btn btn-danger showPromotion"><i class="fad fa-trash"></i> {{ __("Xóa ảnh") }}</button>
                         </form>

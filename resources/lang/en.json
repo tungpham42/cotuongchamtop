@@ -714,5 +714,7 @@
     "Có": "Yes",
     "Không": "No",
     "Bạn đã cập nhật ảnh đại diện thành công!": "Your profile picture has been successfully updated!",
-    "Bạn đã xóa ảnh đại diện thành công!": "You have successfully deleted your profile picture!"
+    "Bạn đã xóa ảnh đại diện thành công!": "You have successfully deleted your profile picture!",
+    "Đổi ảnh đại diện": "Change profile picture",
+    "Xóa ảnh": "Delete profile picture"
 }
