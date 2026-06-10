@@ -1,5 +1,5 @@
 @if ($showAds ?? true)
-<div class="row justify-content-center text-center mb-4">
+<div class="row justify-content-center text-center my-5">
     <div class="col-12">
         <ins class="adsbygoogle"
         style="display:block"
