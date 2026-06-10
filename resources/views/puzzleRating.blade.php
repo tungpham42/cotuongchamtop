@@ -44,7 +44,7 @@
     flex-direction: column;
     gap: 1rem;
     scrollbar-width: thin;
-    scrollbar-color: rgba(100, 116, 139, 0.5) #1a1a1a;
+    scrollbar-color: var(--royal-red) var(--royal-bg);
   }
   @media (min-width: 992px) {
     .puzzle-side-panel {
@@ -53,17 +53,28 @@
       padding-right: 0.5rem;
     }
   }
+
+  /* ROYAL SCROLLBAR OVERRIDE FOR SIDE PANEL */
   .puzzle-side-panel::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
   }
   .puzzle-side-panel::-webkit-scrollbar-track {
-    background: #1a1a1a;
-    border-radius: 999px;
+    background: var(--royal-bg);
+    border-left: 1px solid rgba(212, 175, 55, 0.2);
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.9);
   }
   .puzzle-side-panel::-webkit-scrollbar-thumb {
-    background-color: rgba(100, 116, 139, 0.7);
-    border-radius: 999px;
+    background: linear-gradient(180deg, var(--royal-red), #5c0a0a);
+    border: 1px solid var(--royal-gold);
+    border-radius: 6px;
+    box-shadow: inset 0 0 5px rgba(255, 215, 0, 0.3);
   }
+  .puzzle-side-panel::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #d4af37, #b89020);
+    border-color: #fff;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
+  }
+
   #puzzle-note-block {
     width: 100%;
     margin: 1rem 0 0 auto;
@@ -78,26 +89,44 @@
       max-width: 380px !important;
     }
   }
-  .puzzle-side-card {
-    background: #222222;
-    color: #f8fafc;
-    border-radius: 0.75rem;
-    box-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(34, 34, 34, 0.8);
+
+  /* LIQUID GLASS SIDE CARDS */
+  .puzzle-side-card, .puzzle-comment-feed {
+    background: var(--glass-bg-dark) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border) !important;
+    border-top: 1px solid rgba(255, 215, 0, 0.5) !important;
+    border-radius: 12px;
+    box-shadow: var(--liquid-shadow), inset 0 2px 15px var(--liquid-highlight) !important;
+    color: var(--royal-gold-light);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
+  .puzzle-side-card:hover, .puzzle-comment-feed:hover {
+    transform: translateY(-2px);
+    border-color: rgba(212, 175, 55, 0.6) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(212, 175, 55, 0.3), inset 0 4px 20px var(--liquid-highlight) !important;
+  }
+
   .puzzle-side-card .card-body {
     padding: 1rem 1.2rem;
   }
-  .puzzle-side-card h5 {
-    color: #e2e8f0;
+  .puzzle-side-card h5, .puzzle-comment-feed h6 {
+    font-family: "Texturina", "Noto Sans JP", serif !important;
+    color: var(--royal-gold) !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     font-weight: 600;
   }
   .puzzle-side-card .text-muted {
-    color: rgba(226, 232, 240, 0.72) !important;
+    color: #aa8c4a !important;
   }
+
+  /* GLOSSY REACTION BUTTONS */
   .puzzle-reaction-mini {
     display: flex;
-    gap: 0.45rem;
+    gap: 0.5rem;
     justify-content: flex-end;
   }
   .puzzle-reaction-mini .reaction-btn {
@@ -105,38 +134,39 @@
     align-items: center;
     gap: 0.35rem;
     font-size: 0.75rem;
-    padding: 0.28rem 0.55rem;
-    border-radius: 999px;
-    border: 1px solid rgba(148, 163, 184, 0.35);
-    background: rgba(34, 34, 34, 0.85);
-    color: #f8fafc;
-    transition: all 0.15s ease;
+    padding: 0.3rem 0.6rem;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg-dark);
+    color: var(--royal-gold-light);
+    box-shadow: inset 0 1px 5px var(--liquid-highlight);
+    transition: all 0.3s ease;
   }
   .puzzle-reaction-mini .reaction-btn.disabled,
   .puzzle-reaction-mini .reaction-btn:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     pointer-events: none;
   }
   .puzzle-reaction-mini .reaction-btn:hover {
-    background: rgba(248, 113, 113, 0.18);
-    border-color: rgba(248, 113, 113, 0.35);
-    color: #fca5a5;
+    background: var(--glass-bg-red);
+    border-color: rgba(255, 215, 0, 0.6);
+    color: var(--royal-gold);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5), inset 0 2px 5px rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
   }
   .puzzle-reaction-mini .reaction-btn .reaction-count {
-    padding: 0.05rem 0.4rem;
-    border-radius: 999px;
-    background: rgba(15, 23, 42, 0.45);
+    padding: 0.1rem 0.45rem;
+    border-radius: 4px;
+    background: rgba(11, 12, 16, 0.8);
+    color: var(--royal-gold);
+    border: 1px solid rgba(212, 175, 55, 0.3);
     font-size: 0.68rem;
-  }
-  .puzzle-comment-feed {
-    background-color: #222222;
-    border-radius: 0.85rem;
-    padding: 1rem;
-    color: #e5e7eb;
-  }
-  .puzzle-comment-feed h6 {
-    color: #f3f4f6;
     font-weight: 600;
+  }
+
+  /* COMMENT FEED */
+  .puzzle-comment-feed {
+    padding: 1.2rem;
   }
   .puzzle-comments {
     display: flex;
@@ -144,10 +174,18 @@
     gap: 1rem;
   }
   .puzzle-comment-card {
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 0.75rem;
+    background: rgba(11, 12, 16, 0.5);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 8px;
     padding: 0.85rem 1rem;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+    box-shadow: inset 0 1px 5px var(--liquid-highlight);
+    color: var(--royal-gold-light);
+    transition: all 0.3s ease;
+  }
+  .puzzle-comment-card:hover {
+    background: rgba(11, 12, 16, 0.7);
+    border-color: rgba(212, 175, 55, 0.4);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 2px 8px var(--liquid-highlight);
   }
   .puzzle-comment-card .comment-header {
     display: flex;
@@ -158,138 +196,152 @@
   .puzzle-comment-card .comment-avatar {
     width: 38px;
     height: 38px;
-    border-radius: 999px;
+    border-radius: 4px; /* Squared off royal look */
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 600;
-    color: #111827;
-    background: linear-gradient(135deg, #f87171, #fbbf24);
+    color: var(--royal-bg);
+    background: linear-gradient(135deg, var(--royal-gold), #b89020);
+    border: 1px solid #fff;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
   }
   .puzzle-comment-card .comment-body {
-    color: #f9fafb;
+    color: var(--royal-gold-light);
     line-height: 1.45;
   }
   .puzzle-comment-card .comment-meta {
     font-size: 0.8rem;
-    color: rgba(229, 231, 235, 0.75);
+    color: #aa8c4a;
   }
+
+  /* ACTION LINKS */
   .puzzle-comment-card .comment-actions {
     display: flex;
     gap: 1.25rem;
     margin-top: 0.5rem;
     font-size: 0.82rem;
-    color: rgba(229, 231, 235, 0.75);
+    color: #aa8c4a;
   }
   .puzzle-comment-card .comment-actions .comment-action {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
     cursor: pointer;
-    transition: color 0.15s ease;
+    transition: color 0.15s ease, text-shadow 0.15s ease;
+    font-weight: 600;
   }
   .puzzle-comment-card .comment-actions .comment-action:hover {
-    color: #f87171;
+    color: var(--royal-gold);
+    text-shadow: 0 0 8px rgba(212, 175, 55, 0.8);
   }
   .puzzle-comment-card .comment-actions .comment-action .comment-like-count {
     padding: 0.05rem 0.45rem;
-    border-radius: 999px;
-    background: rgba(15, 23, 42, 0.5);
+    border-radius: 4px;
+    background: rgba(11, 12, 16, 0.6);
+    border: 1px solid rgba(212, 175, 55, 0.2);
     font-size: 0.72rem;
     line-height: 1;
+    color: var(--royal-gold-light);
   }
   .puzzle-comment-card .comment-actions .comment-action.liked {
-    color: #f87171;
-    font-weight: 600;
+    color: var(--royal-red-light);
+    text-shadow: 0 0 8px rgba(230, 57, 70, 0.5);
     cursor: default;
+  }
+  .puzzle-comment-card .comment-actions .comment-action.liked .comment-like-count {
+    color: var(--royal-red-light);
+    border-color: rgba(230, 57, 70, 0.4);
   }
   .puzzle-comment-card .comment-actions .comment-action.disabled,
   .puzzle-comment-card .comment-actions .comment-action.loading {
     pointer-events: none;
     opacity: 0.6;
   }
+
+  /* EMPTY COMMENT STATE */
   .puzzle-empty-comment {
-    background: rgba(34, 34, 34, 0.85);
-    border-radius: 0.75rem;
-    padding: 1rem;
+    background: rgba(11, 12, 16, 0.6);
+    border: 1px dashed var(--royal-gold);
+    border-radius: 8px;
+    padding: 1.5rem;
     text-align: center;
-    color: rgba(229, 231, 235, 0.85);
+    color: var(--royal-gold-light);
+    font-style: italic;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
   }
   .puzzle-empty-comment.error {
-    color: #f87171;
+    color: var(--royal-red-light);
+    border-color: var(--royal-red);
   }
-  .puzzle-side-panel .btn-group-lg .btn {
-    border-radius: 999px;
-  }
+
+  /* FORM CONTROLS (Using Royal Form Design) */
   .puzzle-side-panel label {
-    color: #cbd5f5;
+    font-weight: 600;
+    color: var(--royal-gold);
+    letter-spacing: 0.5px;
   }
   .puzzle-side-panel .form-control {
-    color: rgba(84, 84, 84, 1) !important;
+    background-color: var(--royal-gold-light) !important;
+    border: 1px solid var(--royal-wood) !important;
+    color: var(--royal-bg) !important;
+    border-radius: 4px;
+    font-weight: 600;
   }
   .puzzle-side-panel .form-control::placeholder {
-    color: rgba(84, 84, 84, 0.8) !important;
-  }
-  .puzzle-side-panel .form-control {
-    background-color: rgba(34, 34, 34, 0.8);
-    border-radius: 0.65rem;
-    border: 1px solid rgba(148, 163, 184, 0.35);
+    color: rgba(74, 37, 17, 0.6) !important;
+    font-weight: normal;
   }
   .puzzle-side-panel .form-control:focus {
-    background-color: rgba(34, 34, 34, 0.95);
-    border-color: #f87171;
-    box-shadow: 0 0 0 0.2rem rgba(248, 113, 113, 0.25);
+    background-color: #fff !important;
+    border-color: var(--royal-gold) !important;
+    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25) !important;
   }
+
+  /* REPLIES */
   .puzzle-comment-card.reply {
     margin-left: 1.5rem;
-    background: rgba(34, 34, 34, 0.65);
+    background: rgba(138, 21, 21, 0.15); /* Tint of red for replies */
+    border-left: 2px solid var(--royal-gold);
   }
   .puzzle-comment-children {
     margin-top: 0.75rem;
-    border-left: 1px solid rgba(148, 163, 184, 0.2);
+    border-left: 1px dashed rgba(212, 175, 55, 0.3);
     padding-left: 1rem;
   }
+
+  /* REPLY FORM */
   .comment-reply-form {
-    background: rgba(34, 34, 34, 0.85);
-    border-radius: 0.65rem;
-    padding: 0.75rem;
+    background: rgba(11, 12, 16, 0.7);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
     margin-top: 0.75rem;
-  }
-  .comment-reply-form .form-control {
-    background-color: rgba(17, 24, 39, 0.8);
-    border: 1px solid rgba(148, 163, 184, 0.35);
-    color: #e2e8f0;
-  }
-  .comment-reply-form .form-control::placeholder {
-    color: rgba(148, 163, 184, 0.8) !important;
-  }
-  .comment-reply-form .form-control:focus {
-    background-color: rgba(17, 24, 39, 0.95);
-    border-color: #f87171;
-    box-shadow: 0 0 0 0.2rem rgba(248, 113, 113, 0.25);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
   }
 </style>
+
 <div id="puzzle-note-block" class="puzzle-side-card mr-lg-0 mx-md-auto mw-md-100">
   <div class="card-body">
     <h5 class="mb-2 text-left"><i class="fas fa-info-circle text-danger"></i> {{ __("Ghi chú thế cờ") }}</h5>
     @if (!empty($puzzleDescription))
-      <div style="color:#f1f5f9" class="mb-3">{!! nl2br(e($puzzleDescription)) !!}</div>
+      <div style="color: var(--royal-gold-light);" class="mb-3">{!! nl2br(e($puzzleDescription)) !!}</div>
     @else
       <div class="puzzle-empty-comment mb-3">{{ __("Chưa có ghi chú cho thế cờ này.") }}</div>
     @endif
     <p class="text-muted small mb-2 text-left" id="reaction-summary">
-      {{ __("Tổng phản hồi:") }} <span id="reaction-total">{{ $totalReactions }}</span>
+      {{ __("Tổng phản hồi:") }} <span class="badge badge-status" style="background: rgba(212, 175, 55, 0.2); color: var(--royal-gold); border: 1px solid var(--royal-gold);" id="reaction-total">{{ $totalReactions }}</span>
     </p>
     <div class="puzzle-reaction-mini justify-content-end">
-      <button type="button" class="reaction-btn reaction-btn-like" data-reaction="like">
+      <button type="button" class="reaction-btn reaction-btn-like pulse-light" data-reaction="like">
         <i class="fas fa-thumbs-up"></i>
         <span class="reaction-count" id="reaction-like-count">{{ $reactionData['likes'] }}</span>
       </button>
-      <button type="button" class="reaction-btn reaction-btn-hard" data-reaction="hard">
+      <button type="button" class="reaction-btn reaction-btn-hard pulse-light" data-reaction="hard">
         <i class="fas fa-heart"></i>
         <span class="reaction-count" id="reaction-hard-count">{{ $reactionData['hard'] }}</span>
       </button>
-      <button type="button" class="reaction-btn reaction-btn-unsolved" data-reaction="unsolved">
+      <button type="button" class="reaction-btn reaction-btn-unsolved pulse-light" data-reaction="unsolved">
         <i class="fas fa-question-circle"></i>
         <span class="reaction-count" id="reaction-unsolved-count">{{ $reactionData['unsolved'] }}</span>
       </button>
@@ -305,8 +357,8 @@
         <span class="rounded d-none mt-2" id="game-over"><i class="fad fa-flag-checkered"></i> {{ __("HẾT TRẬN") }}</span>
       </div>
       @if ($isPrivate)
-        <div class="alert alert-warning shadow-sm mb-3 text-left">
-          <i class="fas fa-lock"></i> {{ __("Thế cờ này đang ở chế độ") }} <strong>{{ __("riêng tư") }}</strong>{{ __(". Chỉ những ai có liên kết mới có thể xem.") }}
+        <div class="alert shadow-sm mb-3 text-left" style="background: rgba(212, 175, 55, 0.2); border: 1px solid var(--royal-gold); color: var(--royal-gold-light);">
+          <i class="fas fa-lock text-warning"></i> {{ __("Thế cờ này đang ở chế độ") }} <strong>{{ __("riêng tư") }}</strong>{{ __(". Chỉ những ai có liên kết mới có thể xem.") }}
         </div>
       @endif
       <div class="sharethis-inline-reaction-buttons mb-3"></div>
@@ -348,7 +400,7 @@
         </div>
         <div class="d-flex justify-content-between align-items-center">
           <small class="d-none text-danger" id="comment-feedback"></small>
-          <button type="submit" class="btn btn-danger" id="comment-submit"><i class="fas fa-paper-plane"></i> {{ __("Gửi") }} {{ __("bình luận") }}</button>
+          <button type="submit" class="btn btn-danger pulse-red" id="comment-submit"><i class="fas fa-paper-plane"></i> {{ __("Gửi") }} {{ __("bình luận") }}</button>
         </div>
       </form>
     </div>

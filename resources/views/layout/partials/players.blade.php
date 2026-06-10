@@ -4,8 +4,9 @@
 <div style="background-color: transparent" class="container-fluid puzzles px-0">
     <div class="container mx-auto px-3 pt-0">
         <div class="row my-0">
-            <h2 class="d-block w-100 text-light ml-3 mb-4">
-                <i class="fas fa-users"></i> {{ $firstPagePlayers->total() }} {{ __("kỳ thủ đang hoạt động, mời bạn") }} <a class="text-light animate-light showPromotion" href="{{ localized_url('register') }}">{{ __("tham gia") }}</a>
+            <!-- Removed text-light to let the global H2 royal styling and Texturina font shine -->
+            <h2 class="d-block w-100 ml-3 mb-4">
+                <i class="fas fa-users"></i> {{ $firstPagePlayers->total() }} {{ __("kỳ thủ đang hoạt động, mời bạn") }} <a class="animate showPromotion" href="{{ localized_url('register') }}">{{ __("tham gia") }}</a>
             </h2>
             {{ $firstPagePlayers->links('vendor.pagination.playerVi') }}
             @foreach($firstPagePlayers as $player)
@@ -14,12 +15,12 @@
                     <div class="mb-3">
                         <i class="fas fa-chess-king fa-3x" style="color: var(--royal-gold); filter: drop-shadow(0 0 10px rgba(212,175,55,0.5));"></i>
                     </div>
-                    
+
                     <h4 class="royal-card-title mb-1">{!! app('App\Http\Controllers\UserController')::renderName($player->id) !!}</h4>
                     <p class="mb-4" style="color: var(--royal-gold-light); font-size: 1.1rem;">
                         Elo: <span class="font-weight-bold" style="color: var(--royal-gold);">{!! app('App\Http\Controllers\UserController')::renderElo($player->id) !!}</span>
                     </p>
-                    
+
                     <div class="mt-auto">
                         @if (auth()->check())
                             @if (auth()->id() != $player->id)
@@ -64,7 +65,7 @@
                                     className: 'btn-danger'
                                 },
                                 cancel: {
-                                    className: 'btn-dark text-light'
+                                    className: 'btn-dark' // Removed text-light to use the Obsidian Glass styling
                                 }
                             },
                             callback: function(roomName){
@@ -180,8 +181,8 @@
     <div style="background-color: transparent" class="container-fluid puzzles px-0">
         <div class="container mx-auto px-3 pt-0">
             <div class="row my-0">
-                <h2 class="d-block w-100 text-light ml-3 mb-4">
-                    <i class="fas fa-users"></i> {{ $players->total() }} {{ __("kỳ thủ đang hoạt động, mời bạn") }}  <a class="text-light animate-light showPromotion" href="{{ localized_url('register') }}">{{ __("tham gia") }}</a>
+                <h2 class="d-block w-100 ml-3 mb-4">
+                    <i class="fas fa-users"></i> {{ $players->total() }} {{ __("kỳ thủ đang hoạt động, mời bạn") }}  <a class="animate showPromotion" href="{{ localized_url('register') }}">{{ __("tham gia") }}</a>
                 </h2>
                 {{ $players->links('vendor.pagination.playerVi') }}
                 @foreach($players as $player)
@@ -190,12 +191,12 @@
                         <div class="mb-3">
                             <i class="fas fa-chess-king fa-3x" style="color: var(--royal-gold); filter: drop-shadow(0 0 10px rgba(212,175,55,0.5));"></i>
                         </div>
-                        
+
                         <h4 class="royal-card-title mb-1">{!! app('App\Http\Controllers\UserController')::renderName($player->id) !!}</h4>
                         <p class="mb-4" style="color: var(--royal-gold-light); font-size: 1.1rem;">
                             Elo: <span class="font-weight-bold" style="color: var(--royal-gold);">{!! app('App\Http\Controllers\UserController')::renderElo($player->id) !!}</span>
                         </p>
-                        
+
                         <div class="mt-auto">
                             @if (auth()->check())
                                 @if (auth()->id() != $player->id)
@@ -240,7 +241,7 @@
                                         className: 'btn-danger'
                                     },
                                     cancel: {
-                                        className: 'btn-dark text-light'
+                                        className: 'btn-dark'
                                     }
                                 },
                                 callback: function(roomName){
