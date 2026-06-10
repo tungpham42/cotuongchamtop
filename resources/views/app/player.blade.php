@@ -118,7 +118,7 @@
                         @if(auth()->user()->profile_picture)
                         <form action="{{ localized_url('profile.picture.remove') }}" method="POST" class="d-inline-block">
                             @csrf
-                            <button type="submit" class="btn btn-danger showPromotion"><i class="fad fa-trash"></i> {{ __("Xóa ảnh") }}</button>
+                            <button type="submit" class="btn btn-dark showPromotion"><i class="fad fa-trash"></i> {{ __("Xóa ảnh") }}</button>
                         </form>
                         @endif
                     </div>
