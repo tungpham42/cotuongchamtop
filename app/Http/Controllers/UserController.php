@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Models\Room;
 use Creativeorange\Gravatar\Facades\Gravatar;
@@ -45,6 +46,42 @@ class UserController extends Controller
         return $this->getUsersDatatable($request, '挑战', '个人资料');
     }
 
+    // --- Add these new methods for Uploading and Removing Profile Pictures ---
+    public function uploadProfilePicture(Request $request)
+    {
+        $request->validate([
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $user = auth()->user();
+
+        if ($request->hasFile('profile_picture')) {
+            // Delete old picture if it exists
+            if ($user->profile_picture) {
+                Storage::disk('public')->delete($user->profile_picture);
+            }
+
+            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
+            $user->profile_picture = $path;
+            $user->save();
+        }
+
+        return back()->with('success', __('Bạn đã cập nhật ảnh đại diện thành công!'));
+    }
+
+    public function removeProfilePicture(Request $request)
+    {
+        $user = auth()->user();
+
+        if ($user->profile_picture) {
+            Storage::disk('public')->delete($user->profile_picture);
+            $user->profile_picture = null;
+            $user->save();
+        }
+
+        return back()->with('success', __('Bạn đã xóa ảnh đại diện thành công!'));
+    }
+
     /**
      * Shared logic to generate the DataTables response for users.
      * * @param Request $request
@@ -54,7 +91,7 @@ class UserController extends Controller
     private function getUsersDatatable(Request $request, string $challengeText, string $profileText)
     {
         if ($request->ajax()) {
-            $users = User::select(['id', 'name', 'email', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at']);
+            $users = User::select(['id', 'name', 'email', 'profile_picture', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at']);
 
             return Datatables::of($users)
                 ->addColumn('rank', function($row){
@@ -62,9 +99,10 @@ class UserController extends Controller
                 })
                 ->addColumn('name', function($row){
                     $onlineStatus = self::onlineStatus($row->id);
-                    $avatar = Avatar::create($row->name)->setDimension(28)->setFontSize(14);
+                    // Check for profile_picture
+                    $avatarSrc = $row->profile_picture ? asset('storage/' . $row->profile_picture) : Avatar::create($row->name)->setDimension(28)->setFontSize(14);
                     // Framed royal avatar
-                    $avatarHtml = '<img src="' . $avatar . '" style="border: 1px solid var(--royal-gold); border-radius: 4px; box-shadow: 0 0 5px rgba(212,175,55,0.5);" />';
+                    $avatarHtml = '<img src="' . $avatarSrc . '" style="width: 28px; height: 28px; object-fit: cover; border: 1px solid var(--royal-gold); border-radius: 4px; box-shadow: 0 0 5px rgba(212,175,55,0.5);" />';
                     return $avatarHtml . '&nbsp;<a class="text-warning font-weight-bold animate showPromotion" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.8); text-decoration: none !important;" href="'.localized_url('app.player', ['id' => $row->id]).'">'.$row->name.'</a>&nbsp;' . $onlineStatus;
                 })
                 ->addColumn('elo', function($row){
@@ -272,10 +310,10 @@ class UserController extends Controller
 
         if ($user) {
             $onlineStatus = self::onlineStatus($id);
-            $avatar = Avatar::create($user->name)->setDimension(38)->setFontSize(19);
+            $avatarSrc = $user->profile_picture ? asset('storage/' . $user->profile_picture) : Avatar::create($user->name)->setDimension(38)->setFontSize(19);
             $profileLink = localized_url('app.player', ['id' => $id]);
 
-            return '<img src="' . $avatar . '" />&nbsp;<a class="text-light showPromotion animate-light" href="' . $profileLink . '">' . $user->name . '</a>&nbsp;' . $onlineStatus;
+            return '<img src="' . $avatarSrc . '" style="width: 38px; height: 38px; object-fit: cover; border-radius: 4px;" />&nbsp;<a class="text-light showPromotion animate-light" href="' . $profileLink . '">' . $user->name . '</a>&nbsp;' . $onlineStatus;
         } else {
             return '<span class="waitingIndicator">
                         <span class="indicator bg-danger"></span>
@@ -293,10 +331,10 @@ class UserController extends Controller
 
         if ($user) {
             $onlineStatus = self::onlineStatus($id);
-            $avatar = Avatar::create($user->name)->setDimension(38)->setFontSize(19);
+            $avatarSrc = $user->profile_picture ? asset('storage/' . $user->profile_picture) : Avatar::create($user->name)->setDimension(38)->setFontSize(19);
             $profileLink = localized_url('app.player', ['id' => $id]);
 
-            return '<img src="' . $avatar . '" />&nbsp;<a class="text-danger showPromotion animate" href="' . $profileLink . '">' . '# ' . $id . '  ' . $user->name . '</a>&nbsp;' . $onlineStatus;
+            return '<img src="' . $avatarSrc . '" style="width: 38px; height: 38px; object-fit: cover; border-radius: 4px;" />&nbsp;<a class="text-danger showPromotion animate" href="' . $profileLink . '">' . '# ' . $id . '  ' . $user->name . '</a>&nbsp;' . $onlineStatus;
         } else {
             return '<span class="waitingIndicator">
                         <span class="indicator bg-danger"></span>
@@ -354,10 +392,10 @@ class UserController extends Controller
 
         if ($user) {
             $onlineStatus = self::onlineStatus($id);
-            $avatar = Avatar::create($user->name)->setDimension(28)->setFontSize(14);
+            $avatarSrc = $user->profile_picture ? asset('storage/' . $user->profile_picture) : Avatar::create($user->name)->setDimension(28)->setFontSize(14);
             $profileLink = localized_url('app.player', ['id' => $id]);
 
-            return '<img alt="' . $user->name . '" src="' . $avatar . '">&nbsp;<a class="text-light showPromotion animate-light" href="' . $profileLink . '">' . '# ' . $id . '  ' . $user->name . '</a>&nbsp;' . $onlineStatus;
+            return '<img alt="' . $user->name . '" src="' . $avatarSrc . '" style="width: 28px; height: 28px; object-fit: cover; border-radius: 4px;">&nbsp;<a class="text-light showPromotion animate-light" href="' . $profileLink . '">' . '# ' . $id . '  ' . $user->name . '</a>&nbsp;' . $onlineStatus;
         } else {
             return '<span class="waitingIndicator">
                         <span class="indicator bg-light"></span>

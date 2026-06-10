@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Avatar;
 
 class User extends Authenticatable
 {
@@ -25,6 +26,7 @@ class User extends Authenticatable
         'name',
         'points',
         'email',
+        'profile_picture',
         'password',
         'is_admin',
         'subscription_plan',
@@ -69,6 +71,17 @@ class User extends Authenticatable
     public function createdTournaments()
     {
         return $this->hasMany(Tournament::class, 'user_id');
+    }
+
+    /**
+     * Get the URL of the user's profile picture or fallback to Avatar
+     */
+    public function getAvatarUrl($size = 48, $fontSize = 24): string
+    {
+        if ($this->profile_picture) {
+            return asset('storage/' . $this->profile_picture);
+        }
+        return Avatar::create($this->name)->setDimension($size)->setFontSize($fontSize)->toBase64();
     }
 
     public function payosPayments()

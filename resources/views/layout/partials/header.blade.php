@@ -49,7 +49,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           @else
             <li class="dropdown">
               <a id="navbarDropdown" class="dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false">
-                <img src="{{ Avatar::create(Auth::user()->name)->setDimension(24)->setFontSize(12) }}" />
+                <img src="{{ Auth::user()->getAvatarUrl(24, 12) }}" style="width: 24px; height: 24px; object-fit: cover; border-radius: 50%;" />
               </a>
 
               <div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="navbarDropdown">

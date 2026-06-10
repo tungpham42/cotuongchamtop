@@ -1,11 +1,13 @@
 @extends('layout.app')
 
 @php
-    // Cache the image to prevent high server disk I/O on every page load
     $avatarDir = public_path('players');
     $avatarPath = $avatarDir . '/' . md5($player->email) . '.jpg';
 
-    if (!file_exists($avatarPath)) {
+    // If custom profile picture exists, use it. Otherwise, cache the Gravatar.
+    $ogImage = $player->profile_picture ? asset('storage/' . $player->profile_picture) : url('/players/' . md5($player->email) . '.jpg');
+
+    if (!$player->profile_picture && !file_exists($avatarPath)) {
         if (!is_dir($avatarDir)) {
             mkdir($avatarDir, 0755, true);
         }
@@ -13,7 +15,8 @@
     }
 @endphp
 
-@section('og_image', url('/players/' . md5($player->email) . '.jpg'))
+@section('og_image', $ogImage)
+
 @section('og_image_width', '200')
 @section('og_image_height', '200')
 
@@ -25,7 +28,7 @@
             <!-- Royal Glassmorphism Profile Card -->
             <div class="card shadow-lg mb-4">
                 <div class="card-header d-flex align-items-center">
-                    <img src="{{ Avatar::create($player->name)->setDimension(48)->setFontSize(24) }}" class="mr-2 rounded" />
+                    <img src="{{ $player->getAvatarUrl(48, 24) }}" class="mr-2 rounded" style="width: 48px; height: 48px; object-fit: cover;" />
                     <h4 class="mb-0 text-gold">
                         @if ($player->id == auth()->id() && !str_contains(url()->current(), url('/ky-thu').'/'))
                             <i class="fas fa-user-circle"></i> {{ __("Hồ sơ của tôi") }}
@@ -98,9 +101,26 @@
 
                     @if ($player->id == auth()->id() && !str_contains(url()->current(), url('/ky-thu').'/'))
                     <div class="w-100 text-left mt-4">
-                        <a href="{{ url('/doi-ten') }}" class="btn btn-dark showPromotion"><i class="fad fa-user-edit"></i> {{ __("Đổi tên") }}</a>
-                        <a href="{{ url('/doi-mat-khau') }}" class="btn btn-dark showPromotion"><i class="fad fa-lock-alt"></i> {{ __("Đổi mật khẩu") }}</a>
-                        <a href="{{ url('/doi-giao-dien') }}" class="btn btn-dark showPromotion"><i class="fad fa-palette"></i> {{ __("Đổi giao diện") }}</a>
+                        <a href="{{ localized_url('app.name') }}" class="btn btn-dark showPromotion"><i class="fad fa-user-edit"></i> {{ __("Đổi tên") }}</a>
+                        <a href="{{ localized_url('app.password') }}" class="btn btn-dark showPromotion"><i class="fad fa-lock-alt"></i> {{ __("Đổi mật khẩu") }}</a>
+                        <a href="{{ localized_url('app.ui') }}" class="btn btn-dark showPromotion"><i class="fad fa-palette"></i> {{ __("Đổi giao diện") }}</a>
+
+                        <!-- Upload Image Form -->
+                        <form action="{{ route('profile.picture.upload') }}" method="POST" enctype="multipart/form-data" class="d-inline-block">
+                            @csrf
+                            <label class="btn btn-info showPromotion mb-0" style="cursor: pointer;">
+                                <i class="fad fa-upload"></i> {{ __("Đổi ảnh đại diện") }}
+                                <input type="file" name="profile_picture" class="d-none" onchange="this.form.submit()" accept="image/png, image/jpeg, image/gif">
+                            </label>
+                        </form>
+
+                        <!-- Remove Image Form -->
+                        @if(auth()->user()->profile_picture)
+                        <form action="{{ route('profile.picture.remove') }}" method="POST" class="d-inline-block">
+                            @csrf
+                            <button type="submit" class="btn btn-danger showPromotion"><i class="fad fa-trash"></i> {{ __("Xóa ảnh") }}</button>
+                        </form>
+                        @endif
                     </div>
                     @endif
                 </div>

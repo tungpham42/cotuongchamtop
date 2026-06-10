@@ -426,5 +426,19 @@ return [
             'ko' => 'ui-byeongyeong',
             'zh' => 'genggai-ui',
         ],
+        'profile.picture.upload' => [
+            'vi' => 'doi-anh-dai-dien',
+            'en' => 'upload-profile-picture',
+            'ja' => 'purofiru-gazo-appurodo',
+            'ko' => 'peulopil-sajin-eoblodeu',
+            'zh' => 'shangchuan-touxiang',
+        ],
+        'profile.picture.remove' => [
+            'vi' => 'xoa-anh-dai-dien',
+            'en' => 'remove-profile-picture',
+            'ja' => 'purofiru-gazo-sakujo',
+            'ko' => 'peulopil-sajin-sakje',
+            'zh' => 'shanchu-touxiang',
+        ],
     ],
 ];

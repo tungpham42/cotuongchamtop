@@ -712,5 +712,7 @@
     "Hệ thống": "System",
     "Đang tải": "Processing",
     "Có": "Yes",
-    "Không": "No"
+    "Không": "No",
+    "Bạn đã cập nhật ảnh đại diện thành công!": "Your profile picture has been successfully updated!",
+    "Bạn đã xóa ảnh đại diện thành công!": "You have successfully deleted your profile picture!"
 }
