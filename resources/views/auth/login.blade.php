@@ -12,10 +12,10 @@
 
                 <div class="card-body">
                     <p class="w-100 text-center">
-                        <a data-step="5" data-intro="{{ __('Đăng nhập ngay lập tức bằng tài khoản Google của bạn') }}" href="{{ url('/auth/google') }}" class="mt-0 btn btn-google btn-lg btn-danger mx-auto d-inline-block"><i class="fab fa-google"></i> {{ __('Đăng nhập bằng Google') }}</a>
-                        <a data-step="6" data-intro="{{ __('Đăng nhập ngay lập tức bằng tài khoản Zalo của bạn') }}" href="{{ url('/auth/zalo') }}" class="mt-3 mt-lg-0 ml-lg-2 btn btn-zalo btn-lg btn-info mx-auto d-inline-block"><i class="fad fa-phone-square-alt"></i> {{ __('Đăng nhập bằng Zalo') }}</a>
-                        {{-- <a data-step="6" data-intro="{{ __('Đăng nhập ngay lập tức bằng tài khoản GitHub của bạn') }}" href="{{ url('/auth/github') }}" class="mt-3 mt-lg-0 ml-lg-2 btn btn-github btn-lg btn-dark mx-auto d-inline-block"><i class="fab fa-github"></i> {{ __('Đăng nhập bằng GitHub') }}</a>
-                        <a data-step="5" data-intro="{{ __('Đăng nhập ngay lập tức bằng tài khoản Facebook của bạn') }}" href="{{ url('/auth/facebook') }}" class="mt-0 btn btn-facebook btn-lg btn-info mx-auto d-inline-block"><i class="fab fa-facebook-f"></i> {{ __('Đăng nhập bằng Facebook') }}</a>
+                        <a data-step="5" data-intro="{{ __('Đăng nhập ngay lập tức bằng tài khoản Google của bạn') }}" href="{{ url('/auth/google') }}" class="mb-2 mt-0 btn btn-google btn-lg btn-danger mx-auto d-inline-block"><i class="fab fa-google"></i> {{ __('Đăng nhập bằng Google') }}</a>
+                        <a data-step="6" data-intro="{{ __('Đăng nhập ngay lập tức bằng tài khoản Facebook của bạn') }}" href="{{ url('/auth/facebook') }}" class="mb-2 mt-0 btn btn-facebook btn-lg btn-info mx-auto d-inline-block"><i class="fab fa-facebook-f"></i> {{ __('Đăng nhập bằng Facebook') }}</a>
+                        {{-- <a data-step="6" data-intro="{{ __('Đăng nhập ngay lập tức bằng tài khoản Zalo của bạn') }}" href="{{ url('/auth/zalo') }}" class="mt-3 mt-lg-0 ml-lg-2 btn btn-zalo btn-lg btn-info mx-auto d-inline-block"><i class="fad fa-phone-square-alt"></i> {{ __('Đăng nhập bằng Zalo') }}</a>
+                        <a data-step="6" data-intro="{{ __('Đăng nhập ngay lập tức bằng tài khoản GitHub của bạn') }}" href="{{ url('/auth/github') }}" class="mt-3 mt-lg-0 ml-lg-2 btn btn-github btn-lg btn-dark mx-auto d-inline-block"><i class="fab fa-github"></i> {{ __('Đăng nhập bằng GitHub') }}</a>
                         <a data-step="6" data-intro="{{ __('Đăng nhập ngay lập tức bằng tài khoản Google của bạn') }}" href="{{ url('/auth/google') }}" class="mt-3 mt-lg-0 ml-lg-2 btn btn-google btn-lg btn-danger mx-auto d-inline-block"><i class="fab fa-google"></i> {{ __('Đăng nhập bằng Google') }}</a> --}}
                     </p>
                     {{-- <p class="w-100 text-center">
