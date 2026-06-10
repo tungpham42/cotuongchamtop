@@ -155,7 +155,6 @@
                       </a>
                     </div>
                   </div>
-
                 </div>
               </div>
             </div>
@@ -179,6 +178,7 @@
               @yield('rightSide')
             </div>
           </div>
+          @include('common.adsenseBetween')
           @elseif ( !$roomCode && isset($slug) )
           <div class="puzzle-layout-wrapper">
             <div class="puzzle-layout-board">
@@ -191,6 +191,7 @@
               @yield('rightSide')
             </div>
           </div>
+          @include('common.adsenseBetween')
           @else
           <div class="row">
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
@@ -203,6 +204,7 @@
               {{-- @include('common.sideAds') --}}
             </div>
           </div>
+          @include('common.adsenseBetween')
           @endif
           <div class="row">
             <div class="col-12">
