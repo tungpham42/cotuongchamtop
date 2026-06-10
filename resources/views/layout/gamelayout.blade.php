@@ -58,6 +58,7 @@
   <body class="{{ $bodyClass }}">
     @include('common.afterBody')
     @include('common.scripts')
+    @include('common.adsenseTop')
     @include('layout.partials.header')
     @include('layout.partials.analysisModal')
     @if (session('status'))

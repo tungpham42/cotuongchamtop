@@ -20,6 +20,7 @@
 <body class="{{ $bodyClassToApply }}">
     @include('common.afterBody')
     <div id="app">
+        @include('common.adsenseTop')
         @include('layout.partials.app.header')
         <input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ url('/') }}" >
         @include('common.themes')

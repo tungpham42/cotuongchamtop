@@ -7,6 +7,7 @@
     @include('common.afterBody')
     @include('common.scripts')
     @include('common.themes')
+    @include('common.adsenseTop')
     @include('layout.partials.header')
     @if (session('status'))
       <div class="container">
