@@ -2395,3 +2395,7 @@ div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(3) {
         inset 0 2px 8px var(--liquid-highlight),
         inset 0 -2px 8px rgba(0, 0, 0, 0.4);
 }
+
+#tourBtn {
+    display: none !important;
+}
