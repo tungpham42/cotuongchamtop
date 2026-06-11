@@ -1190,6 +1190,15 @@ body.register .btn-google {
     z-index: -1;
 }
 
+.btn-google::before {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(26, 115, 232, 0.4),
+        transparent
+    ) !important;
+}
+
 .btn-social:hover::before {
     left: 150%;
 }
