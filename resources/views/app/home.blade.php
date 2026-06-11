@@ -67,7 +67,7 @@
                                 @foreach($playingRooms as $room)
                                 <tr data-code="{{ $room->code }}" data-fen="{{ $room->fen }}" data-name="{{ $room->name }}">
                                     <td class="text-center room-code">
-                                        <span><a class="animate text-gold" href="{{ url('/phong/') }}/{{ $room->code }}/theo-doi">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></span>
+                                        <span><a class="animate text-gold" href="{{ localized_url('room.watch', ['code' => $room->code]) }}">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></span>
                                     </td>
                                     <td class="text-center host-name">
                                         {!! app('App\Http\Controllers\UserController')::renderPlayerName($room->host_id) !!}
@@ -152,7 +152,7 @@
                                     }
                                 },
                                 callback: function(){
-                                    window.location.href = '{{ url('/phong/') }}' + '/' + roomCode + '/khach';
+                                    window.location.href = '{{ url(__('/phong/')) }}' + '/' + roomCode + '{{ __('/khach') }}';
                                 }
                             });
                         });
@@ -169,7 +169,7 @@
                                 }
                             },
                             callback: function(){
-                                window.location.href = '{{ url('/phong/') }}' + '/' + roomCode + '/khach';
+                                window.location.href = '{{ url(__('/phong/')) }}' + '/' + roomCode + '{{ __('/khach') }}';
                             }
                         });
                     } else if (hostId == '{{ auth()->id() }}') {
@@ -185,7 +185,7 @@
                                 }
                             },
                             callback: function(){
-                                window.location.href = '{{ url('/phong/') }}' + '/' + roomCode;
+                                window.location.href = '{{ url(__('/phong/')) }}' + '/' + roomCode;
                             }
                         });
                     }

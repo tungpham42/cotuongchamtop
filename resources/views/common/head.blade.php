@@ -32,12 +32,12 @@
     @isset($langViUrl)<link rel="alternate" hreflang="x-default" href="{{ url($langViUrl) }}" />@endisset
 @endisset
 
-<link rel="apple-touch-icon" href="{{ url('/') }}/img/app-icons/apple-touch-icon-iphone-game.png">
-<link rel="apple-touch-icon" sizes="76x76" href="{{ url('/') }}/img/app-icons/apple-touch-icon-ipad-game.png">
-<link rel="apple-touch-icon" sizes="120x120" href="{{ url('/') }}/img/app-icons/apple-touch-icon-iphone-retina-game.png">
-<link rel="apple-touch-icon" sizes="152x152" href="{{ url('/') }}/img/app-icons/apple-touch-icon-ipad-retina-game.png">
-<link rel="icon" sizes="32x32" href="{{ url('/') }}/img/favicon-32x32-game.png" >
-<link rel="stylesheet" href="{{ url('/') }}/css/fa/css/all.min.css" >
+<link rel="apple-touch-icon" href="{{ asset('img/app-icons/apple-touch-icon-iphone-game.png') }}">
+<link rel="apple-touch-icon" sizes="76x76" href="{{ asset('img/app-icons/apple-touch-icon-ipad-game.png') }}">
+<link rel="apple-touch-icon" sizes="120x120" href="{{ asset('img/app-icons/apple-touch-icon-iphone-retina-game.png') }}">
+<link rel="apple-touch-icon" sizes="152x152" href="{{ asset('img/app-icons/apple-touch-icon-ipad-retina-game.png') }}">
+<link rel="icon" sizes="32x32" href="{{ asset('img/favicon-32x32-game.png') }}" >
+<link rel="stylesheet" href="{{ asset('css/fa/css/all.min.css') }}" >
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.2/css/bootstrap.min.css" integrity="sha512-rt/SrQ4UNIaGfDyEXZtNcyWvQeOq0QLygHluFQcSjaGB04IxWhal71tKuzP6K8eYXYB6vJV4pHkXcmFGGQ1/0w==" crossorigin="anonymous" referrerpolicy="no-referrer" >
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.6.2/yeti/bootstrap.min.css" integrity="sha512-o9NK3edLgKJjQxISJIJFMI2w1yPCyBVK0OffzNAN7j3BNt6am8T5VIq9ZblOFKdhkJhvyLWnOWslPSj1uS4MjQ==" crossorigin="anonymous" referrerpolicy="no-referrer" >
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/dataTables.bootstrap4.min.css" integrity="sha512-PT0RvABaDhDQugEbpNMwgYBCnGCiTZMh9yOzUsJHDgl/dMhD9yjHAwoumnUk3JydV3QTcIkNDuN40CJxik5+WQ==" crossorigin="anonymous" referrerpolicy="no-referrer" >
@@ -47,8 +47,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&family=Pacifico&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Roboto:ital,wght@0,100..900;1,100..900&family=Texturina:ital,opsz,wght@0,12..72,100..900;1,12..72,100..900&display=swap" rel="stylesheet">
-{{-- <link href="{{ url('/') }}/css/index.css?v=321" rel="stylesheet"> --}}
-<link href="{{ url('/') }}/css/index_new.css?v=39" rel="stylesheet">
+{{-- <link href="{{ asset('css/index.css?v=321') }}" rel="stylesheet"> --}}
+<link href="{{ asset('css/index_new.css?v=39') }}" rel="stylesheet">
 @if (!($showAds ?? true))
 <style>
   .adsense,
@@ -60,7 +60,7 @@
   }
 </style>
 @endif
-<link rel="manifest" href="{{ url('/') }}/manifest.webmanifest?v=2">
+<link rel="manifest" href="{{ asset('manifest.webmanifest?v=2') }}">
 @if ($showAds ?? true)
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3585118770961536" crossorigin="anonymous"></script>
 @endif
@@ -79,9 +79,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-WM9GZXN');</script>
 @include('common.schemaOrg')
 @if ($showAds ?? true)
-<script type="text/javascript" src="{{ url('/') }}/js/aclib.js"></script>
+<script type="text/javascript" src="{{ asset('js/aclib.js') }}"></script>
 @endif
-<script type="text/javascript" src="{{ url('/') }}/js/theme-manager.js?v=1"></script>
+<script type="text/javascript" src="{{ asset('js/theme-manager.js?v=1') }}"></script>
 
 @guest
 <script src="https://accounts.google.com/gsi/client" async defer></script>

@@ -221,7 +221,7 @@
                                                             }
                                                         },
                                                         callback: function(){
-                                                            window.location.href = '{{ url('/phong/') }}' + '/' + maPhong;
+                                                            window.location.href = '{{ url(__('/phong/')) }}' + '/' + maPhong;
                                                         }
                                                     });
                                                 });
@@ -280,7 +280,7 @@
                                 @foreach($playerRooms as $room)
                                 <tr data-code="{{ $room->code }}" data-fen="{{ $room->fen }}">
                                     <td class="text-center room-code">
-                                        <span><a class="animate text-gold" href="{{ url('/phong/') }}/{{ $room->code }}/theo-doi">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></span>
+                                        <span><a class="animate text-gold" href="{{ localized_url('room.watch', ['code' => $room->code]) }}">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></span>
                                     </td>
                                     <td class="text-center host-name">
                                         {!! app('App\Http\Controllers\UserController')::renderPlayerName($room->host_id) !!}

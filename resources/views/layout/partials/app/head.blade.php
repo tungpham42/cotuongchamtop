@@ -50,4 +50,4 @@ function get_gravatar_image_url(email, size, default_image, allowed_rating, forc
     return ("https://secure.gravatar.com/avatar/" + CryptoJS.MD5(email.toLowerCase().trim()) + "?size=" + size + "&default=" + encodeURIComponent(default_image) + "&rating=" + allowed_rating + (force_default === 'y' ? "&forcedefault=" + force_default : ''));
 }
 </script>
-<script src="{{ url('/') }}/js/xiangqiboard.js?v=31"></script>
+<script src="{{ asset('js/xiangqiboard.js?v=31') }}"></script>

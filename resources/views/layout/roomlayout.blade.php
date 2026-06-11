@@ -315,7 +315,7 @@
                               centerVertical: true,
                               closeButton: false,
                               buttons: { ok: { className: 'btn-danger', label: 'Oki' } },
-                              callback: function(){ window.location.href = '{{ url('/phong/') }}' + '/' + roomCode + '/khach'; }
+                              callback: function(){ window.location.href = '{{ url(__('/phong/')) }}' + '/' + roomCode + '{{ __('/khach') }}'; }
                             });
                           });
                         } else if (guestId == '{{ auth()->id() }}') {
@@ -325,7 +325,7 @@
                             centerVertical: true,
                             closeButton: false,
                             buttons: { ok: { className: 'btn-danger', label: 'Oki' } },
-                            callback: function(){ window.location.href = '{{ url('/phong/') }}' + '/' + roomCode + '/khach'; }
+                            callback: function(){ window.location.href = '{{ url(__('/phong/')) }}' + '/' + roomCode + '{{ __('/khach') }}'; }
                           });
                         } else if (hostId == '{{ auth()->id() }}') {
                           bootbox.alert({
@@ -334,7 +334,7 @@
                             centerVertical: true,
                             closeButton: false,
                             buttons: { ok: { className: 'btn-danger', label: 'Oki' } },
-                            callback: function(){ window.location.href = '{{ url('/phong/') }}' + '/' + roomCode; }
+                            callback: function(){ window.location.href = '{{ url(__('/phong/')) }}' + '/' + roomCode; }
                           });
                         }
                       });
@@ -423,7 +423,7 @@
                               message: "{{ __('Bạn đã tạo phòng thành công.') }}",
                               size: 'small', centerVertical: true, closeButton: false,
                               buttons: { ok: { className: 'btn-danger', label: 'Oki' } },
-                              callback: function(){ window.location.href = '{{ url('/phong/') }}' + '/' + '{{ md5(time()) }}'; }
+                              callback: function(){ window.location.href = '{{ url(__('/phong/')) }}' + '/' + '{{ md5(time()) }}'; }
                             });
                           });
                         }

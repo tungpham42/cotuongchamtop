@@ -102,7 +102,7 @@
                                             }
                                         },
                                         callback: function(){
-                                            window.location.href = '{{ url('/phong/') }}' + '/' + '{{ md5(time()) }}';
+                                            window.location.href = '{{ url(__('/phong/')) }}' + '/' + '{{ md5(time()) }}';
                                         }
                                     });
                                 });

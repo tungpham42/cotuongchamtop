@@ -25,6 +25,6 @@
 </style>
 <div class="zalo-icon">
     <a href="https://zalo.me/0368571310" target="_blank">
-        <img src="{{ url('/') }}/img/zalo.svg" alt="Zalo Chat">
+        <img src="{{ asset('img/zalo.svg') }}" alt="Zalo Chat">
     </a>
 </div>

@@ -7,22 +7,22 @@
       <div class="theme-options board-themes">
         <button class="theme-option" data-theme-type="board" data-theme="xiangqi-board" title="{{ __("Bàn cờ mặc định") }}">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/xiangqi-board.svg" alt="{{ __("Bàn cờ mặc định") }}" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-default')" />
+            <img src="{{ asset('img/xiangqiboards/xiangqi-board.svg') }}" alt="{{ __("Bàn cờ mặc định") }}" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-default')" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="board" data-theme="ban-co-go" title="{{ __("Gỗ nhạt") }}">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/ban-co-go.svg" alt="{{ __("Gỗ nhạt") }}" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-light')" />
+            <img src="{{ asset('img/xiangqiboards/ban-co-go.svg') }}" alt="{{ __("Gỗ nhạt") }}" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-light')" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="board" data-theme="wood-board" title="{{ __("Gỗ đậm") }}">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/wood-board.svg" alt="{{ __("Gỗ đậm") }}" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-dark')" />
+            <img src="{{ asset('img/xiangqiboards/wood-board.svg') }}" alt="{{ __("Gỗ đậm") }}" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-wood-dark')" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="board" data-theme="banco" title="{{ __("Sáng") }}">
           <div class="theme-preview board-preview">
-            <img src="{{ url('/') }}/img/xiangqiboards/banco.svg" alt="{{ __("Sáng") }}" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-light')" />
+            <img src="{{ asset('img/xiangqiboards/banco.svg') }}" alt="{{ __("Sáng") }}" onerror="this.style.display='none'; this.parentElement.classList.add('fallback-board-light')" />
           </div>
         </button>
       </div>
@@ -35,42 +35,42 @@
       <div class="theme-options piece-themes">
         <button class="theme-option" data-theme-type="pieces" data-theme="wiki" title="{{ __("Quân cờ mặc định") }}">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/wiki/rK.svg" alt="{{ __("Quân cờ mặc định") }}" />
+            <img src="{{ asset('img/xiangqipieces/wiki/rK.svg') }}" alt="{{ __("Quân cờ mặc định") }}" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="tung" title="{{ __("Đặc biệt") }}">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/tung/rK.svg" alt="{{ __("Đặc biệt") }}" />
+            <img src="{{ asset('img/xiangqipieces/tung/rK.svg') }}" alt="{{ __("Đặc biệt") }}" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="do-den" title="{{ __("Đỏ đen") }}">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/do-den/rK.svg" alt="{{ __("Đỏ đen") }}" />
+            <img src="{{ asset('img/xiangqipieces/do-den/rK.svg') }}" alt="{{ __("Đỏ đen") }}" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="graphic" title="{{ __("Phương Tây") }}">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/graphic/rK.svg" alt="{{ __("Phương Tây") }}" />
+            <img src="{{ asset('img/xiangqipieces/graphic/rK.svg') }}" alt="{{ __("Phương Tây") }}" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="co" title="{{ __("Cam") }}">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/co/rK.svg" alt="{{ __("Cam") }}" />
+            <img src="{{ asset('img/xiangqipieces/co/rK.svg') }}" alt="{{ __("Cam") }}" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="wikimedia" title="{{ __("Vàng đậm") }}">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/wikimedia/rK.svg" alt="{{ __("Vàng đậm") }}" />
+            <img src="{{ asset('img/xiangqipieces/wikimedia/rK.svg') }}" alt="{{ __("Vàng đậm") }}" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="quan" title="{{ __("Sáng") }}">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/quan/rK.svg" alt="{{ __("Sáng") }}" />
+            <img src="{{ asset('img/xiangqipieces/quan/rK.svg') }}" alt="{{ __("Sáng") }}" />
           </div>
         </button>
         <button class="theme-option" data-theme-type="pieces" data-theme="traditional" title="{{ __("Truyền thống") }}">
           <div class="theme-preview piece-preview">
-            <img src="{{ url('/') }}/img/xiangqipieces/traditional/rK.svg" alt="{{ __("Truyền thống") }}" />
+            <img src="{{ asset('img/xiangqipieces/traditional/rK.svg') }}" alt="{{ __("Truyền thống") }}" />
           </div>
         </button>
       </div>

@@ -68,6 +68,6 @@ $(function () {
   });
 });
 </script>
-<a href="#0" class="cd-top js-cd-top rounded" style="background-image: url('{{ url('/') }}/img/cd-top-arrow.svg');">Top</a>
-<script src="{{ url('') }}/js/to-top.js"></script>
+<a href="#0" class="cd-top js-cd-top rounded" style="background-image: url('{{ asset('img/cd-top-arrow.svg') }}');">Top</a>
+<script src="{{ asset('js/to-top.js') }}"></script>
 @include('cookie-consent::index')

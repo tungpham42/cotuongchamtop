@@ -5,7 +5,7 @@
      data-ad-client="ca-pub-3585118770961536"
      data-ad-slot="9636260713"></ins>
 <a style="width: fit-content !important;" class="aff-link d-inline-block" href="https://shop.cotuong.top/" target="_blank" data-toggle="tooltip" data-placement="top" title="Xiangqi Shop">
-    <img alt="Xiangqi Shop" class="mx-auto" src="{{ url('') }}/img/shop_300x150.webp" style="display: block;" width="300" height="150">
+    <img alt="Xiangqi Shop" class="mx-auto" src="{{ asset('img/shop_300x150.webp') }}" style="display: block;" width="300" height="150">
 </a>
 <script>
      (adsbygoogle = window.adsbygoogle || []).push({});

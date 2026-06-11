@@ -210,7 +210,7 @@ function compete(guestId) {
                           }
                         },
                         callback: function(){
-                          window.location.href = '{{ url('/phong/') }}' + '/' + maPhong;
+                          window.location.href = '{{ url(__('/phong/')) }}' + '/' + maPhong;
                         }
                       });
                     });

@@ -1,10 +1,10 @@
 {{-- @include('common.scripts') --}}
 @desktop
-<script src="{{ $cdnUrl }}/js/xiangqiboard.js?v=34"></script>
+<script src="{{ asset('js/xiangqiboard.js?v=34') }}"></script>
 @elsedesktop
-<script src="{{ $cdnUrl }}/js/xiangqiboard_mobile.js?v=3"></script>
+<script src="{{ asset('js/xiangqiboard_mobile.js?v=3') }}"></script>
 @enddesktop
-<script src="{{ url('/') }}/js/kypho.js?v=9"></script>
+<script src="{{ asset('js/kypho.js?v=9') }}"></script>
 <script>
 $.ajaxSetup({
   headers: {

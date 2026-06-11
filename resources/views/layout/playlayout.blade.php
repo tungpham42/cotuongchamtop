@@ -207,7 +207,7 @@
                                 }
                               },
                               callback: function(){
-                                window.location.href = '{{ url('/phong/') }}' + '/' + roomCode + '/khach';
+                                window.location.href = '{{ url(__('/phong/')) }}' + '/' + roomCode + '{{ __('/khach') }}';
                               }
                             });
                           });
@@ -224,7 +224,7 @@
                               }
                             },
                             callback: function(){
-                              window.location.href = '{{ url('/phong/') }}' + '/' + roomCode + '/khach';
+                              window.location.href = '{{ url(__('/phong/')) }}' + '/' + roomCode + '{{ __('/khach') }}';
                             }
                           });
                         } else if (hostId == '{{ auth()->id() }}') {
@@ -240,7 +240,7 @@
                               }
                             },
                             callback: function(){
-                              window.location.href = '{{ url('/phong/') }}' + '/' + roomCode;
+                              window.location.href = '{{ url(__('/phong/')) }}' + '/' + roomCode;
                             }
                           });
                         }
@@ -357,7 +357,7 @@
                                     }
                                   },
                                   callback: function(){
-                                    window.location.href = '{{ url('/phong/') }}' + '/' + '{{ md5(time()) }}';
+                                    window.location.href = '{{ url(__('/phong/')) }}' + '/' + '{{ md5(time()) }}';
                                   }
                                 });
                               });

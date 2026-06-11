@@ -4,7 +4,7 @@
   <div class="container p-3">
     <h2 class="h1-responsivefooter text-center my-4">Danh sách phòng</h2>
     <p class="w-100 text-center my-1">
-      <a id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ url('/') }}/phong/{{ md5(time()) }}" class="btn btn-success btn-lg"><i class="fad fa-plus-circle"></i> Tạo phòng mới</a>
+      <a id="tao-phong" data-phong="{{ md5(time()) }}" data-url="{{ localized_url('room.host', ['code' => md5(time())]) }}" class="btn btn-success btn-lg"><i class="fad fa-plus-circle"></i> Tạo phòng mới</a>
     </p>
     <div class="table-responsive">
       <table id="danh-sach-phong" class="table table-bordered table-hover table-striped table-sm">

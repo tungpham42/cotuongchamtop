@@ -18,7 +18,7 @@
   <div class="input-group-prepend">
     <span class="input-group-text" id="url-addon-black"><i class="fal fa-copy"></i></span>
   </div>
-  <input data-step="1" data-intro="{{ __("Ấn vào đây để mời bạn bè cùng chơi") }}" type="text" class="form-control" id="url-black" value="{{ url('/') }}/phong/{{ $roomCode }}/khach">
+  <input data-step="1" data-intro="{{ __("Ấn vào đây để mời bạn bè cùng chơi") }}" type="text" class="form-control" id="url-black" value="{{ localized_url('room.guest', ['code' => $roomCode]) }}">
 </div>
 <p id="room-code" class="w-100 text-center mt-0 mb-1">
   <span data-step="2" data-intro="{{ __("Dùng mã phòng này để tìm kiếm trận đấu") }}" class="alert alert-dark d-inline-block" role="alert" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ __("Sao chép mã phòng này nhé") }}"><i class="fad fa-trophy-alt"></i> {{ __("Mã phòng") }}: <strong style="cursor: pointer;">{{ $roomCode }}</strong></span>
@@ -99,7 +99,7 @@ $(document).ready(function() {
                 }
               },
               callback: function () {
-                window.location.href = '{{ url('/') }}';
+                window.location.href = '{{ localized_url('ai.home') }}';
               }
             });
           }
@@ -117,7 +117,7 @@ $(document).ready(function() {
             }
           },
           callback: function () {
-            window.location.href = '{{ url('/') }}';
+            window.location.href = '{{ localized_url('ai.home') }}';
           }
         });
       }

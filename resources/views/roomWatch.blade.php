@@ -20,9 +20,9 @@
 @if (!isset($room->host_id) && !isset($room->result))
 <p class="w-100 text-center">
   @if (str_contains($room->fen, ' r '))
-  <a data-step="2" data-intro="{{ __("Ấn vào đây để vào ván đấu khi đến lượt bạn") }}" id="join-link" class="btn btn-danger text-light btn-lg showPromotion" href="{{ url('/') }}/phong/{{ $roomCode }}" data-toggle="tooltip" data-placement="top" title="{{ __("Đến lược bạn đi") }}"><i class="fad fa-sign-in-alt"></i> {{ __("Vào trận") }}</a>
+  <a data-step="2" data-intro="{{ __("Ấn vào đây để vào ván đấu khi đến lượt bạn") }}" id="join-link" class="btn btn-danger text-light btn-lg showPromotion" href="{{ localized_url('room.host', ['code' => $roomCode]) }}" data-toggle="tooltip" data-placement="top" title="{{ __("Đến lược bạn đi") }}"><i class="fad fa-sign-in-alt"></i> {{ __("Vào trận") }}</a>
   @elseif (str_contains($room->fen, ' b '))
-  <a data-step="2" data-intro="{{ __("Ấn vào đây để vào ván đấu khi đến lượt bạn") }}" id="join-link" class="btn btn-dark text-light btn-lg showPromotion" href="{{ url('/') }}/phong/{{ $roomCode }}/khach" data-toggle="tooltip" data-placement="top" title="{{ __("Đến lược bạn đi") }}"><i class="fad fa-sign-in-alt"></i> {{ __("Vào trận") }}</a>
+  <a data-step="2" data-intro="{{ __("Ấn vào đây để vào ván đấu khi đến lượt bạn") }}" id="join-link" class="btn btn-dark text-light btn-lg showPromotion" href="{{ localized_url('room.guest', ['code' => $roomCode]) }}" data-toggle="tooltip" data-placement="top" title="{{ __("Đến lược bạn đi") }}"><i class="fad fa-sign-in-alt"></i> {{ __("Vào trận") }}</a>
   @endif
 </p>
 @else

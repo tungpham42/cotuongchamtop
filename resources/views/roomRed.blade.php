@@ -58,7 +58,7 @@ $(document).ready(function() {
                 }
               },
               callback: function () {
-                window.location.href = '{{ url('/') }}';
+                window.location.href = '{{ localized_url('ai.home') }}';
               }
             });
           }
@@ -76,7 +76,7 @@ $(document).ready(function() {
             }
           },
           callback: function () {
-            window.location.href = '{{ url('/') }}';
+            window.location.href = '{{ localized_url('ai.home') }}';
           }
         });
       }
