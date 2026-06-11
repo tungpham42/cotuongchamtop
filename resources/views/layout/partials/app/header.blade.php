@@ -82,7 +82,7 @@
                 @if (Auth::user()->isStandard())
                   <span class="dropdown-item text-success"><i class="far fa-crown"></i> {{ __("Standard (ẩn quảng cáo)") }}</span>
                 @else
-                  <a href="{{ localized_url('app.profile') }}#standard-plan" class="showPromotion dropdown-item text-danger">
+                  <a href="{{ localized_url('app.profile') }}#standard-plan" class="showPromotion dropdown-item">
                     <i class="far fa-crown"></i> {{ __("Nâng cấp Standard") }}
                   </a>
                 @endif
@@ -95,7 +95,7 @@
 
                 <div class="dropdown-divider"></div>
 
-                <a class="dropdown-item text-danger" href="{{ route('logout') }}"
+                <a class="dropdown-item" href="{{ route('logout') }}"
                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                   <i class="far fa-sign-out"></i> {{ __('Logout') }}
                 </a>

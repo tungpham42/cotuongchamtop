@@ -66,7 +66,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 @if (Auth::user()->isStandard())
                   <span class="dropdown-item text-success"><i class="far fa-crown"></i> {{ __("Standard (ẩn quảng cáo)") }}</span>
                 @else
-                  <a href="{{ localized_url('app.profile') }}#standard-plan" class="showPromotion dropdown-item text-danger">
+                  <a href="{{ localized_url('app.profile') }}#standard-plan" class="showPromotion dropdown-item">
                     <i class="far fa-crown"></i> {{ __("Nâng cấp Standard") }}
                   </a>
                 @endif
@@ -76,7 +76,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <a href="{{ localized_url('app.ui') }}" class="showPromotion dropdown-item{{ url()->current() == localized_url('app.ui') ? ' active disabled' : '' }}"><i class="far fa-palette"></i> {{ __("Đổi giao diện") }}</a>
                 <a href="{{ localized_url('app.password') }}" class="showPromotion dropdown-item{{ url()->current() == localized_url('app.password') ? ' active disabled' : '' }}"><i class="far fa-lock-alt"></i> {{ __("Đổi mật khẩu") }}</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item text-danger" href="{{ route('logout') }}"
+                <a class="dropdown-item" href="{{ route('logout') }}"
                   onclick="event.preventDefault();
                                 document.getElementById('logout-form').submit();">
                   <i class="far fa-sign-out"></i> {{ __('Logout') }}
