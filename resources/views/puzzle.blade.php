@@ -52,7 +52,7 @@
   <div class="input-group-prepend">
     <span class="input-group-text" id="url-addon"><i class="fal fa-copy"></i></span>
   </div>
-  <input data-step="6" data-intro="Ấn vào đây để mời bạn bè cùng chơi" type="text" class="form-control" id="url" value="{{ url('/') }}{{ __('/co-the/')' }}{{ $board }}">
+  <input data-step="6" data-intro="Ấn vào đây để mời bạn bè cùng chơi" type="text" class="form-control" id="url" value="{{ url('/') }}{{ __('/co-the/') }}{{ $board }}">
 </div>
 <script>
 $('#copy-url').on('click', function() {
