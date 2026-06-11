@@ -172,40 +172,38 @@
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-1">
               <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
               @include('layout.partials.themeSelector')
-              @include('layout.partials.analyzeBtn')
+              {{-- @include('layout.partials.analyzeBtn') --}}
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-auto">
               @yield('rightSide')
             </div>
           </div>
-          @include('common.adsenseBetween')
           @elseif ( !$roomCode && isset($slug) )
           <div class="puzzle-layout-wrapper">
             <div class="puzzle-layout-board">
               <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
               @include('layout.partials.themeSelector')
-              @include('layout.partials.analyzeBtn')
+              {{-- @include('layout.partials.analyzeBtn') --}}
               @yield('belowBoardExtras')
             </div>
             <div class="puzzle-layout-panel">
               @yield('rightSide')
             </div>
           </div>
-          @include('common.adsenseBetween')
           @else
           <div class="row">
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
               <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
               @include('layout.partials.themeSelector')
-              @include('layout.partials.analyzeBtn')
+              {{-- @include('layout.partials.analyzeBtn') --}}
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-5 mt-sm-5 mt-xs-5">
               @include('layout.partials.comments')
               {{-- @include('common.sideAds') --}}
             </div>
           </div>
-          @include('common.adsenseBetween')
           @endif
+          @include('common.adsenseBetween')
           <div class="row">
             <div class="col-12">
               @if ( $roomCode != '' )
@@ -461,7 +459,7 @@
       </div>
       {{-- @include('layout.partials.fb') --}}
     </main>
-    @include('layout.partials.aiChatWidget')
+    {{-- @include('layout.partials.aiChatWidget') --}}
     @include('layout.partials.footer')
     @include('common.contactBtn')
   </body>
