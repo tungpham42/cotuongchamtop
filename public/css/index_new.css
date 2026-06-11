@@ -1143,58 +1143,113 @@ body.setup #ban-co {
 }
 
 /* ==========================================================================
-   TIỆN ÍCH KHÁC (Socials, Highlights, Toggles)
+   REDESIGNED SOCIAL BUTTONS (LIQUID GLASS THEME - INLINE)
    ========================================================================== */
 body.login .btn-facebook,
 body.login .btn-google,
-body.login .btn-github,
-body.login .btn-linkedin,
-body.login .btn-gitlab,
-body.login .btn-bitbucket,
-body.login .btn-zalo {
-    width: 350px;
-}
 body.register .btn-facebook,
-body.register .btn-google,
-body.register .btn-github,
-body.register .btn-linkedin,
-body.register .btn-gitlab,
-body.register .btn-bitbucket,
-body.register .btn-zalo {
-    width: 280px;
+body.register .btn-google {
+    /* Allow buttons to share the same line */
+    width: auto;
+    flex: 1;
+    min-width: 200px;
+    max-width: 300px;
 }
 
-/* Chỉnh nút mxh vuông vắn, cứng cáp hơn */
-.btn-facebook,
-.btn-google,
-.btn-github,
-.btn-linkedin,
-.btn-gitlab,
-.btn-bitbucket,
-.btn-zalo {
-    border-radius: 2px !important;
+.btn-social {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px 20px;
+    overflow: hidden;
     font-weight: 600;
     letter-spacing: 0.5px;
+    border-radius: 8px !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1;
 }
-.btn-facebook {
-    background-color: #3b5998 !important;
-    border: 1px solid #3b5998 !important;
-    color: #fff !important;
+
+/* Liquid sheen reflection effect */
+.btn-social::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 150%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent
+    );
+    transform: skewX(-20deg);
+    transition: all 0.6s ease;
+    z-index: -1;
 }
+
+.btn-social:hover::before {
+    left: 150%;
+}
+
+.btn-social:hover {
+    transform: translateY(-3px) scale(1.02);
+}
+
+/* SVG icon levitation */
+.btn-social svg {
+    width: 22px;
+    height: 22px;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.15));
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-social:hover svg {
+    transform: scale(1.15) rotate(-5deg);
+}
+
+/* Google Button - Official White */
 .btn-google {
-    background-color: #ea4335 !important;
-    border: 1px solid #ea4335 !important;
-    color: #fff !important;
+    background-color: #ffffff !important;
+    border: 1px solid #dadce0 !important;
+    color: #3c4043 !important;
+    box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.3),
+        inset 0 2px 4px rgba(255, 255, 255, 0.8) !important;
 }
-.btn-github {
-    background-color: #222 !important;
-    border: 1px solid #000 !important;
-    color: #fff !important;
+
+.btn-google:hover {
+    background-color: #f8f9fa !important;
+    border-color: #d2e3fc !important;
+    box-shadow:
+        0 10px 20px rgba(0, 0, 0, 0.5),
+        0 0 15px rgba(255, 255, 255, 0.2) !important;
+    color: #1a73e8 !important;
 }
-.btn-zalo {
-    background-color: #0067ff !important;
-    border: 1px solid #0067ff !important;
-    color: #fff !important;
+
+/* Facebook Button - Official Blue (#1877F2) */
+.btn-facebook {
+    background-color: #1877f2 !important;
+    border: 1px solid #1877f2 !important;
+    color: #ffffff !important;
+    box-shadow:
+        0 4px 10px rgba(24, 119, 242, 0.4),
+        inset 0 2px 4px rgba(255, 255, 255, 0.3) !important;
+}
+
+.btn-facebook:hover {
+    background-color: #166fe5 !important;
+    border-color: #166fe5 !important;
+    box-shadow:
+        0 10px 20px rgba(24, 119, 242, 0.6),
+        0 0 20px rgba(24, 119, 242, 0.4) !important;
+    color: #ffffff !important;
+}
+
+.social-wrapper {
+    gap: 24px;
 }
 
 a.animate {
