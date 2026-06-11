@@ -506,7 +506,7 @@ $localizedAppPages = [
         'middleware' => [],
         'titles' => ['vi' => 'Bảng xếp hạng', 'en' => 'Ranking', 'ja' => 'ランキング', 'ko' => '순위표', 'zh' => '排行榜'],
         'data' => fn() => [
-            'bodyClass' => 'dashboard',
+            'bodyClass' => 'trophy',
             'users' => UserController::getUsers(),
             'matchRooms' => RoomController::getMatchRooms(),
             'rankUsers' => UserController::getRankUsers()

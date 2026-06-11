@@ -483,6 +483,8 @@ footer ul li {
     margin-bottom: 0.7em;
 }
 body.home footer a.home,
+body.dashboard footer a.dashboard,
+body.trophy footer a.trophy,
 body.puzzle footer a.puzzle,
 body.setup footer a.setup,
 body.about footer a.about,
