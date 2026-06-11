@@ -792,33 +792,92 @@ body.register main {
     max-height: 420px;
 }
 
+/* ==========================================================================
+   LIQUID GLASS PAGINATION
+   ========================================================================== */
 .page-link {
-    background-color: var(--royal-bg) !important;
-    border-color: var(--royal-border) !important;
+    background: var(--glass-bg-dark) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border) !important;
     color: var(--royal-gold-light) !important;
+    box-shadow:
+        var(--liquid-shadow),
+        inset 0 2px 5px var(--liquid-highlight) !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-weight: 600;
 }
-.page-item.active .page-link {
-    background-color: var(--royal-red) !important;
-    border-color: var(--royal-gold) !important;
-    color: var(--royal-gold) !important;
-}
+
+/* Hover State - Dynamic Translucent Gradient & Glossy Reflection */
 .page-link:hover,
 .bg-dark.page-link:hover {
-    background-color: var(--royal-red) !important;
-    border-color: var(--royal-gold) !important;
+    background: linear-gradient(
+        90deg,
+        rgba(138, 21, 21, 0.15),
+        rgba(138, 21, 21, 0.75),
+        rgba(138, 21, 21, 0.15)
+    ) !important;
+    border-color: rgba(255, 215, 0, 0.6) !important;
     color: var(--royal-gold) !important;
+    text-shadow: 0 0 8px rgba(212, 175, 55, 0.8);
+    box-shadow:
+        inset 0 2px 8px var(--liquid-highlight),
+        inset 0 -2px 8px rgba(0, 0, 0, 0.4),
+        0 4px 15px rgba(212, 175, 55, 0.25) !important;
+    transform: translateY(-2px);
+    z-index: 2;
 }
+
+/* Active State - Solid Liquid Gold */
+.page-item.active .page-link {
+    background: linear-gradient(
+        to right,
+        var(--royal-gold),
+        #b89020
+    ) !important;
+    border-color: var(--royal-gold) !important;
+    color: var(--royal-bg) !important; /* High contrast ebony text */
+    text-shadow: none;
+    box-shadow:
+        inset 0 0 10px rgba(0, 0, 0, 0.5),
+        0 0 15px rgba(212, 175, 55, 0.4) !important;
+    transform: translateY(0);
+    z-index: 3;
+}
+
+/* Disabled State - Dimmed Wood/Ebony */
 .page-item.disabled .page-link {
-    background-color: #1a1c23;
-    border-color: #1a1c23;
-    color: var(--royal-gold-light) !important;
+    background: rgba(11, 12, 16, 0.8) !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: rgba(212, 175, 55, 0.1) !important;
+    color: rgba(255, 242, 204, 0.4) !important; /* Faded royal-gold-light */
+    box-shadow: none !important;
     cursor: not-allowed;
+    transform: none;
 }
+
+/* Focus State - Golden Aura */
 .page-link:focus,
 .bg-dark.page-link:focus,
 .form-check-input:focus {
     border-color: var(--royal-gold) !important;
-    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25) !important;
+    outline: 0;
+    box-shadow:
+        0 0 0 0.25rem rgba(212, 175, 55, 0.3),
+        inset 0 2px 5px var(--liquid-highlight) !important;
+    z-index: 3;
+}
+
+/* Spacing and Border Radius for Page Items */
+.page-item:first-child .page-link {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.page-item:last-child .page-link {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
 /* ==========================================================================
