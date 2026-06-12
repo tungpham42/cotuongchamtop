@@ -405,14 +405,14 @@ foreach ($localizedRoomPages as $pageKey => $roomPage) {
 
       // --- ANTI-CHEAT: Prevent re-entering finished rooms as a player ---
       if (!is_null($room->result)) {
-        if (in_array($pageKey, ['room.host', 'room.guest', 'room.red', 'room.black'])) {
+        if (in_array($pageKey, ['room.host', 'room.guest', 'room.red', 'room.black', 'room.random'])) {
           return redirect()->to(localized_path('room.watch', ['code' => $code], $locale));
         }
       }
 
       // --- ANTI-CHEAT: Prevent re-entering finished tournament rooms as a player ---
       if (!is_null($room->tournament_id) && !is_null($room->result)) {
-        if (in_array($pageKey, ['room.host', 'room.guest', 'room.red', 'room.black'])) {
+        if (in_array($pageKey, ['room.host', 'room.guest', 'room.red', 'room.black', 'room.random'])) {
           abort(403, __('Trận đấu giải này đã kết thúc. Bạn chỉ có thể xem lại ở chế độ theo dõi.'));
         }
       }
