@@ -408,6 +408,11 @@ class RoomController extends Controller
         $code = $request->input('ma-phong');
         $result = $request->input('result');
         $auth_id = auth()->id() ?? $request->input('id');
+        $lang = $request->input('lang');
+
+        if ($lang) {
+            app()->setLocale($lang);
+        }
 
         $roomData = Room::select('host_id', 'guest_id', 'result', 'name', 'tournament_id', 'next_room_code', 'tournament_round')
             ->where('code', $code)
@@ -471,7 +476,6 @@ class RoomController extends Controller
             $success_message = __('You are not authorized to update this room.');
         }
 
-        // FIX: Change 'message' to 'success' to match the frontend expectations: message: data.success
         return response()->json([
             'success' => $success_message
         ]);

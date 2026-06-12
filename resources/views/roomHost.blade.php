@@ -219,7 +219,8 @@ function updateResult(roomCode, result) {
     data: {
       'ma-phong': roomCode,
       'result': result,
-      'id': '{{ auth()->id() }}'
+      'id': '{{ auth()->id() }}',
+      'lang': '{{ __('vi') }}'
     },
     dataType: 'json'
   }).done(function(data) {
