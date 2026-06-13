@@ -70,11 +70,23 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
+        // 1. Log the user out
         Auth::logout();
 
-        $previousUrl = $this->redirectTo();
-        Session::put('previousUrl', url()->previous());
+        // 2. Invalidate the session and regenerate the CSRF token for security
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
+        // 3. Determine the localized home page as a fallback
+        $locale = app()->getLocale();
+        $localizedHome = ($locale === 'vi') ? '/' : '/' . $locale;
+
+        // 4. Get the URL they clicked logout from (ignore if it's the logout route itself)
+        $previousUrl = url()->previous() && url()->previous() !== url('/logout')
+            ? url()->previous()
+            : $localizedHome;
+
+        // 5. Redirect with success message
         return Redirect::to($previousUrl)->with('success', __('Bạn đã đăng xuất thành công!'));
     }
 
