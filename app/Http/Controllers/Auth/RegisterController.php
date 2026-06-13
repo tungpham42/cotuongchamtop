@@ -3,21 +3,30 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Session;
 
 class RegisterController extends Controller
 {
     use RegistersUsers;
 
-    protected $redirectTo = RouteServiceProvider::HOME;
-
     public function __construct()
     {
         $this->middleware('guest');
+    }
+
+    /**
+     * Dynamically determines the redirect path after registration.
+     */
+    public function redirectTo()
+    {
+        $locale = app()->getLocale();
+        $localizedHome = ($locale === 'vi') ? '/' : '/' . $locale;
+
+        return Session::get('previousUrl', $localizedHome);
     }
 
     /**
