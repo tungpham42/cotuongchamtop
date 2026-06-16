@@ -190,6 +190,12 @@ $localizedTournamentPages = [
         'methods' => ['put'],
         'middleware' => ['auth', 'tournament.creator'], // Protected
     ],
+    'tournaments.cancel' => [
+        'action' => [TournamentController::class, 'cancel'],
+        'params' => ['slug' => '{slug}'],
+        'methods' => ['post'],
+        'middleware' => ['auth', 'tournament.creator'],
+    ],
     'tournaments.destroy' => [
         'action' => [TournamentController::class, 'destroy'],
         'params' => ['slug' => '{slug}'],

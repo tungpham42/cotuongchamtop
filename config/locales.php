@@ -398,6 +398,13 @@ return [
             'ko' => 'admin/toneomeonteu/{slug}',
             'zh' => 'admin/jinbiaosai/{slug}',
         ],
+        'tournaments.cancel' => [
+            'vi' => 'admin/giai-dau/{slug}/huy',
+            'en' => 'admin/tournaments/{slug}/cancel',
+            'ja' => 'admin/tonamento/{slug}/kyanseru',
+            'ko' => 'admin/toneomeonteu/{slug}/chuiseo',
+            'zh' => 'admin/jinbiaosai/{slug}/quxiao',
+        ],
         'tournaments.destroy' => [
             'vi' => 'admin/giai-dau/{slug}',
             'en' => 'admin/tournaments/{slug}',

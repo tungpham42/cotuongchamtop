@@ -49,6 +49,7 @@
                                     <option value="open" {{ $tournament->status == 'open' ? 'selected' : '' }}>{{ __('Mở đăng ký') }}</option>
                                     <option value="in_progress" {{ $tournament->status == 'in_progress' ? 'selected' : '' }}>{{ __('Đang diễn ra') }}</option>
                                     <option value="completed" {{ $tournament->status == 'completed' ? 'selected' : '' }}>{{ __('Đã kết thúc') }}</option>
+                                    <option value="cancelled" {{ $tournament->status == 'cancelled' ? 'selected' : '' }}>{{ __('Đã hủy') }}</option>
                                 </select>
                             </div>
                         </div>

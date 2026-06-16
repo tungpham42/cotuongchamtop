@@ -13,14 +13,18 @@
     </div>
 
     <div class="card shadow-lg mb-4" style="border-radius: 4px; background: rgba(28, 17, 10, 0.85); border: 2px solid var(--royal-gold); overflow: hidden;">
-
         @if($tournament->cover_photo)
             <div style="width: 100%; aspect-ratio: 16/9; background-image: url('{{ asset('storage/' . $tournament->cover_photo) }}'); background-size: cover; background-position: center; border-bottom: 2px solid var(--royal-gold);">
             </div>
         @endif
 
         <div class="card-body p-4">
-            <h2 style="color: var(--royal-gold); font-family: 'Texturina', serif; text-transform: uppercase; letter-spacing: 1px;">{{ $tournament->name }}</h2>
+            <h2 style="color: var(--royal-gold); font-family: 'Texturina', serif; text-transform: uppercase; letter-spacing: 1px;">
+                {{ $tournament->name }}
+                @if($tournament->status === 'cancelled')
+                    <span class="badge ml-2" style="font-size: 14px; vertical-align: middle; background: #5c0a0a; color: #ffb7b2; border: 1px solid var(--royal-red);">{{ __('Đã Hủy') }}</span>
+                @endif
+            </h2>
             <p style="color: var(--royal-gold-light);">{{ $tournament->description }}</p>
 
             <div class="row mt-4" style="color: #aa8c4a;">
@@ -47,10 +51,11 @@
                         @php
                             $isJoined = $tournament->users->contains(auth()->id());
                             $isOpen = $tournament->status === 'open';
+                            $isCancelled = $tournament->status === 'cancelled';
                             $isFull = $tournament->users->count() >= $tournament->max_players;
                         @endphp
 
-                        @if($isJoined)
+                        @if($isJoined && !$isCancelled)
                             <button class="btn d-inline-block" disabled style="background: var(--royal-wood); color: var(--royal-gold-light); opacity: 0.8; border: 1px solid var(--royal-gold);">
                                 <i class="fad fa-check-circle" style="color: var(--royal-gold);"></i> {{ __('Đã tham gia') }}
                             </button>
@@ -67,8 +72,10 @@
                             </button>
                         @endif
 
-                        @if(auth()->check() && (auth()->user()->is_admin || $tournament->user_id === auth()->id()))
+                        {{-- Action Buttons cho Creator/Admin --}}
+                        @if(auth()->user()->is_admin || $tournament->user_id === auth()->id())
                             <span style="color: var(--royal-wood);" class="mx-2">|</span>
+
                             @if($isOpen && $tournament->users->count() >= 2)
                             <form action="{{ localized_url('tournaments.generate', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block">
                                 @csrf
@@ -82,13 +89,33 @@
                                 <i class="fad fa-edit"></i>
                             </a>
 
-                            <form action="{{ localized_url('tournaments.destroy', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block delete-form">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger font-weight-bold" style="border-radius: 4px;">
-                                    <i class="fad fa-trash-alt"></i>
-                                </button>
-                            </form>
+                            {{-- Logic Xóa hoặc Hủy --}}
+                            @if($tournament->status === 'open')
+                                @if($tournament->users->count() <= 1)
+                                    <form action="{{ localized_url('tournaments.destroy', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block delete-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger font-weight-bold" style="border-radius: 4px;" title="{{ __('Xóa vĩnh viễn') }}">
+                                            <i class="fad fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                @else
+                                    <form action="{{ localized_url('tournaments.cancel', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block cancel-form">
+                                        @csrf
+                                        <button type="submit" class="btn btn-warning font-weight-bold" style="border-radius: 4px; background: #c27a29; color: #fff; border: 1px solid #fff;" title="{{ __('Hủy giải đấu') }}">
+                                            <i class="fad fa-ban"></i>
+                                        </button>
+                                    </form>
+                                @endif
+                            @elseif($tournament->status === 'cancelled')
+                                <form action="{{ localized_url('tournaments.destroy', ['slug' => $tournament->slug]) }}" method="POST" class="d-inline-block delete-form">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger font-weight-bold" style="border-radius: 4px;" title="{{ __('Xóa vĩnh viễn (Đã Hủy)') }}">
+                                        <i class="fad fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            @endif
                         @endif
                     @else
                         <div class="d-inline-flex align-items-center p-2 shadow" style="background: #2a1910; border-radius: 4px; border: 1px solid var(--royal-gold);">
@@ -220,26 +247,33 @@
 <script>
     $(document).ready(function() {
         $('.delete-form').on('submit', function(e) {
-            e.preventDefault(); // Prevent the form from submitting immediately
+            e.preventDefault();
             var form = this;
-
             bootbox.confirm({
-                message: "{{ __('Bạn có chắc chắn muốn xóa giải đấu này không?') }}",
+                message: "{{ __('Giải đấu sẽ bị xóa vĩnh viễn khỏi hệ thống. Bạn có chắc chắn?') }}",
                 centerVertical: true,
                 buttons: {
-                    confirm: {
-                        label: '{{ __("Có") }}',
-                        className: 'btn-danger'
-                    },
-                    cancel: {
-                        label: '{{ __("Không") }}',
-                        className: 'btn-dark'
-                    }
+                    confirm: { label: '{{ __("Có, Xóa") }}', className: 'btn-danger' },
+                    cancel: { label: '{{ __("Hủy thao tác") }}', className: 'btn-dark' }
                 },
                 callback: function(result) {
-                    if (result) {
-                        form.submit(); // Submit the form if the user clicks "Có"
-                    }
+                    if (result) form.submit();
+                }
+            });
+        });
+
+        $('.cancel-form').on('submit', function(e) {
+            e.preventDefault();
+            var form = this;
+            bootbox.confirm({
+                message: "{{ __('Giải đấu này đã có người đăng ký. Bạn có chắc chắn muốn Hủy giải đấu này không? Trạng thái sẽ chuyển thành Đã Hủy.') }}",
+                centerVertical: true,
+                buttons: {
+                    confirm: { label: '{{ __("Có, Hủy giải") }}', className: 'btn-warning' },
+                    cancel: { label: '{{ __("Giữ lại") }}', className: 'btn-dark' }
+                },
+                callback: function(result) {
+                    if (result) form.submit();
                 }
             });
         });

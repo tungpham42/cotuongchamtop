@@ -18,7 +18,6 @@
         @endif
     </div>
 
-    {{-- Thêm Banner Dành Riêng Cho Khách --}}
     @guest
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 p-4 shadow-sm" style="background: rgba(138, 21, 21, 0.2); border-left: 4px solid var(--royal-gold); border-right: 4px solid var(--royal-gold); border-radius: 4px;">
         <div class="mb-3 mb-md-0">
@@ -69,6 +68,8 @@
                                 <span class="badge" style="background: var(--royal-red); color: var(--royal-gold); border: 1px solid var(--royal-gold);">{{ __('Mở đăng ký') }}</span>
                             @elseif($tournament->status === 'in_progress')
                                 <span class="badge" style="background: var(--royal-gold); color: var(--royal-red);">{{ __('Đang diễn ra') }}</span>
+                            @elseif($tournament->status === 'cancelled')
+                                <span class="badge" style="background: #5c0a0a; color: #ffb7b2; border: 1px solid var(--royal-red);">{{ __('Đã hủy') }}</span>
                             @else
                                 <span class="badge" style="background: var(--royal-wood); color: var(--royal-gold-light);">{{ __('Đã kết thúc') }}</span>
                             @endif
@@ -90,9 +91,15 @@
                             @php
                                 $isJoined = auth()->check() ? $tournament->users->contains(auth()->id()) : false;
                                 $isOpen = $tournament->status === 'open';
+                                $isCancelled = $tournament->status === 'cancelled';
                                 $isFull = $tournament->users_count >= $tournament->max_players;
                             @endphp
-                            @if($isJoined)
+
+                            @if($isCancelled)
+                                <button class="btn btn-sm w-100 ml-2" disabled style="background: var(--royal-wood); color: var(--royal-gold-light); opacity: 0.8;">
+                                    <i class="fad fa-ban"></i> {{ __('Bị hủy') }}
+                                </button>
+                            @elseif($isJoined)
                                 <button class="btn btn-sm w-100 ml-2" disabled style="background: var(--royal-wood); color: var(--royal-gold-light); opacity: 0.8;">
                                     <i class="fad fa-check-circle"></i> {{ __('Đã tham gia') }}
                                 </button>
