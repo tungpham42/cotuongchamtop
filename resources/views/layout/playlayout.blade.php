@@ -58,24 +58,6 @@
   <body class="{{ $bodyClass }}">
     @include('common.afterBody')
     @include('common.scripts')
-    <script src="https://js.pusher.com/8.3.0/pusher.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.16.1/dist/echo.iife.js"></script>
-
-    <script>
-      // Enable pusher logging - comment this out in production!
-      // Pusher.logToConsole = true;
-
-      // Make Pusher globally available for Echo
-      window.Pusher = Pusher;
-
-      // Initialize Echo using your Laravel .env variables
-      window.Echo = new Echo({
-          broadcaster: 'pusher',
-          key: '{{ env("PUSHER_APP_KEY") }}',
-          cluster: '{{ env("PUSHER_APP_CLUSTER", "ap1") }}',
-          forceTLS: true
-      });
-    </script>
     @include('layout.partials.header')
     @include('layout.partials.analysisModal')
     @if (session('status'))
@@ -133,7 +115,7 @@
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-1">
               <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
               @include('layout.partials.themeSelector')
-              @include('layout.partials.analyzeBtn')
+              {{-- @include('layout.partials.analyzeBtn') --}}
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-auto">
               @yield('rightSide')
@@ -144,7 +126,7 @@
             <div class="puzzle-layout-board">
               <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
               @include('layout.partials.themeSelector')
-              @include('layout.partials.analyzeBtn')
+              {{-- @include('layout.partials.analyzeBtn') --}}
               @yield('belowBoardExtras')
             </div>
             <div class="puzzle-layout-panel">
@@ -156,7 +138,7 @@
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
               <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
               @include('layout.partials.themeSelector')
-              @include('layout.partials.analyzeBtn')
+              {{-- @include('layout.partials.analyzeBtn') --}}
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-0">
               @include('layout.partials.chat')
@@ -416,5 +398,6 @@
       </div>
     </main>
     @include('layout.partials.playFooter')
+    @include('common.onlineCounter')
   </body>
 </html>

@@ -12,9 +12,10 @@ class BroadcastServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
-    {
-        Broadcast::routes();
+    public function boot(): void
+{
+        // CRITICAL: Ensure 'auth' is NOT in this array. Only use 'web'.
+        Broadcast::routes(['middleware' => ['web']]);
 
         require base_path('routes/channels.php');
     }

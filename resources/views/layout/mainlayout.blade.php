@@ -48,5 +48,6 @@
     </main>
     @include('layout.partials.footer')
     @include('common.contactBtn')
+    @include('common.onlineCounter')
   </body>
 </html>

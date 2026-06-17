@@ -14,6 +14,7 @@ use App\Http\Controllers\PuzzleController;
 use App\Http\Controllers\TimerController;
 use App\Http\Controllers\PayOSController;
 use App\Http\Controllers\TournamentController;
+use App\Http\Controllers\BroadcastAuthController;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Spatie\Sitemap\SitemapGenerator;
@@ -102,6 +103,9 @@ Route::get('/sitemap', function () {
 Route::get('/sitemap-the-co.xml', function() {
   return response()->view('sitemap-puzzle')->header('Content-Type', 'text/xml');
 });
+
+// Custom route to bypass Laravel's strict auth requirement
+Route::post('/custom/broadcasting/auth', [BroadcastAuthController::class, 'authenticate']);
 
 // ==========================================
 // TOURNAMENT ROUTES (Unified Localized Setup)
