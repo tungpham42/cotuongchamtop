@@ -61,7 +61,7 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             // Trigger real-time UI update when a user logs in
-            // broadcast(new PlayersUpdated());
+            broadcast(new PlayersUpdated());
 
             return Redirect::to($this->redirectTo());
         }
@@ -90,7 +90,7 @@ class LoginController extends Controller
             : $localizedHome;
 
         // 5. Trigger the real-time update so the player is removed from everyone's screen
-        // broadcast(new PlayersUpdated());
+        broadcast(new PlayersUpdated());
 
         // 6. Redirect with success message
         return Redirect::to($previousUrl)->with('success', __('Bạn đã đăng xuất thành công!'));
