@@ -39,5 +39,6 @@
         @include('layout.partials.app.footer')
     </div>
     @include('common.contactBtn')
+    @include('common.onlineCounter')
 </body>
 </html>

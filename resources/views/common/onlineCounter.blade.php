@@ -75,26 +75,47 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        if (typeof window.Echo !== 'undefined') {
-            const countElement = document.getElementById('online-count');
+        // Fallback Initialization
+        if (typeof window.Echo === 'undefined') {
+            if (typeof Pusher !== 'undefined' && typeof Echo !== 'undefined') {
+                // Make Pusher globally available for Echo
+                window.Pusher = Pusher;
 
-            window.Echo.join('online')
-                .here((users) => {
-                    countElement.innerText = users.length;
-                })
-                .joining((user) => {
-                    let currentCount = parseInt(countElement.innerText) || 0;
-                    countElement.innerText = currentCount + 1;
-                })
-                .leaving((user) => {
-                    let currentCount = parseInt(countElement.innerText) || 1;
-                    countElement.innerText = currentCount > 0 ? currentCount - 1 : 0;
-                })
-                .error((error) => {
-                    console.error('Pusher auth error:', error);
+                // Initialize Echo using your Laravel .env variables
+                window.Echo = new Echo({
+                    broadcaster: 'pusher',
+                    key: '{{ env("PUSHER_APP_KEY") }}',
+                    cluster: '{{ env("PUSHER_APP_CLUSTER", "ap1") }}',
+                    forceTLS: true,
+                    authEndpoint: '/custom/broadcasting/auth',
+                    auth: {
+                        headers: {
+                            'X-CSRF-Token': '{{ csrf_token() }}'
+                        }
+                    }
                 });
-        } else {
-            console.warn("Laravel Echo is not initialized. Counter disabled.");
+            } else {
+                console.warn("Pusher or Echo library is missing. Counter cannot connect.");
+                return; // Stop execution if the JS libraries aren't loaded
+            }
         }
+
+        const countElement = document.getElementById('online-count');
+
+        window.Echo.join('online')
+            .here((users) => {
+                countElement.innerText = users.length;
+            })
+            .joining((user) => {
+                let currentCount = parseInt(countElement.innerText) || 0;
+                countElement.innerText = currentCount + 1;
+            })
+            .leaving((user) => {
+                let currentCount = parseInt(countElement.innerText) || 1;
+                countElement.innerText = currentCount > 0 ? currentCount - 1 : 0;
+            })
+            .error((error) => {
+                console.error('Pusher auth error:', error);
+            });
     });
 </script>
