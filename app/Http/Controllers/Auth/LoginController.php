@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use App\Events\PlayersUpdated;
@@ -73,26 +74,28 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        // 1. Log the user out
+        // Capture the user ID before they are logged out
+        $userId = Auth::id();
+
+        if ($userId) {
+            // Instantly delete all lingering database sessions for this user across all devices/tabs
+            DB::table('sessions')
+                ->where('user_id', $userId)
+                ->delete();
+        }
+
         Auth::logout();
 
-        // 2. Invalidate the session and regenerate the CSRF token for security
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // 3. Determine the localized home page as a fallback
         $locale = app()->getLocale();
         $localizedHome = ($locale === 'vi') ? '/' : '/' . $locale;
 
-        // 4. Get the URL they clicked logout from (ignore if it's the logout route itself)
         $previousUrl = url()->previous() && url()->previous() !== url('/logout')
             ? url()->previous()
             : $localizedHome;
 
-        // 5. Trigger the real-time update so the player is removed from everyone's screen
-        // broadcast(new PlayersUpdated());
-
-        // 6. Redirect with success message
         return Redirect::to($previousUrl)->with('success', __('Bạn đã đăng xuất thành công!'));
     }
 
