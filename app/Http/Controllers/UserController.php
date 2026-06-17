@@ -177,7 +177,7 @@ class UserController extends Controller
             );
 
             // Broadcast so the view refreshes to show them online
-            broadcast(new PlayersUpdated());
+            // broadcast(new PlayersUpdated());
         }
     }
 
@@ -189,7 +189,7 @@ class UserController extends Controller
                 ['last_seen_at' => Carbon::now()]
             );
 
-            broadcast(new PlayersUpdated());
+            // broadcast(new PlayersUpdated());
         }
     }
 
@@ -217,21 +217,20 @@ class UserController extends Controller
 
     public static function onlineStatus($id)
     {
-        if (isset($id)) {
-            self::updatePlayerOnlineStatus($id);
-        }
+        // REMOVED: self::updatePlayerOnlineStatus($id);
+        // Read operations (rendering a view) should never trigger broadcasts or DB writes.
+        // User status should only be updated via a dedicated ping route or middleware.
 
         $user = User::find($id);
 
-        if (isset($user->last_seen_at)) {
-            if (Carbon::parse($user->last_seen_at)->diffInMinutes() < 2) {
-                return ' <i title="Trực tuyến" class="text-success fad fa-circle"></i>';
-            } else {
-                return ' <i title="Ngoại tuyến" class="text-danger fad fa-circle"></i>';
-            }
-        } else {
-            return ' <i title="Ngoại tuyến" class="text-danger fad fa-circle"></i>';
-        }
+        // Determine if the user is online
+        $isOnline = $user && $user->last_seen_at && Carbon::parse($user->last_seen_at)->diffInMinutes() < 2;
+
+        $statusClass = $isOnline ? 'text-success' : 'text-danger';
+        $statusTitle = $isOnline ? 'Trực tuyến' : 'Ngoại tuyến';
+
+        // Wrap the icon in a targetable span for Pusher Echo to manipulate
+        return '<span class="user-status-indicator" data-user-id="' . $id . '"> <i title="' . $statusTitle . '" class="' . $statusClass . ' fad fa-circle"></i></span>';
     }
 
     public static function onlinePlayers()
@@ -300,7 +299,7 @@ class UserController extends Controller
         $user->name = $newName;
         $user->save();
 
-        broadcast(new PlayersUpdated()); // Refresh for name change
+        // broadcast(new PlayersUpdated()); // Refresh for name change
 
         return back()->with('success', __('Bạn đã thay đổi tên thành công!'));
     }
@@ -660,7 +659,7 @@ class UserController extends Controller
             ['elo' => $playerElo]
         );
 
-        broadcast(new PlayersUpdated()); // Refresh Elo change
+        // broadcast(new PlayersUpdated()); // Refresh Elo change
     }
 
     public static function updatePlayerPoints($id)
