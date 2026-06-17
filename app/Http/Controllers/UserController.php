@@ -170,13 +170,18 @@ class UserController extends Controller
     public function updateOnlineStatus(Request $request)
     {
         $id = $request->input('id');
+
         if (auth()->id() == $id) {
+            // Update the session's activity timestamp instead of the users table
+            DB::table('sessions')
+                ->where('user_id', $id)
+                ->update(['last_activity' => time()]);
             $updated = User::updateOrInsert(
                 ['id' => $id],
                 ['last_seen_at' => Carbon::now()]
             );
-
-            // Broadcast so the view refreshes to show them online
+            // You can uncomment this if you intend to push updates via Echo
+            // when the user sends an explicit ping.
             // broadcast(new PlayersUpdated());
         }
     }
@@ -184,6 +189,9 @@ class UserController extends Controller
     public static function updatePlayerOnlineStatus($id)
     {
         if (isset($id) && auth()->id() == $id) {
+            DB::table('sessions')
+                ->where('user_id', $id)
+                ->update(['last_activity' => time()]);
             User::updateOrInsert(
                 ['id' => $id],
                 ['last_seen_at' => Carbon::now()]
@@ -217,17 +225,14 @@ class UserController extends Controller
 
     public static function onlineStatus($id)
     {
-        // REMOVED: self::updatePlayerOnlineStatus($id);
-        // Read operations (rendering a view) should never trigger broadcasts or DB writes.
-        // User status should only be updated via a dedicated ping route or middleware.
+        // Check if the specific user ID exists in the active sessions table
+        $hasActiveSession = DB::table('sessions')
+            ->where('user_id', $id)
+            ->exists();
 
-        $user = User::find($id);
-
-        // Determine if the user is online
-        $isOnline = $user && $user->last_seen_at && Carbon::parse($user->last_seen_at)->diffInMinutes() < 2;
-
-        $statusClass = $isOnline ? 'text-success' : 'text-danger';
-        $statusTitle = $isOnline ? 'Trực tuyến' : 'Ngoại tuyến';
+        // Determine the status class and title based on the session query
+        $statusClass = $hasActiveSession ? 'text-success' : 'text-danger';
+        $statusTitle = $hasActiveSession ? __('Trực tuyến') : __('Ngoại tuyến');
 
         // Wrap the icon in a targetable span for Pusher Echo to manipulate
         return '<span class="user-status-indicator" data-user-id="' . $id . '"> <i title="' . $statusTitle . '" class="' . $statusClass . ' fad fa-circle"></i></span>';
