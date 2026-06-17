@@ -136,7 +136,7 @@ class UserController extends Controller
     public static function getPlayers()
     {
         $data = User::select('id', 'name', 'email', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at')
-                    // ->where('last_seen_at', '>=', now()->subMinutes(2))
+                    ->where('last_seen_at', '>=', now()->subMinutes(5))
                     ->orderBy('elo', 'desc')
                     ->orderBy('created_at', 'desc')
                     ->paginate(12);
@@ -146,7 +146,7 @@ class UserController extends Controller
     public static function getFirstPagePlayers()
     {
         $data = User::select('id', 'name', 'email', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at')
-                    // ->where('last_seen_at', '>=', now()->subMinutes(2))
+                    ->where('last_seen_at', '>=', now()->subMinutes(5))
                     ->orderBy('elo', 'desc')
                     ->orderBy('created_at', 'desc')
                     ->paginate(12, ['*'], 'page', 1);
