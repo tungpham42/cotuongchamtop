@@ -32,7 +32,7 @@ class CensorBadWordsCommand extends Command
     public function handle()
     {
         $badWords = [
-            ' Cu', ' cu', 'vl', 'dcm', 'dâm', 'Dâm', 'dm', 'vailon', 'dume', 'ditme', ' ngu ', 'chó', 'Chó',
+            ' Cu', ' cu', 'vl', 'dcm', 'dâm', 'Dâm', 'dm', 'vailon', 'lon', 'dume', 'ditme', ' ngu ', 'chó', 'Chó',
             'Cặc', ' lồn ', 'con cac', 'con cặc', 'con cu', 'cặc', 'cac', 'ccc', 'cc', 'vcl',
             'vú', 'địt', 'dit', 'đụ', 'stupid', 'shit', 'piss', 'fuck', 'cunt', 'cocksucker',
             'motherfucker', 'tits', 'sex', 'sexy', 'nude', 'naked', 'porn'
