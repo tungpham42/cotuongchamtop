@@ -43,8 +43,7 @@ class QuickMatchJob implements ShouldQueue
             $opponent = array_shift($waitingPlayers);
 
             // Create a new room with the two players
-            DB::table('rooms')
-                ->updateOrInsert(
+            Room::updateOrInsert(
                 ['code' => md5(time())],
                 [
                     'fen' => 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1',

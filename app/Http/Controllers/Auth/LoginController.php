@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
+use App\Models\Session as DbSession;
 use App\Events\PlayersUpdated;
 
 class LoginController extends Controller
@@ -79,9 +80,7 @@ class LoginController extends Controller
 
         if ($userId) {
             // Instantly delete all lingering database sessions for this user across all devices/tabs
-            DB::table('sessions')
-                ->where('user_id', $userId)
-                ->delete();
+            DbSession::where('user_id', $userId)->delete();
         }
 
         Auth::logout();

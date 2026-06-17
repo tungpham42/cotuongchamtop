@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Models\Room;
+use App\Models\Session as DbSession;
 use Creativeorange\Gravatar\Facades\Gravatar;
 use Carbon\Carbon;
 use DataTables;
@@ -136,10 +137,7 @@ class UserController extends Controller
     public static function getPlayers()
     {
         // 1. Grab all user IDs currently holding an active session
-        $activeUserIds = DB::table('sessions')
-            ->whereNotNull('user_id')
-            ->pluck('user_id')
-            ->unique();
+        $activeUserIds = DbSession::whereNotNull('user_id')->pluck('user_id')->unique();
 
         // 2. Fetch those specific players
         $data = User::select('id', 'name', 'email', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at')
@@ -153,10 +151,7 @@ class UserController extends Controller
 
     public static function getFirstPagePlayers()
     {
-        $activeUserIds = DB::table('sessions')
-            ->whereNotNull('user_id')
-            ->pluck('user_id')
-            ->unique();
+        $activeUserIds = DbSession::whereNotNull('user_id')->pluck('user_id')->unique();
 
         $data = User::select('id', 'name', 'email', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at')
                     ->whereIn('id', $activeUserIds)
@@ -173,9 +168,8 @@ class UserController extends Controller
 
         if (auth()->id() == $id) {
             // Update the session's activity timestamp instead of the users table
-            DB::table('sessions')
-                ->where('user_id', $id)
-                ->update(['last_activity' => time()]);
+            DbSession::where('user_id', $id)->update(['last_activity' => time()]);
+
             $updated = User::updateOrInsert(
                 ['id' => $id],
                 ['last_seen_at' => Carbon::now()]
@@ -189,9 +183,8 @@ class UserController extends Controller
     public static function updatePlayerOnlineStatus($id)
     {
         if (isset($id) && auth()->id() == $id) {
-            DB::table('sessions')
-                ->where('user_id', $id)
-                ->update(['last_activity' => time()]);
+            DbSession::where('user_id', $id)->update(['last_activity' => time()]);
+
             User::updateOrInsert(
                 ['id' => $id],
                 ['last_seen_at' => Carbon::now()]
@@ -226,9 +219,7 @@ class UserController extends Controller
     public static function onlineStatus($id)
     {
         // Check if the specific user ID exists in the active sessions table
-        $hasActiveSession = DB::table('sessions')
-            ->where('user_id', $id)
-            ->exists();
+        $hasActiveSession = DbSession::where('user_id', $id)->exists();
 
         // Determine the status class and title based on the session query
         $statusClass = $hasActiveSession ? 'text-success' : 'text-danger';
