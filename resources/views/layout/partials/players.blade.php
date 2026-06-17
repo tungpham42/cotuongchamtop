@@ -3,8 +3,7 @@
 <span style="background-color: transparent; margin-top: -15px;" class="d-block w-100 pb-5 mb-5" id="ky-thu"></span>
 <div style="background-color: transparent" class="container-fluid puzzles px-0">
     <div class="container mx-auto px-3 pt-0">
-        <div class="row my-0">
-            <!-- Removed text-light to let the global H2 royal styling and Texturina font shine -->
+        <div id="players-wrapper" class="row my-0">
             <h2 class="d-block w-100 ml-3 mb-4">
                 <i class="fas fa-users"></i> {{ $firstPagePlayers->total() }} {{ __("kỳ thủ đang hoạt động, mời bạn") }} <a class="animate showPromotion" href="{{ localized_url('register') }}">{{ __("tham gia") }}</a>
             </h2>
@@ -40,135 +39,6 @@
                     </div>
                 </div>
             </div>
-            @if (auth()->check())
-            <script>
-            function compete(guestId) {
-                var maPhong = '{{ md5(time()) }}';
-                $.ajax({
-                    type: "POST",
-                    url: '{{ url('/api') }}/hasRoomcode',
-                    data: {
-                        'ma-phong': maPhong
-                    },
-                    dataType: 'text'
-                }).done(function(data){
-                    if (data == 'no') {
-                        bootbox.prompt({
-                            title: "{{ __("Mời đặt tên cho Phòng thi đấu:") }}",
-                            locale: '{{ __("vi") }}',
-                            centerVertical: true,
-                            closeButton: false,
-                            maxlength: 32,
-                            buttons: {
-                                confirm: {
-                                    label: '<i class="fas fa-check"></i> {{ __("Đặt tên") }}',
-                                    className: 'btn-danger'
-                                },
-                                cancel: {
-                                    className: 'btn-dark' // Removed text-light to use the Obsidian Glass styling
-                                }
-                            },
-                            callback: function(roomName){
-                            if (roomName != null) {
-                                if (roomName.trim().length === 0 || roomName.length === 0) {
-                                    bootbox.alert({
-                                        message: "{{ __('Vui lòng đặt tên cho phòng!') }}",
-                                        size: 'small',
-                                        locale: '{{ __("vi") }}',
-                                        centerVertical: true,
-                                        closeButton: false,
-                                        buttons: {
-                                            ok: {
-                                                className: 'btn-danger'
-                                            }
-                                        },
-                                        callback: function () {
-                                            $('#create-room').trigger('click');
-                                        }
-                                    });
-                                } else {
-                                    $.ajax({
-                                        type: "POST",
-                                        url: '{{ url('/api') }}/compete',
-                                        data: {
-                                            'ma-phong': maPhong,
-                                            'ten-phong': roomName,
-                                            'FEN': '{{ env('INITIAL_FEN') }}',
-                                            'pass': '',
-                                            'host_id': '{{ auth()->id() }}',
-                                            'guest_id': guestId
-                                        },
-                                        dataType: 'text'
-                                    }).done(function() {
-                                        bootbox.alert({
-                                            message: "{{ __('Bạn đã tạo phòng thành công.') }}",
-                                            size: 'small',
-                                            centerVertical: true,
-                                            closeButton: false,
-                                            buttons: {
-                                                ok: {
-                                                    className: 'btn-danger',
-                                                    label: '{{ __('Oki') }}'
-                                                }
-                                            },
-                                            callback: function(){
-                                                $.ajax({
-                                                    type: "POST",
-                                                    url: '{{ url('/api') }}/competeMail',
-                                                    data: {
-                                                        'ma-phong': maPhong,
-                                                        'ten-phong': roomName,
-                                                        'host_id': '{{ auth()->id() }}',
-                                                        'guest_id': guestId
-                                                    },
-                                                    dataType: 'json'
-                                                }).done(function(mailData) {
-                                                    bootbox.alert({
-                                                        message: mailData.message,
-                                                        size: 'small',
-                                                        centerVertical: true,
-                                                        closeButton: false,
-                                                        buttons: {
-                                                            ok: {
-                                                                className: 'btn-danger',
-                                                                label: '{{ __('Oki') }}'
-                                                            }
-                                                        },
-                                                        callback: function(){
-                                                            window.location.href = '{{ url(__('/phong/')) }}' + '/' + maPhong;
-                                                        }
-                                                    });
-                                                });
-                                            }
-                                        });
-                                    });
-                                }
-                            }
-                        }
-                    });
-                    } else if (data == 'yes') {
-                        bootbox.alert({
-                            message: "{{ __('Mã phòng bị trùng, vui lòng thử lại.') }}",
-                            size: 'small',
-                            centerVertical: true,
-                            closeButton: false,
-                            buttons: {
-                                ok: {
-                                    className: 'btn-danger',
-                                    label: '{{ __('Oki') }}'
-                                }
-                            },
-                            callback: function(){
-                                setTimeout(() => {
-                                    location.reload();
-                                }, 500);
-                            }
-                        });
-                    }
-                });
-            }
-            </script>
-            @endif
             @endforeach
             {{ $firstPagePlayers->links('vendor.pagination.playerVi') }}
         </div>
@@ -180,7 +50,7 @@
     <span style="background-color: transparent; margin-top: -15px;" class="d-block w-100 pb-5 mb-5" id="ky-thu"></span>
     <div style="background-color: transparent" class="container-fluid puzzles px-0">
         <div class="container mx-auto px-3 pt-0">
-            <div class="row my-0">
+            <div id="players-wrapper" class="row my-0">
                 <h2 class="d-block w-100 ml-3 mb-4">
                     <i class="fas fa-users"></i> {{ $players->total() }} {{ __("kỳ thủ đang hoạt động, mời bạn") }}  <a class="animate showPromotion" href="{{ localized_url('register') }}">{{ __("tham gia") }}</a>
                 </h2>
@@ -216,135 +86,6 @@
                         </div>
                     </div>
                 </div>
-                @if (auth()->check())
-                <script>
-                function compete(guestId) {
-                    var maPhong = '{{ md5(time()) }}';
-                    $.ajax({
-                        type: "POST",
-                        url: '{{ url('/api') }}/hasRoomcode',
-                        data: {
-                            'ma-phong': maPhong
-                        },
-                        dataType: 'text'
-                    }).done(function(data){
-                        if (data == 'no') {
-                            bootbox.prompt({
-                                title: "{{ __("Mời đặt tên cho Phòng thi đấu:") }}",
-                                locale: '{{ __("vi") }}',
-                                centerVertical: true,
-                                closeButton: false,
-                                maxlength: 32,
-                                buttons: {
-                                    confirm: {
-                                        label: '<i class="fas fa-check"></i> {{ __("Đặt tên") }}',
-                                        className: 'btn-danger'
-                                    },
-                                    cancel: {
-                                        className: 'btn-dark'
-                                    }
-                                },
-                                callback: function(roomName){
-                                if (roomName != null) {
-                                    if (roomName.trim().length === 0 || roomName.length === 0) {
-                                        bootbox.alert({
-                                            message: "{{ __('Vui lòng đặt tên cho phòng!') }}",
-                                            size: 'small',
-                                            locale: '{{ __("vi") }}',
-                                            centerVertical: true,
-                                            closeButton: false,
-                                            buttons: {
-                                                ok: {
-                                                    className: 'btn-danger'
-                                                }
-                                            },
-                                            callback: function () {
-                                                $('#create-room').trigger('click');
-                                            }
-                                        });
-                                    } else {
-                                        $.ajax({
-                                            type: "POST",
-                                            url: '{{ url('/api/compete') }}',
-                                            data: {
-                                                'ma-phong': maPhong,
-                                                'ten-phong': roomName,
-                                                'FEN': '{{ env('INITIAL_FEN') }}',
-                                                'pass': '',
-                                                'host_id': '{{ auth()->id() }}',
-                                                'guest_id': guestId
-                                            },
-                                            dataType: 'text'
-                                        }).done(function() {
-                                            bootbox.alert({
-                                                message: "{{ __('Bạn đã tạo phòng thành công.') }}",
-                                                size: 'small',
-                                                centerVertical: true,
-                                                closeButton: false,
-                                                buttons: {
-                                                    ok: {
-                                                        className: 'btn-danger',
-                                                        label: '{{ __('Oki') }}'
-                                                    }
-                                                },
-                                                callback: function(){
-                                                    $.ajax({
-                                                        type: "POST",
-                                                        url: '{{ url('/api') }}/competeMail',
-                                                        data: {
-                                                            'ma-phong': maPhong,
-                                                            'ten-phong': roomName,
-                                                            'host_id': '{{ auth()->id() }}',
-                                                            'guest_id': guestId
-                                                        },
-                                                        dataType: 'json'
-                                                    }).done(function(mailData) {
-                                                        bootbox.alert({
-                                                            message: mailData.message,
-                                                            size: 'small',
-                                                            centerVertical: true,
-                                                            closeButton: false,
-                                                            buttons: {
-                                                                ok: {
-                                                                    className: 'btn-danger',
-                                                                    label: '{{ __('Oki') }}'
-                                                                }
-                                                            },
-                                                            callback: function(){
-                                                                window.location.href = '{{ url(__('/phong/')) }}' + '/' + maPhong;
-                                                            }
-                                                        });
-                                                    });
-                                                }
-                                            });
-                                        });
-                                    }
-                                }
-                            }
-                        });
-                        } else if (data == 'yes') {
-                            bootbox.alert({
-                                message: "{{ __('Mã phòng bị trùng, vui lòng thử lại.') }}",
-                                size: 'small',
-                                centerVertical: true,
-                                closeButton: false,
-                                buttons: {
-                                    ok: {
-                                        className: 'btn-danger',
-                                        label: '{{ __('Oki') }}'
-                                    }
-                                },
-                                callback: function(){
-                                    setTimeout(() => {
-                                        location.reload();
-                                    }, 500);
-                                }
-                            });
-                        }
-                    });
-                }
-                </script>
-                @endif
                 @endforeach
                 {{ $players->links('vendor.pagination.playerVi') }}
             </div>
@@ -352,3 +93,132 @@
     </div>
     @endif
 @endif
+
+@if (auth()->check())
+<script>
+function compete(guestId) {
+    var maPhong = '{{ md5(time()) }}';
+    $.ajax({
+        type: "POST",
+        url: '{{ url('/api') }}/hasRoomcode',
+        data: {
+            'ma-phong': maPhong
+        },
+        dataType: 'text'
+    }).done(function(data){
+        if (data == 'no') {
+            bootbox.prompt({
+                title: "{{ __("Mời đặt tên cho Phòng thi đấu:") }}",
+                locale: '{{ __("vi") }}',
+                centerVertical: true,
+                closeButton: false,
+                maxlength: 32,
+                buttons: {
+                    confirm: {
+                        label: '<i class="fas fa-check"></i> {{ __("Đặt tên") }}',
+                        className: 'btn-danger'
+                    },
+                    cancel: {
+                        className: 'btn-dark'
+                    }
+                },
+                callback: function(roomName){
+                if (roomName != null) {
+                    if (roomName.trim().length === 0 || roomName.length === 0) {
+                        bootbox.alert({
+                            message: "{{ __('Vui lòng đặt tên cho phòng!') }}",
+                            size: 'small', locale: '{{ __("vi") }}', centerVertical: true, closeButton: false,
+                            buttons: { ok: { className: 'btn-danger' } },
+                            callback: function () { $('#create-room').trigger('click'); }
+                        });
+                    } else {
+                        $.ajax({
+                            type: "POST",
+                            url: '{{ url('/api/compete') }}',
+                            data: {
+                                'ma-phong': maPhong, 'ten-phong': roomName, 'FEN': '{{ env('INITIAL_FEN') }}',
+                                'pass': '', 'host_id': '{{ auth()->id() }}', 'guest_id': guestId
+                            },
+                            dataType: 'text'
+                        }).done(function() {
+                            bootbox.alert({
+                                message: "{{ __('Bạn đã tạo phòng thành công.') }}",
+                                size: 'small', centerVertical: true, closeButton: false,
+                                buttons: { ok: { className: 'btn-danger', label: '{{ __('Oki') }}' } },
+                                callback: function(){
+                                    $.ajax({
+                                        type: "POST",
+                                        url: '{{ url('/api') }}/competeMail',
+                                        data: { 'ma-phong': maPhong, 'ten-phong': roomName, 'host_id': '{{ auth()->id() }}', 'guest_id': guestId },
+                                        dataType: 'json'
+                                    }).done(function(mailData) {
+                                        bootbox.alert({
+                                            message: mailData.message, size: 'small', centerVertical: true, closeButton: false,
+                                            buttons: { ok: { className: 'btn-danger', label: '{{ __('Oki') }}' } },
+                                            callback: function(){ window.location.href = '{{ url(__('/phong/')) }}' + '/' + maPhong; }
+                                        });
+                                    });
+                                }
+                            });
+                        });
+                    }
+                }
+            }
+        });
+        } else if (data == 'yes') {
+            bootbox.alert({
+                message: "{{ __('Mã phòng bị trùng, vui lòng thử lại.') }}",
+                size: 'small', centerVertical: true, closeButton: false,
+                buttons: { ok: { className: 'btn-danger', label: '{{ __('Oki') }}' } },
+                callback: function(){ setTimeout(() => { location.reload(); }, 500); }
+            });
+        }
+    });
+}
+</script>
+@endif
+
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function() {
+        if (typeof window.Echo === 'undefined') {
+            if (typeof Pusher !== 'undefined' && typeof Echo !== 'undefined') {
+                // Make Pusher globally available for Echo
+                window.Pusher = Pusher;
+
+                // Initialize Echo using your Laravel .env variables
+                window.Echo = new Echo({
+                    broadcaster: 'pusher',
+                    key: '{{ env("PUSHER_APP_KEY") }}',
+                    cluster: '{{ env("PUSHER_APP_CLUSTER", "ap1") }}',
+                    forceTLS: true,
+                    authEndpoint: '/custom/broadcasting/auth',
+                    auth: {
+                        headers: {
+                            'X-CSRF-Token': '{{ csrf_token() }}'
+                        }
+                    }
+                });
+            } else {
+                console.warn("Pusher or Echo library is missing. Counter cannot connect.");
+                return; // Stop execution if the JS libraries aren't loaded
+            }
+        }
+        window.Echo.channel('players-channel')
+            .listen('.players.updated', (e) => {
+                // Fetch the exact same URL the user is currently on to grab the fresh HTML
+                $.ajax({
+                    url: window.location.href,
+                    type: 'GET',
+                    success: function(response) {
+                        // Extract just the new grid and quantity wrapper
+                        const newHtml = $(response).find('#players-wrapper').html();
+                        if (newHtml) {
+                            // Swap it into the DOM instantly
+                            $('#players-wrapper').html(newHtml);
+                        }
+                    }
+                });
+            }
+        );
+    });
+</script>

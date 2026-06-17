@@ -18,6 +18,7 @@ use Creativeorange\Gravatar\Facades\Gravatar;
 use Carbon\Carbon;
 use DataTables;
 use Avatar;
+use App\Events\PlayersUpdated; // Import the event
 
 class UserController extends Controller
 {
@@ -46,7 +47,6 @@ class UserController extends Controller
         return $this->getUsersDatatable($request, '挑战', '个人资料');
     }
 
-    // --- Add these new methods for Uploading and Removing Profile Pictures ---
     public function uploadProfilePicture(Request $request)
     {
         $request->validate([
@@ -56,7 +56,6 @@ class UserController extends Controller
         $user = auth()->user();
 
         if ($request->hasFile('profile_picture')) {
-            // Delete old picture if it exists
             if ($user->profile_picture) {
                 Storage::disk('public')->delete($user->profile_picture);
             }
@@ -82,12 +81,6 @@ class UserController extends Controller
         return back()->with('success', __('Bạn đã xóa ảnh đại diện thành công!'));
     }
 
-    /**
-     * Shared logic to generate the DataTables response for users.
-     * * @param Request $request
-     * @param string $challengeText Localized text for the Challenge button
-     * @param string $profileText Localized text for the Profile button
-     */
     private function getUsersDatatable(Request $request, string $challengeText, string $profileText)
     {
         if ($request->ajax()) {
@@ -99,9 +92,7 @@ class UserController extends Controller
                 })
                 ->addColumn('name', function($row){
                     $onlineStatus = self::onlineStatus($row->id);
-                    // Check for profile_picture
                     $avatarSrc = $row->profile_picture ? asset('storage/' . $row->profile_picture) : Avatar::create($row->name)->setDimension(28)->setFontSize(14);
-                    // Framed royal avatar
                     $avatarHtml = '<img src="' . $avatarSrc . '" style="width: 28px; height: 28px; object-fit: cover; border: 1px solid var(--royal-gold); border-radius: 4px; box-shadow: 0 0 5px rgba(212,175,55,0.5);" />';
                     return $avatarHtml . '&nbsp;<a class="text-warning font-weight-bold animate showPromotion" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.8); text-decoration: none !important;" href="'.localized_url('app.player', ['id' => $row->id]).'">'.$row->name.'</a>&nbsp;' . $onlineStatus;
                 })
@@ -161,14 +152,18 @@ class UserController extends Controller
                     ->paginate(12, ['*'], 'page', 1);
         return $data;
     }
+
     public function updateOnlineStatus(Request $request)
     {
         $id = $request->input('id');
         if (auth()->id() == $id) {
-            User::updateOrInsert(
+            $updated = User::updateOrInsert(
                 ['id' => $id],
                 ['last_seen_at' => Carbon::now()]
             );
+
+            // Broadcast so the view refreshes to show them online
+            broadcast(new PlayersUpdated());
         }
     }
 
@@ -179,6 +174,8 @@ class UserController extends Controller
                 ['id' => $id],
                 ['last_seen_at' => Carbon::now()]
             );
+
+            broadcast(new PlayersUpdated());
         }
     }
 
@@ -288,6 +285,8 @@ class UserController extends Controller
         $user = User::find($oldId);
         $user->name = $newName;
         $user->save();
+
+        broadcast(new PlayersUpdated()); // Refresh for name change
 
         return back()->with('success', __('Bạn đã thay đổi tên thành công!'));
     }
@@ -646,6 +645,8 @@ class UserController extends Controller
             ['id' => $id],
             ['elo' => $playerElo]
         );
+
+        broadcast(new PlayersUpdated()); // Refresh Elo change
     }
 
     public static function updatePlayerPoints($id)
@@ -676,14 +677,6 @@ class UserController extends Controller
 
     public static function getUsers()
     {
-        // $users = DB::table('users')
-        //         ->select('id')
-        //         ->get();
-
-        // foreach ($users as $user) {
-        //     self::updatePlayerPoints($user->id);
-        // }
-
         $data = User::select('id', 'email', 'name', 'elo', 'last_seen_at', 'created_at')
                 ->orderBy('elo', 'desc')
                 ->paginate(10);
@@ -692,15 +685,6 @@ class UserController extends Controller
 
     public static function getMatchUsers()
     {
-        // $users = DB::table('users')
-        //         ->select('id')
-        //         ->limit(10)
-        //         ->get();
-
-        // foreach ($users as $user) {
-        //     self::updatePlayerPoints($user->id);
-        // }
-
         $data = User::select('id', 'email', 'name', 'elo', 'last_seen_at', 'created_at')
                 ->orderBy('elo', 'desc')
                 ->limit(10)
@@ -710,14 +694,6 @@ class UserController extends Controller
 
     public static function getRankUsers()
     {
-        // $users = DB::table('users')
-        //         ->select('id')
-        //         ->get();
-
-        // foreach ($users as $user) {
-        //     self::updatePlayerPoints($user->id);
-        // }
-
         $data = User::select('id')
                 ->get();
         return $data;
@@ -842,69 +818,10 @@ class UserController extends Controller
         return view('app.search', compact('results'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+    public function create() {}
+    public function store(Request $request) {}
+    public function show($id) {}
+    public function edit($id) {}
+    public function update(Request $request, $id) {}
+    public function destroy($id) {}
 }
