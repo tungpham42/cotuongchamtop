@@ -18,7 +18,7 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-4">
                 <div class="royal-grid-card h-100 d-flex flex-column text-center p-4">
                     <div class="mb-3">
-                        <i class="fas fa-chess-king fa-3x" style="color: var(--royal-gold); filter: drop-shadow(0 0 10px rgba(212,175,55,0.5));"></i>
+                        <i class="fas fa-user fa-3x" style="color: var(--royal-gold); filter: drop-shadow(0 0 10px rgba(212,175,55,0.5));"></i>
                     </div>
 
                     <h4 class="royal-card-title mb-1">{!! app('App\Http\Controllers\UserController')::renderName($player->id) !!}</h4>
