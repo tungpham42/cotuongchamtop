@@ -135,21 +135,35 @@ class UserController extends Controller
 
     public static function getPlayers()
     {
+        // 1. Grab all user IDs currently holding an active session
+        $activeUserIds = DB::table('sessions')
+            ->whereNotNull('user_id')
+            ->pluck('user_id')
+            ->unique();
+
+        // 2. Fetch those specific players
         $data = User::select('id', 'name', 'email', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at')
-                    ->where('last_seen_at', '>=', now()->subMinutes(5))
+                    ->whereIn('id', $activeUserIds)
                     ->orderBy('elo', 'desc')
                     ->orderBy('created_at', 'desc')
                     ->paginate(12);
+
         return $data;
     }
 
     public static function getFirstPagePlayers()
     {
+        $activeUserIds = DB::table('sessions')
+            ->whereNotNull('user_id')
+            ->pluck('user_id')
+            ->unique();
+
         $data = User::select('id', 'name', 'email', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at')
-                    ->where('last_seen_at', '>=', now()->subMinutes(5))
+                    ->whereIn('id', $activeUserIds)
                     ->orderBy('elo', 'desc')
                     ->orderBy('created_at', 'desc')
                     ->paginate(12, ['*'], 'page', 1);
+
         return $data;
     }
 

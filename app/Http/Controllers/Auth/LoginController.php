@@ -60,7 +60,9 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            // Auth::attempt handles login, no need to query User again
+            // Trigger real-time UI update when a user logs in
+            broadcast(new PlayersUpdated());
+
             return Redirect::to($this->redirectTo());
         }
 
@@ -87,9 +89,10 @@ class LoginController extends Controller
             ? url()->previous()
             : $localizedHome;
 
+        // 5. Trigger the real-time update so the player is removed from everyone's screen
         broadcast(new PlayersUpdated());
 
-        // 5. Redirect with success message
+        // 6. Redirect with success message
         return Redirect::to($previousUrl)->with('success', __('Bạn đã đăng xuất thành công!'));
     }
 
@@ -110,7 +113,6 @@ class LoginController extends Controller
         $socialUser = Socialite::driver($driver)->user();
         $redirectUrl = $this->redirectTo();
 
-        // Zalo has unique logic based on your original implementation
         if ($driver === 'zalo') {
             if (null !== $socialUser->getId()) {
                 $user = User::firstOrCreate(
@@ -119,12 +121,14 @@ class LoginController extends Controller
                 );
 
                 Auth::login($user, true);
+
+                broadcast(new \App\Events\PlayersUpdated()); // Trigger update
+
                 return Redirect::to($redirectUrl)->with('success', __("Bạn đã đăng nhập bằng {$providerName} thành công!"));
             }
             return Redirect::to($redirectUrl)->withErrors(['message' => __('Tài khoản của bạn không hợp lệ.')]);
         }
 
-        // Standard logic for all other providers (Facebook, Google, GitHub, etc.)
         if (null !== $socialUser->getEmail()) {
             $user = User::firstOrCreate(
                 ['email' => $socialUser->getEmail()],
@@ -132,6 +136,9 @@ class LoginController extends Controller
             );
 
             Auth::login($user, true);
+
+            broadcast(new \App\Events\PlayersUpdated()); // Trigger update
+
             return Redirect::to($redirectUrl)->with('success', __("Bạn đã đăng nhập bằng {$providerName} thành công!"));
         }
 
