@@ -72,7 +72,7 @@ class RegisterController extends Controller
         ]);
 
         // Trigger real-time UI update when a new user registers
-        broadcast(new PlayersUpdated());
+        // broadcast(new PlayersUpdated());
 
         return $user;
     }
