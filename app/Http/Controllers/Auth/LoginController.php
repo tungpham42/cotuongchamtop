@@ -86,6 +86,8 @@ class LoginController extends Controller
             ? url()->previous()
             : $localizedHome;
 
+        broadcast(new PlayersUpdated());
+
         // 5. Redirect with success message
         return Redirect::to($previousUrl)->with('success', __('Bạn đã đăng xuất thành công!'));
     }
