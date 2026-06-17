@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
+use App\Events\PlayersUpdated;
 
 class LoginController extends Controller
 {
