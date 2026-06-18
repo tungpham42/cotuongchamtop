@@ -64,7 +64,7 @@
     .timer-details {
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
         z-index: 1;
     }
 
