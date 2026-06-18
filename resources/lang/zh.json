@@ -750,5 +750,7 @@
     "Hủy thao tác": "取消操作",
     "Giải đấu này đã có người đăng ký. Bạn có chắc chắn muốn Hủy giải đấu này không? Trạng thái sẽ chuyển thành Đã Hủy.": "此锦标赛已有玩家注册。您确定要取消吗？状态将更改为已取消。",
     "Có, Hủy giải": "是，取消比赛",
-    "Giữ lại": "保留"
+    "Giữ lại": "保留",
+    "Ấn vào đây để vào ván đấu khi đến lượt bạn": "轮到您时，点击此处进入比赛",
+    "Trận đấu kết thúc": "比赛结束"
 }

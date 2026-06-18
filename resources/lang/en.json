@@ -746,5 +746,7 @@
     "Hủy thao tác": "Cancel action",
     "Giải đấu này đã có người đăng ký. Bạn có chắc chắn muốn Hủy giải đấu này không? Trạng thái sẽ chuyển thành Đã Hủy.": "This tournament has registered players. Are you sure you want to cancel it? The status will be changed to Cancelled.",
     "Có, Hủy giải": "Yes, Cancel tournament",
-    "Giữ lại": "Keep it"
+    "Giữ lại": "Keep it",
+    "Ấn vào đây để vào ván đấu khi đến lượt bạn": "Click here to enter the match when it's your turn",
+    "Trận đấu kết thúc": "The match has ended"
 }

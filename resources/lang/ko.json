@@ -735,5 +735,7 @@
     "Hủy thao tác": "작업 취소",
     "Giải đấu này đã có người đăng ký. Bạn có chắc chắn muốn Hủy giải đấu này không? Trạng thái sẽ chuyển thành Đã Hủy.": "이 토너먼트에는 등록된 플레이어가 있습니다. 정말 이 토너먼트를 취소하시겠습니까? 상태가 취소됨으로 변경됩니다.",
     "Có, Hủy giải": "예, 취소합니다",
-    "Giữ lại": "유지하기"
+    "Giữ lại": "유지하기",
+    "Ấn vào đây để vào ván đấu khi đến lượt bạn": "차례가 되면 여기를 클릭하여 매치에 참여하세요",
+    "Trận đấu kết thúc": "경기가 종료되었습니다"
 }
