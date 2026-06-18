@@ -167,7 +167,6 @@
 
     // Presence Variables
     let playersOnline = 0;
-    let systemPaused = false;
     let previousPresenceState = null;
 
     const formatTime = (s) => `${Math.floor(s / 60)}:${(Math.floor(s) % 60).toString().padStart(2, '0')}`;
@@ -187,7 +186,8 @@
     const updateUI = () => {
         if (isGameOver) return;
 
-        let elapsedSinceSync = (activePlayer && !systemPaused) ? (Date.now() - localLastUpdate) / 1000 : 0;
+        // No longer factoring in `systemPaused`
+        let elapsedSinceSync = activePlayer ? (Date.now() - localLastUpdate) / 1000 : 0;
 
         let currentRed = time.red;
         let currentBlack = time.black;
@@ -211,8 +211,8 @@
         ui.red.moveClock.innerText = formatTime(Math.ceil(redMove));
         ui.black.moveClock.innerText = formatTime(Math.ceil(blackMove));
 
-        ui.red.moveClock.classList.toggle('danger', redMove <= 10 && activePlayer === 'red' && !systemPaused);
-        ui.black.moveClock.classList.toggle('danger', blackMove <= 10 && activePlayer === 'black' && !systemPaused);
+        ui.red.moveClock.classList.toggle('danger', redMove <= 10 && activePlayer === 'red');
+        ui.black.moveClock.classList.toggle('danger', blackMove <= 10 && activePlayer === 'black');
 
         if (currentRed <= 0 || currentBlack <= 0) {
             isGameOver = true;
@@ -225,7 +225,7 @@
                 const result = currentRed <= 0 && currentBlack <= 0 ? '0' : (currentRed <= 0 ? '-1' : '1');
                 updateResult(roomCode, result);
             }
-        } else if (!systemPaused) {
+        } else {
             ui.red.box.classList.toggle("active", activePlayer === "red");
             ui.black.box.classList.toggle("active", activePlayer === "black");
         }
@@ -246,22 +246,12 @@
 
         let sPlayer = serverData.active_player;
 
+        // Unpack paused payload natively just in case legacy states are still in DB,
+        // but it will immediately resume local ticking anyway.
         if (sPlayer && sPlayer.startsWith('paused:')) {
             activePlayer = sPlayer.split(':')[1];
-            systemPaused = true;
-
-            // Enforce visual paused state
-            ui.red.box.classList.add('paused-offline');
-            ui.black.box.classList.add('paused-offline');
-            ui.red.box.classList.remove('active');
-            ui.black.box.classList.remove('active');
         } else {
             activePlayer = sPlayer;
-            systemPaused = false; // CRITICAL: Reset the pause flag when active
-
-            // Remove visual paused state
-            ui.red.box.classList.remove('paused-offline');
-            ui.black.box.classList.remove('paused-offline');
         }
 
         serverMoveElapsed = serverData.move_elapsed !== undefined ? parseFloat(serverData.move_elapsed) : 0;
@@ -269,57 +259,36 @@
 
         updateUI();
 
-        if (activePlayer && !systemPaused) startAll();
+        if (activePlayer) startAll();
         else stopAll();
     };
 
     const handlePresenceChange = () => {
-        const isCurrentlyPaused = playersOnline < 2;
+        const isCurrentlyOffline = playersOnline < 2;
 
-        if (previousPresenceState === isCurrentlyPaused) return;
-        previousPresenceState = isCurrentlyPaused;
+        if (previousPresenceState === isCurrentlyOffline) return;
+        previousPresenceState = isCurrentlyOffline;
 
-        if (isCurrentlyPaused) {
-            // Optimistically pause locally
-            systemPaused = true;
-            stopAll();
-
+        if (isCurrentlyOffline) {
+            // ONLY Apply visual dimming if a player disconnects.
+            // Do NOT pause the clocks locally or request the server to pause.
             ui.red.box.classList.add('paused-offline');
             ui.black.box.classList.add('paused-offline');
-            ui.red.box.classList.remove('active');
-            ui.black.box.classList.remove('active');
-
-            if (activePlayer) {
-                // FIX: Added `{}` to force a POST request so the server actually pauses the DB timer
-                apiReq(`/pauseTimer/${roomCode}/${activePlayer}`, {});
-            }
         } else {
+            // Remove visual dimming when reconnected
+            ui.red.box.classList.remove('paused-offline');
+            ui.black.box.classList.remove('paused-offline');
+
+            // Sync with backend to get accurate lost time during disconnection window
             apiReq(`/getTime/${roomCode}`).then(data => {
                 if (data && !data.error) {
-                    let wasPaused = data.active_player && data.active_player.startsWith('paused:');
                     syncTimerState(data);
-
-                    // Only request the server to unpause if it was officially paused
-                    if (wasPaused && activePlayer) {
-                        // FIX: Added `{}` to force a POST request
-                        apiReq(`/startTimer/${roomCode}/${activePlayer}`, {}).then(() => {
-                            // Ensure strict synchronization after unpausing
-                            apiReq(`/getTime/${roomCode}`).then(newData => {
-                                if (newData && !newData.error) syncTimerState(newData);
-                            });
-                        });
-                    }
                 }
             });
         }
     };
 
-    window.pauseTimer = (rc, p) => apiReq(`/pauseTimer/${rc}/${p}`, {});
-    window.startTimer = (rc, p) => apiReq(`/startTimer/${rc}/${p}`, {});
-
     window.switchTurn = async (rc, currentPlayer) => {
-        if (systemPaused) return;
-
         const elapsed = (Date.now() - localLastUpdate) / 1000;
 
         if (currentPlayer === 'red') {

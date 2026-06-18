@@ -1193,52 +1193,29 @@ class RoomController extends Controller
         ]);
     }
 
+    public function pauseTimer($roomCode, $player)
+    {
+        // FIX: Completely bypass backend pausing to enforce continuous counting.
+        // Old cached browsers hitting this endpoint will no longer freeze the clock.
+        return response()->json(['success' => true]);
+    }
+
     public function startTimer($roomCode, $player)
     {
         $room = Room::where('code', $roomCode)->first();
         if (!$room) return response()->json(['error' => 'Room not found'], 404);
 
-        // Resume only if the room was genuinely paused for this player
+        // Recover legacy stuck rooms
         if ($room->active_player === "paused:{$player}") {
             $room->active_player = $player;
-            $room->last_update = now();
+            // FIX: Do NOT set $room->last_update = now() here!
+            // Resetting it would erase the time elapsed while they were offline.
             $room->save();
 
             broadcast(new RoomUpdated($room->fresh()));
         }
 
         return response()->json(['success' => true, 'active_player' => $player]);
-    }
-
-    public function pauseTimer($roomCode, $player)
-    {
-        $room = Room::where('code', $roomCode)->first();
-        if (!$room) return response()->json(['error' => 'Room not found'], 404);
-
-        if ($room->active_player === $player) {
-            $lastUpdate = $room->last_update ? Carbon::parse($room->last_update) : now();
-            $elapsed = $lastUpdate->diffInMilliseconds(now()) / 1000;
-
-            // SAFELY CACHE THE ACCUMULATED MOVE TIME
-            $previouslyElapsed = Cache::get("room_{$roomCode}_move_elapsed", 0);
-            Cache::put("room_{$roomCode}_move_elapsed", $previouslyElapsed + $elapsed, 86400);
-
-            // Deduct the elapsed duration from the overall clocks
-            if ($player === 'red') {
-                $room->red_time = max(0, floatval($room->red_time) - $elapsed);
-            } else {
-                $room->black_time = max(0, floatval($room->black_time) - $elapsed);
-            }
-
-            // Mark player as paused to freeze deductions on future /getTime requests
-            $room->active_player = "paused:{$player}";
-            $room->last_update = now();
-            $room->save();
-
-            broadcast(new RoomUpdated($room->fresh()));
-        }
-
-        return response()->json(['success' => true]);
     }
 
     public function getTime($roomCode)
