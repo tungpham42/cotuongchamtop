@@ -233,20 +233,14 @@ class UserController extends Controller
     {
         return Cache::remember('usersOnline', 60, function () {
             // Get a count of unique authenticated users currently in the sessions table
-            return DbSession::whereNotNull('user_id')
-                ->pluck('user_id')
-                ->unique()
-                ->count();
+            return DbSession::whereNotNull('user_id')->pluck('user_id')->unique()->count();
         });
     }
 
     public static function renderOnlinePlayers()
     {
         // Use the same DbSession logic to get the real-time count without relying on the 'last_seen_at' timestamp
-        $onlinePlayers = DbSession::whereNotNull('user_id')
-            ->pluck('user_id')
-            ->unique()
-            ->count();
+        $onlinePlayers = DbSession::whereNotNull('user_id')->pluck('user_id')->unique()->count();
 
         return trans_choice('messages.players_online_count', $onlinePlayers, ['count' => $onlinePlayers]);
     }

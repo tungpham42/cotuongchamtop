@@ -19,6 +19,7 @@ use App\Jobs\AnonymousQuickMatchJob;
 use Illuminate\Support\Str;
 use Atrox\Haikunator;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Cache;
 
 class RoomController extends Controller
 {
@@ -1148,29 +1149,38 @@ class RoomController extends Controller
         }
 
         $now = now();
-        $lastUpdate = $room->last_update ? \Carbon\Carbon::parse($room->last_update) : $now;
-
-        // Calculate exact elapsed time using milliseconds to avoid rounding drift
+        $lastUpdate = $room->last_update ? Carbon::parse($room->last_update) : $now;
         $elapsed = $lastUpdate->diffInMilliseconds($now) / 1000;
 
-        // Subtract exact elapsed time from the player who just finished their turn
+        // Apply any cached disconnected time to the move calculation
+        $previouslyElapsed = Cache::get("room_{$roomCode}_move_elapsed", 0);
+        $totalMoveElapsed = $previouslyElapsed + $elapsed;
+
         if ($elapsed > 0) {
             if ($currentPlayer === 'red') {
-                $room->red_time = max(0, floatval($room->red_time) - $elapsed);
+                if ($totalMoveElapsed >= 120) {
+                    $room->red_time = 0;
+                } else {
+                    $room->red_time = max(0, floatval($room->red_time) - $elapsed);
+                }
             } else {
-                $room->black_time = max(0, floatval($room->black_time) - $elapsed);
+                if ($totalMoveElapsed >= 120) {
+                    $room->black_time = 0;
+                } else {
+                    $room->black_time = max(0, floatval($room->black_time) - $elapsed);
+                }
             }
         }
 
-        // Switch to the next player
+        // Clean out cache since the turn is ending
+        Cache::forget("room_{$roomCode}_move_elapsed");
+
         $room->active_player = $currentPlayer === 'red' ? 'black' : 'red';
         $room->last_update = $now;
         $room->modified_at = $now;
         $room->save();
 
         $freshRoom = $room->fresh();
-
-        // Push the mathematically verified time to all clients
         broadcast(new RoomUpdated($freshRoom));
 
         return response()->json([
@@ -1178,6 +1188,7 @@ class RoomController extends Controller
             'red_time'      => round($freshRoom->red_time, 3),
             'black_time'    => round($freshRoom->black_time, 3),
             'active_player' => $freshRoom->active_player,
+            'move_elapsed'  => 0,
             'last_update'   => optional($freshRoom->last_update)->toDateTimeString(),
         ]);
     }
@@ -1187,11 +1198,14 @@ class RoomController extends Controller
         $room = Room::where('code', $roomCode)->first();
         if (!$room) return response()->json(['error' => 'Room not found'], 404);
 
-        $room->active_player = $player;
-        $room->last_update = now();
-        $room->save();
+        // Resume only if the room was genuinely paused for this player
+        if ($room->active_player === "paused:{$player}") {
+            $room->active_player = $player;
+            $room->last_update = now();
+            $room->save();
 
-        broadcast(new RoomUpdated($room->fresh()));
+            broadcast(new RoomUpdated($room->fresh()));
+        }
 
         return response()->json(['success' => true, 'active_player' => $player]);
     }
@@ -1202,16 +1216,22 @@ class RoomController extends Controller
         if (!$room) return response()->json(['error' => 'Room not found'], 404);
 
         if ($room->active_player === $player) {
-            $lastUpdate = $room->last_update ? \Carbon\Carbon::parse($room->last_update) : now();
+            $lastUpdate = $room->last_update ? Carbon::parse($room->last_update) : now();
             $elapsed = $lastUpdate->diffInMilliseconds(now()) / 1000;
 
+            // SAFELY CACHE THE ACCUMULATED MOVE TIME
+            $previouslyElapsed = Cache::get("room_{$roomCode}_move_elapsed", 0);
+            Cache::put("room_{$roomCode}_move_elapsed", $previouslyElapsed + $elapsed, 86400);
+
+            // Deduct the elapsed duration from the overall clocks
             if ($player === 'red') {
                 $room->red_time = max(0, floatval($room->red_time) - $elapsed);
             } else {
                 $room->black_time = max(0, floatval($room->black_time) - $elapsed);
             }
 
-            $room->active_player = null;
+            // Mark player as paused to freeze deductions on future /getTime requests
+            $room->active_player = "paused:{$player}";
             $room->last_update = now();
             $room->save();
 
@@ -1229,23 +1249,32 @@ class RoomController extends Controller
         $redTime = floatval($room->red_time);
         $blackTime = floatval($room->black_time);
 
-        // If the game is actively running, mathematically determine the exact remaining time
-        if ($room->active_player) {
-            $lastUpdate = $room->last_update ? \Carbon\Carbon::parse($room->last_update) : now();
-            $elapsed = $lastUpdate->diffInMilliseconds(now()) / 1000;
+        // Fetch any time accumulated during a disconnect
+        $moveElapsed = floatval(Cache::get("room_{$roomCode}_move_elapsed", 0));
+        $activePlayer = $room->active_player;
 
-            if ($room->active_player === 'red') {
+        if ($activePlayer && str_starts_with($activePlayer, 'paused:')) {
+            $activePlayer = explode(':', $activePlayer)[1]; // Expose raw player to client
+        } else if ($activePlayer) {
+            $lastUpdate = $room->last_update ? Carbon::parse($room->last_update) : now();
+            $elapsed = $lastUpdate->diffInMilliseconds(now()) / 1000;
+            $moveElapsed += $elapsed;
+
+            if ($activePlayer === 'red') {
                 $redTime = max(0, $redTime - $elapsed);
-            } elseif ($room->active_player === 'black') {
+                if ($moveElapsed >= 120) $redTime = 0;
+            } elseif ($activePlayer === 'black') {
                 $blackTime = max(0, $blackTime - $elapsed);
+                if ($moveElapsed >= 120) $blackTime = 0;
             }
         }
 
         return response()->json([
-            'red_time' => round($redTime, 3),
-            'black_time' => round($blackTime, 3),
-            'active_player' => $room->active_player,
-            'last_update' => optional($room->last_update)->toDateTimeString(),
+            'red_time'      => round($redTime, 3),
+            'black_time'    => round($blackTime, 3),
+            'move_elapsed'  => round($moveElapsed, 3),
+            'active_player' => $room->active_player, // Raw attribute so client can detect paused
+            'last_update'   => optional($room->last_update)->toDateTimeString(),
         ]);
     }
 

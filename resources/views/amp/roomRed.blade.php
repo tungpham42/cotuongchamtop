@@ -122,6 +122,9 @@ function onDragStart (source, piece) {
   // do not pick up pieces if the game is over
   if (game.game_over()) return false;
 
+  // FIX: Prevent dragging pieces while the opponent is disconnected
+  if (typeof systemPaused !== 'undefined' && systemPaused) return false;
+
   // or if it's not that side's turn
   if ((game.turn() === 'r' && piece.search(/^b/) !== -1) ||
       (game.turn() === 'b' && piece.search(/^r/) !== -1)) {

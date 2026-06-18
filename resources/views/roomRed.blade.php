@@ -6,9 +6,7 @@
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Bạn đang đi quân đỏ") }}">{{ __("Bạn là quân Đỏ") }}</h5>
 @endif
 <span id="room-name">{{ __("Tên phòng") }}: {{ $room->name }}</span>
-@if (!isset($room->tournament_id))
-    @include('layout.partials.timer')
-@endif
+@include('layout.partials.timer')
 @endsection
 @section('aboveContent')
 <p id="room-code" class="w-100 text-center mt-0 mb-1">
@@ -116,11 +114,9 @@ function updateFenCode(roomCode, moveIccs) {
 
     // ĐIỂM QUAN TRỌNG: Chỉ đổi đồng hồ sau khi FEN mới đã được lưu thành công trên Server.
     // Điều này chặn đứng hoàn toàn lỗi Server gửi nhầm FEN cũ về trình duyệt.
-    @if (!isset($room->tournament_id))
-      if (!game.game_over()) {
-        switchTurn('{{ $roomCode }}', game.turn() === 'b' ? 'red' : 'black');
-      }
-    @endif
+    if (!game.game_over()) {
+      switchTurn('{{ $roomCode }}', game.turn() === 'b' ? 'red' : 'black');
+    }
 
     if (kypho) {
       kypho.syncMoves('{{ url('/api') }}/readMoves/' + roomCode);
@@ -255,6 +251,9 @@ function greySquare (square) {
 function onDragStart (source, piece) {
   // do not pick up pieces if the game is over
   if (game.game_over()) return false;
+
+  // FIX: Prevent dragging pieces while the opponent is disconnected
+  if (typeof systemPaused !== 'undefined' && systemPaused) return false;
 
   // or if it's not that side's turn
   if ((game.turn() === 'r' && piece.search(/^b/) !== -1) ||
