@@ -91,12 +91,15 @@
     @if ($role === 'host' && $room['pass'] != null)
     function validateForm() {
       document.getElementById('status').innerHTML = "{{ __('Đang xử lý') }}...";
+
       let formData = {
         'ma-phong': '{{ $roomCode }}',
-        'pass': $('#inputPassword').val()
+        'pass': $('#inputPassword').val(),
+        'lang': '{{ app()->getLocale() }}' // <-- Tell the API which language to use
       };
+
       $.ajax({
-        url: "{{ url('/api') }}/doiPass",
+        url: "{{ url('/api/changePass') }}",
         type: "POST",
         data : formData,
         dataType: 'json',

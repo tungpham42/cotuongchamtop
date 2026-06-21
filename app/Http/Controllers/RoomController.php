@@ -687,109 +687,36 @@ class RoomController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the room password dynamically based on locale.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Room  $room
      * @return \Illuminate\Http\Response
      */
-    public function changePass(Request $request, Room $room)
+    public function changePass(Request $request)
     {
         $code = $request->input('ma-phong');
         $pass = $request->input('pass');
-        if (!$request->input('pass') || $pass === '') {
-            echo json_encode(array('message' => 'Password cannot be empty', 'code' => 0));
-            exit();
-        } else {
-            DB::update('update rooms set pass = ? where code = ?', [$pass, $code]);
-            echo json_encode(array('message' => 'Changed password successfully!', 'code' => 1));
-            exit();
-        }
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Room  $room
-     * @return \Illuminate\Http\Response
-     */
-    public function changePassJa(Request $request, Room $room)
-    {
-        $code = $request->input('ma-phong');
-        $pass = $request->input('pass');
-        if (!$request->input('pass') || $pass === '') {
-            echo json_encode(array('message' => 'パスワードを空にすることはできません', 'code' => 0));
-            exit();
-        } else {
-            DB::update('update rooms set pass = ? where code = ?', [$pass, $code]);
-            echo json_encode(array('message' => 'パスワードが正常に変更されました。', 'code' => 1));
-            exit();
-        }
-    }
+        // Prioritize the language sent from the frontend payload
+        $locale = $request->input('lang', app()->getLocale());
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Room  $room
-     * @return \Illuminate\Http\Response
-     */
-    public function changePassKo(Request $request, Room $room)
-    {
-        $code = $request->input('ma-phong');
-        $pass = $request->input('pass');
-        if (!$request->input('pass') || $pass === '') {
-            echo json_encode(array('message' => '암호는 비워 둘 수 없습니다.', 'code' => 0));
-            exit();
-        } else {
-            DB::update('update rooms set pass = ? where code = ?', [$pass, $code]);
-            echo json_encode(array('message' => '암호가 성공적으로 변경되었습니다!', 'code' => 1));
-            exit();
-        }
-    }
+        $messages = [
+            'vi' => ['empty' => 'Mật khẩu không được để trống.', 'success' => 'Đổi mật khẩu thành công!'],
+            'en' => ['empty' => 'Password cannot be empty', 'success' => 'Changed password successfully!'],
+            'ja' => ['empty' => 'パスワードを空にすることはできません', 'success' => 'パスワードが正常に変更されました。'],
+            'ko' => ['empty' => '암호는 비워 둘 수 없습니다.', 'success' => '암호가 성공적으로 변경되었습니다!'],
+            'zh' => ['empty' => '密码不能为空', 'success' => '成功更改密码！']
+        ];
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Room  $room
-     * @return \Illuminate\Http\Response
-     */
-    public function changePassZh(Request $request, Room $room)
-    {
-        $code = $request->input('ma-phong');
-        $pass = $request->input('pass');
-        if (!$request->input('pass') || $pass === '') {
-            echo json_encode(array('message' => '密码不能为空', 'code' => 0));
-            exit();
-        } else {
-            DB::update('update rooms set pass = ? where code = ?', [$pass, $code]);
-            echo json_encode(array('message' => '成功更改密码！', 'code' => 1));
-            exit();
-        }
-    }
+        $localized = $messages[$locale] ?? $messages['en'];
 
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Room  $room
-     * @return \Illuminate\Http\Response
-     */
-    public function doiPass(Request $request, Room $room)
-    {
-        $code = $request->input('ma-phong');
-        $pass = $request->input('pass');
-        if (!$request->input('pass') || $pass === '') {
-            echo json_encode(array('message' => __('Mật khẩu không được để trống'), 'code' => 0));
-            exit();
-        } else {
-            DB::update('update rooms set pass = ? where code = ?', [$pass, $code]);
-            echo json_encode(array('message' => __('Đổi mật khẩu thành công!'), 'code' => 1));
-            exit();
+        if (!$pass || $pass === '') {
+            return response()->json(['message' => $localized['empty'], 'code' => 0]);
         }
+
+        DB::update('update rooms set pass = ? where code = ?', [$pass, $code]);
+
+        return response()->json(['message' => $localized['success'], 'code' => 1]);
     }
 
     public function getEventStream(Room $room, $code)

@@ -1,43 +1,27 @@
 @php
-$locale = app()->getLocale();
-$sessionPrefix = 'CoTuong_VI-';
-$folder = 'phongChatLog';
-$suffix = '-phongchatlog.html';
-$apiEndpoint = '/dangChat';
+$localeConfigs = [
+    'vi' => ['prefix' => 'CoTuong_VI-', 'folder' => 'phongChatLog', 'suffix' => '-phongchatlog.html', 'endpoint' => '/postChatVi'],
+    'en' => ['prefix' => 'CoTuong_EN-', 'folder' => 'roomChatLog', 'suffix' => '-roomchatlog.html', 'endpoint' => '/postChatEn'],
+    'ja' => ['prefix' => 'CoTuong_JA-', 'folder' => 'rumuChatLog', 'suffix' => '-rumuchatlog.html', 'endpoint' => '/postChatJa'],
+    'ko' => ['prefix' => 'CoTuong_KO-', 'folder' => 'bangChatLog', 'suffix' => '-bangchatlog.html', 'endpoint' => '/postChatKo'],
+    'zh' => ['prefix' => 'CoTuong_ZH-', 'folder' => 'fangjianChatLog', 'suffix' => '-fangjianchatlog.html', 'endpoint' => '/postChatZh']
+];
 
-if ($locale === 'en') {
-    $sessionPrefix = 'CoTuong_EN-';
-    $folder = 'roomChatLog';
-    $suffix = '-roomchatlog.html';
-    $apiEndpoint = '/postChat';
-} elseif ($locale === 'ja') {
-    $sessionPrefix = 'CoTuong_JA-';
-    $folder = 'rumuChatLog';
-    $suffix = '-rumuchatlog.html';
-    $apiEndpoint = '/postChatJa';
-} elseif ($locale === 'ko') {
-    $sessionPrefix = 'CoTuong_KO-';
-    $folder = 'bangChatLog';
-    $suffix = '-bangchatlog.html';
-    $apiEndpoint = '/postChatKo';
-} elseif ($locale === 'zh') {
-    $sessionPrefix = 'CoTuong_ZH-';
-    $folder = 'fangjianChatLog';
-    $suffix = '-fangjianchatlog.html';
-    $apiEndpoint = '/postChatZh';
-}
+$config = $localeConfigs[app()->getLocale()] ?? $localeConfigs['en'];
+extract($config); // Extacts to $prefix, $folder, $suffix, $endpoint
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_name($sessionPrefix . $roomCode);
+    session_name($prefix . $roomCode);
     session_start();
 }
 
-$room_path = public_path() . '/' . $folder . '/' . $roomCode . $suffix;
-$log_path = url('/') . '/' . $folder . '/' . $roomCode . $suffix;
+$room_path = public_path("{$folder}/{$roomCode}{$suffix}");
+$log_path = url("{$folder}/{$roomCode}{$suffix}");
 
 if (!is_file($room_path)) {
-    $welcome_message = "<div class='msgln system-msg'><span class='chat-time'>".date("H:i")."</span> <span class='welcome-info'>👋 ".__('Phòng được tạo')."</span></div>\n";
-    file_put_contents($room_path, $welcome_message);
+    $time = date("H:i");
+    $text = __('Phòng được tạo');
+    file_put_contents($room_path, "<div class='msgln system-msg'><span class='chat-time'>{$time}</span> <span class='welcome-info'>👋 {$text}</span></div>\n");
 }
 
 if (isset($_GET['logout'])) {
@@ -517,7 +501,7 @@ $(document).ready(function () {
         const clientmsg = $("#usermsg").val().trim();
         if (clientmsg === "") return false;
 
-        $.post("{{ url('/api') }}{{ $apiEndpoint }}", {
+        $.post("{{ url('/api') }}{{ $endpoint }}", {
             roomCode: "{{ $roomCode }}",
             text: clientmsg,
             _token: "{{ csrf_token() }}"

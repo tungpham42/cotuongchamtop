@@ -7,219 +7,92 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\XiangqiController;
 use App\Http\Controllers\PuzzleController;
 use App\Http\Controllers\Api\ChessAnalysisController;
+use App\Http\Controllers\TitleController;
+use App\Http\Controllers\MailController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ChatController;
 
-Route::post('/chess/analyze', [ChessAnalysisController::class, 'analyze']);
-Route::post('/chess/chat', [ChessAnalysisController::class, 'chat']);
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-Route::post('/xiangqi/best-move', [XiangqiController::class, 'getBestMove']);
-Route::post('/xiangqi/analyze', [XiangqiController::class, 'analyzePosition']);
-Route::get('/xiangqi/status', [XiangqiController::class, 'getEngineStatus']);
-Route::get('/xiangqi/health', [XiangqiController::class, 'healthCheck']);
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-// Route::resource('rooms', 'RoomCrudController');
+Route::controller(ChessAnalysisController::class)->prefix('chess')->group(function () {
+    Route::post('/analyze', 'analyze');
+    Route::post('/chat', 'chat');
+});
+
+Route::controller(XiangqiController::class)->prefix('xiangqi')->group(function () {
+    Route::post('/best-move', 'getBestMove');
+    Route::post('/analyze', 'analyzePosition');
+    Route::get('/status', 'getEngineStatus');
+    Route::get('/health', 'healthCheck');
+});
+
 Route::post('/game/update-ratings', [GameController::class, 'updateRatings']);
-Route::post('/fetchTitle', [
-    "uses" => 'TitleController@fetchTitle',
-    "as" => 'fetchTitle'
-]);
-Route::post('/getNewRoom', [
-    "uses" => 'RoomController@getNewRoom',
-    "as" => 'getNewRoom'
-]);
-Route::post('/getLatestRoom', [
-    "uses" => 'RoomController@getLatestRoom',
-    "as" => 'getLatestRoom'
-]);
-Route::post('/createRoom', [
-    "uses" => 'RoomController@create',
-    "as" => 'create'
-]);
-Route::post('/compete', [
-    "uses" => 'RoomController@compete',
-    "as" => 'compete'
-]);
-Route::post('/competeMail', [
-    "uses" => 'MailController@competeMail',
-    "as" => 'competeMail'
-]);
-Route::post('/joinRoom', [
-    "uses" => 'RoomController@join',
-    "as" => 'join'
-]);
-Route::post('/updateResult', [
-    "uses" => 'RoomController@updateResult',
-    "as" => 'updateResult'
-]);
-Route::post('/updateElo', [
-    "uses" => 'RoomController@updateElo',
-    "as" => 'updateElo'
-]);
-Route::post('/updateSideResult', [
-    "uses" => 'RoomController@updateSideResult',
-    "as" => 'updateSideResult'
-]);
-Route::post('/quickMatch', [
-    "uses" => 'RoomController@quickMatch',
-    "as" => 'quickMatch'
-]);
-Route::post('/getRoomIds', [
-    "uses" => 'RoomController@getRoomIds',
-    "as" => 'getRoomIds'
-]);
-Route::post('/updateOnlineStatus', [
-    "uses" => 'UserController@updateOnlineStatus',
-    "as" => 'updateOnlineStatus'
-]);
-Route::post('/renderPlayersTitle', [
-    "uses" => 'UserController@renderPlayersTitle',
-    "as" => 'renderPlayersTitle'
-]);
-Route::post('/updatePlayersStatus', [
-    "uses" => 'UserController@updatePlayersStatus',
-    "as" => 'updatePlayersStatus'
-]);
-Route::post('/getName', [
-    "uses" => 'UserController@getName',
-    "as" => 'getName'
-]);
-Route::post('/getNameEmail', [
-    "uses" => 'UserController@getNameEmail',
-    "as" => 'getNameEmail'
-]);
-Route::post('/getPoints', [
-    "uses" => 'UserController@getPoints',
-    "as" => 'getPoints'
-]);
-Route::post('/getWinMatchPoints', [
-    "uses" => 'UserController@getWinMatchPoints',
-    "as" => 'getWinMatchPoints'
-]);
-Route::post('/getLoseMatchPoints', [
-    "uses" => 'UserController@getLoseMatchPoints',
-    "as" => 'getLoseMatchPoints'
-]);
-Route::post('/getDrawMatchPoints', [
-    "uses" => 'UserController@getDrawMatchPoints',
-    "as" => 'getDrawMatchPoints'
-]);
-Route::post('/getTotalMatchPoints', [
-    "uses" => 'UserController@getTotalMatchPoints',
-    "as" => 'getTotalMatchPoints'
-]);
-Route::post('/updatePoints', [
-    "uses" => 'UserController@updatePoints',
-    "as" => 'updatePoints'
-]);
-Route::post('/getHostId', [
-    "uses" => 'RoomController@getHostId',
-    "as" => 'getHostId'
-]);
-Route::post('/hasRoomcode', [
-    "uses" => 'RoomController@hasRoomcode',
-    "as" => 'hasRoomcode'
-]);
-Route::get('/getPass/{code}', [
-    "uses" => 'RoomController@getPass',
-    "as" => 'getPass'
-]);
-Route::post('/changePass', [
-    "uses" => 'RoomController@changePass',
-    "as" => 'changePass'
-]);
-Route::post('/changePassJa', [
-    "uses" => 'RoomController@changePassJa',
-    "as" => 'changePassJa'
-]);
-Route::post('/changePassKo', [
-    "uses" => 'RoomController@changePassKo',
-    "as" => 'changePassKo'
-]);
-Route::post('/changePassZh', [
-    "uses" => 'RoomController@changePassZh',
-    "as" => 'changePassZh'
-]);
-Route::post('/doiPass', [
-    "uses" => 'RoomController@doiPass',
-    "as" => 'doiPass'
-]);
-Route::post('/updateFEN', [
-    "uses" => 'RoomController@store',
-    "as" => 'store'
-]);
-Route::get('/readFEN/{code}', [
-    "uses" => 'RoomController@show',
-    "as" => 'show'
-]);
-Route::get('/readMoves/{code}', [
-    "uses" => 'RoomController@getMoves',
-    "as" => 'getMoves'
-]);
-Route::get('/getFEN/{code}', [
-    "uses" => 'RoomController@getEventStream',
-    "as" => 'getEventStream'
-]);
-Route::post('/processMail', [
-    "uses" => 'MailController@send',
-    "as" => 'send'
-]);
-Route::post('/processMailJa', [
-    "uses" => 'MailController@sendJa',
-    "as" => 'sendJa'
-]);
-Route::post('/processMailKo', [
-    "uses" => 'MailController@sendKo',
-    "as" => 'sendKo'
-]);
-Route::post('/processMailZh', [
-    "uses" => 'MailController@sendZh',
-    "as" => 'sendZh'
-]);
-Route::post('/xulyMail', [
-    "uses" => 'MailController@gui',
-    "as" => 'gui'
-]);
-Route::post('/postChat', [
-  "uses" => 'ChatController@post',
-  "as" => 'post'
-]);
-Route::post('/postChatJa', [
-  "uses" => 'ChatController@postJa',
-  "as" => 'postJa'
-]);
-Route::post('/postChatKo', [
-  "uses" => 'ChatController@postKo',
-  "as" => 'postKo'
-]);
-Route::post('/postChatZh', [
-  "uses" => 'ChatController@postZh',
-  "as" => 'postZh'
-]);
-Route::post('/dangChat', [
-  "uses" => 'ChatController@dang',
-  "as" => 'dang'
-]);
+Route::post('/fetchTitle', [TitleController::class, 'fetchTitle'])->name('fetchTitle');
 
-Route::post('/createPuzzle', [PuzzleController::class, 'create'])->name('createPuzzle');
-Route::post('/checkUniqueName', [PuzzleController::class, 'checkUniqueName'])->name('checkUniqueName');
-Route::post('/upvote', [PuzzleController::class, 'upvote'])->name('upvote');
-Route::post('/downvote', [PuzzleController::class, 'downvote'])->name('downvote');
-Route::post('/totalRating', [PuzzleController::class, 'totalRating'])->name('totalRating');
+Route::controller(RoomController::class)->group(function () {
+    Route::post('/getNewRoom', 'getNewRoom')->name('getNewRoom');
+    Route::post('/getLatestRoom', 'getLatestRoom')->name('getLatestRoom');
+    Route::post('/createRoom', 'create')->name('create');
+    Route::post('/compete', 'compete')->name('compete');
+    Route::post('/joinRoom', 'join')->name('join');
+    Route::post('/updateResult', 'updateResult')->name('updateResult');
+    Route::post('/updateElo', 'updateElo')->name('updateElo');
+    Route::post('/updateSideResult', 'updateSideResult')->name('updateSideResult');
+    Route::post('/quickMatch', 'quickMatch')->name('quickMatch');
+    Route::post('/getRoomIds', 'getRoomIds')->name('getRoomIds');
+    Route::post('/getHostId', 'getHostId')->name('getHostId');
+    Route::post('/hasRoomcode', 'hasRoomcode')->name('hasRoomcode');
+    Route::get('/getPass/{code}', 'getPass')->name('getPass');
+    Route::post('/changePass', 'changePass')->name('changePass');
+    Route::post('/updateFEN', 'store')->name('store');
+    Route::get('/readFEN/{code}', 'show')->name('show');
+    Route::get('/readMoves/{code}', 'getMoves')->name('getMoves');
+    Route::get('/getFEN/{code}', 'getEventStream')->name('getEventStream');
+});
 
-Route::post('/puzzles', [PuzzleController::class, 'create'])->name('puzzles.create');
-Route::post('/puzzles/check-name', [PuzzleController::class, 'checkUniqueName'])->name('puzzles.check-name');
-Route::get('/puzzles/{slug}/reactions', [PuzzleController::class, 'getReactions'])->name('puzzles.reactions.show');
-Route::post('/puzzles/{slug}/reactions', [PuzzleController::class, 'react'])->name('puzzles.reactions.store');
-Route::get('/puzzles/{slug}/comments', [PuzzleController::class, 'comments'])->name('puzzles.comments.index');
-Route::post('/puzzles/{slug}/comments', [PuzzleController::class, 'addComment'])->name('puzzles.comments.store');
-Route::post('/puzzles/{slug}/comments/{comment}/like', [PuzzleController::class, 'likeComment'])->name('puzzles.comments.like');
+Route::controller(UserController::class)->group(function () {
+    Route::post('/updateOnlineStatus', 'updateOnlineStatus')->name('updateOnlineStatus');
+    Route::post('/renderPlayersTitle', 'renderPlayersTitle')->name('renderPlayersTitle');
+    Route::post('/updatePlayersStatus', 'updatePlayersStatus')->name('updatePlayersStatus');
+    Route::post('/getName', 'getName')->name('getName');
+    Route::post('/getNameEmail', 'getNameEmail')->name('getNameEmail');
+    Route::post('/getPoints', 'getPoints')->name('getPoints');
+    Route::post('/getWinMatchPoints', 'getWinMatchPoints')->name('getWinMatchPoints');
+    Route::post('/getLoseMatchPoints', 'getLoseMatchPoints')->name('getLoseMatchPoints');
+    Route::post('/getDrawMatchPoints', 'getDrawMatchPoints')->name('getDrawMatchPoints');
+    Route::post('/getTotalMatchPoints', 'getTotalMatchPoints')->name('getTotalMatchPoints');
+    Route::post('/updatePoints', 'updatePoints')->name('updatePoints');
+});
+
+Route::controller(MailController::class)->group(function () {
+    Route::post('/competeMail', 'competeMail')->name('competeMail');
+    Route::post('/processMailEn', 'sendEn')->name('sendEn');
+    Route::post('/processMailJa', 'sendJa')->name('sendJa');
+    Route::post('/processMailKo', 'sendKo')->name('sendKo');
+    Route::post('/processMailZh', 'sendZh')->name('sendZh');
+    Route::post('/processMailVi', 'sendVi')->name('sendVi');
+});
+
+Route::controller(ChatController::class)->group(function () {
+    Route::post('/postChatEn', 'postEn')->name('postEn');
+    Route::post('/postChatJa', 'postJa')->name('postJa');
+    Route::post('/postChatKo', 'postKo')->name('postKo');
+    Route::post('/postChatZh', 'postZh')->name('postZh');
+    Route::post('/postChatVi', 'postVi')->name('postVi');
+});
+
+Route::controller(PuzzleController::class)->group(function () {
+    Route::post('/createPuzzle', 'create')->name('createPuzzle');
+    Route::post('/checkUniqueName', 'checkUniqueName')->name('checkUniqueName');
+    Route::post('/upvote', 'upvote')->name('upvote');
+    Route::post('/downvote', 'downvote')->name('downvote');
+    Route::post('/totalRating', 'totalRating')->name('totalRating');
+
+    Route::prefix('puzzles')->group(function () {
+        Route::post('/', 'create')->name('puzzles.create');
+        Route::post('/check-name', 'checkUniqueName')->name('puzzles.check-name');
+        Route::get('/{slug}/reactions', 'getReactions')->name('puzzles.reactions.show');
+        Route::post('/{slug}/reactions', 'react')->name('puzzles.reactions.store');
+        Route::get('/{slug}/comments', 'comments')->name('puzzles.comments.index');
+        Route::post('/{slug}/comments', 'addComment')->name('puzzles.comments.store');
+        Route::post('/{slug}/comments/{comment}/like', 'likeComment')->name('puzzles.comments.like');
+    });
+});
