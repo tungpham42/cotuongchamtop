@@ -111,6 +111,9 @@ class MailController extends Controller
         $roomName = $request->input('ten-phong');
         $lang     = $request->input('lang', 'vi'); // Default to vi
 
+        // Set the application locale so helpers like localized_url() use the correct language
+        app()->setLocale($lang);
+
         // Consolidate user data retrieval
         $hostId     = $request->input('host_id');
         $guestId    = $request->input('guest_id');
@@ -119,7 +122,8 @@ class MailController extends Controller
         $guestEmail = UserController::getUserEmail($guestId);
 
         // DRY: Build the URL once using string interpolation
-        $roomUrl = url("/phong/{$roomCode}/khach");
+        // localized_url will now respect the locale set above
+        $roomUrl = localized_url('room.guest', ['code' => $roomCode]);
 
         // DRY: Delegate template and translation logic to a helper
         $emailData = $this->getCompeteEmailContent($lang, $hostName, $guestName, $roomName, $roomUrl);
