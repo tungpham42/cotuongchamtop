@@ -194,7 +194,8 @@ function compete(guestId) {
                         'ma-phong': maPhong,
                         'ten-phong': roomName,
                         'host_id': '{{ auth()->id() }}',
-                        'guest_id': guestId
+                        'guest_id': guestId,
+                        'lang': '{{ app()->getLocale() }}'
                       },
                       dataType: 'json'
                     }).done(function(mailData) {
