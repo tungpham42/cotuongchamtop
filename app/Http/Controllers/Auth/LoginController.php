@@ -9,10 +9,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use App\Models\Session as DbSession;
 use App\Events\PlayersUpdated;
+use Maicol07\SSO\Flarum;
 
 class LoginController extends Controller
 {
@@ -65,6 +67,21 @@ class LoginController extends Controller
             // Trigger real-time UI update when a user logs in
             // broadcast(new PlayersUpdated());
 
+            // --- BẮT ĐẦU: ĐỒNG BỘ LOGIN SANG FLARUM ---
+            try {
+                $flarum = new Flarum([
+                    'url' => env('FLARUM_URL'),
+                    'root_domain' => env('FLARUM_ROOT_DOMAIN'),
+                    'api_key' => env('FLARUM_API_KEY'),
+                    'remember' => true,
+                ]);
+                $user = Auth::user();
+                $flarum->login($user->name, $user->email);
+            } catch (\Exception $e) {
+                Log::error('Flarum Login Error: ' . $e->getMessage());
+            }
+            // --- KẾT THÚC ---
+
             return Redirect::to($this->redirectTo());
         }
 
@@ -82,6 +99,19 @@ class LoginController extends Controller
             // Instantly delete all lingering database sessions for this user across all devices/tabs
             DbSession::where('user_id', $userId)->delete();
         }
+
+        // --- BẮT ĐẦU: ĐỒNG BỘ LOGOUT SANG FLARUM ---
+        try {
+            $flarum = new Flarum([
+                'url' => env('FLARUM_URL'),
+                'root_domain' => env('FLARUM_ROOT_DOMAIN'),
+                'api_key' => env('FLARUM_API_KEY'),
+            ]);
+            $flarum->logout();
+        } catch (\Exception $e) {
+            Log::error('Flarum Logout Error: ' . $e->getMessage());
+        }
+        // --- KẾT THÚC ---
 
         Auth::logout();
 
@@ -115,36 +145,42 @@ class LoginController extends Controller
         $socialUser = Socialite::driver($driver)->user();
         $redirectUrl = $this->redirectTo();
 
-        if ($driver === 'zalo') {
-            if (null !== $socialUser->getId()) {
-                $user = User::firstOrCreate(
-                    ['name' => $socialUser->getName()],
-                    ['email' => md5(time()).'.zalo@cotuong.top']
-                );
+        $user = null;
 
-                Auth::login($user, true);
-
-                broadcast(new \App\Events\PlayersUpdated()); // Trigger update
-
-                return Redirect::to($redirectUrl)->with('success', __("Bạn đã đăng nhập bằng {$providerName} thành công!"));
-            }
-            return Redirect::to($redirectUrl)->withErrors(['message' => __('Tài khoản của bạn không hợp lệ.')]);
-        }
-
-        if (null !== $socialUser->getEmail()) {
+        if ($driver === 'zalo' && null !== $socialUser->getId()) {
+            $user = User::firstOrCreate(
+                ['name' => $socialUser->getName()],
+                ['email' => md5(time()).'.zalo@cotuong.top']
+            );
+        } elseif (null !== $socialUser->getEmail()) {
             $user = User::firstOrCreate(
                 ['email' => $socialUser->getEmail()],
                 ['name' => $socialUser->getName()]
             );
+        }
 
+        if ($user) {
             Auth::login($user, true);
+            broadcast(new \App\Events\PlayersUpdated());
 
-            broadcast(new \App\Events\PlayersUpdated()); // Trigger update
+            // --- BẮT ĐẦU: ĐỒNG BỘ SOCIAL LOGIN SANG FLARUM ---
+            try {
+                $flarum = new Flarum([
+                    'url' => env('FLARUM_URL'),
+                    'root_domain' => env('FLARUM_ROOT_DOMAIN'),
+                    'api_key' => env('FLARUM_API_KEY'),
+                    'remember' => true,
+                ]);
+                $flarum->login($user->name, $user->email);
+            } catch (\Exception $e) {
+                Log::error('Flarum Social Login Error: ' . $e->getMessage());
+            }
+            // --- KẾT THÚC ---
 
             return Redirect::to($redirectUrl)->with('success', __("Bạn đã đăng nhập bằng {$providerName} thành công!"));
         }
 
-        return Redirect::to($redirectUrl)->withErrors(['message' => __('Email của bạn không hợp lệ.')]);
+        return Redirect::to($redirectUrl)->withErrors(['message' => __('Tài khoản của bạn không hợp lệ hoặc thiếu email.')]);
     }
 
     // Facebook

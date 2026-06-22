@@ -27,6 +27,7 @@
     "laravel/ui": "^4.2",
     "laravolt/avatar": "^5.0",
     "litespeed/lscache-laravel": "^1.3",
+    "maicol07/flarum-sso-plugin": "^3.3",
     "munafio/chatify": "^1.6",
     "payos/payos": "*",
     "phpmailer/phpmailer": "^6.5",

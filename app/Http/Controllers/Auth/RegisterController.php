@@ -8,7 +8,10 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 use App\Events\PlayersUpdated;
+use Illuminate\Http\Request;
+use Maicol07\SSO\Flarum;
 
 class RegisterController extends Controller
 {
@@ -75,5 +78,28 @@ class RegisterController extends Controller
         // broadcast(new PlayersUpdated());
 
         return $user;
+    }
+
+    /**
+     * Hàm này được Laravel tự động gọi ngay sau khi create() thành công
+     * và user đã được Auth::login().
+     */
+    protected function registered(Request $request, $user)
+    {
+        // --- BẮT ĐẦU: ĐỒNG BỘ REGISTER SANG FLARUM ---
+        try {
+            $flarum = new Flarum([
+                'url' => env('FLARUM_URL'),
+                'root_domain' => env('FLARUM_ROOT_DOMAIN'),
+                'api_key' => env('FLARUM_API_KEY'),
+                'remember' => true,
+            ]);
+
+            // Hàm login() của Flarum SSO có tính năng tự động tạo user bên Flarum nếu chưa tồn tại
+            $flarum->login($user->name, $user->email);
+        } catch (\Exception $e) {
+            Log::error('Flarum Register/Login Error: ' . $e->getMessage());
+        }
+        // --- KẾT THÚC ---
     }
 }
