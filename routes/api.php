@@ -12,6 +12,15 @@ use App\Http\Controllers\MailController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChatController;
 
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    // Trả về đúng định dạng JSON mà Flarum dễ đọc nhất
+    return response()->json([
+        'id' => $request->user()->id,
+        'name' => $request->user()->name,
+        'email' => $request->user()->email,
+    ]);
+});
+
 Route::controller(ChessAnalysisController::class)->prefix('chess')->group(function () {
     Route::post('/analyze', 'analyze');
     Route::post('/chat', 'chat');
