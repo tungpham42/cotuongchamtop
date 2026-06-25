@@ -1476,37 +1476,91 @@ a.animate:hover {
 }
 
 /* Nút Cuộn Lên (Scroll Top) hoàng gia */
+/* ==========================================================================
+   LIQUID GLASS SCROLL-TO-TOP (.cd-top)
+   ========================================================================== */
 .cd-top {
     display: inline-block;
-    height: 40px;
-    width: 40px;
+    height: 48px; /* Slightly larger for easier tapping */
+    width: 48px;
     position: fixed;
-    bottom: 40px;
-    left: 10px;
-    z-index: 42;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+    bottom: 30px;
+    left: 30px; /* Moved slightly off the exact edge for better breathing room */
+    z-index: 9999;
     overflow: hidden;
     text-indent: 100%;
     white-space: nowrap;
-    background: rgba(138, 21, 21, 0.9) url(/img/cd-top-arrow.svg) no-repeat
-        center 50%;
-    border: 2px solid var(--royal-gold);
-    border-radius: 4px;
+
+    /* Background & Icon Setup */
+    background: var(--glass-bg-dark) url(/img/cd-top-arrow.svg) no-repeat center
+        50%;
+    background-size: 20px;
+
+    /* Liquid Glass Effects */
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-top: 2px solid rgba(255, 215, 0, 0.6); /* Glossy top edge */
+    border-radius: 50%; /* Floating circular button */
+
+    /* Deep Shadow & Inner Wet Reflection */
+    box-shadow:
+        var(--liquid-shadow),
+        inset 0 3px 10px var(--liquid-highlight);
+
+    /* Initial Hidden State with Slide-Down Offset */
     visibility: hidden;
     opacity: 0;
-    transition:
-        opacity 0.3s,
-        visibility 0s,
-        background-color 0.3s;
+    transform: translateY(20px) scale(0.9);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+
+/* Liquid Sheen Reflection (matches your buttons) */
+.cd-top::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 150%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent
+    );
+    transform: skewX(-20deg);
+    transition: all 0.6s ease;
+    z-index: -1;
+}
+
+/* Shown State */
 .cd-top.cd-top--show {
     visibility: visible;
     opacity: 1;
+    transform: translateY(0) scale(1);
 }
-.cd-top:hover {
-    background-color: var(--royal-gold);
-    border-color: var(--royal-red);
+
+/* Catchy Hover State - Glowing & Levitating */
+.cd-top:hover,
+.cd-top:focus {
+    background-color: var(
+        --glass-bg-red
+    ); /* Shifts to royal red on interaction */
+    border-color: var(--royal-gold);
     opacity: 1;
+    transform: translateY(-6px) scale(1.1);
+
+    /* Amplified Glow */
+    box-shadow:
+        0 15px 30px rgba(0, 0, 0, 0.9),
+        0 0 20px rgba(212, 175, 55, 0.6),
+        inset 0 4px 15px var(--liquid-highlight),
+        inset 0 -2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.cd-top:hover::before {
+    left: 150%; /* Triggers the light reflection swipe */
 }
 
 /* Waiting Indicator Dot */
