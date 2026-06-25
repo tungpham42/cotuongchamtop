@@ -51,7 +51,7 @@
             <a id="dashboardDropdown" class="dashboard room trophy thi-dau dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false">
               <i class="far fa-trophy-alt"></i> {{ __("Thi đấu") }}
             </a>
-            <div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="dashboardDropdown">
+            <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow" aria-labelledby="dashboardDropdown">
               <a class="rooms-list showPromotion dropdown-item{{ url()->current() == $roomListUrl ? ' active disabled' : '' }}" href="{{ $roomListUrl }}"><i class="far fa-list-alt"></i> {{ __("Sảnh chờ") }}</a>
               <a class="showPromotion dropdown-item{{ url()->current() == $membersUrl ? ' active disabled' : '' }}" href="{{ $membersUrl }}"><i class="far fa-users"></i> {{ __("Thành viên") }}</a>
               <a class="setup puzzle showPromotion dropdown-item{{ url()->current() == $puzzleListUrl ? ' active disabled' : '' }}" href="{{ $puzzleListUrl }}"><i class="far fa-puzzle-piece"></i> {{ __("Cờ thế") }}</a>
@@ -78,7 +78,7 @@
                 <img src="{{ Auth::user()->getAvatarUrl(24, 12) }}" class="shadow-sm pulse-gold" style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%; border: 2px solid var(--royal-gold);" />
               </a>
 
-              <div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="navbarDropdown">
+              <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow" aria-labelledby="navbarDropdown">
                 @if (Auth::user()->isStandard())
                   <span class="dropdown-item text-success"><i class="far fa-crown"></i> {{ __("Standard (ẩn quảng cáo)") }}</span>
                 @else
@@ -109,7 +109,7 @@
 
           <li class="dropdown language-switcher ml-3 pl-3">
             <a class="lang dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false"><i class="far fa-language"></i> {{ $localeLabels[$locale] ?? __('Tiếng Việt') }}</a>
-            <div class="dropdown-menu dropdown-menu-right shadow">
+            <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow">
               <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangViUrl ? ' active disabled' : '' }}" href="{{ url($currentLangViUrl) }}"><span class="shadow-sm fi fi-vn mr-2"></span> {{ __("Tiếng Việt") }}</a>
               <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangEnUrl ? ' active disabled' : '' }}" href="{{ url($currentLangEnUrl) }}"><span class="shadow-sm fi fi-us mr-2"></span> {{ __("English") }}</a>
               <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangJaUrl ? ' active disabled' : '' }}" href="{{ url($currentLangJaUrl) }}"><span class="shadow-sm fi fi-jp mr-2"></span> {{ __("日本語") }}</a>
