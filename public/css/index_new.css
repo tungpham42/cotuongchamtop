@@ -2610,8 +2610,14 @@ div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(3) {
 .scrollable-menu {
     height: auto;
     /* Set maximum height relative to viewport height (e.g., 75% of the screen) */
-    max-height: calc(95vh - 82px);
+    max-height: calc(82vh - 82px);
     /* Enable vertical scrolling if content overflows */
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+@media (max-width: 1199.98px) {
+    .scrollable-menu {
+        max-height: 100%;
+    }
 }

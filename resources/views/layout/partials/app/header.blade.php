@@ -1,5 +1,6 @@
 @php
   $homeUrl = localized_url('home');
+  $tournamentListUrl = localized_url('tournaments.index');
   $roomListUrl = localized_url('room.list');
   $membersUrl = localized_url('user.list');
   $puzzleListUrl = localized_url('puzzle.list');
@@ -53,6 +54,7 @@
             </a>
             <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow" aria-labelledby="dashboardDropdown">
               <a class="rooms-list showPromotion dropdown-item{{ url()->current() == $roomListUrl ? ' active disabled' : '' }}" href="{{ $roomListUrl }}"><i class="far fa-list-alt"></i> {{ __("Sảnh chờ") }}</a>
+              <a class="showPromotion dropdown-item{{ url()->current() == $tournamentListUrl ? ' active disabled' : '' }}" href="{{ $tournamentListUrl }}"><i class="far fa-swords"></i> {{ __("Giải đấu") }}</a>
               <a class="showPromotion dropdown-item{{ url()->current() == $membersUrl ? ' active disabled' : '' }}" href="{{ $membersUrl }}"><i class="far fa-users"></i> {{ __("Thành viên") }}</a>
               <a class="setup puzzle showPromotion dropdown-item{{ url()->current() == $puzzleListUrl ? ' active disabled' : '' }}" href="{{ $puzzleListUrl }}"><i class="far fa-puzzle-piece"></i> {{ __("Cờ thế") }}</a>
               <a class="showPromotion dropdown-item{{ url()->current() == $playingUrl ? ' active disabled' : '' }}" href="{{ $playingUrl }}"><i class="far fa-list"></i> {{ __("Đang thi đấu") }}</a>
