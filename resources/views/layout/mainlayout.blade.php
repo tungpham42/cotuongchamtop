@@ -41,7 +41,6 @@
       @include('common.ads')
       @include('layout.partials.scripts')
       @yield('belowContent')
-      @include('common.xiangqiBanner')
       {{-- @desktop
         @include('layout.partials.fb')
       @enddesktop --}}
