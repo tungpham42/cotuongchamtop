@@ -341,7 +341,7 @@ class UserController extends Controller
             $avatarSrc = $user->profile_picture ? asset('storage/' . $user->profile_picture) : Avatar::create($user->name)->setDimension(38)->setFontSize(19);
             $profileLink = localized_url('app.player', ['id' => $id]);
 
-            return '<img src="' . $avatarSrc . '" style="width: 38px; height: 38px; object-fit: cover; border-radius: 4px;" />&nbsp;<a class="text-danger showPromotion animate" href="' . $profileLink . '">' . '# ' . $id . '  ' . $user->name . '</a>&nbsp;' . $onlineStatus;
+            return $onlineStatus . '&nbsp;<img src="' . $avatarSrc . '" style="width: 38px; height: 38px; object-fit: cover; border-radius: 4px;" />&nbsp;<a class="text-danger showPromotion animate" href="' . $profileLink . '">' . '# ' . $id . '  ' . $user->name . '</a>';
         } else {
             return '<span class="waitingIndicator">
                         <span class="indicator bg-danger"></span>
@@ -402,7 +402,7 @@ class UserController extends Controller
             $avatarSrc = $user->profile_picture ? asset('storage/' . $user->profile_picture) : Avatar::create($user->name)->setDimension(28)->setFontSize(14);
             $profileLink = localized_url('app.player', ['id' => $id]);
 
-            return '<img alt="' . $user->name . '" src="' . $avatarSrc . '" style="width: 28px; height: 28px; object-fit: cover; border-radius: 4px;">&nbsp;<a class="text-light showPromotion animate-light" href="' . $profileLink . '">' . '# ' . $id . '  ' . $user->name . '</a>&nbsp;' . $onlineStatus;
+            return $onlineStatus . '&nbsp;<img alt="' . $user->name . '" src="' . $avatarSrc . '" style="width: 28px; height: 28px; object-fit: cover; border-radius: 4px;">&nbsp;<a class="text-light showPromotion animate-light" href="' . $profileLink . '">' . '# ' . $id . '  ' . $user->name . '</a>';
         } else {
             return '<span class="waitingIndicator">
                         <span class="indicator bg-light"></span>
