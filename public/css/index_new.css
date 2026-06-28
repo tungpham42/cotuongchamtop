@@ -1165,11 +1165,29 @@ body.setup #ban-co {
     box-shadow: inset 0 0 15px rgba(255, 215, 0, 0.1);
 }
 
+/* 1. Prevent table headers from wrapping into multiple lines */
 .table thead th {
     border-bottom: 2px solid var(--royal-gold);
     color: var(--royal-gold);
     text-transform: uppercase;
     background: rgba(11, 12, 16, 0.2);
+    white-space: nowrap; /* Add this line */
+}
+
+/* 2. Prevent room names from breaking, and truncate them if they are too long */
+.table td.room-code span {
+    padding: 4px 7px 5px;
+    background: rgba(212, 175, 55, 0.2);
+    border-radius: 4px;
+    border: 1px solid var(--royal-gold);
+
+    /* Add these lines below to fix the wrapping bug */
+    display: inline-block;
+    max-width: 180px; /* Adjust this value based on your layout preference */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
 }
 
 /* ==========================================================================
