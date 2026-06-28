@@ -1,5 +1,16 @@
 @extends('layout.gamelayout')
 @section('aboveBoard')
+@php
+$locale = app()->getLocale() ?: 'vi';
+$levelUrls = [
+    'vi' => ['ban-co-moi-choi', 'ban-co-de', 'ban-co-binh-thuong', 'ban-co-kho', 'ban-co-kho-nhat'],
+    'en' => ['newbie-board', 'easy-board', 'normal-board', 'hard-board', 'hardest-board'],
+    'ja' => ['shoshinsha-bodo', 'kantan-bodo', 'tsujo-bodo', 'hado-bodo', 'mottomo-muzukashi-bodo'],
+    'ko' => ['nyubi-bodeu', 'iji-bodeu', 'nomol-bodeu', 'hadeu-bodeu', 'gajang-dandanhan-bodeu'],
+    'zh' => ['xinshouban', 'jianyiban', 'putongban', 'yingban', 'zuiyingban'],
+];
+$urls = $levelUrls[$locale] ?? $levelUrls['vi'];
+@endphp
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Cấp độ") }} máy: {{ $levelTxt }}">{{ __("Bạn đang giải") }}<span id="puzzle-title"></span> {{ __("với máy") }}</h5>
 @endsection
 @section('aboveContent')
@@ -18,11 +29,11 @@
     <i class="fad fa-robot"></i> {{ __("Chọn cấp độ bàn cờ") }}
   </button>
   <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="levelDropdown">
-    <a class="add-fen dropdown-item{{ $levelTxt === 'Mới chơi' ? ' active disabled' : '' }}" href="{{ url('/ban-co-moi-choi') }}" style="cursor: pointer !important;">{{ __("Mới chơi") }}</a>
-    <a class="add-fen dropdown-item{{ $levelTxt === 'Dễ' ? ' active disabled' : '' }}" href="{{ url('/ban-co-de') }}" style="cursor: pointer !important;">{{ __("Dễ") }}</a>
-    <a class="add-fen dropdown-item{{ $levelTxt === 'Bình thường' ? ' active disabled' : '' }}" href="{{ url('/ban-co-binh-thuong') }}" style="cursor: pointer !important;">{{ __("Bình thường") }}</a>
-    <a class="add-fen dropdown-item{{ $levelTxt === 'Khó' ? ' active disabled' : '' }}" href="{{ url('/ban-co-kho') }}" style="cursor: pointer !important;">{{ __("Khó") }}</a>
-    <a class="add-fen dropdown-item{{ $levelTxt === 'Khó nhất' ? ' active disabled' : '' }}" href="{{ url('/ban-co-kho-nhat') }}" style="cursor: pointer !important;">{{ __("Khó nhất") }}</a>
+    <a class="add-fen dropdown-item{{ $levelTxt === 'Mới chơi' ? ' active disabled' : '' }}" href="{{ url('/' . $urls[0]) }}" style="cursor: pointer !important;">{{ __("Mới chơi") }}</a>
+    <a class="add-fen dropdown-item{{ $levelTxt === 'Dễ' ? ' active disabled' : '' }}" href="{{ url('/' . $urls[1]) }}" style="cursor: pointer !important;">{{ __("Dễ") }}</a>
+    <a class="add-fen dropdown-item{{ $levelTxt === 'Bình thường' ? ' active disabled' : '' }}" href="{{ url('/' . $urls[2]) }}" style="cursor: pointer !important;">{{ __("Bình thường") }}</a>
+    <a class="add-fen dropdown-item{{ $levelTxt === 'Khó' ? ' active disabled' : '' }}" href="{{ url('/' . $urls[3]) }}" style="cursor: pointer !important;">{{ __("Khó") }}</a>
+    <a class="add-fen dropdown-item{{ $levelTxt === 'Khó nhất' ? ' active disabled' : '' }}" href="{{ url('/' . $urls[4]) }}" style="cursor: pointer !important;">{{ __("Khó nhất") }}</a>
   </div>
 </div>
 <div class="dropup mx-auto text-center my-1">
@@ -384,12 +395,12 @@ $('.level.dropup .dropdown-item').each(function(){
     $(this).prepend(activePointer);
   }
   $(this).on('click auxclick', function(e){
-    // if (removeTrailingSlash($(this).attr('href') + '/' + game.fen()) !== removeTrailingSlash(window.location.href)) {
-    //   e.preventDefault();
-    //   $('#AdSenseModal').attr('data-url', $(this).attr('href') + '/' + game.fen()).modal('show');
-    // } else {
+
+    // PREVENT DEFAULT NAVIGATION SO JS CAN APPEND THE FEN
+    e.preventDefault();
+
     window.location.href = $(this).attr('href') + '/' + game.fen();
-    // }
+
   }).on('mouseenter mouseleave', function(){
     if ($(this).has('i').length) {
       $(this).find('i').remove();

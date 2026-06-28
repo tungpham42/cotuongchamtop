@@ -1,5 +1,16 @@
 @extends('layout.gamelayout')
 @section('aboveBoard')
+@php
+$locale = app()->getLocale() ?: 'vi';
+$levelUrls = [
+    'vi' => ['ban-co-moi-choi', 'ban-co-de', 'ban-co-binh-thuong', 'ban-co-kho', 'ban-co-kho-nhat'],
+    'en' => ['newbie-board', 'easy-board', 'normal-board', 'hard-board', 'hardest-board'],
+    'ja' => ['shoshinsha-bodo', 'kantan-bodo', 'tsujo-bodo', 'hado-bodo', 'mottomo-muzukashi-bodo'],
+    'ko' => ['nyubi-bodeu', 'iji-bodeu', 'nomol-bodeu', 'hadeu-bodeu', 'gajang-dandanhan-bodeu'],
+    'zh' => ['xinshouban', 'jianyiban', 'putongban', 'yingban', 'zuiyingban'],
+];
+$urls = $levelUrls[$locale] ?? $levelUrls['vi'];
+@endphp
 <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Tăng kỹ năng chơi cờ") }}">{{ __("Bạn đang giải") }}<span id="puzzle-title"></span></h5>
 @endsection
 @section('aboveContent')
@@ -12,18 +23,18 @@
   <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> {{ __("HẾT TRẬN") }}</span>
 </p>
 <div class="sharethis-inline-reaction-buttons"></div>
-{{-- <div class="dropup mx-auto text-center my-1">
+<div class="dropup mx-auto text-center my-1">
   <button class="btn btn-lg btn-dark dropdown-toggle" type="button" id="levelDropdown" data-toggle="dropdown" aria-haspopup="true" data-step="1" data-intro="Hãy chọn cấp độ phù hợp với bạn nhé" aria-expanded="false">
-    <i class="fad fa-robot"></i> Chọn cấp độ bàn cờ
+    <i class="fad fa-robot"></i> {{ __("Chọn cấp độ bàn cờ") }}
   </button>
   <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="levelDropdown">
-    <a class="add-fen dropdown-item" href="{{ url('/ban-co-moi-choi') }}" style="cursor: pointer !important;">{{ __("Mới chơi") }}</a>
-    <a class="add-fen dropdown-item" href="{{ url('/ban-co-de') }}" style="cursor: pointer !important;">{{ __("Dễ") }}</a>
-    <a class="add-fen dropdown-item" href="{{ url('/ban-co-binh-thuong') }}" style="cursor: pointer !important;">{{ __("Bình thường") }}</a>
-    <a class="add-fen dropdown-item" href="{{ url('/ban-co-kho') }}" style="cursor: pointer !important;">{{ __("Khó") }}</a>
-    <a class="add-fen dropdown-item" href="{{ url('/ban-co-kho-nhat') }}" style="cursor: pointer !important;">{{ __("Khó nhất") }}</a>
+    <a class="add-fen dropdown-item" href="{{ url('/' . $urls[0]) }}" style="cursor: pointer !important;">{{ __("Mới chơi") }}</a>
+    <a class="add-fen dropdown-item" href="{{ url('/' . $urls[1]) }}" style="cursor: pointer !important;">{{ __("Dễ") }}</a>
+    <a class="add-fen dropdown-item" href="{{ url('/' . $urls[2]) }}" style="cursor: pointer !important;">{{ __("Bình thường") }}</a>
+    <a class="add-fen dropdown-item" href="{{ url('/' . $urls[3]) }}" style="cursor: pointer !important;">{{ __("Khó") }}</a>
+    <a class="add-fen dropdown-item" href="{{ url('/' . $urls[4]) }}" style="cursor: pointer !important;">{{ __("Khó nhất") }}</a>
   </div>
-</div> --}}
+</div>
 <div class="dropup mx-auto text-center my-1">
   <button class="btn btn-danger btn-lg dropdown-toggle" type="button" id="hostDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     <span data-toggle="tooltip" data-placement="top" title="{{ __("Đấu với bạn bè trong phòng") }}"><i class="fad fa-gamepad-alt"></i> {{ __("Chơi online") }}</span>
@@ -250,12 +261,12 @@ $('.add-fen').each(function(){
     $(this).prepend(activePointer);
   }
   $(this).on('click auxclick', function(e){
-    // if (removeTrailingSlash($(this).attr('href') + '/' + game.fen()) !== removeTrailingSlash(window.location.href)) {
-    //   e.preventDefault();
-    //   $('#AdSenseModal').attr('data-url', $(this).attr('href') + '/' + game.fen()).modal('show');
-    // } else {
-      window.location.href = $(this).attr('href') + '/' + game.fen();
-    // }
+
+    // PREVENT DEFAULT NAVIGATION SO JS CAN APPEND THE FEN
+    e.preventDefault();
+
+    window.location.href = $(this).attr('href') + '/' + game.fen();
+
   }).on('mouseenter mouseleave', function(){
     if ($(this).has('i').length) {
       $(this).find('i').remove();
