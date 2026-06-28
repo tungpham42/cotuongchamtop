@@ -132,6 +132,18 @@ $(function () {
     });
   });
 });
+$(document).ready(function() {
+    // Tự động gắn tooltip cho các trường có khả năng bị cắt chữ
+    $('.host-title, .guest-title').each(function() {
+        // Lấy văn bản thuần túy bên trong (tự động loại bỏ các thẻ HTML)
+        var pureText = $(this).text().trim();
+
+        // Gắn thuộc tính title để tạo native tooltip
+        if (pureText.length > 0) {
+            $(this).attr('title', pureText);
+        }
+    });
+});
 </script>
 <a href="#0" class="cd-top js-cd-top rounded" style="background-image: url('{{ asset('img/cd-top-arrow.svg') }}');">Top</a>
 <script src="{{ asset('js/to-top.js') }}"></script>
