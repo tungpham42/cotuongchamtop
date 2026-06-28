@@ -94,8 +94,8 @@ class UserController extends Controller
                 ->addColumn('name', function($row){
                     $onlineStatus = self::onlineStatus($row->id);
                     $avatarSrc = $row->profile_picture ? asset('storage/' . $row->profile_picture) : Avatar::create($row->name)->setDimension(28)->setFontSize(14);
-                    $avatarHtml = '<img src="' . $avatarSrc . '" style="width: 28px; height: 28px; object-fit: cover; border: 1px solid var(--royal-gold); border-radius: 4px; box-shadow: 0 0 5px rgba(212,175,55,0.5);" />';
-                    return $avatarHtml . '&nbsp;<a class="text-warning font-weight-bold animate showPromotion" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.8); text-decoration: none !important;" href="'.localized_url('app.player', ['id' => $row->id]).'">'.$row->name.'</a>&nbsp;' . $onlineStatus;
+                    $avatarHtml = $onlineStatus . '&nbsp;<img src="' . $avatarSrc . '" style="width: 28px; height: 28px; object-fit: cover; border: 1px solid var(--royal-gold); border-radius: 4px; box-shadow: 0 0 5px rgba(212,175,55,0.5);" />';
+                    return $avatarHtml . '&nbsp;<a class="text-warning font-weight-bold animate showPromotion" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.8); text-decoration: none !important;" href="'.localized_url('app.player', ['id' => $row->id]).'">'.$row->name.'</a>';
                 })
                 ->addColumn('elo', function($row){
                     return '<strong style="color: var(--royal-gold);">' . self::renderElo($row->id) . '</strong>';
@@ -320,7 +320,7 @@ class UserController extends Controller
             $avatarSrc = $user->profile_picture ? asset('storage/' . $user->profile_picture) : Avatar::create($user->name)->setDimension(38)->setFontSize(19);
             $profileLink = localized_url('app.player', ['id' => $id]);
 
-            return '<img src="' . $avatarSrc . '" style="width: 38px; height: 38px; object-fit: cover; border-radius: 4px;" />&nbsp;<a class="text-light showPromotion animate-light" href="' . $profileLink . '">' . $user->name . '</a>&nbsp;' . $onlineStatus;
+            return $onlineStatus . '&nbsp;<img src="' . $avatarSrc . '" style="width: 38px; height: 38px; object-fit: cover; border-radius: 4px;" />&nbsp;<a class="text-light showPromotion animate-light" href="' . $profileLink . '">' . $user->name . '</a>';
         } else {
             return '<span class="waitingIndicator">
                         <span class="indicator bg-danger"></span>
