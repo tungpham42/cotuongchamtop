@@ -1190,6 +1190,15 @@ body.setup #ban-co {
     vertical-align: middle;
 }
 
+.table td.host-name,
+.table td.guest-name {
+    max-width: 140px; /* Điều chỉnh độ rộng tối đa tùy ý */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
 /* ==========================================================================
    BẢNG & DATA TABLES
    ========================================================================== */

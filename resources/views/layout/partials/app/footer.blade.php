@@ -210,6 +210,19 @@ $('#tourBtn').on('click', function(){
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }).start();
 });
+
+$(document).ready(function() {
+    // Tự động gắn tooltip cho các trường có khả năng bị cắt chữ
+    $('.room-code span, .host-name, .guest-name').each(function() {
+        // Lấy văn bản thuần túy bên trong (tự động loại bỏ các thẻ HTML)
+        var pureText = $(this).text().trim();
+
+        // Gắn thuộc tính title để tạo native tooltip
+        if (pureText.length > 0) {
+            $(this).attr('title', pureText);
+        }
+    });
+});
 </script>
 <script src='https://platform-api.sharethis.com/js/sharethis.js#property=646aee4bd8c6d2001a06c2f8&product=sticky-share-buttons' async='async'></script>
 <a href="#0" class="cd-top js-cd-top rounded" style="background-image: url('{{ asset('img/cd-top-arrow.svg') }}');">{{ __("Top") }}</a>
