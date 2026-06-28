@@ -21,7 +21,7 @@
     @guest
     <div class="d-flex flex-column flex-lg-row justify-content-between align-items-center mb-4 p-4 shadow-sm" style="background: rgba(138, 21, 21, 0.2); border-left: 4px solid var(--royal-gold); border-right: 4px solid var(--royal-gold); border-radius: 4px;">
         <div class="mb-3 mb-md-0">
-            <h5 class="font-weight-bold mb-1" style="color: var(--royal-gold); font-family: 'Texturina', serif;"><i class="fad fa-chess-knight"></i> {{ __('Sẵn sàng thử thách bản thân?') }}</h5>
+            <h5 class="font-weight-bold mb-1" style="color: var(--royal-gold); font-family: 'Texturina', serif;"><i class="fad fa-swords"></i> {{ __('Sẵn sàng thử thách bản thân?') }}</h5>
             <p class="mb-0 mr-3" style="color: var(--royal-gold-light);">{{ __('Tạo tài khoản miễn phí để Tạo giải đấu, ghi danh vào các giải đấu, cạnh tranh với cao thủ và khắc tên lên bảng vàng.') }}</p>
         </div>
         <a href="{{ localized_url('register') }}" class="btn font-weight-bold px-4 py-2 pulse-gold" style="background: linear-gradient(to bottom, #d4af37, #b89020); color: var(--royal-red); border: 2px solid #fff; white-space: nowrap;">
