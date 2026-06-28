@@ -212,15 +212,28 @@ $('#tourBtn').on('click', function(){
 });
 
 $(document).ready(function() {
-    // Tự động gắn tooltip cho các trường có khả năng bị cắt chữ
+    // 1. Quét qua các cột có khả năng bị cắt chữ
     $('.room-code span, .host-name, .guest-name').each(function() {
-        // Lấy văn bản thuần túy bên trong (tự động loại bỏ các thẻ HTML)
+        // Lấy văn bản thuần (bỏ các thẻ HTML như <a>, <i>)
         var pureText = $(this).text().trim();
 
-        // Gắn thuộc tính title để tạo native tooltip
+        // 2. Gắn attribute cho Bootstrap Tooltip
         if (pureText.length > 0) {
+            $(this).attr('data-toggle', 'tooltip');
+            $(this).attr('data-placement', 'top'); // Có thể đổi thành 'bottom' nếu muốn
             $(this).attr('title', pureText);
+
+            // Fix nhẹ để thẻ <td> hiển thị con trỏ chuột dạng help/pointer khi hover
+            $(this).css('cursor', 'pointer');
         }
+    });
+
+    // 3. Khởi tạo Bootstrap Tooltip jQuery Plugin
+    // Nếu bạn dùng Bootstrap 5, cú pháp có thể là $('[data-bs-toggle="tooltip"]')
+    $('[data-toggle="tooltip"]').tooltip({
+        trigger: 'hover',       // Chỉ hiện khi hover
+        animation: true,        // Bật hiệu ứng fade
+        delay: { "show": 300, "hide": 100 } // Độ trễ xuất hiện (giúp đỡ rối mắt khi lướt chuột nhanh)
     });
 });
 </script>

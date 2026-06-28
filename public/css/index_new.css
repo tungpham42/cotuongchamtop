@@ -1200,6 +1200,47 @@ body.setup #ban-co {
 }
 
 /* ==========================================================================
+   TABLE TRUNCATION (CẮT CHỮ)
+   ========================================================================== */
+.table td.host-name,
+.table td.guest-name {
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+/* ==========================================================================
+   ROYAL TOOLTIP (BOOTSTRAP OVERRIDE)
+   ========================================================================== */
+.tooltip .tooltip-inner {
+    background: rgba(11, 12, 16, 0.95) !important; /* Nền đen mun */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--royal-gold) !important;
+    color: var(--royal-gold-light) !important;
+    box-shadow:
+        0 10px 20px rgba(0, 0, 0, 0.9),
+        0 0 15px rgba(212, 175, 55, 0.3);
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+/* Mũi tên của Tooltip (màu vàng hoàng kim) */
+.tooltip.bs-tooltip-top .arrow::before,
+.tooltip.bs-tooltip-auto[x-placement^="top"] .arrow::before {
+    border-top-color: var(--royal-gold) !important;
+}
+.tooltip.bs-tooltip-bottom .arrow::before,
+.tooltip.bs-tooltip-auto[x-placement^="bottom"] .arrow::before {
+    border-bottom-color: var(--royal-gold) !important;
+}
+
+/* ==========================================================================
    BẢNG & DATA TABLES
    ========================================================================== */
 .table {
