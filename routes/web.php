@@ -248,13 +248,6 @@ Route::post('/saveTime/{roomCode}', [RoomController::class, 'saveTime']);
 Route::post('/match/find', [RoomController::class, 'findMatch'])->name('match.find');
 Route::get('/match/status', [RoomController::class, 'checkMatchStatus'])->name('match.status');
 
-Route::get('/terms-and-conditions', function () {
-  return view('terms', localized_page_data('terms', app()->getLocale(), ['headTitle' => 'Terms and Conditions', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url('')]));
-});
-Route::get('/privacy-policy', function () {
-  return view('privacy', localized_page_data('privacy', app()->getLocale(), ['headTitle' => 'Privacy Policy', 'bodyClass' => 'home', 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url('')]));
-});
-
 Route::get('/getUserPuzzlesTemplate', function(){
   return view('layout.partials.userPuzzles')->render();
 });
@@ -1196,6 +1189,20 @@ $localizedStaticPages = [
     'ja' => ['view' => 'userList', 'title' => 'すべてのプレイヤー'],
     'ko' => ['view' => 'userList', 'title' => '모든 플레이어'],
     'zh' => ['view' => 'userList', 'title' => '所有玩家'],
+  ],
+  'terms' => [
+    'vi' => ['view' => 'terms', 'title' => 'Điều khoản và Điều kiện'],
+    'en' => ['view' => 'terms', 'title' => 'Terms and Conditions'],
+    'ja' => ['view' => 'terms', 'title' => '利用規約'],
+    'ko' => ['view' => 'terms', 'title' => '이용약관'],
+    'zh' => ['view' => 'terms', 'title' => '条款和条件']
+  ],
+  'privacy' => [
+    'vi' => ['view' => 'privacy', 'title' => 'Chính sách bảo mật'],
+    'en' => ['view' => 'privacy', 'title' => 'Privacy Policy'],
+    'ja' => ['view' => 'privacy', 'title' => 'プライバシーポリシー'],
+    'ko' => ['view' => 'privacy', 'title' => '개인정보 처리방침'],
+    'zh' => ['view' => 'privacy', 'title' => '隐私政策']
   ],
 ];
 
