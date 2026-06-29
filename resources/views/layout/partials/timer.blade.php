@@ -144,6 +144,8 @@
 <script>
     const roomCode = "{{ $roomCode }}";
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+
+    // Đã đổi url('/') thành url('/api') để trỏ đúng vào group API của bạn
     const apiBase = "{{ url('/api') }}";
 
     const apiReq = async (endpoint, body = null) => {
@@ -170,7 +172,6 @@
     let tickInterval = null, localLastUpdate = Date.now();
 
     let playersOnline = 0;
-    // Chỉ cần duy nhất biến này để quản lý trạng thái khóa cờ/đồng hồ ban đầu
     window.hasMatchStarted = false;
 
     const formatTime = (s) => `${Math.floor(s / 60)}:${(Math.floor(s) % 60).toString().padStart(2, '0')}`;
@@ -180,19 +181,16 @@
     const updateUI = () => {
         if (isGameOver) return;
 
-        // NEW: Chỉ cần biết có activePlayer là đếm giờ, bất chấp người chơi có online hay không!
         const elapsed = activePlayer ? (Date.now() - localLastUpdate) / 1000 : 0;
         const current = { red: time.red, black: time.black };
         const moveTime = { red: MOVE_TIME_LIMIT, black: MOVE_TIME_LIMIT };
 
-        // Xử lý trừ thời gian cho phe đang đi
         if (activePlayer) {
             current[activePlayer] = Math.max(0, current[activePlayer] - elapsed);
             moveTime[activePlayer] = Math.max(0, MOVE_TIME_LIMIT - (serverMoveElapsed + elapsed));
             if (moveTime[activePlayer] <= 0) current[activePlayer] = 0;
         }
 
-        // Render UI
         ['red', 'black'].forEach(side => {
             ui[side].clock.innerText = formatTime(Math.ceil(current[side]));
             ui[side].moveClock.innerText = formatTime(Math.ceil(moveTime[side]));
@@ -200,7 +198,6 @@
             ui[side].box.classList.toggle('active', activePlayer === side);
         });
 
-        // Trigger Hết Giờ
         if (current.red <= 0 || current.black <= 0) {
             isGameOver = true;
             stopAll();
@@ -225,29 +222,23 @@
 
         const sPlayer = serverData.active_player;
 
-        // Đồng bộ trạng thái khóa trận đấu từ Server
         if (!sPlayer || sPlayer === 'waiting') {
             activePlayer = null;
             window.hasMatchStarted = false;
         } else {
-            // Nếu có ai đó đang đi (red, black hoặc paused:red...), nghĩa là trận ĐÃ BẮT ĐẦU
             activePlayer = sPlayer.startsWith('paused:') ? sPlayer.split(':')[1] : sPlayer;
             window.hasMatchStarted = true;
         }
 
         updateUI();
 
-        // LUÔN LUÔN chạy đồng hồ miễn là có activePlayer
         if (activePlayer) startAll();
         else stopAll();
     };
 
     const handlePresenceChange = () => {
-        // TRIGGER 1 LẦN DUY NHẤT: Bắt đầu trận đấu khi đủ 2 người
         if (!window.hasMatchStarted && playersOnline >= 2) {
-            window.hasMatchStarted = true; // Khóa ngay lập tức để không gọi API lần 2
-
-            // Hiện ứng UI nhấp nháy/mờ có thể tắt đi vì trận đã bắt đầu
+            window.hasMatchStarted = true;
             ui.red.box.classList.remove('paused-offline');
             ui.black.box.classList.remove('paused-offline');
 
@@ -256,10 +247,33 @@
             });
         }
 
-        // (Tùy chọn) Thêm hiệu ứng mờ nhẹ nếu ai đó thoát lúc chưa bắt đầu
         if (!window.hasMatchStarted && playersOnline < 2) {
             ui.red.box.classList.add('paused-offline');
             ui.black.box.classList.add('paused-offline');
+        }
+    };
+
+    // FALLBACK MỚI THÊM: Chủ động gọi API kiểm tra phòng
+    const checkRoomReadiness = async () => {
+        if (window.hasMatchStarted) return;
+
+        try {
+            const res = await apiReq('getRoomIds', { 'ma-phong': roomCode });
+
+            // Phòng đủ điều kiện khi có cả Host (ID hoặc Session) và Guest (ID hoặc Session)
+            const hasHost = res && (res.host_id || res.host_session);
+            const hasGuest = res && (res.guest_id || res.guest_session);
+
+            if (hasHost && hasGuest) {
+                window.hasMatchStarted = true;
+                ui.red.box.classList.remove('paused-offline');
+                ui.black.box.classList.remove('paused-offline');
+
+                await apiReq(`startMatch/${roomCode}`);
+                apiReq(`getTime/${roomCode}`).then(syncTimerState);
+            }
+        } catch (e) {
+            console.warn("Error checking room readiness:", e);
         }
     };
 
@@ -282,7 +296,6 @@
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-        // Echo Initialization
         if (typeof window.Echo === 'undefined' && typeof window.Pusher !== 'undefined' && typeof Echo !== 'undefined') {
             window.Echo = new Echo({
                 broadcaster: 'pusher',
@@ -295,17 +308,36 @@
         }
 
         if (window.Echo) {
+            // Channel này chỉ trigger nếu User đã đăng nhập
             window.Echo.join(`room.${roomCode}`)
                 .here(users => { playersOnline = users.length; handlePresenceChange(); })
                 .joining(() => { playersOnline++; handlePresenceChange(); })
                 .leaving(() => { playersOnline = Math.max(0, playersOnline - 1); handlePresenceChange(); });
 
+            // Channel Public: Cập nhật cho cả User không đăng nhập,
+            // đồng thời cũng trigger kiểm tra checkRoomReadiness ngay khi có biến động
             window.Echo.channel(`room.${roomCode}`)
                 .listen('.room.updated', (e) => {
-                    if (e.room) apiReq(`getTime/${roomCode}`).then(syncTimerState);
+                    if (e.room) {
+                        checkRoomReadiness();
+                        apiReq(`getTime/${roomCode}`).then(syncTimerState);
+                    }
                 });
         }
 
         apiReq(`getTime/${roomCode}`).then(syncTimerState);
+
+        // CƠ CHẾ POLLING BẢO HIỂM (Chạy ngầm): Cứ mỗi 3 giây sẽ tự check lại một lần
+        // nếu trận đấu chưa được bắt đầu, phòng ngừa trường hợp Websocket bị chặn.
+        const startMatchFallbackInterval = setInterval(() => {
+            if (window.hasMatchStarted) {
+                clearInterval(startMatchFallbackInterval);
+            } else {
+                checkRoomReadiness();
+            }
+        }, 3000);
+
+        // Gọi liền ngay khi load xong DOM cho chắc ăn
+        checkRoomReadiness();
     });
 </script>

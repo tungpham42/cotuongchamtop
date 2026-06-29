@@ -241,6 +241,7 @@ Route::post('/pauseTimer/{roomCode}/{player}', [RoomController::class, 'pauseTim
 Route::post('/switchTurn/{roomCode}', [RoomController::class, 'switchTurn']);
 Route::get('/getTime/{roomCode}', [RoomController::class, 'getTime']);
 Route::post('/saveTime/{roomCode}', [RoomController::class, 'saveTime']);
+Route::post('/startMatch/{roomCode}', [RoomController::class, 'startMatch'])->name('startMatch');
 
 // ==========================================
 // UNIFIED MATCHMAKING ROUTES (Guests & Auth)
