@@ -166,6 +166,7 @@
     let resignAlertShown = false;
     let kypho = null;
     let lastMoveIccs = null;
+    let expectedFEN = null;
 
     @if ($role === 'watch')
         let serverFen = '{!! $room->fen !!}';
@@ -181,28 +182,38 @@
 
     function updateFenCode(roomCode, moveIccs) {
       @if ($role === 'watch')
-          board.position(game.fen(), true);
-          game.load(game.fen());
-          $.ajax({
-            type: "POST",
-            url: '{{ url('/api') }}/updateFEN',
-            data: { 'ma-phong': roomCode, 'FEN': game.fen() },
-            dataType: 'text'
-          });
+        board.position(game.fen(), true);
+        game.load(game.fen());
+        $.ajax({
+          type: "POST",
+          url: '{{ url('/api') }}/updateFEN',
+          data: { 'ma-phong': roomCode, 'FEN': game.fen() },
+          dataType: 'text'
+        });
       @else
-          currentFEN = game.fen();
-          const payload = { 'ma-phong': roomCode, 'FEN': game.fen() };
-          if (moveIccs) { payload.move = moveIccs; }
+        currentFEN = game.fen();
+        expectedFEN = game.fen();
+        const payload = { 'ma-phong': roomCode, 'FEN': game.fen() };
+        if (moveIccs) { payload.move = moveIccs; }
 
-          $.ajax({
-            type: "POST",
-            url: '{{ url('/api') }}/updateFEN',
-            data: payload,
-            dataType: 'text'
-          }).done(function() {
-            if (!game.game_over()) { switchTurn('{{ $roomCode }}', game.turn() === 'b' ? 'red' : 'black'); }
-            if (kypho) { kypho.syncMoves('{{ url('/api') }}/readMoves/' + roomCode); }
-          });
+        // [SỬA Ở ĐÂY] Gọi chuyển lượt ngay lập tức trên Client (Optimistic UI)
+        if (!game.game_over()) {
+          let activeColor = game.turn() === 'b' ? 'red' : 'black';
+          if (typeof window.switchTurn === 'function') {
+            window.switchTurn('{{ $roomCode }}', activeColor);
+          }
+        }
+
+        // Gọi API cập nhật FEN chạy ngầm
+        $.ajax({
+          type: "POST",
+          url: '{{ url('/api') }}/updateFEN',
+          data: payload,
+          dataType: 'text'
+        }).done(function() {
+          // Chỉ đồng bộ kỳ phổ sau khi FEN đã lưu
+          if (kypho) { kypho.syncMoves('{{ url('/api') }}/readMoves/' + roomCode); }
+        });
       @endif
     }
 
@@ -212,11 +223,26 @@
           let newFEN = e.room.fen;
           if (!newFEN) return;
 
-          if (newFEN !== game.fen()) {
-            if (newFEN === currentFEN) return;
+          // -------------------------------------------------------------
+          // FIX RUBBER-BANDING (GIẬT CỤC CỜ)
+          // Bỏ qua bản tin FEN cũ do race condition của API switchTurn
+          // -------------------------------------------------------------
+          if (expectedFEN && newFEN !== expectedFEN && game.fen() === expectedFEN) {
+              return;
+          }
+          // Khi server trả về đúng FEN mới nhất, ta mở khóa
+          if (expectedFEN && newFEN === expectedFEN) {
+              expectedFEN = null;
+          }
+
+          // So sánh phần vị trí quân cờ (bỏ qua lượt đi, đếm số bước ở đuôi FEN)
+          let newBoardState = newFEN.split(' ')[0];
+          let currentBoardState = game.fen().split(' ')[0];
+
+          if (newBoardState !== currentBoardState) {
             currentFEN = newFEN;
             game.load(newFEN);
-            board.position(newFEN, true);
+            board.position(newFEN, true); // Animate di chuyển quân cờ
 
             if (!newFEN.includes('resign')) {
               if (typeof nuocCo !== 'undefined') {
@@ -231,7 +257,12 @@
               kypho.syncMoves('{{ url('/api') }}/readMoves/{{ $roomCode }}');
             }
           } else {
+            // Thế cờ giống hệt, chỉ cập nhật trạng thái logic ngầm,
+            // KHÔNG gọi board.position() để tránh UI bị nháy (micro-stutter)
             currentFEN = newFEN;
+            if (newFEN !== game.fen()) {
+                game.load(newFEN);
+            }
           }
           updateStatus();
         });
@@ -305,29 +336,42 @@
 
     function onDragStart (source, piece) {
       @if ($role === 'watch')
-          return false;
+        return false;
       @else
-          if (game.game_over()) return false;
-          if (typeof systemPaused !== 'undefined' && systemPaused) return false;
+        if (game.game_over()) return false;
+        if (typeof systemPaused !== 'undefined' && systemPaused) return false;
 
-          // Block di chuyển quân cờ nếu trận chưa bắt đầu
-          if (typeof window.hasMatchStarted !== 'undefined' && !window.hasMatchStarted) {
-              if (!alertShown) {
-                  alertShown = true;
-                  bootbox.alert({
-                      message: "{{ __('Vui lòng chờ đối thủ vào phòng để bắt đầu trận đấu!') }}",
-                      size: 'small',
-                      centerVertical: true,
-                      closeButton: false,
-                      buttons: { ok: { className: 'btn-danger pulse-red' } },
-                      callback: function() { alertShown = false; }
-                  });
-              }
-              return false;
+        // [FIX BUG CHO GUEST & RANDOM]
+        // Bypass kiểm tra hasMatchStarted cho phòng Random (ẩn danh)
+        // hoặc khách chưa đăng nhập (do bị chặn auth từ Pusher Presence Channel).
+        @if ($role !== 'random')
+        if (typeof window.hasMatchStarted !== 'undefined' && !window.hasMatchStarted) {
+
+          // Kiểm tra xem người dùng có đang ở trạng thái Guest (chưa login) không
+          let isUnauthenticatedPlayer = {{ auth()->check() ? 'false' : 'true' }};
+
+          if (isUnauthenticatedPlayer) {
+              // Mở khóa bắt buộc vì Presence Channel không đếm được Guest
+            window.hasMatchStarted = true;
+          } else {
+            if (!alertShown) {
+              alertShown = true;
+              bootbox.alert({
+                message: "{{ __('Vui lòng chờ đối thủ vào phòng để bắt đầu trận đấu!') }}",
+                size: 'small',
+                centerVertical: true,
+                closeButton: false,
+                buttons: { ok: { className: 'btn-danger pulse-red' } },
+                callback: function() { alertShown = false; }
+              });
+            }
+            return false;
           }
+        }
+        @endif
 
-          if ((game.turn() === 'r' && piece.search(/^b/) !== -1) || (game.turn() === 'b' && piece.search(/^r/) !== -1)) return false;
-          if ((board.orientation() == 'red' && game.turn() === 'b') || (board.orientation() == 'black' && game.turn() === 'r')) return false;
+        if ((game.turn() === 'r' && piece.search(/^b/) !== -1) || (game.turn() === 'b' && piece.search(/^r/) !== -1)) return false;
+        if ((board.orientation() == 'red' && game.turn() === 'b') || (board.orientation() == 'black' && game.turn() === 'r')) return false;
       @endif
     }
 

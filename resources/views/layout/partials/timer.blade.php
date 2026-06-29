@@ -215,20 +215,30 @@
     const syncTimerState = (serverData) => {
         if (isGameOver || !serverData) return;
 
-        time.red = parseFloat(serverData.red_time);
-        time.black = parseFloat(serverData.black_time);
-        serverMoveElapsed = parseFloat(serverData.move_elapsed || 0);
-        localLastUpdate = Date.now();
-
         const sPlayer = serverData.active_player;
+        let newActivePlayer = null;
 
         if (!sPlayer || sPlayer === 'waiting') {
-            activePlayer = null;
             window.hasMatchStarted = false;
         } else {
-            activePlayer = sPlayer.startsWith('paused:') ? sPlayer.split(':')[1] : sPlayer;
+            newActivePlayer = sPlayer.startsWith('paused:') ? sPlayer.split(':')[1] : sPlayer;
             window.hasMatchStarted = true;
         }
+
+        const newRed = parseFloat(serverData.red_time);
+        const newBlack = parseFloat(serverData.black_time);
+
+        // Kỹ thuật Threshold: CHỈ ghi đè thời gian nếu sai số giữa Client và Server
+        // lớn hơn 1.5 giây, HOẶC khi có sự thay đổi lượt đi.
+        // Điều này giúp timer trên giao diện không bị giật lùi do độ trễ mạng (Ping).
+        if (activePlayer !== newActivePlayer || Math.abs(time.red - newRed) > 1.5 || Math.abs(time.black - newBlack) > 1.5) {
+            time.red = newRed;
+            time.black = newBlack;
+            serverMoveElapsed = parseFloat(serverData.move_elapsed || 0);
+        }
+
+        activePlayer = newActivePlayer;
+        localLastUpdate = Date.now();
 
         updateUI();
 
@@ -278,6 +288,7 @@
     };
 
     window.switchTurn = async (rc, currentPlayer) => {
+        // Cập nhật UI ngay lập tức (Optimistic Update)
         const elapsed = (Date.now() - localLastUpdate) / 1000;
 
         if (time[currentPlayer]) {
@@ -292,7 +303,10 @@
         updateUI();
         startAll();
 
-        await apiReq(`switchTurn/${rc}`, { current_player: currentPlayer });
+        // Gọi API ngầm mà không chặn UI
+        apiReq(`switchTurn/${rc}`, { current_player: currentPlayer }).then(serverData => {
+            if(serverData) syncTimerState(serverData);
+        });
     };
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -308,19 +322,23 @@
         }
 
         if (window.Echo) {
-            // Channel này chỉ trigger nếu User đã đăng nhập
             window.Echo.join(`room.${roomCode}`)
                 .here(users => { playersOnline = users.length; handlePresenceChange(); })
                 .joining(() => { playersOnline++; handlePresenceChange(); })
                 .leaving(() => { playersOnline = Math.max(0, playersOnline - 1); handlePresenceChange(); });
 
-            // Channel Public: Cập nhật cho cả User không đăng nhập,
-            // đồng thời cũng trigger kiểm tra checkRoomReadiness ngay khi có biến động
+            // Thêm biến để debounce
+            let syncTimeout = null;
+
             window.Echo.channel(`room.${roomCode}`)
                 .listen('.room.updated', (e) => {
                     if (e.room) {
                         checkRoomReadiness();
-                        apiReq(`getTime/${roomCode}`).then(syncTimerState);
+                        // Chờ 200ms để gộp các event (updateFEN + switchTurn) lại thành 1 lần gọi API
+                        clearTimeout(syncTimeout);
+                        syncTimeout = setTimeout(() => {
+                            apiReq(`getTime/${roomCode}`).then(syncTimerState);
+                        }, 200);
                     }
                 });
         }
