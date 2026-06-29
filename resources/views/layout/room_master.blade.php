@@ -342,16 +342,17 @@
         if (typeof systemPaused !== 'undefined' && systemPaused) return false;
 
         // [FIX BUG CHO GUEST & RANDOM]
-        // Bypass kiểm tra hasMatchStarted cho phòng Random (ẩn danh)
-        // hoặc khách chưa đăng nhập (do bị chặn auth từ Pusher Presence Channel).
+        // Bypass kiểm tra hasMatchStarted cho phòng Random (ẩn danh),
+        // khách chưa đăng nhập, hoặc người dùng đã đăng nhập nhưng chơi ẩn danh.
         @if ($role !== 'random')
         if (typeof window.hasMatchStarted !== 'undefined' && !window.hasMatchStarted) {
 
-          // Kiểm tra xem người dùng có đang ở trạng thái Guest (chưa login) không
-          let isUnauthenticatedPlayer = {{ auth()->check() ? 'false' : 'true' }};
+          // Kiểm tra xem người dùng chưa đăng nhập, phòng không có host,
+          // hoặc đã đăng nhập nhưng không phải host/guest chính thức (chơi ẩn danh)
+          let isAnonymousPlayer = {{ (!auth()->check() || !isset($room->host_id) || (auth()->id() != $room->host_id && auth()->id() != $room->guest_id)) ? 'true' : 'false' }};
 
-          if (isUnauthenticatedPlayer) {
-              // Mở khóa bắt buộc vì Presence Channel không đếm được Guest
+          if (isAnonymousPlayer) {
+              // Mở khóa bắt buộc vì Presence Channel không đếm được Guest hoặc người chơi ẩn danh
             window.hasMatchStarted = true;
           } else {
             if (!alertShown) {
