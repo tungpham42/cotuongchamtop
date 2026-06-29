@@ -99,6 +99,7 @@ class TournamentController extends Controller
                     'tournament_round' => $round,
                     'red_time' => 600,
                     'black_time' => 600,
+                    'active_player' => 'waiting',
                     'modified_at' => now(),
                     'next_room_code' => $round == $totalRounds ? null : $previousRoundRooms[floor($i / 2)]->code
                 ]);

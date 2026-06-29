@@ -309,6 +309,23 @@
       @else
           if (game.game_over()) return false;
           if (typeof systemPaused !== 'undefined' && systemPaused) return false;
+
+          // Block di chuyển quân cờ nếu trận chưa bắt đầu
+          if (typeof window.hasMatchStarted !== 'undefined' && !window.hasMatchStarted) {
+              if (!alertShown) {
+                  alertShown = true;
+                  bootbox.alert({
+                      message: "{{ __('Vui lòng chờ đối thủ vào phòng để bắt đầu trận đấu!') }}",
+                      size: 'small',
+                      centerVertical: true,
+                      closeButton: false,
+                      buttons: { ok: { className: 'btn-danger pulse-red' } },
+                      callback: function() { alertShown = false; }
+                  });
+              }
+              return false;
+          }
+
           if ((game.turn() === 'r' && piece.search(/^b/) !== -1) || (game.turn() === 'b' && piece.search(/^r/) !== -1)) return false;
           if ((board.orientation() == 'red' && game.turn() === 'b') || (board.orientation() == 'black' && game.turn() === 'r')) return false;
       @endif

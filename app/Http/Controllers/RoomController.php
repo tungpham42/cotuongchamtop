@@ -1259,4 +1259,22 @@ class RoomController extends Controller
 
         return response()->json(['status' => 'waiting']);
     }
+
+    public function startMatch($roomCode)
+    {
+        $room = Room::where('code', $roomCode)->first();
+
+        // Only start if the match is officially in the 'waiting' state
+        if ($room && $room->active_player === 'waiting') {
+            $room->active_player = 'red'; // Red always moves first
+            $room->last_update = now();
+            $room->modified_at = now();
+            $room->save();
+
+            // Broadcast to Echo so both players' timers sync instantly
+            broadcast(new RoomUpdated($room->fresh()));
+        }
+
+        return response()->json(['success' => true]);
+    }
 }

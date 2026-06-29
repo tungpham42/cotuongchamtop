@@ -18,6 +18,7 @@
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap');
+
     /* ==========================================================================
        GLOSSY & COMPACT DUAL-TIMERS (10M + 2M/Move)
        ========================================================================== */
@@ -40,14 +41,12 @@
         border-radius: 40px;
         min-width: 150px;
         overflow: hidden;
-
         background: linear-gradient(145deg, #2a2d38, #1a1c23);
         box-shadow:
             6px 6px 12px rgba(0, 0, 0, 0.6),
             -2px -2px 8px rgba(255, 255, 255, 0.03),
             inset 0 1px 1px rgba(255, 255, 255, 0.1);
         border: 1px solid rgba(255, 255, 255, 0.05);
-
         color: #e0e0e0;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
@@ -100,32 +99,27 @@
         text-shadow: 0 2px 4px rgba(0,0,0,0.6);
     }
 
-    .red-glass .clock { color: #ff5252; }
-    .red-glass .label { color: #ff5252; }
+    /* Colors for RED */
+    .red-glass .clock, .red-glass .label { color: #ff5252; }
     .red-glass .move-clock { color: #ff8a80; }
-
     .red-glass.active {
         background: linear-gradient(145deg, #5c1616, #300808);
         border-color: rgba(255, 82, 82, 0.4);
-        box-shadow:
-            0 0 20px rgba(255, 82, 82, 0.3),
-            inset 0 2px 4px rgba(255, 138, 128, 0.2);
+        box-shadow: 0 0 20px rgba(255, 82, 82, 0.3), inset 0 2px 4px rgba(255, 138, 128, 0.2);
         transform: translateY(-3px) scale(1.03);
     }
 
-    .black-glass .clock { color: #ffd54f; }
-    .black-glass .label { color: #ffd54f; }
+    /* Colors for BLACK */
+    .black-glass .clock, .black-glass .label { color: #ffd54f; }
     .black-glass .move-clock { color: #ffe082; }
-
     .black-glass.active {
         background: linear-gradient(145deg, #2b2b2b, #111111);
         border-color: rgba(255, 213, 79, 0.4);
-        box-shadow:
-            0 0 20px rgba(255, 213, 79, 0.2),
-            inset 0 2px 4px rgba(255, 224, 130, 0.2);
+        box-shadow: 0 0 20px rgba(255, 213, 79, 0.2), inset 0 2px 4px rgba(255, 224, 130, 0.2);
         transform: translateY(-3px) scale(1.03);
     }
 
+    /* Utility Classes */
     .ptimer.paused-offline {
         opacity: 0.5;
         filter: grayscale(80%);
@@ -150,71 +144,64 @@
 <script>
     const roomCode = "{{ $roomCode }}";
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
-    const headers = { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest' };
-
-    const ui = {
-        red: { clock: document.getElementById("red-clock"), box: document.getElementById("red-box"), moveClock: document.getElementById("red-move-clock") },
-        black: { clock: document.getElementById("black-clock"), box: document.getElementById("black-box"), moveClock: document.getElementById("black-move-clock") }
-    };
-
-    let time = { red: 600, black: 600 };
-    let serverMoveElapsed = 0;
-    const MOVE_TIME_LIMIT = 120;
-
-    let activePlayer = null, isGameOver = false;
-    let intervals = { tick: null };
-    let localLastUpdate = Date.now();
-
-    // Presence Variables
-    let playersOnline = 0;
-    let previousPresenceState = null;
-
-    const formatTime = (s) => `${Math.floor(s / 60)}:${(Math.floor(s) % 60).toString().padStart(2, '0')}`;
+    const apiBase = "{{ url('/api') }}";
 
     const apiReq = async (endpoint, body = null) => {
         try {
-            const res = await fetch(endpoint, {
+            const res = await fetch(`${apiBase}/${endpoint}`, {
                 method: body ? 'POST' : 'GET',
-                headers, credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest' },
+                credentials: 'same-origin',
                 body: body ? JSON.stringify(body) : null
             });
-            if (!res.ok) throw new Error('API Error');
+            if (!res.ok) throw new Error(`API Error: ${res.status}`);
             return await res.json();
         } catch (err) { console.error(err); }
     };
 
+    const ui = {
+        red: { box: document.getElementById("red-box"), clock: document.getElementById("red-clock"), moveClock: document.getElementById("red-move-clock") },
+        black: { box: document.getElementById("black-box"), clock: document.getElementById("black-clock"), moveClock: document.getElementById("black-move-clock") }
+    };
+
+    const MOVE_TIME_LIMIT = 120;
+    let time = { red: 600, black: 600 };
+    let serverMoveElapsed = 0, activePlayer = null, isGameOver = false;
+    let tickInterval = null, localLastUpdate = Date.now();
+
+    let playersOnline = 0;
+    // Chỉ cần duy nhất biến này để quản lý trạng thái khóa cờ/đồng hồ ban đầu
+    window.hasMatchStarted = false;
+
+    const formatTime = (s) => `${Math.floor(s / 60)}:${(Math.floor(s) % 60).toString().padStart(2, '0')}`;
+    const stopAll = () => clearInterval(tickInterval);
+    const startAll = () => { stopAll(); localLastUpdate = Date.now(); tickInterval = setInterval(updateUI, 100); };
+
     const updateUI = () => {
         if (isGameOver) return;
 
-        // No longer factoring in `systemPaused`
-        let elapsedSinceSync = activePlayer ? (Date.now() - localLastUpdate) / 1000 : 0;
+        // NEW: Chỉ cần biết có activePlayer là đếm giờ, bất chấp người chơi có online hay không!
+        const elapsed = activePlayer ? (Date.now() - localLastUpdate) / 1000 : 0;
+        const current = { red: time.red, black: time.black };
+        const moveTime = { red: MOVE_TIME_LIMIT, black: MOVE_TIME_LIMIT };
 
-        let currentRed = time.red;
-        let currentBlack = time.black;
-        let redMove = MOVE_TIME_LIMIT;
-        let blackMove = MOVE_TIME_LIMIT;
-
-        if (activePlayer === 'red') {
-            currentRed = Math.max(0, currentRed - elapsedSinceSync);
-            redMove = Math.max(0, MOVE_TIME_LIMIT - (serverMoveElapsed + elapsedSinceSync));
-            if (redMove <= 0) currentRed = 0;
+        // Xử lý trừ thời gian cho phe đang đi
+        if (activePlayer) {
+            current[activePlayer] = Math.max(0, current[activePlayer] - elapsed);
+            moveTime[activePlayer] = Math.max(0, MOVE_TIME_LIMIT - (serverMoveElapsed + elapsed));
+            if (moveTime[activePlayer] <= 0) current[activePlayer] = 0;
         }
 
-        if (activePlayer === 'black') {
-            currentBlack = Math.max(0, currentBlack - elapsedSinceSync);
-            blackMove = Math.max(0, MOVE_TIME_LIMIT - (serverMoveElapsed + elapsedSinceSync));
-            if (blackMove <= 0) currentBlack = 0;
-        }
+        // Render UI
+        ['red', 'black'].forEach(side => {
+            ui[side].clock.innerText = formatTime(Math.ceil(current[side]));
+            ui[side].moveClock.innerText = formatTime(Math.ceil(moveTime[side]));
+            ui[side].moveClock.classList.toggle('danger', moveTime[side] <= 10 && activePlayer === side);
+            ui[side].box.classList.toggle('active', activePlayer === side);
+        });
 
-        ui.red.clock.innerText = formatTime(Math.ceil(currentRed));
-        ui.black.clock.innerText = formatTime(Math.ceil(currentBlack));
-        ui.red.moveClock.innerText = formatTime(Math.ceil(redMove));
-        ui.black.moveClock.innerText = formatTime(Math.ceil(blackMove));
-
-        ui.red.moveClock.classList.toggle('danger', redMove <= 10 && activePlayer === 'red');
-        ui.black.moveClock.classList.toggle('danger', blackMove <= 10 && activePlayer === 'black');
-
-        if (currentRed <= 0 || currentBlack <= 0) {
+        // Trigger Hết Giờ
+        if (current.red <= 0 || current.black <= 0) {
             isGameOver = true;
             stopAll();
             activePlayer = null;
@@ -222,82 +209,66 @@
             ui.black.box.classList.remove("active");
 
             if (typeof updateResult === 'function') {
-                const result = currentRed <= 0 && currentBlack <= 0 ? '0' : (currentRed <= 0 ? '-1' : '1');
+                const result = current.red <= 0 && current.black <= 0 ? '0' : (current.red <= 0 ? '-1' : '1');
                 updateResult(roomCode, result);
             }
-        } else {
-            ui.red.box.classList.toggle("active", activePlayer === "red");
-            ui.black.box.classList.toggle("active", activePlayer === "black");
         }
-    };
-
-    const stopAll = () => clearInterval(intervals.tick);
-
-    const startAll = () => {
-        stopAll();
-        localLastUpdate = Date.now();
-        intervals.tick = setInterval(updateUI, 100);
     };
 
     const syncTimerState = (serverData) => {
-        if (isGameOver) return;
+        if (isGameOver || !serverData) return;
+
         time.red = parseFloat(serverData.red_time);
         time.black = parseFloat(serverData.black_time);
-
-        let sPlayer = serverData.active_player;
-
-        // Unpack paused payload natively just in case legacy states are still in DB,
-        // but it will immediately resume local ticking anyway.
-        if (sPlayer && sPlayer.startsWith('paused:')) {
-            activePlayer = sPlayer.split(':')[1];
-        } else {
-            activePlayer = sPlayer;
-        }
-
-        serverMoveElapsed = serverData.move_elapsed !== undefined ? parseFloat(serverData.move_elapsed) : 0;
+        serverMoveElapsed = parseFloat(serverData.move_elapsed || 0);
         localLastUpdate = Date.now();
+
+        const sPlayer = serverData.active_player;
+
+        // Đồng bộ trạng thái khóa trận đấu từ Server
+        if (!sPlayer || sPlayer === 'waiting') {
+            activePlayer = null;
+            window.hasMatchStarted = false;
+        } else {
+            // Nếu có ai đó đang đi (red, black hoặc paused:red...), nghĩa là trận ĐÃ BẮT ĐẦU
+            activePlayer = sPlayer.startsWith('paused:') ? sPlayer.split(':')[1] : sPlayer;
+            window.hasMatchStarted = true;
+        }
 
         updateUI();
 
+        // LUÔN LUÔN chạy đồng hồ miễn là có activePlayer
         if (activePlayer) startAll();
         else stopAll();
     };
 
     const handlePresenceChange = () => {
-        const isCurrentlyOffline = playersOnline < 2;
+        // TRIGGER 1 LẦN DUY NHẤT: Bắt đầu trận đấu khi đủ 2 người
+        if (!window.hasMatchStarted && playersOnline >= 2) {
+            window.hasMatchStarted = true; // Khóa ngay lập tức để không gọi API lần 2
 
-        if (previousPresenceState === isCurrentlyOffline) return;
-        previousPresenceState = isCurrentlyOffline;
-
-        if (isCurrentlyOffline) {
-            // ONLY Apply visual dimming if a player disconnects.
-            // Do NOT pause the clocks locally or request the server to pause.
-            ui.red.box.classList.add('paused-offline');
-            ui.black.box.classList.add('paused-offline');
-        } else {
-            // Remove visual dimming when reconnected
+            // Hiện ứng UI nhấp nháy/mờ có thể tắt đi vì trận đã bắt đầu
             ui.red.box.classList.remove('paused-offline');
             ui.black.box.classList.remove('paused-offline');
 
-            // Sync with backend to get accurate lost time during disconnection window
-            apiReq(`/getTime/${roomCode}`).then(data => {
-                if (data && !data.error) {
-                    syncTimerState(data);
-                }
+            apiReq(`startMatch/${roomCode}`).then(() => {
+                apiReq(`getTime/${roomCode}`).then(syncTimerState);
             });
+        }
+
+        // (Tùy chọn) Thêm hiệu ứng mờ nhẹ nếu ai đó thoát lúc chưa bắt đầu
+        if (!window.hasMatchStarted && playersOnline < 2) {
+            ui.red.box.classList.add('paused-offline');
+            ui.black.box.classList.add('paused-offline');
         }
     };
 
     window.switchTurn = async (rc, currentPlayer) => {
         const elapsed = (Date.now() - localLastUpdate) / 1000;
 
-        if (currentPlayer === 'red') {
-            time.red = Math.max(0, time.red - elapsed);
-            if (serverMoveElapsed + elapsed >= MOVE_TIME_LIMIT) time.red = 0;
-        }
-        if (currentPlayer === 'black') {
-            time.black = Math.max(0, time.black - elapsed);
-            if (serverMoveElapsed + elapsed >= MOVE_TIME_LIMIT) time.black = 0;
+        if (time[currentPlayer]) {
+            time[currentPlayer] = Math.max(0, time[currentPlayer] - elapsed);
+            if (serverMoveElapsed + elapsed >= MOVE_TIME_LIMIT) time[currentPlayer] = 0;
         }
 
         activePlayer = currentPlayer === 'red' ? 'black' : 'red';
@@ -307,64 +278,34 @@
         updateUI();
         startAll();
 
-        await apiReq(`/switchTurn/${rc}`, { current_player: currentPlayer });
+        await apiReq(`switchTurn/${rc}`, { current_player: currentPlayer });
     };
 
-    // Pusher Initialization Fallback & Channels Logic
-    document.addEventListener('DOMContentLoaded', function () {
-        if (typeof window.Echo === 'undefined') {
-            if (typeof Pusher !== 'undefined' && typeof Echo !== 'undefined') {
-                window.Pusher = Pusher;
-                window.Echo = new Echo({
-                    broadcaster: 'pusher',
-                    key: '{{ env("PUSHER_APP_KEY") }}',
-                    cluster: '{{ env("PUSHER_APP_CLUSTER", "ap1") }}',
-                    forceTLS: true,
-                    authEndpoint: '/custom/broadcasting/auth',
-                    auth: {
-                        headers: {
-                            'X-CSRF-Token': '{{ csrf_token() }}'
-                        }
-                    }
-                });
-            } else {
-                console.warn("Pusher or Echo library is missing. Counter cannot connect.");
-                return;
-            }
+    document.addEventListener('DOMContentLoaded', () => {
+        // Echo Initialization
+        if (typeof window.Echo === 'undefined' && typeof window.Pusher !== 'undefined' && typeof Echo !== 'undefined') {
+            window.Echo = new Echo({
+                broadcaster: 'pusher',
+                key: '{{ env("PUSHER_APP_KEY") }}',
+                cluster: '{{ env("PUSHER_APP_CLUSTER", "ap1") }}',
+                forceTLS: true,
+                authEndpoint: '/custom/broadcasting/auth',
+                auth: { headers: { 'X-CSRF-Token': csrfToken } }
+            });
         }
 
-        // 1. PRESENCE TRACKER (Monitors Disconnects)
-        window.Echo.join(`room.${roomCode}`)
-            .here((users) => {
-                playersOnline = users.length;
-                handlePresenceChange();
-            })
-            .joining((user) => {
-                playersOnline++;
-                handlePresenceChange();
-            })
-            .leaving((user) => {
-                playersOnline = playersOnline > 0 ? playersOnline - 1 : 0;
-                handlePresenceChange();
-            })
-            .error((error) => {
-                console.error('Pusher auth error:', error);
-            });
+        if (window.Echo) {
+            window.Echo.join(`room.${roomCode}`)
+                .here(users => { playersOnline = users.length; handlePresenceChange(); })
+                .joining(() => { playersOnline++; handlePresenceChange(); })
+                .leaving(() => { playersOnline = Math.max(0, playersOnline - 1); handlePresenceChange(); });
 
-        // 2. PUBLIC LISTENER (Monitors Game Events)
-        window.Echo.channel(`room.${roomCode}`)
-            .listen('.room.updated', (e) => {
-                if (e.room) {
-                    apiReq(`/getTime/${roomCode}`).then(data => {
-                        if (data && !data.error) syncTimerState(data);
-                    });
-                }
-            });
+            window.Echo.channel(`room.${roomCode}`)
+                .listen('.room.updated', (e) => {
+                    if (e.room) apiReq(`getTime/${roomCode}`).then(syncTimerState);
+                });
+        }
 
-        // Initial sync fetch on page load
-        (async () => {
-            const data = await apiReq(`/getTime/${roomCode}`);
-            if (data && !data.error) syncTimerState(data);
-        })();
+        apiReq(`getTime/${roomCode}`).then(syncTimerState);
     });
 </script>

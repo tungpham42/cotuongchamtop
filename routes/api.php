@@ -55,6 +55,7 @@ Route::controller(RoomController::class)->group(function () {
     Route::get('/readFEN/{code}', 'show')->name('show');
     Route::get('/readMoves/{code}', 'getMoves')->name('getMoves');
     Route::get('/getFEN/{code}', 'getEventStream')->name('getEventStream');
+    Route::post('/startMatch/{roomCode}', 'startMatch')->name('startMatch');
 });
 
 Route::controller(UserController::class)->group(function () {
