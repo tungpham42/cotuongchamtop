@@ -1,0 +1,2800 @@
+/* ==========================================================================
+   LIQUID GLASS + GIAO DIỆN HÁN SỞ TRANH HÙNG (OPTIMIZED)
+   ========================================================================== */
+:root {
+    /* Chu-Han Palette (Overriding Royal variable names to maintain structure) */
+    --royal-red: #8b0000; /* Đỏ máu / Hán */
+    --royal-red-dark: #4a0000; /* Đỏ bầm */
+    --royal-red-light: #b22222; /* Đỏ cờ lụa */
+    --royal-gold: #b87333; /* Đồng thau cổ */
+    --royal-gold-light: #fdf6e3; /* Lụa cổ / Giấy cũ */
+    --royal-bg: #111111; /* Đen thiết giáp / Sở */
+    --royal-wood: #4a3525; /* Gỗ trúc đậm */
+
+    /* Liquid Glass Variables */
+    --glass-blur: blur(20px);
+    --glass-bg-dark: rgba(17, 17, 17, 0.85);
+    --glass-bg-red: rgba(139, 0, 0, 0.75);
+    --glass-border: rgba(184, 115, 51, 0.55);
+    --liquid-highlight: rgba(253, 246, 227, 0.15);
+    --liquid-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.85);
+}
+
+* {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* ==========================================================================
+   ROYAL SCROLLBAR (CUNG ĐÌNH HUẾ THEME)
+   ========================================================================== */
+
+/* Firefox Fallback */
+html,
+body {
+    scrollbar-width: thin;
+    scrollbar-color: var(--royal-red) var(--royal-bg);
+}
+
+/* WebKit Base (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 12px; /* Vertical scrollbar width */
+    height: 12px; /* Horizontal scrollbar height */
+}
+
+/* Scrollbar Track (The background) */
+::-webkit-scrollbar-track {
+    background: var(--royal-bg); /* Deep ebony */
+    border-left: 1px solid rgba(184, 115, 51, 0.2); /* Subtle bronze separator line */
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.9); /* Inner depth */
+}
+
+/* Scrollbar Thumb (The draggable piece) */
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+        180deg,
+        var(--royal-red),
+        #4a0000
+    ); /* Chu-Han red gradient */
+    border: 1px solid var(--royal-gold); /* Bronze trim */
+    border-radius: 6px;
+    box-shadow: inset 0 0 5px rgba(184, 115, 51, 0.3); /* Inner bronze glow */
+}
+
+/* Scrollbar Thumb - Hover State */
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+        180deg,
+        #b87333,
+        #8b4513
+    ); /* Switches to bronze on hover */
+    border-color: #fff; /* Bright white border for emphasis */
+    box-shadow: 0 0 10px rgba(184, 115, 51, 0.8); /* Stronger glow */
+}
+
+/* Scrollbar Thumb - Active/Click State */
+::-webkit-scrollbar-thumb:active {
+    background: var(--royal-gold);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8); /* Pressed-in effect */
+}
+
+/* Corner where vertical and horizontal scrollbars meet */
+::-webkit-scrollbar-corner {
+    background: var(--royal-bg);
+    border-left: 1px solid rgba(184, 115, 51, 0.2);
+    border-top: 1px solid rgba(184, 115, 51, 0.2);
+}
+
+input,
+input:before,
+input:after,
+textarea {
+    -webkit-user-select: initial !important;
+    -khtml-user-select: initial !important;
+    -moz-user-select: initial !important;
+    -ms-user-select: initial !important;
+    user-select: initial !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    border: 1px solid var(--royal-gold) !important;
+    -webkit-text-fill-color: var(--royal-bg) !important;
+    box-shadow: 0 0 0 0.25rem rgba(184, 115, 51, 0.25) !important;
+    -webkit-box-shadow: 0 0 0 0.25rem rgba(184, 115, 51, 0.25) !important;
+    transition: background-color 1000s ease-in-out 0s;
+}
+
+body {
+    font-family:
+        "Plus Jakarta Sans", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
+        sans-serif !important;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    background-color: var(--royal-bg) !important;
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+    font-family:
+        "Texturina", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC", serif !important;
+    color: var(--royal-gold); /* Chữ tiêu đề đồng thau */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.form-control,
+input:-internal-autofill-selected {
+    background-color: var(--royal-gold-light) !important;
+    border: 1px solid var(--royal-wood) !important;
+}
+.form-control:focus,
+input:-internal-autofill-selected:focus {
+    border-color: var(--royal-gold) !important;
+    box-shadow: 0 0 0 0.25rem rgba(184, 115, 51, 0.25) !important;
+}
+
+/* ==========================================================================
+   HEADER / LẦU NGŨ PHỤNG (UPGRADED TO LIQUID GLASS)
+   ========================================================================== */
+
+header.site-header {
+    width: 100%;
+    /* Replaced solid gradient with frosted royal glass */
+    background: var(--glass-bg-red);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-bottom: 2px solid var(--glass-border);
+    box-shadow:
+        var(--liquid-shadow),
+        inset 0 -2px 15px rgba(184, 115, 51, 0.15);
+    z-index: 1050;
+    transition: all 0.3s ease-in-out;
+
+    /* New Animations applied here */
+    animation:
+        headerSlideDown 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
+        headerLiquidGlow 3.5s ease-in-out 0.8s infinite alternate;
+}
+
+header.site-header a {
+    color: var(--royal-gold-light);
+    position: relative;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color 0.3s ease;
+}
+
+/* Glowing underline effect on hover */
+header.site-header a:not(.navbar-brand)::before {
+    content: "";
+    position: absolute;
+    height: 3px;
+    left: 50%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--royal-gold),
+        transparent
+    );
+    bottom: -8px;
+    width: 0;
+    transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px var(--royal-gold);
+}
+
+header.site-header a:not(.navbar-brand):hover {
+    text-decoration: none;
+    color: var(--royal-gold);
+    text-shadow: 0 0 10px rgba(184, 115, 51, 0.5);
+}
+
+header.site-header a:not(.navbar-brand):hover::before {
+    width: 100%;
+}
+
+#header-status {
+    font-size: 15px !important;
+    color: var(--royal-gold-light);
+}
+
+header.site-header ul.navbar-nav li.dropdown.language-switcher > a {
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+}
+
+header.site-header ul.navbar-nav:hover a:before,
+header.site-header ul.navbar-nav:hover a::before {
+    width: 0;
+}
+header.site-header ul.navbar-nav .dropdown-menu {
+    position: absolute;
+    margin-top: -7px;
+    border: 2px solid var(--royal-gold);
+    background-color: var(--royal-red);
+}
+
+header.site-header a:not(.navbar-brand) {
+    top: -5px;
+}
+
+header.site-header a:not(.navbar-brand):hover {
+    text-decoration: none;
+    font-weight: 600;
+    color: var(--royal-gold);
+}
+
+header.site-header a:not(.navbar-brand):hover:before,
+header.site-header a:not(.navbar-brand):hover::before {
+    width: 100% !important;
+}
+
+/* Menu states active */
+body.home header.site-header a.home,
+body.puzzle header.site-header a.puzzle,
+body.setup header.site-header a.setup,
+body.about header.site-header a.about,
+body.bmi header.site-header a.bmi,
+body.game header.site-header a.game,
+body.room header.site-header a.room,
+body.dashboard header.site-header a.dashboard,
+body.login header.site-header a.login,
+body.news header.site-header a.news,
+body.contact header.site-header a.contact {
+    font-weight: 600;
+    color: var(--royal-gold);
+}
+body.home header.site-header a.home:before,
+body.puzzle header.site-header a.puzzle:before,
+body.setup header.site-header a.setup:before,
+body.about header.site-header a.about:before,
+body.bmi header.site-header a.bmi:before,
+body.game header.site-header a.game:before,
+body.room header.site-header a.room:before,
+body.dashboard header.site-header a.dashboard:before,
+body.login header.site-header a.login:before,
+body.news header.site-header a.news:before,
+body.contact header.site-header a.contact:before {
+    width: 100%;
+}
+
+/* ==========================================================================
+   AUTHENTICATION & ACTION BUTTONS
+   ========================================================================== */
+header.site-header a.login,
+header.site-header a.register {
+    position: relative;
+    overflow: hidden;
+    padding: 8px 20px;
+    border-radius: 8px;
+    z-index: 1;
+    box-shadow: var(--liquid-shadow);
+    backdrop-filter: var(--glass-blur);
+}
+
+header.site-header a.register {
+    background: linear-gradient(to bottom, #b87333, #8b4513) !important;
+    color: var(--royal-bg) !important;
+    border: 1px solid #fff;
+}
+
+header.site-header a.login {
+    background: var(--glass-bg-dark) !important;
+    color: var(--royal-gold) !important;
+    border: 1px solid var(--royal-gold);
+    box-shadow: inset 0 2px 5px var(--liquid-highlight);
+}
+
+header.site-header a.login:hover {
+    background: rgba(139, 0, 0, 0.6) !important;
+    box-shadow:
+        0 0 20px rgba(184, 115, 51, 0.5),
+        inset 0 2px 10px var(--liquid-highlight);
+}
+
+/* ==========================================================================
+   HEADER ANIMATIONS
+   ========================================================================== */
+@keyframes headerSlideDown {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes headerLiquidGlow {
+    0% {
+        box-shadow:
+            var(--liquid-shadow),
+            inset 0 -2px 15px rgba(184, 115, 51, 0.15);
+    }
+    100% {
+        box-shadow:
+            0 12px 35px rgba(0, 0, 0, 0.9),
+            inset 0 -2px 30px rgba(184, 115, 51, 0.5);
+    }
+}
+
+/* ==========================================================================
+   HEADER HOVER (LIQUID SHEEN & GLOW)
+   ========================================================================== */
+
+/* 1. Create the liquid reflection layer (hidden by default) */
+header.site-header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(253, 246, 227, 0.3),
+        /* Silk white reflection */ transparent
+    );
+    transform: skewX(-20deg);
+    transition: left 4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: -1; /* Keeps the glare behind your navigation links */
+    pointer-events: none;
+}
+
+/* 2. Intensify the glass and bronze aura on hover */
+header.site-header:hover {
+    /* Pauses the idle breathing animation so the hover state takes focus */
+    animation-play-state: paused;
+
+    /* Slightly brighter red glass for an active feel */
+    background: rgba(178, 34, 34, 0.85);
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.9),
+        /* Deeper drop shadow */ 0 0 30px rgba(184, 115, 51, 0.5),
+        /* Stronger outer bronze aura */ inset 0 -2px 25px
+            var(--liquid-highlight) !important; /* Brighter inner wet look */
+}
+
+/* 3. Trigger the sweeping light effect across the header */
+header.site-header:hover::before {
+    left: 200%;
+}
+
+/* ==========================================================================
+   GLOSSY & LIQUID GLASS LOGO (.navbar-brand img) REDESIGN
+   ========================================================================== */
+header.site-header .navbar-brand img {
+    margin-right: 12px;
+    border-radius: 50%; /* Smooth circular baseline */
+    padding: 2px;
+    background: radial-gradient(
+        circle,
+        rgba(253, 246, 227, 0.15) 0%,
+        transparent 70%
+    );
+
+    /* Ambient Bronze Glow */
+    filter: drop-shadow(0 0 8px rgba(184, 115, 51, 0.6))
+        drop-shadow(0 4px 10px rgba(0, 0, 0, 0.7));
+
+    /* Liquid Motion Physics */
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    z-index: 2;
+}
+
+/* Hover State: Levitate, Radiant Aura and Majestic Infinite Spin */
+header.site-header .navbar-brand img:hover {
+    transform: scale(1.12) translateY(-2px);
+    filter: drop-shadow(0 0 18px rgba(184, 115, 51, 0.9))
+        drop-shadow(0 12px 20px rgba(0, 0, 0, 0.8));
+    animation: spin 1.2s linear 0s infinite;
+}
+
+/* Active State: Click Compression (Pressed-wet look) */
+header.site-header .navbar-brand img:active {
+    transform: scale(0.95) translateY(1px);
+    filter: drop-shadow(0 0 8px rgba(184, 115, 51, 0.5))
+        drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
+    animation: spin 0.6s linear 0s infinite;
+}
+
+/* Global Loading Overrides */
+body.loading .navbar-brand img {
+    animation: spin 0.3s linear 0s infinite !important;
+    filter: drop-shadow(
+        0 0 15px rgba(178, 34, 34, 0.8)
+    ) !important; /* Shifts to an energetic red pulse while loading */
+}
+
+header.site-header .navbar {
+    box-shadow: none !important;
+    border: none !important;
+}
+header.site-header .navbar ul {
+    display: flex;
+    flex-flow: row wrap;
+    margin: 0 -14px;
+}
+header.site-header .navbar li {
+    padding: 30px 12.5px 20px;
+}
+header.site-header .navbar li a {
+    font-size: 14px;
+}
+header.site-header .navbar li a.waves-effect {
+    display: inline !important;
+}
+
+/* Dropdown */
+header.site-header .dropdown-menu a {
+    color: var(--royal-gold-light);
+    top: 0 !important;
+}
+header.site-header .dropdown-menu a:hover {
+    background-color: var(--royal-red-light);
+    color: var(--royal-gold);
+}
+header.site-header .dropdown-menu a:before {
+    display: none !important;
+}
+header.site-header .dropdown-menu .dropdown-item.active,
+header.site-header .dropdown-menu .dropdown-item:active {
+    background-color: var(--royal-gold) !important;
+    color: var(--royal-red) !important;
+}
+
+/* Menu toggle mobile */
+header.site-header .menu-toggle {
+    display: none;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 37px;
+    z-index: 3;
+}
+/* Thay màu icon svg beige thành bronze nếu được, ở đây mượn style cũ */
+header.site-header .menu-toggle.open {
+    background-image: url(/img/ic-menu-open-beige.svg);
+    width: 20px;
+    height: 12px;
+}
+header.site-header .menu-toggle.close {
+    background-image: url(/img/ic-menu-close-beige.svg);
+    width: 20px;
+    height: 15px;
+}
+
+@media (max-width: 1199.98px) {
+    header.site-header ul.navbar-nav {
+        overflow-y: auto !important;
+        max-height: calc(100vh - 74px);
+    }
+    header.site-header ul.navbar-nav li.dropdown.language-switcher > a {
+        border-left: none;
+        padding: 0 !important;
+    }
+    header.site-header ul.navbar-nav .dropdown-menu {
+        position: static;
+        background-color: var(--royal-bg);
+        border: none;
+    }
+    header.site-header .navbar-brand {
+        margin-left: auto;
+    }
+    header.site-header .navbar-brand h1,
+    header.site-header .navbar-brand span {
+        display: none !important;
+    }
+    header.site-header .navbar-brand img {
+        margin-right: 0;
+    }
+    header.site-header .menu-toggle {
+        display: block;
+    }
+    header.site-header .menu-toggle.open ~ nav.navbar {
+        display: none;
+    }
+    header.site-header .menu-toggle.close ~ nav.navbar {
+        display: block;
+        position: absolute;
+        background: linear-gradient(to bottom, #8b0000, #4a0000);
+        top: 74px;
+        left: 0;
+        z-index: 2;
+        width: 100%;
+        border-bottom: 2px solid var(--royal-gold);
+    }
+    header.site-header .menu-toggle.close ~ nav.navbar ul li {
+        width: 100%;
+        margin: 0;
+        padding: 12px 24px;
+        border-bottom: 1px solid rgba(184, 115, 51, 0.2);
+    }
+    header.site-header .menu-toggle.close ~ nav.navbar ul li a {
+        color: var(--royal-gold-light);
+    }
+    header.site-header .menu-toggle.close ~ nav.navbar ul li .dropdown-menu a {
+        color: var(--royal-gold-light);
+    }
+    header.site-header
+        .menu-toggle.close
+        ~ nav.navbar
+        ul
+        li
+        .dropdown-menu
+        .dropdown-item.active {
+        background-color: var(--royal-gold);
+        color: var(--royal-red);
+    }
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+footer {
+    background-color: #0a0a0a;
+    border-top: 3px solid var(--royal-gold);
+    color: var(--royal-gold-light);
+    z-index: 123456789;
+    user-select: none;
+}
+footer a {
+    color: #b87333;
+}
+footer a:hover {
+    color: var(--royal-gold);
+}
+footer ul li {
+    margin-bottom: 0.7em;
+}
+body.home footer a.home,
+body.dashboard footer a.dashboard,
+body.trophy footer a.trophy,
+body.puzzle footer a.puzzle,
+body.setup footer a.setup,
+body.about footer a.about,
+body.bmi footer a.bmi,
+body.game footer a.game,
+body.room footer a.room,
+body.news footer a.news,
+body.contact footer a.contact {
+    text-decoration: underline;
+    color: var(--royal-gold);
+}
+footer ul.list-unstyled:hover a {
+    text-decoration: none;
+}
+footer ul.list-unstyled > li > a:hover {
+    text-decoration: underline !important;
+}
+
+/* ==========================================================================
+   LAYOUTS & HERO (Cuốn thư / Tấm liễn)
+   ========================================================================== */
+.hero {
+    background-color: transparent;
+}
+.hero .hero-box {
+    background: rgba(26, 20, 16, 0.85); /* Nền gỗ trong suốt */
+    border: 2px solid var(--royal-gold);
+    box-shadow:
+        0 0 20px rgba(0, 0, 0, 0.8),
+        inset 0 0 15px rgba(184, 115, 51, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+}
+.hero .hero-box .nav-tabs {
+    border-bottom: 2px solid var(--royal-gold);
+}
+.hero .hero-box .nav-tabs li a {
+    cursor: pointer;
+    padding: 12px 24px;
+    display: block;
+    color: var(--royal-gold-light);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.hero .hero-box .nav-tabs li.active a {
+    background: linear-gradient(to bottom, #8b0000, #4a0000);
+    color: var(--royal-gold);
+    border: 1px solid var(--royal-gold);
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+}
+.hero .hero-box .nav-tabs li:not(.active) a {
+    color: #b87333;
+}
+.hero .hero-box .desc {
+    color: var(--royal-gold-light);
+    font-style: italic;
+}
+
+.comments {
+    background-color: var(--royal-bg);
+}
+
+/* Hình nền chung - Nếu có ảnh cung đình tĩnh thì thay URL ở đây */
+.container-fluid.about,
+.container-fluid.bmi,
+.container-fluid.game,
+.container-fluid.news,
+.container-fluid.contact,
+body.dashboard main,
+body.login main,
+body.register main {
+    color: var(--royal-gold-light);
+    background-image: linear-gradient(
+        -45deg,
+        #111111,
+        #2a1111,
+        #0a0a0a,
+        #1a130a
+    ) !important;
+    background-size: 400% 400%;
+    animation: gradientBG 12s ease infinite;
+    isolation: isolate !important;
+    position: relative !important;
+}
+
+.container-fluid.bmi-explanation,
+.container-fluid.game-explanation {
+    background-color: #251c16;
+    border-top: 1px solid var(--royal-gold);
+    border-bottom: 1px solid var(--royal-gold);
+}
+
+/* ==========================================================================
+   COMPONENTS
+   ========================================================================== */
+#tao-phong a {
+    color: var(--royal-gold) !important;
+    font-weight: 600;
+}
+#tao-phong a i {
+    color: var(--royal-gold) !important;
+}
+#tao-phong a:active {
+    background-color: var(--royal-red) !important;
+    color: var(--royal-gold-light) !important;
+}
+#tao-phong a:active i {
+    color: var(--royal-gold-light) !important;
+}
+
+/* Câu tục ngữ kiểu thư pháp */
+#proverb {
+    color: var(--royal-gold);
+    font-size: 18px;
+    font-family: "Texturina", serif;
+    font-style: italic;
+    font-weight: 600;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    background: rgba(139, 0, 0, 0.2);
+    padding: 10px 20px;
+    border-left: 4px solid var(--royal-gold);
+    border-right: 4px solid var(--royal-gold);
+}
+#proverb #proverb_content:before,
+#proverb #proverb_content::before {
+    content: "“";
+    position: relative;
+    top: 15px;
+    font-size: 32px;
+    color: var(--royal-red-light);
+}
+#proverb span.content {
+    cursor: pointer;
+}
+#proverb span.content.introjs-relativePosition {
+    color: var(--royal-gold);
+}
+#proverb_refresh {
+    display: inline-block;
+    cursor: pointer;
+}
+#proverb_refresh i {
+    color: var(--royal-gold);
+    font-size: 29px;
+}
+#proverb_refresh:hover i {
+    animation: spin 900ms linear 0s infinite;
+}
+
+#result,
+#compatibility,
+#ket-qua,
+#ghep-cap {
+    height: 74px;
+    margin-top: -74px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.chart,
+.adsense {
+    background-color: var(--royal-bg);
+}
+.chart #main_chart {
+    height: 480px;
+    width: calc(100% - 100px);
+    user-select: none;
+}
+
+/* Nút chung */
+.btn {
+    cursor: pointer;
+    color: var(--royal-gold-light);
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+/* ==========================================================================
+   LIQUID ROYAL BUTTONS
+   ========================================================================== */
+.btn {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-radius: 8px;
+}
+
+/* The Liquid Glass Highlight Sheen overlay */
+.btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 150%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(253, 246, 227, 0.4),
+        /* Brighter silk for liquid reflection */ transparent
+    );
+    transform: skewX(-20deg);
+    transition: all 0.6s ease;
+    z-index: -1;
+}
+
+.btn:hover::before {
+    left: 150%;
+}
+
+/* Obsidian Glass Button (.btn-dark) */
+.btn-dark {
+    background: var(--glass-bg-dark) !important;
+    color: var(--royal-gold-light) !important;
+    border: 1px solid var(--glass-border) !important;
+    box-shadow:
+        var(--liquid-shadow),
+        inset 0 2px 5px var(--liquid-highlight);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.btn-dark:hover {
+    background: rgba(37, 42, 54, 0.6) !important;
+    color: var(--royal-gold) !important;
+    border-color: rgba(184, 115, 51, 0.8) !important;
+    box-shadow:
+        0 10px 20px rgba(0, 0, 0, 0.8),
+        0 0 15px rgba(184, 115, 51, 0.3),
+        inset 0 2px 10px rgba(253, 246, 227, 0.3);
+}
+
+/* Ruby Glass Button (.btn-danger) */
+.btn-danger {
+    background: var(--glass-bg-red) !important;
+    border: 1px solid rgba(184, 115, 51, 0.4) !important;
+    color: var(--royal-gold) !important;
+    box-shadow:
+        var(--liquid-shadow),
+        inset 0 2px 8px rgba(184, 115, 51, 0.2);
+}
+
+.btn-danger:hover {
+    background: rgba(178, 34, 34, 0.5) !important;
+    box-shadow:
+        0 0 15px rgba(184, 115, 51, 0.5),
+        inset 0 2px 10px rgba(184, 115, 51, 0.4);
+}
+.btn-success {
+    background: linear-gradient(to bottom, #2d6a4f, #1b4332) !important;
+    border: 1px solid var(--royal-gold) !important;
+    color: var(--royal-gold) !important;
+}
+
+.btn.bootbox-cancel {
+    color: #fff !important;
+    background-color: #333 !important;
+    border-color: #555 !important;
+}
+
+.custom-select,
+#dob,
+#change-date {
+    cursor: pointer;
+}
+.chart-nav {
+    font-size: 48px;
+    color: #b87333;
+    top: 288px;
+    cursor: pointer;
+    user-select: none;
+    filter: drop-shadow(2px 3px 6px rgba(0, 0, 0, 0.5));
+}
+.chart-nav:hover {
+    color: var(--royal-gold);
+}
+#ajax-chart {
+    padding-top: 60px !important;
+    padding-bottom: 60px !important;
+}
+
+#info {
+    user-select: none;
+}
+#info p {
+    font-size: 20px;
+    color: var(--royal-gold-light);
+}
+.info {
+    background-color: #251c16;
+    border: 1px solid var(--royal-gold);
+    padding: 10px;
+    border-radius: 4px;
+}
+.info .controls {
+    max-height: 0;
+    overflow-y: hidden;
+    transition: max-height 420ms ease-in-out;
+    height: 64px;
+}
+.info .controls:hover,
+.info .controls:active,
+.info .controls:focus {
+    max-height: 420px;
+}
+.info:hover .controls,
+.info:active .controls,
+.info:focus .controls {
+    max-height: 420px;
+}
+
+/* ==========================================================================
+   LIQUID GLASS PAGINATION
+   ========================================================================== */
+.page-link {
+    background: var(--glass-bg-dark) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border) !important;
+    color: var(--royal-gold-light) !important;
+    box-shadow:
+        var(--liquid-shadow),
+        inset 0 2px 5px var(--liquid-highlight) !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-weight: 600;
+}
+
+/* Hover State - Dynamic Translucent Gradient & Glossy Reflection */
+.page-link:hover,
+.bg-dark.page-link:hover {
+    background: linear-gradient(
+        90deg,
+        rgba(139, 0, 0, 0.15),
+        rgba(139, 0, 0, 0.75),
+        rgba(139, 0, 0, 0.15)
+    ) !important;
+    border-color: rgba(184, 115, 51, 0.6) !important;
+    color: var(--royal-gold) !important;
+    text-shadow: 0 0 8px rgba(184, 115, 51, 0.8);
+    box-shadow:
+        inset 0 2px 8px var(--liquid-highlight),
+        inset 0 -2px 8px rgba(0, 0, 0, 0.4),
+        0 4px 15px rgba(184, 115, 51, 0.25) !important;
+    transform: translateY(-2px);
+    z-index: 2;
+}
+
+/* Active State - Solid Liquid Bronze */
+.page-item.active .page-link {
+    background: linear-gradient(
+        to right,
+        var(--royal-gold),
+        #8b4513
+    ) !important;
+    border-color: var(--royal-gold) !important;
+    color: var(--royal-bg) !important; /* High contrast ebony text */
+    text-shadow: none;
+    box-shadow:
+        inset 0 0 10px rgba(0, 0, 0, 0.5),
+        0 0 15px rgba(184, 115, 51, 0.4) !important;
+    transform: translateY(0);
+    z-index: 3;
+}
+
+/* Disabled State - Dimmed Wood/Ebony */
+.page-item.disabled .page-link {
+    background: rgba(17, 17, 17, 0.8) !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: rgba(184, 115, 51, 0.1) !important;
+    color: rgba(253, 246, 227, 0.4) !important; /* Faded royal-gold-light */
+    box-shadow: none !important;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Focus State - Bronze Aura */
+.page-link:focus,
+.bg-dark.page-link:focus,
+.form-check-input:focus {
+    border-color: var(--royal-gold) !important;
+    outline: 0;
+    box-shadow:
+        0 0 0 0.25rem rgba(184, 115, 51, 0.3),
+        inset 0 2px 5px var(--liquid-highlight) !important;
+    z-index: 3;
+}
+
+/* Spacing and Border Radius for Page Items */
+.page-item:first-child .page-link {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.page-item:last-child .page-link {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+/* ==========================================================================
+   BÀN CỜ / KHUNG BÀN CỜ HOÀNG GIA (GAME BOARD)
+   ========================================================================== */
+#ban-co {
+    touch-action: none !important;
+    pointer-events: all;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto !important;
+    background-color: #1a1512; /* */
+    border-radius: 12px;
+    padding: 10px;
+    /* Replace static shadow with a multi-layered cinematic glow */
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.8),
+        0 0 20px rgba(184, 115, 51, 0.15),
+        inset 0 0 20px rgba(184, 115, 51, 0.05) !important;
+    border: 1px solid var(--glass-border);
+    transition:
+        transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        box-shadow 0.4s ease;
+}
+#ban-co:hover {
+    transform: translateY(-2px) scale(1.005);
+    box-shadow:
+        0 30px 60px rgba(0, 0, 0, 0.9),
+        0 0 40px rgba(184, 115, 51, 0.3),
+        inset 0 0 30px rgba(184, 115, 51, 0.1) !important;
+}
+#ban-co:has(.notation-8c7a2) {
+    padding: 25px 5px !important;
+    background-color: #d1b894 !important;
+}
+#ban-co:has(.notation-8c7a2):has(.spare-pieces-9e77b) {
+    padding: 5px !important;
+}
+body.setup #ban-co {
+    max-width: 310px !important;
+}
+
+.side-color {
+    font-weight: 600;
+    font-size: 42px;
+    text-align: center;
+    line-height: 1.2em;
+    display: block;
+    cursor: default !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+.side-color.red {
+    color: #ff3333;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+.side-color.black {
+    color: #111;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+#game-status {
+    background: linear-gradient(
+        to right,
+        transparent,
+        rgba(139, 0, 0, 0.8),
+        transparent
+    ) !important;
+    padding: 12px 24px;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--royal-gold);
+    cursor: default !important;
+    display: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+#game-over {
+    color: var(--royal-gold);
+    border: 2px solid var(--royal-gold);
+    padding: 12px 24px;
+    background-color: var(--royal-bg);
+    font-weight: 600;
+    cursor: default !important;
+    text-transform: uppercase;
+}
+#game-over:hover {
+    background-color: var(--royal-red);
+}
+
+/* ==========================================================================
+   EPIC CHECKMATE BANNER
+   ========================================================================== */
+#checkmateText {
+    font-size: 12vw; /* Larger! */
+    font-family: "Texturina", serif;
+    font-weight: 900;
+    color: transparent;
+    background: linear-gradient(to bottom, #fff, var(--royal-gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    text-shadow:
+        0 0 40px var(--royal-red-light),
+        0 0 80px var(--royal-red-dark);
+    /* */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    animation: epicCheckmate 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+        forwards;
+}
+
+@keyframes epicCheckmate {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(3) rotate(-5deg);
+        filter: blur(10px);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.9) rotate(2deg);
+        filter: blur(0px);
+    }
+    70% {
+        transform: translate(-50%, -50%) scale(1.1) rotate(0deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    }
+}
+
+/* ==========================================================================
+   ANIMATIONS (Hiệu ứng tỏa sáng hoàng kim/châu sa)
+   ========================================================================== */
+.pulse,
+.pulse-gold,
+.pulse-red,
+.pulse-light,
+.pulse-dark {
+    position: relative;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.pulse {
+    box-shadow: 0 0 0 0 rgba(45, 106, 79, 0.84);
+    animation: pulse 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+.pulse-gold {
+    box-shadow: 0 0 0 0 rgba(184, 115, 51, 0.84);
+    animation: pulse-gold 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+.pulse-red {
+    box-shadow: 0 0 0 0 rgba(139, 0, 0, 0.84);
+    animation: pulse-red 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+.pulse-light {
+    box-shadow: 0 0 0 0 rgba(243, 229, 216, 0.84);
+    animation: pulse-light 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+.pulse-dark {
+    box-shadow: 0 0 0 0 rgba(26, 20, 16, 0.84);
+    animation: pulse-dark 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+.pulse:hover,
+.pulse-gold:hover,
+.pulse-red:hover,
+.pulse-light:hover,
+.pulse-dark:hover {
+    animation: none;
+}
+
+@keyframes pulse {
+    to {
+        box-shadow: 0 0 0 15px rgba(45, 106, 79, 0);
+    }
+}
+@keyframes pulse-gold {
+    to {
+        box-shadow: 0 0 0 15px rgba(184, 115, 51, 0);
+    }
+}
+@keyframes pulse-red {
+    to {
+        box-shadow: 0 0 0 15px rgba(139, 0, 0, 0);
+    }
+}
+@keyframes pulse-light {
+    to {
+        box-shadow: 0 0 0 15px rgba(243, 229, 216, 0);
+    }
+}
+@keyframes pulse-dark {
+    to {
+        box-shadow: 0 0 0 15px rgba(26, 20, 16, 0);
+    }
+}
+@keyframes fadeInAnimation {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+@keyframes fade {
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+}
+
+/* ==========================================================================
+   GLASS TABLES
+   ========================================================================== */
+.table-responsive,
+.dataTables_wrapper {
+    background: var(--glass-bg-dark);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    box-shadow:
+        var(--liquid-shadow),
+        inset 0 1px 5px var(--liquid-highlight);
+    padding: 10px;
+}
+
+.table {
+    color: var(--royal-gold-light);
+    background: transparent !important;
+}
+
+.table td,
+.table th {
+    vertical-align: middle !important;
+    border-top: 1px solid rgba(184, 115, 51, 0.15) !important;
+    color: var(--royal-gold) !important;
+    background: transparent !important;
+}
+
+.table tbody tr {
+    transition: background-color 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(
+        184,
+        115,
+        51,
+        0.05
+    ) !important; /* Soft glossy glow on hover */
+    box-shadow: inset 0 0 15px rgba(184, 115, 51, 0.1);
+}
+
+/* 1. Prevent table headers from wrapping into multiple lines */
+.table thead th {
+    border-bottom: 2px solid var(--royal-gold);
+    color: var(--royal-gold);
+    text-transform: uppercase;
+    background: rgba(17, 17, 17, 0.2);
+    white-space: nowrap; /* Add this line */
+}
+
+/* 2. Prevent room names from breaking, and truncate them if they are too long */
+.table td.room-code span {
+    padding: 4px 7px 5px;
+    background: rgba(184, 115, 51, 0.2);
+    border-radius: 4px;
+    border: 1px solid var(--royal-gold);
+
+    /* Add these lines below to fix the wrapping bug */
+    display: inline-block;
+    max-width: 180px; /* Adjust this value based on your layout preference */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+.table td.host-name,
+.table td.guest-name {
+    max-width: 140px; /* Điều chỉnh độ rộng tối đa tùy ý */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+/* ==========================================================================
+   TABLE TRUNCATION (CẮT CHỮ)
+   ========================================================================== */
+.table td.host-name,
+.table td.guest-name {
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+/* ==========================================================================
+   ROYAL TOOLTIP (BOOTSTRAP OVERRIDE)
+   ========================================================================== */
+.tooltip .tooltip-inner {
+    background: rgba(17, 17, 17, 0.95) !important; /* Nền đen mun */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--royal-gold) !important;
+    color: var(--royal-gold-light) !important;
+    box-shadow:
+        0 10px 20px rgba(0, 0, 0, 0.9),
+        0 0 15px rgba(184, 115, 51, 0.3);
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+/* Mũi tên của Tooltip (màu vàng đồng thau) */
+.tooltip.bs-tooltip-top .arrow::before,
+.tooltip.bs-tooltip-auto[x-placement^="top"] .arrow::before {
+    border-top-color: var(--royal-gold) !important;
+}
+.tooltip.bs-tooltip-bottom .arrow::before,
+.tooltip.bs-tooltip-auto[x-placement^="bottom"] .arrow::before {
+    border-bottom-color: var(--royal-gold) !important;
+}
+
+/* ==========================================================================
+   BẢNG & DATA TABLES
+   ========================================================================== */
+.table {
+    color: var(--royal-gold-light);
+}
+.table td,
+.table th {
+    vertical-align: middle !important;
+    border-top: 1px solid var(--royal-gold);
+    color: var(--royal-gold) !important;
+}
+#app table th,
+#app table td,
+#app .table th,
+#app .table td {
+    color: var(--royal-gold) !important;
+}
+.table thead th {
+    border-bottom: 2px solid var(--royal-gold);
+    color: var(--royal-gold);
+    text-transform: uppercase;
+}
+.table td.room-code a {
+    color: var(--royal-gold);
+    font-family: "Noto Sans Mono", monospace;
+    font-weight: 600;
+}
+.table td.room-code span {
+    padding: 4px 7px 5px;
+    background: rgba(184, 115, 51, 0.2);
+    border-radius: 4px;
+    border: 1px solid var(--royal-gold);
+}
+.table td.room-time {
+    font-family: "Noto Sans Mono", monospace;
+    color: #b87333;
+}
+
+/* ==========================================================================
+   REDESIGNED SOCIAL BUTTONS (LIQUID GLASS THEME - INLINE)
+   ========================================================================== */
+body.login .btn-facebook,
+body.login .btn-google,
+body.register .btn-facebook,
+body.register .btn-google {
+    /* Allow buttons to share the same line */
+    width: auto;
+    flex: 1;
+    min-width: 200px;
+    max-width: 300px;
+}
+
+.btn-social {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px 20px;
+    overflow: hidden;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 8px !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1;
+}
+
+/* Liquid sheen reflection effect */
+.btn-social::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 150%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(253, 246, 227, 0.4),
+        transparent
+    );
+    transform: skewX(-20deg);
+    transition: all 0.6s ease;
+    z-index: -1;
+}
+
+.btn-google::before {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(26, 115, 232, 0.4),
+        transparent
+    ) !important;
+}
+
+.btn-social:hover::before {
+    left: 150%;
+}
+
+.btn-social:hover {
+    transform: translateY(-3px) scale(1.02);
+}
+
+/* SVG icon levitation */
+.btn-social svg {
+    width: 22px;
+    height: 22px;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.15));
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-social:hover svg {
+    transform: scale(1.15) rotate(-5deg);
+}
+
+/* Google Button - Official White */
+.btn-google {
+    background-color: #ffffff !important;
+    border: 1px solid #dadce0 !important;
+    color: #3c4043 !important;
+    box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.3),
+        inset 0 2px 4px rgba(255, 255, 255, 0.8) !important;
+}
+
+.btn-google:hover {
+    background-color: #f8f9fa !important;
+    border-color: #d2e3fc !important;
+    box-shadow:
+        0 10px 20px rgba(0, 0, 0, 0.5),
+        0 0 15px rgba(255, 255, 255, 0.2) !important;
+    color: #1a73e8 !important;
+}
+
+/* Facebook Button - Official Blue (#1877F2) */
+.btn-facebook {
+    background-color: #1877f2 !important;
+    border: 1px solid #1877f2 !important;
+    color: #ffffff !important;
+    box-shadow:
+        0 4px 10px rgba(24, 119, 242, 0.4),
+        inset 0 2px 4px rgba(255, 255, 255, 0.3) !important;
+}
+
+.btn-facebook:hover {
+    background-color: #166fe5 !important;
+    border-color: #166fe5 !important;
+    box-shadow:
+        0 10px 20px rgba(24, 119, 242, 0.6),
+        0 0 20px rgba(24, 119, 242, 0.4) !important;
+    color: #ffffff !important;
+}
+
+.social-wrapper {
+    gap: 24px;
+}
+
+a.animate {
+    box-shadow: inset 0 0 0 0 var(--royal-gold);
+    font-weight: 600;
+    color: var(--royal-gold);
+    text-decoration: none !important;
+    padding: 0 0.25rem;
+    margin: 0 -0.25rem;
+    border-radius: 0.5rem;
+    transition:
+        color 666ms ease-in-out,
+        box-shadow 666ms ease-in-out;
+}
+a.animate:hover {
+    color: var(--royal-bg) !important;
+    box-shadow: inset 100em 0 0 0 var(--royal-gold);
+    border-radius: 2px;
+}
+
+.highlight {
+    box-shadow: inset 0 0 3px 3px var(--royal-gold) !important;
+    background-color: rgba(184, 115, 51, 0.4) !important;
+    opacity: 1;
+}
+.highlight-red {
+    box-shadow: inset 0 0 3px 3px #ff0000;
+}
+.highlight-black {
+    box-shadow: inset 0 0 3px 3px #000;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before,
+.custom-control-input:active ~ .custom-control-label::before,
+.custom-control-input:focus ~ .custom-control-label::before {
+    background-color: var(--royal-red) !important;
+    border-color: var(--royal-gold) !important;
+    box-shadow: rgba(184, 115, 51, 0.5) 0px 0px 0px 0.2rem;
+}
+
+/* ==========================================================================
+   PUZZLE LAYOUT / XIANGQIBOARD / INTROJS OVERRIDES
+   ========================================================================== */
+.puzzle-layout-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+    align-items: flex-start;
+}
+.puzzle-layout-board {
+    flex: 1 1 520px;
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+}
+.puzzle-layout-panel {
+    flex: 1 1 360px;
+    min-width: 320px;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.board-1ef78 {
+    box-sizing: content-box;
+    pointer-events: none !important;
+    margin: auto;
+}
+.board-1ef78 .row-cb702:first-of-type .square-2b8ce .notation-8c7a2 {
+    top: -21px !important;
+    bottom: auto !important;
+}
+.board-1ef78 .row-cb702:last-of-type .square-2b8ce .notation-8c7a2 {
+    bottom: -21px !important;
+    top: auto !important;
+}
+.xiangqiboard-8ddcb .spare-pieces-top-e4b47 {
+    margin-bottom: 21px !important;
+}
+.xiangqiboard-8ddcb .spare-pieces-bottom-29dac {
+    margin-top: 21px !important;
+}
+.square-2b8ce {
+    float: left;
+    position: relative;
+    user-select: none;
+    pointer-events: none !important;
+}
+.square-2b8ce img {
+    pointer-events: all !important;
+}
+.square-2b8ce:hover {
+    z-index: 2;
+}
+.square-2b8ce:hover img {
+    cursor: pointer;
+    filter: drop-shadow(0 0 5px rgba(184, 115, 51, 0.8));
+} /* Sáng lên khi di chuột */
+.highlight1-e13fc,
+.highlight2-e0a03 {
+    box-shadow: inset 0 0 3px 3px var(--royal-gold);
+    background: rgba(184, 115, 51, 0.2);
+}
+.notation-8c7a2 {
+    cursor: default;
+    font-family: serif;
+    font-size: 14px;
+    position: absolute;
+    color: #333;
+    font-weight: 600;
+}
+.alpha-f4ef2 {
+    bottom: 1px;
+    right: 40%;
+}
+.numeric-fe76e {
+    top: 40%;
+    left: 1px;
+}
+
+.introjs-helperLayer {
+    background-color: rgba(26, 20, 16, 0.9);
+    border: 2px solid var(--royal-gold);
+    border-radius: 4px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+}
+.introjs-tooltip {
+    color: var(--royal-gold-light);
+    background-color: rgba(26, 20, 16, 0.95);
+    font-family: serif;
+}
+.introjs-button {
+    text-shadow: none;
+    font-weight: 600;
+    color: var(--royal-red);
+    background: var(--royal-gold);
+    border-radius: 2px;
+}
+.introjs-button:hover {
+    background: var(--royal-red);
+    color: var(--royal-gold) !important;
+    border: 1px solid var(--royal-gold);
+}
+.introjs-progressbar {
+    background-color: var(--royal-gold) !important;
+}
+
+/* Nút Cuộn Lên (Scroll Top) hoàng gia */
+/* ==========================================================================
+   LIQUID GLASS SCROLL-TO-TOP (.cd-top)
+   ========================================================================== */
+.cd-top {
+    display: inline-block;
+    height: 48px; /* Slightly larger for easier tapping */
+    width: 48px;
+    position: fixed;
+    bottom: 30px;
+    left: 30px; /* Moved slightly off the exact edge for better breathing room */
+    z-index: 9999;
+    overflow: hidden;
+    text-indent: 100%;
+    white-space: nowrap;
+
+    /* Background & Icon Setup */
+    background: var(--glass-bg-dark) url(/img/cd-top-arrow.svg) no-repeat center
+        50%;
+    background-size: 20px;
+
+    /* Liquid Glass Effects */
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-top: 2px solid rgba(184, 115, 51, 0.6); /* Glossy top edge */
+    border-radius: 50%; /* Floating circular button */
+
+    /* Deep Shadow & Inner Wet Reflection */
+    box-shadow:
+        var(--liquid-shadow),
+        inset 0 3px 10px var(--liquid-highlight);
+
+    /* Initial Hidden State with Slide-Down Offset */
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Liquid Sheen Reflection (matches your buttons) */
+.cd-top::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 150%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(253, 246, 227, 0.4),
+        transparent
+    );
+    transform: skewX(-20deg);
+    transition: all 0.6s ease;
+    z-index: -1;
+}
+
+/* Shown State */
+.cd-top.cd-top--show {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Catchy Hover State - Glowing & Levitating */
+.cd-top:hover,
+.cd-top:focus {
+    background-color: var(
+        --glass-bg-red
+    ); /* Shifts to royal red on interaction */
+    border-color: var(--royal-gold);
+    opacity: 1;
+    transform: translateY(-6px) scale(1.1);
+
+    /* Amplified Glow */
+    box-shadow:
+        0 15px 30px rgba(0, 0, 0, 0.9),
+        0 0 20px rgba(184, 115, 51, 0.6),
+        inset 0 4px 15px var(--liquid-highlight),
+        inset 0 -2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.cd-top:hover::before {
+    left: 150%; /* Triggers the light reflection swipe */
+}
+
+/* Waiting Indicator Dot */
+body.player .waitingIndicator .indicator,
+body.dashboard .waitingIndicator .indicator {
+    background-color: var(--royal-gold);
+}
+.waitingIndicator {
+    position: relative;
+    display: inline;
+}
+.waitingIndicator .indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    display: inline-block;
+    margin: 3px;
+    opacity: 0;
+}
+.waitingIndicator .indicator:nth-child(1) {
+    animation: fade 3s ease 0s infinite;
+}
+.waitingIndicator .indicator:nth-child(2) {
+    animation: fade 3s ease 250ms infinite;
+}
+.waitingIndicator .indicator:nth-child(3) {
+    animation: fade 3s ease 500ms infinite;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 991px) {
+    #copy-url,
+    #copy-url-red,
+    #copy-url-black,
+    #change-pass {
+        width: 100% !important;
+    }
+    .btn.w-25 {
+        width: 49% !important;
+    }
+    .btn.w-25.btn-success {
+        width: 75% !important;
+    }
+    #ban-co {
+        height: auto !important;
+    }
+    .puzzle-layout-panel,
+    .puzzle-layout-board {
+        width: 100%;
+    }
+}
+@media screen and (max-width: 380px) {
+    #ban-co {
+        width: calc(100% - 15px) !important;
+    }
+}
+@media (max-width: 413px) {
+    .hero .hero-box,
+    .hero #proverb {
+        width: 100% !important;
+    }
+    .hero .hero-box .nav-tabs li {
+        width: 100%;
+    }
+    .hero .hero-box .nav-tabs li a {
+        text-align: center;
+    }
+}
+@media screen and (min-width: 1400px) {
+    .container {
+        max-width: 1320px !important;
+    }
+}
+.clearfix-5f3b5 {
+    clear: both;
+}
+.board-1ef78 {
+    box-sizing: content-box;
+    pointer-events: none !important;
+    margin: auto;
+}
+.board-1ef78 .row-cb702:first-of-type .square-2b8ce .notation-8c7a2 {
+    top: -21px !important;
+    bottom: auto !important;
+}
+.board-1ef78 .row-cb702:last-of-type .square-2b8ce .notation-8c7a2 {
+    bottom: -21px !important;
+    top: auto !important;
+}
+.xiangqiboard-8ddcb .spare-pieces-top-e4b47 {
+    margin-bottom: 21px !important;
+}
+.xiangqiboard-8ddcb .spare-pieces-bottom-29dac {
+    margin-top: 21px !important;
+}
+.square-2b8ce {
+    float: left;
+    position: relative;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: none !important;
+}
+.square-2b8ce img {
+    pointer-events: all !important;
+}
+.square-2b8ce:hover {
+    z-index: 2;
+}
+.square-2b8ce:hover img {
+    cursor: pointer;
+}
+.highlight1-e13fc,
+.highlight2-e0a03 {
+    box-shadow: inset 0 0 3px 3px #daa520;
+}
+.notation-8c7a2 {
+    cursor: default;
+    font-family:
+        "Plus Jakarta Sans", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
+        sans-serif;
+    font-size: 14px;
+    position: absolute;
+    color: #000;
+}
+.alpha-f4ef2 {
+    bottom: 1px;
+    right: 40%;
+}
+.numeric-fe76e {
+    top: 40%;
+    left: 1px;
+}
+.piece-1e8b9 {
+    cursor: pointer;
+}
+th[role="columnheader"]:not(.no-sort) {
+    cursor: pointer;
+}
+th[role="columnheader"]:not(.no-sort):after {
+    content: "";
+    float: right;
+    margin-top: 7px;
+    border-width: 0 4px 4px;
+    border-style: solid;
+    border-color: #404040 transparent;
+    visibility: hidden;
+    opacity: 0;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+th[role="columnheader"]:not(.no-sort):hover:after {
+    visibility: visible;
+    opacity: 1;
+}
+th[aria-sort="ascending"]:not(.no-sort):after {
+    border-bottom: none;
+    border-width: 4px 4px 0;
+}
+th[aria-sort]:not(.no-sort):after {
+    visibility: visible;
+    opacity: 0.4;
+}
+table th.no-sort {
+    cursor: default !important;
+    pointer-events: none !important;
+}
+table th.no-sort::before,
+table th.no-sort::after {
+    display: none !important;
+} /*# sourceMappingURL=index.css.map */
+
+.puzzle-layout-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+    align-items: flex-start;
+}
+.puzzle-layout-board {
+    flex: 1 1 520px;
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+}
+.puzzle-layout-panel {
+    flex: 1 1 360px;
+    min-width: 320px;
+}
+@media (max-width: 991.98px) {
+    .puzzle-layout-panel,
+    .puzzle-layout-board {
+        width: 100%;
+    }
+}
+
+.puzzle-layout-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+    align-items: flex-start;
+}
+.puzzle-layout-board {
+    flex: 1 1 520px;
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+}
+.puzzle-layout-panel {
+    flex: 1 1 360px;
+    min-width: 320px;
+}
+@media (max-width: 991.98px) {
+    .puzzle-layout-panel,
+    .puzzle-layout-board {
+        width: 100%;
+    }
+}
+.custom-control-input:checked ~ .custom-control-label::before,
+.custom-control-input:active ~ .custom-control-label::before,
+.custom-control-input:focus ~ .custom-control-label::before {
+    background-color: #f04124 !important;
+    border-color: #f04124 !important;
+    box-shadow: rgba(240, 65, 36, 0.25) 0px 0px 0px 0.2rem;
+}
+.comment-action.liked {
+    color: #f87171;
+    cursor: default;
+}
+.comment-action.liked i {
+    color: #f87171;
+}
+.comment-action:not(.liked):hover {
+    color: #f87171;
+    cursor: pointer;
+}
+.comment-action:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+.fa-spinner {
+    margin-left: 5px;
+}
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+.highlight {
+    background-color: #ffeb3b !important;
+    opacity: 0.6;
+}
+.st-count,
+.st-text {
+    color: var(--royal-gold-light) !important;
+}
+
+/* ==========================================================================
+   LIQUID GLASS CARDS & PANELS
+   ========================================================================== */
+.card.shadow-lg,
+#app .card,
+.royal-grid-card {
+    background: var(--glass-bg-dark) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border) !important;
+    border-top: 1px solid rgba(184, 115, 51, 0.5) !important; /* Stronger top border for lighting */
+    border-radius: 12px;
+    box-shadow:
+        var(--liquid-shadow),
+        inset 0 2px 15px var(--liquid-highlight) !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+}
+
+.card.shadow-lg:hover,
+#app .card:hover,
+.royal-grid-card:hover {
+    transform: translateY(-5px) scale(1.005);
+    border-color: rgba(184, 115, 51, 0.6) !important;
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.9),
+        0 0 25px rgba(184, 115, 51, 0.3),
+        inset 0 4px 20px var(--liquid-highlight) !important;
+}
+
+/* Glassy Card Headers */
+.card-header {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--glass-bg-red),
+        transparent
+    ) !important;
+    border-bottom: 1px solid rgba(184, 115, 51, 0.2) !important;
+    text-shadow: 0 0 10px rgba(184, 115, 51, 0.5);
+    color: var(--royal-gold-light) !important;
+    backdrop-filter: blur(8px);
+}
+
+/* Update the Hero/Proverb Boxes to match */
+.hero .hero-box,
+#proverb {
+    background: var(--glass-bg-dark);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+        var(--liquid-shadow),
+        inset 0 2px 10px var(--liquid-highlight);
+    border-radius: 12px;
+}
+
+.card #tourBtn {
+    color: var(--royal-gold-light) !important;
+}
+
+.card > a:hover {
+    color: transparent !important;
+}
+
+form label {
+    font-weight: 600;
+    color: var(--royal-gold);
+}
+
+.dropdown-item.active,
+.dropdown-item:active {
+    background-color: var(--royal-red) !important;
+    color: var(--royal-gold) !important;
+}
+
+/* ==========================================================================
+   DROPDOWNS HOÀNG GIA (ROYAL DROPDOWNS)
+   ========================================================================== */
+/* Khung nền Dropdown */
+.dropdown-menu {
+    background-color: rgba(17, 17, 17, 0.95) !important; /* Đen mun bóng */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--royal-gold) !important;
+    border-radius: 6px;
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.8),
+        0 0 15px rgba(184, 115, 51, 0.2) !important;
+    padding: 0.5rem 0;
+    animation: fadeInMenu 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1050; /* Đảm bảo luôn đè lên các phần tử khác */
+}
+
+/* Hiệu ứng xuất hiện mượt mà */
+@keyframes fadeInMenu {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ==========================================================================
+   GLOSSY & CATCHY DROPDOWN ITEM HOVER
+   ========================================================================== */
+.dropdown-item {
+    color: var(--royal-gold-light) !important;
+    font-weight: 600;
+    padding: 10px 20px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background-color: transparent !important;
+    display: flex;
+    align-items: center;
+    border-top: 1px solid transparent; /* Prevents layout shift on hover */
+    border-bottom: 1px solid transparent;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    /* Richer, dynamic translucent gradient */
+    background: linear-gradient(
+        90deg,
+        rgba(139, 0, 0, 0.15),
+        rgba(139, 0, 0, 0.75),
+        rgba(139, 0, 0, 0.15)
+    ) !important;
+
+    /* Glossy liquid glass reflection and outer bronze glow */
+    box-shadow:
+        inset 0 2px 8px var(--liquid-highlight),
+        /* Wet top reflection */ inset 0 -2px 8px rgba(0, 0, 0, 0.4),
+        /* Deep bottom shadow */ 0 4px 15px rgba(184, 115, 51, 0.25) !important; /* Soft bronze aura */
+
+    /* Stronger blur for the frosted glass effect */
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+
+    /* Catchy text illumination */
+    color: var(--royal-gold) !important;
+    text-shadow: 0 0 12px rgba(184, 115, 51, 0.9);
+
+    /* Emphasized movement (slides right and slightly scales up) */
+    transform: translateX(8px) scale(1.02);
+
+    /* Crisp glass edges */
+    border-top: 1px solid rgba(184, 115, 51, 0.4);
+    border-bottom: 1px solid rgba(184, 115, 51, 0.1);
+}
+
+.dropdown-item:hover i,
+.dropdown-item:focus i {
+    color: var(--royal-gold-light) !important;
+    text-shadow: 0 0 15px rgba(184, 115, 51, 1);
+    transform: scale(1.15); /* Makes the icon pop more */
+}
+
+/* Trạng thái Đang chọn (Active/Clicked) */
+.dropdown-item.active,
+.dropdown-item:active {
+    background: linear-gradient(
+        to right,
+        var(--royal-gold),
+        #8b4513
+    ) !important;
+    color: var(--royal-bg) !important; /* Chữ chuyển sang đen mun */
+    font-weight: 600;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    transform: translateX(0); /* Reset trượt khi click */
+}
+
+.dropdown-item.active i,
+.dropdown-item:active i {
+    color: var(--royal-red-dark) !important;
+}
+
+/* Đường kẻ phân cách */
+.dropdown-divider {
+    border-top: 1px solid rgba(184, 115, 51, 0.2) !important;
+    margin: 0.5rem 0;
+}
+
+div.dataTables_wrapper div.dataTables_length label {
+    padding-left: 1rem;
+    padding-top: 1rem;
+}
+
+div.dataTables_wrapper div.dataTables_filter label {
+    padding-right: 1rem;
+    padding-top: 1rem;
+}
+
+.dataTables_info {
+    padding-bottom: 1rem;
+    padding-left: 1rem;
+}
+/* ==========================================================================
+   TRẠNG THÁI BADGES (STATUS INDICATORS)
+   ========================================================================== */
+.badge-status {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.badge-status i {
+    font-size: 0.6rem;
+}
+
+/* Online Badge - Glowing Royal Green */
+.badge-online {
+    background: linear-gradient(
+        to bottom,
+        rgba(45, 106, 79, 0.8),
+        rgba(27, 67, 50, 0.8)
+    );
+    border: 1px solid #2d6a4f;
+    color: var(--royal-gold-light);
+    box-shadow: 0 0 10px rgba(45, 106, 79, 0.4);
+}
+
+.badge-online i {
+    color: #4ade80; /* Bright green for the dot */
+    text-shadow: 0 0 8px #4ade80;
+}
+
+/* Offline Badge - Dimmed Wood/Bronze */
+.badge-offline {
+    background: rgba(26, 20, 16, 0.8);
+    border: 1px solid var(--royal-wood);
+    color: #b87333;
+}
+
+.badge-offline i {
+    color: var(--royal-wood);
+}
+
+/* ==========================================================================
+   ROYAL WATCH & PREVIEW BUTTONS (Overrides for roomList)
+   ========================================================================== */
+
+/* 1. The Preview Button (Eye) - Solid Bronze */
+.btn.previewBtn {
+    background: linear-gradient(to bottom, #b87333, #8b4513) !important;
+    border: 1px solid #fff !important;
+    color: var(--royal-bg) !important; /* Ebony text for high contrast */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    font-weight: 600;
+    text-shadow: none;
+    letter-spacing: 0.5px;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn.previewBtn:hover {
+    background: linear-gradient(to bottom, #cda434, #b87333) !important;
+    border-color: var(--royal-gold) !important;
+    box-shadow:
+        0 6px 15px rgba(0, 0, 0, 0.8),
+        0 0 10px rgba(184, 115, 51, 0.6);
+    transform: translateY(-2px);
+}
+
+.btn.previewBtn i {
+    color: var(--royal-bg) !important;
+}
+
+/* 2. Public Watch Button (Glass Bronze) */
+.btn.watch-btn.btn-light {
+    background: rgba(184, 115, 51, 0.1) !important; /* Glassmorphism tint */
+    border: 1px solid var(--royal-gold) !important;
+    color: var(--royal-gold) !important;
+    box-shadow: inset 0 0 10px rgba(184, 115, 51, 0.05);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+}
+
+/* 3. Private Watch Button or Hovered Public Watch (Solid Royal Wood) */
+.btn.watch-btn.btn-warning {
+    background: linear-gradient(
+        145deg,
+        #3b2415,
+        #1c110a
+    ) !important; /* Rosewood base */
+    border: 1px solid var(--royal-gold) !important;
+    color: var(--royal-gold-light) !important;
+    box-shadow:
+        2px 2px 8px rgba(0, 0, 0, 0.8),
+        inset 0 0 5px rgba(184, 115, 51, 0.2);
+    transition: all 0.3s ease;
+}
+
+/* 4. Force override the text-color utility classes set in the controller */
+.btn.watch-btn.text-warning {
+    color: var(--royal-gold) !important;
+}
+.btn.watch-btn.text-light {
+    color: var(--royal-gold-light) !important;
+}
+
+.btn.watch-btn i {
+    transition: transform 0.3s ease;
+}
+
+/* 5. Hover state for Watch buttons - Levitate and Glow */
+.btn.watch-btn:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.8),
+        0 0 12px rgba(184, 115, 51, 0.4) !important;
+    border-color: #fff !important;
+}
+
+.btn.watch-btn:hover i {
+    transform: scale(1.1);
+}
+
+/* ==========================================================================
+   ROYAL MODALS (CUNG ĐÌNH HUẾ THEME OVERRIDES)
+   ========================================================================== */
+
+/* 1. Modal Backdrop - Deep ebony with a subtle blur */
+.modal-backdrop.show {
+    opacity: 0.85 !important;
+    background-color: var(--royal-bg) !important;
+    backdrop-filter: blur(4px);
+}
+
+/* 2. Modal Content - The Royal Panel (Glassmorphism & Bronze Borders) */
+.modal-content {
+    background: linear-gradient(
+        145deg,
+        rgba(28, 28, 28, 0.98),
+        rgba(17, 17, 17, 0.98)
+    ) !important;
+    backdrop-filter: blur(12px);
+    border: 2px solid var(--royal-gold) !important;
+    border-radius: 8px;
+    box-shadow:
+        0 15px 50px rgba(0, 0, 0, 0.9),
+        0 0 20px rgba(184, 115, 51, 0.15) !important;
+    color: var(--royal-gold-light);
+    overflow: hidden; /* Ensures headers/footers respect border-radius */
+}
+
+/* 3. Modal Header - Royal Red Banner */
+.modal-header {
+    background: linear-gradient(
+        90deg,
+        #8b0000,
+        #4a0000
+    ) !important; /* Chu-Han red gradient */
+    border-bottom: 2px solid var(--royal-gold) !important;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+}
+
+/* 4. Modal Title - Texturina Font & Glowing Bronze */
+.modal-title {
+    font-family: "Texturina", serif !important;
+    color: var(--royal-gold) !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    margin: 0;
+}
+
+/* Modal Close Button ("X") inside Header */
+.modal-header .close {
+    color: var(--royal-gold-light) !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.modal-header .close:hover {
+    color: var(--royal-gold) !important;
+    opacity: 1;
+    transform: scale(1.1); /* Playful majestic spin on hover */
+}
+
+/* 5. Modal Body - Content Area */
+.modal-body {
+    background-color: transparent !important;
+    color: var(--royal-gold-light);
+    padding: 24px;
+    font-family: "Plus Jakarta Sans", sans-serif !important;
+}
+
+/* 6. Modal Footer - Subtle Divider */
+.modal-footer {
+    border-top: 1px solid rgba(184, 115, 51, 0.3) !important; /* Faded bronze line */
+    background-color: transparent !important;
+    padding: 16px 24px;
+}
+
+/* Modal Dialog adjustments for smooth scaling */
+.modal.fade .modal-dialog {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: scale(0.9);
+}
+
+.modal.show .modal-dialog {
+    transform: scale(1);
+}
+
+/* ==========================================================================
+   DATATABLES ROYAL PROCESSING INDICATOR
+   ========================================================================== */
+div.dataTables_wrapper div.dataTables_processing {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 260px;
+    margin-left: -130px;
+    margin-top: -30px;
+    text-align: center;
+    padding: 16px 0;
+
+    /* Royal Glassmorphism Background */
+    background: linear-gradient(
+        145deg,
+        rgba(28, 28, 28, 0.98),
+        rgba(17, 17, 17, 0.98)
+    ) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    /* Bronze Trim & Shape */
+    border: 2px solid var(--royal-gold) !important;
+    border-radius: 8px;
+
+    /* Deep Shadow & Inner Glow */
+    box-shadow:
+        0 15px 50px rgba(0, 0, 0, 0.9),
+        0 0 20px rgba(184, 115, 51, 0.15) !important;
+
+    /* Royal Typography */
+    color: var(--royal-gold) !important;
+    font-family: "Texturina", serif !important;
+    font-weight: 600;
+    font-size: 1.25rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+
+    /* Bronze Aura Animation */
+    animation: pulse-gold 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+    z-index: 1050; /* Keep above table elements */
+}
+
+/*
+   Royal Waiting Indicator Dots (Optional)
+   Matches the theme's custom fade animation for loading states
+*/
+div.dataTables_wrapper div.dataTables_processing .indicator {
+    width: 6px;
+    height: 6px;
+    background-color: var(--royal-gold);
+    border-radius: 3px;
+    display: inline-block;
+    margin: 3px;
+    opacity: 0;
+}
+div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(1) {
+    animation: fade 1.5s ease 0s infinite;
+}
+div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(2) {
+    animation: fade 1.5s ease 250ms infinite;
+}
+div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(3) {
+    animation: fade 1.5s ease 500ms infinite;
+}
+
+.puzzle-reaction-btn {
+    text-decoration: none !important;
+}
+
+/* ==========================================================================
+   ROYAL GRID CARDS (Kỳ Thủ, Thế Cờ, Ván Đấu)
+   ========================================================================== */
+.royal-grid-card {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.6),
+        inset 0 0 15px rgba(184, 115, 51, 0.05);
+}
+
+.royal-grid-card:hover {
+    transform: translateY(-5px) scale(1.005);
+    border-color: rgba(184, 115, 51, 0.6) !important;
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.9),
+        0 0 20px rgba(184, 115, 51, 0.3) !important;
+}
+
+.royal-card-title {
+    font-family: "Texturina", serif;
+    color: var(--royal-gold);
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.royal-card-title:hover {
+    color: var(--royal-gold-light);
+}
+
+.royal-vs-text {
+    font-family: "Texturina", serif;
+    color: var(--royal-red-light);
+    font-size: 1.2rem;
+    font-style: italic;
+    text-shadow: 0 0 8px rgba(178, 34, 34, 0.5);
+}
+
+/* Elegant Board Wrapper replacing the ugly hardcoded colors */
+.royal-board-wrapper {
+    background: linear-gradient(145deg, #251c16, #0a0a0a) !important;
+    border-bottom: 2px solid var(--royal-gold);
+    padding: 15px;
+}
+
+.royal-board-wrapper .xiangqiboard-8ddcb {
+    background: transparent !important;
+    margin: auto !important;
+}
+
+.royal-board-wrapper .xiangqiboard-8ddcb .board-1ef78 {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8) !important;
+    border-radius: 4px;
+}
+
+/* ==========================================================================
+   LIQUID DROPDOWNS HOÀNG GIA
+   ========================================================================== */
+.dropdown-menu {
+    background: var(--glass-bg-dark) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border) !important;
+    border-top: 2px solid rgba(184, 115, 51, 0.6) !important;
+    border-radius: 12px;
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.9),
+        inset 0 2px 10px var(--liquid-highlight) !important;
+    padding: 0.5rem 0;
+    animation: fadeInMenu 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.dropdown-item {
+    color: var(--royal-gold-light) !important;
+    font-weight: 600;
+    padding: 12px 24px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background-color: transparent !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background: linear-gradient(
+        90deg,
+        rgba(139, 0, 0, 0.2),
+        rgba(139, 0, 0, 0.8),
+        rgba(139, 0, 0, 0.2)
+    ) !important;
+    color: var(--royal-gold) !important;
+    text-shadow: 0 0 12px rgba(184, 115, 51, 0.9);
+    box-shadow:
+        inset 0 2px 8px var(--liquid-highlight),
+        inset 0 -2px 8px rgba(0, 0, 0, 0.5);
+    transform: translateX(10px) scale(1.02);
+    border-left: 3px solid var(--royal-gold);
+}
+
+/* Modal Content Adjustment */
+.modal-content {
+    background: var(--glass-bg-dark) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border) !important;
+    border-top: 2px solid rgba(184, 115, 51, 0.5) !important;
+    border-radius: 12px;
+    box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.9),
+        inset 0 3px 15px var(--liquid-highlight) !important;
+}
+
+.modal-header {
+    background: linear-gradient(
+        90deg,
+        rgba(139, 0, 0, 0.5),
+        rgba(74, 0, 0, 0.3)
+    ) !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+}
+
+/* ==========================================================================
+    LIQUID GLASS MATCH STATUS
+========================================================================== */
+#match-status {
+    /* Liquid Glass Background */
+    background: var(--glass-bg-dark) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+
+    /* Royal Borders with Glossy Top Lighting */
+    border: 1px solid var(--glass-border) !important;
+    border-top: 2px solid rgba(184, 115, 51, 0.5) !important;
+    border-radius: 8px;
+
+    /* Deep Shadows & Inner Wet Reflection */
+    box-shadow:
+        var(--liquid-shadow),
+        inset 0 3px 15px var(--liquid-highlight) !important;
+
+    /* Royal Typography */
+    font-family: "Texturina", serif;
+    color: var(--royal-gold) !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(184, 115, 51, 0.5);
+
+    /* Layout & Smooth Animation */
+    padding: 12px 24px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Auto-hide the glossy box when the script hasn't injected any text */
+#match-status:empty {
+    display: none !important;
+    padding: 0;
+    border: none !important;
+}
+
+.fa,
+.fab,
+.fad,
+.fal,
+.far,
+.fas {
+    margin-right: 0.2rem !important;
+}
+
+/* Visual Bracket Styles (Liquid Glass & Royal Theme) */
+.bracket-container {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 20px 0;
+    gap: 30px;
+}
+.bracket-round {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    min-width: 280px;
+    gap: 25px;
+}
+
+/* Liquid Glass Match Card */
+.match-card {
+    background: var(--glass-bg-dark) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border) !important;
+    border-top: 2px solid rgba(184, 115, 51, 0.5) !important;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+        var(--liquid-shadow),
+        inset 0 3px 15px var(--liquid-highlight) !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Catchy Hover Animation */
+.match-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    border-color: rgba(184, 115, 51, 0.6) !important;
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.9),
+        0 0 25px rgba(184, 115, 51, 0.3),
+        inset 0 4px 20px var(--liquid-highlight) !important;
+}
+
+.match-player {
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(184, 115, 51, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    color: var(--royal-gold-light);
+    transition: background-color 0.3s ease;
+}
+
+.match-player:hover {
+    background-color: rgba(184, 115, 51, 0.05) !important;
+    box-shadow: inset 0 0 15px rgba(184, 115, 51, 0.1);
+}
+
+.match-player:last-child {
+    border-bottom: none;
+}
+
+/* Red Player styling */
+.match-player.red-side {
+    color: #ff3333;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+}
+
+/* Black Player styling (Updated for dark glass background) */
+.match-player.black-side {
+    color: var(--royal-gold-light);
+}
+
+/* Winner Highlight */
+.match-winner {
+    background: rgba(184, 115, 51, 0.2) !important;
+    box-shadow: inset 0 0 3px 3px var(--royal-gold);
+    color: var(--royal-gold) !important;
+    text-shadow: 0 0 8px rgba(184, 115, 51, 0.5);
+}
+
+/* Glossy Action Button */
+.bracket-room-link {
+    display: block;
+    text-align: center;
+    background: linear-gradient(
+        90deg,
+        rgba(139, 0, 0, 0.5),
+        rgba(74, 0, 0, 0.3)
+    ) !important;
+    padding: 12px;
+    font-size: 0.85rem;
+    text-decoration: none !important;
+    color: var(--royal-gold) !important;
+    text-transform: uppercase;
+    font-family: "Texturina", serif;
+    letter-spacing: 1px;
+    border-top: 1px solid rgba(184, 115, 51, 0.2);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.bracket-room-link:hover {
+    background: linear-gradient(
+        90deg,
+        rgba(139, 0, 0, 0.75),
+        rgba(139, 0, 0, 0.15)
+    ) !important;
+    color: #fff !important;
+    text-shadow: 0 0 12px rgba(184, 115, 51, 0.9);
+    box-shadow:
+        inset 0 2px 8px var(--liquid-highlight),
+        inset 0 -2px 8px rgba(0, 0, 0, 0.4);
+}
+
+#tourBtn {
+    display: none !important;
+}
+
+.scrollable-menu {
+    height: auto;
+    /* Set maximum height relative to viewport height (e.g., 75% of the screen) */
+    max-height: calc(82vh - 82px);
+    /* Enable vertical scrolling if content overflows */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+@media (max-width: 1199.98px) {
+    .scrollable-menu {
+        max-height: 100%;
+    }
+}
