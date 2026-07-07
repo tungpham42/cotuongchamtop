@@ -8,7 +8,7 @@ $localeConfigs = [
 ];
 
 $config = $localeConfigs[app()->getLocale()] ?? $localeConfigs['en'];
-extract($config); // Extacts to $prefix, $folder, $suffix, $endpoint
+extract($config); // Extracts to $prefix, $folder, $suffix, $endpoint[cite: 4]
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_name($prefix . $roomCode);
@@ -17,6 +17,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 $room_path = public_path("{$folder}/{$roomCode}{$suffix}");
 $log_path = url("{$folder}/{$roomCode}{$suffix}");
+$initialLog = ''; // Variable to hold existing chat content[cite: 4]
 
 if (!is_file($room_path)) {
     $time = date("H:i");
@@ -41,11 +42,16 @@ if (isset($_POST['enter'])) {
         file_put_contents($room_path, $login_message, FILE_APPEND | LOCK_EX);
     }
 }
+
+// Fetch the existing log unconditionally so guests can see it too![cite: 4]
+if (is_file($room_path)) {
+    $initialLog = file_get_contents($room_path);
+}
 @endphp
 
 <style>
 /* *==========================================================================
-   * GIAO DIỆN CHAT HOÀNG GIA - LIQUID GLASS THEME
+   * GIAO DIỆN CHAT HOÀNG GIA - LIQUID GLASS & GUEST MODE
    *========================================================================== */
 
 #chat-wrapper {
@@ -55,114 +61,35 @@ if (isset($_POST['enter'])) {
     max-width: 420px;
     height: 550px;
 
-    /* Liquid Glass Enclosure */
-    background: var(--glass-bg-dark);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
-    border-top: 1px solid rgba(255, 215, 0, 0.5); /* Glossy top edge */
+    /* Integrated Liquid Glass Enclosure */
+    background: var(--glass-bg-dark); /*[cite: 3] */
+    backdrop-filter: var(--glass-blur); /*[cite: 3] */
+    -webkit-backdrop-filter: var(--glass-blur); /*[cite: 3] */
+    border: 1px solid var(--glass-border); /*[cite: 3] */
+    border-top: 2px solid rgba(255, 215, 0, 0.5); /* Enhanced glossy top edge[cite: 3] */
     border-radius: 12px;
-    box-shadow: var(--liquid-shadow), inset 0 2px 15px var(--liquid-highlight);
+    box-shadow: var(--liquid-shadow), inset 0 3px 15px var(--liquid-highlight); /*[cite: 3] */
 
     overflow: hidden;
-    font-family: "Plus Jakarta Sans", "Noto Sans JP", sans-serif;
+    font-family: "Plus Jakarta Sans", "Noto Sans JP", sans-serif; /*[cite: 3] */
     justify-content: space-between;
     align-content: center;
     margin: 0 auto;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /*[cite: 3] */
 }
 
-/* Login Form */
-#loginform {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    padding: 2.5rem;
-    text-align: center;
-    background: transparent;
-}
-#loginform p {
-    font-family: "Texturina", serif;
-    font-size: 18px;
-    font-weight: bold;
-    color: var(--royal-gold);
-    text-transform: uppercase;
-    margin-bottom: 2rem;
-    letter-spacing: 1px;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-}
-#loginform form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-#loginform label { display: none; }
-
-/* Glossy Inputs */
-#name, #usermsg {
-    width: 100%;
-    background: rgba(11, 12, 16, 0.5);
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    color: var(--royal-gold-light);
-    padding: 14px 18px;
-    font-size: 16px;
-    font-weight: 600;
-    border-radius: 8px;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    outline: none;
-}
-#name::placeholder, #usermsg::placeholder { color: var(--royal-gold-light); opacity: 0.5; }
-#name:focus, #usermsg:focus {
-    border-color: var(--royal-gold);
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.4), inset 0 2px 5px rgba(0,0,0,0.5);
-    background: rgba(11, 12, 16, 0.7);
+#chat-wrapper:hover {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(212, 175, 55, 0.3), inset 0 2px 20px var(--liquid-highlight); /*[cite: 3] */
 }
 
-/* Ruby Glass Buttons */
-#enter, #submitmsg {
-    background: var(--glass-bg-red);
-    color: var(--royal-gold);
-    border: 1px solid rgba(255, 215, 0, 0.4);
-    border-radius: 8px;
-    box-shadow: inset 0 2px 8px rgba(255, 215, 0, 0.2), 0 4px 10px rgba(0,0,0,0.5);
-    padding: 14px;
-    font-weight: 700;
-    font-size: 16px;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-#enter:hover, #submitmsg:hover {
-    background: rgba(183, 34, 34, 0.6);
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5), inset 0 2px 10px rgba(255, 215, 0, 0.4);
-    transform: translateY(-2px);
-}
-.error {
-    color: #fff;
-    background: rgba(183, 34, 34, 0.8);
-    backdrop-filter: blur(4px);
-    padding: 8px 12px;
-    border: 1px solid rgba(255, 215, 0, 0.5);
-    border-radius: 8px;
-    font-size: 14px;
-    margin-top: 12px;
-    font-weight: bold;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-}
-
-/* Glassy Chat Header */
+/* Glassy Chat Header aligned with .card-header */
 #menu {
-    background: linear-gradient(90deg, rgba(138, 21, 21, 0.5), rgba(92, 10, 10, 0.3));
+    background: linear-gradient(90deg, transparent, var(--glass-bg-red), transparent); /*[cite: 3] */
     padding: 16px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--glass-border);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2); /*[cite: 3] */
     z-index: 10;
 }
 #menu p.welcome {
@@ -176,6 +103,11 @@ if (isset($_POST['enter'])) {
     font-weight: bold;
     text-transform: uppercase;
     text-shadow: 0 0 8px rgba(255,215,0,0.4);
+}
+#menu p.welcome i {
+    color: var(--royal-gold);
+    margin-right: 6px;
+    text-shadow: 0 0 10px rgba(255,215,0,0.5);
 }
 a#exit {
     color: var(--royal-gold-light);
@@ -208,11 +140,11 @@ a#exit:hover {
     gap: 16px;
 }
 
-/* Custom Scrollbar for Chatbox */
-#chatbox::-webkit-scrollbar { width: 6px; }
-#chatbox::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
-#chatbox::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.5); border-radius: 4px; }
-#chatbox::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.8); }
+/* Royal Custom Scrollbar */
+#chatbox::-webkit-scrollbar { width: 8px; } /*[cite: 3] */
+#chatbox::-webkit-scrollbar-track { background: var(--royal-bg); border-left: 1px solid rgba(212, 175, 55, 0.2); border-radius: 4px; } /*[cite: 3] */
+#chatbox::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--royal-red), #5c0a0a); border: 1px solid var(--royal-gold); border-radius: 6px; } /*[cite: 3] */
+#chatbox::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #d4af37, #b89020); border-color: #fff; } /*[cite: 3] */
 
 /* Chat Bubbles Container */
 .msg-container {
@@ -225,7 +157,7 @@ a#exit:hover {
 /* Other Player (Obsidian Glass Bubbles) */
 .message-theirs { align-self: flex-start; }
 .message-theirs .msg-content {
-    background: rgba(37, 42, 54, 0.65);
+    background: var(--glass-bg-dark); /*[cite: 3] */
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     color: var(--royal-gold-light);
@@ -248,7 +180,7 @@ a#exit:hover {
 /* Current Player (Ruby Glass Bubbles) */
 .message-mine { align-self: flex-end; }
 .message-mine .msg-content {
-    background: rgba(138, 21, 21, 0.65);
+    background: var(--glass-bg-red); /*[cite: 3] */
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     color: #fff;
@@ -268,15 +200,15 @@ a#exit:hover {
     font-weight: bold;
 }
 
-/* System Messages - Proverb Style */
+/* System Messages - Proverb Style Integration */
 .message-system {
     align-self: center;
-    background: rgba(138, 21, 21, 0.2);
-    border-left: 2px solid var(--royal-gold);
-    border-right: 2px solid var(--royal-gold);
+    background: rgba(138, 21, 21, 0.2); /*[cite: 3] */
+    border-left: 2px solid var(--royal-gold); /*[cite: 3] */
+    border-right: 2px solid var(--royal-gold); /*[cite: 3] */
     backdrop-filter: blur(4px);
     color: var(--royal-gold);
-    font-family: "Texturina", serif;
+    font-family: "Texturina", serif; /*[cite: 3] */
     font-style: italic;
     font-weight: bold;
     font-size: 14px;
@@ -291,23 +223,109 @@ a#exit:hover {
 .message-system .enter-info { color: var(--royal-gold); text-shadow: 0 0 5px rgba(255,215,0,0.5); }
 .message-system .left-info { color: #ff6b6b; }
 
-/* Input Area */
+/* Input Footer Actions (Guest & User) */
+#footer-action {
+    background: rgba(11, 12, 16, 0.5);
+    border-top: 1px solid rgba(255, 215, 0, 0.2);
+    z-index: 10;
+    padding: 15px;
+}
+
+/* Guest Inline Form */
+#guest-action {
+    display: flex;
+    flex-direction: column;
+}
+#login-form-inline {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+}
+
+/* Glossy Inputs */
+#name, #usermsg {
+    flex: 1;
+    background: rgba(11, 12, 16, 0.6);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--royal-wood); /*[cite: 3] */
+    color: var(--royal-gold-light); /*[cite: 3] */
+    padding: 14px 18px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    outline: none;
+}
+#name::placeholder, #usermsg::placeholder { color: var(--royal-gold-light); opacity: 0.5; }
+#name:focus, #usermsg:focus {
+    border-color: var(--royal-gold); /*[cite: 3] */
+    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25), inset 0 2px 5px rgba(0,0,0,0.5); /*[cite: 3] */
+    background: rgba(11, 12, 16, 0.8);
+}
+
+/* User Chat Form */
 #message-form {
     display: flex;
-    padding: 15px;
-    background: rgba(11, 12, 16, 0.4);
-    border-top: 1px solid rgba(255, 215, 0, 0.2);
     align-items: center;
     gap: 12px;
 }
-#submitmsg {
+
+/* Ruby Glass Buttons aligned with .btn-danger */
+#enter, #submitmsg {
+    position: relative;
+    overflow: hidden;
+    background: var(--glass-bg-red); /*[cite: 3] */
+    color: var(--royal-gold); /*[cite: 3] */
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    border-radius: 8px;
+    box-shadow: var(--liquid-shadow), inset 0 2px 8px rgba(255, 215, 0, 0.2); /*[cite: 3] */
     width: 48px;
     height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1;
 }
-#submitmsg i { font-size: 18px; filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)); }
+#enter i, #submitmsg i { filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)); }
+
+#enter::before, #submitmsg::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 150%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent); /*[cite: 3] */
+    transform: skewX(-20deg);
+    transition: all 0.6s ease;
+    z-index: -1;
+}
+#enter:hover::before, #submitmsg:hover::before {
+    left: 150%; /*[cite: 3] */
+}
+#enter:hover, #submitmsg:hover {
+    background: rgba(183, 34, 34, 0.6);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5), inset 0 2px 10px rgba(255, 215, 0, 0.4); /*[cite: 3] */
+    transform: translateY(-2px);
+}
+.error {
+    color: #fff;
+    background: rgba(183, 34, 34, 0.8);
+    backdrop-filter: blur(4px);
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 215, 0, 0.5);
+    border-radius: 8px;
+    font-size: 13px;
+    margin-top: 10px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
 
 /* Animations */
 @keyframes slideUpFade {
@@ -316,31 +334,44 @@ a#exit:hover {
 }
 </style>
 
+<!-- Hidden div to hold initial payload for immediate render (Works for Guests too) -->
+<div id="raw-chat-log" style="display:none;">{!! $initialLog !!}</div>
+
 <div id="chat-wrapper">
-    @php if (!isset($_SESSION['name'])) { @endphp
-        <div id="loginform">
-            <p>{{ __('Vui lòng nhập tên để bắt đầu chat!') }}</p>
-            <form id="login-form" method="post" action="{{ url()->current() }}">
-                @csrf
-                <input type="text" name="name" id="name" placeholder="{{ __('Tên') }}..." value="{{ Auth::check() ? Auth::user()->name : (isset($_COOKIE['cotuong_name']) ? $_COOKIE['cotuong_name'] : '') }}" />
-                <input type="submit" name="enter" id="enter" value="{{ __('Nhập') }}" />
-            </form>
-            <div id="login-error" class="error" style="display:none;"></div>
-        </div>
-        <div id="chatbox" style="display:none;"></div>
-    @php } else { @endphp
-        <div id="menu">
+    <div id="menu">
+        @php if (!isset($_SESSION['name'])) { @endphp
+            <p class="welcome"><i class="fas fa-eye"></i> {{ __('Khách Quan') }}</p>
+        @php } else { @endphp
             <p class="welcome">{{ __('Chào bạn') }}, <b>@php echo $_SESSION['name']; @endphp</b></p>
             <a id="exit" href="javascript:void(0);">{{ __("Thoát") }}</a>
-        </div>
-        <div id="chatbox"></div>
-        <form name="message" id="message-form">
-            <input name="usermsg" type="text" id="usermsg" placeholder="{{ __('Nhập tin nhắn...') }}" required="required" autocomplete="off" />
-            <button name="submitmsg" type="submit" id="submitmsg">
-                <i class="fas fa-paper-plane"></i>
-            </button>
-        </form>
-    @php } @endphp
+        @php } @endphp
+    </div>
+
+    <!-- Chatbox is always visible -->
+    <div id="chatbox"></div>
+
+    <!-- The Action Footer swaps based on auth state -->
+    <div id="footer-action">
+        @php if (!isset($_SESSION['name'])) { @endphp
+            <div id="guest-action">
+                <form id="login-form-inline" method="post" action="{{ url()->current() }}">
+                    @csrf
+                    <input type="text" name="name" id="name" placeholder="{{ __('Danh xưng của ngài...') }}" value="{{ Auth::check() ? Auth::user()->name : (isset($_COOKIE['cotuong_name']) ? $_COOKIE['cotuong_name'] : '') }}" required />
+                    <button type="submit" name="enter" id="enter" class="pulse-gold" title="{{ __('Báo danh') }}">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </button>
+                </form>
+                <div id="login-error" class="error" style="display:none;"></div>
+            </div>
+        @php } else { @endphp
+            <form name="message" id="message-form">
+                <input name="usermsg" type="text" id="usermsg" placeholder="{{ __('Nhập tin nhắn...') }}" required="required" autocomplete="off" />
+                <button name="submitmsg" type="submit" id="submitmsg">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        @php } @endphp
+    </div>
 </div>
 
 <script>
@@ -355,20 +386,39 @@ $(document).ready(function () {
         return;
     }
 
-    function renderLoginForm() {
+    // Dynamic state rendering without destroying the chat history[cite: 4]
+    function renderGuestState() {
         let defaultName = "{{ Auth::check() ? Auth::user()->name : (isset($_COOKIE['cotuong_name']) ? $_COOKIE['cotuong_name'] : '') }}";
 
-        $("#chat-wrapper").html(`
-            <div id="loginform">
-                <p>{{ __('Vui lòng nhập tên để bắt đầu chat!') }}</p>
-                <form id="login-form" method="post" action="{{ url()->current() }}">
+        $("#menu").html(`<p class="welcome"><i class="fas fa-eye"></i> {{ __('Khách Quan') }}</p>`);
+
+        $("#footer-action").html(`
+            <div id="guest-action">
+                <form id="login-form-inline" method="post" action="{{ url()->current() }}">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <input type="text" name="name" id="name" placeholder="{{ __('Tên') }}..." value="${defaultName}" />
-                    <input class="btn btn-danger" type="submit" name="enter" id="enter" value="{{ __('Nhập') }}" />
+                    <input type="text" name="name" id="name" placeholder="{{ __('Danh xưng của ngài...') }}" value="${defaultName}" required />
+                    <button type="submit" name="enter" id="enter" class="pulse-gold" title="{{ __('Báo danh') }}">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </button>
                 </form>
                 <div id="login-error" class="error" style="display:none;"></div>
             </div>
-            <div id="chatbox" style="display:none;"></div>
+        `);
+    }
+
+    function renderUserState(name) {
+        $("#menu").html(`
+            <p class="welcome">{{ __('Chào bạn') }}, <b>${name}</b></p>
+            <a id="exit" href="javascript:void(0);">{{ __("Thoát") }}</a>
+        `);
+
+        $("#footer-action").html(`
+            <form name="message" id="message-form">
+                <input name="usermsg" type="text" id="usermsg" placeholder="{{ __('Nhập tin nhắn...') }}" required="required" autocomplete="off" />
+                <button name="submitmsg" type="submit" id="submitmsg">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
         `);
     }
 
@@ -395,7 +445,8 @@ $(document).ready(function () {
                 $clone.find('br').last().remove();
                 let msgText = $clone.html().trim();
 
-                let isMine = (userName === currentUser);
+                // If currentUser is empty (Guest), all messages become "theirs" naturally.
+                let isMine = (currentUser !== "") && (userName === currentUser);
                 let bubbleClass = isMine ? 'message-mine' : 'message-theirs';
                 let metaText = isMine ? timeOnly : `<b>${userName}</b> • ${timeOnly}`;
 
@@ -409,6 +460,25 @@ $(document).ready(function () {
         });
 
         return formattedHtml;
+    }
+
+    // Immediate Chat Initialization (Works for logged out users too)[cite: 4]
+    function initializeChat() {
+        let rawHtml = $("#raw-chat-log").html();
+        if (rawHtml && rawHtml.trim() !== '') {
+            let $temp = $('<div>').html(rawHtml);
+            let $allMessages = $temp.find('.msgln');
+
+            if ($allMessages.length > 0) {
+                let newFormattedHtml = parseAndRenderChat($allMessages);
+                $("#chatbox").append(newFormattedHtml);
+                renderedMessageCount = $allMessages.length;
+
+                let chatbox = $("#chatbox")[0];
+                chatbox.scrollTop = chatbox.scrollHeight;
+                lastScrollHeight = chatbox.scrollHeight;
+            }
+        }
     }
 
     function loadLog(forceScroll = false) {
@@ -443,12 +513,12 @@ $(document).ready(function () {
         });
     }
 
-    if (currentUser !== "") {
-        loadLog(true);
-        chatInterval = setInterval(() => loadLog(false), 1500);
-    }
+    // Always start observing the room immediately
+    initializeChat();
+    chatInterval = setInterval(() => loadLog(false), 1500);
 
-    $(document).on("submit", "#login-form", function (e) {
+    // Dynamic Login Form Submission (Intercepted from #footer-action)[cite: 4]
+    $("#chat-wrapper").on("submit", "#login-form-inline", function (e) {
         e.preventDefault();
         e.stopImmediatePropagation();
 
@@ -459,21 +529,12 @@ $(document).ready(function () {
         }
 
         currentUser = name;
-        renderedMessageCount = 0;
 
-        $("#chat-wrapper").html(`
-            <div id="menu">
-                <p class="welcome">{{ __('Chào bạn') }}, <b>${name}</b></p>
-                <a id="exit" href="javascript:void(0);">{{ __("Thoát") }}</a>
-            </div>
-            <div id="chatbox"></div>
-            <form name="message" id="message-form">
-                <input name="usermsg" type="text" id="usermsg" placeholder="{{ __('Nhập tin nhắn...') }}" required="required" autocomplete="off" />
-                <button name="submitmsg" type="submit" id="submitmsg">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </form>
-        `);
+        // Wipe local variables, reload entire chat using the new identity mapping
+        renderedMessageCount = 0;
+        $("#chatbox").empty();
+
+        renderUserState(name);
 
         $.ajax({
             url: "{{ url()->current() }}",
@@ -484,18 +545,19 @@ $(document).ready(function () {
                 enter: "{{ __('Nhập') }}"
             },
             success: function () {
+                initializeChat();
                 loadLog(true);
-                if (chatInterval) clearInterval(chatInterval);
-                chatInterval = setInterval(() => loadLog(false), 1500);
             },
             error: function () {
-                renderLoginForm();
-                $("#login-error").text("{{ __('Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại.') }}").show();
+                currentUser = "";
+                renderGuestState();
+                $("#login-error").text("{{ __('Lỗi đăng nhập. Xin thử lại.') }}").show();
             }
         });
         return false;
     });
 
+    // Submitting Chat Message
     $("#chat-wrapper").on("submit", "#message-form", function (e) {
         e.preventDefault();
         const clientmsg = $("#usermsg").val().trim();
@@ -513,20 +575,21 @@ $(document).ready(function () {
         return false;
     });
 
+    // Exiting Chat (Reverts gracefully to Observer mode)[cite: 4]
     $("#chat-wrapper").on("click", "#exit", function (e) {
         e.preventDefault();
         bootbox.confirm({
-            message: "{{ __('Thoát') }} {{ __('khỏi phòng chat?') }}",
+            message: "{{ __('Rời khỏi cuộc đàm đạo?') }}",
             centerVertical: true,
             locale: '{{ __("vi") }}',
             closeButton: false,
             buttons: {
                 confirm: {
-                    label: '<i class="fas fa-check"></i> {{ __("Thoát") }}',
+                    label: '<i class="fas fa-check"></i> {{ __("Rời đi") }}',
                     className: 'btn-danger pulse-red'
                 },
                 cancel: {
-                    label: '<i class="fas fa-times"></i> {{ __("Hủy") }}',
+                    label: '<i class="fas fa-times"></i> {{ __("Ở lại") }}',
                     className: 'btn-dark text-light'
                 }
             },
@@ -540,13 +603,12 @@ $(document).ready(function () {
                             logout: true
                         },
                         success: function () {
-                            if (chatInterval) {
-                                clearInterval(chatInterval);
-                                chatInterval = null;
-                            }
                             currentUser = "";
                             renderedMessageCount = 0;
-                            renderLoginForm();
+                            $("#chatbox").empty();
+                            renderGuestState();
+                            initializeChat(); // Read chatlog as a guest again
+                            loadLog(true);
                         }
                     });
                 }
