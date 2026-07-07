@@ -340,7 +340,7 @@ a#exit:hover {
 <div id="chat-wrapper">
     <div id="menu">
         @php if (!isset($_SESSION['name'])) { @endphp
-            <p class="welcome"><i class="fas fa-eye"></i> {{ __('Khách Quan') }}</p>
+            <p class="welcome"><i class="fas fa-eye"></i></p>
         @php } else { @endphp
             <p class="welcome">{{ __('Chào bạn') }}, <b>@php echo $_SESSION['name']; @endphp</b></p>
             <a id="exit" href="javascript:void(0);">{{ __("Thoát") }}</a>
@@ -390,7 +390,7 @@ $(document).ready(function () {
     function renderGuestState() {
         let defaultName = "{{ Auth::check() ? Auth::user()->name : (isset($_COOKIE['cotuong_name']) ? $_COOKIE['cotuong_name'] : '') }}";
 
-        $("#menu").html(`<p class="welcome"><i class="fas fa-eye"></i> {{ __('Khách Quan') }}</p>`);
+        $("#menu").html(`<p class="welcome"><i class="fas fa-eye"></i></p>`);
 
         $("#footer-action").html(`
             <div id="guest-action">
