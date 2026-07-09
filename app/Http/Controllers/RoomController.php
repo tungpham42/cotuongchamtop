@@ -3,68 +3,39 @@
 namespace App\Http\Controllers;
 
 use DB;
+use Exception;
 use App\Models\Room;
 use App\Models\User;
 use App\Events\RoomUpdated;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\Controller;
-use App\Http\Controllers\PostsController;
-use App\Http\Controllers\GameController;
-use Carbon\Carbon;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use DataTables;
-use App\Jobs\QuickMatchJob;
-use App\Jobs\AnonymousQuickMatchJob;
 use Illuminate\Support\Str;
-use Atrox\Haikunator;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Atrox\Haikunator;
+use Carbon\Carbon;
+use DataTables;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Jobs\QuickMatchJob;
 
 class RoomController extends Controller
 {
     /**
      * Shared logic for generating Room DataTables across all locales.
-     * Applies Auth logic uniformly and dynamically generates localized routes.
      */
     private function getRoomsData(Request $request, string $locale)
     {
         if ($request->ajax()) {
-            $ongoingRooms = Room::where(function($query) {
-                $query->whereNotNull('host_id')->orWhereNotNull('host_session');
-                })
-                ->where(function($query) {
-                    $query->whereNotNull('guest_id')->orWhereNotNull('guest_session');
-                })
-                ->whereNull('result')
-                ->whereNotNull('active_player')
-                ->where('active_player', '!=', 'waiting')
-                ->where('active_player', 'NOT LIKE', 'paused:%')
-                ->get();
-
+            // Fetch ongoing rooms and trigger timeouts via model logic
+            $ongoingRooms = Room::ongoing()->get();
             foreach ($ongoingRooms as $r) {
-                $lastUpdate = $r->last_update ? Carbon::parse($r->last_update) : now();
-                $elapsed = $lastUpdate->diffInSeconds(now());
-
-                // Lấy thời gian suy nghĩ bù trừ (nếu có cache khi disconnect)
-                $moveElapsed = Cache::get("room_{$r->code}_move_elapsed", 0) + $elapsed;
-
-                if ($r->active_player === 'red') {
-                    // Đỏ đang đi: Nếu tốn quá 120s/nước hoặc thời gian tổng trừ đi thời gian đã trôi qua <= 0
-                    if ($moveElapsed >= 120 || floatval($r->red_time) - $elapsed <= 0) {
-                        $r->update(['result' => '-1', 'modified_at' => now()]); // '-1' là Đen thắng (Đỏ thua)
-                    }
-                } elseif ($r->active_player === 'black') {
-                    // Đen đang đi: Nếu tốn quá 120s/nước hoặc thời gian tổng trừ đi thời gian đã trôi qua <= 0
-                    if ($moveElapsed >= 120 || floatval($r->black_time) - $elapsed <= 0) {
-                        $r->update(['result' => '1', 'modified_at' => now()]); // '1' là Đỏ thắng (Đen thua)
-                    }
+                if ($r->hasTimedOut()) {
+                    $r->processTimeout();
                 }
             }
 
             $rooms = Room::select(['fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at']);
 
-            // Localized text dictionary mapped exactly to original translations
             $texts = [
                 'vi' => ['public' => 'Công khai', 'private' => 'Riêng tư', 'red' => 'Đỏ', 'black' => 'Đen', 'guest_won' => 'Đen thắng', 'draw' => 'Hòa', 'host_won' => 'Đỏ thắng', 'not_started' => 'Chưa bắt đầu', 'ongoing' => 'Đang đấu', 'play' => 'Chơi', 'watch' => 'Theo dõi', 'finished_btn' => 'Đã xong', 'finished_auth' => 'Đã đấu xong', 'play_now' => 'Chơi nào', 'login' => 'Đăng nhập', 'preview' => 'Xem trước'],
                 'en' => ['public' => 'Public', 'private' => 'Private', 'red' => 'Red', 'black' => 'Black', 'guest_won' => 'Guest won', 'draw' => 'Draw', 'host_won' => 'Host won', 'not_started' => 'Not started', 'ongoing' => 'Ongoing', 'play' => 'Play', 'watch' => 'Watch', 'finished_btn' => 'Finished', 'finished_auth' => 'Finished', 'play_now' => 'Play now', 'login' => 'Login', 'preview' => 'Preview'],
@@ -74,14 +45,11 @@ class RoomController extends Controller
             ];
 
             $t = $texts[$locale] ?? $texts['en'];
-            $routePrefix = ($locale === 'vi') ? '' : "{$locale}.";
 
             return Datatables::of($rooms)
                 ->addColumn('code', function($row) use ($t) {
                     $roomNameRaw = (isset($row->name) && $row->name != '') ? $row->name : $row->code;
-                    // Royal Theme Room Badge
                     $roomNameHtml = '<span class="badge badge-status" style="background: rgba(20, 22, 28, 0.85); border: 1px solid var(--royal-gold); color: var(--royal-gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);"><i class="fas fa-chess-board"></i> ' . $roomNameRaw . '</span>';
-
                     $iconClass = ($row->pass == '') ? 'fa-globe' : 'fa-lock';
                     $iconTooltip = ($row->pass == '') ? $t['public'] : $t['private'];
                     $iconHtml = '<i class="ml-2 far ' . $iconClass . ' text-warning" data-toggle="tooltip" data-placement="top" data-original-title="' . $iconTooltip . '"></i>';
@@ -105,10 +73,8 @@ class RoomController extends Controller
                 })
                 ->addColumn('turn', function($row) use ($t) {
                     if (str_contains($row->fen, ' r ')) {
-                        // Royal Red gradient
                         return '<span class="badge badge-status" style="background: linear-gradient(to bottom, #8a1515, #5c0a0a); color: var(--royal-gold); border: 1px solid var(--royal-gold); box-shadow: 0 0 8px rgba(138, 21, 21, 0.6);"><i class="fas fa-chess-knight"></i> '.$t['red'].'</span>';
                     } else if (str_contains($row->fen, ' b ')) {
-                        // Deep Obsidian gradient
                         return '<span class="badge badge-status" style="background: linear-gradient(145deg, #252a36, #121418); color: var(--royal-gold-light); border: 1px solid rgba(212, 175, 55, 0.3); box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);"><i class="fas fa-chess-knight"></i> '.$t['black'].'</span>';
                     }
                     return '';
@@ -116,16 +82,13 @@ class RoomController extends Controller
                 ->addColumn('result', function($row) use ($t) {
                     if (isset($row->result)) {
                         switch ($row->result) {
-                            case '-1': // Đen thắng (Guest Won)
-                                return '<span class="badge badge-status" style="background: linear-gradient(145deg, #252a36, #121418); color: var(--royal-gold); border: 1px solid var(--royal-gold);"><i class="fas fa-crown"></i> '.$t['guest_won'].'</span>';
-                            case '0': // Hòa (Draw)
-                                return '<span class="badge badge-status badge-offline"><i class="fas fa-handshake"></i> '.$t['draw'].'</span>';
-                            case '1': // Đỏ thắng (Host Won)
-                                return '<span class="badge badge-status" style="background: linear-gradient(to bottom, #8a1515, #5c0a0a); color: var(--royal-gold); border: 1px solid var(--royal-gold);"><i class="fas fa-crown"></i> '.$t['host_won'].'</span>';
+                            case '-1': return '<span class="badge badge-status" style="background: linear-gradient(145deg, #252a36, #121418); color: var(--royal-gold); border: 1px solid var(--royal-gold);"><i class="fas fa-crown"></i> '.$t['guest_won'].'</span>';
+                            case '0': return '<span class="badge badge-status badge-offline"><i class="fas fa-handshake"></i> '.$t['draw'].'</span>';
+                            case '1': return '<span class="badge badge-status" style="background: linear-gradient(to bottom, #8a1515, #5c0a0a); color: var(--royal-gold); border: 1px solid var(--royal-gold);"><i class="fas fa-crown"></i> '.$t['host_won'].'</span>';
                         }
-                    } else if ($row->fen == env('INITIAL_FEN')) { // Chưa bắt đầu
+                    } else if ($row->fen == env('INITIAL_FEN')) {
                         return '<span class="badge badge-status" style="background: rgba(255,255,255,0.05); color: #aaa; border: 1px dashed rgba(212, 175, 55, 0.3);"><i class="fas fa-hourglass-start"></i> '.$t['not_started'].'</span>';
-                    } else { // Đang diễn ra
+                    } else {
                         return '<span class="badge badge-status badge-online"><i class="fas fa-circle"></i> '.$t['ongoing'].'</span>';
                     }
                     return '';
@@ -138,8 +101,6 @@ class RoomController extends Controller
                     $urlLogin = localized_url('login', [], $locale);
 
                     $actionBtn = '';
-
-                    // Adding pulse animations to primary CTAs
                     if (!isset($row->host_id)) {
                         if ($row->fen == env('INITIAL_FEN')) {
                             if ($row->pass == '') {
@@ -187,8 +148,6 @@ class RoomController extends Controller
                             }
                         }
                     }
-
-                    // Implementing the Royal Custom Eye Button
                     $actionBtn .= '<a class="ml-1 btn previewBtn"><i class="far fa-eye"></i> '.$t['preview'].'</a>';
                     return $actionBtn;
                 })
@@ -235,50 +194,35 @@ class RoomController extends Controller
         $latestRoom = Room::where('pass', NULL)->where('host_id', NULL)->where('result', NULL)->orderBy('modified_at', 'desc')->offset($offsetNumber)->first();
         if ($latestRoom != null) {
             if (str_contains($latestRoom->fen, ' r ')) {
-                return response()->json([
-                    'color' => 'red',
-                    'room' => $latestRoom
-                ]);
+                return response()->json(['color' => 'red', 'room' => $latestRoom]);
             } else if (str_contains($latestRoom->fen, ' b ')) {
-                return response()->json([
-                    'color' => 'black',
-                    'room' => $latestRoom
-                ]);
+                return response()->json(['color' => 'black', 'room' => $latestRoom]);
             }
-        } else {
-            return response()->json([
-                'room' => null
-            ]);
         }
+        return response()->json(['room' => null]);
     }
+
     public static function getRandomRoom() {
         return Room::where('pass', null)
             ->where('host_id', null)
             ->where('result', '=', null)
-            ->where('fen', '!=', 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1')
+            ->where('fen', '!=', env('INITIAL_FEN', 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1'))
             ->where('fen', 'LIKE', '% b %')
             ->inRandomOrder()
             ->first();
     }
+
     public static function getNewRoom()
     {
         $firstRoom = Room::where('fen', env('INITIAL_FEN'))->where('pass', NULL)->where('host_id', NULL)->where('result', NULL)->orderBy('modified_at', 'desc')->first();
-        return response()->json([
-            'room' => $firstRoom
-        ]);
+        return response()->json(['room' => $firstRoom]);
     }
 
     public static function getRoomName($code)
     {
-        $name = Room::where('code', $code)->value('name');
-
-        return $name;
+        return Room::where('code', $code)->value('name');
     }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create(Request $request)
     {
         $code    = $request->input('ma-phong');
@@ -287,7 +231,6 @@ class RoomController extends Controller
         $host_id = $request->input('host_id');
         $pass    = $request->input('pass');
 
-        // Nếu phòng chưa tồn tại thì tạo mới (reset timer)
         $room = Room::firstOrCreate(
             ['code' => $code],
             [
@@ -297,14 +240,13 @@ class RoomController extends Controller
                 'name'          => $name,
                 'pass'          => $pass,
                 'modified_at'   => now(),
-                'black_time'    => 600,   // reset timer khi phòng mới
+                'black_time'    => 600,
                 'red_time'      => 600,
                 'active_player' => null,
                 'last_update'   => null,
             ]
         );
 
-        // Nếu phòng đã tồn tại -> chỉ update các thông tin khác, KHÔNG reset timer
         if (!$room->wasRecentlyCreated) {
             $room->update([
                 'fen'         => $fen,
@@ -317,41 +259,27 @@ class RoomController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => $room->wasRecentlyCreated
-                ? 'Phòng mới đã được tạo và timer reset.'
-                : 'Phòng đã tồn tại, chỉ cập nhật thông tin.',
+            'message' => $room->wasRecentlyCreated ? 'Phòng mới đã được tạo và timer reset.' : 'Phòng đã tồn tại, chỉ cập nhật thông tin.',
             'room' => $room,
         ]);
     }
 
     public function compete(Request $request)
     {
-        $code = $request->input('ma-phong');
-        $name = $request->input('ten-phong');
-        $fen = $request->input('FEN');
-        $host_id = $request->input('host_id');
-        $guest_id = $request->input('guest_id');
-        $pass = $request->input('pass');
         Room::updateOrInsert(
-            ['code' => $code],
+            ['code' => $request->input('ma-phong')],
             [
-                'fen' => $fen,
+                'fen' => $request->input('FEN'),
                 'moves' => json_encode([]),
-                'host_id' => $host_id,
-                'guest_id' => $guest_id,
-                'name' => $name,
-                'pass' => $pass,
-                'modified_at' => date('Y-m-d H:i:s'),
+                'host_id' => $request->input('host_id'),
+                'guest_id' => $request->input('guest_id'),
+                'name' => $request->input('ten-phong'),
+                'pass' => $request->input('pass'),
+                'modified_at' => now(),
             ]
         );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $code = $request->input('ma-phong');
@@ -360,7 +288,6 @@ class RoomController extends Controller
 
         $room = Room::firstOrNew(['code' => $code]);
 
-        // BẢO VỆ: Không cập nhật FEN nếu ván cờ đã kết thúc
         if (!is_null($room->result)) {
             return response()->json(['success' => false, 'message' => __('Game already finished')], 400);
         }
@@ -369,37 +296,24 @@ class RoomController extends Controller
         $room->modified_at = now();
 
         if ($move && Schema::hasColumn('rooms', 'moves')) {
-            $moves = [];
-            if (!empty($room->moves)) {
-                $decoded = json_decode($room->moves, true);
-                if (is_array($decoded)) {
-                    $moves = $decoded;
-                }
-            }
-            $lastMove = end($moves);
-            if ($lastMove !== $move) {
+            $moves = !empty($room->moves) ? json_decode($room->moves, true) : [];
+            if (is_array($moves) && end($moves) !== $move) {
                 $moves[] = $move;
                 $room->moves = json_encode($moves);
             }
         }
 
         $room->save();
-
-        // Push realtime update để hạn chế polling
         broadcast(new RoomUpdated($room->fresh()));
 
-        return response()->json([
-            'success' => true,
-        ]);
+        return response()->json(['success' => true]);
     }
 
     public function join(Request $request)
     {
-        $code = $request->input('ma-phong');
-        $guest_id = $request->input('guest_id');
         Room::updateOrInsert(
-            ['code' => $code],
-            ['guest_id' => $guest_id, 'modified_at' => date('Y-m-d H:i:s')]
+            ['code' => $request->input('ma-phong')],
+            ['guest_id' => $request->input('guest_id'), 'modified_at' => now()]
         );
     }
 
@@ -408,32 +322,32 @@ class RoomController extends Controller
         $code = $request->input('ma-phong');
         $result = $request->input('result');
 
-        $room = Room::select('host_id', 'guest_id')
-                ->where('code', $code)
-                ->first();
+        try {
+            return DB::transaction(function () use ($code, $result) {
+                $room = Room::select('host_id', 'guest_id')->where('code', $code)->firstOrFail();
 
-        if (!$room || !$room->host_id || !$room->guest_id) {
-            return response()->json(['error' => 'Room or players not found'], 404);
+                if (!$room->host_id || !$room->guest_id) {
+                    throw new Exception('Players missing from room');
+                }
+
+                $host = User::lockForUpdate()->findOrFail($room->host_id);
+                $guest = User::lockForUpdate()->findOrFail($room->guest_id);
+
+                $eloRatings = GameController::getEloRatings($host->elo, $guest->elo, $result);
+                [$host->elo, $guest->elo] = $eloRatings;
+
+                $host->save();
+                $guest->save();
+
+                return response()->json([
+                    'host_elo' => $host->elo,
+                    'guest_elo' => $guest->elo,
+                ]);
+            });
+        } catch (Exception $e) {
+            Log::error("Elo update failed for room {$code}: " . $e->getMessage());
+            return response()->json(['error' => 'Failed to update Elo ratings'], 500);
         }
-
-        $host = User::find($room->host_id);
-        $guest = User::find($room->guest_id);
-
-        if (!$host || !$guest) {
-            return response()->json(['error' => 'Players missing'], 404);
-        }
-
-        $eloRatings = GameController::getEloRatings($host->elo, $guest->elo, $result);
-
-        [$host->elo, $guest->elo] = $eloRatings;
-
-        $host->save();
-        $guest->save();
-
-        return response()->json([
-            'host_elo' => $host->elo,
-            'guest_elo' => $guest->elo,
-        ]);
     }
 
     public function updateResult(Request $request)
@@ -441,295 +355,126 @@ class RoomController extends Controller
         $code = $request->input('ma-phong');
         $result = $request->input('result');
         $auth_id = auth()->id() ?? $request->input('id');
-        $lang = $request->input('lang');
 
-        if ($lang) {
-            app()->setLocale($lang);
-        }
+        if ($request->has('lang')) app()->setLocale($request->input('lang'));
 
-        $roomData = Room::select('host_id', 'guest_id', 'result', 'name', 'tournament_id', 'next_room_code', 'tournament_round')
-            ->where('code', $code)
-            ->first();
+        try {
+            return DB::transaction(function () use ($code, $result, $auth_id) {
+                $room = Room::lockForUpdate()->where('code', $code)->firstOrFail();
 
-        $host_id = $roomData->host_id ?? null;
-        $guest_id = $roomData->guest_id ?? null;
-
-        if (!$auth_id || !in_array($auth_id, [$host_id, $guest_id])) {
-            return response()->json([
-                'success' => false,
-                'message' => __('Bạn không có quyền cập nhật ván này.')
-            ], 403);
-        }
-
-        // FIX: Only update DB and advance tournament if the result is NOT set yet.
-        if ($roomData && is_null($roomData->result)) {
-            Room::updateOrInsert(
-                ['code' => $code],
-                ['result' => $result, 'modified_at' => now()]
-            );
-
-            // --- TOURNAMENT ADVANCEMENT LOGIC ---
-            $room = Room::where('code', $code)->first();
-
-            if ($room->tournament_id && $room->next_room_code && $result !== '0') {
-                $winnerId = ($result === '1') ? $room->host_id : $room->guest_id;
-                $nextRoom = Room::where('code', $room->next_room_code)->first();
-
-                if ($nextRoom->host_id !== $winnerId && $nextRoom->guest_id !== $winnerId) {
-                    if (is_null($nextRoom->host_id)) {
-                        $nextRoom->update(['host_id' => $winnerId]);
-                    } else {
-                        $nextRoom->update([
-                            'guest_id' => $winnerId,
-                            'name' => $room->name . " - " . __('Vòng') . " " . $nextRoom->tournament_round
-                        ]);
-                    }
+                if (!in_array($auth_id, [$room->host_id, $room->guest_id])) {
+                    throw new Exception(__('Bạn không có quyền cập nhật ván này.'));
                 }
+
+                if (is_null($room->result)) {
+                    $room->update(['result' => $result, 'modified_at' => now()]);
+                    $this->advanceTournament($room, $result);
+                }
+
+                $isHost = $auth_id == $room->host_id;
+                $messageKey = $this->getResultMessageKey($isHost, $result);
+
+                return response()->json(['success' => __($messageKey)]);
+            });
+        } catch (Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 403);
+        }
+    }
+
+    private function getResultMessageKey($isHost, $result)
+    {
+        if ($result === '0') return 'Hòa.';
+        if ($isHost) return $result === '1' ? 'Chủ phòng thắng. Xin chúc mừng!' : 'Chủ phòng thua! Cố lên nhé!';
+        return $result === '-1' ? 'Khách thắng. Xin chúc mừng!' : 'Khách thua! Cố lên nhé!';
+    }
+
+    private function advanceTournament(Room $room, $result)
+    {
+        if (!$room->tournament_id || !$room->next_room_code || $result === '0') return;
+
+        $winnerId = ($result === '1') ? $room->host_id : $room->guest_id;
+        $nextRoom = Room::where('code', $room->next_room_code)->first();
+
+        if ($nextRoom && $nextRoom->host_id !== $winnerId && $nextRoom->guest_id !== $winnerId) {
+            if (is_null($nextRoom->host_id)) {
+                $nextRoom->update(['host_id' => $winnerId]);
+            } else {
+                $nextRoom->update([
+                    'guest_id' => $winnerId,
+                    'name' => $room->name . " - " . __('Vòng') . " " . $nextRoom->tournament_round
+                ]);
             }
         }
-
-        $successMessages = [
-            'host' => [
-                '-1' => __('Chủ phòng thua! Cố lên nhé!'),
-                '0'  => __('Hòa.'),
-                '1'  => __('Chủ phòng thắng. Xin chúc mừng!'),
-            ],
-            'guest' => [
-                '-1' => __('Khách thắng. Xin chúc mừng!'),
-                '0'  => __('Hòa.'),
-                '1'  => __('Khách thua! Cố lên nhé!'),
-            ],
-        ];
-
-        if ($auth_id == $host_id) {
-            $success_message = $successMessages['host'][$result] ?? '';
-        } elseif ($auth_id == $guest_id) {
-            $success_message = $successMessages['guest'][$result] ?? '';
-        } else {
-            $success_message = __('You are not authorized to update this room.');
-        }
-
-        return response()->json([
-            'success' => $success_message
-        ]);
     }
 
     public function updateSideResult(Request $request)
     {
         $code = $request->input('ma-phong');
         $result = $request->input('result');
-        $lang = $request->input('lang');
         $side = $request->input('side');
+        if ($request->has('lang')) app()->setLocale($request->input('lang'));
 
-        if ($lang) {
-            app()->setLocale($lang);
-        }
+        $room = Room::where('code', $code)->first();
 
-        $roomData = Room::select('result')->where('code', $code)->first();
-
-        // FIX: Skip database update if a result already exists instead of returning 403
-        if (!$roomData || is_null($roomData->result)) {
-            Room::updateOrInsert(
-                ['code' => $code],
-                ['result' => $result, 'modified_at' => now()]
-            );
+        if ($room && is_null($room->result)) {
+            $room->update(['result' => $result, 'modified_at' => now()]);
         }
 
         $successMessages = [
-            'red' => [
-                '-1' => __('Red lost!'),
-                '0'  => __('Draw.'),
-                '1'  => __('Red won!'),
-            ],
-            'black' => [
-                '-1' => __('Black won!'),
-                '0'  => __('Draw.'),
-                '1'  => __('Black lost!'),
-            ],
+            'red' => ['-1' => __('Red lost!'), '0' => __('Draw.'), '1' => __('Red won!')],
+            'black' => ['-1' => __('Black won!'), '0' => __('Draw.'), '1' => __('Black lost!')],
         ];
 
-        $success_message = $successMessages[$side][$result] ?? __('Result recorded.');
-
-        return response()->json([
-            'success' => $success_message
-        ]);
+        return response()->json(['success' => $successMessages[$side][$result] ?? __('Result recorded.')]);
     }
 
-    public static function getHostId(Request $request)
-    {
-        $code = $request->input('ma-phong');
-        $hostId = Room::where('code', $code)->value('host_id');
-
-        return $hostId;
-    }
-
-    public static function getHostIdRoute($code)
-    {
-        $hostId = Room::where('code', $code)->value('host_id');
-
-        return $hostId;
-    }
-
+    public static function getHostId(Request $request) { return Room::where('code', $request->input('ma-phong'))->value('host_id'); }
+    public static function getHostIdRoute($code) { return Room::where('code', $code)->value('host_id'); }
     public static function getRoomIds(Request $request)
     {
-        $code = $request->input('ma-phong');
-        $roomData = Room::select('host_id', 'guest_id')
-                        ->where('code', '=', $code)
-                        ->first();
-
+        $roomData = Room::select('host_id', 'guest_id')->where('code', '=', $request->input('ma-phong'))->first();
         return $roomData ? $roomData->toArray() : [];
     }
 
-    public static function getMatchRooms()
-    {
-        $data = Room::select('fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at')
-                    ->where('host_id', '!=', NULL)
-                    ->orderBy('modified_at', 'desc')
-                    ->paginate(10);
-        return $data;
-    }
-
-    public static function getPlayingRooms()
-    {
-        $data = Room::select('fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at')
-                    ->where('host_id', '!=', NULL)
-                    ->where('result', '=', NULL)
-                    ->orderBy('modified_at', 'desc')
-                    ->paginate(10);
-        return $data;
-    }
-
-    public static function getPlayedRooms()
-    {
-        $data = Room::select('fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at')
-                    ->where('host_id', '!=', NULL)
-                    ->where('result', '!=', NULL)
-                    ->orderBy('modified_at', 'desc')
-                    ->paginate(10);
-        return $data;
-    }
-
+    public static function getMatchRooms() { return Room::whereNotNull('host_id')->orderBy('modified_at', 'desc')->paginate(10); }
+    public static function getPlayingRooms() { return Room::whereNotNull('host_id')->whereNull('result')->orderBy('modified_at', 'desc')->paginate(10); }
+    public static function getPlayedRooms() { return Room::whereNotNull('host_id')->whereNotNull('result')->orderBy('modified_at', 'desc')->paginate(10); }
     public static function getPlayerRooms($id)
     {
-        $data = Room::select('fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at')
-                    ->orWhere('host_id', '=', $id)
-                    ->orWhere('guest_id', '=', $id)
-                    ->orderBy('modified_at', 'desc')
-                    ->paginate(10);
-        return $data;
+        return Room::where('host_id', $id)->orWhere('guest_id', $id)->orderBy('modified_at', 'desc')->paginate(10);
     }
-
-    public static function getBoards()
-    {
-        $data = Room::select('fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at')
-                    ->where('host_id', '!=', NULL)
-                    ->where('result', '=', NULL)
-                    ->orderBy('modified_at', 'desc')
-                    ->paginate(6);
-        return $data;
-    }
-
-    public static function getFirstPageBoards()
-    {
-        $data = Room::select('fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at')
-                    ->where('host_id', '!=', NULL)
-                    ->where('result', '=', NULL)
-                    ->orderBy('modified_at', 'desc')
-                    ->paginate(6, ['*'], 'page', 1);
-        return $data;
-    }
-
-    public static function getPlayedBoards()
-    {
-        $data = Room::select('fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at')
-                    ->where('host_id', '!=', NULL)
-                    ->where('result', '!=', NULL)
-                    ->orderBy('modified_at', 'desc')
-                    ->paginate(6);
-        return $data;
-    }
-
-    public static function getFirstPagePlayedBoards()
-    {
-        $data = Room::select('fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at')
-                    ->where('host_id', '!=', NULL)
-                    ->where('result', '!=', NULL)
-                    ->orderBy('modified_at', 'desc')
-                    ->paginate(6, ['*'], 'page', 1);
-        return $data;
-    }
+    public static function getBoards() { return Room::whereNotNull('host_id')->whereNull('result')->orderBy('modified_at', 'desc')->paginate(6); }
+    public static function getFirstPageBoards() { return Room::whereNotNull('host_id')->whereNull('result')->orderBy('modified_at', 'desc')->paginate(6, ['*'], 'page', 1); }
+    public static function getPlayedBoards() { return Room::whereNotNull('host_id')->whereNotNull('result')->orderBy('modified_at', 'desc')->paginate(6); }
+    public static function getFirstPagePlayedBoards() { return Room::whereNotNull('host_id')->whereNotNull('result')->orderBy('modified_at', 'desc')->paginate(6, ['*'], 'page', 1); }
 
     public static function hasRoomcode(Request $request)
     {
-        $code = $request->input('ma-phong');
-
-        $roomcodeCount = Room::where('code', '=', $code)->count();
-
-        if ($roomcodeCount > 0) {
-            return 'yes';
-        } else if ($roomcodeCount == 0) {
-            return 'no';
-        }
+        return Room::where('code', $request->input('ma-phong'))->exists() ? 'yes' : 'no';
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Room  $room
-     * @return \Illuminate\Http\Response
-     */
     public function show(Room $room, $code)
     {
-        if (auth()->check()) {
-            // Update user's online status
-            auth()->user()->update(['last_seen_at' => now()]);
-        }
-
-        $fen = Room::where('code', $code)->value('fen');
-
-        return $fen;
+        if (auth()->check()) auth()->user()->update(['last_seen_at' => now()]);
+        return Room::where('code', $code)->value('fen');
     }
 
     public function getMoves(Room $room, $code)
     {
         $moves = Room::where('code', $code)->value('moves');
-        if (!$moves) {
-            return response()->json([]);
-        }
-
-        $decoded = json_decode($moves, true);
-        if (!is_array($decoded)) {
-            $decoded = [];
-        }
-
-        return response()->json($decoded);
+        $decoded = $moves ? json_decode($moves, true) : [];
+        return response()->json(is_array($decoded) ? $decoded : []);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Room  $room
-     * @return \Illuminate\Http\Response
-     */
     public function getPass(Room $room, $code)
     {
-        $pass = Room::where('code', $code)->value('pass');
-
-        return $pass;
+        return Room::where('code', $code)->value('pass');
     }
 
-    /**
-     * Update the room password dynamically based on locale.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function changePass(Request $request)
     {
         $code = $request->input('ma-phong');
         $pass = $request->input('pass');
-
-        // Prioritize the language sent from the frontend payload
         $locale = $request->input('lang', app()->getLocale());
 
         $messages = [
@@ -739,15 +484,11 @@ class RoomController extends Controller
             'ko' => ['empty' => '암호는 비워 둘 수 없습니다.', 'success' => '암호가 성공적으로 변경되었습니다!'],
             'zh' => ['empty' => '密码不能为空', 'success' => '成功更改密码！']
         ];
-
         $localized = $messages[$locale] ?? $messages['en'];
 
-        if (!$pass || $pass === '') {
-            return response()->json(['message' => $localized['empty'], 'code' => 0]);
-        }
+        if (!$pass || $pass === '') return response()->json(['message' => $localized['empty'], 'code' => 0]);
 
         DB::update('update rooms set pass = ? where code = ?', [$pass, $code]);
-
         return response()->json(['message' => $localized['success'], 'code' => 1]);
     }
 
@@ -757,44 +498,26 @@ class RoomController extends Controller
 
         $response = new StreamedResponse(function () use ($code) {
             $lastPayload = null;
-
-            // Trong môi trường test, chỉ đẩy 1 lần để tránh treo
             $isTesting = app()->environment('testing');
+            $iterations = $isTesting ? 1 : 300;
 
-            // Giới hạn vòng lặp để tránh treo request quá lâu
-            $iterations = $isTesting ? 1 : 300; // ~5 phút nếu 1s/lần
+            for ($i = 0; $i < $iterations; $i++) {
+                $r = Room::select('fen', 'modified_at')->where('code', $code)->first();
 
-            for ($i = 0; $i < $iterations; $i++) { // ~5 phút nếu 1s/lần
-                $room = Room::select('fen', 'modified_at')->where('code', $code)->first();
-
-                if (!$room) {
-                    echo "event: close\n";
-                    echo "data: {}\n\n";
-                    ob_flush();
-                    flush();
-                    break;
+                if (!$r) {
+                    echo "event: close\ndata: {}\n\n";
+                    ob_flush(); flush(); break;
                 }
 
-                $payload = json_encode([
-                    'fen'         => $room->fen,
-                    'modified_at' => $room->modified_at,
-                ]);
+                $payload = json_encode(['fen' => $r->fen, 'modified_at' => $r->modified_at]);
 
                 if ($payload !== $lastPayload) {
                     echo "data: {$payload}\n\n";
-                    ob_flush();
-                    flush();
+                    ob_flush(); flush();
                     $lastPayload = $payload;
                 }
 
-                if (connection_aborted()) {
-                    break;
-                }
-
-                if ($isTesting) {
-                    break;
-                }
-
+                if (connection_aborted() || $isTesting) break;
                 sleep(1);
             }
         });
@@ -808,345 +531,138 @@ class RoomController extends Controller
 
     public static function updateRoomScores($id)
     {
-        $hostWinScores = Room::where('host_id', '=', $id)
-                ->where('result', '=', '1')
-                ->count();
-        $guestWinScores = Room::where('guest_id', '=', $id)
-                ->where('result', '=', '-1')
-                ->count();
+        $hostWin = Room::where('host_id', $id)->where('result', '1')->count();
+        $guestWin = Room::where('guest_id', $id)->where('result', '-1')->count();
+        $hostDraw = Room::where('host_id', $id)->where('result', '0')->count();
+        $guestDraw = Room::where('guest_id', $id)->where('result', '0')->count();
 
-        $hostDrawScores = Room::where('host_id', '=', $id)
-                ->where('result', '=', '0')
-                ->count();
-
-        $guestDrawScores = Room::where('guest_id', '=', $id)
-                ->where('result', '=', '0')
-                ->count();
-
-        $hostScores = $hostWinScores + 0.5 * $hostDrawScores;
-        $guestScores = $guestWinScores + 0.5 * $guestDrawScores;
-
-        Room::updateOrInsert(
-            ['id' => $id],
-            ['host_score' => $hostScores]
-        );
-        Room::updateOrInsert(
-            ['id' => $id],
-            ['guest_score' => $guestScores]
-        );
+        Room::updateOrInsert(['id' => $id], ['host_score' => $hostWin + 0.5 * $hostDraw]);
+        Room::updateOrInsert(['id' => $id], ['guest_score' => $guestWin + 0.5 * $guestDraw]);
     }
 
     public static function updateRoomElo($id)
     {
-        $hostId = Room::find($id)->host_id;
-        $guestId = Room::find($id)->guest_id;
+        $room = Room::find($id);
+        if (!$room) return;
 
-        $hostCurrentElo = User::find($hostId)->elo;
-        $guestCurrentElo = User::find($guestId)->elo;
+        $hostCurrentElo = User::find($room->host_id)->elo ?? 1200;
+        $guestCurrentElo = User::find($room->guest_id)->elo ?? 1200;
 
-        $hostScores = Room::find($id)->host_score;
-        $guestScores = Room::find($id)->guest_score;
+        $roomHostElo = GameController::calculateElo($hostCurrentElo, $guestCurrentElo, $room->host_score);
+        $roomGuestElo = GameController::calculateElo($guestCurrentElo, $hostCurrentElo, $room->guest_score);
 
-        $roomHostElo = GameController::calculateElo($hostCurrentElo, $guestCurrentElo, $hostScores);
-        $roomGuestElo = GameController::calculateElo($guestCurrentElo, $hostCurrentElo, $guestScores);
-
-        Room::updateOrInsert(
-            ['id' => $id],
-            ['host_elo' => $roomHostElo]
-        );
-        Room::updateOrInsert(
-            ['id' => $id],
-            ['guest_elo' => $roomGuestElo]
-        );
+        $room->update(['host_elo' => $roomHostElo, 'guest_elo' => $roomGuestElo]);
     }
 
-    /**
-     * Dọn phòng cũ và đảm bảo session hiện tại luôn có phòng chờ hoặc đã ghép.
-     */
     public function prepareAnonymousRoom(string $sessionId): Room
     {
         $initialFen = env('INITIAL_FEN') ?: 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1';
 
-        // 1. CLEANUP: Throttled to reduce DB contention (e.g., runs ~10% of the time).
-        // Ideally, move this to a scheduled Laravel command/cron job later.
-        if (rand(1, 10) === 1) {
-            Room::whereNull('result')
-                ->where('modified_at', '<', now()->subMinutes(5))
-                ->delete();
-        }
-
-        // 2. CHECK EXISTING: Is this user already in a room?
-        $currentRoom = Room::where(function($query) use ($sessionId) {
-                $query->where('host_session', $sessionId)
-                    ->orWhere('guest_session', $sessionId);
-            })
-            ->whereNull('result')
+        $currentRoom = Room::ongoing()
+            ->where(fn($q) => $q->where('host_session', $sessionId)->orWhere('guest_session', $sessionId))
             ->first();
 
         if ($currentRoom) {
-            $currentRoom->update(['modified_at' => now()]);
+            $currentRoom->touch('modified_at');
             return $currentRoom;
         }
 
-        // 3. MATCHMAKING: Find a room waiting for a guest (No gap locks!)
-        $availableRoom = Room::whereNotNull('host_session')
-            ->whereNull('guest_session')
-            ->whereNull('result')
-            ->whereNull('pass')
-            ->where('fen', '=', $initialFen)
-            ->where('modified_at', '>', now()->subSeconds(15))
-            ->orderBy('modified_at', 'desc')
-            ->first();
+        $availableRoom = Room::availableForAnonymousMatch($initialFen)->first();
 
         if ($availableRoom) {
-            // Atomic update to safely claim the room without race conditions
             $updated = Room::where('code', $availableRoom->code)
                 ->whereNull('guest_session')
-                ->update([
-                    'guest_session' => $sessionId,
-                    'modified_at'   => now(),
-                ]);
+                ->update(['guest_session' => $sessionId, 'modified_at' => now()]);
 
-            if ($updated) {
-                return Room::where('code', $availableRoom->code)->first();
-            }
-
-            // If the update failed, someone else grabbed the room milliseconds before. Retry!
+            if ($updated) return Room::where('code', $availableRoom->code)->first();
             return $this->prepareAnonymousRoom($sessionId);
         }
 
-        // 4. CREATE: No match found, create a new room
         return Room::create([
-            'code'          => md5(time() . $sessionId . uniqid('', true)), // Added true for extra entropy
+            'code'          => md5(time() . $sessionId . uniqid('', true)),
             'fen'           => $initialFen,
             'name'          => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
             'host_session'  => $sessionId,
-            'guest_session' => null,
-            'host_id'       => null,
-            'guest_id'      => null,
-            'pass'          => null,
             'red_time'      => 600,
             'black_time'    => 600,
-            'active_player' => null,
-            'last_update'   => null,
             'modified_at'   => now(),
         ]);
     }
 
-    /**
-     * Helper method for anonymous match status checking
-     */
-    private function checkAnonymousMatchStatusHelper(Request $request, $sideNames = ['do', 'den'], $colorNames = ['đỏ', 'đen'])
+    private function handleAnonymousMatch(Request $request, $sideNames, $colorNames, $messages)
+    {
+        $sessionId = $request->session()->get('anonymous_match_id', Str::random(32));
+        $request->session()->put('anonymous_match_id', $sessionId);
+
+        $room = $this->prepareAnonymousRoom($sessionId);
+        $matched = $room && $room->host_session && $room->guest_session;
+        $isHost = $room->host_session === $sessionId;
+
+        return response()->json([
+            'code' => 1,
+            'message' => $matched ? $messages['matched'] : $messages['waiting'],
+            'session_id' => $sessionId,
+            'matched' => $matched,
+            'room_code' => $room->code,
+            'room_name' => $room->name,
+            'side' => $matched ? ($isHost ? $sideNames[0] : $sideNames[1]) : null,
+            'color' => $matched ? ($isHost ? $colorNames[0] : $colorNames[1]) : null,
+        ]);
+    }
+
+    private function handleCheckMatchStatus(Request $request, $sideNames, $colorNames)
     {
         $sessionId = $request->input('session_id');
-        if (!$sessionId) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Session ID required.',
-            ], 400);
-        }
+        if (!$sessionId) return response()->json(['status' => 'error', 'message' => 'Session ID required.'], 400);
 
         $room = $this->prepareAnonymousRoom($sessionId);
 
         if ($room->host_session && $room->guest_session) {
             $isHost = $room->host_session == $sessionId;
-            $side = $isHost ? $sideNames[0] : $sideNames[1];
-            $color = $isHost ? $colorNames[0] : $colorNames[1];
             return response()->json([
                 'status'    => 'matched',
                 'room_code' => $room->code,
                 'room_name' => $room->name,
-                'side'      => $side,
-                'color'     => $color,
+                'side'      => $isHost ? $sideNames[0] : $sideNames[1],
+                'color'     => $isHost ? $colorNames[0] : $colorNames[1],
             ]);
         }
-
         return response()->json(['status' => 'waiting']);
     }
 
-    public function anonymousQuickMatch(Request $request)
-    {
-        $sessionId = $request->session()->get('anonymous_match_id', Str::random(32));
-        $request->session()->put('anonymous_match_id', $sessionId);
+    public function anonymousQuickMatch(Request $request) { return $this->handleAnonymousMatch($request, ['do', 'den'], ['đỏ', 'đen'], ['matched' => __('Đã tìm thấy đối thủ!'), 'waiting' => __('Đang tìm trận...')]); }
+    public function checkAnonymousMatchStatus(Request $request) { return $this->handleCheckMatchStatus($request, ['do', 'den'], ['đỏ', 'đen']); }
 
-        $room = $this->prepareAnonymousRoom($sessionId);
-        $matched = $room && $room->host_session && $room->guest_session;
-        $isHost = $room->host_session === $sessionId;
+    public function anonymousQuickMatchEn(Request $request) { return $this->handleAnonymousMatch($request, ['red', 'black'], ['red', 'black'], ['matched' => 'Opponent found!', 'waiting' => 'Looking for opponent...']); }
+    public function checkAnonymousMatchStatusEn(Request $request) { return $this->handleCheckMatchStatus($request, ['red', 'black'], ['red', 'black']); }
 
-        return response()->json([
-            'code' => 1,
-            'message' => $matched ? __('Đã tìm thấy đối thủ!') : __('Đang tìm trận...'),
-            'session_id' => $sessionId,
-            'matched' => $matched,
-            'room_code' => $room->code,
-            'room_name' => $room->name,
-            'side' => $matched ? ($isHost ? 'do' : 'den') : null,
-            'color' => $matched ? ($isHost ? 'đỏ' : 'đen') : null,
-        ]);
-    }
+    public function anonymousQuickMatchJa(Request $request) { return $this->handleAnonymousMatch($request, ['aka', 'kuro'], ['赤', '黒'], ['matched' => '対戦相手が見つかりました！', 'waiting' => '対戦相手を探しています...']); }
+    public function checkAnonymousMatchStatusJa(Request $request) { return $this->handleCheckMatchStatus($request, ['aka', 'kuro'], ['赤', '黒']); }
 
-    public function checkAnonymousMatchStatus(Request $request)
-    {
-        return $this->checkAnonymousMatchStatusHelper($request, ['do', 'den'], ['đỏ', 'đen']);
-    }
+    public function anonymousQuickMatchKo(Request $request) { return $this->handleAnonymousMatch($request, ['ppalgan', 'geom-eunsaeg'], ['빨간색', '검은색'], ['matched' => '상대를 찾았습니다!', 'waiting' => '상대를 찾고 있습니다...']); }
+    public function checkAnonymousMatchStatusKo(Request $request) { return $this->handleCheckMatchStatus($request, ['ppalgan', 'geom-eunsaeg'], ['빨간색', '검은색']); }
 
-    public function anonymousQuickMatchEn(Request $request)
-    {
-        $sessionId = $request->session()->get('anonymous_match_id', Str::random(32));
-        $request->session()->put('anonymous_match_id', $sessionId);
-
-        $room = $this->prepareAnonymousRoom($sessionId);
-        $matched = $room && $room->host_session && $room->guest_session;
-        $isHost = $room->host_session === $sessionId;
-
-        return response()->json([
-            'code' => 1,
-            'message' => $matched ? 'Opponent found!' : 'Looking for opponent...',
-            'session_id' => $sessionId,
-            'matched' => $matched,
-            'room_code' => $room->code,
-            'room_name' => $room->name,
-            'side' => $matched ? ($isHost ? 'red' : 'black') : null,
-            'color' => $matched ? ($isHost ? 'red' : 'black') : null,
-        ]);
-    }
-
-    public function checkAnonymousMatchStatusEn(Request $request)
-    {
-        return $this->checkAnonymousMatchStatusHelper($request, ['red', 'black'], ['red', 'black']);
-    }
-
-    public function anonymousQuickMatchJa(Request $request)
-    {
-        $sessionId = $request->session()->get('anonymous_match_id', Str::random(32));
-        $request->session()->put('anonymous_match_id', $sessionId);
-
-        $room = $this->prepareAnonymousRoom($sessionId);
-        $matched = $room && $room->host_session && $room->guest_session;
-        $isHost = $room->host_session === $sessionId;
-
-        return response()->json([
-            'code' => 1,
-            'message' => $matched ? '対戦相手が見つかりました！' : '対戦相手を探しています...',
-            'session_id' => $sessionId,
-            'matched' => $matched,
-            'room_code' => $room->code,
-            'room_name' => $room->name,
-            'side' => $matched ? ($isHost ? 'aka' : 'kuro') : null,
-            'color' => $matched ? ($isHost ? '赤' : '黒') : null,
-        ]);
-    }
-
-    public function checkAnonymousMatchStatusJa(Request $request)
-    {
-        return $this->checkAnonymousMatchStatusHelper($request, ['aka', 'kuro'], ['赤', '黒']);
-    }
-
-    public function anonymousQuickMatchKo(Request $request)
-    {
-        $sessionId = $request->session()->get('anonymous_match_id', Str::random(32));
-        $request->session()->put('anonymous_match_id', $sessionId);
-
-        $room = $this->prepareAnonymousRoom($sessionId);
-        $matched = $room && $room->host_session && $room->guest_session;
-        $isHost = $room->host_session === $sessionId;
-
-        return response()->json([
-            'code' => 1,
-            'message' => $matched ? '상대를 찾았습니다!' : '상대를 찾고 있습니다...',
-            'session_id' => $sessionId,
-            'matched' => $matched,
-            'room_code' => $room->code,
-            'room_name' => $room->name,
-            'side' => $matched ? ($isHost ? 'ppalgan' : 'geom-eunsaeg') : null,
-            'color' => $matched ? ($isHost ? '빨간색' : '검은색') : null,
-        ]);
-    }
-
-    public function checkAnonymousMatchStatusKo(Request $request)
-    {
-        return $this->checkAnonymousMatchStatusHelper($request, ['ppalgan', 'geom-eunsaeg'], ['빨간색', '검은색']);
-    }
-
-    public function anonymousQuickMatchZh(Request $request)
-    {
-        $sessionId = $request->session()->get('anonymous_match_id', Str::random(32));
-        $request->session()->put('anonymous_match_id', $sessionId);
-
-        $room = $this->prepareAnonymousRoom($sessionId);
-        $matched = $room && $room->host_session && $room->guest_session;
-        $isHost = $room->host_session === $sessionId;
-
-        return response()->json([
-            'code' => 1,
-            'message' => $matched ? '已找到对手！' : '寻找对手...',
-            'session_id' => $sessionId,
-            'matched' => $matched,
-            'room_code' => $room->code,
-            'room_name' => $room->name,
-            'side' => $matched ? ($isHost ? 'hongse' : 'heise') : null,
-            'color' => $matched ? ($isHost ? '红色的' : '黑色的') : null,
-        ]);
-    }
-
-    public function checkAnonymousMatchStatusZh(Request $request)
-    {
-        return $this->checkAnonymousMatchStatusHelper($request, ['hongse', 'heise'], ['红色的', '黑色的']);
-    }
+    public function anonymousQuickMatchZh(Request $request) { return $this->handleAnonymousMatch($request, ['hongse', 'heise'], ['红色的', '黑色的'], ['matched' => '已找到对手！', 'waiting' => '寻找对手...']); }
+    public function checkAnonymousMatchStatusZh(Request $request) { return $this->handleCheckMatchStatus($request, ['hongse', 'heise'], ['红色的', '黑色的']); }
 
     public function switchTurn(Request $request, $roomCode)
     {
         $currentPlayer = $request->input('current_player');
+        if (!in_array($currentPlayer, ['red', 'black'])) return response()->json(['error' => 'Invalid player'], 422);
 
-        if (!in_array($currentPlayer, ['red', 'black'])) {
-            return response()->json(['error' => 'Invalid player'], 422);
-        }
-
-        $room = Room::where('code', $roomCode)->first();
-        if (!$room) {
-            return response()->json(['error' => 'Room not found'], 404);
-        }
-
-        $now = now();
-        $lastUpdate = $room->last_update ? Carbon::parse($room->last_update) : $now;
-        $elapsed = $lastUpdate->diffInMilliseconds($now) / 1000;
-
-        // Apply any cached disconnected time to the move calculation
-        $previouslyElapsed = Cache::get("room_{$roomCode}_move_elapsed", 0);
-        $totalMoveElapsed = $previouslyElapsed + $elapsed;
-
-        if ($elapsed > 0) {
-            if ($currentPlayer === 'red') {
-                if ($totalMoveElapsed >= 120) {
-                    $room->red_time = 0;
-                } else {
-                    $room->red_time = max(0, floatval($room->red_time) - $elapsed);
-                }
-            } else {
-                if ($totalMoveElapsed >= 120) {
-                    $room->black_time = 0;
-                } else {
-                    $room->black_time = max(0, floatval($room->black_time) - $elapsed);
-                }
-            }
-        }
-
-        // Clean out cache since the turn is ending
-        Cache::forget("room_{$roomCode}_move_elapsed");
-
-        $room->active_player = $currentPlayer === 'red' ? 'black' : 'red';
-        $room->last_update = $now;
-        $room->modified_at = $now;
-        $room->save();
+        $room = Room::where('code', $roomCode)->firstOrFail();
+        $room->switchTurn($currentPlayer);
 
         $freshRoom = $room->fresh();
         broadcast(new RoomUpdated($freshRoom));
 
+        $times = $freshRoom->getCalculatedTimes();
+
         return response()->json([
             'success'       => true,
-            'red_time'      => round($freshRoom->red_time, 3),
-            'black_time'    => round($freshRoom->black_time, 3),
-            'active_player' => $freshRoom->active_player,
+            'red_time'      => $times['red_time'],
+            'black_time'    => $times['black_time'],
+            'active_player' => $times['active_player'],
             'move_elapsed'  => 0,
             'last_update'   => optional($freshRoom->last_update)->toDateTimeString(),
         ]);
@@ -1154,8 +670,6 @@ class RoomController extends Controller
 
     public function pauseTimer($roomCode, $player)
     {
-        // FIX: Completely bypass backend pausing to enforce continuous counting.
-        // Old cached browsers hitting this endpoint will no longer freeze the clock.
         return response()->json(['success' => true]);
     }
 
@@ -1164,13 +678,9 @@ class RoomController extends Controller
         $room = Room::where('code', $roomCode)->first();
         if (!$room) return response()->json(['error' => 'Room not found'], 404);
 
-        // Recover legacy stuck rooms
         if ($room->active_player === "paused:{$player}") {
             $room->active_player = $player;
-            // FIX: Do NOT set $room->last_update = now() here!
-            // Resetting it would erase the time elapsed while they were offline.
             $room->save();
-
             broadcast(new RoomUpdated($room->fresh()));
         }
 
@@ -1179,47 +689,17 @@ class RoomController extends Controller
 
     public function getTime($roomCode)
     {
-        $room = Room::where('code', $roomCode)->first();
-        if (!$room) return response()->json(['error' => 'Room not found'], 404);
+        $room = Room::where('code', $roomCode)->firstOrFail();
+        $times = $room->getCalculatedTimes();
 
-        $redTime = floatval($room->red_time);
-        $blackTime = floatval($room->black_time);
-
-        // Fetch any time accumulated during a disconnect
-        $moveElapsed = floatval(Cache::get("room_{$roomCode}_move_elapsed", 0));
-        $activePlayer = $room->active_player;
-
-        if ($activePlayer && str_starts_with($activePlayer, 'paused:')) {
-            $activePlayer = explode(':', $activePlayer)[1]; // Expose raw player to client
-        } else if ($activePlayer) {
-            $lastUpdate = $room->last_update ? Carbon::parse($room->last_update) : now();
-            $elapsed = $lastUpdate->diffInMilliseconds(now()) / 1000;
-            $moveElapsed += $elapsed;
-
-            if ($activePlayer === 'red') {
-                $redTime = max(0, $redTime - $elapsed);
-                if ($moveElapsed >= 120) $redTime = 0;
-            } elseif ($activePlayer === 'black') {
-                $blackTime = max(0, $blackTime - $elapsed);
-                if ($moveElapsed >= 120) $blackTime = 0;
-            }
-        }
-
-        return response()->json([
-            'red_time'      => round($redTime, 3),
-            'black_time'    => round($blackTime, 3),
-            'move_elapsed'  => round($moveElapsed, 3),
-            'active_player' => $room->active_player, // Raw attribute so client can detect paused
-            'last_update'   => optional($room->last_update)->toDateTimeString(),
-        ]);
+        return response()->json(array_merge($times, [
+            'last_update' => optional($room->last_update)->toDateTimeString(),
+        ]));
     }
 
     public function saveTime(Request $request, $roomCode)
     {
-        $room = Room::where('code', $roomCode)->first();
-        if (!$room) {
-            return response()->json(['error' => 'Room not found'], 404);
-        }
+        $room = Room::where('code', $roomCode)->firstOrFail();
 
         $room->red_time = max(0, $request->input('red_time', $room->red_time));
         $room->black_time = max(0, $request->input('black_time', $room->black_time));
@@ -1234,12 +714,8 @@ class RoomController extends Controller
         ]);
     }
 
-    /**
-     * Unified method to find a match (handles both guests and authenticated users via Session/Client ID)
-     */
     public function findMatch(Request $request)
     {
-        // Use provided session_id from frontend, or fallback to Laravel session
         $sessionId = $request->input('session_id') ?: $request->session()->get('match_session_id', Str::random(32));
         $request->session()->put('match_session_id', $sessionId);
 
@@ -1249,46 +725,31 @@ class RoomController extends Controller
 
         return response()->json([
             'code' => 1,
-            // Uses Laravel's __() helper to adapt if a locale middleware is present,
-            // otherwise frontend JS will override with its own localized strings.
             'message' => $matched ? __('Đã tìm thấy đối thủ!') : __('Đang tìm trận...'),
             'session_id' => $sessionId,
             'matched' => $matched,
             'room_code' => $room->code,
             'room_name' => $room->name,
-            // Standardized sides
             'side' => $matched ? ($isHost ? 'red' : 'black') : null,
         ]);
     }
 
-    /**
-     * Unified method to check matchmaking status
-     */
     public function checkMatchStatus(Request $request)
     {
         $sessionId = $request->input('session_id');
-
-        if (!$sessionId) {
-            return response()->json([
-                'status' => 'error',
-                'message' => __('Không tìm thấy phiên bản kết nối (Session ID).'),
-            ], 400);
-        }
+        if (!$sessionId) return response()->json(['status' => 'error', 'message' => __('Không tìm thấy phiên bản kết nối (Session ID).')], 400);
 
         $room = $this->prepareAnonymousRoom($sessionId);
 
         if ($room->host_session && $room->guest_session) {
             $isHost = $room->host_session == $sessionId;
-
             return response()->json([
                 'status'    => 'matched',
                 'room_code' => $room->code,
                 'room_name' => $room->name,
-                // Return standard English keys for the frontend logic to parse effortlessly
                 'side'      => $isHost ? 'red' : 'black',
             ]);
         }
-
         return response()->json(['status' => 'waiting']);
     }
 
@@ -1296,14 +757,12 @@ class RoomController extends Controller
     {
         $room = Room::where('code', $roomCode)->first();
 
-        // Only start if the match is officially in the 'waiting' state
         if ($room && $room->active_player === 'waiting') {
-            $room->active_player = 'red'; // Red always moves first
+            $room->active_player = 'red';
             $room->last_update = now();
             $room->modified_at = now();
             $room->save();
 
-            // Broadcast to Echo so both players' timers sync instantly
             broadcast(new RoomUpdated($room->fresh()));
         }
 
