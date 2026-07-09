@@ -30,6 +30,38 @@ class RoomController extends Controller
     private function getRoomsData(Request $request, string $locale)
     {
         if ($request->ajax()) {
+            $ongoingRooms = Room::where(function($query) {
+                $query->whereNotNull('host_id')->orWhereNotNull('host_session');
+                })
+                ->where(function($query) {
+                    $query->whereNotNull('guest_id')->orWhereNotNull('guest_session');
+                })
+                ->whereNull('result')
+                ->whereNotNull('active_player')
+                ->where('active_player', '!=', 'waiting')
+                ->where('active_player', 'NOT LIKE', 'paused:%')
+                ->get();
+
+            foreach ($ongoingRooms as $r) {
+                $lastUpdate = $r->last_update ? Carbon::parse($r->last_update) : now();
+                $elapsed = $lastUpdate->diffInSeconds(now());
+
+                // Lấy thời gian suy nghĩ bù trừ (nếu có cache khi disconnect)
+                $moveElapsed = Cache::get("room_{$r->code}_move_elapsed", 0) + $elapsed;
+
+                if ($r->active_player === 'red') {
+                    // Đỏ đang đi: Nếu tốn quá 120s/nước hoặc thời gian tổng trừ đi thời gian đã trôi qua <= 0
+                    if ($moveElapsed >= 120 || floatval($r->red_time) - $elapsed <= 0) {
+                        $r->update(['result' => '-1', 'modified_at' => now()]); // '-1' là Đen thắng (Đỏ thua)
+                    }
+                } elseif ($r->active_player === 'black') {
+                    // Đen đang đi: Nếu tốn quá 120s/nước hoặc thời gian tổng trừ đi thời gian đã trôi qua <= 0
+                    if ($moveElapsed >= 120 || floatval($r->black_time) - $elapsed <= 0) {
+                        $r->update(['result' => '1', 'modified_at' => now()]); // '1' là Đỏ thắng (Đen thua)
+                    }
+                }
+            }
+
             $rooms = Room::select(['fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at']);
 
             // Localized text dictionary mapped exactly to original translations

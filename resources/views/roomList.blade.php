@@ -194,7 +194,7 @@ $(document).ready(function () {
   });
   setInterval( function () {
     table.ajax.reload( null, false ); // user paging is not reset on reload
-  }, 60000 );
+  }, 15000 );
   $('.dataTables_length').addClass('bs-select');
 });
 @if (auth()->check())
