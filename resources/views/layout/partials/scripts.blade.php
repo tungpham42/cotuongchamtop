@@ -5,6 +5,8 @@
 <script src="{{ asset('js/xiangqiboard_mobile.js?v=3') }}"></script>
 @enddesktop
 <script src="{{ asset('js/kypho.js?v=9') }}"></script>
+<script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap4.min.js"></script>
 <script>
 $.ajaxSetup({
   headers: {

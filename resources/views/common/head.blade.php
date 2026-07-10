@@ -44,11 +44,12 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icons/7.1.0/css/flag-icons.min.css" integrity="sha512-bZBu2H0+FGFz/stDN/L0k8J0G8qVsAL0ht1qg5kTwtAheiXwiRKyCq1frwfbSFSJN3jooR5kauE0YjtPzhZtJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/introjs.min.css" integrity="sha512-DcHJLWkmfnv+isBrT8M3PhKEhsHWhEgulhr8m5EuGhdAG9w+vUyjlwgR4ISLN0+s/m4ItmPsTOqPzW714dtr5w==" crossorigin="anonymous" referrerpolicy="no-referrer">
 {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/red/pace-theme-loading-bar.min.css" integrity="sha512-L7L86P7/Kgjmnc8/oz6wEpwzWXf2ezUPLgOt+bAdquy7SA0kK8ZtAFrTQpJN0mdtkILJ71UsRTL8sZGRS9bs1g==" crossorigin="anonymous" referrerpolicy="no-referrer" /> --}}
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.bootstrap4.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&family=Pacifico&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Roboto:ital,wght@0,100..900;1,100..900&family=Texturina:ital,opsz,wght@0,12..72,100..900;1,12..72,100..900&display=swap" rel="stylesheet">
 {{-- <link href="{{ asset('css/index.css?v=321') }}" rel="stylesheet"> --}}
-<link href="{{ asset('css/index_new.css?v=50') }}" rel="stylesheet">
+<link href="{{ asset('css/index_new.css?v=52') }}" rel="stylesheet">
 @if (!($showAds ?? true))
 <style>
   .adsense,

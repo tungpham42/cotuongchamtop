@@ -25,22 +25,20 @@
     </div>
     <div data-step="2" data-intro="{{ __("Danh sách tất cả các trận đấu") }}" class="card shadow-lg mb-4">
       <div class="card-body p-0">
-        <div class="table-responsive">
-          <table id="danh-sach-phong" class="table table-hover table-sm mb-0">
-            <thead>
-              <tr>
-                <th class="text-center" scope="col">{{ __("Tên phòng") }}</th>
-                <th class="text-center" scope="col">{{ __("Tới lượt") }}</th>
-                <th class="text-center" scope="col">{{ __("Kết quả") }}</th>
-                <th class="text-center" scope="col">{{ __("Hành động") }}</th>
-                <th class="text-center" scope="col">{{ __("Lần cuối chơi") }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- DataTables will populate this natively utilizing the theme's text colors -->
-            </tbody>
-          </table>
-        </div>
+        <table id="danh-sach-phong" class="table table-hover table-sm mb-0 dt-responsive nowrap w-100">
+          <thead>
+            <tr>
+              <th class="text-center" scope="col">{{ __("Tên phòng") }}</th>
+              <th class="text-center" scope="col">{{ __("Tới lượt") }}</th>
+              <th class="text-center" scope="col">{{ __("Kết quả") }}</th>
+              <th class="text-center" scope="col">{{ __("Hành động") }}</th>
+              <th class="text-center" scope="col">{{ __("Lần cuối chơi") }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- DataTables will populate this natively utilizing the theme's text colors -->
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -67,6 +65,7 @@ $(document).ready(function () {
   console.log('List URL: ' + '{{ route(__('rooms_list_route')) }}');
   var table = $('#danh-sach-phong').DataTable({
     processing: true,
+    responsive: true,
     serverSide: true,
     ordering: true,
     searching: true,
@@ -74,6 +73,13 @@ $(document).ready(function () {
       url: "{{ route(__('rooms_list_route')) }}"
     },
     deferRender: true,
+    columnDefs: [
+      { responsivePriority: 1, targets: 0 }, // Tên phòng
+      { responsivePriority: 2, targets: 3 }, // Hành động
+      { responsivePriority: 3, targets: 1 }, // Tới lượt
+      { responsivePriority: 4, targets: 2 }, // Kết quả
+      { responsivePriority: 5, targets: 4 }  // Lần cuối chơi
+    ],
     columns: [
       {
         data: 'code',

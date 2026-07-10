@@ -12,22 +12,20 @@
     </div>
     <div data-step="2" data-intro="{{ __('Danh sách tất cả các thế cờ') }}" class="card shadow-lg mb-4">
       <div class="card-body p-0">
-        <div class="table-responsive">
-          <table id="danh-sach-the-co" class="table table-hover table-sm mb-0">
-            <thead>
-              <tr>
-                <th class="text-center" scope="col">{{ __('Xếp hạng') }}</th>
-                <th class="text-center" scope="col">{{ __('Tên thế cờ') }}</th>
-                <th class="text-center" scope="col">{{ __('Đánh giá') }}</th>
-                <th class="text-center" scope="col">{{ __('Hành động') }}</th>
-                <th class="text-center" scope="col">{{ __('Thời gian cập nhật') }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- DataTables will populate this natively utilizing the theme's text colors -->
-            </tbody>
-          </table>
-        </div>
+        <table id="danh-sach-the-co" class="table table-hover table-sm mb-0 dt-responsive nowrap w-100">
+          <thead>
+            <tr>
+              <th class="text-center" scope="col">{{ __('Xếp hạng') }}</th>
+              <th class="text-center" scope="col">{{ __('Tên thế cờ') }}</th>
+              <th class="text-center" scope="col">{{ __('Đánh giá') }}</th>
+              <th class="text-center" scope="col">{{ __('Hành động') }}</th>
+              <th class="text-center" scope="col">{{ __('Thời gian cập nhật') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- DataTables will populate this natively utilizing the theme's text colors -->
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -54,6 +52,7 @@ $(document).ready(function () {
   console.log('List URL: ' + '{{ route('puzzles' . ucfirst(app()->getLocale()) . '.list') }}');
   var table = $('#danh-sach-the-co').DataTable({
     processing: true,
+    responsive: true,
     serverSide: true,
     ordering: true,
     searching: true,
@@ -61,6 +60,13 @@ $(document).ready(function () {
       url: "{{ route('puzzles' . ucfirst(app()->getLocale()) . '.list') }}"
     },
     deferRender: true,
+    columnDefs: [
+      { responsivePriority: 1, targets: 1 }, // Tên thế cờ (Always visible)
+      { responsivePriority: 2, targets: 3 }, // Hành động (Always visible)
+      { responsivePriority: 3, targets: 2 }, // Đánh giá
+      { responsivePriority: 4, targets: 0 }, // Xếp hạng
+      { responsivePriority: 5, targets: 4 }  // Thời gian (Collapses first)
+    ],
     columns: [
       {
         data: 'rank',

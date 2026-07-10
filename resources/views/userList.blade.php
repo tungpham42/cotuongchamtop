@@ -8,22 +8,20 @@
     <h2 class="h1-responsivefooter text-center my-4">{{ __('Thành viên') }}</h2>
     <div class="card shadow-lg mb-4">
       <div class="card-body p-0">
-        <div class="table-responsive">
-          <table id="danh-sach-ky-thu" class="table table-hover table-sm mb-0">
-            <thead>
-              <tr>
-                <th class="text-center" scope="col">{{ __('Xếp hạng') }}</th>
-                <th class="text-center" scope="col">{{ __('Kỳ thủ') }}</th>
-                <th class="text-center" scope="col">{{ __('Elo') }}</th>
-                <th class="text-center" scope="col">{{ __('Hành động') }}</th>
-                <th class="text-center" scope="col">{{ __('Thời điểm tham gia') }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- DataTables will populate this natively utilizing the theme's text colors -->
-            </tbody>
-          </table>
-        </div>
+        <table id="danh-sach-ky-thu" class="table table-hover table-sm mb-0 dt-responsive nowrap w-100">
+          <thead>
+            <tr>
+              <th class="text-center" scope="col">{{ __('Xếp hạng') }}</th>
+              <th class="text-center" scope="col">{{ __('Kỳ thủ') }}</th>
+              <th class="text-center" scope="col">{{ __('Elo') }}</th>
+              <th class="text-center" scope="col">{{ __('Hành động') }}</th>
+              <th class="text-center" scope="col">{{ __('Thời điểm tham gia') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- DataTables will populate this natively utilizing the theme's text colors -->
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -35,6 +33,7 @@ $(document).ready(function () {
   console.log('List URL: ' + '{{ route('users' . ucfirst(app()->getLocale()) . '.list') }}');
   var table = $('#danh-sach-ky-thu').DataTable({
     processing: true,
+    responsive: true,
     serverSide: true,
     ordering: true,
     searching: true,
@@ -42,6 +41,13 @@ $(document).ready(function () {
       url: "{{ route('users' . ucfirst(app()->getLocale()) . '.list') }}"
     },
     deferRender: true,
+    columnDefs: [
+      { responsivePriority: 1, targets: 1 }, // Kỳ thủ
+      { responsivePriority: 2, targets: 3 }, // Hành động
+      { responsivePriority: 3, targets: 2 }, // Elo
+      { responsivePriority: 4, targets: 0 }, // Xếp hạng
+      { responsivePriority: 5, targets: 4 }  // Tham gia
+    ],
     columns: [
       {
         data: 'rank',
