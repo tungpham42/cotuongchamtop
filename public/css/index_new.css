@@ -2890,3 +2890,17 @@ table.dataTable.dtr-inline.collapsed
         inset 0 2px 10px rgba(255, 215, 0, 0.4) !important;
     transform: scale(1.15) rotate(180deg) !important;
 }
+
+/* ==========================================================================
+   MOBILE OPTIMIZATIONS (MÀN HÌNH NHỎ HƠN 500PX)
+   ========================================================================== */
+@media (max-width: 768px) {
+    table.dataTable tbody li.room-action .dtr-title {
+        display: none !important;
+    }
+
+    table.dataTable .dtr-details {
+        padding: 8px 12px !important;
+        width: 100% !important;
+    }
+}
