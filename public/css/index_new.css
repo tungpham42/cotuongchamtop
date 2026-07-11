@@ -2904,3 +2904,29 @@ table.dataTable.dtr-inline.collapsed
         width: 100% !important;
     }
 }
+
+/* Khung bao quanh Bàn cờ */
+#ban-co {
+    background-color: #252a36;
+    border-radius: 8px;
+    padding: 5px;
+    margin-bottom: 15px;
+}
+
+/* Tùy chỉnh Alerts cho Dark Theme */
+.alert {
+    border-radius: 8px;
+    border: none;
+    backdrop-filter: blur(5px);
+    margin-top: 15px;
+}
+.alert-success {
+    background-color: rgba(46, 125, 50, 0.2);
+    color: #81c784;
+    border-left: 4px solid #4caf50;
+}
+.alert-warning {
+    background-color: rgba(245, 124, 0, 0.2);
+    color: #ffb74d;
+    border-left: 4px solid #ff9800;
+}
