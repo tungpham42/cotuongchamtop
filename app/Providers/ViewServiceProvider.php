@@ -4,19 +4,20 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
-use App\Http\Controllers\PuzzleController;
-use App\Http\Controllers\RoomController;
-use App\Http\Controllers\UserController;
+use App\Services\PuzzleService;
+use App\Services\RoomService;
+use App\Services\UserService;
 
 class ViewServiceProvider extends ServiceProvider
 {
-    public function boot()
-    {
-        // Define an array of all the views that need this shared data.
-        // Alternatively, use '*' to attach it to EVERY view, though specifying is usually better for performance.
+    public function boot(
+        PuzzleService $puzzleService,
+        RoomService $roomService,
+        UserService $userService
+    ) {
         $viewsWithSharedData = [
             'layout.partials.userPuzzles',
-            'room*', // You can use wildcards if your view names share a prefix
+            'room*',
             'puzzle',
             'puzzleAi',
             'puzzleList',
@@ -30,16 +31,16 @@ class ViewServiceProvider extends ServiceProvider
             'tournaments.*'
         ];
 
-        View::composer($viewsWithSharedData, function ($view) {
+        View::composer($viewsWithSharedData, function ($view) use ($puzzleService, $roomService, $userService) {
             $view->with([
-                'userPuzzles' => PuzzleController::getUserPuzzles(),
-                'firstUserPuzzles' => PuzzleController::getFirstUserPuzzles(),
-                'boards' => RoomController::getBoards(),
-                'firstPageBoards' => RoomController::getFirstPageBoards(),
-                'playedBoards' => RoomController::getPlayedBoards(),
-                'firstPagePlayedBoards' => RoomController::getFirstPagePlayedBoards(),
-                'players' => UserController::getPlayers(),
-                'firstPagePlayers' => UserController::getFirstPagePlayers(),
+                'userPuzzles' => $puzzleService->getUserPuzzles(),
+                'firstUserPuzzles' => $puzzleService->getFirstUserPuzzles(),
+                'boards' => $roomService->getBoards(),
+                'firstPageBoards' => $roomService->getFirstPageBoards(),
+                'playedBoards' => $roomService->getPlayedBoards(),
+                'firstPagePlayedBoards' => $roomService->getFirstPagePlayedBoards(),
+                'players' => $userService->getPlayers(),
+                'firstPagePlayers' => $userService->getFirstPagePlayers(),
             ]);
         });
     }
