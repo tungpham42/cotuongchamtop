@@ -116,12 +116,23 @@ Route::post('/custom/broadcasting/auth', [BroadcastAuthController::class, 'authe
 // TOURNAMENT ROUTES (Unified Localized Setup)
 // ==========================================
 
-// Explicit Route Model Binding:
-// Maps the '{slug}' parameter from localized paths to the Tournament model.
-Route::bind('slug', function ($value) {
-    return \App\Models\Tournament::where('slug', $value)->firstOrFail();
+// 1. Register an inline middleware to verify tournament ownership
+Route::aliasMiddleware('tournament.creator', function ($request, $next) {
+    $slug = $request->route('slug');
+    $tournament = Tournament::where('slug', $slug)->firstOrFail();
+
+    // Check if the authenticated user is the owner.
+    // IMPORTANT: Change 'user_id' below to match your database column (e.g., 'host_id' or 'creator_id')
+    if ($tournament->user_id !== auth()->id() && !auth()->user()->is_admin) {
+        abort(403, __('Bạn không có quyền quản lý giải đấu này.'));
+    }
+
+    return $next($request);
 });
 
+// ==========================================
+// TOURNAMENT ROUTES (Unified Localized Setup)
+// ==========================================
 $localizedTournamentPages = [
     // --- PUBLIC ROUTES ---
     'tournaments.index' => [
@@ -156,13 +167,13 @@ $localizedTournamentPages = [
         'action' => [TournamentController::class, 'generateBracket'],
         'params' => ['slug' => '{slug}'],
         'methods' => ['post'],
-        'middleware' => ['auth'], // Authorization handled via TournamentPolicy in the controller
+        'middleware' => ['auth', 'tournament.creator'], // Protected
     ],
     'tournaments.create' => [
         'action' => [TournamentController::class, 'create'],
         'params' => [],
         'methods' => ['get'],
-        'middleware' => ['auth'],
+        'middleware' => ['auth'], // Any auth user can view create form
         'titles' => [
             'vi' => 'Tạo Giải đấu', 'en' => 'Create Tournament', 'ja' => 'トーナメント作成', 'ko' => '토너먼트 만들기', 'zh' => '创建锦标赛',
         ],
@@ -171,13 +182,13 @@ $localizedTournamentPages = [
         'action' => [TournamentController::class, 'store'],
         'params' => [],
         'methods' => ['post'],
-        'middleware' => ['auth'],
+        'middleware' => ['auth'], // Any auth user can submit new tournament
     ],
     'tournaments.edit' => [
         'action' => [TournamentController::class, 'edit'],
         'params' => ['slug' => '{slug}'],
         'methods' => ['get'],
-        'middleware' => ['auth'], // Authorization handled via TournamentPolicy in the controller
+        'middleware' => ['auth', 'tournament.creator'], // Protected
         'titles' => [
             'vi' => 'Sửa Giải đấu', 'en' => 'Edit Tournament', 'ja' => 'トーナメント編集', 'ko' => '토너먼트 편집', 'zh' => '编辑锦标赛',
         ],
@@ -186,19 +197,19 @@ $localizedTournamentPages = [
         'action' => [TournamentController::class, 'update'],
         'params' => ['slug' => '{slug}'],
         'methods' => ['put'],
-        'middleware' => ['auth'], // Authorization handled via TournamentPolicy in the controller
+        'middleware' => ['auth', 'tournament.creator'], // Protected
     ],
     'tournaments.cancel' => [
         'action' => [TournamentController::class, 'cancel'],
         'params' => ['slug' => '{slug}'],
         'methods' => ['post'],
-        'middleware' => ['auth'], // Authorization handled via TournamentPolicy in the controller
+        'middleware' => ['auth', 'tournament.creator'],
     ],
     'tournaments.destroy' => [
         'action' => [TournamentController::class, 'destroy'],
         'params' => ['slug' => '{slug}'],
         'methods' => ['delete'],
-        'middleware' => ['auth'], // Authorization handled via TournamentPolicy in the controller
+        'middleware' => ['auth', 'tournament.creator'], // Protected
     ],
 ];
 
