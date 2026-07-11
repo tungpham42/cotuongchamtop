@@ -15,6 +15,11 @@ use App\Http\Controllers\TimerController;
 use App\Http\Controllers\PayOSController;
 use App\Http\Controllers\TournamentController;
 use App\Http\Controllers\BroadcastAuthController;
+use App\Actions\Room\GetRandomRoomAction;
+use App\Actions\Room\GetRoomQueriesAction;
+use App\Actions\User\GetUserQueriesAction;
+use App\Actions\User\GetPuzzleQueriesAction;
+use App\Actions\User\GetUserStatsAction;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Spatie\Sitemap\SitemapGenerator;
@@ -111,23 +116,12 @@ Route::post('/custom/broadcasting/auth', [BroadcastAuthController::class, 'authe
 // TOURNAMENT ROUTES (Unified Localized Setup)
 // ==========================================
 
-// 1. Register an inline middleware to verify tournament ownership
-Route::aliasMiddleware('tournament.creator', function ($request, $next) {
-    $slug = $request->route('slug');
-    $tournament = Tournament::where('slug', $slug)->firstOrFail();
-
-    // Check if the authenticated user is the owner.
-    // IMPORTANT: Change 'user_id' below to match your database column (e.g., 'host_id' or 'creator_id')
-    if ($tournament->user_id !== auth()->id() && !auth()->user()->is_admin) {
-        abort(403, __('Bạn không có quyền quản lý giải đấu này.'));
-    }
-
-    return $next($request);
+// Explicit Route Model Binding:
+// Maps the '{slug}' parameter from localized paths to the Tournament model.
+Route::bind('slug', function ($value) {
+    return \App\Models\Tournament::where('slug', $value)->firstOrFail();
 });
 
-// ==========================================
-// TOURNAMENT ROUTES (Unified Localized Setup)
-// ==========================================
 $localizedTournamentPages = [
     // --- PUBLIC ROUTES ---
     'tournaments.index' => [
@@ -162,13 +156,13 @@ $localizedTournamentPages = [
         'action' => [TournamentController::class, 'generateBracket'],
         'params' => ['slug' => '{slug}'],
         'methods' => ['post'],
-        'middleware' => ['auth', 'tournament.creator'], // Protected
+        'middleware' => ['auth'], // Authorization handled via TournamentPolicy in the controller
     ],
     'tournaments.create' => [
         'action' => [TournamentController::class, 'create'],
         'params' => [],
         'methods' => ['get'],
-        'middleware' => ['auth'], // Any auth user can view create form
+        'middleware' => ['auth'],
         'titles' => [
             'vi' => 'Tạo Giải đấu', 'en' => 'Create Tournament', 'ja' => 'トーナメント作成', 'ko' => '토너먼트 만들기', 'zh' => '创建锦标赛',
         ],
@@ -177,13 +171,13 @@ $localizedTournamentPages = [
         'action' => [TournamentController::class, 'store'],
         'params' => [],
         'methods' => ['post'],
-        'middleware' => ['auth'], // Any auth user can submit new tournament
+        'middleware' => ['auth'],
     ],
     'tournaments.edit' => [
         'action' => [TournamentController::class, 'edit'],
         'params' => ['slug' => '{slug}'],
         'methods' => ['get'],
-        'middleware' => ['auth', 'tournament.creator'], // Protected
+        'middleware' => ['auth'], // Authorization handled via TournamentPolicy in the controller
         'titles' => [
             'vi' => 'Sửa Giải đấu', 'en' => 'Edit Tournament', 'ja' => 'トーナメント編集', 'ko' => '토너먼트 편집', 'zh' => '编辑锦标赛',
         ],
@@ -192,19 +186,19 @@ $localizedTournamentPages = [
         'action' => [TournamentController::class, 'update'],
         'params' => ['slug' => '{slug}'],
         'methods' => ['put'],
-        'middleware' => ['auth', 'tournament.creator'], // Protected
+        'middleware' => ['auth'], // Authorization handled via TournamentPolicy in the controller
     ],
     'tournaments.cancel' => [
         'action' => [TournamentController::class, 'cancel'],
         'params' => ['slug' => '{slug}'],
         'methods' => ['post'],
-        'middleware' => ['auth', 'tournament.creator'],
+        'middleware' => ['auth'], // Authorization handled via TournamentPolicy in the controller
     ],
     'tournaments.destroy' => [
         'action' => [TournamentController::class, 'destroy'],
         'params' => ['slug' => '{slug}'],
         'methods' => ['delete'],
-        'middleware' => ['auth', 'tournament.creator'], // Protected
+        'middleware' => ['auth'], // Authorization handled via TournamentPolicy in the controller
     ],
 ];
 
@@ -340,61 +334,61 @@ $localizedRoomPages = [
   'room.host' => [
     'view' => 'roomHost',
     'titles' => [
-      'vi' => fn($code) => ((null !== RoomController::getHostIdRoute($code)) ? 'Thi đấu - ' : '').'Chủ phòng - Phòng: '.RoomController::getRoomName($code),
-      'en' => fn($code) => 'Host - Room: '.RoomController::getRoomName($code),
-      'ja' => fn($code) => 'ホスト - ルーム: '.RoomController::getRoomName($code),
-      'ko' => fn($code) => '주인 - 방: '.RoomController::getRoomName($code),
-      'zh' => fn($code) => '主办 - 房间：'.RoomController::getRoomName($code),
+      'vi' => fn($code) => 'Chủ phòng - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'en' => fn($code) => 'Host - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ja' => fn($code) => 'ホスト - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ko' => fn($code) => '주인 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'zh' => fn($code) => '主办 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
     ],
   ],
   'room.guest' => [
     'view' => 'roomGuest',
     'titles' => [
-      'vi' => fn($code) => ((null !== RoomController::getHostIdRoute($code)) ? 'Thi đấu - ' : '').'Khách - Phòng: '.RoomController::getRoomName($code),
-      'en' => fn($code) => 'Guest - Room: '.RoomController::getRoomName($code),
-      'ja' => fn($code) => 'ゲスト - ルーム: '.RoomController::getRoomName($code),
-      'ko' => fn($code) => '손님 - 방: '.RoomController::getRoomName($code),
-      'zh' => fn($code) => '客人 - 房间：'.RoomController::getRoomName($code),
+      'vi' => fn($code) => 'Khách - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'en' => fn($code) => 'Guest - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ja' => fn($code) => 'ゲスト - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ko' => fn($code) => '손님 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'zh' => fn($code) => '客人 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
     ],
   ],
   'room.random' => [
     'view' => 'roomRandom',
     'titles' => [
-      'vi' => fn($code) => 'Ngẫu nhiên - Phòng: '.RoomController::getRoomName($code),
-      'en' => fn($code) => 'Random - Room: '.RoomController::getRoomName($code),
-      'ja' => fn($code) => 'ランダム - ルーム: '.RoomController::getRoomName($code),
-      'ko' => fn($code) => '무작위의 - 방: '.RoomController::getRoomName($code),
-      'zh' => fn($code) => '随机的 - 房间：'.RoomController::getRoomName($code),
+      'vi' => fn($code) => 'Ngẫu nhiên - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'en' => fn($code) => 'Random - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ja' => fn($code) => 'ランダム - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ko' => fn($code) => '무작위의 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'zh' => fn($code) => '随机的 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
     ],
   ],
   'room.watch' => [
     'view' => 'roomWatch',
     'titles' => [
-      'vi' => fn($code) => ((null !== RoomController::getHostIdRoute($code)) ? 'Thi đấu - ' : '').'Theo dõi - Phòng: '.RoomController::getRoomName($code),
-      'en' => fn($code) => 'Watch - Room: '.RoomController::getRoomName($code),
-      'ja' => fn($code) => '見る - ルーム: '.RoomController::getRoomName($code),
-      'ko' => fn($code) => '보다 - 방: '.RoomController::getRoomName($code),
-      'zh' => fn($code) => '看 - 房间：'.RoomController::getRoomName($code),
+      'vi' => fn($code) => 'Theo dõi - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'en' => fn($code) => 'Watch - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ja' => fn($code) => '見る - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ko' => fn($code) => '보다 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'zh' => fn($code) => '看 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
     ],
   ],
   'room.red' => [
     'view' => 'roomRed',
     'titles' => [
-      'vi' => fn($code) => 'Bên đỏ - Phòng: '.RoomController::getRoomName($code),
-      'en' => fn($code) => 'Red side - Room: '.RoomController::getRoomName($code),
-      'ja' => fn($code) => '赤 - ルーム: '.RoomController::getRoomName($code),
-      'ko' => fn($code) => '빨간 - 방: '.RoomController::getRoomName($code),
-      'zh' => fn($code) => '红方 - 房间：'.RoomController::getRoomName($code),
+      'vi' => fn($code) => 'Bên đỏ - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'en' => fn($code) => 'Red side - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ja' => fn($code) => '赤 - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ko' => fn($code) => '빨간 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'zh' => fn($code) => '红方 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
     ],
   ],
   'room.black' => [
     'view' => 'roomBlack',
     'titles' => [
-      'vi' => fn($code) => 'Bên đen - Phòng: '.RoomController::getRoomName($code),
-      'en' => fn($code) => 'Black side - Room: '.RoomController::getRoomName($code),
-      'ja' => fn($code) => '黒 - ルーム: '.RoomController::getRoomName($code),
-      'ko' => fn($code) => '검은색 - 방: '.RoomController::getRoomName($code),
-      'zh' => fn($code) => '黑边 - 房间：'.RoomController::getRoomName($code),
+      'vi' => fn($code) => 'Bên đen - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'en' => fn($code) => 'Black side - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ja' => fn($code) => '黒 - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ko' => fn($code) => '검은색 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'zh' => fn($code) => '黑边 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
     ],
   ],
 ];
@@ -441,7 +435,7 @@ foreach ($localizedRoomPages as $pageKey => $roomPage) {
       $data = [
         'headTitle' => $roomPage['titles'][$locale]($code),
         'bodyClass' => 'room',
-        'randomRoom' => RoomController::getRandomRoom(),
+        'randomRoom' => app(GetRandomRoomAction::class)->execute(),
         'roomCode' => $code,
         'room' => $room,
         'cdnUrl' => url(''),
@@ -484,12 +478,12 @@ $localizedAppPages = [
         // We use closures for data so DB queries don't run on route registration
         'data' => fn() => [
             'bodyClass' => 'dashboard',
-            'matchUsers' => UserController::getMatchUsers(),
-            'matchRooms' => RoomController::getMatchRooms(),
-            'playingRooms' => RoomController::getPlayingRooms(),
-            'playedRooms' => RoomController::getPlayedRooms(),
-            'rankUsers' => UserController::getRankUsers(),
-            'onlinePlayers' => UserController::onlinePlayers()
+            'matchUsers' => app(GetUserQueriesAction::class)->getMatchUsers(),
+            'matchRooms' => app(GetRoomQueriesAction::class)->getMatchRooms(),
+            'playingRooms' => app(GetRoomQueriesAction::class)->getPlayingRooms(),
+            'playedRooms' => app(GetRoomQueriesAction::class)->getPlayedRooms(),
+            'rankUsers' => app(GetUserQueriesAction::class)->getRankUsers(),
+            'onlinePlayers' => app(GetUserStatsAction::class)->getOnlinePlayersCount()
         ]
     ],
     'app.history' => [
@@ -498,11 +492,11 @@ $localizedAppPages = [
         'titles' => ['vi' => 'Lịch sử thi đấu', 'en' => 'Match History', 'ja' => '対戦履歴', 'ko' => '경기 기록', 'zh' => '比赛历史'],
         'data' => fn() => [
             'bodyClass' => 'dashboard',
-            'matchUsers' => UserController::getMatchUsers(),
-            'matchRooms' => RoomController::getMatchRooms(),
-            'playingRooms' => RoomController::getPlayingRooms(),
-            'playedRooms' => RoomController::getPlayedRooms(),
-            'rankUsers' => UserController::getRankUsers()
+            'matchUsers' => app(GetUserQueriesAction::class)->getMatchUsers(),
+            'matchRooms' => app(GetRoomQueriesAction::class)->getMatchRooms(),
+            'playingRooms' => app(GetRoomQueriesAction::class)->getPlayingRooms(),
+            'playedRooms' => app(GetRoomQueriesAction::class)->getPlayedRooms(),
+            'rankUsers' => app(GetUserQueriesAction::class)->getRankUsers()
         ]
     ],
     'app.ranking' => [
@@ -511,9 +505,9 @@ $localizedAppPages = [
         'titles' => ['vi' => 'Bảng xếp hạng', 'en' => 'Ranking', 'ja' => 'ランキング', 'ko' => '순위표', 'zh' => '排行榜'],
         'data' => fn() => [
             'bodyClass' => 'trophy',
-            'users' => UserController::getUsers(),
-            'matchRooms' => RoomController::getMatchRooms(),
-            'rankUsers' => UserController::getRankUsers()
+            'users' => app(GetUserQueriesAction::class)->getUsers(),
+            'matchRooms' => app(GetRoomQueriesAction::class)->getMatchRooms(),
+            'rankUsers' => app(GetUserQueriesAction::class)->getRankUsers()
         ]
     ],
     'app.password' => [
@@ -523,10 +517,10 @@ $localizedAppPages = [
         'data' => fn() => [
             'bodyClass' => 'player profile',
             'player' => Auth::user(),
-            'users' => UserController::getUsers(),
-            'matchRooms' => RoomController::getMatchRooms(),
-            'rankUsers' => UserController::getRankUsers(),
-            'playerRooms' => RoomController::getPlayerRooms(Auth::user()->id)
+            'users' => app(GetUserQueriesAction::class)->getUsers(),
+            'matchRooms' => app(GetRoomQueriesAction::class)->getMatchRooms(),
+            'rankUsers' => app(GetUserQueriesAction::class)->getRankUsers(),
+            'playerRooms' => app(GetRoomQueriesAction::class)->getPlayerRooms(Auth::user()->id)
         ]
     ],
     'app.name' => [
@@ -536,10 +530,10 @@ $localizedAppPages = [
         'data' => fn() => [
             'bodyClass' => 'player profile',
             'player' => Auth::user(),
-            'users' => UserController::getUsers(),
-            'matchRooms' => RoomController::getMatchRooms(),
-            'rankUsers' => UserController::getRankUsers(),
-            'playerRooms' => RoomController::getPlayerRooms(Auth::user()->id)
+            'users' => app(GetUserQueriesAction::class)->getUsers(),
+            'matchRooms' => app(GetRoomQueriesAction::class)->getMatchRooms(),
+            'rankUsers' => app(GetUserQueriesAction::class)->getRankUsers(),
+            'playerRooms' => app(GetRoomQueriesAction::class)->getPlayerRooms(Auth::user()->id)
         ]
     ],
     'app.ui' => [
@@ -549,10 +543,10 @@ $localizedAppPages = [
         'data' => fn() => [
             'bodyClass' => 'player profile',
             'player' => Auth::user(),
-            'users' => UserController::getUsers(),
-            'matchRooms' => RoomController::getMatchRooms(),
-            'rankUsers' => UserController::getRankUsers(),
-            'playerRooms' => RoomController::getPlayerRooms(Auth::user()->id)
+            'users' => app(GetUserQueriesAction::class)->getUsers(),
+            'matchRooms' => app(GetRoomQueriesAction::class)->getMatchRooms(),
+            'rankUsers' => app(GetUserQueriesAction::class)->getRankUsers(),
+            'playerRooms' => app(GetRoomQueriesAction::class)->getPlayerRooms(Auth::user()->id)
         ]
     ],
     'app.profile' => [
@@ -562,10 +556,10 @@ $localizedAppPages = [
         'data' => fn() => [
             'bodyClass' => 'player profile',
             'player' => Auth::user(),
-            'users' => UserController::getUsers(),
-            'matchRooms' => RoomController::getMatchRooms(),
-            'rankUsers' => UserController::getRankUsers(),
-            'playerRooms' => RoomController::getPlayerRooms(Auth::user()->id)
+            'users' => app(GetUserQueriesAction::class)->getUsers(),
+            'matchRooms' => app(GetRoomQueriesAction::class)->getMatchRooms(),
+            'rankUsers' => app(GetUserQueriesAction::class)->getRankUsers(),
+            'playerRooms' => app(GetRoomQueriesAction::class)->getPlayerRooms(Auth::user()->id)
         ]
     ],
     'search' => [
@@ -574,9 +568,8 @@ $localizedAppPages = [
         'titles' => ['vi' => 'Tìm kiếm', 'en' => 'Search', 'ja' => '検索', 'ko' => '검색', 'zh' => '搜索'],
         'data' => fn() => [
             'bodyClass' => 'search',
-            // Included common app layout data variables if your app.search view relies on them
-            'matchRooms' => RoomController::getMatchRooms(),
-            'rankUsers' => UserController::getRankUsers(),
+            'matchRooms' => app(GetRoomQueriesAction::class)->getMatchRooms(),
+            'rankUsers' => app(GetUserQueriesAction::class)->getRankUsers(),
             'results' => request('query')
                 ? User::where('name', 'LIKE', '%'.request('query').'%')
                     ->orWhere('email', 'LIKE', '%'.request('query').'%')
@@ -609,11 +602,11 @@ $localizedPlayerPages = [
     'app.player' => [
         'view' => 'app/player',
         'titles' => [
-            'vi' => fn($id) => 'Hồ sơ kỳ thủ "' . UserController::getUserName($id) . '"',
-            'en' => fn($id) => 'Player Profile "' . UserController::getUserName($id) . '"',
-            'ja' => fn($id) => 'プレイヤープロフィール "' . UserController::getUserName($id) . '"',
-            'ko' => fn($id) => '플레이어 프로필 "' . UserController::getUserName($id) . '"',
-            'zh' => fn($id) => '玩家资料 "' . UserController::getUserName($id) . '"',
+            'vi' => fn($id) => 'Hồ sơ kỳ thủ "' . app(GetUserQueriesAction::class)->getUserName($id) . '"',
+            'en' => fn($id) => 'Player Profile "' . app(GetUserQueriesAction::class)->getUserName($id) . '"',
+            'ja' => fn($id) => 'プレイヤープロフィール "' . app(GetUserQueriesAction::class)->getUserName($id) . '"',
+            'ko' => fn($id) => '플레이어 프로필 "' . app(GetUserQueriesAction::class)->getUserName($id) . '"',
+            'zh' => fn($id) => '玩家资料 "' . app(GetUserQueriesAction::class)->getUserName($id) . '"',
         ],
     ]
 ];
@@ -626,10 +619,10 @@ foreach (config('locales.supported', []) as $locale) {
             'headTitle' => $pageSettings['titles'][$locale]($id),
             'bodyClass' => 'player',
             'player' => User::firstWhere('id', $id),
-            'users' => UserController::getUsers(),
-            'matchRooms' => RoomController::getMatchRooms(),
-            'rankUsers' => UserController::getRankUsers(),
-            'playerRooms' => RoomController::getPlayerRooms($id)
+            'users' => app(GetUserQueriesAction::class)->getUsers(),
+            'matchRooms' => app(GetRoomQueriesAction::class)->getMatchRooms(),
+            'rankUsers' => app(GetUserQueriesAction::class)->getRankUsers(),
+            'playerRooms' => app(GetRoomQueriesAction::class)->getPlayerRooms($id)
         ];
 
         return view($pageSettings['view'], localized_page_data('app.player', $locale, $data, ['id' => $id]));
@@ -638,7 +631,11 @@ foreach (config('locales.supported', []) as $locale) {
 
 // Ensure this single standalone route stays as it acts as an internal API/Partial endpoint
 Route::get('/rankTableHtml', function() {
-  return view('layout/partials/app/rankTableHtml', ['users' => UserController::getUsers(), 'matchRooms' => RoomController::getMatchRooms(), 'rankUsers' => UserController::getRankUsers()]);
+    return view('layout/partials/app/rankTableHtml', [
+        'users' => app(GetUserQueriesAction::class)->getUsers(),
+        'matchRooms' => app(GetRoomQueriesAction::class)->getMatchRooms(),
+        'rankUsers' => app(GetUserQueriesAction::class)->getRankUsers()
+    ]);
 });
 
 // ==========================================
@@ -826,7 +823,7 @@ foreach ($localizedHumanPages['human.play']['titles'] as $locale => $title) {
         return view('human', localized_page_data('human.play', $locale, [
             'headTitle' => $title,
             'bodyClass' => 'home',
-            'randomRoom' => RoomController::getRandomRoom(),
+            'randomRoom' => app(GetRandomRoomAction::class)->execute(),
             'roomCode' => '',
             'cdnUrl' => url(''),
         ]));
@@ -834,7 +831,7 @@ foreach ($localizedHumanPages['human.play']['titles'] as $locale => $title) {
 }
 
 Route::match(['get', 'post'], '/thach-dau/{board}', function ($board) {
-return view('puzzleCompete', ['headTitle' => 'Thách đấu', 'bodyClass' => 'puzzle', 'board' => $board, 'randomRoom' => RoomController::getRandomRoom(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'canonicalUrl' => '/thach-dau/'.$board]);
+return view('puzzleCompete', ['headTitle' => 'Thách đấu', 'bodyClass' => 'puzzle', 'board' => $board, 'randomRoom' => app(GetRandomRoomAction::class)->execute(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'canonicalUrl' => '/thach-dau/'.$board]);
 })->where(['board' => $fenRegex]);
 
 // Define the titles for your puzzle rating routes
@@ -871,7 +868,7 @@ foreach ($localizedPuzzleRatingPages['puzzle.rating']['titles'] as $locale => $t
                 'unsolved' => $puzzle->unsolved_count,
                 'rating' => $puzzle->rating,
             ],
-            'randomRoom' => RoomController::getRandomRoom(),
+            'randomRoom' => app(GetRandomRoomAction::class)->execute(),
             'roomCode' => '',
             'cdnUrl' => url(''), // Retained here as it relies on the dynamic url() helper
         ], ['slug' => $puzzle->slug]));
@@ -915,7 +912,7 @@ foreach ($localizedPuzzlePages['puzzle.setup']['titles'] as $locale => $title) {
             'headTitle' => $title,
             'bodyClass' => 'puzzle setup',
             'board' => '',
-            'randomRoom' => RoomController::getRandomRoom(),
+            'randomRoom' => app(GetRandomRoomAction::class)->execute(),
             'roomCode' => '',
             'cdnUrl' => url(''),
         ]));
@@ -929,7 +926,7 @@ foreach ($localizedPuzzlePages['puzzle.board']['titles'] as $locale => $title) {
             'headTitle' => $title,
             'bodyClass' => 'puzzle',
             'board' => $board,
-            'randomRoom' => RoomController::getRandomRoom(),
+            'randomRoom' => app(GetRandomRoomAction::class)->execute(),
             'roomCode' => '',
             'cdnUrl' => url(''),
         ], ['board' => $board]));
@@ -1037,7 +1034,7 @@ foreach ($localizedBoardPages as $pageKey => $pageData) {
             $viewData = [
                 'bodyClass' => ($pageData['view'] === 'puzzleAi') ? 'puzzle' : 'home',
                 'fen' => $fen,
-                'randomRoom' => RoomController::getRandomRoom(),
+                'randomRoom' => app(GetRandomRoomAction::class)->execute(),
                 'roomCode' => '',
                 'cdnUrl' => url(''),
             ];
@@ -1050,7 +1047,7 @@ foreach ($localizedBoardPages as $pageKey => $pageData) {
 
                 // Inject dynamic puzzle name specifically for puzzleAi
                 if ($pageData['view'] === 'puzzleAi') {
-                    $puzzleName = PuzzleController::getNameByFen($fen);
+                    $puzzleName = app(GetPuzzleQueriesAction::class)->getNameByFen($fen);
                     $viewData['headTitle'] = $puzzleName ? $baseTitle . ' "' . $puzzleName . '"' : $baseTitle;
                 } else {
                     $viewData['headTitle'] = $baseTitle;
@@ -1130,7 +1127,7 @@ foreach ($localizedLevelPages as $pageKey => $localizedPages) {
             return view('ai', localized_page_data($pageKey, $locale, [
                 'headTitle' => $page['title'],
                 'bodyClass' => 'home',
-                'randomRoom' => RoomController::getRandomRoom(),
+                'randomRoom' => app(GetRandomRoomAction::class)->execute(),
                 'roomCode' => '',
                 'cdnUrl' => url(''),
                 'level' => $page['level'],
@@ -1213,7 +1210,7 @@ foreach ($localizedStaticPages as $pageKey => $localizedPages) {
       return view($page['view'], localized_page_data($pageKey, $locale, [
         'headTitle' => $page['title'],
         'bodyClass' => $pageKey,
-        'randomRoom' => RoomController::getRandomRoom(),
+        'randomRoom' => app(GetRandomRoomAction::class)->execute(),
         'roomCode' => '',
         'cdnUrl' => url(''),
       ]));
@@ -1236,7 +1233,7 @@ foreach ($localizedRoomListPages as $locale => $page) {
       'bodyClass' => 'room',
       'rooms' => Room::all(),
       'roomCode' => '',
-      'randomRoom' => RoomController::getRandomRoom(),
+      'randomRoom' => app(GetRandomRoomAction::class)->execute(),
       'cdnUrl' => url(''),
     ];
 

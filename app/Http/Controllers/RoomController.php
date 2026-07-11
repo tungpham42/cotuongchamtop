@@ -7,6 +7,7 @@ use Exception;
 use App\Models\Room;
 use App\Models\User;
 use App\Events\RoomUpdated;
+use App\Actions\Room\UpdateRoomEloAction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Schema;
@@ -317,35 +318,16 @@ class RoomController extends Controller
         );
     }
 
-    public static function updateElo(Request $request)
+    public function updateElo(Request $request, UpdateRoomEloAction $updateRoomEloAction)
     {
         $code = $request->input('ma-phong');
         $result = $request->input('result');
 
         try {
-            return DB::transaction(function () use ($code, $result) {
-                $room = Room::select('host_id', 'guest_id')->where('code', $code)->firstOrFail();
-
-                if (!$room->host_id || !$room->guest_id) {
-                    throw new Exception('Players missing from room');
-                }
-
-                $host = User::lockForUpdate()->findOrFail($room->host_id);
-                $guest = User::lockForUpdate()->findOrFail($room->guest_id);
-
-                $eloRatings = GameController::getEloRatings($host->elo, $guest->elo, $result);
-                [$host->elo, $guest->elo] = $eloRatings;
-
-                $host->save();
-                $guest->save();
-
-                return response()->json([
-                    'host_elo' => $host->elo,
-                    'guest_elo' => $guest->elo,
-                ]);
-            });
-        } catch (Exception $e) {
-            Log::error("Elo update failed for room {$code}: " . $e->getMessage());
+            // Replaced static logic with Action execution
+            $newElos = $updateRoomEloAction->execute($code, $result);
+            return response()->json($newElos);
+        } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to update Elo ratings'], 500);
         }
     }
@@ -538,20 +520,6 @@ class RoomController extends Controller
 
         Room::updateOrInsert(['id' => $id], ['host_score' => $hostWin + 0.5 * $hostDraw]);
         Room::updateOrInsert(['id' => $id], ['guest_score' => $guestWin + 0.5 * $guestDraw]);
-    }
-
-    public static function updateRoomElo($id)
-    {
-        $room = Room::find($id);
-        if (!$room) return;
-
-        $hostCurrentElo = User::find($room->host_id)->elo ?? 1200;
-        $guestCurrentElo = User::find($room->guest_id)->elo ?? 1200;
-
-        $roomHostElo = GameController::calculateElo($hostCurrentElo, $guestCurrentElo, $room->host_score);
-        $roomGuestElo = GameController::calculateElo($guestCurrentElo, $hostCurrentElo, $room->guest_score);
-
-        $room->update(['host_elo' => $roomHostElo, 'guest_elo' => $roomGuestElo]);
     }
 
     public function prepareAnonymousRoom(string $sessionId): Room

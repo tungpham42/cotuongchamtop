@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Puzzle;
 use App\Models\PuzzleComment;
 use App\Models\PuzzleCommentLike;
+use App\Actions\Puzzle\GetPuzzleRankAction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,13 @@ use DataTables;
 
 class PuzzleController extends Controller
 {
+    private $getPuzzleRankAction;
+
+    public function __construct(GetPuzzleRankAction $getPuzzleRankAction)
+    {
+        $this->getPuzzleRankAction = $getPuzzleRankAction;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -61,7 +69,7 @@ class PuzzleController extends Controller
 
             return Datatables::of($puzzles)
                 ->addColumn('rank', function($row){
-                    return self::renderPuzzleRank($row->id);
+                    return $this->getPuzzleRankAction->execute($row->id);
                 })
                 ->addColumn('name', function($row){
                     return '<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/the-co/").$row->slug.'">'.$row->name.'</a>';

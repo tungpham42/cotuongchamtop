@@ -7,6 +7,8 @@ use App\Services\XiangqiEngineService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use App\Contracts\BracketGeneratorInterface;
+use App\Services\SingleEliminationBracketGenerator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(XiangqiEngineService::class, function ($app) {
             return new XiangqiEngineService();
         });
+
+        $this->app->bind(
+            BracketGeneratorInterface::class,
+            SingleEliminationBracketGenerator::class
+        );
     }
 
     /**

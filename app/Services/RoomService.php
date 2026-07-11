@@ -71,18 +71,4 @@ class RoomService
         Room::updateOrInsert(['id' => $id], ['host_score' => $hostWin + 0.5 * $hostDraw]);
         Room::updateOrInsert(['id' => $id], ['guest_score' => $guestWin + 0.5 * $guestDraw]);
     }
-
-    public function updateRoomElo(int $id): void
-    {
-        $room = Room::find($id);
-        if (!$room) return;
-
-        $hostCurrentElo = User::find($room->host_id)->elo ?? 1200;
-        $guestCurrentElo = User::find($room->guest_id)->elo ?? 1200;
-
-        $roomHostElo = GameController::calculateElo($hostCurrentElo, $guestCurrentElo, $room->host_score);
-        $roomGuestElo = GameController::calculateElo($guestCurrentElo, $hostCurrentElo, $room->guest_score);
-
-        $room->update(['host_elo' => $roomHostElo, 'guest_elo' => $roomGuestElo]);
-    }
 }

@@ -1,3 +1,4 @@
+@inject('puzzleService', 'App\Services\PuzzleService')
 @php
     $locale = app()->getLocale();
     $locale = in_array($locale, ['en', 'ja', 'ko', 'zh'], true) ? $locale : 'en';
@@ -54,7 +55,7 @@
     ];
 
     $text = $copy[$locale];
-    $puzzlesPage = $userPuzzles ?? App\Http\Controllers\PuzzleController::getUserPuzzles();
+    $puzzlesPage = $userPuzzles ?? $puzzleService->getUserPuzzles();
 @endphp
 
 @if (Request::get('page') <= ceil($puzzlesPage->total() / $puzzlesPage->perPage()))

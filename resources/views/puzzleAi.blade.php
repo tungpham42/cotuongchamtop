@@ -1,15 +1,7 @@
 @extends('layout.gamelayout')
+@inject('puzzleService', 'App\Services\PuzzleService')
 @php
-    function containsCJK(string $string): bool {
-        // \p{Han} covers Chinese characters (including Japanese Kanji and Korean Hanja)
-        // \p{Hiragana} and \p{Katakana} cover Japanese syllabaries
-        // \p{Hangul} covers the Korean alphabet
-        // The 'u' modifier at the end turns on UTF-8 mode
-        $pattern = '/[\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]/u';
-
-        return preg_match($pattern, $string) === 1;
-    }
-    $puzzleName = App\Http\Controllers\PuzzleController::getNameByFen($fen);
+    $puzzleName = $puzzleService->getNameByFen($fen);
 @endphp
 
 {{-- Set the dynamic Open Graph Image and Alt text using a placeholder service --}}

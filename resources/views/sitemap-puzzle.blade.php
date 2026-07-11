@@ -2,9 +2,10 @@
 echo '<?xml version="1.0" encoding="UTF-8"?>';
 echo '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>';
 @endphp
+@inject('puzzleService', 'App\Services\PuzzleService')
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     @php
-        $puzzles = App\Http\Controllers\PuzzleController::getSitemapPuzzles();
+        $puzzles = $puzzleService->getSitemapPuzzles();
     @endphp
 
     @foreach($puzzles as $puzzle)

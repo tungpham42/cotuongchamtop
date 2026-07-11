@@ -9,6 +9,7 @@ use Mail;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use App\Http\Controllers\UserController;
+use App\Actions\User\GetUserQueriesAction;
 use Config;
 
 class MailController extends Controller
@@ -117,9 +118,9 @@ class MailController extends Controller
         // Consolidate user data retrieval
         $hostId     = $request->input('host_id');
         $guestId    = $request->input('guest_id');
-        $hostName   = UserController::getUserName($hostId);
-        $guestName  = UserController::getUserName($guestId);
-        $guestEmail = UserController::getUserEmail($guestId);
+        $hostName   = app(GetUserQueriesAction::class)->getUserName($hostId);
+        $guestName  = app(GetUserQueriesAction::class)->getUserName($guestId);
+        $guestEmail = app(GetUserQueriesAction::class)->getUserEmail($guestId);
 
         // DRY: Build the URL once using string interpolation
         // localized_url will now respect the locale set above
@@ -155,7 +156,7 @@ class MailController extends Controller
                 'smtp_messages' => [
                     "Invitation to \"{$guestName}\" failed",
                     "Invitation to \"{$guestName}\" sent successfully",
-                    "Message could not be sent" //[cite: 1]
+                    "Message could not be sent"
                 ]
             ],
 
@@ -171,7 +172,7 @@ class MailController extends Controller
                 'smtp_messages' => [
                     "Lời mời đến \"{$guestName}\" không gửi được",
                     "Lời mời đến \"{$guestName}\" gửi thành công",
-                    "Tin nhắn không gửi được" //[cite: 1]
+                    "Tin nhắn không gửi được"
                 ]
             ],
 
@@ -187,7 +188,7 @@ class MailController extends Controller
                 'smtp_messages' => [
                     "「{$guestName}」への招待を送信できませんでした",
                     "「{$guestName}」への招待が送信されました",
-                    "メッセージを送信できませんでした" //[cite: 1]
+                    "メッセージを送信できませんでした"
                 ]
             ],
 
@@ -203,7 +204,7 @@ class MailController extends Controller
                 'smtp_messages' => [
                     "\"{$guestName}\"님에게 초대를 보내지 못했습니다.",
                     "\"{$guestName}\"님에게 초대가 성공적으로 전송되었습니다.",
-                    "메시지를 보내지 못했습니다." //[cite: 1]
+                    "메시지를 보내지 못했습니다."
                 ]
             ],
 
@@ -219,7 +220,7 @@ class MailController extends Controller
                 'smtp_messages' => [
                     "无法向“{$guestName}”发送邀请",
                     "已成功向“{$guestName}”发送邀请",
-                    "无法发送消息" //[cite: 1]
+                    "无法发送消息"
                 ]
             ],
         ];

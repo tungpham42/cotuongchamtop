@@ -71,3 +71,13 @@ function numberToWordsZh($number)
     $formatter = new NumberFormatter('zh_CN', NumberFormatter::SPELLOUT);
     return $formatter->format($number);
 }
+
+function containsCJK(string $string): bool {
+    // \p{Han} covers Chinese characters (including Japanese Kanji and Korean Hanja)
+    // \p{Hiragana} and \p{Katakana} cover Japanese syllabaries
+    // \p{Hangul} covers the Korean alphabet
+    // The 'u' modifier at the end turns on UTF-8 mode
+    $pattern = '/[\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]/u';
+
+    return preg_match($pattern, $string) === 1;
+}

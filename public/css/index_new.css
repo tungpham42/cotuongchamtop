@@ -2631,12 +2631,12 @@ div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(3) {
     border-top: 2px solid rgba(255, 215, 0, 0.5) !important;
     border-radius: 8px;
 
-    /* Deep Shadows & Inner Wet Reflection[cite: 1] */
+    /* Deep Shadows & Inner Wet Reflection */
     box-shadow:
         var(--liquid-shadow),
         inset 0 3px 15px var(--liquid-highlight) !important;
 
-    /* Royal Typography[cite: 1] */
+    /* Royal Typography */
     font-family: "Texturina", serif;
     color: var(--royal-gold) !important;
     font-weight: 600;
@@ -2644,7 +2644,7 @@ div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(3) {
     letter-spacing: 1px;
     text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 
-    /* Layout & Smooth Animation[cite: 1] */
+    /* Layout & Smooth Animation */
     padding: 12px 24px;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
