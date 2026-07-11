@@ -14,7 +14,7 @@ class SingleEliminationBracketGenerator implements BracketGeneratorInterface
         $totalPlayers = $players->count();
         if ($totalPlayers < 2) return; // Need at least 2 players
 
-        $totalRounds = max(1, (int) log($totalPlayers, 2)); // Calculate rounds based on powers of 2
+        $totalRounds = max(1, (int) log($totalPlayers, 2)); // Calculate rounds based on powers of 2[cite: 1]
         $previousRoundRooms = [];
 
         for ($round = $totalRounds; $round >= 1; $round--) {
@@ -23,7 +23,7 @@ class SingleEliminationBracketGenerator implements BracketGeneratorInterface
 
             for ($i = 0; $i < $matchesInRound; $i++) {
                 $room = Room::create([
-                    'code' => md5(time() . uniqid()), // Generate unique room code
+                    'code' => md5(time() . uniqid()), // Generate unique room code[cite: 1]
                     'fen' => env('INITIAL_FEN'),
                     'tournament_id' => $tournament->id,
                     'tournament_round' => $round,
@@ -31,7 +31,7 @@ class SingleEliminationBracketGenerator implements BracketGeneratorInterface
                     'black_time' => 600,
                     'active_player' => 'waiting',
                     'modified_at' => now(),
-                    'next_room_code' => $round == $totalRounds ? null : $previousRoundRooms[floor($i / 2)]->code // Link to next room
+                    'next_room_code' => $round == $totalRounds ? null : $previousRoundRooms[floor($i / 2)]->code // Link to next room[cite: 1]
                 ]);
 
                 if ($round == 1) {

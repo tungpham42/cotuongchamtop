@@ -11,7 +11,7 @@ class TournamentService
     public function joinTournament(Tournament $tournament, int $userId): void
     {
         if (!$tournament->users()->where('user_id', $userId)->exists()) {
-            $tournament->users()->attach($userId); // Attach user if not already joined
+            $tournament->users()->attach($userId); // Attach user if not already joined[cite: 1]
         }
     }
 
@@ -22,14 +22,14 @@ class TournamentService
         }
 
         if ($oldFilePath) {
-            Storage::disk('public')->delete($oldFilePath); // Delete old photo
+            Storage::disk('public')->delete($oldFilePath); // Delete old photo[cite: 1]
         }
 
-        return $file->store('tournaments', 'public'); // Store new photo in public/tournaments
+        return $file->store('tournaments', 'public'); // Store new photo in public/tournaments[cite: 1]
     }
 
     public function clearBracket(Tournament $tournament): void
     {
-        $tournament->rooms()->delete(); // Remove associated rooms
+        $tournament->rooms()->delete(); // Remove associated rooms[cite: 1]
     }
 }
