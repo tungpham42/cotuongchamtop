@@ -1,4 +1,5 @@
 @extends('layout.gamelayout')
+@inject('userPresenter', 'App\Presenters\UserPresenter')
 @inject('puzzleService', 'App\Services\PuzzleService')
 @php
     $puzzleName = $puzzleService->getNameByFen($fen);

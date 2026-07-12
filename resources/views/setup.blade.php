@@ -1,4 +1,5 @@
 @extends('layout.gamelayout')
+@inject('userPresenter', 'App\Presenters\UserPresenter')
 @section('aboveContent')
 <h3 class="text-center my-2">{{ __("Đang xếp bàn cờ thế") }}</h3>
 @endsection

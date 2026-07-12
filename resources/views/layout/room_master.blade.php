@@ -1,4 +1,5 @@
 @extends('layout.playlayout')
+@inject('userPresenter', 'App\Presenters\UserPresenter')
 
 @section('aboveBoard')
     @if ($role === 'watch')

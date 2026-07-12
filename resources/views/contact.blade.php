@@ -1,4 +1,5 @@
 @extends('layout.mainlayout')
+@inject('userPresenter', 'App\Presenters\UserPresenter')
 
 @section('aboveContent')
 @php

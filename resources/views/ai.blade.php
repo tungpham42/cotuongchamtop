@@ -1,4 +1,5 @@
 @extends('layout.gamelayout')
+@inject('userPresenter', 'App\Presenters\UserPresenter')
 @section('aboveBoard')
 @php
 $locale = app()->getLocale() ?: 'vi';

@@ -1,4 +1,5 @@
 @extends('layout.gamelayout')
+@inject('userPresenter', 'App\Presenters\UserPresenter')
 @section('aboveContent')
 <p id="room-code" class="w-100 text-center mt-2">
   <span class="alert alert-info d-inline-block" role="alert"><i class="fad fa-trophy-alt"></i> {{ __("Mã phòng:") }} {{ $roomCode }}</span>
@@ -101,7 +102,7 @@ function onDragStart (source, piece) {
       (game.turn() === 'b' && piece.search(/^r/) !== -1)) {
     return false;
   }
-  
+
   if ((board.orientation() == 'red' && game.turn() === 'b') || (board.orientation() == 'black' && game.turn() === 'r')) {
     return false;
   }

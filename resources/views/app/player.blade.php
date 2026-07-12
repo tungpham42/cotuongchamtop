@@ -1,4 +1,5 @@
 @extends('layout.app')
+@inject('userPresenter', 'App\Presenters\UserPresenter')
 
 @php
     $avatarDir = public_path('players');

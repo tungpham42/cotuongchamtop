@@ -1,4 +1,5 @@
 @extends('layout.mainlayout')
+@inject('userPresenter', 'App\Presenters\UserPresenter')
 @section('aboveContent')
 <div class="container-fluid about px-0">
   <div class="container p-5">

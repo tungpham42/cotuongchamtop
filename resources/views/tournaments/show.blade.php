@@ -1,4 +1,5 @@
 @extends('layout.app')
+@inject('userPresenter', 'App\Presenters\UserPresenter')
 
 @section('meta_description', $tournament->description ?? 'Giải đấu cờ tướng hấp dẫn.')
 
