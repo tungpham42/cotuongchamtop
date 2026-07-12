@@ -19,8 +19,12 @@ class UserPresenter
         return trans_choice('messages.players_online_count', $onlinePlayers, ['count' => $onlinePlayers]);
     }
 
-    public function renderOnlineStatusIndicator(int $userId): string
+    public function renderOnlineStatusIndicator(?int $userId): string
     {
+        if (!$userId) {
+            return '';
+        }
+
         $hasActiveSession = DbSession::where('user_id', $userId)->exists();
         $statusClass = $hasActiveSession ? 'text-success' : 'text-danger';
         $statusTitle = $hasActiveSession ? __('Trực tuyến') : __('Ngoại tuyến');
@@ -28,9 +32,11 @@ class UserPresenter
         return '<span class="user-status-indicator" data-user-id="' . $userId . '"> <i title="' . $statusTitle . '" class="' . $statusClass . ' fad fa-circle"></i></span>';
     }
 
-    public function renderPlayerName(int $userId, bool $forRoom = false, bool $isProfile = false): string
+    public function renderPlayerName(?int $userId, bool $forRoom = false, bool $isProfile = false): string
     {
         $user = User::find($userId);
+
+        // If $userId is null or user doesn't exist, return the waiting indicator
         if (!$user) {
             $bg = $forRoom ? 'bg-light' : 'bg-danger';
             return '<span class="waitingIndicator"><span class="indicator '.$bg.'"></span><span class="indicator '.$bg.'"></span><span class="indicator '.$bg.'"></span><span class="indicator '.$bg.'"></span><span class="indicator '.$bg.'"></span></span>';
@@ -59,8 +65,10 @@ class UserPresenter
         return '';
     }
 
-    public function renderUserRank(int $userId): ?int
+    public function renderUserRank(?int $userId): ?int
     {
+        if (!$userId) return null;
+
         $user = User::find($userId);
         if (!$user) return null;
 
@@ -68,27 +76,35 @@ class UserPresenter
         return $rank == User::count() + 1 ? User::count() : $rank;
     }
 
-    public function renderElo(int $userId): ?int
+    public function renderElo(?int $userId): ?int
     {
+        if (!$userId) return null;
+
         $user = User::find($userId);
         return $user ? ceil($user->elo) : null;
     }
 
-    public function renderStat(int $userId, string $type): int
+    public function renderStat(?int $userId, string $type): int
     {
+        if (!$userId) return 0;
+
         $this->statsAction->updatePoints($userId);
         $stats = $this->statsAction->getMatchStats($userId);
         return $stats[$type] ?? 0;
     }
 
-    public function renderPlayerEmail(int $userId): string
+    public function renderPlayerEmail(?int $userId): string
     {
+        if (!$userId) return '';
+
         $user = User::find($userId);
         return $user ? '<a class="text-danger showPromotion animate" href="mailto:'.$user->email.'">'.$user->email.'</a>' : '';
     }
 
-    public function renderPlayerRank(int $userId): string
+    public function renderPlayerRank(?int $userId): string
     {
+        if (!$userId) return '';
+
         $user = User::find($userId);
         if (!$user) {
             return '';
