@@ -14,7 +14,7 @@
                     <div class="p-3 border-bottom" style="border-color: rgba(212, 175, 55, 0.2) !important;">
                         @include('layout.partials.app.createRoom')
                         <h2 data-step="2" data-intro="{{ __("Danh sách xếp hạng đầy đủ") }}" class="mt-4 mb-0 h4">
-                            <i class="fas fa-star text-gold"></i> {{ __("Bảng xếp hạng của") }} {{ $users->total() }} {{ __("kỳ thủ") }} <small class="text-muted">({!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</small>
+                            <i class="fas fa-star text-gold"></i> {{ __("Bảng xếp hạng của") }} {{ $users->total() }} {{ __("kỳ thủ") }} <small class="text-muted">({!! $userPresenter->renderOnlinePlayersCount() !!})</small>
                         </h2>
                     </div>
                     <div class="table-responsive">
@@ -32,10 +32,10 @@
                                 @foreach($users as $user)
                                 <tr data-user="{{ $user->id }}">
                                     <td class="text-center font-weight-bold">
-                                        <span class="badge badge-status" style="background: linear-gradient(to bottom, #d4af37, #b89020); color: #0b0c10; box-shadow: 0 0 5px rgba(212, 175, 55, 0.6);"><i class="fas fa-trophy"></i> {!! app('App\Http\Controllers\UserController')::renderUserRank($user->id) !!}</span>
+                                        <span class="badge badge-status" style="background: linear-gradient(to bottom, #d4af37, #b89020); color: #0b0c10; box-shadow: 0 0 5px rgba(212, 175, 55, 0.6);"><i class="fas fa-trophy"></i> {!! $userPresenter->renderUserRank($user->id) !!}</span>
                                     </td>
-                                    <td class="text-center name">{!! app('App\Http\Controllers\UserController')::renderPlayerName($user->id) !!}</td>
-                                    <td class="text-center elo text-gold font-weight-bold" style="font-size: 1.1em;">{!! app('App\Http\Controllers\UserController')::renderElo($user->id) !!}</td>
+                                    <td class="text-center name">{!! $userPresenter->renderPlayerName($user->id) !!}</td>
+                                    <td class="text-center elo text-gold font-weight-bold" style="font-size: 1.1em;">{!! $userPresenter->renderElo($user->id) !!}</td>
                                     <td class="text-center room-time">{{ $user->created_at }}</td>
                                     <td class="text-center room-time">{{ $user->last_seen_at }}</td>
                                 </tr>

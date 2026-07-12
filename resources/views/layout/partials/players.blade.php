@@ -21,9 +21,9 @@
                         <i class="fas fa-user fa-3x" style="color: var(--royal-gold); filter: drop-shadow(0 0 10px rgba(212,175,55,0.5));"></i>
                     </div>
 
-                    <h4 class="royal-card-title mb-1">{!! app('App\Http\Controllers\UserController')::renderName($player->id) !!}</h4>
+                    <h4 class="royal-card-title mb-1">{!! $userPresenter->renderPlayerName($player->id, false, true) !!}</h4>
                     <p class="mb-4" style="color: var(--royal-gold-light); font-size: 1.1rem;">
-                        Elo: <span class="font-weight-bold" style="color: var(--royal-gold);">{!! app('App\Http\Controllers\UserController')::renderElo($player->id) !!}</span>
+                        Elo: <span class="font-weight-bold" style="color: var(--royal-gold);">{!! $userPresenter->renderElo($player->id) !!}</span>
                     </p>
 
                     <div class="mt-auto">

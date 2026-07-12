@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Models\Room;
 use App\Models\Session as DbSession;
+use App\Actions\User\UpdateOnlineStatus;
+use App\Presenters\UserPresenter;
 use Creativeorange\Gravatar\Facades\Gravatar;
 use Carbon\Carbon;
 use DataTables;
@@ -23,6 +25,8 @@ use App\Events\PlayersUpdated; // Import the event
 
 class UserController extends Controller
 {
+    public function __construct(private UserPresenter $presenter) {}
+
     public function getUsersVi(Request $request)
     {
         return $this->getUsersDatatable($request, 'Thách đấu', 'Hồ sơ');
@@ -88,18 +92,9 @@ class UserController extends Controller
             $users = User::select(['id', 'name', 'email', 'profile_picture', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at']);
 
             return Datatables::of($users)
-                ->addColumn('rank', function($row){
-                    return '<span class="badge badge-status" style="background: linear-gradient(to bottom, #d4af37, #b89020); color: #0b0c10; box-shadow: 0 0 5px rgba(212, 175, 55, 0.6);"><i class="fas fa-medal"></i> ' . self::renderUserRank($row->id) . '</span>';
-                })
-                ->addColumn('name', function($row){
-                    $onlineStatus = self::onlineStatus($row->id);
-                    $avatarSrc = $row->profile_picture ? asset('storage/' . $row->profile_picture) : Avatar::create($row->name)->setDimension(28)->setFontSize(14);
-                    $avatarHtml = $onlineStatus . '&nbsp;<img src="' . $avatarSrc . '" style="width: 28px; height: 28px; object-fit: cover; border: 1px solid var(--royal-gold); border-radius: 4px; box-shadow: 0 0 5px rgba(212,175,55,0.5);" />';
-                    return $avatarHtml . '&nbsp;<a class="text-warning font-weight-bold animate showPromotion" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.8); text-decoration: none !important;" href="'.localized_url('app.player', ['id' => $row->id]).'">'.$row->name.'</a>';
-                })
-                ->addColumn('elo', function($row){
-                    return '<strong style="color: var(--royal-gold);">' . self::renderElo($row->id) . '</strong>';
-                })
+                ->addColumn('rank', fn($row) => '<span class="badge badge-status"><i class="fas fa-medal"></i> ' . $this->presenter->renderUserRank($row->id) . '</span>')
+                ->addColumn('name', fn($row) => $this->presenter->renderPlayerName($row->id, false, true))
+                ->addColumn('elo', fn($row) => '<strong style="color: var(--royal-gold);">' . $this->presenter->renderElo($row->id) . '</strong>')
                 ->addColumn('action', function($row) use ($challengeText, $profileText) {
                     if (auth()->check()) {
                         if (auth()->id() != $row->id) {
@@ -134,6 +129,8 @@ class UserController extends Controller
         }
     }
 
+    // LEGACY METHODS BELOW (to be refactored to use UserPresenter)
+
     public static function getPlayers()
     {
         // 1. Grab all user IDs currently holding an active session
@@ -162,21 +159,10 @@ class UserController extends Controller
         return $data;
     }
 
-    public function updateOnlineStatus(Request $request)
+    public function updateOnlineStatus(Request $request, UpdateOnlineStatus $action)
     {
-        $id = $request->input('id');
-
-        if (auth()->id() == $id) {
-            // Update the session's activity timestamp instead of the users table
-            DbSession::where('user_id', $id)->update(['last_activity' => time()]);
-
-            $updated = User::updateOrInsert(
-                ['id' => $id],
-                ['last_seen_at' => Carbon::now()]
-            );
-            // You can uncomment this if you intend to push updates via Echo
-            // when the user sends an explicit ping.
-            // broadcast(new PlayersUpdated());
+        if (auth()->id() == $request->input('id')) {
+            $action->execute($request->input('id'));
         }
     }
 

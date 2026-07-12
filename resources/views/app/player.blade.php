@@ -37,7 +37,7 @@
                         @endif
                     </h4>
                     <div class="ml-2">
-                        {!! app('App\Http\Controllers\UserController')::onlineStatus($player->id) !!}
+                        {!! $userPresenter->renderOnlineStatusIndicator($player->id) !!}
                     </div>
 
                     <div class="ml-auto d-flex align-items-center">
@@ -56,17 +56,17 @@
                 <div class="card-body">
                     <h5>{{ __("Tên:") }} <span class="text-gold font-weight-bold">{{ $player->name }}</span></h5>
                     @if ($player->id == auth()->id() && !str_contains(url()->current(), url('/ky-thu').'/'))
-                    <h5>{{ __("Email:") }} {!! app('App\Http\Controllers\UserController')::renderPlayerEmail($player->id) !!}</h5>
+                    <h5>{{ __("Email:") }} {!! $userPresenter->renderPlayerEmail($player->id) !!}</h5>
                     @endif
                     <h5>{{ __("Ngày giờ gia nhập:") }} <span class="text-light">{{ $player->created_at }}</span></h5>
                     <h5>{{ __("Lần trực tuyến gần nhất:") }} <span class="text-light">{{ $player->last_seen_at }}</span></h5>
-                    <h5>{{ __("Thứ hạng:") }} {!! app('App\Http\Controllers\UserController')::renderPlayerRank($player->id) !!}</h5>
-                    <h5>Elo: <span id="elo" class="text-gold font-weight-bold" style="font-size: 1.2em;">{!! app('App\Http\Controllers\UserController')::renderElo($player->id) !!}</span></h5>
+                    <h5>{{ __("Thứ hạng:") }} {!! $userPresenter->renderPlayerRank($player->id) !!}</h5>
+                    <h5>Elo: <span id="elo" class="text-gold font-weight-bold" style="font-size: 1.2em;">{!! $userPresenter->renderElo($player->id) !!}</span></h5>
                     <hr style="border-color: rgba(212, 175, 55, 0.2);">
-                    <h5>{{ __("Số trận thắng:") }} <span id="winPoints" class="text-success font-weight-bold">{!! app('App\Http\Controllers\UserController')::renderWinMatchPoints($player->id) !!}</span></h5>
-                    <h5>{{ __("Số trận hòa:") }} <span id="drawPoints" class="text-warning font-weight-bold">{!! app('App\Http\Controllers\UserController')::renderDrawMatchPoints($player->id) !!}</span></h5>
-                    <h5>{{ __("Số trận thua:") }} <span id="losePoints" class="text-danger font-weight-bold">{!! app('App\Http\Controllers\UserController')::renderLoseMatchPoints($player->id) !!}</span></h5>
-                    <h5>{{ __("Tổng số trận đã đấu xong:") }} <span id="totalPoints" class="text-light font-weight-bold">{!! app('App\Http\Controllers\UserController')::renderTotalMatchPoints($player->id) !!}</span></h5>
+                    <h5>{{ __("Số trận thắng:") }} <span id="winPoints" class="text-success font-weight-bold">{!! $userPresenter->renderStat($player->id, 'win') !!}</span></h5>
+                    <h5>{{ __("Số trận hòa:") }} <span id="drawPoints" class="text-warning font-weight-bold">{!! $userPresenter->renderStat($player->id, 'draw') !!}</span></h5>
+                    <h5>{{ __("Số trận thua:") }} <span id="losePoints" class="text-danger font-weight-bold">{!! $userPresenter->renderStat($player->id, 'lose') !!}</span></h5>
+                    <h5>{{ __("Tổng số trận đã đấu xong:") }} <span id="totalPoints" class="text-light font-weight-bold">{!! $userPresenter->renderStat($player->id, 'total') !!}</span></h5>
 
                     @if (auth()->check() && $player->id === auth()->id())
                     <div id="standard-plan" class="alert alert-warning d-flex align-items-center justify-content-between mt-4 mb-0 shadow-lg" style="background: rgba(212, 175, 55, 0.1); border: 1px solid var(--royal-gold); color: var(--royal-gold-light);">
@@ -284,10 +284,10 @@
                                         <span><a class="animate text-gold" href="{{ localized_url('room.watch', ['code' => $room->code]) }}">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></span>
                                     </td>
                                     <td class="text-center host-name">
-                                        {!! app('App\Http\Controllers\UserController')::renderPlayerName($room->host_id) !!}
+                                        {!! $userPresenter->renderPlayerName($room->host_id) !!}
                                     </td>
                                     <td class="text-center guest-name">
-                                        {!! app('App\Http\Controllers\UserController')::renderPlayerName($room->guest_id) !!}
+                                        {!! $userPresenter->renderPlayerName($room->guest_id) !!}
                                     </td>
                                     <td class="text-center">
                                         @if (str_contains($room->fen, ' r '))

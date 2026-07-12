@@ -33,10 +33,10 @@
                                     @foreach($matchUsers as $user)
                                     <tr data-user="{{ $user->id }}">
                                         <td class="text-center font-weight-bold">
-                                            <span class="badge badge-status" style="background: linear-gradient(to bottom, #d4af37, #b89020); color: #0b0c10; box-shadow: 0 0 5px rgba(212, 175, 55, 0.6);"><i class="fas fa-trophy"></i> {!! app('App\Http\Controllers\UserController')::renderUserRank($user->id) !!}</span>
+                                            <span class="badge badge-status" style="background: linear-gradient(to bottom, #d4af37, #b89020); color: #0b0c10; box-shadow: 0 0 5px rgba(212, 175, 55, 0.6);"><i class="fas fa-trophy"></i> {!! $userPresenter->renderUserRank($user->id) !!}</span>
                                         </td>
-                                        <td class="text-center name">{!! app('App\Http\Controllers\UserController')::renderPlayerName($user->id) !!}</td>
-                                        <td class="text-center elo text-gold font-weight-bold">{!! app('App\Http\Controllers\UserController')::renderElo($user->id) !!}</td>
+                                        <td class="text-center name">{!! $userPresenter->renderPlayerName($user->id) !!}</td>
+                                        <td class="text-center elo text-gold font-weight-bold">{!! $userPresenter->renderElo($user->id) !!}</td>
                                         <td class="text-center room-time">{{ $user->created_at }}</td>
                                         <td class="text-center room-time">{{ $user->last_seen_at }}</td>
                                     </tr>
@@ -46,7 +46,7 @@
                         </div>
 
                         <h2 data-step="3" data-intro="{{ __("Danh sách các ván đấu đang diễn ra") }}" class="mt-5 mb-3 h4">
-                            <i class="fas fa-list text-gold"></i> {{ $playingRooms->total() }} {{ __("ván cờ đang thi đấu") }} <small class="text-muted">({!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</small>
+                            <i class="fas fa-list text-gold"></i> {{ $playingRooms->total() }} {{ __("ván cờ đang thi đấu") }} <small class="text-muted">({!! $userPresenter->renderOnlinePlayersCount() !!})</small>
                         </h2>
                     </div>
 
@@ -70,10 +70,10 @@
                                         <span><a class="animate text-gold" href="{{ localized_url('room.watch', ['code' => $room->code]) }}">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></span>
                                     </td>
                                     <td class="text-center host-name">
-                                        {!! app('App\Http\Controllers\UserController')::renderPlayerName($room->host_id) !!}
+                                        {!! $userPresenter->renderPlayerName($room->host_id) !!}
                                     </td>
                                     <td class="text-center guest-name">
-                                        {!! app('App\Http\Controllers\UserController')::renderPlayerName($room->guest_id) !!}
+                                        {!! $userPresenter->renderPlayerName($room->guest_id) !!}
                                     </td>
                                     <td class="text-center">
                                         @if (str_contains($room->fen, ' r '))

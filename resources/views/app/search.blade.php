@@ -15,7 +15,7 @@
                         @include('layout.partials.app.createRoom')
 
                         <h2 data-step="2" data-intro="{{ __("Tìm kiếm kỳ thủ theo tên và email") }}" class="mt-4 mb-3 h4">
-                            <i class="fas fa-search text-gold"></i> {{ __("Tìm kiếm kỳ thủ") }} <small class="text-muted">({!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</small>
+                            <i class="fas fa-search text-gold"></i> {{ __("Tìm kiếm kỳ thủ") }} <small class="text-muted">({!! $userPresenter->renderOnlinePlayersCount() !!})</small>
                         </h2>
 
                         <!-- Premium Royal Search Bar -->
@@ -63,8 +63,8 @@
                             <tbody>
                                 @foreach ($results as $result)
                                 <tr data-user="{{ $result->id }}">
-                                    <td class="text-center name font-weight-bold">{!! app('App\Http\Controllers\UserController')::renderPlayerName($result->id) !!}</td>
-                                    <td class="text-center elo text-gold">{!! app('App\Http\Controllers\UserController')::renderElo($result->id) !!}</td>
+                                    <td class="text-center name font-weight-bold">{!! $userPresenter->renderPlayerName($result->id) !!}</td>
+                                    <td class="text-center elo text-gold">{!! $userPresenter->renderElo($result->id) !!}</td>
                                     <td class="text-center room-time">{{ $result->created_at }}</td>
                                     <td class="text-center room-time">{{ $result->last_seen_at }}</td>
                                 </tr>

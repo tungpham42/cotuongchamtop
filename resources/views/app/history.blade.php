@@ -14,7 +14,7 @@
                     <div class="p-3 border-bottom" style="border-color: rgba(212, 175, 55, 0.2) !important;">
                         @include('layout.partials.app.createRoom')
                         <h2 data-step="2" data-intro="{{ __("Danh sách các ván đấu đã hoàn tất") }}" class="mt-3 mb-0 h4">
-                            <i class="fas fa-archive"></i> {{ __("Lịch sử thi đấu") }} <small class="text-muted">({{ $playedRooms->total() }} {{ __("trận") }}, {!! app('App\Http\Controllers\UserController')::renderOnlinePlayers() !!})</small>
+                            <i class="fas fa-archive"></i> {{ __("Lịch sử thi đấu") }} <small class="text-muted">({{ $playedRooms->total() }} {{ __("trận") }}, {!! $userPresenter->renderOnlinePlayersCount() !!})</small>
                         </h2>
                     </div>
                     <div class="table-responsive">
@@ -35,10 +35,10 @@
                                         <span><a class="animate text-gold" href="{{ localized_url('room.watch', ['code' => $room->code]) }}">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></span>
                                     </td>
                                     <td class="text-center host-name">
-                                        {!! app('App\Http\Controllers\UserController')::renderPlayerName($room->host_id) !!}
+                                        {!! $userPresenter->renderPlayerName($room->host_id) !!}
                                     </td>
                                     <td class="text-center guest-name">
-                                        {!! app('App\Http\Controllers\UserController')::renderPlayerName($room->guest_id) !!}
+                                        {!! $userPresenter->renderPlayerName($room->guest_id) !!}
                                     </td>
                                     <td class="text-center">
                                         @if ($room->result == '1')

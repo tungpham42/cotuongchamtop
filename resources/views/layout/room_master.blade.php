@@ -3,7 +3,7 @@
 @section('aboveBoard')
     @if ($role === 'watch')
         @if (isset($room->host_id))
-            <h5 id="room-title" class="text-center my-1"><span id="host-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($room->host_id) !!}</span> <span id="guest-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($room->guest_id) !!}</span></h5>
+            <h5 id="room-title" class="text-center my-1"><span id="host-title">{!! $userPresenter->renderPlayerName($room->host_id, true) !!}</span> <span id="guest-title">{!! $userPresenter->renderPlayerName($room->guest_id, true) !!}</span></h5>
         @else
             <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __('Quan sát hai kỳ thủ đang chơi') }}">{{ __('Bạn đang theo dõi') }}</h5>
         @endif
@@ -11,7 +11,7 @@
         <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __('Bạn đang đi quân đen') }}">{{ __('Bạn đang đánh ngẫu nhiên') }}</h5>
     @else
         @if (isset($room->host_id))
-            <h5 id="room-title" class="text-center my-1"><span id="host-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($room->host_id) !!}</span> <span id="guest-title">{!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($room->guest_id) !!}</span></h5>
+            <h5 id="room-title" class="text-center my-1"><span id="host-title">{!! $userPresenter->renderPlayerName($room->host_id, true) !!}</span> <span id="guest-title">{!! $userPresenter->renderPlayerName($room->guest_id, true) !!}</span></h5>
         @else
             @php
                 $tooltip = $orientation === 'red' ? 'Bạn đang đi quân đỏ' : 'Bạn đang đi quân đen';

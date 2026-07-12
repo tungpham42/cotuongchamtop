@@ -34,7 +34,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-3 px-2">
                             <div class="w-45 text-right text-truncate">
                                 <span class="host-title" style="color: var(--royal-red-light); font-weight: 800; text-shadow: 0 0 8px rgba(230,57,70,0.6); font-size: 1.1rem;">
-                                    {!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->host_id) !!}
+                                    {!! $userPresenter->renderPlayerName($board->host_id, true) !!}
                                 </span>
                             </div>
                             <div class="w-10">
@@ -42,7 +42,7 @@
                             </div>
                             <div class="w-45 text-left text-truncate">
                                 <span class="guest-title" style="color: var(--royal-gold-light); font-weight: bold; font-size: 1.1rem; text-shadow: 0 0 5px rgba(212, 175, 55, 0.3);">
-                                    {!! app('App\Http\Controllers\UserController')::renderPlayerNameRoom($board->guest_id) !!}
+                                    {!! $userPresenter->renderPlayerName($board->guest_id, true) !!}
                                 </span>
                             </div>
                         </div>
