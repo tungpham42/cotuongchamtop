@@ -1,4 +1,3 @@
-@inject('userPresenter', 'App\Presenters\UserPresenter')
 @php
     $isFiltered = isset($_GET['loai']) && in_array($_GET['loai'], ['van-da-dau', 'van-dau', 'co-the', 'ky-thu']);
     $puzzleCollection = $isFiltered ? $firstUserPuzzles : $userPuzzles;

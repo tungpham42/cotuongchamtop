@@ -1,5 +1,5 @@
 @extends('layout.gamelayout')
-@inject('userPresenter', 'App\Presenters\UserPresenter')
+
 @section('aboveContent')
 <p id="room-code" class="w-100 text-center mt-2">
   <span class="alert alert-info d-inline-block" role="alert"><i class="fad fa-trophy-alt"></i> {{ __("Mã phòng:") }} {{ $roomCode }}</span>

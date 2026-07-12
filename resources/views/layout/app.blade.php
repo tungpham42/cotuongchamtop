@@ -3,7 +3,7 @@
 <head>
     @include('layout.partials.app.head')
 </head>
-@inject('userPresenter', 'App\Presenters\UserPresenter')
+
 @php
     $bodyClassToApply = $bodyClass ?? '';
 

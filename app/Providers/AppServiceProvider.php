@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use App\Contracts\BracketGeneratorInterface;
 use App\Services\SingleEliminationBracketGenerator;
+use App\Presenters\UserPresenter;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer('*', function ($view) {
             $user = Auth::user();
+            $view->with('userPresenter', app(UserPresenter::class));
             $view->with('showAds', !($user && $user->hasAdsRemoved()));
         });
     }

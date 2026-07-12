@@ -1,4 +1,3 @@
-@inject('userPresenter', 'App\Presenters\UserPresenter')
 @php
     $isFiltered = isset($_GET['loai']) && in_array($_GET['loai'], ['van-da-dau', 'co-the', 'the-co', 'ky-thu']);
     $boardCollection = $isFiltered ? $firstPageBoards : $boards;

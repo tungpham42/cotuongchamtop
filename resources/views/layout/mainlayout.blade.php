@@ -1,4 +1,4 @@
-@inject('userPresenter', 'App\Presenters\UserPresenter')
+
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
   <head>

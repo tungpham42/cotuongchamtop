@@ -1,5 +1,5 @@
 @extends('layout.gamelayout')
-@inject('userPresenter', 'App\Presenters\UserPresenter')
+
 @php
     $reactionData = $reactions ?? ['likes' => 0, 'hard' => 0, 'unsolved' => 0, 'rating' => 0];
     $totalReactions = $reactionData['likes'] + $reactionData['hard'] + $reactionData['unsolved'];
