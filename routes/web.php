@@ -18,7 +18,7 @@ use App\Http\Controllers\BroadcastAuthController;
 use App\Actions\Room\GetRandomRoomAction;
 use App\Actions\Room\GetRoomQueriesAction;
 use App\Actions\User\GetUserQueriesAction;
-use App\Actions\User\GetPuzzleQueriesAction;
+use App\Actions\Puzzle\GetPuzzleQueriesAction;
 use App\Actions\User\GetUserStatsAction;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
