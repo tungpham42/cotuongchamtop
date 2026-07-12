@@ -1,3 +1,4 @@
+@inject('userPresenter', 'App\Presenters\UserPresenter')
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
   <head>
@@ -56,7 +57,6 @@
     </style>
   </head>
   <body class="{{ $bodyClass }}">
-    @inject('userPresenter', 'App\Presenters\UserPresenter')
     @include('common.afterBody')
     @include('common.scripts')
     @include('common.adsenseTop')
