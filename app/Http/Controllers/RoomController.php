@@ -8,6 +8,7 @@ use App\Models\Room;
 use App\Models\User;
 use App\Events\RoomUpdated;
 use App\Actions\Room\UpdateRoomEloAction;
+use App\Http\Controllers\TournamentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Schema;
@@ -372,20 +373,18 @@ class RoomController extends Controller
 
     private function advanceTournament(Room $room, $result)
     {
+        // Do not advance if there is no tournament, no next room, or if the result is a draw ('0')
         if (!$room->tournament_id || !$room->next_room_code || $result === '0') return;
 
+        // Determine the winner's ID based on the result
         $winnerId = ($result === '1') ? $room->host_id : $room->guest_id;
-        $nextRoom = Room::where('code', $room->next_room_code)->first();
 
-        if ($nextRoom && $nextRoom->host_id !== $winnerId && $nextRoom->guest_id !== $winnerId) {
-            if (is_null($nextRoom->host_id)) {
-                $nextRoom->update(['host_id' => $winnerId]);
-            } else {
-                $nextRoom->update([
-                    'guest_id' => $winnerId,
-                    'name' => $room->name . " - " . __('Vòng') . " " . $nextRoom->tournament_round
-                ]);
-            }
+        // Fetch the User object for the winner, as required by handleTournamentAdvancement[cite: 1, 2]
+        $winner = User::find($winnerId);
+
+        if ($winner) {
+            // Call the method from TournamentController to handle the advancement and email notifications
+            app(TournamentController::class)->handleTournamentAdvancement($room, $winner);
         }
     }
 
