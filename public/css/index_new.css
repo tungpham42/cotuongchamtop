@@ -39,6 +39,7 @@ html,
 body {
     scrollbar-width: thin;
     scrollbar-color: var(--royal-red) var(--royal-bg);
+    text-rendering: optimizeSpeed;
 }
 
 /* WebKit Base (Chrome, Safari, Edge) */
