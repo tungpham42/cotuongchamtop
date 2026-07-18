@@ -348,14 +348,17 @@
         @if ($role !== 'random')
         if (typeof window.hasMatchStarted !== 'undefined' && !window.hasMatchStarted) {
 
-          // Kiểm tra xem người dùng chưa đăng nhập, phòng không có host,
-          // hoặc đã đăng nhập nhưng không phải host/guest chính thức (chơi ẩn danh)
-          let isAnonymousPlayer = {{ (!auth()->check() || !isset($room->host_id) || (auth()->id() != $room->host_id && auth()->id() != $room->guest_id)) ? 'true' : 'false' }};
+          @php
+            $isAnonymous = !auth()->check()
+                || !isset($room->host_id)
+                || (auth()->id() != $room->host_id && auth()->id() != ($room->guest_id ?? null));
+          @endphp
 
-          if (isAnonymousPlayer) {
-              // Mở khóa bắt buộc vì Presence Channel không đếm được Guest hoặc người chơi ẩn danh
+          @if ($isAnonymous)
+            // Bypass cho khách ẩn danh: Mở khóa bắt buộc vì Presence Channel không đếm được
             window.hasMatchStarted = true;
-          } else {
+          @else
+            // Chặn người chơi chính thức nếu đối thủ chưa vào phòng
             if (!alertShown) {
               alertShown = true;
               bootbox.alert({
@@ -368,7 +371,7 @@
               });
             }
             return false;
-          }
+          @endif
         }
         @endif
 
