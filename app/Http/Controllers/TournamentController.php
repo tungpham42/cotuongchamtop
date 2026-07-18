@@ -9,6 +9,7 @@ use App\Models\Puzzle;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PuzzleController;
+use App\Http\Controllers\MailController; // Added for email notifications
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -113,11 +114,142 @@ class TournamentController extends Controller
                         'guest_id' => $p2 ? $p2->id : null,
                         'name' => ($p1 && $p2) ? "{$p1->name} vs {$p2->name}" : __('TBD')
                     ]);
+
+                    // Nofity players if both are present in the room
+                    if ($p1 && $p2) {
+                        $this->notifyMatchPlayers($p1, $p2, $room);
+                    }
                 }
 
                 $currentRoundRooms[] = $room;
             }
             $previousRoundRooms = $currentRoundRooms;
+        }
+    }
+
+    /**
+     * Send email notifications to both players of a newly scheduled room.
+     */
+    public function notifyMatchPlayers($player1, $player2, Room $room)
+    {
+        $mailController = app(MailController::class);
+        $lang = app()->getLocale();
+
+        // Generate separate URLs for Red (Player 1) and Black (Player 2)
+        $roomUrlRed = localized_url('room.red', ['code' => $room->code]);
+        $roomUrlBlack = localized_url('room.black', ['code' => $room->code]);
+
+        // Send to Player 1 (Red)
+        if (isset($player1->email)) {
+            $emailDataP1 = $this->getTournamentEmailContent($lang, $player2->name, $player1->name, $room->name, $roomUrlRed);
+            $mailController->sendSmtpMail($player1->email, $emailDataP1['subject'], $emailDataP1['content'], $emailDataP1['smtp_messages']);
+        }
+
+        // Send to Player 2 (Black)
+        if (isset($player2->email)) {
+            $emailDataP2 = $this->getTournamentEmailContent($lang, $player1->name, $player2->name, $room->name, $roomUrlBlack);
+            $mailController->sendSmtpMail($player2->email, $emailDataP2['subject'], $emailDataP2['content'], $emailDataP2['smtp_messages']);
+        }
+    }
+
+    /**
+     * Translated templates for tournament match notifications in 5 languages.
+     */
+    private function getTournamentEmailContent(string $lang, string $opponentName, string $playerName, string $roomName, string $roomUrl): array
+    {
+        $translations = [
+            'en' => [
+                'subject' => "Tournament Match Scheduled: You vs {$opponentName}",
+                'content' => "<p>Hi {$playerName},</p>
+                              <p>Your tournament match against <strong>{$opponentName}</strong> is ready!</p>
+                              <p>Please join your match room \"{$roomName}\" here: <a target=\"_blank\" href=\"{$roomUrl}\">{$roomUrl}</a></p>
+                              <p>Good luck!</p>",
+                'smtp_messages' => [
+                    "Notification to {$playerName} failed",
+                    "Notification to {$playerName} sent",
+                    "Message could not be sent"
+                ]
+            ],
+
+            'vi' => [
+                'subject' => "Lịch Thi Đấu Giải: Bạn vs {$opponentName}",
+                'content' => "<p>Chào {$playerName},</p>
+                              <p>Trận đấu giải của bạn với <strong>{$opponentName}</strong> đã sẵn sàng!</p>
+                              <p>Vui lòng tham gia phòng thi đấu \"{$roomName}\" tại đây: <a target=\"_blank\" href=\"{$roomUrl}\">{$roomUrl}</a></p>
+                              <p>Chúc bạn may mắn!</p>",
+                'smtp_messages' => [
+                    "Gửi thông báo cho {$playerName} thất bại",
+                    "Gửi thông báo cho {$playerName} thành công",
+                    "Tin nhắn không gửi được"
+                ]
+            ],
+
+            'ja' => [
+                'subject' => "トーナメント対局予定：あなた vs {$opponentName}",
+                'content' => "<p>{$playerName}さん、こんにちは。</p>
+                              <p><strong>{$opponentName}</strong>とのトーナメント対局の準備が整いました！</p>
+                              <p>こちらの対局ルーム「{$roomName}」にご参加ください：<a target=\"_blank\" href=\"{$roomUrl}\">{$roomUrl}</a></p>
+                              <p>頑張ってください！</p>",
+                'smtp_messages' => [
+                    "{$playerName}への通知に失敗しました",
+                    "{$playerName}への通知を送信しました",
+                    "メッセージを送信できませんでした"
+                ]
+            ],
+
+            'ko' => [
+                'subject' => "토너먼트 경기 예정: 귀하 vs {$opponentName}",
+                'content' => "<p>안녕하세요 {$playerName}님,</p>
+                              <p><strong>{$opponentName}</strong>님과의 토너먼트 경기가 준비되었습니다!</p>
+                              <p>여기 \"{$roomName}\" 경기 방에 참여해 주세요: <a target=\"_blank\" href=\"{$roomUrl}\">{$roomUrl}</a></p>
+                              <p>행운을 빕니다!</p>",
+                'smtp_messages' => [
+                    "{$playerName}님에게 알림 전송 실패",
+                    "{$playerName}님에게 알림이 전송되었습니다",
+                    "메시지를 보내지 못했습니다"
+                ]
+            ],
+
+            'zh' => [
+                'subject' => "锦标赛比赛已安排：你 vs {$opponentName}",
+                'content' => "<p>你好 {$playerName}，</p>
+                              <p>你与 <strong>{$opponentName}</strong> 的锦标赛比赛已经准备就绪！</p>
+                              <p>请点击此处加入你的比赛房间“{$roomName}”：<a target=\"_blank\" href=\"{$roomUrl}\">{$roomUrl}</a></p>
+                              <p>祝你好运！</p>",
+                'smtp_messages' => [
+                    "向 {$playerName} 发送通知失败",
+                    "已向 {$playerName} 发送通知",
+                    "无法发送消息"
+                ]
+            ],
+        ];
+
+        return $translations[$lang] ?? $translations['vi'];
+    }
+
+    /**
+     * Call this method from wherever your match finishes (e.g., RoomController or WebSockets)
+     * to advance the winner to the next round and notify both players once the room is full.
+     */
+    public function handleTournamentAdvancement(Room $currentRoom, User $winner)
+    {
+        if ($currentRoom->next_room_code) {
+            $nextRoom = Room::where('code', $currentRoom->next_room_code)->first();
+
+            if ($nextRoom) {
+                if (empty($nextRoom->host_id)) {
+                    $nextRoom->update(['host_id' => $winner->id]);
+                } else {
+                    $nextRoom->update(['guest_id' => $winner->id]);
+
+                    $host = User::find($nextRoom->host_id);
+                    $guest = User::find($nextRoom->guest_id);
+
+                    $nextRoom->update(['name' => "{$host->name} vs {$guest->name}"]);
+
+                    $this->notifyMatchPlayers($host, $guest, $nextRoom);
+                }
+            }
         }
     }
 
@@ -229,7 +361,6 @@ class TournamentController extends Controller
             $data['cover_photo'] = $request->file('cover_photo')->store('tournaments', 'public');
         }
 
-        // Clear bracket if status is reverted/updated back to 'open'
         if (isset($data['status']) && $data['status'] === 'open' && $tournament->status !== 'open') {
             $tournament->rooms()->delete();
         }
@@ -238,7 +369,6 @@ class TournamentController extends Controller
         return redirect()->route($this->getRouteName('tournaments.show'), $tournament->slug)->with('success', __('Cập nhật giải đấu thành công!'));
     }
 
-    // FUNCTION MỚI: Xử lý Hủy giải đấu
     public function cancel($slug)
     {
         $this->checkAuth();
@@ -253,19 +383,16 @@ class TournamentController extends Controller
         return back()->with('success', __('Giải đấu đã được chuyển sang trạng thái Đã Hủy.'));
     }
 
-    // CẬP NHẬT: Thêm logic chặn xóa vĩnh viễn
     public function destroy($slug)
     {
         $this->checkAuth();
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
         $this->authorizeCreator($tournament);
 
-        // Chặn xóa nếu giải đang diễn ra hoặc đã kết thúc
         if ($tournament->status === 'in_progress' || $tournament->status === 'completed') {
             return back()->with('error', __('Không thể xóa giải đấu đang diễn ra hoặc đã kết thúc. Dữ liệu này cần được lưu trữ.'));
         }
 
-        // Bắt buộc dùng nút "Hủy" nếu có người tham gia (trừ khi đã Hủy từ trước đó)
         if ($tournament->status === 'open' && $tournament->users()->count() > 1) {
              return back()->with('error', __('Giải đấu đã có người đăng ký. Bạn chỉ có thể Hủy giải đấu để thông báo cho người tham gia, không được xóa vĩnh viễn.'));
         }
