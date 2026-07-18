@@ -341,40 +341,6 @@
       @else
         if (game.game_over()) return false;
         if (typeof systemPaused !== 'undefined' && systemPaused) return false;
-
-        // [FIX BUG CHO GUEST & RANDOM]
-        // Bypass kiểm tra hasMatchStarted cho phòng Random (ẩn danh),
-        // khách chưa đăng nhập, hoặc người dùng đã đăng nhập nhưng chơi ẩn danh.
-        @if ($role !== 'random')
-        if (typeof window.hasMatchStarted !== 'undefined' && !window.hasMatchStarted) {
-
-          @php
-            $isAnonymous = !auth()->check()
-                || !isset($room->host_id)
-                || (auth()->id() != $room->host_id && auth()->id() != ($room->guest_id ?? null));
-          @endphp
-
-          @if ($isAnonymous)
-            // Bypass cho khách ẩn danh: Mở khóa bắt buộc vì Presence Channel không đếm được
-            window.hasMatchStarted = true;
-          @else
-            // Chặn người chơi chính thức nếu đối thủ chưa vào phòng
-            if (!alertShown) {
-              alertShown = true;
-              bootbox.alert({
-                message: "{{ __('Vui lòng chờ đối thủ vào phòng để bắt đầu trận đấu!') }}",
-                size: 'small',
-                centerVertical: true,
-                closeButton: false,
-                buttons: { ok: { className: 'btn-danger pulse-red' } },
-                callback: function() { alertShown = false; }
-              });
-            }
-            return false;
-          @endif
-        }
-        @endif
-
         if ((game.turn() === 'r' && piece.search(/^b/) !== -1) || (game.turn() === 'b' && piece.search(/^r/) !== -1)) return false;
         if ((board.orientation() == 'red' && game.turn() === 'b') || (board.orientation() == 'black' && game.turn() === 'r')) return false;
       @endif
