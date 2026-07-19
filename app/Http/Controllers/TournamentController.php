@@ -85,45 +85,90 @@ class TournamentController extends Controller
         $totalPlayers = $players->count();
         if ($totalPlayers < 2) return;
 
-        $totalRounds = max(1, log($totalPlayers, 2));
+        // Calculate the total rounds needed (e.g., 3 players = 2 rounds, 5 players = 3 rounds)
+        $totalRounds = (int) ceil(log($totalPlayers, 2));
+        $powerOf2 = pow(2, $totalRounds);
+
+        $roomsByRound = [];
         $previousRoundRooms = [];
 
+        // Build the full empty bracket from the Final (highest round) down to Round 1
         for ($round = $totalRounds; $round >= 1; $round--) {
-            $matchesInRound = $totalPlayers / pow(2, $round);
+            $matchesInRound = pow(2, $totalRounds - $round);
             $currentRoundRooms = [];
 
             for ($i = 0; $i < $matchesInRound; $i++) {
+                $nextRoomCode = null;
+                if ($round < $totalRounds) {
+                    $nextRoomIndex = (int) floor($i / 2);
+                    $nextRoomCode = $previousRoundRooms[$nextRoomIndex]->code;
+                }
+
                 $room = Room::create([
-                    'code' => md5(time() . uniqid()),
-                    'fen' => env('INITIAL_FEN'),
+                    'code' => md5(time() . uniqid() . $round . $i),
+                    'fen' => env('INITIAL_FEN', 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1'),
                     'tournament_id' => $tournament->id,
                     'tournament_round' => $round,
                     'red_time' => 600,
                     'black_time' => 600,
                     'active_player' => 'waiting',
                     'modified_at' => now(),
-                    'next_room_code' => $round == $totalRounds ? null : $previousRoundRooms[floor($i / 2)]->code
+                    'next_room_code' => $nextRoomCode
                 ]);
-
-                if ($round == 1) {
-                    $p1 = $players->pop();
-                    $p2 = $players->pop();
-
-                    $room->update([
-                        'host_id' => $p1 ? $p1->id : null,
-                        'guest_id' => $p2 ? $p2->id : null,
-                        'name' => ($p1 && $p2) ? "{$p1->name} vs {$p2->name}" : __('TBD')
-                    ]);
-
-                    // Nofity players if both are present in the room
-                    if ($p1 && $p2) {
-                        $this->notifyMatchPlayers($p1, $p2, $room);
-                    }
-                }
 
                 $currentRoundRooms[] = $room;
             }
+            $roomsByRound[$round] = $currentRoundRooms;
             $previousRoundRooms = $currentRoundRooms;
+        }
+
+        // Distribute players in Round 1 handling "byes" for odd/non-power-of-2 numbers
+        $round1Rooms = $roomsByRound[1];
+
+        // Calculate how many actual 2-player matches happen in round 1
+        $matchesToPlay = $totalPlayers - ($powerOf2 / 2);
+
+        $playersQueue = $players->values();
+        $playerIndex = 0;
+
+        foreach ($round1Rooms as $index => $room) {
+            if ($index < $matchesToPlay) {
+                // Regular match with 2 players
+                $p1 = $playersQueue[$playerIndex++];
+                $p2 = $playersQueue[$playerIndex++];
+
+                $room->update([
+                    'host_id' => $p1->id,
+                    'guest_id' => $p2->id,
+                    'name' => "{$p1->name} vs {$p2->name}"
+                ]);
+
+                $this->notifyMatchPlayers($p1, $p2, $room);
+            } else {
+                // Bye: Only 1 player in this branch, move them directly to Round 2
+                $p1 = $playersQueue[$playerIndex++];
+
+                if ($room->next_room_code) {
+                    $nextRoom = Room::where('code', $room->next_room_code)->first();
+                    if ($nextRoom) {
+                        if (empty($nextRoom->host_id)) {
+                            $nextRoom->update(['host_id' => $p1->id]);
+                        } else {
+                            $nextRoom->update(['guest_id' => $p1->id]);
+
+                            // If this Round 2 match is now full from two byes, notify them
+                            $host = User::find($nextRoom->host_id);
+                            $guest = User::find($nextRoom->guest_id);
+
+                            $nextRoom->update(['name' => "{$host->name} vs {$guest->name}"]);
+                            $this->notifyMatchPlayers($host, $guest, $nextRoom);
+                        }
+                    }
+                }
+
+                // Delete the unused Round 1 room to keep the database clean
+                $room->delete();
+            }
         }
     }
 
