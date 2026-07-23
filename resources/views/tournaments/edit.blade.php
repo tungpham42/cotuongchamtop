@@ -41,7 +41,12 @@
 
                             <div class="col-md-4 form-group">
                                 <label style="color: var(--royal-gold); font-weight: bold;">{{ __('Số lượng kỳ thủ') }} <span style="color: var(--royal-red-light);">*</span></label>
-                                <input type="number" name="max_players" class="form-control" min="2" max="16" value="{{ $tournament->max_players }}" required>
+                                <select name="max_players" class="form-control" required>
+                                    <option value="2" {{ $tournament->max_players == 2 ? 'selected' : '' }}>2</option>
+                                    <option value="4" {{ $tournament->max_players == 4 ? 'selected' : '' }}>4</option>
+                                    <option value="8" {{ $tournament->max_players == 8 ? 'selected' : '' }}>8</option>
+                                    <option value="16" {{ $tournament->max_players == 16 ? 'selected' : '' }}>16</option>
+                                </select>
                             </div>
 
                             <div class="col-md-4 form-group">

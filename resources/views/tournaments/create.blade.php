@@ -35,15 +35,21 @@
 
                             <div class="col-md-4 form-group">
                                 <label style="color: var(--royal-gold); font-weight: bold;">{{ __('Số lượng kỳ thủ') }} <span style="color: var(--royal-red-light);">*</span></label>
-                                <input type="number" name="max_players" class="form-control" min="2" max="16" value="16" required>
+                                <select name="max_players" class="form-control" required>
+                                    <option value="2" selected>2</option>
+                                    <option value="4">4</option>
+                                    <option value="8">8</option>
+                                    <option value="16">16</option>
+                                </select>
                             </div>
 
                             <div class="col-md-4 form-group">
                                 <label style="color: var(--royal-gold); font-weight: bold;">{{ __('Trạng thái') }} <span style="color: var(--royal-red-light);">*</span></label>
                                 <select name="status" class="form-control" required>
-                                    <option value="open">{{ __('Mở đăng ký') }}</option>
+                                    <option value="open" selected>{{ __('Mở đăng ký') }}</option>
                                     <option value="in_progress">{{ __('Đang diễn ra') }}</option>
                                     <option value="completed">{{ __('Đã kết thúc') }}</option>
+                                    <option value="cancelled">{{ __('Đã hủy') }}</option>
                                 </select>
                             </div>
                         </div>

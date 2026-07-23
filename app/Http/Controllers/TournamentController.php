@@ -352,7 +352,7 @@ class TournamentController extends Controller
             'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:20480',
             'start_date' => 'required|date',
             'status' => 'required|in:open,in_progress,completed,cancelled',
-            'max_players' => 'required|integer|min:2',
+            'max_players' => 'required|in:2,4,8,16',
         ]);
 
         $data = $request->all();
@@ -394,7 +394,7 @@ class TournamentController extends Controller
             'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:20480',
             'start_date' => 'required|date',
             'status' => 'required|in:open,in_progress,completed,cancelled',
-            'max_players' => 'required|integer|min:2',
+            'max_players' => 'required|in:2,4,8,16',
         ]);
 
         $data = $request->all();
