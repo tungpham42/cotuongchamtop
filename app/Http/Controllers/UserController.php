@@ -17,6 +17,7 @@ use App\Models\Room;
 use App\Models\Session as DbSession;
 use App\Actions\User\UpdateOnlineStatus;
 use App\Presenters\UserPresenter;
+use App\Presenters\UserDataTablePresenter;
 use Creativeorange\Gravatar\Facades\Gravatar;
 use Carbon\Carbon;
 use DataTables;
@@ -25,32 +26,45 @@ use App\Events\PlayersUpdated; // Import the event
 
 class UserController extends Controller
 {
-    public function __construct(private UserPresenter $presenter) {}
+    public function __construct(private UserPresenter $userPresenter) {}
 
-    public function getUsersVi(Request $request)
+    private function getUsersData(Request $request, string $locale)
     {
-        return $this->getUsersDatatable($request, 'Thách đấu', 'Hồ sơ');
+        if ($request->ajax()) {
+            $users = User::select(['id', 'name', 'email', 'profile_picture', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at']);
+
+            // Pass the internal UserPresenter to the DataTables presenter
+            $presenter = new UserDataTablePresenter($locale, $this->userPresenter);
+
+            return Datatables::of($users)
+                ->addColumn('rank', fn($row) => $presenter->formatRank($row))
+                ->addColumn('name', fn($row) =>$presenter->formatName($row))
+                ->addColumn('elo', fn($row) => $presenter->formatElo($row))
+                ->addColumn('action', fn($row) => $presenter->formatAction($row))
+                ->addColumn('time', fn($row) => $presenter->formatTime($row))
+                ->escapeColumns([])
+                ->orderColumn('name', 'name $1')
+                ->orderColumn('elo', 'elo $1')
+                ->orderColumn('time', 'created_at $1')
+                ->filterColumn('name', function($query, $keyword) {
+                    $query->where(function($query) use ($keyword) {
+                        $query->orWhere('name', 'like', '%' . $keyword . '%');
+                    });
+                })
+                ->filterColumn('time', function($query, $keyword) {
+                    $sql = "created_at like ?";
+                    $query->whereRaw($sql, ["%{$keyword}%"]);
+                })
+                ->rawColumns(['rank', 'name', 'elo', 'action', 'time'])
+                ->make(true);
+        }
     }
 
-    public function getUsersEn(Request $request)
-    {
-        return $this->getUsersDatatable($request, 'Challenge', 'Profile');
-    }
-
-    public function getUsersJa(Request $request)
-    {
-        return $this->getUsersDatatable($request, '挑戦', 'プロフィール');
-    }
-
-    public function getUsersKo(Request $request)
-    {
-        return $this->getUsersDatatable($request, '도전', '프로필');
-    }
-
-    public function getUsersZh(Request $request)
-    {
-        return $this->getUsersDatatable($request, '挑战', '个人资料');
-    }
+    public function getUsersVi(Request $request) { return $this->getUsersData($request, 'vi'); }
+    public function getUsersEn(Request $request) { return $this->getUsersData($request, 'en'); }
+    public function getUsersJa(Request $request) { return $this->getUsersData($request, 'ja'); }
+    public function getUsersKo(Request $request) { return $this->getUsersData($request, 'ko'); }
+    public function getUsersZh(Request $request) { return $this->getUsersData($request, 'zh'); }
 
     public function uploadProfilePicture(Request $request)
     {
@@ -84,49 +98,6 @@ class UserController extends Controller
         }
 
         return back()->with('success', __('Bạn đã xóa ảnh đại diện thành công!'));
-    }
-
-    private function getUsersDatatable(Request $request, string $challengeText, string $profileText)
-    {
-        if ($request->ajax()) {
-            $users = User::select(['id', 'name', 'email', 'profile_picture', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at']);
-
-            return Datatables::of($users)
-                ->addColumn('rank', fn($row) => '<span class="badge badge-status"><i class="fas fa-medal"></i> ' . $this->presenter->renderUserRank($row->id) . '</span>')
-                ->addColumn('name', fn($row) => $this->presenter->renderPlayerName($row->id, false, true))
-                ->addColumn('elo', fn($row) => '<strong style="color: var(--royal-gold);">' . $this->presenter->renderElo($row->id) . '</strong>')
-                ->addColumn('action', function($row) use ($challengeText, $profileText) {
-                    if (auth()->check()) {
-                        if (auth()->id() != $row->id) {
-                            $actionBtn = '<a class="btn btn-danger text-light mr-1 pulse-red" style="width: 140px;" href="javascript:compete('.$row->id.');"><i class="far fa-mouse"></i> '.$challengeText.'</a>';
-                        } else {
-                            $actionBtn = '<a class="btn btn-dark text-light mr-1" style="width: 140px; cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> '.$challengeText.'</a>';
-                        }
-                    } else {
-                        $actionBtn = '<a class="btn btn-danger text-light mr-1 pulse-red" style="width: 140px;" href="'.localized_url('login').'"><i class="far fa-sign-in"></i> '.$challengeText.'</a>';
-                    }
-                    $actionBtn .= '<a class="btn btn-dark text-light" style="width: 140px;" href="'.localized_url('app.player', ['id' => $row->id]).'"><i class="far fa-user-alt"></i> '.$profileText.'</a>';
-                    return $actionBtn;
-                })
-                ->addColumn('time', function($row){
-                    return date('Y-m-d | H:i:s', strtotime($row->created_at));
-                })
-                ->escapeColumns([])
-                ->orderColumn('name', 'name $1')
-                ->orderColumn('elo', 'elo $1')
-                ->orderColumn('time', 'created_at $1')
-                ->filterColumn('name', function($query, $keyword) {
-                    $query->where(function($query) use ($keyword) {
-                        $query->orWhere('name', 'like', '%' . $keyword . '%');
-                    });
-                })
-                ->filterColumn('time', function($query, $keyword) {
-                    $sql = "created_at like ?";
-                    $query->whereRaw($sql, ["%{$keyword}%"]);
-                })
-                ->rawColumns(['rank', 'name', 'elo', 'action', 'time'])
-                ->make(true);
-        }
     }
 
     // LEGACY METHODS BELOW (to be refactored to use UserPresenter)

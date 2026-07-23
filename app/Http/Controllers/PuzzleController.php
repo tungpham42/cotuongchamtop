@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use App\Presenters\PuzzleDataTablePresenter;
 use DataTables;
 
 class PuzzleController extends Controller
@@ -25,66 +26,21 @@ class PuzzleController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    public function getPuzzlesVi(Request $request)
-    {
-        return $this->getPuzzlesDatatable($request, 'Giải cờ thế', 'Xem trước');
-    }
-
-    public function getPuzzlesEn(Request $request)
-    {
-        return $this->getPuzzlesDatatable($request, 'Solve puzzle', 'Preview');
-    }
-
-    public function getPuzzlesJa(Request $request)
-    {
-        return $this->getPuzzlesDatatable($request, 'パズルを解く', 'プレビュー');
-    }
-
-    public function getPuzzlesKo(Request $request)
-    {
-        return $this->getPuzzlesDatatable($request, '퍼즐 풀기', '미리보기');
-    }
-
-    public function getPuzzlesZh(Request $request)
-    {
-        return $this->getPuzzlesDatatable($request, '解谜', '预览');
-    }
-
-    /**
      * Shared logic to generate the DataTables response for puzzles.
      */
-    private function getPuzzlesDatatable(Request $request, string $solveText, string $previewText)
+    private function getPuzzlesData(Request $request, string $locale)
     {
         if ($request->ajax()) {
             $puzzles = Puzzle::public()->select(['id', 'name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'updated_at']);
 
+            $presenter = new PuzzleDataTablePresenter($locale, $this->getPuzzleRankAction);
+
             return Datatables::of($puzzles)
-                ->addColumn('rank', function($row){
-                    return $this->getPuzzleRankAction->execute($row->id);
-                })
-                ->addColumn('name', function($row){
-                    return '<a class="text-danger animate showPromotion" style="cursor: pointer !important; text-decoration: none !important;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/the-co/").$row->slug.'">'.$row->name.'</a>';
-                })
-                ->addColumn('rating', function($row){
-                    return (int) $row->likes_count;
-                })
-                ->addColumn('action', function($row) use ($solveText, $previewText) {
-                    $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 160px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/giai-co-the/").$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> '.$solveText.'</a>';
-                    $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye""></i> '.$previewText.'</a>';
-                    return $actionBtn;
-                })
-                ->addColumn('time', function($row){
-                    return date('Y-m-d | H:i:s', strtotime($row->updated_at));
-                })
+                ->addColumn('rank', fn($row) => $presenter->formatRank($row))
+                ->addColumn('name', fn($row) => $presenter->formatName($row))
+                ->addColumn('rating', fn($row) => $presenter->formatRating($row))
+                ->addColumn('action', fn($row) => $presenter->formatAction($row))
+                ->addColumn('time', fn($row) => $presenter->formatTime($row))
                 ->escapeColumns([])
                 ->orderColumn('name', 'name $1')
                 ->orderColumn('rating', 'likes_count $1')
@@ -103,6 +59,12 @@ class PuzzleController extends Controller
                 ->make(true);
         }
     }
+
+    public function getPuzzlesVi(Request $request) { return $this->getPuzzlesData($request, 'vi'); }
+    public function getPuzzlesEn(Request $request) { return $this->getPuzzlesData($request, 'en'); }
+    public function getPuzzlesJa(Request $request) { return $this->getPuzzlesData($request, 'ja'); }
+    public function getPuzzlesKo(Request $request) { return $this->getPuzzlesData($request, 'ko'); }
+    public function getPuzzlesZh(Request $request) { return $this->getPuzzlesData($request, 'zh'); }
 
     public static function renderPuzzleRank($id)
     {
