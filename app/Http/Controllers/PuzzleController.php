@@ -11,8 +11,6 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\Controller;
 use App\Presenters\PuzzleDataTablePresenter;
 use DataTables;
 
@@ -65,44 +63,6 @@ class PuzzleController extends Controller
     public function getPuzzlesJa(Request $request) { return $this->getPuzzlesData($request, 'ja'); }
     public function getPuzzlesKo(Request $request) { return $this->getPuzzlesData($request, 'ko'); }
     public function getPuzzlesZh(Request $request) { return $this->getPuzzlesData($request, 'zh'); }
-
-    public static function renderPuzzleRank($id)
-    {
-        $puzzle = Puzzle::find($id);
-        if (!$puzzle) {
-            return null;
-        }
-
-        $likes = $puzzle->likes_count;
-
-        return Puzzle::public()
-                ->where('likes_count', '>', $likes)
-                ->count() + 1;
-    }
-
-    public static function getUserPuzzles()
-    {
-        return Puzzle::public()
-                        ->select('name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'description', 'updated_at')
-                        ->orderByDesc('updated_at')
-                        ->paginate(6);
-    }
-
-    public static function getFirstUserPuzzles()
-    {
-        return Puzzle::public()
-                        ->select('name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'description', 'updated_at')
-                        ->orderByDesc('updated_at')
-                        ->paginate(6, ['*'], 'page', 1);
-    }
-
-    public static function getSitemapPuzzles()
-    {
-        return Puzzle::public()
-                        ->select('name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'description', 'updated_at')
-                        ->orderByDesc('updated_at')
-                        ->paginate(4096);
-    }
 
     /**
      * Show the form for creating a new resource.
@@ -188,17 +148,6 @@ class PuzzleController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      *
      * @param  int  $id
@@ -207,21 +156,6 @@ class PuzzleController extends Controller
     public function show(Puzzle $puzzle, $name)
     {
         return Puzzle::where('name', $name)->value('fen');
-    }
-
-    public static function findBySlug(string $slug): ?Puzzle
-    {
-        return Puzzle::where('slug', $slug)->first();
-    }
-
-    public static function getFen($slug)
-    {
-        return optional(self::findBySlug($slug))->fen;
-    }
-
-    public static function getName($slug)
-    {
-        return optional(self::findBySlug($slug))->name;
     }
 
     public function upvote(Request $request)
@@ -456,54 +390,5 @@ class PuzzleController extends Controller
         $agent = (string) $request->userAgent();
 
         return 'guest:' . hash('sha256', $ip . '|' . $agent);
-    }
-
-    public static function getNameByFen(string $fen): ?string
-    {
-        // Remove any trailing move/turn information to get the pure position
-        $fenBase = trim(explode(' ', $fen)[0]);
-
-        // Also try the full FEN in case it's stored that way
-        $puzzle = Puzzle::where('fen', $fenBase)->first();
-
-        if (!$puzzle) {
-            // Try with the full FEN
-            $puzzle = Puzzle::where('fen', $fen)->first();
-        }
-
-        return $puzzle ? $puzzle->name : null;
-    }
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

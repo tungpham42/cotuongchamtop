@@ -56,7 +56,6 @@ Route::controller(RoomController::class)->group(function () {
     Route::get('/readMoves/{code}', 'getMoves')->name('getMoves');
     Route::get('/getFEN/{code}', 'getEventStream')->name('getEventStream');
     Route::post('/startTimer/{roomCode}/{player}', 'startTimer');
-    Route::post('/pauseTimer/{roomCode}/{player}', 'pauseTimer');
     Route::post('/switchTurn/{roomCode}', 'switchTurn');
     Route::get('/getTime/{roomCode}', 'getTime');
     Route::post('/saveTime/{roomCode}', 'saveTime');

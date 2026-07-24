@@ -94,16 +94,6 @@ class RoomController extends Controller
         return response()->json(['room' => null]);
     }
 
-    public static function getRandomRoom() {
-        return Room::whereNull('pass')
-            ->whereNull('host_id')
-            ->whereNull('result')
-            ->where('fen', '!=', env('INITIAL_FEN', self::INITIAL_FEN))
-            ->where('fen', 'LIKE', '% b %')
-            ->inRandomOrder()
-            ->first();
-    }
-
     public static function getNewRoom()
     {
         $firstRoom = Room::where('fen', env('INITIAL_FEN', self::INITIAL_FEN))
@@ -114,11 +104,6 @@ class RoomController extends Controller
             ->first();
 
         return response()->json(['room' => $firstRoom]);
-    }
-
-    public static function getRoomName($code)
-    {
-        return Room::where('code', $code)->value('name');
     }
 
     public function create(Request $request)
@@ -281,26 +266,6 @@ class RoomController extends Controller
         return response()->json(['success' => $successMessages[$request->input('side')][$request->input('result')] ?? __('Result recorded.')]);
     }
 
-    public static function getHostId(Request $request) { return Room::where('code', $request->input('ma-phong'))->value('host_id'); }
-    public static function getHostIdRoute($code) { return Room::where('code', $code)->value('host_id'); }
-
-    public static function getRoomIds(Request $request)
-    {
-        $roomData = Room::select('host_id', 'guest_id')->where('code', '=', $request->input('ma-phong'))->first();
-        return $roomData ? $roomData->toArray() : [];
-    }
-
-    public static function getMatchRooms() { return Room::whereNotNull('host_id')->orderBy('modified_at', 'desc')->paginate(10); }
-    public static function getPlayingRooms() { return Room::whereNotNull('host_id')->whereNull('result')->orderBy('modified_at', 'desc')->paginate(10); }
-    public static function getPlayedRooms() { return Room::whereNotNull('host_id')->whereNotNull('result')->orderBy('modified_at', 'desc')->paginate(10); }
-    public static function getPlayerRooms($id) { return Room::where('host_id', $id)->orWhere('guest_id', $id)->orderBy('modified_at', 'desc')->paginate(10); }
-    public static function getBoards() { return Room::whereNotNull('host_id')->whereNull('result')->orderBy('modified_at', 'desc')->paginate(6); }
-    public static function getFirstPageBoards() { return Room::whereNotNull('host_id')->whereNull('result')->orderBy('modified_at', 'desc')->paginate(6, ['*'], 'page', 1); }
-    public static function getPlayedBoards() { return Room::whereNotNull('host_id')->whereNotNull('result')->orderBy('modified_at', 'desc')->paginate(6); }
-    public static function getFirstPagePlayedBoards() { return Room::whereNotNull('host_id')->whereNotNull('result')->orderBy('modified_at', 'desc')->paginate(6, ['*'], 'page', 1); }
-
-    public static function hasRoomcode(Request $request) { return Room::where('code', $request->input('ma-phong'))->exists() ? 'yes' : 'no'; }
-
     public function show(Room $room, $code)
     {
         if (auth()->check()) auth()->user()->update(['last_seen_at' => now()]);
@@ -363,17 +328,6 @@ class RoomController extends Controller
         $response->headers->set('Cache-Control', 'no-cache, no-transform');
 
         return $response;
-    }
-
-    public static function updateRoomScores($id)
-    {
-        $hostWin = Room::where('host_id', $id)->where('result', '1')->count();
-        $guestWin = Room::where('guest_id', $id)->where('result', '-1')->count();
-        $hostDraw = Room::where('host_id', $id)->where('result', '0')->count();
-        $guestDraw = Room::where('guest_id', $id)->where('result', '0')->count();
-
-        Room::updateOrInsert(['id' => $id], ['host_score' => $hostWin + 0.5 * $hostDraw]);
-        Room::updateOrInsert(['id' => $id], ['guest_score' => $guestWin + 0.5 * $guestDraw]);
     }
 
     public function prepareAnonymousRoom(string $sessionId): Room
@@ -481,11 +435,6 @@ class RoomController extends Controller
         ]);
     }
 
-    public function pauseTimer($roomCode, $player)
-    {
-        return response()->json(['success' => true]);
-    }
-
     public function startTimer($roomCode, $player)
     {
         $room = Room::where('code', $roomCode)->first();
@@ -547,7 +496,7 @@ class RoomController extends Controller
         ]);
     }
 
-    public function checkMatchStatus(Request $request) // Duplicated functionality, but kept for non-anonymous route parity
+    public function checkMatchStatus(Request $request)
     {
         $sessionId = $request->input('session_id');
         if (!$sessionId) return response()->json(['status' => 'error', 'message' => __('Không tìm thấy phiên bản kết nối (Session ID).')], 400);
