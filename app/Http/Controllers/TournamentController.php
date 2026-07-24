@@ -41,6 +41,9 @@ class TournamentController extends Controller
 
     public function join(Request $request, $slug)
     {
+        // Add this missing authorization check
+        $this->checkAuth();
+
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
         $userId = auth()->id();
 

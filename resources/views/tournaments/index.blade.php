@@ -105,12 +105,18 @@
                                     <i class="fad fa-check-circle"></i> {{ __('Đã tham gia') }}
                                 </button>
                             @elseif($isOpen && !$isFull)
-                                <form action="{{ localized_url('tournaments.join', ['slug' => $tournament->slug]) }}" method="POST" class="w-100 ml-2">
-                                    @csrf
-                                    <button type="submit" class="btn btn-danger btn-sm w-100 pulse-red">
-                                        <i class="fad fa-sign-in-alt"></i> {{ __('Tham gia') }}
-                                    </button>
-                                </form>
+                                @auth
+                                    <form action="{{ localized_url('tournaments.join', ['slug' => $tournament->slug]) }}" method="POST" class="w-100 ml-2">
+                                        @csrf
+                                        <button type="submit" class="btn btn-danger btn-sm w-100 pulse-red">
+                                            <i class="fad fa-sign-in-alt"></i> {{ __('Tham gia') }}
+                                        </button>
+                                    </form>
+                                @else
+                                    <a href="{{ localized_url('login') }}" class="btn btn-danger btn-sm w-100 ml-2 pulse-red">
+                                        <i class="fad fa-sign-in-alt"></i> {{ __('Đăng nhập để tham gia') }}
+                                    </a>
+                                @endauth
                             @elseif($isFull)
                                 <button class="btn btn-sm w-100 ml-2" disabled style="background: var(--royal-wood); color: var(--royal-gold-light);">
                                     <i class="fad fa-users-slash"></i> {{ __('Đã đầy') }}
