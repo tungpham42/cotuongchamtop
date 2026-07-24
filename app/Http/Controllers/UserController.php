@@ -51,12 +51,6 @@ class UserController extends Controller
         }
     }
 
-    public function getUsersVi(Request $request) { return $this->getUsersData($request, 'vi'); }
-    public function getUsersEn(Request $request) { return $this->getUsersData($request, 'en'); }
-    public function getUsersJa(Request $request) { return $this->getUsersData($request, 'ja'); }
-    public function getUsersKo(Request $request) { return $this->getUsersData($request, 'ko'); }
-    public function getUsersZh(Request $request) { return $this->getUsersData($request, 'zh'); }
-
     public function uploadProfilePicture(Request $request)
     {
         $request->validate([
@@ -135,8 +129,7 @@ class UserController extends Controller
             'new_confirm_password.same' => __('Mật khẩu lặp lại và mật khẩu mới phải giống nhau.'),
         ]);
 
-        $oldId = $request->input('current_id');
-        $user = User::findOrFail($oldId); // Replaced find() with findOrFail()
+        $user = auth()->user(); // Fix: Use authenticated user instead of $request->input('current_id')
 
         if (!Hash::check($request->input('current_password'), $user->password)) {
             return back()->withErrors(['current_password' => __('Mật khẩu hiện tại không khớp.')]);
@@ -162,11 +155,8 @@ class UserController extends Controller
             'new_name.unique' => __('Tên này đã được sử dụng.'),
         ]);
 
-        $oldId = $request->input('current_id');
-        $newName = $request->input('new_name');
-
-        $user = User::findOrFail($oldId); // Replaced find() with findOrFail()
-        $user->name = $newName;
+        $user = auth()->user(); // Fix: Use authenticated user
+        $user->name = $request->input('new_name');
         $user->save();
 
         return back()->with('success', __('Bạn đã thay đổi tên thành công!'));
@@ -174,8 +164,7 @@ class UserController extends Controller
 
     public function changeUserInterface(Request $request)
     {
-        $currentId = $request->input('current_id');
-        $user = User::findOrFail($currentId); // Replaced find() with findOrFail()
+        $user = auth()->user(); // Fix: Use authenticated user
 
         $user->board_theme = $request->input('board_theme');
         $user->pieces_theme = $request->input('pieces_theme');

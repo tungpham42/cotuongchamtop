@@ -10,6 +10,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PuzzleController;
 use App\Http\Controllers\MailController; // Added for email notifications
+use App\Actions\Room\GetRandomRoomAction; // Imported the action
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -306,7 +307,7 @@ class TournamentController extends Controller
             'headTitle' => $request->route('headTitle'),
             'bodyClass' => 'dashboard',
             'tournaments' => $tournaments,
-            'randomRoom' => RoomController::getRandomRoom(),
+            'randomRoom' => app(GetRandomRoomAction::class)->execute(),
             'roomCode' => '',
             'cdnUrl' => url(''),
         ]));
@@ -325,7 +326,7 @@ class TournamentController extends Controller
             'bodyClass' => 'dashboard',
             'tournament' => $tournament,
             'rounds' => $rounds,
-            'randomRoom' => RoomController::getRandomRoom(),
+            'randomRoom' => app(GetRandomRoomAction::class)->execute(),
             'roomCode' => '',
             'cdnUrl' => url(''),
         ], ['slug' => $slug]));
@@ -337,7 +338,7 @@ class TournamentController extends Controller
         return view('tournaments.create', localized_page_data('tournaments.create', app()->getLocale(), [
             'headTitle' => $request->route('headTitle'),
             'bodyClass' => 'dashboard',
-            'randomRoom' => RoomController::getRandomRoom(),
+            'randomRoom' => app(GetRandomRoomAction::class)->execute(),
             'roomCode' => '',
             'cdnUrl' => url(''),
         ]));
@@ -376,7 +377,7 @@ class TournamentController extends Controller
             'headTitle' => $request->route('headTitle') . ': ' . $tournament->name,
             'bodyClass' => 'dashboard',
             'tournament' => $tournament,
-            'randomRoom' => RoomController::getRandomRoom(),
+            'randomRoom' => app(GetRandomRoomAction::class)->execute(),
             'roomCode' => '',
             'cdnUrl' => url(''),
         ], ['slug' => $slug]));

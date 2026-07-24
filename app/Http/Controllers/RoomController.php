@@ -63,12 +63,6 @@ class RoomController extends Controller
         }
     }
 
-    public function getRoomsVi(Request $request) { return $this->getRoomsData($request, 'vi'); }
-    public function getRoomsEn(Request $request) { return $this->getRoomsData($request, 'en'); }
-    public function getRoomsJa(Request $request) { return $this->getRoomsData($request, 'ja'); }
-    public function getRoomsKo(Request $request) { return $this->getRoomsData($request, 'ko'); }
-    public function getRoomsZh(Request $request) { return $this->getRoomsData($request, 'zh'); }
-
     public static function quickMatch()
     {
         dispatch(new QuickMatchJob());

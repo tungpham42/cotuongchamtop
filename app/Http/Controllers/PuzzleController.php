@@ -58,12 +58,6 @@ class PuzzleController extends Controller
         }
     }
 
-    public function getPuzzlesVi(Request $request) { return $this->getPuzzlesData($request, 'vi'); }
-    public function getPuzzlesEn(Request $request) { return $this->getPuzzlesData($request, 'en'); }
-    public function getPuzzlesJa(Request $request) { return $this->getPuzzlesData($request, 'ja'); }
-    public function getPuzzlesKo(Request $request) { return $this->getPuzzlesData($request, 'ko'); }
-    public function getPuzzlesZh(Request $request) { return $this->getPuzzlesData($request, 'zh'); }
-
     /**
      * Show the form for creating a new resource.
      *
