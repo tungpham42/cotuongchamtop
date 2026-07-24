@@ -772,6 +772,9 @@ body.register main {
     text-transform: uppercase;
     font-weight: 600;
     letter-spacing: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 /* ==========================================================================
    LIQUID ROYAL BUTTONS
