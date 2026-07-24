@@ -27,7 +27,7 @@ $action = $actionMap[$level ?? '3'] ?? 'chơi';
     {{-- GRANDMASTER CUSTOM UI --}}
     <div class="grandmaster-header text-center mt-3 mb-2 p-3 rounded" style="background: linear-gradient(45deg, #1a0505, #3a0000); border: 2px solid #ffd700; color: #ffd700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);">
         <img src="/img/xiangqipieces/wiki/rK.svg" width="55" class="mb-2" style="filter: drop-shadow(0 0 8px #ffd700);" alt="Grandmaster">
-        <h4 class="text-uppercase font-weight-bold mb-1"><i class="fas fa-crown"></i> {{ __("Đại Kiện Tướng") }} Phạm Tùng</h4>
+        <h4 class="text-uppercase font-weight-bold mb-1"><i class="fas fa-crown"></i> {{ __("Đại Kiện Tướng") }}</h4>
         <p class="m-0 small text-light">{{ __("Bạn đang khiêu chiến với đối thủ mạnh nhất.") }}</p>
     </div>
 @else

@@ -61,7 +61,7 @@
         pollInterval = setInterval(() => {
             waitSeconds++;
 
-            // If 10 seconds have passed and no human is found, match with Phạm Tùng (Bot)
+            // If 10 seconds have passed and no human is found, match with AI (Bot)
             if (waitSeconds >= 10 && !hasMatched) {
                 hasMatched = true;
                 clearInterval(pollInterval);
@@ -103,7 +103,7 @@
     function showMatchFoundModal(data, isBot = false) {
         let countdown = 5;
 
-        const matchTitle = isBot ? '{{ __("Đã ghép với Phạm Tùng!") }}' : '{{ __("Đã tìm thấy đối thủ!") }}';
+        const matchTitle = isBot ? '{{ __("Đã ghép với AI!") }}' : '{{ __("Đã tìm thấy đối thủ!") }}';
 
         // Upgraded to Liquid Glass UI
         const modalHTML = `
@@ -174,7 +174,7 @@
                 let targetUrl = '';
                 if (isBot) {
                     targetUrl = aiTargetUrl;
-                    document.getElementById('match-status').innerText = '{{ __("Đang vào trận với Phạm Tùng...") }}';
+                    document.getElementById('match-status').innerText = '{{ __("Đang vào trận với AI...") }}';
                 } else {
                     targetUrl = (data.side === 'red')
                         ? routes.roomRed.replace(':code', data.room_code)
