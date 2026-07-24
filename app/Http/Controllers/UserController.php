@@ -20,12 +20,12 @@ class UserController extends Controller
         private UpdateUserStatusAction $updateUserStatusAction
     ) {}
 
-    private function getUsersData(Request $request, string $locale)
+    public function getUsersData(Request $request)
     {
         if ($request->ajax()) {
             $users = User::select(['id', 'name', 'email', 'profile_picture', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at']);
 
-            $presenter = new UserDataTablePresenter($locale, $this->userPresenter);
+            $presenter = new UserDataTablePresenter(app()->getLocale(), $this->userPresenter);
 
             return Datatables::of($users)
                 ->addColumn('rank', fn($row) => $presenter->formatRank($row))
@@ -136,7 +136,7 @@ class UserController extends Controller
         ]);
 
         $oldId = $request->input('current_id');
-        $user = User::find($oldId);
+        $user = User::findOrFail($oldId); // Replaced find() with findOrFail()
 
         if (!Hash::check($request->input('current_password'), $user->password)) {
             return back()->withErrors(['current_password' => __('Mật khẩu hiện tại không khớp.')]);
@@ -165,7 +165,7 @@ class UserController extends Controller
         $oldId = $request->input('current_id');
         $newName = $request->input('new_name');
 
-        $user = User::find($oldId);
+        $user = User::findOrFail($oldId); // Replaced find() with findOrFail()
         $user->name = $newName;
         $user->save();
 
@@ -175,7 +175,7 @@ class UserController extends Controller
     public function changeUserInterface(Request $request)
     {
         $currentId = $request->input('current_id');
-        $user = User::find($currentId);
+        $user = User::findOrFail($currentId); // Replaced find() with findOrFail()
 
         $user->board_theme = $request->input('board_theme');
         $user->pieces_theme = $request->input('pieces_theme');

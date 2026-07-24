@@ -465,9 +465,18 @@ foreach ($localizedRoomPages as $pageKey => $roomPage) {
 // Loop through supported locales to dynamically generate DataTables endpoints
 foreach (['vi', 'en', 'ja', 'ko', 'zh'] as $locale) {
     $ucLocale = ucfirst($locale);
-    Route::get("/puzzles/{$locale}", [PuzzleController::class, "getPuzzles{$ucLocale}"])->name("puzzles{$ucLocale}.list");
-    Route::get("/users/{$locale}", [UserController::class, "getUsers{$ucLocale}"])->name("users{$ucLocale}.list");
-    Route::get("/rooms/{$locale}", [RoomController::class, "getRooms{$ucLocale}"])->name("rooms{$ucLocale}.list");
+
+    Route::get("/puzzles/{$locale}", [PuzzleController::class, 'getPuzzlesData'])
+        ->name("puzzles{$ucLocale}.list")
+        ->middleware("locale:{$locale}");
+
+    Route::get("/users/{$locale}", [UserController::class, 'getUsersData'])
+        ->name("users{$ucLocale}.list")
+        ->middleware("locale:{$locale}");
+
+    Route::get("/rooms/{$locale}", [RoomController::class, 'getRoomsData'])
+        ->name("rooms{$ucLocale}.list")
+        ->middleware("locale:{$locale}");
 }
 // Auth::routes();
 

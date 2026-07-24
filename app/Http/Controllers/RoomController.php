@@ -22,9 +22,9 @@ class RoomController extends Controller
     public const INITIAL_FEN = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1';
 
     /**
-     * Shared logic for generating Room DataTables across all locales.
+     * Unified logic for generating Room DataTables using the app's active locale.
      */
-    private function getRoomsData(Request $request, string $locale)
+    public function getRoomsData(Request $request)
     {
         if ($request->ajax()) {
             $ongoingRooms = Room::ongoing()->get();
@@ -36,8 +36,8 @@ class RoomController extends Controller
 
             $rooms = Room::select(['fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at']);
 
-            // Instantiate the presenter injected with the active locale
-            $presenter = new RoomDataTablePresenter($locale);
+            // Instantiate the presenter dynamically using the active app locale
+            $presenter = new RoomDataTablePresenter(app()->getLocale());
 
             return Datatables::of($rooms)
                 ->addColumn('code', fn($row) => $presenter->formatCode($row))

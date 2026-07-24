@@ -24,14 +24,14 @@ class PuzzleController extends Controller
     }
 
     /**
-     * Shared logic to generate the DataTables response for puzzles.
+     * Unified logic to generate the DataTables response for puzzles.
      */
-    private function getPuzzlesData(Request $request, string $locale)
+    public function getPuzzlesData(Request $request)
     {
         if ($request->ajax()) {
             $puzzles = Puzzle::public()->select(['id', 'name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'updated_at']);
 
-            $presenter = new PuzzleDataTablePresenter($locale, $this->getPuzzleRankAction);
+            $presenter = new PuzzleDataTablePresenter(app()->getLocale(), $this->getPuzzleRankAction);
 
             return Datatables::of($puzzles)
                 ->addColumn('rank', fn($row) => $presenter->formatRank($row))
