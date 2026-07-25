@@ -532,10 +532,37 @@ class RoomController extends Controller
     }
 
     /**
-     * Check if a room code exists.
+     * Get host ID of a room.
      */
-    public function hasRoomCode(string $code): bool
+    public function getHostId(Request $request): JsonResponse
     {
+        $code = $request->input('ma-phong') ?? $request->input('code');
+        $hostId = Room::where('code', $code)->value('host_id');
+
+        return response()->json(['host_id' => $hostId]);
+    }
+
+    /**
+     * Get both host and guest IDs of a room.
+     */
+    public function getRoomIds(Request $request): JsonResponse
+    {
+        $code = $request->input('ma-phong') ?? $request->input('code');
+        $roomData = Room::select('host_id', 'guest_id')->where('code', $code)->first();
+
+        return response()->json($roomData ? $roomData->toArray() : []);
+    }
+
+    /**
+     * Check if a room code exists (handles HTTP Request and static string calls).
+     */
+    public static function hasRoomCode(Request|string $code): JsonResponse|bool
+    {
+        if ($code instanceof Request) {
+            $roomCode = $code->input('ma-phong') ?? $code->input('code');
+            return response()->json(['exists' => Room::where('code', $roomCode)->exists()]);
+        }
+
         return Room::where('code', $code)->exists();
     }
 }
