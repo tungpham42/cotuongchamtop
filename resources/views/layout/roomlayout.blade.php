@@ -385,7 +385,7 @@
             function createRoom() {
               $.ajax({
                 type: "POST",
-                url: '{{ url('/api') }}/hasRoomcode',
+                url: '{{ route('hasRoomcode') }}',
                 data: { 'ma-phong': '{{ md5(time()) }}' },
                 dataType: 'text'
               }).done(function(data){

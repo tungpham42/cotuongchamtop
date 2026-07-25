@@ -133,7 +133,7 @@
                 var maPhong = '{{ md5(time()) }}';
                 $.ajax({
                     type: "POST",
-                    url: '{{ url('/api') }}/hasRoomcode',
+                    url: '{{ route('hasRoomcode') }}',
                     data: {
                         'ma-phong': maPhong
                     },
