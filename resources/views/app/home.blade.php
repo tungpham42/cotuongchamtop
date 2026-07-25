@@ -118,79 +118,73 @@
 
             @if (auth()->check())
             <script>
-            function joinMatch(roomCode) {
-                var hostId = '';
-                var guestId = '';
-                $.ajax({
-                    type: "POST",
-                    url: '{{ url('/api') }}/getRoomIds',
-                    data: {
-                        'ma-phong': roomCode
+            // Helper wrapper to convert Bootbox alert into an awaitable Promise
+            const bootboxAlertAsync = (message) => new Promise((resolve) => {
+                bootbox.alert({
+                    message: message,
+                    size: 'small',
+                    centerVertical: true,
+                    closeButton: false,
+                    buttons: {
+                        ok: {
+                            className: 'btn-danger pulse-red',
+                            label: '{{ __("Oki") }}'
+                        }
                     },
-                    dataType: 'json'
-                }).done(function(data){
-                    hostId = data.host_id;
-                    guestId = data.guest_id;
-                    if (hostId != '{{ auth()->id() }}' && guestId != '{{ auth()->id() }}') {
-                        $.ajax({
+                    callback: resolve
+                });
+            });
+
+            async function joinMatch(roomCode) {
+                const currentUserId = Number('{{ auth()->id() }}');
+                const hostUrl = '{{ url(__('/phong/')) }}/' + roomCode;
+                const guestUrl = '{{ url(__('/phong/')) }}/' + roomCode + '{{ __('/khach') }}';
+
+                try {
+                    // 1. Fetch host and guest IDs for the room
+                    const data = await $.ajax({
+                        type: "POST",
+                        url: '{{ url('/api/getRoomIds') }}',
+                        data: { 'ma-phong': roomCode },
+                        dataType: 'json'
+                    });
+
+                    const hostId = data?.host_id ? Number(data.host_id) : null;
+                    const guestId = data?.guest_id ? Number(data.guest_id) : null;
+
+                    let alertMessage = '';
+                    let targetUrl = '';
+
+                    // 2. Determine action based on current user role
+                    if (hostId === currentUserId) {
+                        alertMessage = "{{ __('Mời bạn vào lại phòng của mình!') }}";
+                        targetUrl = hostUrl;
+                    } else if (guestId === currentUserId) {
+                        alertMessage = "{{ __('Mời bạn quay lại phòng!') }}";
+                        targetUrl = guestUrl;
+                    } else {
+                        // New user joining as guest
+                        await $.ajax({
                             type: "POST",
-                            url: '{{ url('/api') }}/joinRoom',
+                            url: '{{ url('/api/joinRoom') }}',
                             data: {
                                 'ma-phong': roomCode,
-                                'guest_id': '{{ auth()->id() }}'
+                                'guest_id': currentUserId
                             },
                             dataType: 'text'
-                        }).done(function() {
-                            bootbox.alert({
-                                message: "{{ __("Hãy chuẩn bị vào phòng!") }}",
-                                size: 'small',
-                                centerVertical: true,
-                                closeButton: false,
-                                buttons: {
-                                    ok: {
-                                        className: 'btn-danger pulse-red',
-                                        label: '{{ __("Oki") }}'
-                                    }
-                                },
-                                callback: function(){
-                                    window.location.href = '{{ url(__('/phong/')) }}' + '/' + roomCode + '{{ __('/khach') }}';
-                                }
-                            });
                         });
-                    } else if (guestId == '{{ auth()->id() }}') {
-                        bootbox.alert({
-                            message: "{{ __("Mời bạn quay lại phòng!") }}",
-                            size: 'small',
-                            centerVertical: true,
-                            closeButton: false,
-                            buttons: {
-                                ok: {
-                                    className: 'btn-danger pulse-red',
-                                    label: '{{ __("Oki") }}'
-                                }
-                            },
-                            callback: function(){
-                                window.location.href = '{{ url(__('/phong/')) }}' + '/' + roomCode + '{{ __('/khach') }}';
-                            }
-                        });
-                    } else if (hostId == '{{ auth()->id() }}') {
-                        bootbox.alert({
-                            message: "{{ __("Mời bạn vào lại phòng của mình!") }}",
-                            size: 'small',
-                            centerVertical: true,
-                            closeButton: false,
-                            buttons: {
-                                ok: {
-                                    className: 'btn-danger pulse-red',
-                                    label: '{{ __("Oki") }}'
-                                }
-                            },
-                            callback: function(){
-                                window.location.href = '{{ url(__('/phong/')) }}' + '/' + roomCode;
-                            }
-                        });
+
+                        alertMessage = "{{ __('Hãy chuẩn bị vào phòng!') }}";
+                        targetUrl = guestUrl;
                     }
-                });
+
+                    // 3. Show message and redirect upon user confirmation
+                    await bootboxAlertAsync(alertMessage);
+                    window.location.href = targetUrl;
+
+                } catch (error) {
+                    console.error('Failed to join match:', error);
+                }
             }
             </script>
             <script>

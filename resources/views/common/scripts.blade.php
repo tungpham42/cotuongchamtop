@@ -21,6 +21,22 @@
 <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.16.1/dist/echo.iife.js"></script>
 
 <script>
+    // ==========================================
+    // 1. HELPER UTILITIES
+    // ==========================================
+
+    // Dynamically generate a unique 32-character hex room code
+    const generateRoomCode = () => Array.from(crypto.getRandomValues(new Uint8Array(16)))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+
+    const bootboxAlertAsync = (options) => new Promise(resolve => {
+        bootbox.alert({ ...options, callback: resolve });
+    });
+
+    const bootboxPromptAsync = (options) => new Promise(resolve => {
+        bootbox.prompt({ ...options, callback: resolve });
+    });
     // Make Pusher globally available for Echo
     window.Pusher = Pusher;
 
