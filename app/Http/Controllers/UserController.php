@@ -9,6 +9,9 @@ use App\Actions\User\UpdateUserStatusAction;
 use App\Presenters\UserPresenter;
 use App\Presenters\UserDataTablePresenter;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use DataTables;
@@ -20,7 +23,7 @@ class UserController extends Controller
         private UpdateUserStatusAction $updateUserStatusAction
     ) {}
 
-    public function getUsersData(Request $request)
+    public function getUsersData(Request $request): JsonResponse
     {
         if ($request->ajax()) {
             $users = User::select(['id', 'name', 'email', 'profile_picture', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at']);
@@ -49,9 +52,11 @@ class UserController extends Controller
                 ->rawColumns(['rank', 'name', 'elo', 'action', 'time'])
                 ->make(true);
         }
+
+        return response()->json([]);
     }
 
-    public function uploadProfilePicture(Request $request)
+    public function uploadProfilePicture(Request $request): RedirectResponse
     {
         $request->validate([
             'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -72,7 +77,7 @@ class UserController extends Controller
         return back()->with('success', __('Bạn đã cập nhật ảnh đại diện thành công!'));
     }
 
-    public function removeProfilePicture(Request $request)
+    public function removeProfilePicture(Request $request): RedirectResponse
     {
         $user = auth()->user();
 
@@ -85,7 +90,7 @@ class UserController extends Controller
         return back()->with('success', __('Bạn đã xóa ảnh đại diện thành công!'));
     }
 
-    public function updateOnlineStatus(Request $request, UpdateOnlineStatus $action)
+    public function updateOnlineStatus(Request $request, UpdateOnlineStatus $action): JsonResponse
     {
         if (auth()->id() == $request->input('id')) {
             $action->execute($request->input('id'));
@@ -94,7 +99,7 @@ class UserController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function updatePlayersStatus(Request $request)
+    public function updatePlayersStatus(Request $request): JsonResponse
     {
         $code = $request->input('ma-phong');
 
@@ -114,7 +119,7 @@ class UserController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function changePassword(Request $request)
+    public function changePassword(Request $request): RedirectResponse
     {
         $request->validate([
             'current_password' => 'required',
@@ -141,7 +146,7 @@ class UserController extends Controller
         return back()->with('success', __('Mật khẩu đã thay đổi thành công!'));
     }
 
-    public function changeName(Request $request)
+    public function changeName(Request $request): RedirectResponse
     {
         $request->validate([
             'current_name' => 'required',
@@ -162,7 +167,7 @@ class UserController extends Controller
         return back()->with('success', __('Bạn đã thay đổi tên thành công!'));
     }
 
-    public function changeUserInterface(Request $request)
+    public function changeUserInterface(Request $request): RedirectResponse
     {
         $user = auth()->user(); // Fix: Use authenticated user
 
@@ -173,7 +178,7 @@ class UserController extends Controller
         return back()->with('success', __('Bạn đã thay đổi giao diện thành công!'));
     }
 
-    public function getName(Request $request)
+    public function getName(Request $request): JsonResponse
     {
         $id = $request->input('id');
         $user = User::find($id);
@@ -181,7 +186,7 @@ class UserController extends Controller
         return response()->json(['name' => $user ? $user->name : null]);
     }
 
-    public function getEmail(Request $request)
+    public function getEmail(Request $request): JsonResponse
     {
         $id = $request->input('id');
         $user = User::find($id);
@@ -189,7 +194,7 @@ class UserController extends Controller
         return response()->json(['email' => $user ? $user->email : null]);
     }
 
-    public function getNameEmail(Request $request)
+    public function getNameEmail(Request $request): JsonResponse
     {
         $id = $request->input('id');
         $user = User::find($id);
@@ -200,7 +205,7 @@ class UserController extends Controller
         ]);
     }
 
-    public function getPoints(Request $request)
+    public function getPoints(Request $request): JsonResponse
     {
         $id = $request->input('id');
         $user = User::find($id);
@@ -208,7 +213,7 @@ class UserController extends Controller
         return response()->json(['points' => $user ? $user->points : null]);
     }
 
-    public function search(Request $request)
+    public function search(Request $request): View
     {
         $query = $request->input('query');
 

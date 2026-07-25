@@ -12,34 +12,38 @@ use App\Http\Controllers\PuzzleController;
 use App\Http\Controllers\MailController; // Added for email notifications
 use App\Actions\Room\GetRandomRoomAction; // Imported the action
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class TournamentController extends Controller
 {
-    private function getRouteName($key)
+    private function getRouteName(string $key): string
     {
         $locale = app()->getLocale();
         $defaultLocale = config('locales.default', 'vi');
         return $locale === $defaultLocale ? $key : "{$locale}.{$key}";
     }
 
-    private function checkAuth()
+    private function checkAuth(): void
     {
         if (!auth()->check()) {
             abort(403, __('Bạn không có quyền truy cập trang này.'));
         }
     }
 
-    private function authorizeCreator(Tournament $tournament)
+    private function authorizeCreator(Tournament $tournament): void
     {
         if ($tournament->user_id !== auth()->id() && !auth()->user()->is_admin) {
             abort(403, __('Bạn không có quyền quản lý giải đấu này.'));
         }
     }
 
-    public function join(Request $request, $slug)
+    public function join(Request $request, string $slug): RedirectResponse
     {
         // Add this missing authorization check
         $this->checkAuth();
@@ -62,7 +66,7 @@ class TournamentController extends Controller
         return back()->with('success', __('Bạn đã đăng ký tham gia giải đấu thành công!'));
     }
 
-    public function generateBracket($slug)
+    public function generateBracket(string $slug): RedirectResponse
     {
         $this->checkAuth();
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
@@ -84,7 +88,7 @@ class TournamentController extends Controller
         return back()->with('success', __('Đã bốc thăm và tạo sơ đồ thi đấu thành công!'));
     }
 
-    private function createBracketNodes(Tournament $tournament, $players)
+    private function createBracketNodes(Tournament $tournament, Collection|EloquentCollection $players): void
     {
         $totalPlayers = $players->count();
         if ($totalPlayers < 2) return;
@@ -179,7 +183,7 @@ class TournamentController extends Controller
     /**
      * Send email notifications to both players of a newly scheduled room.
      */
-    public function notifyMatchPlayers($player1, $player2, Room $room)
+    public function notifyMatchPlayers(User $player1, User $player2, Room $room): void
     {
         $mailController = app(MailController::class);
         $lang = app()->getLocale();
@@ -280,7 +284,7 @@ class TournamentController extends Controller
      * Call this method from wherever your match finishes (e.g., RoomController or WebSockets)
      * to advance the winner to the next round and notify both players once the room is full.
      */
-    public function handleTournamentAdvancement(Room $currentRoom, User $winner)
+    public function handleTournamentAdvancement(Room $currentRoom, User $winner): void
     {
         if ($currentRoom->next_room_code) {
             $nextRoom = Room::where('code', $currentRoom->next_room_code)->first();
@@ -302,7 +306,7 @@ class TournamentController extends Controller
         }
     }
 
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $tournaments = Tournament::withCount('users')->orderBy('start_date', 'desc')->paginate(10);
 
@@ -316,7 +320,7 @@ class TournamentController extends Controller
         ]));
     }
 
-    public function show(Request $request, $slug)
+    public function show(Request $request, string $slug): View
     {
         $tournament = Tournament::with(['creator', 'users', 'rooms.host', 'rooms.guest'])
             ->where('slug', $slug)
@@ -335,7 +339,7 @@ class TournamentController extends Controller
         ], ['slug' => $slug]));
     }
 
-    public function create(Request $request)
+    public function create(Request $request): View
     {
         $this->checkAuth();
         return view('tournaments.create', localized_page_data('tournaments.create', app()->getLocale(), [
@@ -347,7 +351,7 @@ class TournamentController extends Controller
         ]));
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->checkAuth();
         $request->validate([
@@ -370,7 +374,7 @@ class TournamentController extends Controller
         return redirect()->route($this->getRouteName('tournaments.index'))->with('success', __('Tạo giải đấu thành công!'));
     }
 
-    public function edit(Request $request, $slug)
+    public function edit(Request $request, string $slug): View
     {
         $this->checkAuth();
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
@@ -386,7 +390,7 @@ class TournamentController extends Controller
         ], ['slug' => $slug]));
     }
 
-    public function update(Request $request, $slug)
+    public function update(Request $request, string $slug): RedirectResponse
     {
         $this->checkAuth();
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
@@ -418,7 +422,7 @@ class TournamentController extends Controller
         return redirect()->route($this->getRouteName('tournaments.show'), $tournament->slug)->with('success', __('Cập nhật giải đấu thành công!'));
     }
 
-    public function cancel($slug)
+    public function cancel(string $slug): RedirectResponse
     {
         $this->checkAuth();
         $tournament = Tournament::where('slug', $slug)->firstOrFail();
@@ -432,7 +436,7 @@ class TournamentController extends Controller
         return back()->with('success', __('Giải đấu đã được chuyển sang trạng thái Đã Hủy.'));
     }
 
-    public function destroy($slug)
+    public function destroy(string $slug): RedirectResponse
     {
         $this->checkAuth();
         $tournament = Tournament::where('slug', $slug)->firstOrFail();

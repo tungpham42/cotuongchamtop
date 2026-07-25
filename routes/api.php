@@ -77,20 +77,12 @@ Route::controller(UserController::class)->group(function () {
 });
 
 Route::controller(MailController::class)->group(function () {
+    Route::post('/contact-mail', 'sendContact')->name('mail.contact');
     Route::post('/competeMail', 'competeMail')->name('competeMail');
-    Route::post('/processMailEn', 'sendEn')->name('sendEn');
-    Route::post('/processMailJa', 'sendJa')->name('sendJa');
-    Route::post('/processMailKo', 'sendKo')->name('sendKo');
-    Route::post('/processMailZh', 'sendZh')->name('sendZh');
-    Route::post('/processMailVi', 'sendVi')->name('sendVi');
 });
 
 Route::controller(ChatController::class)->group(function () {
-    Route::post('/postChatEn', 'postEn')->name('postEn');
-    Route::post('/postChatJa', 'postJa')->name('postJa');
-    Route::post('/postChatKo', 'postKo')->name('postKo');
-    Route::post('/postChatZh', 'postZh')->name('postZh');
-    Route::post('/postChatVi', 'postVi')->name('postVi');
+    Route::post('/chat/post', 'postChat')->name('chat.post');
 });
 
 Route::controller(PuzzleController::class)->group(function () {

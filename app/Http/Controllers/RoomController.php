@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Events\RoomUpdated;
 use App\Actions\Room\UpdateRoomEloAction;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Schema;
 use Atrox\Haikunator;
@@ -24,7 +25,7 @@ class RoomController extends Controller
     /**
      * Unified logic for generating Room DataTables using the app's active locale.
      */
-    public function getRoomsData(Request $request)
+    public function getRoomsData(Request $request): JsonResponse
     {
         if ($request->ajax()) {
             $ongoingRooms = Room::ongoing()->get();
@@ -61,9 +62,11 @@ class RoomController extends Controller
                 ->rawColumns(['code', 'turn', 'result', 'action', 'time'])
                 ->make(true);
         }
+
+        return response()->json([]);
     }
 
-    public static function quickMatch()
+    public static function quickMatch(): JsonResponse
     {
         dispatch(new QuickMatchJob());
         return response()->json([
@@ -72,13 +75,13 @@ class RoomController extends Controller
         ]);
     }
 
-    public static function getLatestRoom(Request $request)
+    public static function getLatestRoom(Request $request): JsonResponse
     {
         $latestRoom = Room::whereNull('pass')
             ->whereNull('host_id')
             ->whereNull('result')
             ->orderBy('modified_at', 'desc')
-            ->offset($request->input('offset'))
+            ->offset((int) $request->input('offset'))
             ->first();
 
         if ($latestRoom) {
@@ -88,7 +91,7 @@ class RoomController extends Controller
         return response()->json(['room' => null]);
     }
 
-    public static function getNewRoom()
+    public static function getNewRoom(): JsonResponse
     {
         $firstRoom = Room::where('fen', env('INITIAL_FEN', self::INITIAL_FEN))
             ->whereNull('pass')
@@ -100,7 +103,7 @@ class RoomController extends Controller
         return response()->json(['room' => $firstRoom]);
     }
 
-    public function create(Request $request)
+    public function create(Request $request): JsonResponse
     {
         $room = Room::firstOrCreate(
             ['code' => $request->input('ma-phong')],
@@ -135,7 +138,7 @@ class RoomController extends Controller
         ]);
     }
 
-    public function compete(Request $request)
+    public function compete(Request $request): void
     {
         Room::updateOrInsert(
             ['code' => $request->input('ma-phong')],
@@ -151,7 +154,7 @@ class RoomController extends Controller
         );
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $room = Room::firstOrNew(['code' => $request->input('ma-phong')]);
 
@@ -177,7 +180,7 @@ class RoomController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function join(Request $request)
+    public function join(Request $request): void
     {
         Room::updateOrInsert(
             ['code' => $request->input('ma-phong')],
@@ -185,7 +188,7 @@ class RoomController extends Controller
         );
     }
 
-    public function updateElo(Request $request, UpdateRoomEloAction $updateRoomEloAction)
+    public function updateElo(Request $request, UpdateRoomEloAction $updateRoomEloAction): JsonResponse
     {
         try {
             return response()->json($updateRoomEloAction->execute($request->input('ma-phong'), $request->input('result')));
@@ -194,13 +197,13 @@ class RoomController extends Controller
         }
     }
 
-    public function updateResult(Request $request)
+    public function updateResult(Request $request): JsonResponse
     {
-        $code = $request->input('ma-phong');
-        $result = $request->input('result');
-        $auth_id = auth()->id() ?? $request->input('id');
+        $code = (string) $request->input('ma-phong');
+        $result = (string) $request->input('result');
+        $auth_id = (int) (auth()->id() ?? $request->input('id'));
 
-        if ($request->has('lang')) app()->setLocale($request->input('lang'));
+        if ($request->has('lang')) app()->setLocale((string) $request->input('lang'));
 
         try {
             return DB::transaction(function () use ($code, $result, $auth_id) {
@@ -215,7 +218,7 @@ class RoomController extends Controller
                     $this->advanceTournament($room, $result);
                 }
 
-                $messageKey = $this->getResultMessageKey($auth_id == $room->host_id, $result);
+                $messageKey = $this->getResultMessageKey($auth_id === $room->host_id, $result);
                 return response()->json(['success' => __($messageKey)]);
             });
         } catch (Exception $e) {
@@ -223,14 +226,14 @@ class RoomController extends Controller
         }
     }
 
-    private function getResultMessageKey($isHost, $result)
+    private function getResultMessageKey(bool $isHost, string $result): string
     {
         if ($result === '0') return 'Hòa.';
         if ($isHost) return $result === '1' ? 'Chủ phòng thắng. Xin chúc mừng!' : 'Chủ phòng thua! Cố lên nhé!';
         return $result === '-1' ? 'Khách thắng. Xin chúc mừng!' : 'Khách thua! Cố lên nhé!';
     }
 
-    private function advanceTournament(Room $room, $result)
+    private function advanceTournament(Room $room, string $result): void
     {
         if (!$room->tournament_id || !$room->next_room_code || $result === '0') return;
 
@@ -242,9 +245,9 @@ class RoomController extends Controller
         }
     }
 
-    public function updateSideResult(Request $request)
+    public function updateSideResult(Request $request): JsonResponse
     {
-        if ($request->has('lang')) app()->setLocale($request->input('lang'));
+        if ($request->has('lang')) app()->setLocale((string) $request->input('lang'));
 
         $room = Room::where('code', $request->input('ma-phong'))->first();
 
@@ -260,22 +263,25 @@ class RoomController extends Controller
         return response()->json(['success' => $successMessages[$request->input('side')][$request->input('result')] ?? __('Result recorded.')]);
     }
 
-    public function show(Room $room, $code)
+    public function show(Room $room, string $code): ?string
     {
         if (auth()->check()) auth()->user()->update(['last_seen_at' => now()]);
         return Room::where('code', $code)->value('fen');
     }
 
-    public function getMoves(Room $room, $code)
+    public function getMoves(Room $room, string $code): JsonResponse
     {
         $moves = Room::where('code', $code)->value('moves');
         $decoded = $moves ? json_decode($moves, true) : [];
         return response()->json(is_array($decoded) ? $decoded : []);
     }
 
-    public function getPass(Room $room, $code) { return Room::where('code', $code)->value('pass'); }
+    public function getPass(Room $room, string $code): ?string
+    {
+        return Room::where('code', $code)->value('pass');
+    }
 
-    public function changePass(Request $request)
+    public function changePass(Request $request): JsonResponse
     {
         $pass = $request->input('pass');
 
@@ -287,7 +293,7 @@ class RoomController extends Controller
         return response()->json(['message' => __('Changed password successfully!'), 'code' => 1]);
     }
 
-    public function getEventStream(Room $room, $code)
+    public function getEventStream(Room $room, string $code): StreamedResponse
     {
         set_time_limit(0);
 
@@ -362,9 +368,9 @@ class RoomController extends Controller
     /**
      * Unified Anonymous Quick Match utilizing App Locale
      */
-    public function anonymousQuickMatch(Request $request)
+    public function anonymousQuickMatch(Request $request): JsonResponse
     {
-        $sessionId = $request->session()->get('anonymous_match_id', Str::random(32));
+        $sessionId = (string) $request->session()->get('anonymous_match_id', Str::random(32));
         $request->session()->put('anonymous_match_id', $sessionId);
 
         $room = $this->prepareAnonymousRoom($sessionId);
@@ -386,12 +392,12 @@ class RoomController extends Controller
     /**
      * Unified Check Anonymous Match Status utilizing App Locale
      */
-    public function checkAnonymousMatchStatus(Request $request)
+    public function checkAnonymousMatchStatus(Request $request): JsonResponse
     {
         $sessionId = $request->input('session_id');
         if (!$sessionId) return response()->json(['status' => 'error', 'message' => __('Session ID required.')], 400);
 
-        $room = $this->prepareAnonymousRoom($sessionId);
+        $room = $this->prepareAnonymousRoom((string) $sessionId);
 
         if ($room->host_session && $room->guest_session) {
             $isHost = $room->host_session == $sessionId;
@@ -406,7 +412,7 @@ class RoomController extends Controller
         return response()->json(['status' => 'waiting']);
     }
 
-    public function switchTurn(Request $request, $roomCode)
+    public function switchTurn(Request $request, string $roomCode): JsonResponse
     {
         $currentPlayer = $request->input('current_player');
         if (!in_array($currentPlayer, ['red', 'black'])) return response()->json(['error' => 'Invalid player'], 422);
@@ -429,7 +435,7 @@ class RoomController extends Controller
         ]);
     }
 
-    public function startTimer($roomCode, $player)
+    public function startTimer(string $roomCode, string $player): JsonResponse
     {
         $room = Room::where('code', $roomCode)->first();
         if (!$room) return response()->json(['error' => 'Room not found'], 404);
@@ -443,7 +449,7 @@ class RoomController extends Controller
         return response()->json(['success' => true, 'active_player' => $player]);
     }
 
-    public function getTime($roomCode)
+    public function getTime(string $roomCode): JsonResponse
     {
         $room = Room::where('code', $roomCode)->firstOrFail();
         $times = $room->getCalculatedTimes();
@@ -453,12 +459,12 @@ class RoomController extends Controller
         ]));
     }
 
-    public function saveTime(Request $request, $roomCode)
+    public function saveTime(Request $request, string $roomCode): JsonResponse
     {
         $room = Room::where('code', $roomCode)->firstOrFail();
 
-        $room->red_time = max(0, $request->input('red_time', $room->red_time));
-        $room->black_time = max(0, $request->input('black_time', $room->black_time));
+        $room->red_time = max(0, (int) $request->input('red_time', $room->red_time));
+        $room->black_time = max(0, (int) $request->input('black_time', $room->black_time));
         $room->last_update = now();
         $room->save();
 
@@ -470,9 +476,9 @@ class RoomController extends Controller
         ]);
     }
 
-    public function findMatch(Request $request)
+    public function findMatch(Request $request): JsonResponse
     {
-        $sessionId = $request->input('session_id') ?: $request->session()->get('match_session_id', Str::random(32));
+        $sessionId = (string) ($request->input('session_id') ?: $request->session()->get('match_session_id', Str::random(32)));
         $request->session()->put('match_session_id', $sessionId);
 
         $room = $this->prepareAnonymousRoom($sessionId);
@@ -490,12 +496,12 @@ class RoomController extends Controller
         ]);
     }
 
-    public function checkMatchStatus(Request $request)
+    public function checkMatchStatus(Request $request): JsonResponse
     {
         $sessionId = $request->input('session_id');
         if (!$sessionId) return response()->json(['status' => 'error', 'message' => __('Không tìm thấy phiên bản kết nối (Session ID).')], 400);
 
-        $room = $this->prepareAnonymousRoom($sessionId);
+        $room = $this->prepareAnonymousRoom((string) $sessionId);
 
         if ($room->host_session && $room->guest_session) {
             $isHost = $room->host_session == $sessionId;
@@ -509,7 +515,7 @@ class RoomController extends Controller
         return response()->json(['status' => 'waiting']);
     }
 
-    public function startMatch($roomCode)
+    public function startMatch(string $roomCode): JsonResponse
     {
         $room = Room::where('code', $roomCode)->first();
 

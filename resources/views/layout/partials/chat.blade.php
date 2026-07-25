@@ -1,14 +1,14 @@
 @php
 $localeConfigs = [
-    'vi' => ['prefix' => 'CoTuong_VI-', 'folder' => 'phongChatLog', 'suffix' => '-phongchatlog.html', 'endpoint' => '/postChatVi'],
-    'en' => ['prefix' => 'CoTuong_EN-', 'folder' => 'roomChatLog', 'suffix' => '-roomchatlog.html', 'endpoint' => '/postChatEn'],
-    'ja' => ['prefix' => 'CoTuong_JA-', 'folder' => 'rumuChatLog', 'suffix' => '-rumuchatlog.html', 'endpoint' => '/postChatJa'],
-    'ko' => ['prefix' => 'CoTuong_KO-', 'folder' => 'bangChatLog', 'suffix' => '-bangchatlog.html', 'endpoint' => '/postChatKo'],
-    'zh' => ['prefix' => 'CoTuong_ZH-', 'folder' => 'fangjianChatLog', 'suffix' => '-fangjianchatlog.html', 'endpoint' => '/postChatZh']
+    'vi' => ['prefix' => 'CoTuong_VI-', 'folder' => 'phongChatLog',    'suffix' => '-phongchatlog.html'],
+    'en' => ['prefix' => 'CoTuong_EN-', 'folder' => 'roomChatLog',     'suffix' => '-roomchatlog.html'],
+    'ja' => ['prefix' => 'CoTuong_JA-', 'folder' => 'rumuChatLog',     'suffix' => '-rumuchatlog.html'],
+    'ko' => ['prefix' => 'CoTuong_KO-', 'folder' => 'bangChatLog',     'suffix' => '-bangchatlog.html'],
+    'zh' => ['prefix' => 'CoTuong_ZH-', 'folder' => 'fangjianChatLog', 'suffix' => '-fangjianchatlog.html']
 ];
 
 $config = $localeConfigs[app()->getLocale()] ?? $localeConfigs['en'];
-extract($config); // Extracts to $prefix, $folder, $suffix, $endpoint[cite: 4]
+extract($config);
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_name($prefix . $roomCode);
@@ -16,8 +16,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 
 $room_path = public_path("{$folder}/{$roomCode}{$suffix}");
-$log_path = url("{$folder}/{$roomCode}{$suffix}");
-$initialLog = ''; // Variable to hold existing chat content[cite: 4]
+$log_path  = url("{$folder}/{$roomCode}{$suffix}");
 
 if (!is_file($room_path)) {
     $time = date("H:i");
@@ -43,16 +42,13 @@ if (isset($_POST['enter'])) {
     }
 }
 
-// Fetch the existing log unconditionally so guests can see it too![cite: 4]
-if (is_file($room_path)) {
-    $initialLog = file_get_contents($room_path);
-}
+$initialLog = is_file($room_path) ? file_get_contents($room_path) : '';
 @endphp
 
 <style>
-/* *==========================================================================
-   * GIAO DIỆN CHAT HOÀNG GIA - LIQUID GLASS & GUEST MODE
-   *========================================================================== */
+/* ==========================================================================
+   GIAO DIỆN CHAT HOÀNG GIA - LIQUID GLASS & GUEST MODE
+   ========================================================================== */
 
 #chat-wrapper {
     display: flex;
@@ -62,34 +58,34 @@ if (is_file($room_path)) {
     height: 550px;
 
     /* Integrated Liquid Glass Enclosure */
-    background: var(--glass-bg-dark); /*[cite: 3] */
-    backdrop-filter: var(--glass-blur); /*[cite: 3] */
-    -webkit-backdrop-filter: var(--glass-blur); /*[cite: 3] */
-    border: 1px solid var(--glass-border); /*[cite: 3] */
-    border-top: 2px solid rgba(255, 215, 0, 0.5); /* Enhanced glossy top edge[cite: 3] */
+    background: var(--glass-bg-dark);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-top: 2px solid rgba(255, 215, 0, 0.5);
     border-radius: 12px;
-    box-shadow: var(--liquid-shadow), inset 0 3px 15px var(--liquid-highlight); /*[cite: 3] */
+    box-shadow: var(--liquid-shadow), inset 0 3px 15px var(--liquid-highlight);
 
     overflow: hidden;
-    font-family: "Plus Jakarta Sans", "Noto Sans JP", sans-serif; /*[cite: 3] */
+    font-family: "Plus Jakarta Sans", "Noto Sans JP", sans-serif;
     justify-content: space-between;
     align-content: center;
     margin: 0 auto;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /*[cite: 3] */
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 #chat-wrapper:hover {
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(212, 175, 55, 0.3), inset 0 2px 20px var(--liquid-highlight); /*[cite: 3] */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(212, 175, 55, 0.3), inset 0 2px 20px var(--liquid-highlight);
 }
 
 /* Glassy Chat Header aligned with .card-header */
 #menu {
-    background: linear-gradient(90deg, transparent, var(--glass-bg-red), transparent); /*[cite: 3] */
+    background: linear-gradient(90deg, transparent, var(--glass-bg-red), transparent);
     padding: 16px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(255, 215, 0, 0.2); /*[cite: 3] */
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
     z-index: 10;
 }
 #menu p.welcome {
@@ -141,10 +137,10 @@ a#exit:hover {
 }
 
 /* Royal Custom Scrollbar */
-#chatbox::-webkit-scrollbar { width: 8px; } /*[cite: 3] */
-#chatbox::-webkit-scrollbar-track { background: var(--royal-bg); border-left: 1px solid rgba(212, 175, 55, 0.2); border-radius: 4px; } /*[cite: 3] */
-#chatbox::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--royal-red), #5c0a0a); border: 1px solid var(--royal-gold); border-radius: 6px; } /*[cite: 3] */
-#chatbox::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #d4af37, #b89020); border-color: #fff; } /*[cite: 3] */
+#chatbox::-webkit-scrollbar { width: 8px; }
+#chatbox::-webkit-scrollbar-track { background: var(--royal-bg); border-left: 1px solid rgba(212, 175, 55, 0.2); border-radius: 4px; }
+#chatbox::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--royal-red), #5c0a0a); border: 1px solid var(--royal-gold); border-radius: 6px; }
+#chatbox::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #d4af37, #b89020); border-color: #fff; }
 
 /* Chat Bubbles Container */
 .msg-container {
@@ -157,7 +153,7 @@ a#exit:hover {
 /* Other Player (Obsidian Glass Bubbles) */
 .message-theirs { align-self: flex-start; }
 .message-theirs .msg-content {
-    background: var(--glass-bg-dark); /*[cite: 3] */
+    background: var(--glass-bg-dark);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     color: var(--royal-gold-light);
@@ -180,7 +176,7 @@ a#exit:hover {
 /* Current Player (Ruby Glass Bubbles) */
 .message-mine { align-self: flex-end; }
 .message-mine .msg-content {
-    background: var(--glass-bg-red); /*[cite: 3] */
+    background: var(--glass-bg-red);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     color: #fff;
@@ -203,12 +199,12 @@ a#exit:hover {
 /* System Messages - Proverb Style Integration */
 .message-system {
     align-self: center;
-    background: rgba(138, 21, 21, 0.2); /*[cite: 3] */
-    border-left: 2px solid var(--royal-gold); /*[cite: 3] */
-    border-right: 2px solid var(--royal-gold); /*[cite: 3] */
+    background: rgba(138, 21, 21, 0.2);
+    border-left: 2px solid var(--royal-gold);
+    border-right: 2px solid var(--royal-gold);
     backdrop-filter: blur(4px);
     color: var(--royal-gold);
-    font-family: "Texturina", serif; /*[cite: 3] */
+    font-family: "Texturina", serif;
     font-style: italic;
     font-weight: bold;
     font-size: 14px;
@@ -248,8 +244,8 @@ a#exit:hover {
     flex: 1;
     background: rgba(11, 12, 16, 0.6);
     backdrop-filter: blur(4px);
-    border: 1px solid var(--royal-wood); /*[cite: 3] */
-    color: var(--royal-gold-light); /*[cite: 3] */
+    border: 1px solid var(--royal-wood);
+    color: var(--royal-gold-light);
     padding: 14px 18px;
     font-size: 15px;
     font-weight: 600;
@@ -260,8 +256,8 @@ a#exit:hover {
 }
 #name::placeholder, #usermsg::placeholder { color: var(--royal-gold-light); opacity: 0.5; }
 #name:focus, #usermsg:focus {
-    border-color: var(--royal-gold); /*[cite: 3] */
-    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25), inset 0 2px 5px rgba(0,0,0,0.5); /*[cite: 3] */
+    border-color: var(--royal-gold);
+    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25), inset 0 2px 5px rgba(0,0,0,0.5);
     background: rgba(11, 12, 16, 0.8);
 }
 
@@ -276,11 +272,11 @@ a#exit:hover {
 #enter, #submitmsg {
     position: relative;
     overflow: hidden;
-    background: var(--glass-bg-red); /*[cite: 3] */
-    color: var(--royal-gold); /*[cite: 3] */
+    background: var(--glass-bg-red);
+    color: var(--royal-gold);
     border: 1px solid rgba(255, 215, 0, 0.4);
     border-radius: 8px;
-    box-shadow: var(--liquid-shadow), inset 0 2px 8px rgba(255, 215, 0, 0.2); /*[cite: 3] */
+    box-shadow: var(--liquid-shadow), inset 0 2px 8px rgba(255, 215, 0, 0.2);
     width: 48px;
     height: 48px;
     display: flex;
@@ -300,17 +296,17 @@ a#exit:hover {
     left: -150%;
     width: 150%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent); /*[cite: 3] */
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
     transform: skewX(-20deg);
     transition: all 0.6s ease;
     z-index: -1;
 }
 #enter:hover::before, #submitmsg:hover::before {
-    left: 150%; /*[cite: 3] */
+    left: 150%;
 }
 #enter:hover, #submitmsg:hover {
     background: rgba(183, 34, 34, 0.6);
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5), inset 0 2px 10px rgba(255, 215, 0, 0.4); /*[cite: 3] */
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5), inset 0 2px 10px rgba(255, 215, 0, 0.4);
     transform: translateY(-2px);
 }
 .error {
@@ -334,7 +330,7 @@ a#exit:hover {
 }
 </style>
 
-<!-- Hidden div to hold initial payload for immediate render (Works for Guests too) -->
+<!-- Hidden div to hold initial payload for immediate render -->
 <div id="raw-chat-log" style="display:none;">{!! $initialLog !!}</div>
 
 <div id="chat-wrapper">
@@ -386,7 +382,6 @@ $(document).ready(function () {
         return;
     }
 
-    // Dynamic state rendering without destroying the chat history[cite: 4]
     function renderGuestState() {
         let defaultName = "{{ Auth::check() ? Auth::user()->name : (isset($_COOKIE['cotuong_name']) ? $_COOKIE['cotuong_name'] : '') }}";
 
@@ -445,7 +440,6 @@ $(document).ready(function () {
                 $clone.find('br').last().remove();
                 let msgText = $clone.html().trim();
 
-                // If currentUser is empty (Guest), all messages become "theirs" naturally.
                 let isMine = (currentUser !== "") && (userName === currentUser);
                 let bubbleClass = isMine ? 'message-mine' : 'message-theirs';
                 let metaText = isMine ? timeOnly : `<b>${userName}</b> • ${timeOnly}`;
@@ -462,7 +456,6 @@ $(document).ready(function () {
         return formattedHtml;
     }
 
-    // Immediate Chat Initialization (Works for logged out users too)[cite: 4]
     function initializeChat() {
         let rawHtml = $("#raw-chat-log").html();
         if (rawHtml && rawHtml.trim() !== '') {
@@ -513,11 +506,10 @@ $(document).ready(function () {
         });
     }
 
-    // Always start observing the room immediately
     initializeChat();
     chatInterval = setInterval(() => loadLog(false), 1500);
 
-    // Dynamic Login Form Submission (Intercepted from #footer-action)[cite: 4]
+    // Dynamic Login Form Submission
     $("#chat-wrapper").on("submit", "#login-form-inline", function (e) {
         e.preventDefault();
         e.stopImmediatePropagation();
@@ -530,7 +522,6 @@ $(document).ready(function () {
 
         currentUser = name;
 
-        // Wipe local variables, reload entire chat using the new identity mapping
         renderedMessageCount = 0;
         $("#chatbox").empty();
 
@@ -557,14 +548,15 @@ $(document).ready(function () {
         return false;
     });
 
-    // Submitting Chat Message
+    // Submitting Chat Message to Unified Route
     $("#chat-wrapper").on("submit", "#message-form", function (e) {
         e.preventDefault();
         const clientmsg = $("#usermsg").val().trim();
         if (clientmsg === "") return false;
 
-        $.post("{{ url('/api') }}{{ $endpoint }}", {
+        $.post("{{ route('chat.post') }}", {
             roomCode: "{{ $roomCode }}",
+            lang: "{{ app()->getLocale() }}",
             text: clientmsg,
             _token: "{{ csrf_token() }}"
         }, function() {
@@ -575,7 +567,7 @@ $(document).ready(function () {
         return false;
     });
 
-    // Exiting Chat (Reverts gracefully to Observer mode)[cite: 4]
+    // Exiting Chat
     $("#chat-wrapper").on("click", "#exit", function (e) {
         e.preventDefault();
         bootbox.confirm({
@@ -607,7 +599,7 @@ $(document).ready(function () {
                             renderedMessageCount = 0;
                             $("#chatbox").empty();
                             renderGuestState();
-                            initializeChat(); // Read chatlog as a guest again
+                            initializeChat();
                             loadLog(true);
                         }
                     });

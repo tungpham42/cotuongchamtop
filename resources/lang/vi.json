@@ -1707,5 +1707,17 @@
     "Rời khỏi cuộc đàm đạo?": "Rời khỏi cuộc đàm đạo?",
     "Rời đi": "Rời đi",
     "Ở lại": "Ở lại",
-    "Đăng nhập để tham gia": "Đăng nhập để tham gia"
+    "Đăng nhập để tham gia": "Đăng nhập để tham gia",
+    "Name cannot be empty": "Họ tên không được để trống",
+    "Email cannot be empty": "Email không được để trống",
+    "Email format invalid": "Định dạng email sai",
+    "Subject cannot be empty": "Chủ đề không được để trống",
+    "Message cannot be empty": "Tin nhắn không được để trống",
+    "Email not sent": "Email không gửi được",
+    "Email has been sent": "Email gửi thành công",
+    "Message could not be sent": "Tin nhắn không gửi được",
+    "Xiangqi Challenge on cotuong.top: An Invitation from \":host\"": "Thách Đấu Cờ Tướng Trên cotuong.top: Một Lời Mời Từ \":host\"",
+    "compete_email_body": "<p>Chào :guest,</p><p>Tôi hy vọng bạn đang có một ngày tốt lành!</p><p>Tôi muốn mời bạn tham gia vào một trận cờ tướng thú vị trên trang cotuong.top.</p><p>Tôi đã thấy bạn tham gia vào cộng đồng cờ tướng trực tuyến này và tôi rất muốn có cơ hội thách đấu và học hỏi từ bạn.</p><p>Đường dẫn tới phòng \":room\" tại đây: <a target=\"_blank\" href=\":url\">:url</a></p><p>Trân trọng,</p><p>:host</p>",
+    "Invitation to \":guest\" failed": "Lời mời đến \":guest\" không gửi được",
+    "Invitation to \":guest\" sent successfully": "Lời mời đến \":guest\" gửi thành công"
 }

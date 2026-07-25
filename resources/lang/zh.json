@@ -764,5 +764,17 @@
     "Rời khỏi cuộc đàm đạo?": "离开对话？",
     "Rời đi": "离开",
     "Ở lại": "留下",
-    "Đăng nhập để tham gia": "登录以加入"
+    "Đăng nhập để tham gia": "登录以加入",
+    "Name cannot be empty": "名称不能为空",
+    "Email cannot be empty": "电子邮件不能为空",
+    "Email format invalid": "电子邮件格式无效",
+    "Subject cannot be empty": "主题不能为空",
+    "Message cannot be empty": "消息不能为空",
+    "Email not sent": "未发送电子邮件",
+    "Email has been sent": "电子邮件已发送",
+    "Message could not be sent": "无法发送消息",
+    "Xiangqi Challenge on cotuong.top: An Invitation from \":host\"": "cotuong.top 上的象棋挑战：“:host”的邀请",
+    "compete_email_body": "<p>你好 :guest，</p><p>祝你今天过得愉快！</p><p>我想邀请你在 cotuong.top 上进行一场精彩的象棋比赛。</p><p>我看到你参与了这个在线社区，希望能有机会与你切磋并向你学习。</p><p>房间“:room”的链接在这里：<a target=\"_blank\" href=\":url\">:url</a></p><p>顺祝商祺，</p><p>:host</p>",
+    "Invitation to \":guest\" failed": "无法向“:guest”发送邀请",
+    "Invitation to \":guest\" sent successfully": "已成功向“:guest”发送邀请"
 }

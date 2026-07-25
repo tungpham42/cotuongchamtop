@@ -7,6 +7,7 @@ use App\Models\PuzzleComment;
 use App\Models\PuzzleCommentLike;
 use App\Actions\Puzzle\GetPuzzleRankAction;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,7 @@ use DataTables;
 
 class PuzzleController extends Controller
 {
-    private $getPuzzleRankAction;
+    private GetPuzzleRankAction $getPuzzleRankAction;
 
     public function __construct(GetPuzzleRankAction $getPuzzleRankAction)
     {
@@ -26,7 +27,7 @@ class PuzzleController extends Controller
     /**
      * Unified logic to generate the DataTables response for puzzles.
      */
-    public function getPuzzlesData(Request $request)
+    public function getPuzzlesData(Request $request): JsonResponse
     {
         if ($request->ajax()) {
             $puzzles = Puzzle::public()->select(['id', 'name', 'slug', 'fen', 'rating', 'likes_count', 'hard_count', 'unsolved_count', 'updated_at']);
@@ -56,14 +57,14 @@ class PuzzleController extends Controller
                 ->rawColumns(['rank', 'name', 'rating', 'action', 'time'])
                 ->make(true);
         }
+
+        return response()->json([]);
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create(Request $request): JsonResponse
     {
         $payload = $request->validate([
             'name' => 'required|string|max:255',
@@ -107,7 +108,7 @@ class PuzzleController extends Controller
         ], 201);
     }
 
-    public function checkUniqueName(Request $request)
+    public function checkUniqueName(Request $request): JsonResponse
     {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -143,29 +144,26 @@ class PuzzleController extends Controller
 
     /**
      * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function show(Puzzle $puzzle, $name)
+    public function show(Puzzle $puzzle, string $name): ?string
     {
         return Puzzle::where('name', $name)->value('fen');
     }
 
-    public function upvote(Request $request)
+    public function upvote(Request $request): JsonResponse
     {
         $slug = $request->input('slug');
         return $this->react($request, $slug ?? '');
     }
 
-    public function downvote(Request $request)
+    public function downvote(Request $request): JsonResponse
     {
         $slug = $request->input('slug');
         $request->merge(['type' => 'unsolved']);
         return $this->react($request, $slug ?? '');
     }
 
-    public function totalRating(Request $request)
+    public function totalRating(Request $request): JsonResponse
     {
         $slug = $request->input('slug');
         $puzzle = $this->getPuzzleOrFail($slug);
@@ -178,7 +176,7 @@ class PuzzleController extends Controller
         ]);
     }
 
-    public function getReactions(string $slug)
+    public function getReactions(string $slug): JsonResponse
     {
         $puzzle = $this->getPuzzleOrFail($slug);
 
@@ -190,7 +188,7 @@ class PuzzleController extends Controller
         ]);
     }
 
-    public function react(Request $request, string $slug = null)
+    public function react(Request $request, ?string $slug = null): JsonResponse
     {
         $slug = $slug ?? $request->input('slug');
 
@@ -229,7 +227,7 @@ class PuzzleController extends Controller
         ]);
     }
 
-    public function comments(Request $request, string $slug)
+    public function comments(Request $request, string $slug): JsonResponse
     {
         $puzzle = $this->getPuzzleOrFail($slug);
 
@@ -256,7 +254,7 @@ class PuzzleController extends Controller
         ]);
     }
 
-    public function addComment(Request $request, string $slug)
+    public function addComment(Request $request, string $slug): JsonResponse
     {
         $puzzle = $this->getPuzzleOrFail($slug);
 
@@ -305,7 +303,7 @@ class PuzzleController extends Controller
         ], 201);
     }
 
-    public function likeComment(Request $request, string $slug, PuzzleComment $comment)
+    public function likeComment(Request $request, string $slug, PuzzleComment $comment): JsonResponse
     {
         $puzzle = $this->getPuzzleOrFail($slug);
 
@@ -348,7 +346,7 @@ class PuzzleController extends Controller
         ]);
     }
 
-    protected function transformComment(PuzzleComment $comment)
+    protected function transformComment(PuzzleComment $comment): array
     {
         $replies = $comment->relationLoaded('replies')
             ? $comment->replies

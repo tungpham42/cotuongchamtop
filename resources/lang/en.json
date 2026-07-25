@@ -760,5 +760,17 @@
     "Rời khỏi cuộc đàm đạo?": "Leave the conversation?",
     "Rời đi": "Leave",
     "Ở lại": "Stay",
-    "Đăng nhập để tham gia": "Login to join"
+    "Đăng nhập để tham gia": "Login to join",
+    "Name cannot be empty": "Name cannot be empty",
+    "Email cannot be empty": "Email cannot be empty",
+    "Email format invalid": "Email format invalid",
+    "Subject cannot be empty": "Subject cannot be empty",
+    "Message cannot be empty": "Message cannot be empty",
+    "Email not sent": "Email not sent",
+    "Email has been sent": "Email has been sent",
+    "Message could not be sent": "Message could not be sent",
+    "Xiangqi Challenge on cotuong.top: An Invitation from \":host\"": "Xiangqi Challenge on cotuong.top: An Invitation from \":host\"",
+    "compete_email_body": "<p>Hi :guest,</p><p>I hope you are having a good day!</p><p>I would like to invite you to an exciting game of Xiangqi on cotuong.top.</p><p>I've seen you participate in this online community and would love the chance to challenge and learn from you.</p><p>Link to room \":room\" here: <a target=\"_blank\" href=\":url\">:url</a></p><p>Best regards,</p><p>:host</p>",
+    "Invitation to \":guest\" failed": "Invitation to \":guest\" failed",
+    "Invitation to \":guest\" sent successfully": "Invitation to \":guest\" sent successfully"
 }
