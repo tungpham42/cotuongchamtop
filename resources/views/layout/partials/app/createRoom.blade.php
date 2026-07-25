@@ -22,7 +22,6 @@
     <form method="POST" id="create-form">
         <div class="form-group">
             @csrf
-            <input name="ma-phong" type="hidden" value="{{ md5(time()) }}" disabled readonly>
             <button data-step="1" data-intro="{{ __("Ấn vào đây để tạo phòng thi đấu với các kỳ thủ khác") }}" type="submit" class="btn btn-danger btn-lg my-3"><i class="fad fa-plus-octagon"></i> {{ __("Tạo phòng mới") }}</button>
         </div>
     </form>
