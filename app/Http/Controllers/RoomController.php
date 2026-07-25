@@ -530,4 +530,12 @@ class RoomController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    /**
+     * Check if a room code exists.
+     */
+    public function hasRoomCode(string $code): bool
+    {
+        return Room::where('code', $code)->exists();
+    }
 }
