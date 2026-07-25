@@ -154,23 +154,6 @@
                                     @if (auth()->check())
                                         <a id="choi" class="btn btn-danger text-light btn-lg showPromotion mx-2" href="javascript:joinMatch('{{ $roomCode }}')"><i class="fad fa-mouse"></i> {{ __('Chơi') }}</a>
                                         <script>
-                                            // Helper wrapper to make Bootbox alert awaitable
-                                            const bootboxAlertAsync = (message) => new Promise((resolve) => {
-                                                bootbox.alert({
-                                                    message: message,
-                                                    size: 'small',
-                                                    centerVertical: true,
-                                                    closeButton: false,
-                                                    buttons: {
-                                                        ok: {
-                                                            className: 'btn-danger',
-                                                            label: '{{ __("Oki") }}'
-                                                        }
-                                                    },
-                                                    callback: resolve
-                                                });
-                                            });
-
                                             async function joinMatch(roomCode) {
                                                 const currentUserId = Number('{{ auth()->id() }}');
                                                 const hostUrl = '{{ url(__('/phong/')) }}/' + roomCode;
@@ -250,21 +233,6 @@
                             @yield('belowContent')
                             @if ( !isset($board) )
                                 <script>
-                                    // Helper Promise wrappers for Bootbox alerts and prompts
-                                    const bootboxAlertAsync = (options) => new Promise((resolve) => {
-                                        const config = typeof options === 'string' ? { message: options } : options;
-                                        bootbox.alert({ ...config, callback: resolve });
-                                    });
-
-                                    const bootboxPromptAsync = (options) => new Promise((resolve) => {
-                                        bootbox.prompt({ ...options, callback: resolve });
-                                    });
-
-                                    // Helper to generate a unique 32-character hex room code dynamically
-                                    const generateRoomCode = () => Array.from(crypto.getRandomValues(new Uint8Array(16)))
-                                        .map(b => b.toString(16).padStart(2, '0'))
-                                        .join('');
-
                                     // --- 1. Analyze Board Event Handler ---
                                     $('#btn-analyze').on('click', async function(e) {
                                         e.preventDefault();

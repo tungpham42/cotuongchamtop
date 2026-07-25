@@ -33,15 +33,6 @@
         CANCEL: '<i class="fas fa-times"></i> {{ __("Hủy") }}'
     });
 
-    // Promise wrappers to make Bootbox modals awaitable
-    const bootboxAlertAsync = (options) => new Promise(resolve => {
-        bootbox.alert({ ...options, callback: resolve });
-    });
-
-    const bootboxPromptAsync = (options) => new Promise(resolve => {
-        bootbox.prompt({ ...options, callback: resolve });
-    });
-
     $('#create-form').on('submit', async function(e) {
         e.preventDefault();
 

@@ -118,23 +118,6 @@
 
             @if (auth()->check())
             <script>
-            // Helper wrapper to convert Bootbox alert into an awaitable Promise
-            const bootboxAlertAsync = (message) => new Promise((resolve) => {
-                bootbox.alert({
-                    message: message,
-                    size: 'small',
-                    centerVertical: true,
-                    closeButton: false,
-                    buttons: {
-                        ok: {
-                            className: 'btn-danger pulse-red',
-                            label: '{{ __("Oki") }}'
-                        }
-                    },
-                    callback: resolve
-                });
-            });
-
             async function joinMatch(roomCode) {
                 const currentUserId = Number('{{ auth()->id() }}');
                 const hostUrl = '{{ url(__('/phong/')) }}/' + roomCode;

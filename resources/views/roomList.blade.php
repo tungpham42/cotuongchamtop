@@ -207,28 +207,6 @@
         });
 
         @if (auth()->check())
-        // ==========================================
-        // 1. HELPER UTILITIES
-        // ==========================================
-
-        // Dynamically generate a unique 32-character hex room code
-        const generateRoomCode = () => Array.from(crypto.getRandomValues(new Uint8Array(16)))
-            .map(b => b.toString(16).padStart(2, '0'))
-            .join('');
-
-        // Promise wrappers to make Bootbox modals awaitable
-        const bootboxAlertAsync = (options) => new Promise(resolve => {
-            bootbox.alert({ ...options, callback: resolve });
-        });
-
-        const bootboxPromptAsync = (options) => new Promise(resolve => {
-            bootbox.prompt({ ...options, callback: resolve });
-        });
-
-        // ==========================================
-        // 2. REFACTORED FUNCTIONS
-        // ==========================================
-
         async function createRoom() {
             const maPhong = generateRoomCode();
 

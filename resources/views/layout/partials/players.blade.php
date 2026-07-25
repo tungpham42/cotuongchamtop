@@ -54,14 +54,6 @@
 
 @if (auth()->check())
 <script>
-// Helper wrappers to make Bootbox work cleanly with async/await
-const bootboxAlertAsync = (options) => new Promise(resolve => {
-    bootbox.alert({ ...options, callback: resolve });
-});
-
-const bootboxPromptAsync = (options) => new Promise(resolve => {
-    bootbox.prompt({ ...options, callback: resolve });
-});
 
 async function compete(guestId) {
     // Dynamically generate a unique room code per call (32-character hex)
