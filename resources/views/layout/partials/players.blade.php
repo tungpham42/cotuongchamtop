@@ -54,108 +54,123 @@
 
 @if (auth()->check())
 <script>
-function compete(guestId) {
-    var maPhong = '{{ md5(time()) }}';
-    $.ajax({
-        type: "POST",
-        url: '{{ url('/api/hasRoomcode') }}',
-        data: { 'ma-phong': maPhong },
-        dataType: 'text'
-    }).done(function(data){
-        if (data == 'no') {
-            bootbox.prompt({
-                title: "{{ __("Mời đặt tên cho Phòng thi đấu:") }}",
-                locale: '{{ __("vi") }}',
-                centerVertical: true,
-                closeButton: false,
-                maxlength: 32,
-                buttons: {
-                    confirm: {
-                        label: '<i class="fas fa-check"></i> {{ __("Đặt tên") }}',
-                        className: 'btn-danger'
-                    },
-                    cancel: {
-                        className: 'btn-dark'
-                    }
-                },
-                callback: function(roomName){
-                    if (roomName != null) {
-                        if (roomName.trim().length === 0 || roomName.length === 0) {
-                            bootbox.alert({
-                                message: "{{ __('Vui lòng đặt tên cho phòng!') }}",
-                                size: 'small',
-                                locale: '{{ __("vi") }}',
-                                centerVertical: true,
-                                closeButton: false,
-                                buttons: { ok: { className: 'btn-danger' } },
-                                callback: function () {
-                                    $('#create-room').trigger('click');
-                                }
-                            });
-                        } else {
-                            $.ajax({
-                                type: "POST",
-                                url: '{{ url('/api/compete') }}',
-                                data: {
-                                    'ma-phong': maPhong,
-                                    'ten-phong': roomName,
-                                    'FEN': '{{ env('INITIAL_FEN') }}',
-                                    'pass': '',
-                                    'host_id': '{{ auth()->id() }}',
-                                    'guest_id': guestId
-                                },
-                                dataType: 'text'
-                            }).done(function() {
-                                bootbox.alert({
-                                    message: "{{ __('Bạn đã tạo phòng thành công.') }}",
-                                    size: 'small',
-                                    centerVertical: true,
-                                    closeButton: false,
-                                    buttons: { ok: { className: 'btn-danger', label: '{{ __('Oki') }}' } },
-                                    callback: function(){
-                                        $.ajax({
-                                            type: "POST",
-                                            url: '{{ url('/api/competeMail') }}',
-                                            data: {
-                                                'ma-phong': maPhong,
-                                                'ten-phong': roomName,
-                                                'host_id': '{{ auth()->id() }}',
-                                                'guest_id': guestId,
-                                                'lang': '{{ app()->getLocale() }}'
-                                            },
-                                            dataType: 'json'
-                                        }).done(function(mailData) {
-                                            bootbox.alert({
-                                                message: mailData.message,
-                                                size: 'small',
-                                                centerVertical: true,
-                                                closeButton: false,
-                                                buttons: { ok: { className: 'btn-danger', label: '{{ __('Oki') }}' } },
-                                                callback: function(){
-                                                    window.location.href = '{{ url(__('/phong/')) }}' + '/' + maPhong;
-                                                }
-                                            });
-                                        });
-                                    }
-                                });
-                            });
-                        }
-                    }
-                }
-            });
-        } else if (data == 'yes') {
-            bootbox.alert({
+// Helper wrappers to make Bootbox work cleanly with async/await
+const bootboxAlertAsync = (options) => new Promise(resolve => {
+    bootbox.alert({ ...options, callback: resolve });
+});
+
+const bootboxPromptAsync = (options) => new Promise(resolve => {
+    bootbox.prompt({ ...options, callback: resolve });
+});
+
+async function compete(guestId) {
+    // Dynamically generate a unique room code per call (32-character hex)
+    const maPhong = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+
+    try {
+        // 1. Check room code availability
+        const checkRes = await $.ajax({
+            type: "POST",
+            url: '{{ url('/api/hasRoomcode') }}',
+            data: { 'ma-phong': maPhong },
+            dataType: 'json'
+        });
+
+        if (checkRes.exists) {
+            await bootboxAlertAsync({
                 message: "{{ __('Mã phòng bị trùng, vui lòng thử lại.') }}",
                 size: 'small',
                 centerVertical: true,
                 closeButton: false,
-                buttons: { ok: { className: 'btn-danger', label: '{{ __('Oki') }}' } },
-                callback: function(){
-                    setTimeout(() => { location.reload(); }, 500);
-                }
+                buttons: { ok: { className: 'btn-danger', label: '{{ __('Oki') }}' } }
             });
+            setTimeout(() => location.reload(), 500);
+            return;
         }
-    });
+
+        // 2. Prompt user for room name
+        const roomName = await bootboxPromptAsync({
+            title: "{{ __('Mời đặt tên cho Phòng thi đấu:') }}",
+            locale: '{{ __("vi") }}',
+            centerVertical: true,
+            closeButton: false,
+            maxlength: 32,
+            buttons: {
+                confirm: { label: '<i class="fas fa-check"></i> {{ __("Đặt tên") }}', className: 'btn-danger' },
+                cancel: { className: 'btn-dark' }
+            }
+        });
+
+        // User cancelled the prompt
+        if (roomName === null) return;
+
+        // Validation check
+        if (!roomName.trim()) {
+            await bootboxAlertAsync({
+                message: "{{ __('Vui lòng đặt tên cho phòng!') }}",
+                size: 'small',
+                locale: '{{ __("vi") }}',
+                centerVertical: true,
+                closeButton: false,
+                buttons: { ok: { className: 'btn-danger' } }
+            });
+            $('#create-room').trigger('click');
+            return;
+        }
+
+        // 3. Create the room
+        await $.ajax({
+            type: "POST",
+            url: '{{ url('/api/compete') }}',
+            data: {
+                'ma-phong': maPhong,
+                'ten-phong': roomName.trim(),
+                'FEN': '{{ env('INITIAL_FEN') }}',
+                'pass': '',
+                'host_id': '{{ auth()->id() }}',
+                'guest_id': guestId
+            },
+            dataType: 'text'
+        });
+
+        await bootboxAlertAsync({
+            message: "{{ __('Bạn đã tạo phòng thành công.') }}",
+            size: 'small',
+            centerVertical: true,
+            closeButton: false,
+            buttons: { ok: { className: 'btn-danger', label: '{{ __('Oki') }}' } }
+        });
+
+        // 4. Send email notification
+        const mailData = await $.ajax({
+            type: "POST",
+            url: '{{ url('/api/competeMail') }}',
+            data: {
+                'ma-phong': maPhong,
+                'ten-phong': roomName.trim(),
+                'host_id': '{{ auth()->id() }}',
+                'guest_id': guestId,
+                'lang': '{{ app()->getLocale() }}'
+            },
+            dataType: 'json'
+        });
+
+        await bootboxAlertAsync({
+            message: mailData.message,
+            size: 'small',
+            centerVertical: true,
+            closeButton: false,
+            buttons: { ok: { className: 'btn-danger', label: '{{ __('Oki') }}' } }
+        });
+
+        // 5. Redirect to the newly created room
+        window.location.href = '{{ url(__('/phong/')) }}' + '/' + maPhong;
+
+    } catch (error) {
+        console.error('An error occurred during compete execution:', error);
+    }
 }
 </script>
 @endif
