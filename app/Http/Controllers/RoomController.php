@@ -554,15 +554,21 @@ class RoomController extends Controller
     }
 
     /**
-     * Check if a room code exists (handles HTTP Request and static string calls).
+     * Check if a room code exists.
      */
-    public static function hasRoomCode(Request|string $code): JsonResponse|bool
+    public function hasRoomcode(Request|string $request = null): JsonResponse|bool
     {
-        if ($code instanceof Request) {
-            $roomCode = $code->input('ma-phong') ?? $code->input('code');
-            return response()->json(['exists' => Room::where('code', $roomCode)->exists()]);
+        // If called directly with a string (e.g., RoomController::hasRoomCode('12345'))
+        if (is_string($request)) {
+            return Room::where('code', $request)->exists();
         }
 
-        return Room::where('code', $code)->exists();
+        // Resolve current request if called via HTTP route without injected parameter
+        $request = $request ?? request();
+        $code = $request->input('ma-phong') ?? $request->input('code');
+
+        return response()->json([
+            'exists' => Room::where('code', $code)->exists(),
+        ]);
     }
 }
