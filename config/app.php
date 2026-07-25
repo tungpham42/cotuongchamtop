@@ -162,9 +162,6 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
-        SwooleTW\Http\LaravelServiceProvider::class,
-        PragmaRX\Health\ServiceProvider::class,
-        That0n3guy\Transliteration\TransliterationServiceProvider::class,
         Creativeorange\Gravatar\GravatarServiceProvider::class,
         Vrkansagara\LaraOutPress\ServiceProvider::class,
         /*
@@ -234,7 +231,6 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
-        'Transliteration' => That0n3guy\Transliteration\Facades\Transliteration::class,
         'Gravatar' => Creativeorange\Gravatar\Facades\Gravatar::class,
     ],
 

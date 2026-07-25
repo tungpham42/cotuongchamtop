@@ -1,6 +1,6 @@
 <?php
 
-namespace Spatie\Health\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;

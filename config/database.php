@@ -63,19 +63,6 @@ return [
             ]) : [],
         ],
 
-        'wordpress' => [ // for WordPress database (used by Corcel)
-            'driver'    => 'mysql',
-            'host'      => 'localhost',
-            'database'  => 'cotuong_news',
-            'username'  => 'cotuong_news',
-            'password'  => 'NEWSv0d0i',
-            'charset'   => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix'    => 'co_',
-            'strict'    => false,
-            'engine'    => null,
-        ],
-
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
