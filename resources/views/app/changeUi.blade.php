@@ -26,26 +26,26 @@
                                 <div class="form-group">
                                     <label for="board_theme" class="font-weight-bold"><i class="fas fa-chess-board text-muted"></i> {{ __("Bàn cờ") }}</label>
                                     <select data-step="1" data-intro="{{ __("Chọn giao diện bàn cờ") }}" class="form-control form-control-lg" name="board_theme" id="board_theme">
-                                        <option value="xiangqi-board" @if((auth()->user()->board_theme ?? '') === 'xiangqi-board') selected @endif>{{ __("Bàn cờ mặc định") }}</option>
-                                        <option value="ban-co-go" @if((auth()->user()->board_theme ?? '') === 'ban-co-go') selected @endif>{{ __("Gỗ nhạt") }}</option>
-                                        <option value="wood-board" @if((auth()->user()->board_theme ?? '') === 'wood-board') selected @endif>{{ __("Gỗ đậm") }}</option>
-                                        <option value="ban-co" @if((auth()->user()->board_theme ?? '') === 'ban-co') selected @endif>{{ __("Vàng chói") }}</option>
-                                        <option value="banco" @if((auth()->user()->board_theme ?? '') === 'banco') selected @endif>{{ __("Sáng") }}</option>
-                                        <option value="chess-board" @if((auth()->user()->board_theme ?? '') === 'chess-board') selected @endif>{{ __("Cam nhạt") }}</option>
+                                        <option value="xiangqi-board" @if(empty(auth()->user()->board_theme) || auth()->user()->board_theme === 'xiangqi-board') selected @endif>{{ __("Bàn cờ mặc định") }}</option>
+                                        <option value="ban-co-go" @if(auth()->user()->board_theme === 'ban-co-go') selected @endif>{{ __("Gỗ nhạt") }}</option>
+                                        <option value="wood-board" @if(auth()->user()->board_theme === 'wood-board') selected @endif>{{ __("Gỗ đậm") }}</option>
+                                        <option value="ban-co" @if(auth()->user()->board_theme === 'ban-co') selected @endif>{{ __("Vàng chói") }}</option>
+                                        <option value="banco" @if(auth()->user()->board_theme === 'banco') selected @endif>{{ __("Sáng") }}</option>
+                                        <option value="chess-board" @if(auth()->user()->board_theme === 'chess-board') selected @endif>{{ __("Cam nhạt") }}</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="pieces_theme" class="font-weight-bold"><i class="fas fa-chess-knight text-muted"></i> {{ __("Quân cờ") }}</label>
                                     <select data-step="2" data-intro="{{ __("Chọn giao diện quân cờ") }}" class="form-control form-control-lg" name="pieces_theme" id="pieces_theme">
-                                        <option value="wiki" @if((auth()->user()->pieces_theme ?? '') === 'wiki') selected @endif>{{ __("Quân cờ mặc định") }}</option>
-                                        <option value="tung" @if((auth()->user()->pieces_theme ?? '') === 'tung') selected @endif>{{ __("Đặc biệt") }}</option>
-                                        <option value="do-den" @if((auth()->user()->pieces_theme ?? '') === 'do-den') selected @endif>{{ __("Đỏ đen") }}</option>
-                                        <option value="graphic" @if((auth()->user()->pieces_theme ?? '') === 'graphic') selected @endif>{{ __("Phương Tây") }}</option>
-                                        <option value="co" @if((auth()->user()->pieces_theme ?? '') === 'co') selected @endif>{{ __("Cam") }}</option>
-                                        <option value="wikimedia" @if((auth()->user()->pieces_theme ?? '') === 'wikimedia') selected @endif>{{ __("Vàng đậm") }}</option>
-                                        <option value="quan" @if((auth()->user()->pieces_theme ?? '') === 'quan') selected @endif>{{ __("Sáng") }}</option>
-                                        <option value="traditional" @if((auth()->user()->pieces_theme ?? '') === 'traditional') selected @endif>{{ __("Truyền thống") }}</option>
+                                        <option value="wiki" @if(empty(auth()->user()->pieces_theme) || auth()->user()->pieces_theme === 'wiki') selected @endif>{{ __("Quân cờ mặc định") }}</option>
+                                        <option value="tung" @if(auth()->user()->pieces_theme === 'tung') selected @endif>{{ __("Đặc biệt") }}</option>
+                                        <option value="do-den" @if(auth()->user()->pieces_theme === 'do-den') selected @endif>{{ __("Đỏ đen") }}</option>
+                                        <option value="graphic" @if(auth()->user()->pieces_theme === 'graphic') selected @endif>{{ __("Phương Tây") }}</option>
+                                        <option value="co" @if(auth()->user()->pieces_theme === 'co') selected @endif>{{ __("Cam") }}</option>
+                                        <option value="wikimedia" @if(auth()->user()->pieces_theme === 'wikimedia') selected @endif>{{ __("Vàng đậm") }}</option>
+                                        <option value="quan" @if(auth()->user()->pieces_theme === 'quan') selected @endif>{{ __("Sáng") }}</option>
+                                        <option value="traditional" @if(auth()->user()->pieces_theme === 'traditional') selected @endif>{{ __("Truyền thống") }}</option>
                                     </select>
                                 </div>
 
