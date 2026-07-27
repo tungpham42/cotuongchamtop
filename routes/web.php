@@ -1144,7 +1144,7 @@ foreach ($localizedLevelPages as $pageKey => $localizedPages) {
     foreach ($localizedPages as $locale => $page) {
         Route::match(['get', 'post'], localized_path($pageKey, [], $locale), function () use ($pageKey, $locale, $page) {
 
-            // 1. Wrap the view in a response object
+            // 1. Generate the view response
             $response = response()->view('ai', localized_page_data($pageKey, $locale, [
                 'headTitle' => $page['title'],
                 'bodyClass' => 'home',
@@ -1155,12 +1155,16 @@ foreach ($localizedLevelPages as $pageKey => $localizedPages) {
                 'levelTxt' => $page['levelTxt'],
             ]));
 
-            // 2. Attach strict cache-busting headers
-            return $response->withHeaders([
-                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
-                'Pragma'       => 'no-cache',
-                'Expires'      => '0',
-            ]);
+            // 2. Apply cache-busting headers strictly to the root '/' page (vi locale)
+            if ($pageKey === 'ai.home' && $locale === 'vi') {
+                $response->withHeaders([
+                    'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                    'Pragma'       => 'no-cache',
+                    'Expires'      => '0',
+                ]);
+            }
+
+            return $response;
 
         })->middleware("locale:{$locale}");
     }
