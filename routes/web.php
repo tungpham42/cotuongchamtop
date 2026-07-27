@@ -1143,7 +1143,9 @@ $localizedLevelPages = [
 foreach ($localizedLevelPages as $pageKey => $localizedPages) {
     foreach ($localizedPages as $locale => $page) {
         Route::match(['get', 'post'], localized_path($pageKey, [], $locale), function () use ($pageKey, $locale, $page) {
-            return view('ai', localized_page_data($pageKey, $locale, [
+
+            // 1. Wrap the view in a response object
+            $response = response()->view('ai', localized_page_data($pageKey, $locale, [
                 'headTitle' => $page['title'],
                 'bodyClass' => 'home',
                 'randomRoom' => app(GetRandomRoomAction::class)->execute(),
@@ -1152,6 +1154,14 @@ foreach ($localizedLevelPages as $pageKey => $localizedPages) {
                 'level' => $page['level'],
                 'levelTxt' => $page['levelTxt'],
             ]));
+
+            // 2. Attach strict cache-busting headers
+            return $response->withHeaders([
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma'       => 'no-cache',
+                'Expires'      => '0',
+            ]);
+
         })->middleware("locale:{$locale}");
     }
 }
