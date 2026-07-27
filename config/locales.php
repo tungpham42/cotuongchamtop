@@ -92,6 +92,11 @@ return [
         'password.create'  => ['vi' => 'tao-mat-khau', 'en' => 'create-password', 'ja' => 'pasuwado-sakusei', 'ko' => 'bimilbeonho-mandeulgi', 'zh' => 'chuangjianmima'],
         'password.reset'   => ['vi' => 'dat-lai-mat-khau/{token}', 'en' => 'reset-password/{token}', 'ja' => 'pasuwado-risetto/{token}', 'ko' => 'bimilbeonho-jaeseoljeong/{token}', 'zh' => 'chongzhimima/{token}'],
 
+        // Auth Actions (Add these to your existing configuration)
+        'logout'           => ['vi' => 'dang-xuat', 'en' => 'logout', 'ja' => 'roguauto', 'ko' => 'log-a-us', 'zh' => 'dengchu'],
+        'password.email'   => ['vi' => 'gui-duong-dan-tao-mat-khau', 'en' => 'send-reset-link', 'ja' => 'risetto-rinku-soshin', 'ko' => 'jaeseoljeong-lingkeu-boda', 'zh' => 'fasong-chongzhi-lianjie'],
+        'password.update'  => ['vi' => 'quen-mat-khau', 'en' => 'forgot-password-update', 'ja' => 'pasuwado-koshin', 'ko' => 'bimilbeonho-eobdeiteu', 'zh' => 'wangjimima-gengxin'],
+
         // Lists/Misc
         'puzzle.list' => ['vi' => 'tat-ca-the-co', 'en' => 'all-puzzles', 'ja' => 'subete-no-pazuru', 'ko' => 'modeun-peojeul', 'zh' => 'suoyou-mi'],
         'user.list'   => ['vi' => 'thanh-vien', 'en' => 'members', 'ja' => 'pureya', 'ko' => 'peulleieo', 'zh' => 'wanjia'],

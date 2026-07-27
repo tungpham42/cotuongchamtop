@@ -96,12 +96,12 @@
 
                 <div class="dropdown-divider"></div>
 
-                <a class="dropdown-item" href="{{ route('logout') }}"
+                <a class="dropdown-item" href="{{ localized_url('logout') }}"
                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                   <i class="far fa-sign-out"></i> {{ __('Logout') }}
                 </a>
 
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                <form id="logout-form" action="{{ localized_url('logout') }}" method="POST" class="d-none">
                   @csrf
                 </form>
               </div>

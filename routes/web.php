@@ -736,18 +736,41 @@ foreach ($localizedAuthPages as $pageKey => $page) {
     }
 }
 
-Route::post('dang-xuat', [LoginController::class, 'logout'])->name('logout');
-// Route::get('dang-nhap', 'Auth\LoginController@showLoginForm')->name('login');
-Route::post('dang-nhap', 'Auth\LoginController@login');
+// ==========================================
+// LOCALIZED AUTH ACTION PAGES (Form Submissions)
+// ==========================================
+$localizedAuthActionUrls = [
+    'logout' => [
+        'action' => [LoginController::class, 'logout'],
+    ],
+    'login' => [
+        'action' => 'Auth\LoginController@login',
+    ],
+    'register' => [
+        'action' => 'Auth\RegisterController@register',
+    ],
+    'password.email' => [
+        'action' => 'Auth\ForgotPasswordController@sendResetLinkEmail',
+    ],
+    'password.update' => [
+        'action' => 'Auth\ResetPasswordController@reset',
+    ],
+];
 
-// Route::get('dang-ky', 'Auth\RegisterController@showRegistrationForm')->name('register');
-Route::post('dang-ky', 'Auth\RegisterController@register');
+foreach ($localizedAuthActionUrls as $pageKey => $page) {
+    foreach (config('locales.supported', []) as $locale) {
 
-// Route::get('quen-mat-khau', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
-// Route::get('tao-mat-khau', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.create');
-Route::post('gui-duong-dan-tao-mat-khau', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
-// Route::get('dat-lai-mat-khau/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
-Route::post('quen-mat-khau', 'Auth\ResetPasswordController@reset')->name('password.update');
+        $route = Route::post(localized_path($pageKey, [], $locale), $page['action'])
+            ->middleware("locale:{$locale}");
+
+        // Retain original route names for the default locale to prevent blade component breaks
+        if ($locale === config('locales.default', 'vi')) {
+            $route->name($pageKey);
+        } else {
+            $route->name("{$locale}.{$pageKey}");
+        }
+    }
+}
 
 Route::middleware('auth')->post('/payos/standard', [PayOSController::class, 'createStandard'])->name('payos.standard');
 Route::get('/payos/return', [PayOSController::class, 'handleReturn'])->name('payos.return');
