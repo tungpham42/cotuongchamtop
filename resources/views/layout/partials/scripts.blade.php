@@ -363,5 +363,19 @@
         if(event.stopPropagation != undefined)
             event.stopPropagation();
     }
+
+    window.onload = () => {
+        'use strict';
+        if ('serviceWorker' in navigator) {
+            console.log("Will the service worker register?");
+            navigator.serviceWorker
+                .register('{{ url('/') }}/serviceWorker.js')
+                .then(function(reg) {
+                    console.log("Yes, it did.");
+                }).catch(function(err) {
+                    console.log("No it didn't. This happened:", err)
+                });
+        }
+    }
 </script>
 <script src='https://platform-api.sharethis.com/js/sharethis.js#property=646aee4bd8c6d2001a06c2f8&product=sticky-share-buttons' async='async'></script>
