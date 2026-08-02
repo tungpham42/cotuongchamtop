@@ -24,6 +24,16 @@ use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Spatie\Sitemap\SitemapGenerator;
 use Spatie\Sitemap\Sitemap;
+use Illuminate\Support\Facades\Cache;
+
+Route::get('/test-redis', function () {
+    if (Cache::has('browser_test')) {
+        return "Loaded from Redis Cache: " . Cache::get('browser_test');
+    }
+    $message = "This is fresh data created at " . now();
+    Cache::put('browser_test', $message, 60);
+    return "Saved to Redis. Refresh the page! Data: " . $message;
+});
 
 /*
 |--------------------------------------------------------------------------
