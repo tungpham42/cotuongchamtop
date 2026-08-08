@@ -556,7 +556,7 @@ class RoomController extends Controller
     /**
      * Check if a room code exists.
      */
-    public function hasRoomcode(Request|string $request = null): JsonResponse|bool
+    public function hasRoomcode(Request|string|null $request = null): JsonResponse|bool
     {
         // If called directly with a string (e.g., RoomController::hasRoomCode('12345'))
         if (is_string($request)) {
