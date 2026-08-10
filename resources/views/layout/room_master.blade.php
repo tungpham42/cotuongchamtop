@@ -30,7 +30,7 @@
     @if ($role !== 'watch')
         @include('layout.partials.timer')
         <!-- INCLUDE VIDEO CALL COMPONENT HERE -->
-        @if(in_array($role, ['host', 'guest', 'red', 'black']))
+        @if(in_array($role, ['host', 'guest', 'red', 'black']) && auth()->check())
             <div class="w-50 mx-auto">
                 @include('layout.partials.videoCall')
             </div>

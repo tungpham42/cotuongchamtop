@@ -1,9 +1,11 @@
 <!-- resources/views/layout/partials/videoCall.blade.php -->
-<div class="card bg-dark text-light my-3 shadow-sm border-secondary" id="video-call-container">
+<div class="card my-3 shadow-lg royal-grid-card" id="video-call-container">
     <div class="card-header d-flex justify-content-between align-items-center py-2">
-        <h6 class="m-0"><i class="fad fa-video text-danger mr-2"></i>{{ __('Cuộc gọi Video') }}</h6>
+        <h6 class="m-0" style="font-family: 'Texturina', serif; color: var(--royal-gold); text-transform: uppercase;">
+            <i class="fad fa-video mr-2" style="color: var(--royal-red-light);"></i>{{ __('Cuộc gọi Video') }}
+        </h6>
         <div>
-            <button id="btn-start-call" class="btn btn-sm btn-success pulse-light">
+            <button id="btn-start-call" class="btn btn-sm btn-success pulse-gold">
                 <i class="fas fa-phone-alt"></i> {{ __('Bắt đầu Gọi') }}
             </button>
             <button id="btn-end-call" class="btn btn-sm btn-danger d-none">
@@ -11,24 +13,32 @@
             </button>
         </div>
     </div>
-    <div class="card-body p-2 position-relative bg-black rounded-bottom overflow-hidden" style="min-height: 220px;">
+    <div class="card-body p-2 position-relative rounded-bottom overflow-hidden" style="min-height: 220px; background: rgba(11, 12, 16, 0.6);">
         <!-- Remote Video (Large display) -->
         <!-- Added transition for smooth mirroring effect when signaled by remote peer -->
-        <video id="remoteVideo" autoplay playsinline class="w-100 h-100 rounded" style="object-fit: cover; max-height: 350px; background: #111; transition: transform 0.3s ease;"></video>
+        <video id="remoteVideo" autoplay playsinline class="w-100 h-100 rounded" style="object-fit: cover; max-height: 350px; background: var(--royal-bg); transition: transform 0.3s ease;"></video>
+        
+        <!-- Overlay Tên Remote -->
+        <span id="remoteUserName" class="position-absolute badge" style="top: 15px; left: 15px; z-index: 10; font-size: 0.85rem; display: none; background: var(--glass-bg-dark); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--royal-gold); color: var(--royal-gold-light); box-shadow: var(--liquid-shadow);"></span>
 
         <!-- Local Video (Small overlay inset) -->
-        <video id="localVideo" autoplay playsinline muted class="position-absolute rounded border border-light shadow"
-               style="width: 110px; height: 85px; bottom: 15px; right: 15px; object-fit: cover; background: #222; z-index: 10; transition: transform 0.3s ease;"></video>
+        <div id="localVideoContainer" class="position-absolute rounded" style="width: 110px; height: 85px; bottom: 15px; right: 15px; z-index: 10; box-shadow: var(--liquid-shadow); border: 1px solid var(--glass-border); overflow: hidden;">
+            <video id="localVideo" autoplay playsinline muted class="w-100 h-100" style="object-fit: cover; background: var(--royal-bg); transition: transform 0.3s ease;"></video>
+            <!-- Overlay Tên Local -->
+            <span id="localUserName" class="position-absolute badge text-truncate" style="max-width: 100px; bottom: 5px; left: 5px; z-index: 11; font-size: 0.7rem; background: var(--glass-bg-dark); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid rgba(212, 175, 55, 0.5); color: var(--royal-gold-light);">
+                {{ auth()->check() ? auth()->user()->name : __('Bạn') }}
+            </span>
+        </div>
 
         <!-- Media Controls Overlay -->
         <div id="media-controls" class="position-absolute d-none" style="bottom: 15px; left: 15px; z-index: 10;">
-            <button id="btn-toggle-audio" class="btn btn-sm btn-dark text-light border-secondary mr-1" data-toggle="tooltip" title="{{ __('Bật/Tắt Mic') }}">
+            <button id="btn-toggle-audio" class="btn btn-sm btn-dark mr-1" data-toggle="tooltip" title="{{ __('Bật/Tắt Mic') }}">
                 <i class="fas fa-microphone"></i>
             </button>
-            <button id="btn-toggle-video" class="btn btn-sm btn-dark text-light border-secondary mr-1" data-toggle="tooltip" title="{{ __('Bật/Tắt Camera') }}">
+            <button id="btn-toggle-video" class="btn btn-sm btn-dark mr-1" data-toggle="tooltip" title="{{ __('Bật/Tắt Camera') }}">
                 <i class="fas fa-video"></i>
             </button>
-            <button id="btn-toggle-mirror" class="btn btn-sm btn-dark text-light border-secondary" data-toggle="tooltip" title="{{ __('Lật Camera') }}">
+            <button id="btn-toggle-mirror" class="btn btn-sm btn-dark" data-toggle="tooltip" title="{{ __('Lật Camera') }}">
                 <i class="fas fa-arrows-alt-h"></i>
             </button>
         </div>
@@ -42,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // =========================================================================
 
     const currentUserId = "{{ auth()->id() ?? session()->getId() }}";
+    const currentUserName = "{{ auth()->check() ? auth()->user()->name : __('Bạn') }}";
     const videoRoomCode = "{{ $roomCode }}";
 
     let localStream = null;
@@ -85,6 +96,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 1. Send Signal to API (Sent as strict JSON)
     function sendWebRtcSignal(payload) {
+        // Đính kèm tên người dùng vào payload
+        payload.senderName = currentUserName;
+
         $.ajax({
             type: "POST",
             url: `{{ url('/api/room') }}/${videoRoomCode}/signal`,
@@ -254,6 +268,10 @@ document.addEventListener('DOMContentLoaded', function () {
         $localVideo.srcObject = null;
         $remoteVideo.srcObject = null;
 
+        // Ẩn tên remote khi cúp máy
+        const remoteNameEl = document.getElementById('remoteUserName');
+        if (remoteNameEl) remoteNameEl.style.display = 'none';
+
         // Reset mirror states on both local and remote UI elements on end call
         isVideoMirrored = false;
         $localVideo.style.transform = 'scaleX(1)';
@@ -272,6 +290,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (String(e.senderId) === String(currentUserId)) return;
 
                 const signal = e.payload;
+
+                // Hiển thị tên của đối thủ
+                if (signal.senderName) {
+                    const remoteNameEl = document.getElementById('remoteUserName');
+                    if (remoteNameEl) {
+                        remoteNameEl.textContent = signal.senderName;
+                        remoteNameEl.style.display = 'inline-block';
+                    }
+                }
 
                 try {
                     if (signal.type === 'offer') {
