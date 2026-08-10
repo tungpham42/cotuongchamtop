@@ -773,5 +773,12 @@
     "Xiangqi Challenge on cotuong.top: An Invitation from \":host\"": "Xiangqi Challenge on cotuong.top: An Invitation from \":host\"",
     "compete_email_body": "<p>Hi :guest,</p><p>I hope you are having a good day!</p><p>I would like to invite you to an exciting game of Xiangqi on cotuong.top.</p><p>I've seen you participate in this online community and would love the chance to challenge and learn from you.</p><p>Link to room \":room\" here: <a target=\"_blank\" href=\":url\">:url</a></p><p>Best regards,</p><p>:host</p>",
     "Invitation to \":guest\" failed": "Invitation to \":guest\" failed",
-    "Invitation to \":guest\" sent successfully": "Invitation to \":guest\" sent successfully"
+    "Invitation to \":guest\" sent successfully": "Invitation to \":guest\" sent successfully",
+    "Cuộc gọi Video": "Video Call",
+    "Bắt đầu Gọi": "Start Call",
+    "Tắt máy": "End Call",
+    "Bật/Tắt Mic": "Toggle Mic",
+    "Bật/Tắt Camera": "Toggle Camera",
+    "Lật Camera": "Mirror Camera",
+    "Không thể truy cập Camera/Microphone của bạn.": "Cannot access your Camera/Microphone."
 }

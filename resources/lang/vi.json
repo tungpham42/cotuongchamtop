@@ -1720,5 +1720,12 @@
     "Xiangqi Challenge on cotuong.top: An Invitation from \":host\"": "Thách Đấu Cờ Tướng Trên cotuong.top: Một Lời Mời Từ \":host\"",
     "compete_email_body": "<p>Chào :guest,</p><p>Tôi hy vọng bạn đang có một ngày tốt lành!</p><p>Tôi muốn mời bạn tham gia vào một trận cờ tướng thú vị trên trang cotuong.top.</p><p>Tôi đã thấy bạn tham gia vào cộng đồng cờ tướng trực tuyến này và tôi rất muốn có cơ hội thách đấu và học hỏi từ bạn.</p><p>Đường dẫn tới phòng \":room\" tại đây: <a target=\"_blank\" href=\":url\">:url</a></p><p>Trân trọng,</p><p>:host</p>",
     "Invitation to \":guest\" failed": "Lời mời đến \":guest\" không gửi được",
-    "Invitation to \":guest\" sent successfully": "Lời mời đến \":guest\" gửi thành công"
+    "Invitation to \":guest\" sent successfully": "Lời mời đến \":guest\" gửi thành công",
+    "Cuộc gọi Video": "Cuộc gọi Video",
+    "Bắt đầu Gọi": "Bắt đầu Gọi",
+    "Tắt máy": "Tắt máy",
+    "Bật/Tắt Mic": "Bật/Tắt Mic",
+    "Bật/Tắt Camera": "Bật/Tắt Camera",
+    "Lật Camera": "Lật Camera",
+    "Không thể truy cập Camera/Microphone của bạn.": "Không thể truy cập Camera/Microphone của bạn."
 }

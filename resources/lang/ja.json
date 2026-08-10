@@ -775,5 +775,12 @@
     "Xiangqi Challenge on cotuong.top: An Invitation from \":host\"": "cotuong.topでの将棋（シャンチー）の対局：「:host」からの招待",
     "compete_email_body": "<p>:guestさん、こんにちは。</p><p>良い一日をお過ごしのことと思います！</p><p>cotuong.topでのエキサイティングな将棋（シャンチー）の対局にあなたを招待したいと思います。</p><p>このオンラインコミュニティに参加されているのをお見かけし、ぜひ対局してあなたから学ぶ機会をいただきたいと思いました。</p><p>ルーム「:room」へのリンクはこちらです：<a target=\"_blank\" href=\":url\">:url</a></p><p>よろしくお願いします。</p><p>:host</p>",
     "Invitation to \":guest\" failed": "「:guest」への招待を送信できませんでした",
-    "Invitation to \":guest\" sent successfully": "「:guest」への招待が送信されました"
+    "Invitation to \":guest\" sent successfully": "「:guest」への招待が送信されました",
+    "Cuộc gọi Video": "ビデオ通話",
+    "Bắt đầu Gọi": "通話を開始",
+    "Tắt máy": "通話を終了",
+    "Bật/Tắt Mic": "マイクのオン/オフ",
+    "Bật/Tắt Camera": "カメラのオン/オフ",
+    "Lật Camera": "カメラを反転",
+    "Không thể truy cập Camera/Microphone của bạn.": "カメラとマイクにアクセスできません。"
 }

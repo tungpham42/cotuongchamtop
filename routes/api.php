@@ -60,6 +60,7 @@ Route::controller(RoomController::class)->group(function () {
     Route::get('/getTime/{roomCode}', 'getTime');
     Route::post('/saveTime/{roomCode}', 'saveTime');
     Route::post('/startMatch/{roomCode}', 'startMatch')->name('startMatch');
+    Route::post('/room/{code}/signal', 'sendSignal')->name('room.signal');
 });
 
 Route::controller(UserController::class)->group(function () {

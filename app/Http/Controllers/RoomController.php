@@ -17,6 +17,7 @@ use DataTables;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Jobs\QuickMatchJob;
 use App\Presenters\RoomDataTablePresenter;
+use App\Events\WebRtcSignal;
 
 class RoomController extends Controller
 {
@@ -570,5 +571,22 @@ class RoomController extends Controller
         return response()->json([
             'exists' => Room::where('code', $code)->exists(),
         ]);
+    }
+
+    /**
+     * Broadcast WebRTC signaling messages (offers, answers, ICE candidates)
+     */
+    public function sendSignal(Request $request, string $code): JsonResponse
+    {
+        $payload = $request->input('payload');
+        $senderId = auth()->id() ?? $request->input('sender_id') ?? $request->session()->getId();
+
+        if (empty($payload)) {
+            return response()->json(['error' => 'Payload is required'], 422);
+        }
+
+        broadcast(new WebRtcSignal($code, $payload, $senderId))->toOthers();
+
+        return response()->json(['success' => true]);
     }
 }

@@ -29,13 +29,13 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-    
+
     'facebook' => [
         'client_id' => env('FACEBOOK_CLIENT_ID'),
         'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
         'redirect' => env('FACEBOOK_REDIRECT'),
     ],
-    
+
     'google' => [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
@@ -67,9 +67,15 @@ return [
         'redirect' => env('BITBUCKET_REDIRECT'),
     ],
 
-    'zalo' => [    
-        'client_id' => env('ZALO_CLIENT_ID'),  
-        'client_secret' => env('ZALO_CLIENT_SECRET'),  
-        'redirect' => env('ZALO_REDIRECT') 
+    'zalo' => [
+        'client_id' => env('ZALO_CLIENT_ID'),
+        'client_secret' => env('ZALO_CLIENT_SECRET'),
+        'redirect' => env('ZALO_REDIRECT')
+    ],
+
+    'coturn' => [
+        'url'      => env('COTURN_URL', 'turn:coturn.soft.io.vn:3478'),
+        'username' => env('COTURN_USERNAME', 'turn_user'),
+        'credential' => env('COTURN_CREDENTIAL', 'turn_password'),
     ],
 ];

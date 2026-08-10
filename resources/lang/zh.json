@@ -777,5 +777,12 @@
     "Xiangqi Challenge on cotuong.top: An Invitation from \":host\"": "cotuong.top 上的象棋挑战：“:host”的邀请",
     "compete_email_body": "<p>你好 :guest，</p><p>祝你今天过得愉快！</p><p>我想邀请你在 cotuong.top 上进行一场精彩的象棋比赛。</p><p>我看到你参与了这个在线社区，希望能有机会与你切磋并向你学习。</p><p>房间“:room”的链接在这里：<a target=\"_blank\" href=\":url\">:url</a></p><p>顺祝商祺，</p><p>:host</p>",
     "Invitation to \":guest\" failed": "无法向“:guest”发送邀请",
-    "Invitation to \":guest\" sent successfully": "已成功向“:guest”发送邀请"
+    "Invitation to \":guest\" sent successfully": "已成功向“:guest”发送邀请",
+    "Cuộc gọi Video": "视频通话",
+    "Bắt đầu Gọi": "开始通话",
+    "Tắt máy": "挂断",
+    "Bật/Tắt Mic": "切换麦克风",
+    "Bật/Tắt Camera": "切换摄像头",
+    "Lật Camera": "翻转摄像头",
+    "Không thể truy cập Camera/Microphone của bạn.": "无法访问您的摄像头和麦克风。"
 }
