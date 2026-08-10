@@ -255,7 +255,7 @@ Route::post('/startTimer/{roomCode}/{player}', [RoomController::class, 'startTim
 Route::post('/switchTurn/{roomCode}', [RoomController::class, 'switchTurn']);
 Route::get('/getTime/{roomCode}', [RoomController::class, 'getTime']);
 Route::post('/saveTime/{roomCode}', [RoomController::class, 'saveTime']);
-Route::post('/startMatch/{roomCode}', [RoomController::class, 'startMatch'])->name('startMatch');
+// Route::post('/startMatch/{roomCode}', [RoomController::class, 'startMatch'])->name('startMatch');
 
 // ==========================================
 // UNIFIED MATCHMAKING ROUTES (Guests & Auth)
@@ -773,11 +773,13 @@ foreach ($localizedAuthActionUrls as $pageKey => $page) {
         $route = Route::post(localized_path($pageKey, [], $locale), $page['action'])
             ->middleware("locale:{$locale}");
 
-        // Retain original route names for the default locale to prevent blade component breaks
+        // Differentiate POST route names for 'login' and 'register' to prevent collisions with GET routes
+        $routeName = in_array($pageKey, ['login', 'register']) ? "{$pageKey}.post" : $pageKey;
+
         if ($locale === config('locales.default', 'vi')) {
-            $route->name($pageKey);
+            $route->name($routeName);
         } else {
-            $route->name("{$locale}.{$pageKey}");
+            $route->name("{$locale}.{$routeName}");
         }
     }
 }
@@ -786,11 +788,6 @@ Route::middleware('auth')->post('/payos/standard', [PayOSController::class, 'cre
 Route::get('/payos/return', [PayOSController::class, 'handleReturn'])->name('payos.return');
 Route::get('/payos/cancel', [PayOSController::class, 'handleCancel'])->name('payos.cancel');
 Route::post('/payos/webhook', [PayOSController::class, 'webhook'])->name('payos.webhook');
-
-Route::middleware('auth')->group(function () {
-    Route::post('/profile/picture/upload', [UserController::class, 'uploadProfilePicture'])->name('profile.picture.upload');
-    Route::post('/profile/picture/remove', [UserController::class, 'removeProfilePicture'])->name('profile.picture.remove');
-});
 
 // ==========================================
 // LOCALIZED SETTING PAGES (Form Actions)
