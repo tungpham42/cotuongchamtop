@@ -223,4 +223,15 @@ class UserController extends Controller
 
         return view('app.search', compact('results'));
     }
+
+    public function renderPlayersTitle(Request $request): string
+    {
+        $roomCode = $request->input('ma-phong');
+
+        if (!$roomCode) {
+            return '';
+        }
+
+        return $this->userPresenter->renderPlayersTitle($roomCode);
+    }
 }
