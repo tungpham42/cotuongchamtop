@@ -77,11 +77,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         // Fallback Initialization
         if (typeof window.Echo === 'undefined') {
-            if (typeof Pusher !== 'undefined' && typeof Echo !== 'undefined') {
-                // Make Pusher globally available for Echo
-                window.Pusher = Pusher;
-
-                // Initialize Echo using your Laravel .env variables
+            if (typeof Echo !== 'undefined') {
                 window.Echo = new Echo({
                     broadcaster: 'reverb',
                     key: '{{ config("broadcasting.connections.reverb.key") }}',
@@ -98,8 +94,8 @@
                     }
                 });
             } else {
-                console.warn("Pusher or Echo library is missing. Counter cannot connect.");
-                return; // Stop execution if the JS libraries aren't loaded
+                console.warn("Echo library is missing. Counter cannot connect.");
+                return; // Stop execution if the JS library isn't loaded
             }
         }
 
@@ -118,7 +114,7 @@
                 countElement.innerText = currentCount > 0 ? currentCount - 1 : 0;
             })
             .error((error) => {
-                console.error('Pusher auth error:', error);
+                console.error('Reverb auth error:', error);
             });
     });
 </script>

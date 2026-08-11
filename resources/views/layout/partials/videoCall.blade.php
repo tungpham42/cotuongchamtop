@@ -48,7 +48,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // =========================================================================
-    // WEBRTC VIDEO CALL IMPLEMENTATION (COTURN + PUSHER)
+    // WEBRTC VIDEO CALL IMPLEMENTATION (COTURN + REVERB)
     // =========================================================================
 
     const currentUserId = "{{ auth()->id() ?? session()->getId() }}";
@@ -283,9 +283,9 @@ document.addEventListener('DOMContentLoaded', function () {
         $mediaControls.classList.add('d-none');
     }
 
-    // 4. Listen to Signals via Laravel Echo (Pusher)
-    if (typeof Echo !== 'undefined') {
-        Echo.channel(`room.${videoRoomCode}`)
+    // 4. Listen to Signals via Laravel Echo (Reverb)
+    if (typeof window.Echo !== 'undefined') {
+        window.Echo.channel(`room.${videoRoomCode}`)
             .listen('.webrtc.signal', async (e) => {
                 if (String(e.senderId) === String(currentUserId)) return;
 

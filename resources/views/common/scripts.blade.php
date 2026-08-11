@@ -25,7 +25,6 @@
     // 1. HELPER UTILITIES
     // ==========================================
 
-    // Dynamically generate a unique 32-character hex room code
     const generateRoomCode = () => Array.from(crypto.getRandomValues(new Uint8Array(16)))
         .map(b => b.toString(16).padStart(2, '0'))
         .join('');
@@ -37,10 +36,8 @@
     const bootboxPromptAsync = (options) => new Promise(resolve => {
         bootbox.prompt({ ...options, callback: resolve });
     });
-    // Make Pusher globally available for Echo
-    window.Pusher = Pusher;
 
-    // Initialize Echo using your Laravel .env variables
+    // Initialize Echo with Reverb (no Pusher dependency needed)
     window.Echo = new Echo({
         broadcaster: 'reverb',
         key: '{{ config("broadcasting.connections.reverb.key") }}',
