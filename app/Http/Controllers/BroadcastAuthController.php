@@ -9,18 +9,14 @@ class BroadcastAuthController extends Controller
 {
     public function authenticate(Request $request)
     {
-        // Reverb speaks the Pusher protocol, so we still use the Pusher SDK —
-        // just pointed at Reverb's credentials via config(), not env().
+        // Initialize Pusher manually using your .env credentials
         $pusher = new Pusher(
-            config('broadcasting.connections.reverb.key'),
-            config('broadcasting.connections.reverb.secret'),
-            config('broadcasting.connections.reverb.app_id'),
+            env('PUSHER_APP_KEY'),
+            env('PUSHER_APP_SECRET'),
+            env('PUSHER_APP_ID'),
             [
-                'cluster' => '', // Reverb doesn't use Pusher clusters
+                'cluster' => env('PUSHER_APP_CLUSTER'),
                 'useTLS' => true,
-                'host' => config('broadcasting.connections.reverb.options.host'),
-                'port' => config('broadcasting.connections.reverb.options.port'),
-                'scheme' => config('broadcasting.connections.reverb.options.scheme'),
             ]
         );
 
@@ -33,12 +29,15 @@ class BroadcastAuthController extends Controller
             $userId = 'user_' . $user->id;
             $userInfo = ['name' => $user->name];
         } else {
+            // Treat the guest as a user with their session ID
             $userId = 'guest_' . session()->getId();
             $userInfo = ['name' => 'Guest'];
         }
 
+        // Generate the authentication signature
         $auth = $pusher->presence_auth($channelName, $socketId, $userId, $userInfo);
 
+        // FIX: Must explicitly return as application/json, otherwise Pusher rejects it
         return response($auth)->header('Content-Type', 'application/json');
     }
 }

@@ -77,15 +77,16 @@
     document.addEventListener('DOMContentLoaded', function () {
         // Fallback Initialization
         if (typeof window.Echo === 'undefined') {
-            if (typeof Echo !== 'undefined') {
+            if (typeof Pusher !== 'undefined' && typeof Echo !== 'undefined') {
+                // Make Pusher globally available for Echo
+                window.Pusher = Pusher;
+
+                // Initialize Echo using your Laravel .env variables
                 window.Echo = new Echo({
-                    broadcaster: 'reverb',
-                    key: '{{ config("broadcasting.connections.reverb.key") }}',
-                    wsHost: '{{ config("broadcasting.connections.reverb.options.host") }}',
-                    wsPort: {{ config("broadcasting.connections.reverb.options.port", 8081) }},
-                    wssPort: {{ config("broadcasting.connections.reverb.options.port", 443) }},
-                    forceTLS: ( '{{ config("broadcasting.connections.reverb.options.scheme", "https") }}' === 'https' ),
-                    enabledTransports: ['ws', 'wss'],
+                    broadcaster: 'pusher',
+                    key: '{{ env("PUSHER_APP_KEY") }}',
+                    cluster: '{{ env("PUSHER_APP_CLUSTER", "ap1") }}',
+                    forceTLS: true,
                     authEndpoint: '/custom/broadcasting/auth',
                     auth: {
                         headers: {
@@ -94,8 +95,8 @@
                     }
                 });
             } else {
-                console.warn("Echo library is missing. Counter cannot connect.");
-                return; // Stop execution if the JS library isn't loaded
+                console.warn("Pusher or Echo library is missing. Counter cannot connect.");
+                return; // Stop execution if the JS libraries aren't loaded
             }
         }
 
@@ -114,7 +115,7 @@
                 countElement.innerText = currentCount > 0 ? currentCount - 1 : 0;
             })
             .error((error) => {
-                console.error('Reverb auth error:', error);
+                console.error('Pusher auth error:', error);
             });
     });
 </script>

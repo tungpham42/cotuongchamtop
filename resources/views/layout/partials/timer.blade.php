@@ -330,15 +330,16 @@
     document.addEventListener('DOMContentLoaded', () => {
         if (typeof window.Echo === 'undefined' && typeof Echo !== 'undefined') {
             window.Echo = new Echo({
-                broadcaster: 'reverb',
-                key: '{{ config("broadcasting.connections.reverb.key") }}',
-                wsHost: '{{ config("broadcasting.connections.reverb.options.host") }}',
-                wsPort: {{ config("broadcasting.connections.reverb.options.port", 8081) }},
-                wssPort: {{ config("broadcasting.connections.reverb.options.port", 443) }},
-                forceTLS: ( '{{ config("broadcasting.connections.reverb.options.scheme", "https") }}' === 'https' ),
-                enabledTransports: ['ws', 'wss'],
+                broadcaster: 'pusher',
+                key: '{{ env("PUSHER_APP_KEY") }}',
+                cluster: '{{ env("PUSHER_APP_CLUSTER", "ap1") }}',
+                forceTLS: true,
                 authEndpoint: '/custom/broadcasting/auth',
-                auth: { headers: { 'X-CSRF-Token': csrfToken } }
+                auth: {
+                    headers: {
+                        'X-CSRF-Token': '{{ csrf_token() }}'
+                    }
+                }
             });
         }
 

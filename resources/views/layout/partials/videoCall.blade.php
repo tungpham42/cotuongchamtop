@@ -17,7 +17,7 @@
         <!-- Remote Video (Large display) -->
         <!-- Added transition for smooth mirroring effect when signaled by remote peer -->
         <video id="remoteVideo" autoplay playsinline class="w-100 h-100 rounded" style="object-fit: cover; max-height: 350px; background: var(--royal-bg); transition: transform 0.3s ease;"></video>
-        
+
         <!-- Overlay Tên Remote -->
         <span id="remoteUserName" class="position-absolute badge" style="top: 15px; left: 15px; z-index: 10; font-size: 0.85rem; display: none; background: var(--glass-bg-dark); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--royal-gold); color: var(--royal-gold-light); box-shadow: var(--liquid-shadow);"></span>
 
@@ -48,7 +48,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // =========================================================================
-    // WEBRTC VIDEO CALL IMPLEMENTATION (COTURN + REVERB)
+    // WEBRTC VIDEO CALL IMPLEMENTATION (COTURN + PUSHER)
     // =========================================================================
 
     const currentUserId = "{{ auth()->id() ?? session()->getId() }}";
@@ -283,9 +283,9 @@ document.addEventListener('DOMContentLoaded', function () {
         $mediaControls.classList.add('d-none');
     }
 
-    // 4. Listen to Signals via Laravel Echo (Reverb)
-    if (typeof window.Echo !== 'undefined') {
-        window.Echo.channel(`room.${videoRoomCode}`)
+    // 4. Listen to Signals via Laravel Echo (Pusher)
+    if (typeof Echo !== 'undefined') {
+        Echo.channel(`room.${videoRoomCode}`)
             .listen('.webrtc.signal', async (e) => {
                 if (String(e.senderId) === String(currentUserId)) return;
 
