@@ -67,4 +67,8 @@ class Kernel extends HttpKernel
         'locale' => \App\Http\Middleware\SetLocale::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
+
+    protected $middlewareAliases = [
+        'tournament.creator' => \App\Http\Middleware\TournamentCreator::class,
+    ];
 }

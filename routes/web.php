@@ -125,24 +125,6 @@ Route::post('/custom/broadcasting/auth', [BroadcastAuthController::class, 'authe
 // ==========================================
 // TOURNAMENT ROUTES (Unified Localized Setup)
 // ==========================================
-
-// 1. Register an inline middleware to verify tournament ownership
-Route::aliasMiddleware('tournament.creator', function ($request, $next) {
-    $slug = $request->route('slug');
-    $tournament = Tournament::where('slug', $slug)->firstOrFail();
-
-    // Check if the authenticated user is the owner.
-    // IMPORTANT: Change 'user_id' below to match your database column (e.g., 'host_id' or 'creator_id')
-    if ($tournament->user_id !== auth()->id() && !auth()->user()->is_admin) {
-        abort(403, __('Bạn không có quyền quản lý giải đấu này.'));
-    }
-
-    return $next($request);
-});
-
-// ==========================================
-// TOURNAMENT ROUTES (Unified Localized Setup)
-// ==========================================
 $localizedTournamentPages = [
     // --- PUBLIC ROUTES ---
     'tournaments.index' => [
