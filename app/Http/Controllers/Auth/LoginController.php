@@ -124,7 +124,7 @@ class LoginController extends Controller
 
                 Auth::login($user, true);
 
-                broadcast(new \App\Events\PlayersUpdated()); // Trigger update
+                broadcast(new PlayersUpdated()); // Trigger update
 
                 return Redirect::to($redirectUrl)->with('success', __("Bạn đã đăng nhập bằng {$providerName} thành công!"));
             }
@@ -139,7 +139,7 @@ class LoginController extends Controller
 
             Auth::login($user, true);
 
-            broadcast(new \App\Events\PlayersUpdated()); // Trigger update
+            broadcast(new PlayersUpdated()); // Trigger update
 
             return Redirect::to($redirectUrl)->with('success', __("Bạn đã đăng nhập bằng {$providerName} thành công!"));
         }
