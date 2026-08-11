@@ -61,8 +61,8 @@
     // Initialize Echo using your Laravel .env variables
     window.Echo = new Echo({
         broadcaster: 'pusher',
-        key: '{{ env("PUSHER_APP_KEY") }}',
-        cluster: '{{ env("PUSHER_APP_CLUSTER", "ap1") }}',
+        key: '{{ config("broadcasting.connections.pusher.key") }}',
+        cluster: '{{ config("broadcasting.connections.pusher.options.cluster", "ap1") }}',
         forceTLS: true,
         authEndpoint: '/custom/broadcasting/auth',
         auth: {
