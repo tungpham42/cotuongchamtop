@@ -45,7 +45,7 @@
         broadcaster: 'reverb',
         key: '{{ env("REVERB_APP_KEY") }}',
         wsHost: '{{ env("REVERB_HOST") }}',
-        wsPort: {{ env("REVERB_PORT", 8080) }},
+        wsPort: {{ env("REVERB_PORT", 8081) }},
         wssPort: {{ env("REVERB_PORT", 443) }},
         forceTLS: ( '{{ env("REVERB_SCHEME", "https") }}' === 'https' ),
         enabledTransports: ['ws', 'wss'],
