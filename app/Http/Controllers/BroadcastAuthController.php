@@ -9,14 +9,14 @@ class BroadcastAuthController extends Controller
 {
     public function authenticate(Request $request)
     {
-        // Initialize Pusher manually using your .env credentials
+        // Initialize Pusher manually using Laravel's config(), NOT env()
         $pusher = new Pusher(
-            env('PUSHER_APP_KEY'),
-            env('PUSHER_APP_SECRET'),
-            env('PUSHER_APP_ID'),
+            config('broadcasting.connections.pusher.key'),
+            config('broadcasting.connections.pusher.secret'),
+            config('broadcasting.connections.pusher.app_id'),
             [
-                'cluster' => env('PUSHER_APP_CLUSTER'),
-                'useTLS' => true,
+                'cluster' => config('broadcasting.connections.pusher.options.cluster', 'ap1'),
+                'useTLS'  => true,
             ]
         );
 
