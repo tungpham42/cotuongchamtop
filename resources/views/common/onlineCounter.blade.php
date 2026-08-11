@@ -84,11 +84,11 @@
                 // Initialize Echo using your Laravel .env variables
                 window.Echo = new Echo({
                     broadcaster: 'reverb',
-                    key: '{{ env("REVERB_APP_KEY") }}',
-                    wsHost: '{{ env("REVERB_HOST") }}',
-                    wsPort: {{ env("REVERB_PORT", 8081) }},
-                    wssPort: {{ env("REVERB_PORT", 443) }},
-                    forceTLS: ( '{{ env("REVERB_SCHEME", "https") }}' === 'https' ),
+                    key: '{{ config("broadcasting.connections.reverb.key") }}',
+                    wsHost: '{{ config("broadcasting.connections.reverb.options.host") }}',
+                    wsPort: {{ config("broadcasting.connections.reverb.options.port", 8081) }},
+                    wssPort: {{ config("broadcasting.connections.reverb.options.port", 443) }},
+                    forceTLS: ( '{{ config("broadcasting.connections.reverb.options.scheme", "https") }}' === 'https' ),
                     enabledTransports: ['ws', 'wss'],
                     authEndpoint: '/custom/broadcasting/auth',
                     auth: {
