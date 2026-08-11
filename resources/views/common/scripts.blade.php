@@ -22,7 +22,7 @@
 
 <script>
     // ==========================================
-    // 1. HELPER UTILITIES
+    // HELPER UTILITIES
     // ==========================================
 
     // Dynamically generate a unique 32-character hex room code
@@ -30,13 +30,31 @@
         .map(b => b.toString(16).padStart(2, '0'))
         .join('');
 
-    const bootboxAlertAsync = (options) => new Promise(resolve => {
-        bootbox.alert({ ...options, callback: resolve });
-    });
+    // ==========================================
+    // BOOTBOX ASYNC HELPERS
+    // ==========================================
 
-    const bootboxPromptAsync = (options) => new Promise(resolve => {
-        bootbox.prompt({ ...options, callback: resolve });
-    });
+    const createBootboxAsync = (method) => (options) => {
+        return new Promise((resolve) => {
+            // 1. Flexibility: Allow passing a simple string instead of a full object
+            const config = typeof options === 'string' ? { message: options } : { ...options };
+
+            // 2. Safety: Provide a fallback message to prevent the Bootbox crash
+            config.message = config.message || "An unexpected event occurred.";
+
+            // 3. Execution: Call the requested Bootbox method and resolve the promise
+            bootbox[method]({
+                ...config,
+                callback: resolve
+            });
+        });
+    };
+
+    // Generate your reusable, safe async functions dynamically
+    const bootboxAlertAsync = createBootboxAsync('alert');
+    const bootboxPromptAsync = createBootboxAsync('prompt');
+    const bootboxConfirmAsync = createBootboxAsync('confirm');
+
     // Make Pusher globally available for Echo
     window.Pusher = Pusher;
 
