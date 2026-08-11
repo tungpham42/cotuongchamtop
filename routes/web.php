@@ -1167,15 +1167,6 @@ foreach ($localizedLevelPages as $pageKey => $localizedPages) {
                 'levelTxt' => $page['levelTxt'],
             ]));
 
-            // 2. Apply cache-busting headers strictly to the root '/' page (vi locale)
-            if ($pageKey === 'ai.home' && $locale === 'vi') {
-                $response->withHeaders([
-                    'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
-                    'Pragma'       => 'no-cache',
-                    'Expires'      => '0',
-                ]);
-            }
-
             return $response;
 
         })->middleware("locale:{$locale}");
