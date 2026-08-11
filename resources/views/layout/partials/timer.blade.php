@@ -148,17 +148,40 @@
     // Đã đổi url('/') thành url('/api') để trỏ đúng vào group API của bạn
     const apiBase = "{{ url('/api') }}";
 
-    const apiReq = async (endpoint, body = null) => {
+    // Refactored apiReq to support explicit HTTP methods (e.g., POST with no body)
+    const apiReq = async (endpoint, methodOrBody = 'GET', bodyData = null) => {
+        let method = 'GET';
+        let body = null;
+
+        if (typeof methodOrBody === 'string') {
+            method = methodOrBody.toUpperCase();
+            body = bodyData;
+        } else if (typeof methodOrBody === 'object' && methodOrBody !== null) {
+            method = 'POST';
+            body = methodOrBody;
+        }
+
         try {
-            const res = await fetch(`${apiBase}/${endpoint}`, {
-                method: body ? 'POST' : 'GET',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest' },
-                credentials: 'same-origin',
-                body: body ? JSON.stringify(body) : null
-            });
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            };
+
+            if (body && method !== 'GET') {
+                options.body = JSON.stringify(body);
+            }
+
+            const res = await fetch(`${apiBase}/${endpoint}`, options);
             if (!res.ok) throw new Error(`API Error: ${res.status}`);
             return await res.json();
-        } catch (err) { console.error(err); }
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     const ui = {
@@ -228,9 +251,6 @@
         const newRed = parseFloat(serverData.red_time);
         const newBlack = parseFloat(serverData.black_time);
 
-        // Kỹ thuật Threshold: CHỈ ghi đè thời gian nếu sai số giữa Client và Server
-        // lớn hơn 1.5 giây, HOẶC khi có sự thay đổi lượt đi.
-        // Điều này giúp timer trên giao diện không bị giật lùi do độ trễ mạng (Ping).
         if (activePlayer !== newActivePlayer || Math.abs(time.red - newRed) > 1.5 || Math.abs(time.black - newBlack) > 1.5) {
             time.red = newRed;
             time.black = newBlack;
@@ -252,7 +272,8 @@
             ui.red.box.classList.remove('paused-offline');
             ui.black.box.classList.remove('paused-offline');
 
-            apiReq(`startMatch/${roomCode}`).then(() => {
+            // Explicitly pass 'POST' method for startMatch
+            apiReq(`startMatch/${roomCode}`, 'POST').then(() => {
                 apiReq(`getTime/${roomCode}`).then(syncTimerState);
             });
         }
@@ -263,14 +284,12 @@
         }
     };
 
-    // FALLBACK MỚI THÊM: Chủ động gọi API kiểm tra phòng
     const checkRoomReadiness = async () => {
         if (window.hasMatchStarted) return;
 
         try {
             const res = await apiReq('getRoomIds', { 'ma-phong': roomCode });
 
-            // Phòng đủ điều kiện khi có cả Host (ID hoặc Session) và Guest (ID hoặc Session)
             const hasHost = res && (res.host_id || res.host_session);
             const hasGuest = res && (res.guest_id || res.guest_session);
 
@@ -279,7 +298,8 @@
                 ui.red.box.classList.remove('paused-offline');
                 ui.black.box.classList.remove('paused-offline');
 
-                await apiReq(`startMatch/${roomCode}`);
+                // Explicitly pass 'POST' method for startMatch
+                await apiReq(`startMatch/${roomCode}`, 'POST');
                 apiReq(`getTime/${roomCode}`).then(syncTimerState);
             }
         } catch (e) {
@@ -288,7 +308,6 @@
     };
 
     window.switchTurn = async (rc, currentPlayer) => {
-        // Cập nhật UI ngay lập tức (Optimistic Update)
         const elapsed = (Date.now() - localLastUpdate) / 1000;
 
         if (time[currentPlayer]) {
@@ -303,9 +322,8 @@
         updateUI();
         startAll();
 
-        // Gọi API ngầm mà không chặn UI
         apiReq(`switchTurn/${rc}`, { current_player: currentPlayer }).then(serverData => {
-            if(serverData) syncTimerState(serverData);
+            if (serverData) syncTimerState(serverData);
         });
     };
 
@@ -330,14 +348,12 @@
                 .joining(() => { playersOnline++; handlePresenceChange(); })
                 .leaving(() => { playersOnline = Math.max(0, playersOnline - 1); handlePresenceChange(); });
 
-            // Thêm biến để debounce
             let syncTimeout = null;
 
             window.Echo.channel(`room.${roomCode}`)
                 .listen('.room.updated', (e) => {
                     if (e.room) {
                         checkRoomReadiness();
-                        // Chờ 200ms để gộp các event (updateFEN + switchTurn) lại thành 1 lần gọi API
                         clearTimeout(syncTimeout);
                         syncTimeout = setTimeout(() => {
                             apiReq(`getTime/${roomCode}`).then(syncTimerState);
@@ -348,8 +364,6 @@
 
         apiReq(`getTime/${roomCode}`).then(syncTimerState);
 
-        // CƠ CHẾ POLLING BẢO HIỂM (Chạy ngầm): Cứ mỗi 3 giây sẽ tự check lại một lần
-        // nếu trận đấu chưa được bắt đầu, phòng ngừa trường hợp Websocket bị chặn.
         const startMatchFallbackInterval = setInterval(() => {
             if (window.hasMatchStarted) {
                 clearInterval(startMatchFallbackInterval);
@@ -358,7 +372,6 @@
             }
         }, 3000);
 
-        // Gọi liền ngay khi load xong DOM cho chắc ăn
         checkRoomReadiness();
     });
 </script>
