@@ -42,11 +42,14 @@
 
     // Initialize Echo using your Laravel .env variables
     window.Echo = new Echo({
-        broadcaster: 'pusher',
-        key: '{{ env("PUSHER_APP_KEY") }}',
-        cluster: '{{ env("PUSHER_APP_CLUSTER", "ap1") }}',
-        forceTLS: true,
-        authEndpoint: '/custom/broadcasting/auth', // <--- Add this here!
+        broadcaster: 'reverb',
+        key: '{{ env("REVERB_APP_KEY") }}',
+        wsHost: '{{ env("REVERB_HOST") }}',
+        wsPort: {{ env("REVERB_PORT", 8080) }},
+        wssPort: {{ env("REVERB_PORT", 443) }},
+        forceTLS: ( '{{ env("REVERB_SCHEME", "https") }}' === 'https' ),
+        enabledTransports: ['ws', 'wss'],
+        authEndpoint: '/custom/broadcasting/auth',
         auth: {
             headers: {
                 'X-CSRF-Token': '{{ csrf_token() }}'
