@@ -318,20 +318,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 1. Initialize preferences based on login state
-    let currentBoardTheme = 'xiangqi-board';
-    let currentPiecesTheme = 'wiki';
-
-    @if(auth()->check())
-        // Logged-in user: Pull existing preferences directly from the user's database record
-        // Use ?: to fallback safely if the value is an empty string
-        currentBoardTheme = '{{ auth()->user()->board_theme ?: "xiangqi-board" }}';
-        currentPiecesTheme = '{{ auth()->user()->pieces_theme ?: "wiki" }}';
-    @else
-        // Guest user: Pull from LocalStorage
-        currentBoardTheme = localStorage.getItem('guest_board_theme') || 'xiangqi-board';
-        currentPiecesTheme = localStorage.getItem('guest_pieces_theme') || 'wiki';
-    @endif
+    // 1. Initialize preferences from LocalStorage for ALL users (ignoring DB user settings)
+    const currentBoardTheme = localStorage.getItem('guest_board_theme') || 'xiangqi-board';
+    const currentPiecesTheme = localStorage.getItem('guest_pieces_theme') || 'wiki';
 
     // Sync initialization to hidden inputs if they exist elsewhere on the page
     const boardInput = document.getElementById('boardTheme');
@@ -345,10 +334,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle theme selection (update active state and button style)
     themeOptions.forEach(option => {
         option.addEventListener('click', function() {
-            // Update active state for visual feedback
             handleThemeClick(this);
 
-            // Highlight apply button to indicate confirmation is needed
             const applyBtn = document.getElementById('apply-theme-btn');
             if (applyBtn) {
                 applyBtn.classList.remove('btn-danger');
@@ -362,58 +349,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const applyBtn = document.getElementById('apply-theme-btn');
     if (applyBtn) {
         applyBtn.addEventListener('click', function() {
-            // Get currently selected themes from the DOM (active classes)
             const selectedBoardTheme = document.querySelector('.theme-option[data-theme-type="board"].active')?.dataset.theme || 'xiangqi-board';
             const selectedPiecesTheme = document.querySelector('.theme-option[data-theme-type="pieces"].active')?.dataset.theme || 'wiki';
 
-            // Update hidden inputs if they exist
             if (boardInput) boardInput.value = selectedBoardTheme;
             if (piecesInput) piecesInput.value = selectedPiecesTheme;
 
-            // Show loading state on button
+            // Save to LocalStorage regardless of authentication status
+            localStorage.setItem('guest_board_theme', selectedBoardTheme);
+            localStorage.setItem('guest_pieces_theme', selectedPiecesTheme);
+
             this.classList.remove('btn-danger', 'btn-primary', 'btn-warning');
             this.classList.add('btn-info');
             this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + '{{ __("Đang tải lại...") }}';
             this.disabled = true;
 
-            // Logic: Save preference then Reload Page
-            @if(auth()->check())
-                // AUTH USER: Save to DB via AJAX
-                const formData = new FormData();
-                formData.append('_token', '{{ csrf_token() }}');
-                formData.append('current_id', '{{ auth()->user()->id }}');
-                formData.append('board_theme', selectedBoardTheme);
-                formData.append('pieces_theme', selectedPiecesTheme);
-
-                // FIXED: Using localized_url for localized routing setup
-                fetch('{{ localized_url('change.ui') }}', {
-                    method: 'POST',
-                    body: formData
-                }).then(response => {
-                    if (response.ok) {
-                        // Success -> Reload page
-                        location.reload();
-                    } else {
-                        throw new Error('Server returned error');
-                    }
-                }).catch(error => {
-                    console.error('Save error:', error);
-                    this.innerHTML = '<i class="fas fa-times"></i> ' + '{{ __("Lỗi kết nối!") }}';
-                    this.classList.remove('btn-info');
-                    this.classList.add('btn-danger');
-                    this.disabled = false;
-                });
-
-            @else
-                // GUEST USER: Save to LocalStorage -> Reload
-                localStorage.setItem('guest_board_theme', selectedBoardTheme);
-                localStorage.setItem('guest_pieces_theme', selectedPiecesTheme);
-
-                // Slight delay just to let the user see the button click, then reload
-                setTimeout(() => {
-                    location.reload();
-                }, 100);
-            @endif
+            setTimeout(() => {
+                location.reload();
+            }, 100);
         });
     }
 
@@ -423,10 +376,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const themeType = option.dataset.themeType;
             const themeName = option.dataset.theme;
 
-            // Remove all active states first
             option.classList.remove('active');
 
-            // Set active based on initialized values
             if ((themeType === 'board' && themeName === boardTheme) ||
                 (themeType === 'pieces' && themeName === piecesTheme)) {
                 option.classList.add('active');
@@ -438,16 +389,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleThemeClick(clickedOption) {
         const themeType = clickedOption.dataset.themeType;
 
-        // Remove active from all options of this specific type
         themeOptions.forEach(option => {
             if (option.dataset.themeType === themeType) {
                 option.classList.remove('active');
             }
         });
 
-        // Add active to the clicked option
         clickedOption.classList.add('active');
     }
-
 });
 </script>
