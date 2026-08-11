@@ -1,5 +1,5 @@
 // 1. Versioning: Change this version string to force a cache update
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
 const CACHE_NAME = `game-pwa-${CACHE_VERSION}`;
 
 // 2. Updated Asset List based on latest HTML/layout includes
@@ -16,7 +16,7 @@ const FILES_TO_CACHE = [
     "/sound/nuocCo.wav",
     "/sound/hetTran.mp3",
     "/sound/hetTran.wav",
-    "/manifest.webmanifest?v=2",
+    "/manifest.webmanifest?v=3",
 ];
 
 /* Install Event: Cache files and force immediate activation */
@@ -58,10 +58,46 @@ self.addEventListener("activate", (event) => {
     );
 });
 
-/* Fetch Event: Cache-First strategy with network fallback */
+/* Fetch Event:
+   - Navigation requests (HTML documents, e.g. "/"): Network-First.
+     This is the fix for the homepage-caching bug: "/" used to be
+     pre-cached once on install and then handed back from that single
+     snapshot forever, because a cache hit was returned without ever
+     re-checking the network. Now the network is always tried first,
+     so visitors get the current homepage, and the cache is only used
+     as a fallback when they're offline.
+   - Everything else (CSS/JS/sounds — versioned via ?v= or otherwise
+     safe to cache): Cache-First, unchanged from before. */
 self.addEventListener("fetch", (event) => {
     // Only handle GET requests; POST requests (like Pushers/API calls) cannot be cached
     if (event.request.method !== "GET") return;
+
+    if (event.request.mode === "navigate") {
+        event.respondWith(
+            fetch(event.request)
+                .then((networkResponse) => {
+                    if (networkResponse.ok) {
+                        const responseClone = networkResponse.clone();
+                        event.waitUntil(
+                            caches
+                                .open(CACHE_NAME)
+                                .then((cache) =>
+                                    cache.put(event.request, responseClone),
+                                ),
+                        );
+                    }
+                    return networkResponse;
+                })
+                .catch(() => {
+                    console.error(
+                        "[Service Worker] Navigation fetch failed; serving cached page if available.",
+                        event.request.url,
+                    );
+                    return caches.match(event.request);
+                }),
+        );
+        return;
+    }
 
     event.respondWith(
         caches.match(event.request).then((response) => {
@@ -70,7 +106,7 @@ self.addEventListener("fetch", (event) => {
                 return response;
             }
 
-            // Otherwise, fetch from the network[cite: 3]
+            // Otherwise, fetch from the network
             return fetch(event.request)
                 .then((networkResponse) => {
                     return networkResponse;
