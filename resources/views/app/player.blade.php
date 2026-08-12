@@ -105,6 +105,8 @@
                         <a href="{{ localized_url('app.name') }}" class="btn btn-dark showPromotion"><i class="fad fa-user-edit"></i> {{ __("Đổi tên") }}</a>
                         <a href="{{ localized_url('app.password') }}" class="btn btn-dark showPromotion"><i class="fad fa-lock-alt"></i> {{ __("Đổi mật khẩu") }}</a>
 
+                        <a href="{{ localized_url('app.ui') }}" class="btn btn-dark showPromotion"><i class="fad fa-palette"></i> {{ __("Đổi giao diện") }}</a>
+
                         <!-- Upload Image Form -->
                         <form action="{{ localized_url('profile.picture.upload') }}" method="POST" enctype="multipart/form-data" class="d-inline-block">
                             @csrf

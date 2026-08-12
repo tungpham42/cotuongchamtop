@@ -305,6 +305,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const panel = document.querySelector('.theme-selector-panel');
     const themeOptions = document.querySelectorAll('.theme-option');
 
+    // 1. Establish user context using Blade injection
+    const isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
+    const dbBoardTheme = "{{ auth()->check() ? auth()->user()->board_theme : '' }}";
+    const dbPiecesTheme = "{{ auth()->check() ? auth()->user()->pieces_theme : '' }}";
+
     // Toggle panel visibility
     toggleBtn.addEventListener('click', function(e) {
         e.stopPropagation();
@@ -318,9 +323,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 1. Initialize preferences from LocalStorage for ALL users (ignoring DB user settings)
-    const currentBoardTheme = localStorage.getItem('guest_board_theme') || 'xiangqi-board';
-    const currentPiecesTheme = localStorage.getItem('guest_pieces_theme') || 'wiki';
+    // 2. Initialize preferences for BOTH logged-in users and guests
+    let currentBoardTheme = 'xiangqi-board';
+    let currentPiecesTheme = 'wiki';
+
+    if (isAuthenticated && dbBoardTheme) {
+        currentBoardTheme = dbBoardTheme;
+        currentPiecesTheme = dbPiecesTheme || 'wiki';
+    } else {
+        currentBoardTheme = localStorage.getItem('guest_board_theme') || 'xiangqi-board';
+        currentPiecesTheme = localStorage.getItem('guest_pieces_theme') || 'wiki';
+    }
 
     // Sync initialization to hidden inputs if they exist elsewhere on the page
     const boardInput = document.getElementById('boardTheme');
@@ -328,7 +341,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (boardInput) boardInput.value = currentBoardTheme;
     if (piecesInput) piecesInput.value = currentPiecesTheme;
 
-    // 2. Set active theme visual state on page load
+    // 3. Set active theme visual state on page load
     updateActiveThemes(currentBoardTheme, currentPiecesTheme);
 
     // Handle theme selection (update active state and button style)
@@ -355,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (boardInput) boardInput.value = selectedBoardTheme;
             if (piecesInput) piecesInput.value = selectedPiecesTheme;
 
-            // Save to LocalStorage regardless of authentication status
+            // Always save to LocalStorage as a fallback caching method
             localStorage.setItem('guest_board_theme', selectedBoardTheme);
             localStorage.setItem('guest_pieces_theme', selectedPiecesTheme);
 
@@ -364,9 +377,31 @@ document.addEventListener('DOMContentLoaded', function() {
             this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + '{{ __("Đang tải lại...") }}';
             this.disabled = true;
 
-            setTimeout(() => {
-                location.reload();
-            }, 100);
+            if (isAuthenticated) {
+                // If a form exists on the page covering these inputs, submit it
+                const themeForm = document.getElementById('theme-form');
+                if (themeForm) {
+                    themeForm.submit();
+                } else {
+                    // Example configuration for an API Fetch approach to save to DB dynamically:
+                    /*
+                    fetch('/api/user/update-theme', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({ board_theme: selectedBoardTheme, pieces_theme: selectedPiecesTheme })
+                    }).then(() => location.reload());
+                    */
+
+                    // Fallback reload if API integration isn't ready
+                    setTimeout(() => location.reload(), 100);
+                }
+            } else {
+                // Direct reload for guests; LocalStorage handles state retention
+                setTimeout(() => location.reload(), 100);
+            }
         });
     }
 

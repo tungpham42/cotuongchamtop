@@ -93,7 +93,7 @@
                 <a href="{{ localized_url('app.profile') }}" class="showPromotion dropdown-item{{ url()->current() == localized_url('app.profile') ? ' active disabled' : '' }}"><i class="far fa-id-card"></i> {{ __("Hồ sơ của tôi") }}</a>
                 <a href="{{ localized_url('app.name') }}" class="showPromotion dropdown-item{{ url()->current() == localized_url('app.name') ? ' active disabled' : '' }}"><i class="far fa-user-edit"></i> {{ __("Đổi tên") }}</a>
                 <a href="{{ localized_url('app.password') }}" class="showPromotion dropdown-item{{ url()->current() == localized_url('app.password') ? ' active disabled' : '' }}"><i class="far fa-lock-alt"></i> {{ __("Đổi mật khẩu") }}</a>
-
+                <a href="{{ localized_url('app.ui') }}" class="showPromotion dropdown-item{{ url()->current() == localized_url('app.ui') ? ' active disabled' : '' }}"><i class="far fa-palette"></i> {{ __("Đổi giao diện") }}</a>
                 <div class="dropdown-divider"></div>
 
                 <a class="dropdown-item" href="{{ localized_url('logout') }}"
