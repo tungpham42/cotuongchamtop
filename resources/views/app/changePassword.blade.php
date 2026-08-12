@@ -11,6 +11,22 @@
                     @include('layout.partials.app.tourBtn')
                 </div>
                 <div class="card-body">
+                    <!-- Add this block for the success message -->
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     @if ($player->id == auth()->id() && !str_contains(url()->current(), url('/ky-thu').'/'))
                     <div class="col-md-12">
                         <form method="POST" action="{{ localized_url('change.password') }}">

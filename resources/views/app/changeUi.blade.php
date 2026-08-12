@@ -16,6 +16,12 @@
                 </div>
 
                 <div class="card-body">
+                    <!-- Add this block for the success message -->
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif
                     @if ($errors->any())
                         <div class="alert alert-danger">
                             <ul class="mb-0">
