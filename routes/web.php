@@ -479,43 +479,6 @@ Route::get('/home', function () {
 });
 
 // ==========================================
-// LOCALIZED SETTING PAGES (Form Actions)
-// ==========================================
-$localizedSettingPages = [
-    'change.password' => [
-        'action' => [UserController::class, 'changePassword'],
-    ],
-    'change.name' => [
-        'action' => [UserController::class, 'changeName'],
-    ],
-    'change.ui' => [
-        'action' => [UserController::class, 'changeUserInterface'],
-    ],
-    'profile.picture.upload' => [
-        'action' => [UserController::class, 'uploadProfilePicture'],
-    ],
-    'profile.picture.remove' => [
-        'action' => [UserController::class, 'removeProfilePicture'],
-    ],
-];
-
-foreach ($localizedSettingPages as $pageKey => $page) {
-    foreach (config('locales.supported', []) as $locale) {
-        // We use POST since these are form submission actions
-        // Added 'auth' to the middleware array to protect all settings routes
-        $route = Route::post(localized_path($pageKey, [], $locale), $page['action'])
-            ->middleware(['auth', "locale:{$locale}"]);
-
-        // Retain original route names for the default locale to prevent blade component breaks
-        if ($locale === config('locales.default', 'vi')) {
-            $route->name($pageKey);
-        } else {
-            $route->name("{$locale}.{$pageKey}");
-        }
-    }
-}
-
-// ==========================================
 // LOCALIZED APP PAGES (Dashboard, History, Profile, etc.)
 // ==========================================
 $localizedAppPages = [
@@ -611,7 +574,7 @@ $localizedAppPages = [
         ]
     ],
     'search' => [
-        'view' => 'app.search',
+        'view' => 'app/search',
         'middleware' => [],
         'titles' => ['vi' => 'Tìm kiếm', 'en' => 'Search', 'ja' => '検索', 'ko' => '검색', 'zh' => '搜索'],
         'data' => fn() => [
@@ -631,7 +594,7 @@ $localizedAppPages = [
 // 1. Loop through static unparameterized app pages
 foreach ($localizedAppPages as $pageKey => $pageSettings) {
     foreach (config('locales.supported', []) as $locale) {
-        $route = Route::match(['get', 'post'], localized_path($pageKey, [], $locale), function () use ($pageKey, $locale, $pageSettings) {
+        $route = Route::get(localized_path($pageKey, [], $locale), function () use ($pageKey, $locale, $pageSettings) {
 
             $data = $pageSettings['data'](); // Execute closure for fresh DB results
             $data['headTitle'] = $pageSettings['titles'][$locale] ?? $pageSettings['titles']['vi'];
@@ -641,6 +604,43 @@ foreach ($localizedAppPages as $pageKey => $pageSettings) {
 
         if (!empty($pageSettings['middleware'])) {
             $route->middleware($pageSettings['middleware']);
+        }
+    }
+}
+
+// ==========================================
+// LOCALIZED SETTING PAGES (Form Actions)
+// ==========================================
+$localizedSettingPages = [
+    'change.password' => [
+        'action' => [UserController::class, 'changePassword'],
+    ],
+    'change.name' => [
+        'action' => [UserController::class, 'changeName'],
+    ],
+    'change.ui' => [
+        'action' => [UserController::class, 'changeUserInterface'],
+    ],
+    'profile.picture.upload' => [
+        'action' => [UserController::class, 'uploadProfilePicture'],
+    ],
+    'profile.picture.remove' => [
+        'action' => [UserController::class, 'removeProfilePicture'],
+    ],
+];
+
+foreach ($localizedSettingPages as $pageKey => $page) {
+    foreach (config('locales.supported', []) as $locale) {
+        // We use POST since these are form submission actions
+        // Added 'auth' to the middleware array to protect all settings routes
+        $route = Route::post(localized_path($pageKey, [], $locale), $page['action'])
+            ->middleware(['auth', "locale:{$locale}"]);
+
+        // Retain original route names for the default locale to prevent blade component breaks
+        if ($locale === config('locales.default', 'vi')) {
+            $route->name($pageKey);
+        } else {
+            $route->name("{$locale}.{$pageKey}");
         }
     }
 }
