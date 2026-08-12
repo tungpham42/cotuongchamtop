@@ -89,12 +89,6 @@
         <i class="fas fa-palette"></i>
         <span class="theme-toggle-text">{{ __("Tùy chỉnh") }}</span>
     </button>
-
-    {{-- Fix: this widget is included standalone on game pages, so it can't rely
-         on a "#theme-form" that lives elsewhere — none exists anywhere in the
-         codebase. Without its own form, Apply Theme silently did nothing for
-         logged-in users (see script below). Own the form here so the choice
-         actually reaches UserController::changeUserInterface. --}}
     @auth
         <form id="theme-apply-form" method="POST" action="{{ localized_url('change.ui') }}" style="display: none;">
             @csrf
@@ -389,18 +383,12 @@ document.addEventListener('DOMContentLoaded', function() {
             this.disabled = true;
 
             if (isAuthenticated) {
-                // Fix: previously looked for a "#theme-form" that never
-                // existed anywhere in the app, so this branch always fell
-                // through to a plain reload with nothing saved. The form is
-                // now rendered by this widget itself (see @auth block above).
                 const themeForm = document.getElementById('theme-apply-form');
                 if (themeForm) {
                     boardInput.value = selectedBoardTheme;
                     piecesInput.value = selectedPiecesTheme;
                     themeForm.submit();
                 } else {
-                    // Should not happen since @auth guarantees the form
-                    // exists for authenticated users; reload as a safe fallback.
                     setTimeout(() => location.reload(), 100);
                 }
             } else {
