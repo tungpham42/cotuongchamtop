@@ -2,7 +2,6 @@
 <html lang="{{ app()->getLocale() }}">
 <head>
     @include('layout.partials.head')
-    @include('layout.partials.scripts')
 
     <style>
 
@@ -226,6 +225,7 @@
                             <input type="hidden" name="FEN" id="FEN" >
                             <input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ url('/') }}" >
                             @include('common.themes')
+                            @include('layout.partials.scripts')
                             @yield('belowContent')
                             @if ( !isset($board) )
                                 <script>

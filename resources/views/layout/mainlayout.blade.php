@@ -2,7 +2,6 @@
 <html lang="{{ app()->getLocale() }}">
 <head>
     @include('layout.partials.head')
-    @include('layout.partials.scripts')
 </head>
 <body class="{{ $bodyClass }}">
     @include('common.afterBody')
@@ -39,6 +38,7 @@
         @yield('aboveContent')
         <div class="sharethis-inline-reaction-buttons"></div>
         @include('common.ads')
+        @include('layout.partials.scripts')
         @yield('belowContent')
         {{-- @desktop
             @include('layout.partials.fb')
