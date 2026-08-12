@@ -176,14 +176,15 @@
         }
 
         function getTimeoutByLevel(level) {
+            const parsedLevel = parseInt(level, 10);
             const timeouts = {
-                1: 500,
-                2: 1000,
-                3: 1500,
-                4: 2000,
-                5: 2500
+                1: 150,   // Newbie
+                2: 250,   // Easy
+                3: 400,   // Normal
+                4: 600,   // Hard
+                5: 900,   // Hardest
             };
-            return timeouts[level] || 3000;
+            return timeouts[parsedLevel] ?? 400;
         }
 
         function makeRandomMove() {
