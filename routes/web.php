@@ -479,6 +479,43 @@ Route::get('/home', function () {
 });
 
 // ==========================================
+// LOCALIZED SETTING PAGES (Form Actions)
+// ==========================================
+$localizedSettingPages = [
+    'change.password' => [
+        'action' => [UserController::class, 'changePassword'],
+    ],
+    'change.name' => [
+        'action' => [UserController::class, 'changeName'],
+    ],
+    'change.ui' => [
+        'action' => [UserController::class, 'changeUserInterface'],
+    ],
+    'profile.picture.upload' => [
+        'action' => [UserController::class, 'uploadProfilePicture'],
+    ],
+    'profile.picture.remove' => [
+        'action' => [UserController::class, 'removeProfilePicture'],
+    ],
+];
+
+foreach ($localizedSettingPages as $pageKey => $page) {
+    foreach (config('locales.supported', []) as $locale) {
+        // We use POST since these are form submission actions
+        // Added 'auth' to the middleware array to protect all settings routes
+        $route = Route::post(localized_path($pageKey, [], $locale), $page['action'])
+            ->middleware(['auth', "locale:{$locale}"]);
+
+        // Retain original route names for the default locale to prevent blade component breaks
+        if ($locale === config('locales.default', 'vi')) {
+            $route->name($pageKey);
+        } else {
+            $route->name("{$locale}.{$pageKey}");
+        }
+    }
+}
+
+// ==========================================
 // LOCALIZED APP PAGES (Dashboard, History, Profile, etc.)
 // ==========================================
 $localizedAppPages = [
@@ -770,43 +807,6 @@ Route::middleware('auth')->post('/payos/standard', [PayOSController::class, 'cre
 Route::get('/payos/return', [PayOSController::class, 'handleReturn'])->name('payos.return');
 Route::get('/payos/cancel', [PayOSController::class, 'handleCancel'])->name('payos.cancel');
 Route::post('/payos/webhook', [PayOSController::class, 'webhook'])->name('payos.webhook');
-
-// ==========================================
-// LOCALIZED SETTING PAGES (Form Actions)
-// ==========================================
-$localizedSettingPages = [
-    'change.password' => [
-        'action' => [UserController::class, 'changePassword'],
-    ],
-    'change.name' => [
-        'action' => [UserController::class, 'changeName'],
-    ],
-    'change.ui' => [
-        'action' => [UserController::class, 'changeUserInterface'],
-    ],
-    'profile.picture.upload' => [
-        'action' => [UserController::class, 'uploadProfilePicture'],
-    ],
-    'profile.picture.remove' => [
-        'action' => [UserController::class, 'removeProfilePicture'],
-    ],
-];
-
-foreach ($localizedSettingPages as $pageKey => $page) {
-    foreach (config('locales.supported', []) as $locale) {
-        // We use POST since these are form submission actions
-        // Added 'auth' to the middleware array to protect all settings routes
-        $route = Route::post(localized_path($pageKey, [], $locale), $page['action'])
-            ->middleware(['auth', "locale:{$locale}"]);
-
-        // Retain original route names for the default locale to prevent blade component breaks
-        if ($locale === config('locales.default', 'vi')) {
-            $route->name($pageKey);
-        } else {
-            $route->name("{$locale}.{$pageKey}");
-        }
-    }
-}
 
 Route::post('auth/google/onetap', [AuthController::class, 'handleOneTapCallback'])->name('login.google.onetap');
 

@@ -6,13 +6,18 @@ use App\Models\User;
 use App\Models\Room;
 use App\Actions\User\UpdateOnlineStatus;
 use App\Actions\User\UpdateUserStatusAction;
+use App\Actions\User\ChangePasswordAction;
+use App\Actions\User\ChangeNameAction;
+use App\Actions\User\ChangeUserInterfaceAction;
+use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\ChangeNameRequest;
+use App\Http\Requests\ChangeUserInterfaceRequest;
 use App\Presenters\UserPresenter;
 use App\Presenters\UserDataTablePresenter;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use DataTables;
 
@@ -119,61 +124,34 @@ class UserController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function changePassword(Request $request): RedirectResponse
+    public function changePassword(ChangePasswordRequest $request, ChangePasswordAction $action): RedirectResponse
     {
-        $request->validate([
-            'current_password' => 'required',
-            'new_password' => 'required|min:8',
-            'new_confirm_password' => 'required|same:new_password',
-        ],
-        [
-            'current_password.required' => __('Mật khẩu hiện tại bắt buộc điền.'),
-            'new_password.required' => __('Mật khẩu mới bắt buộc điền.'),
-            'new_password.min' => __('Mật khẩu mới phải ít nhất 8 ký tự.'),
-            'new_confirm_password.required' => __('Mật khẩu lặp lại bắt buộc điền.'),
-            'new_confirm_password.same' => __('Mật khẩu lặp lại và mật khẩu mới phải giống nhau.'),
-        ]);
-
-        $user = auth()->user(); // Fix: Use authenticated user instead of $request->input('current_id')
-
-        if (!Hash::check($request->input('current_password'), $user->password)) {
-            return back()->withErrors(['current_password' => __('Mật khẩu hiện tại không khớp.')]);
-        }
-
-        $user->password = Hash::make($request->input('new_password'));
-        $user->save();
+        // Validation errors (including the "current password wrong" case
+        // thrown from the action) are caught by Laravel's exception handler
+        // and redirected back with $errors automatically.
+        $action->execute(
+            auth()->user(),
+            $request->validated('current_password'),
+            $request->validated('new_password')
+        );
 
         return back()->with('success', __('Mật khẩu đã thay đổi thành công!'));
     }
 
-    public function changeName(Request $request): RedirectResponse
+    public function changeName(ChangeNameRequest $request, ChangeNameAction $action): RedirectResponse
     {
-        $request->validate([
-            'current_name' => 'required',
-            'new_name' => 'required|min:3|max:15|unique:users,name',
-        ],
-        [
-            'current_name.required' => __('Tên hiện tại bắt buộc.'),
-            'new_name.required' => __('Tên mới bắt buộc điền.'),
-            'new_name.min' => __('Tên mới phải ít nhất 3 ký tự.'),
-            'new_name.max' => __('Tên mới phải ít hơn 16 ký tự.'),
-            'new_name.unique' => __('Tên này đã được sử dụng.'),
-        ]);
-
-        $user = auth()->user(); // Fix: Use authenticated user
-        $user->name = $request->input('new_name');
-        $user->save();
+        $action->execute(auth()->user(), $request->validated('new_name'));
 
         return back()->with('success', __('Bạn đã thay đổi tên thành công!'));
     }
 
-    public function changeUserInterface(Request $request): RedirectResponse
+    public function changeUserInterface(ChangeUserInterfaceRequest $request, ChangeUserInterfaceAction $action): RedirectResponse
     {
-        $user = auth()->user(); // Fix: Use authenticated user
-
-        $user->board_theme = $request->input('board_theme');
-        $user->pieces_theme = $request->input('pieces_theme');
-        $user->save();
+        $action->execute(
+            auth()->user(),
+            $request->validated('board_theme'),
+            $request->validated('pieces_theme')
+        );
 
         return back()->with('success', __('Bạn đã thay đổi giao diện thành công!'));
     }

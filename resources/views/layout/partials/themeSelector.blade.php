@@ -89,6 +89,19 @@
         <i class="fas fa-palette"></i>
         <span class="theme-toggle-text">{{ __("Tùy chỉnh") }}</span>
     </button>
+
+    {{-- Fix: this widget is included standalone on game pages, so it can't rely
+         on a "#theme-form" that lives elsewhere — none exists anywhere in the
+         codebase. Without its own form, Apply Theme silently did nothing for
+         logged-in users (see script below). Own the form here so the choice
+         actually reaches UserController::changeUserInterface. --}}
+    @auth
+        <form id="theme-apply-form" method="POST" action="{{ localized_url('change.ui') }}" style="display: none;">
+            @csrf
+            <input type="hidden" name="board_theme" id="boardTheme" value="{{ auth()->user()->board_theme ?: 'xiangqi-board' }}">
+            <input type="hidden" name="pieces_theme" id="piecesTheme" value="{{ auth()->user()->pieces_theme ?: 'wiki' }}">
+        </form>
+    @endauth
 </div>
 
 <style>
@@ -304,6 +317,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const toggleBtn = document.getElementById('theme-toggle-btn');
     const panel = document.querySelector('.theme-selector-panel');
     const themeOptions = document.querySelectorAll('.theme-option');
+    const boardInput = document.getElementById('boardTheme');
+    const piecesInput = document.getElementById('piecesTheme');
 
     // 1. Establish user context using Blade injection
     const isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
@@ -335,9 +350,8 @@ document.addEventListener('DOMContentLoaded', function() {
         currentPiecesTheme = localStorage.getItem('guest_pieces_theme') || 'wiki';
     }
 
-    // Sync initialization to hidden inputs if they exist elsewhere on the page
-    const boardInput = document.getElementById('boardTheme');
-    const piecesInput = document.getElementById('piecesTheme');
+    // Sync initialization to the hidden form inputs (logged-in users only —
+    // they don't exist in the DOM for guests, since there's nothing to POST)
     if (boardInput) boardInput.value = currentBoardTheme;
     if (piecesInput) piecesInput.value = currentPiecesTheme;
 
@@ -365,10 +379,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const selectedBoardTheme = document.querySelector('.theme-option[data-theme-type="board"].active')?.dataset.theme || 'xiangqi-board';
             const selectedPiecesTheme = document.querySelector('.theme-option[data-theme-type="pieces"].active')?.dataset.theme || 'wiki';
 
-            if (boardInput) boardInput.value = selectedBoardTheme;
-            if (piecesInput) piecesInput.value = selectedPiecesTheme;
-
-            // Always save to LocalStorage as a fallback caching method
+            // Always save to LocalStorage as a guest-mode fallback / cache
             localStorage.setItem('guest_board_theme', selectedBoardTheme);
             localStorage.setItem('guest_pieces_theme', selectedPiecesTheme);
 
@@ -378,28 +389,23 @@ document.addEventListener('DOMContentLoaded', function() {
             this.disabled = true;
 
             if (isAuthenticated) {
-                // If a form exists on the page covering these inputs, submit it
-                const themeForm = document.getElementById('theme-form');
+                // Fix: previously looked for a "#theme-form" that never
+                // existed anywhere in the app, so this branch always fell
+                // through to a plain reload with nothing saved. The form is
+                // now rendered by this widget itself (see @auth block above).
+                const themeForm = document.getElementById('theme-apply-form');
                 if (themeForm) {
+                    boardInput.value = selectedBoardTheme;
+                    piecesInput.value = selectedPiecesTheme;
                     themeForm.submit();
                 } else {
-                    // Example configuration for an API Fetch approach to save to DB dynamically:
-                    /*
-                    fetch('/api/user/update-theme', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({ board_theme: selectedBoardTheme, pieces_theme: selectedPiecesTheme })
-                    }).then(() => location.reload());
-                    */
-
-                    // Fallback reload if API integration isn't ready
+                    // Should not happen since @auth guarantees the form
+                    // exists for authenticated users; reload as a safe fallback.
                     setTimeout(() => location.reload(), 100);
                 }
             } else {
-                // Direct reload for guests; LocalStorage handles state retention
+                // Guests have no account to save to; localStorage above
+                // already persisted the choice, just reload to apply it.
                 setTimeout(() => location.reload(), 100);
             }
         });

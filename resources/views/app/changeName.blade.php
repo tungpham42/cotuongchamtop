@@ -15,7 +15,6 @@
                     <div class="col-md-12">
                         <form method="POST" action="{{ localized_url('change.name') }}">
                             @csrf
-                            <input type="hidden" value="{{ auth()->user()->id }}" name="current_id">
                             <div class="row mb-3">
                                 <label for="current_name" class="col-md-4 col-form-label text-md-end">{{ __("Tên hiện tại") }}</label>
                                 <div class="col-md-6">

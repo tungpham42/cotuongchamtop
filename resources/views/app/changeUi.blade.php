@@ -16,16 +16,24 @@
                 </div>
 
                 <div class="card-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     <div class="row">
 
                         <div class="col-md-6 mb-4 mb-md-0">
                             <form method="POST" action="{{ localized_url('change.ui') }}">
                                 @csrf
-                                <input type="hidden" value="{{ auth()->user()->id ?? '' }}" name="current_id">
 
                                 <div class="form-group">
                                     <label for="board_theme" class="font-weight-bold"><i class="fas fa-chess-board text-muted"></i> {{ __("Bàn cờ") }}</label>
-                                    <select data-step="1" data-intro="{{ __("Chọn giao diện bàn cờ") }}" class="form-control form-control-lg" name="board_theme" id="board_theme">
+                                    <select data-step="1" data-intro="{{ __("Chọn giao diện bàn cờ") }}" class="form-control form-control-lg @error('board_theme') is-invalid @enderror" name="board_theme" id="board_theme">
                                         <option value="xiangqi-board" @if(empty(auth()->user()->board_theme) || auth()->user()->board_theme === 'xiangqi-board') selected @endif>{{ __("Bàn cờ mặc định") }}</option>
                                         <option value="ban-co-go" @if(auth()->user()->board_theme === 'ban-co-go') selected @endif>{{ __("Gỗ nhạt") }}</option>
                                         <option value="wood-board" @if(auth()->user()->board_theme === 'wood-board') selected @endif>{{ __("Gỗ đậm") }}</option>
@@ -33,11 +41,16 @@
                                         <option value="banco" @if(auth()->user()->board_theme === 'banco') selected @endif>{{ __("Sáng") }}</option>
                                         <option value="chess-board" @if(auth()->user()->board_theme === 'chess-board') selected @endif>{{ __("Cam nhạt") }}</option>
                                     </select>
+                                    @error('board_theme')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
 
                                 <div class="form-group">
                                     <label for="pieces_theme" class="font-weight-bold"><i class="fas fa-chess-knight text-muted"></i> {{ __("Quân cờ") }}</label>
-                                    <select data-step="2" data-intro="{{ __("Chọn giao diện quân cờ") }}" class="form-control form-control-lg" name="pieces_theme" id="pieces_theme">
+                                    <select data-step="2" data-intro="{{ __("Chọn giao diện quân cờ") }}" class="form-control form-control-lg @error('pieces_theme') is-invalid @enderror" name="pieces_theme" id="pieces_theme">
                                         <option value="wiki" @if(empty(auth()->user()->pieces_theme) || auth()->user()->pieces_theme === 'wiki') selected @endif>{{ __("Quân cờ mặc định") }}</option>
                                         <option value="tung" @if(auth()->user()->pieces_theme === 'tung') selected @endif>{{ __("Đặc biệt") }}</option>
                                         <option value="do-den" @if(auth()->user()->pieces_theme === 'do-den') selected @endif>{{ __("Đỏ đen") }}</option>
@@ -47,6 +60,11 @@
                                         <option value="quan" @if(auth()->user()->pieces_theme === 'quan') selected @endif>{{ __("Sáng") }}</option>
                                         <option value="traditional" @if(auth()->user()->pieces_theme === 'traditional') selected @endif>{{ __("Truyền thống") }}</option>
                                     </select>
+                                    @error('pieces_theme')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
 
                                 <button data-step="3" data-intro="{{ __("Ấn vào đây để đổi giao diện") }}" type="submit" class="btn btn-lg btn-danger mt-3 w-100">
