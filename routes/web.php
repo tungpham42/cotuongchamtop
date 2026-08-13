@@ -18,6 +18,9 @@ use App\Http\Controllers\BroadcastAuthController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\AdminPuzzleController;
+use App\Http\Controllers\AdminRoomController;
+use App\Http\Controllers\AdminTournamentController;
 use App\Actions\Room\GetRandomRoomAction;
 use App\Actions\Room\GetRoomQueriesAction;
 use App\Actions\User\GetUserQueriesAction;
@@ -49,6 +52,9 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->name('admin.')->gr
 
     // Future routes can go here (e.g., users management, tournaments approval, etc.)
     Route::resource('users', AdminUserController::class);
+    Route::resource('puzzles', AdminPuzzleController::class);
+    Route::resource('rooms', AdminRoomController::class);
+    Route::resource('tournaments', AdminTournamentController::class);
 });
 
 /*

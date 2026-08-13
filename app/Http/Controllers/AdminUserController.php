@@ -42,7 +42,7 @@ class AdminUserController extends Controller
             'name'              => 'required|string|max:255',
             'email'             => 'required|string|email|max:255|unique:users',
             'password'          => 'required|string|min:8',
-            'points'            => 'nullable|integer',
+            'elo'               => 'nullable|integer',
             'is_admin'          => 'boolean',
             'subscription_plan' => 'nullable|string',
         ]);
@@ -65,7 +65,7 @@ class AdminUserController extends Controller
         $validated = $request->validate([
             'name'              => 'required|string|max:255',
             'email'             => "required|string|email|max:255|unique:users,email,{$user->id}",
-            'points'            => 'required|integer',
+            'elo'               => 'required|integer',
             'subscription_plan' => 'nullable|string',
         ]);
 

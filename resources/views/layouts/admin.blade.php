@@ -3,7 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:image" content="@yield('og_image', url('/img/1200x630.jpg'))">
+    <meta property="og:image:width" content="@yield('og_image_width', '1200')" >
+    <meta property="og:image:height" content="@yield('og_image_height', '630')" >
+    <meta property="og:image:alt" content="@yield('og_image_alt', 'Cờ tướng 2 người')" >
+    <meta property="og:image:type" content="@yield('og_image_type', 'image/jpeg')" />
+
     <title>@yield('title', 'Admin Dashboard')</title>
+
+    <link rel="apple-touch-icon" href="{{ asset('img/app-icons/apple-touch-icon-iphone-game.png') }}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('img/app-icons/apple-touch-icon-ipad-game.png') }}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ asset('img/app-icons/apple-touch-icon-iphone-retina-game.png') }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('img/app-icons/apple-touch-icon-ipad-retina-game.png') }}">
+    <link rel="icon" sizes="32x32" href="{{ asset('img/favicon-32x32-game.png') }}" >
 
     <!-- Tailwind CSS & FontAwesome CDNs -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -27,6 +39,15 @@
                     </a>
                     <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition {{ request()->routeIs('admin.users.*') ? 'bg-indigo-600 text-white' : 'text-slate-300' }}">
                         <i class="fa-solid fa-users w-5"></i> Users
+                    </a>
+                    <a href="{{ route('admin.rooms.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition {{ request()->routeIs('admin.rooms.*') ? 'bg-indigo-600 text-white' : 'text-slate-300' }}">
+                        <i class="fa-solid fa-gamepad w-5"></i> Rooms
+                    </a>
+                    <a href="{{ route('admin.puzzles.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition {{ request()->routeIs('admin.puzzles.*') ? 'bg-indigo-600 text-white' : 'text-slate-300' }}">
+                        <i class="fa-solid fa-puzzle-piece w-5"></i> Puzzles
+                    </a>
+                    <a href="{{ route('admin.tournaments.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-800 transition {{ request()->routeIs('admin.tournaments.*') ? 'bg-indigo-600 text-white' : 'text-slate-300' }}">
+                        <i class="fa-solid fa-trophy w-5"></i> Tournaments
                     </a>
                 </nav>
             </div>
