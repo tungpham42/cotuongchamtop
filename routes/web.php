@@ -15,6 +15,7 @@ use App\Http\Controllers\TimerController;
 use App\Http\Controllers\PayOSController;
 use App\Http\Controllers\TournamentController;
 use App\Http\Controllers\BroadcastAuthController;
+use App\Http\Controllers\SitemapController;
 use App\Actions\Room\GetRandomRoomAction;
 use App\Actions\Room\GetRoomQueriesAction;
 use App\Actions\User\GetUserQueriesAction;
@@ -101,23 +102,10 @@ Route::get('/test-engine', function() {
     echo "<pre>" . $e->getTraceAsString() . "</pre>";
   }
 });
-Route::get('/sitemap', function () {
-  $sitemap = Sitemap::create();
-
-  // Add all named routes to the sitemap except those with '/api' prefix and parameters
-  collect(Route::getRoutes())->each(function ($route) use ($sitemap) {
-    if ($route->getName() && strpos($route->uri(), '/api') !== 0 && count($route->signatureParameters()) === 0) {
-      $sitemap->add(route($route->getName()));
-    }
-  });
-
-  $sitemap->writeToFile(public_path('sitemap.xml'));
-
-  return 'Sitemap generated!';
-});
-Route::get('/sitemap-the-co.xml', function() {
-  return response()->view('sitemap-puzzle')->header('Content-Type', 'text/xml');
-});
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.index');
+Route::get('/sitemap-puzzles-{locale}.xml', [SitemapController::class, 'puzzles'])
+    ->whereIn('locale', ['vi', 'en', 'ja', 'ko', 'zh'])
+    ->name('sitemap.puzzles');
 
 // Custom route to bypass Laravel's strict auth requirement
 Route::post('/custom/broadcasting/auth', [BroadcastAuthController::class, 'authenticate']);
