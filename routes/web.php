@@ -41,14 +41,14 @@ Route::get('/test-redis', function () {
 // ==========================================
 // ADMIN ROUTES
 // ==========================================
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+// Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
 
-    // Admin Dashboard
-    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+//     // Admin Dashboard
+//     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
 
-    // Future routes can go here (e.g., users management, tournaments approval, etc.)
-    Route::resource('users', AdminUserController::class);
-});
+//     // Future routes can go here (e.g., users management, tournaments approval, etc.)
+//     Route::resource('users', AdminUserController::class);
+// });
 
 /*
 |--------------------------------------------------------------------------
