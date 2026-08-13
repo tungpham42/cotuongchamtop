@@ -20,16 +20,45 @@
         <h3 class="text-md font-semibold text-gray-700 mb-4">Add Player</h3>
         <form action="{{ route('admin.tournaments.participants.store', $tournament) }}" method="POST" class="flex items-end gap-4">
             @csrf
-            <div class="flex-grow">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Select User</label>
-                <select name="user_id" required class="w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <option value="" disabled selected>-- Select a user to add --</option>
+
+            <!-- Custom Searchable Select Wrapper -->
+            <div class="flex-grow relative" id="searchable-select-wrapper">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Search and Select User</label>
+
+                <!-- Visible Search Input -->
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                    <input type="text"
+                           id="user-search-input"
+                           placeholder="Type name or email to search..."
+                           class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                           autocomplete="off"
+                           {{ $tournament->users_count >= $tournament->max_players ? 'disabled' : '' }}>
+                </div>
+
+                <!-- Hidden Input to store the actual User ID for the form submission -->
+                <input type="hidden" name="user_id" id="selected-user-id" required>
+
+                <!-- Custom Dropdown List -->
+                <ul id="user-options-list" class="absolute z-10 w-full bg-white border border-gray-200 rounded-lg shadow-xl mt-1 hidden max-h-60 overflow-y-auto">
                     @foreach($availableUsers as $user)
-                        <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
+                        <li class="user-option px-4 py-3 text-sm text-gray-700 cursor-pointer hover:bg-indigo-50 hover:text-indigo-700 border-b last:border-b-0"
+                            data-id="{{ $user->id }}"
+                            data-name="{{ $user->name }} ({{ $user->email }})"
+                            data-search="{{ strtolower($user->name . ' ' . $user->email) }}">
+                            <div class="font-medium">{{ $user->name }}</div>
+                            <div class="text-xs text-gray-500">{{ $user->email }}</div>
+                        </li>
                     @endforeach
-                </select>
+                    <li id="no-results-msg" class="px-4 py-3 text-sm text-gray-500 hidden text-center italic">
+                        No users found matching your search.
+                    </li>
+                </ul>
             </div>
-            <button type="submit" class="px-6 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition disabled:opacity-50" {{ $tournament->users_count >= $tournament->max_players ? 'disabled' : '' }}>
+
+            <button type="submit" id="submit-btn" class="px-6 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition disabled:opacity-50" {{ $tournament->users_count >= $tournament->max_players ? 'disabled' : '' }}>
                 Add Player
             </button>
         </form>
@@ -78,4 +107,71 @@
         </div>
     </div>
 </div>
+
+<!-- Searchable Select Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('user-search-input');
+        const hiddenInput = document.getElementById('selected-user-id');
+        const optionsList = document.getElementById('user-options-list');
+        const options = optionsList.querySelectorAll('.user-option');
+        const noResults = document.getElementById('no-results-msg');
+        const wrapper = document.getElementById('searchable-select-wrapper');
+
+        if (!searchInput) return;
+
+        // Show the dropdown when the input is focused
+        searchInput.addEventListener('focus', () => {
+            optionsList.classList.remove('hidden');
+        });
+
+        // Filter the list dynamically as the user types
+        searchInput.addEventListener('input', function(e) {
+            const filterText = e.target.value.toLowerCase();
+            let hasVisibleOptions = false;
+
+            // Clear the hidden ID if the user modifies the search box (forces them to re-select)
+            hiddenInput.value = '';
+
+            options.forEach(option => {
+                const searchableString = option.getAttribute('data-search');
+
+                if (searchableString.includes(filterText)) {
+                    option.classList.remove('hidden');
+                    hasVisibleOptions = true;
+                } else {
+                    option.classList.add('hidden');
+                }
+            });
+
+            // Toggle "No results" message
+            if (hasVisibleOptions) {
+                noResults.classList.add('hidden');
+            } else {
+                noResults.classList.remove('hidden');
+            }
+        });
+
+        // Handle user selection from the dropdown list
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                // Set the visible input to the user's name
+                searchInput.value = this.getAttribute('data-name');
+
+                // Set the hidden input to the user's database ID
+                hiddenInput.value = this.getAttribute('data-id');
+
+                // Hide the dropdown
+                optionsList.classList.add('hidden');
+            });
+        });
+
+        // Close the dropdown if the user clicks outside of the component
+        document.addEventListener('click', function(e) {
+            if (!wrapper.contains(e.target)) {
+                optionsList.classList.add('hidden');
+            }
+        });
+    });
+</script>
 @endsection
