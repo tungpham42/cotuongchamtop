@@ -28,6 +28,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Spatie\Sitemap\SitemapGenerator;
 use Spatie\Sitemap\Sitemap;
 use Illuminate\Support\Facades\Cache;
+use App\Http\Middleware\IsAdmin;
 
 Route::get('/test-redis', function () {
     if (Cache::has('browser_test')) {
@@ -41,14 +42,14 @@ Route::get('/test-redis', function () {
 // ==========================================
 // ADMIN ROUTES
 // ==========================================
-// Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', IsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
 
-//     // Admin Dashboard
-//     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+    // Admin Dashboard
+    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
 
-//     // Future routes can go here (e.g., users management, tournaments approval, etc.)
-//     Route::resource('users', AdminUserController::class);
-// });
+    // Future routes can go here (e.g., users management, tournaments approval, etc.)
+    Route::resource('users', AdminUserController::class);
+});
 
 /*
 |--------------------------------------------------------------------------
