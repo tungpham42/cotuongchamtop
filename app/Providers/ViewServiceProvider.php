@@ -16,7 +16,7 @@ class ViewServiceProvider extends ServiceProvider
         UserService $userService
     ) {
         $viewsWithSharedData = [
-            'layout.partials.userPuzzles',
+            'layouts.partials.userPuzzles',
             'room*',
             'puzzle',
             'puzzleAi',

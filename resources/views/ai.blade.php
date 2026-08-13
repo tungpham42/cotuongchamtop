@@ -93,7 +93,7 @@
         <a data-step="5" data-intro="Nơi luyện tập với chính mình nhé" class="w-25 btn btn-dark btn-lg showPromotion" href="{{ url('/' . __('choi-mot-minh')) }}"><i class="fad fa-user"></i> {{ __("Một mình") }}</a>
         <a data-step="4" data-intro="Ấn vào đây để {{ __("chơi") }} lại từ đầu" id="reset" class="w-25 btn btn-dark btn-lg"><i class="fad fa-redo-alt"></i> {{ __("Chơi lại") }}</a>
     </p>
-    @include('layout.partials.kypho')
+    @include('layouts.partials.kypho')
 
     <script>
         let board = null;
@@ -402,9 +402,9 @@
         @endif
     </script>
     @if(isset($level) && $level != '8')
-        @include('layout.partials.players')
-        @include('layout.partials.userPuzzles')
-        @include('layout.partials.boards')
-        @include('layout.partials.playedBoards')
+        @include('layouts.partials.players')
+        @include('layouts.partials.userPuzzles')
+        @include('layouts.partials.boards')
+        @include('layouts.partials.playedBoards')
     @endif
 @endsection

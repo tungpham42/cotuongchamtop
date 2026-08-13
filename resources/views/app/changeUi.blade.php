@@ -11,7 +11,7 @@
                         <i class="fas fa-palette mr-2"></i> {{ __("Thay đổi giao diện") }}
                     </div>
                     <div class="ml-auto">
-                        @include('layout.partials.app.tourBtn')
+                        @include('layouts.partials.app.tourBtn')
                     </div>
                 </div>
 

@@ -12,7 +12,7 @@
                     @else
                     <i class="fas fa-key"></i> {{ __('Reset Password') }}
                     @endif
-                    @include('layout.partials.app.tourBtn')
+                    @include('layouts.partials.app.tourBtn')
                 </div>
 
                 <div class="card-body">

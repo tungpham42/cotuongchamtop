@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    @include('layout.partials.app.head')
+    @include('layouts.partials.app.head')
 </head>
 
 @php
@@ -21,7 +21,7 @@
     @include('common.afterBody')
     <div id="app">
         @include('common.adsenseTop')
-        @include('layout.partials.app.header')
+        @include('layouts.partials.app.header')
         <input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ url('/') }}" >
         @include('common.themes')
 
@@ -36,7 +36,7 @@
             @yield('content')
         </main>
 
-        @include('layout.partials.app.footer')
+        @include('layouts.partials.app.footer')
     </div>
     @include('common.contactBtn')
     @include('common.onlineCounter')

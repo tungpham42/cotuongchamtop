@@ -8,7 +8,7 @@
             <div class="card">
                 <div class="card-header">
                     <i class="fas fa-user-plus"></i> {{ __('Register') }}
-                    @include('layout.partials.app.tourBtn')
+                    @include('layouts.partials.app.tourBtn')
                 </div>
 
                 <div class="card-body">

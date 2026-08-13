@@ -83,7 +83,7 @@
             $(this).tooltip('update');
         });
     </script>
-    @include('layout.partials.kypho')
+    @include('layouts.partials.kypho')
     <script>
         let board = null;
         let game = new Xiangqi();
@@ -435,8 +435,8 @@
             });
         @endif
     </script>
-    @include('layout.partials.players')
-    @include('layout.partials.userPuzzles')
-    @include('layout.partials.boards')
-    @include('layout.partials.playedBoards')
+    @include('layouts.partials.players')
+    @include('layouts.partials.userPuzzles')
+    @include('layouts.partials.boards')
+    @include('layouts.partials.playedBoards')
 @endsection

@@ -1,3 +1,3 @@
 <div id="userPuzzlesWrapper">
-@include('layout.partials.userPuzzles')
+@include('layouts.partials.userPuzzles')
 </div>

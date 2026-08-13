@@ -28,12 +28,12 @@
     <span id="room-name">{{ __('Tên phòng') }}: {{ $room->name }}</span>
 
     @if ($role !== 'watch')
-        @include('layout.partials.timer')
+        @include('layouts.partials.timer')
 
         <!-- INCLUDE VIDEO CALL COMPONENT HERE -->
         @if(isset($room->host_id) && in_array($role, ['host', 'guest', 'red', 'black']) && auth()->check())
             <div class="w-50 mx-auto">
-                @include('layout.partials.videoCall')
+                @include('layouts.partials.videoCall')
             </div>
         @endif
         <!-- END VIDEO CALL COMPONENT -->
@@ -93,7 +93,7 @@
         </p>
     @endif
 
-    @include('layout.partials.kypho')
+    @include('layouts.partials.kypho')
 
     <script>
         @if ($role === 'host' && $room['pass'] != null)

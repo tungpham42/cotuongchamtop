@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
-    @include('layout.partials.head')
+    @include('layouts.partials.head')
 
     <style>
 
@@ -57,8 +57,8 @@
 </head>
 <body class="{{ $bodyClass }}">
     @include('common.afterBody')
-    @include('layout.partials.header')
-    @include('layout.partials.analysisModal')
+    @include('layouts.partials.header')
+    @include('layouts.partials.analysisModal')
     @if (session('status'))
         <div class="container">
             <div class="alert alert-success" role="alert">
@@ -101,7 +101,7 @@
                 </audio>
                 @if (!isset($room->tournament_id))
                     <div class="row">
-                        @include('layout.partials.findMatch')
+                        @include('layouts.partials.findMatch')
                     </div>
                 @endif
                 <div class="row">
@@ -113,8 +113,8 @@
                     <div class="row">
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-1">
                             <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
-                            @include('layout.partials.themeSelector')
-                            {{-- @include('layout.partials.analyzeBtn') --}}
+                            @include('layouts.partials.themeSelector')
+                            {{-- @include('layouts.partials.analyzeBtn') --}}
                         </div>
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-auto">
                             @yield('rightSide')
@@ -124,8 +124,8 @@
                     <div class="puzzle-layout-wrapper">
                         <div class="puzzle-layout-board">
                             <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
-                            @include('layout.partials.themeSelector')
-                            {{-- @include('layout.partials.analyzeBtn') --}}
+                            @include('layouts.partials.themeSelector')
+                            {{-- @include('layouts.partials.analyzeBtn') --}}
                             @yield('belowBoardExtras')
                         </div>
                         <div class="puzzle-layout-panel">
@@ -136,11 +136,11 @@
                     <div class="row">
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                             <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
-                            @include('layout.partials.themeSelector')
-                            {{-- @include('layout.partials.analyzeBtn') --}}
+                            @include('layouts.partials.themeSelector')
+                            {{-- @include('layouts.partials.analyzeBtn') --}}
                         </div>
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-0">
-                            @include('layout.partials.chat')
+                            @include('layouts.partials.chat')
                             {{-- @include('common.sideAds') --}}
                         </div>
                     </div>
@@ -225,7 +225,7 @@
                             <input type="hidden" name="FEN" id="FEN" >
                             <input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ url('/') }}" >
                             @include('common.themes')
-                            @include('layout.partials.scripts')
+                            @include('layouts.partials.scripts')
                             @yield('belowContent')
                             @if ( !isset($board) )
                                 <script>
@@ -383,7 +383,7 @@
             </div>
         </div>
     </main>
-    @include('layout.partials.playFooter')
+    @include('layouts.partials.playFooter')
     @include('common.onlineCounter')
 </body>
 </html>

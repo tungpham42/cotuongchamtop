@@ -8,7 +8,7 @@
             <div class="card">
                 <div class="card-header">
                     <i class="fas fa-lock-alt"></i> {{ __("Đổi mật khẩu") }}
-                    @include('layout.partials.app.tourBtn')
+                    @include('layouts.partials.app.tourBtn')
                 </div>
                 <div class="card-body">
                     <!-- Add this block for the success message -->

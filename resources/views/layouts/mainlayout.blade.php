@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
-    @include('layout.partials.head')
+    @include('layouts.partials.head')
 </head>
 <body class="{{ $bodyClass }}">
     @include('common.afterBody')
     @include('common.themes')
     @include('common.adsenseTop')
-    @include('layout.partials.header')
+    @include('layouts.partials.header')
     @if (session('status'))
         <div class="container">
             <div class="alert alert-success" role="alert">
@@ -38,13 +38,13 @@
         @yield('aboveContent')
         <div class="sharethis-inline-reaction-buttons"></div>
         @include('common.ads')
-        @include('layout.partials.scripts')
+        @include('layouts.partials.scripts')
         @yield('belowContent')
         {{-- @desktop
-            @include('layout.partials.fb')
+            @include('layouts.partials.fb')
         @enddesktop --}}
     </main>
-    @include('layout.partials.footer')
+    @include('layouts.partials.footer')
     @include('common.contactBtn')
     @include('common.onlineCounter')
 </body>

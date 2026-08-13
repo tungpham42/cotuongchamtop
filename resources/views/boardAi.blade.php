@@ -86,7 +86,7 @@
         <a data-step="4" data-intro="Ấn vào đây để tự giải bàn cờ" id="board" class="add-fen w-25 btn btn-dark btn-lg" href="{{ url('/ban-co') }}"><i class="fad fa-user"></i> Tự giải</a>
         <a data-step="5" data-intro="Ấn vào đây để {{ __("chơi") }} lại từ đầu" id="reset" class="w-25 btn btn-dark btn-lg"><i class="fad fa-redo-alt"></i> {{ __("Chơi lại") }}</a>
     </p>
-    @include('layout.partials.kypho')
+    @include('layouts.partials.kypho')
     <script>
         let board = null;
         let game = new Xiangqi();
@@ -385,8 +385,8 @@
             });
         });
     </script>
-    @include('layout.partials.players')
-    @include('layout.partials.userPuzzles')
-    @include('layout.partials.boards')
-    @include('layout.partials.playedBoards')
+    @include('layouts.partials.players')
+    @include('layouts.partials.userPuzzles')
+    @include('layouts.partials.boards')
+    @include('layouts.partials.playedBoards')
 @endsection

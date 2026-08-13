@@ -42,7 +42,7 @@
                     </div>
 
                     <div class="ml-auto d-flex align-items-center">
-                        @include('layout.partials.app.tourBtn')
+                        @include('layouts.partials.app.tourBtn')
                         @if (auth()->check())
                             @if (auth()->id() != $player->id)
                                 <a class="btn btn-danger text-light ml-2 pulse-red" style="width: 140px;" href="javascript:compete({{ $player->id }});"><i class="far fa-mouse"></i> {{ __("Thách đấu") }}</a>

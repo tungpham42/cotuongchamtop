@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
-    @include('layout.partials.head')
+    @include('layouts.partials.head')
 </head>
 <body class="error">
     @include('common.afterBody')
-    @include('layout.partials.header')
+    @include('layouts.partials.header')
     <main>
         @yield('content')
     </main>
-    @include('layout.partials.footer')
+    @include('layouts.partials.footer')
 </body>
 </html>

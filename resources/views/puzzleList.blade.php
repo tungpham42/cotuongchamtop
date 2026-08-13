@@ -4,7 +4,7 @@
     <div class="container-fluid game px-0">
         <div class="container p-3">
             <div class="row">
-                @include('layout.partials.findMatch')
+                @include('layouts.partials.findMatch')
             </div>
             <h2 class="h1-responsivefooter text-center my-4">{{ __('Tất cả thế cờ') }}</h2>
             <div class="dropdown mx-auto text-center mb-3">
@@ -194,7 +194,7 @@
         });
     </script>
     <input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ url('/') }}" >
-    @include('layout.partials.players')
-    @include('layout.partials.boards')
-    @include('layout.partials.playedBoards')
+    @include('layouts.partials.players')
+    @include('layouts.partials.boards')
+    @include('layouts.partials.playedBoards')
 @endsection

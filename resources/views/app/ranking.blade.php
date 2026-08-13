@@ -9,11 +9,11 @@
             <div class="card shadow-lg mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0"><i class="fas fa-star text-gold"></i> {{ __("Bảng xếp hạng") }}</h4>
-                    @include('layout.partials.app.tourBtn')
+                    @include('layouts.partials.app.tourBtn')
                 </div>
                 <div class="card-body p-0">
                     <div class="p-3 border-bottom" style="border-color: rgba(212, 175, 55, 0.2) !important;">
-                        @include('layout.partials.app.createRoom')
+                        @include('layouts.partials.app.createRoom')
                         <h2 data-step="2" data-intro="{{ __("Danh sách xếp hạng đầy đủ") }}" class="mt-4 mb-0 h4">
                             <i class="fas fa-star text-gold"></i> {{ __("Bảng xếp hạng của") }} {{ $users->total() }} {{ __("kỳ thủ") }} <small class="text-muted">({!! $userPresenter->renderOnlinePlayersCount() !!})</small>
                         </h2>

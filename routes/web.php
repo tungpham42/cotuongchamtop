@@ -249,7 +249,7 @@ Route::post('/match/find', [RoomController::class, 'findMatch'])->name('match.fi
 Route::get('/match/status', [RoomController::class, 'checkMatchStatus'])->name('match.status');
 
 Route::get('/getUserPuzzlesTemplate', function(){
-  return view('layout.partials.userPuzzles')->render();
+  return view('layouts.partials.userPuzzles')->render();
 });
 
 Route::get('/rooms', function () {
@@ -910,7 +910,7 @@ foreach ($localizedPuzzleRatingPages['puzzle.rating']['titles'] as $locale => $t
 }
 
 Route::match(['get', 'post'], '/getUserPuzzlesTemplate', function(){
-return view('layout.partials.userPuzzles')->render();
+return view('layouts.partials.userPuzzles')->render();
 });
 
 // ==========================================

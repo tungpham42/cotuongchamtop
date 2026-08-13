@@ -8,7 +8,7 @@
             <div class="card">
                 <div class="card-header">
                     <i class="fas fa-user-edit"></i> {{ __("Đổi tên") }}
-                    @include('layout.partials.app.tourBtn')
+                    @include('layouts.partials.app.tourBtn')
                 </div>
                 <div class="card-body">
                     <!-- Add this block for the success message -->

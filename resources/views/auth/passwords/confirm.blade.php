@@ -8,7 +8,7 @@
             <div class="card">
                 <div class="card-header">
                     <i class="fas fa-check-circle"></i> {{ __('Confirm Password') }}
-                    @include('layout.partials.app.tourBtn')
+                    @include('layouts.partials.app.tourBtn')
                 </div>
 
                 <div class="card-body">

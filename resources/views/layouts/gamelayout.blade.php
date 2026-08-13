@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
-    @include('layout.partials.head')
+    @include('layouts.partials.head')
 
     <style>
 
@@ -58,8 +58,8 @@
 <body class="{{ $bodyClass }}">
     @include('common.afterBody')
     @include('common.adsenseTop')
-    @include('layout.partials.header')
-    @include('layout.partials.analysisModal')
+    @include('layouts.partials.header')
+    @include('layouts.partials.analysisModal')
     @if (session('status'))
         <div class="container">
             <div class="alert alert-success" role="alert">
@@ -102,7 +102,7 @@
                 </audio>
                 @include('common.hero')
                 <div class="row">
-                    @include('layout.partials.findMatch')
+                    @include('layouts.partials.findMatch')
                 </div>
                 <div class="row">
                     <div class="col-12 text-center mb-3">
@@ -113,8 +113,8 @@
                     <div class="row">
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-1">
                             <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
-                            @include('layout.partials.themeSelector')
-                            {{-- @include('layout.partials.analyzeBtn') --}}
+                            @include('layouts.partials.themeSelector')
+                            {{-- @include('layouts.partials.analyzeBtn') --}}
                         </div>
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-auto">
                             @yield('rightSide')
@@ -124,8 +124,8 @@
                     <div class="puzzle-layout-wrapper">
                         <div class="puzzle-layout-board">
                             <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
-                            @include('layout.partials.themeSelector')
-                            {{-- @include('layout.partials.analyzeBtn') --}}
+                            @include('layouts.partials.themeSelector')
+                            {{-- @include('layouts.partials.analyzeBtn') --}}
                             @yield('belowBoardExtras')
                         </div>
                         <div class="puzzle-layout-panel">
@@ -136,11 +136,11 @@
                     <div class="row">
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                             <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
-                            @include('layout.partials.themeSelector')
-                            {{-- @include('layout.partials.analyzeBtn') --}}
+                            @include('layouts.partials.themeSelector')
+                            {{-- @include('layouts.partials.analyzeBtn') --}}
                         </div>
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-5 mt-sm-5 mt-xs-5">
-                            @include('layout.partials.comments')
+                            @include('layouts.partials.comments')
                             {{-- @include('common.sideAds') --}}
                         </div>
                     </div>
@@ -226,9 +226,9 @@
                             <input type="hidden" name="FEN" id="FEN" >
                             <input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ url('/') }}" >
                             @include('common.themes')
-                            @include('layout.partials.scripts')
+                            @include('layouts.partials.scripts')
                             @if ( !isset($board) )
-                                @include('layout.partials.rules')
+                                @include('layouts.partials.rules')
                             @endif
                             @yield('belowContent')
                             @if ( !isset($board) )
@@ -386,10 +386,10 @@
                 </div>
             </div>
         </div>
-        {{-- @include('layout.partials.fb') --}}
+        {{-- @include('layouts.partials.fb') --}}
     </main>
-    {{-- @include('layout.partials.aiChatWidget') --}}
-    @include('layout.partials.footer')
+    {{-- @include('layouts.partials.aiChatWidget') --}}
+    @include('layouts.partials.footer')
     @include('common.contactBtn')
     @include('common.onlineCounter')
 </body>

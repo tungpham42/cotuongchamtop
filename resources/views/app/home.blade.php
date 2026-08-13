@@ -9,11 +9,11 @@
             <div class="card shadow-lg mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0"><i class="fas fa-gamepad-alt text-gold"></i> {{ __("Thi đấu xếp hạng") }}</h4>
-                    @include('layout.partials.app.tourBtn')
+                    @include('layouts.partials.app.tourBtn')
                 </div>
                 <div class="card-body p-0">
                     <div class="p-3 border-bottom" style="border-color: rgba(212, 175, 55, 0.2) !important;">
-                        @include('layout.partials.app.createRoom')
+                        @include('layouts.partials.app.createRoom')
                         <h2 data-step="2" data-intro="{{ __("Danh sách 10 kỳ thủ nhiều điểm nhất") }}" class="mt-4 mb-3 h4">
                             <i class="fas fa-medal text-gold"></i> {{ __("TOP 10") }}
                         </h2>

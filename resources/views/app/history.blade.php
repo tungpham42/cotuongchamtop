@@ -9,11 +9,11 @@
             <div class="card shadow-lg mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0"><i class="fas fa-archive text-gold"></i> {{ __("Lịch sử thi đấu") }}</h4>
-                    @include('layout.partials.app.tourBtn')
+                    @include('layouts.partials.app.tourBtn')
                 </div>
                 <div class="card-body p-0">
                     <div class="p-3 border-bottom" style="border-color: rgba(212, 175, 55, 0.2) !important;">
-                        @include('layout.partials.app.createRoom')
+                        @include('layouts.partials.app.createRoom')
                         <h2 data-step="2" data-intro="{{ __("Danh sách các ván đấu đã hoàn tất") }}" class="mt-3 mb-0 h4">
                             <i class="fas fa-archive"></i> {{ __("Lịch sử thi đấu") }} <small class="text-muted">({{ $playedRooms->total() }} {{ __("trận") }}, {!! $userPresenter->renderOnlinePlayersCount() !!})</small>
                         </h2>
