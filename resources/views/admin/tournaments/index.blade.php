@@ -18,10 +18,6 @@
             </select>
             <button type="submit" class="px-4 py-2 bg-gray-800 text-white text-sm rounded-lg hover:bg-gray-700 transition">Filter</button>
         </form>
-
-        <a href="{{ route('admin.tournaments.create') }}" class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2">
-            <i class="fa-solid fa-trophy"></i> Add Tournament
-        </a>
     </div>
 
     <!-- Data Table -->
