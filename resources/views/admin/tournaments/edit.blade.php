@@ -7,9 +7,13 @@
 
     <!-- Overview Header Stats -->
     <div class="grid grid-cols-3 gap-4">
-        <div class="bg-white p-4 rounded-xl border border-gray-100 text-center shadow-sm">
+        <div class="bg-white p-4 rounded-xl border border-gray-100 text-center shadow-sm relative">
             <p class="text-xs text-gray-400 font-semibold uppercase">Registered Players</p>
             <p class="text-xl font-bold text-indigo-600 mt-1"><i class="fa-solid fa-users mr-1 text-sm"></i>{{ $tournament->users_count }} / {{ $tournament->max_players }}</p>
+            <!-- Added Link Below -->
+            <a href="{{ route('admin.tournaments.participants.index', $tournament) }}" class="mt-2 inline-block text-xs text-indigo-600 hover:text-indigo-800 hover:underline">
+                Manage Participants &rarr;
+            </a>
         </div>
         <div class="bg-white p-4 rounded-xl border border-gray-100 text-center shadow-sm">
             <p class="text-xs text-gray-400 font-semibold uppercase">Total Rooms</p>

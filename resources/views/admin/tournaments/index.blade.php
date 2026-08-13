@@ -82,6 +82,11 @@
                         </td>
                         <td class="p-4 text-right">
                             <div class="flex justify-end gap-2">
+                                <!-- New Participants Link -->
+                                <a href="{{ route('admin.tournaments.participants.index', $tournament) }}" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Manage Participants">
+                                    <i class="fa-solid fa-users-gear"></i>
+                                </a>
+
                                 <a href="{{ route('admin.tournaments.edit', $tournament) }}" class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition"><i class="fa-solid fa-pen-to-square"></i></a>
                                 <form action="{{ route('admin.tournaments.destroy', $tournament) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this tournament?');">
                                     @csrf
