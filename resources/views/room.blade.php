@@ -1,4 +1,4 @@
-@extends('layout.gamelayout')
+@extends('layouts.gamelayout')
 
 @section('aboveContent')
 <p id="room-code" class="w-100 text-center mt-2">

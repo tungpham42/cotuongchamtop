@@ -1,4 +1,4 @@
-@extends('layout.mainlayout')
+@extends('layouts.mainlayout')
 
 @section('aboveContent')
     <div class="container-fluid game px-0">

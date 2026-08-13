@@ -1,4 +1,4 @@
-@extends('layout.gamelayout')
+@extends('layouts.gamelayout')
 
 @php
     $reactionData = $reactions ?? ['likes' => 0, 'hard' => 0, 'unsolved' => 0, 'rating' => 0];

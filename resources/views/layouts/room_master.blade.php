@@ -1,4 +1,4 @@
-@extends('layout.playlayout')
+@extends('layouts.playlayout')
 
 @section('aboveBoard')
     @if ($role === 'watch')

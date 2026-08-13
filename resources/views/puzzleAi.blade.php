@@ -1,4 +1,4 @@
-@extends('layout.gamelayout')
+@extends('layouts.gamelayout')
 
 @inject('puzzleService', 'App\Services\PuzzleService')
 @php

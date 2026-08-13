@@ -1,4 +1,4 @@
-@extends('layout.mainlayout')
+@extends('layouts.mainlayout')
 
 @section('aboveContent')
 <div class="container-fluid contact px-0">

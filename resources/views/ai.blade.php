@@ -1,4 +1,4 @@
-@extends('layout.gamelayout')
+@extends('layouts.gamelayout')
 
 @section('aboveBoard')
     @php

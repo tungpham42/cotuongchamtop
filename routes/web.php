@@ -16,6 +16,8 @@ use App\Http\Controllers\PayOSController;
 use App\Http\Controllers\TournamentController;
 use App\Http\Controllers\BroadcastAuthController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminUserController;
 use App\Actions\Room\GetRandomRoomAction;
 use App\Actions\Room\GetRoomQueriesAction;
 use App\Actions\User\GetUserQueriesAction;
@@ -26,6 +28,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Spatie\Sitemap\SitemapGenerator;
 use Spatie\Sitemap\Sitemap;
 use Illuminate\Support\Facades\Cache;
+use App\Http\Middleware\IsAdmin;
 
 Route::get('/test-redis', function () {
     if (Cache::has('browser_test')) {
@@ -34,6 +37,18 @@ Route::get('/test-redis', function () {
     $message = "This is fresh data created at " . now();
     Cache::put('browser_test', $message, 60);
     return "Saved to Redis. Refresh the page! Data: " . $message;
+});
+
+// ==========================================
+// ADMIN ROUTES
+// ==========================================
+Route::middleware(['auth', IsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
+
+    // Admin Dashboard
+    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+
+    // Future routes can go here (e.g., users management, tournaments approval, etc.)
+    Route::resource('users', AdminUserController::class);
 });
 
 /*

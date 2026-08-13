@@ -1,4 +1,4 @@
-@extends('layout.gamelayout')
+@extends('layouts.gamelayout')
 
 @section('aboveBoard')
     <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Tăng kỹ năng chơi cờ") }}">{{ __("Bạn đang chơi một mình") }}<span id="puzzle-title"></span></h5>

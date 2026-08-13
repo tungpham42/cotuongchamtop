@@ -1,4 +1,4 @@
-@extends('layout.app')
+@extends('layouts.app')
 
 
 @section('meta_description', $tournament->description ?? 'Giải đấu cờ tướng hấp dẫn.')

@@ -1,1 +1,1 @@
-@extends('layout.room_master', ['role' => 'red', 'orientation' => 'red', 'updateSide' => 'red'])
+@extends('layouts.room_master', ['role' => 'red', 'orientation' => 'red', 'updateSide' => 'red'])
