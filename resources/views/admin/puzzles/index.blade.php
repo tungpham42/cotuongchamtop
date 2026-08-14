@@ -4,7 +4,21 @@
 
 @section('content')
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-    <!-- Header Controls -->
+    <!-- Header Title & Stats -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-gray-100">
+        <div class="flex items-center gap-3">
+            <h1 class="text-lg font-bold text-gray-900">Puzzles</h1>
+            <span class="px-3 py-1 text-xs font-semibold bg-indigo-50 text-indigo-700 rounded-full border border-indigo-100">
+                Total: {{ number_format($puzzles->total()) }}
+            </span>
+        </div>
+
+        <a href="{{ route('admin.puzzles.create') }}" class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-plus"></i> Add Puzzle
+        </a>
+    </div>
+
+    <!-- Header Controls / Filters -->
     <div class="flex flex-col sm:flex-row justify-between gap-4 mb-6">
         <form method="GET" action="{{ route('admin.puzzles.index') }}" class="flex gap-2">
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name, FEN, description..." class="px-4 py-2 border rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -15,10 +29,6 @@
             </select>
             <button type="submit" class="px-4 py-2 bg-gray-800 text-white text-sm rounded-lg hover:bg-gray-700 transition">Filter</button>
         </form>
-
-        <a href="{{ route('admin.puzzles.create') }}" class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2">
-            <i class="fa-solid fa-plus"></i> Add Puzzle
-        </a>
     </div>
 
     <!-- Data Table -->
@@ -82,9 +92,14 @@
         </table>
     </div>
 
-    <!-- Pagination -->
-    <div class="mt-6">
-        {{ $puzzles->links() }}
+    <!-- Pagination & Footer Info -->
+    <div class="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+        <div>
+            Showing {{ $puzzles->firstItem() ?? 0 }} to {{ $puzzles->lastItem() ?? 0 }} of {{ number_format($puzzles->total()) }} puzzles
+        </div>
+        <div>
+            {{ $puzzles->links() }}
+        </div>
     </div>
 </div>
 @endsection
