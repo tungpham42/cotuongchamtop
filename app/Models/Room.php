@@ -16,9 +16,8 @@ class Room extends Model
     public $incrementing = false;
 
     public $fillable = [
-        'code', 'fen', 'moves', 'result', 'name', 'status', 'host_id', 'guest_id',
+        'code', 'fen', 'moves', 'result', 'name', 'host_id', 'guest_id',
         'host_session', 'guest_session', 'pass', 'red_time', 'black_time',
-        'anonymous_red_id', 'anonymous_black_id',
         'active_player', 'last_update', 'modified_at', 'tournament_id',
         'tournament_round', 'next_room_code', 'host_score', 'guest_score', 'host_elo', 'guest_elo'
     ];

@@ -5,219 +5,186 @@
 <div class="mt-4 w-100 text-center">
     <span id="match-status" class="d-inline-block"></span>
 </div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.8.4/axios.min.js" integrity="sha512-2A1+/TAny5loNGk3RBbk11FwoKXYOMfAK6R7r4CpQH7Luz4pezqEGcfphoNzB7SM4dixUoJsKkBsB6kg+dNE2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
 <script>
-    // --- Configuration & Laravel Blade Injections ---
     axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    const MatchmakingConfig = {
-        currentLocale: '{{ app()->getLocale() }}',
-        botRoutes: {
-            'vi': '/kien-tuong',
-            'en': '/master',
-            'ja': '/masuta',
-            'ko': '/maseuteo',
-            'zh': '/dashi'
-        },
-        routes: {
-            findMatch: '{{ route("match.find") }}',
-            checkStatus: '{{ route("match.status") }}',
-            roomRed: '{{ localized_path("room.red", ["code" => ":code"]) }}',
-            roomBlack: '{{ localized_path("room.black", ["code" => ":code"]) }}'
-        },
-        baseUrl: '{{ url("") }}',
-        maxPollErrors: 5,
-        aiTimeoutSeconds: 10,
-        pollIntervalMs: 1000
+    let sessionId = sessionStorage.getItem('match_session_id') || 'guest_' + Math.random().toString(36).substr(2, 9);
+    let pollInterval;
+    let errorCount = 0;
+    let waitSeconds = 0; // Track waiting time
+
+    // Map locales to their corresponding "Hardest" AI routes based on web.php
+    const botRoutes = {
+        'vi': '/kien-tuong',
+        'en': '/master',
+        'ja': '/masuta',
+        'ko': '/maseuteo',
+        'zh': '/dashi'
+    };
+    const currentLocale = '{{ app()->getLocale() }}';
+    const aiTargetUrl = '{{ url("") }}' + (botRoutes[currentLocale] || '/kho-nhat');
+
+    const routes = {
+        findMatch: '{{ route("match.find") }}',
+        checkStatus: '{{ route("match.status") }}',
+        roomRed: '{{ localized_path("room.red", ["code" => ":code"]) }}',
+        roomBlack: '{{ localized_path("room.black", ["code" => ":code"]) }}'
     };
 
-    MatchmakingConfig.aiTargetUrl = MatchmakingConfig.baseUrl + (MatchmakingConfig.botRoutes[MatchmakingConfig.currentLocale] || '/kho-nhat');
+    document.getElementById('find-match-btn').addEventListener('click', function () {
+        this.disabled = true;
+        document.getElementById('match-status').innerText = '{{ __("Đang tìm đối thủ...") }}';
 
-    // --- Core Matchmaking Module ---
-    const Matchmaker = (() => {
-        // State
-        let sessionId = sessionStorage.getItem('match_session_id') || 'guest_' + Math.random().toString(36).substr(2, 9);
-        let errorCount = 0;
-        let waitSeconds = 0;
-        let isPolling = false;
-        let pollingTimer = null;
+        axios.post(routes.findMatch, { session_id: sessionId })
+            .then(response => {
+                if (response.data.code === 1) {
+                    sessionStorage.setItem('match_session_id', response.data.session_id || sessionId);
+                    document.getElementById('match-status').innerText = response.data.message;
+                    startPolling();
+                } else {
+                    document.getElementById('match-status').innerText = response.data.message;
+                    this.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                document.getElementById('match-status').innerText = '{{ __("Lỗi kết nối server.") }}';
+                this.disabled = false;
+            });
+    });
 
-        // DOM Elements
-        const elements = {
-            btn: document.getElementById('find-match-btn'),
-            status: document.getElementById('match-status')
-        };
+    function startPolling() {
+        let hasMatched = false;
+        waitSeconds = 0; // Reset counter every time queue starts
 
-        // Helper: Centralized UI updater
-        const updateUI = (message, disableBtn) => {
-            if (elements.status && message !== null) elements.status.innerText = message;
-            if (elements.btn && disableBtn !== null) elements.btn.disabled = disableBtn;
-        };
-
-        // Helper: Stop Polling
-        const stopPolling = (message) => {
-            isPolling = false;
-            if (pollingTimer) clearTimeout(pollingTimer);
-            updateUI(message, false);
-        };
-
-        // Asynchronous Polling Logic (Replaces setInterval to prevent race conditions)
-        const pollStatus = async () => {
-            if (!isPolling) return;
-
+        pollInterval = setInterval(() => {
             waitSeconds++;
 
-            // AI Fallback if timeout reached
-            if (waitSeconds >= MatchmakingConfig.aiTimeoutSeconds) {
-                isPolling = false;
+            // If 10 seconds have passed and no human is found, match with AI (Bot)
+            if (waitSeconds >= 10 && !hasMatched) {
+                hasMatched = true;
+                clearInterval(pollInterval);
                 showMatchFoundModal(null, true);
                 return;
             }
 
-            try {
-                const response = await axios.get(MatchmakingConfig.routes.checkStatus, {
-                    params: { session_id: sessionStorage.getItem('match_session_id') }
-                });
+            axios.get(routes.checkStatus, {
+                params: { session_id: sessionStorage.getItem('match_session_id') }
+            })
+            .then(response => {
+                errorCount = 0;
 
-                errorCount = 0; // Reset error count on successful ping
-
-                if (response.data.status === 'matched') {
-                    isPolling = false;
+                if (response.data.status === 'matched' && !hasMatched) {
+                    hasMatched = true;
+                    clearInterval(pollInterval);
                     showMatchFoundModal(response.data, false);
-                    return; // Exit poll loop
                 } else if (response.data.status === 'error') {
                     stopPolling(response.data.message);
-                    return;
                 }
-            } catch (err) {
-                console.error("Polling Error:", err);
+            })
+            .catch((err) => {
+                console.error(err);
                 errorCount++;
-                if (errorCount > MatchmakingConfig.maxPollErrors) {
+                if(errorCount > 5) {
                     stopPolling('{{ __("Mất kết nối với máy chủ.") }}');
-                    return;
                 }
-            }
+            });
+        }, 1000);
+    }
 
-            // Schedule the next poll only after the current one completes
-            if (isPolling) {
-                pollingTimer = setTimeout(pollStatus, MatchmakingConfig.pollIntervalMs);
-            }
-        };
+    function stopPolling(message) {
+        clearInterval(pollInterval);
+        document.getElementById('match-status').innerText = message;
+        document.getElementById('find-match-btn').disabled = false;
+    }
 
-        // Start Matchmaking Logic
-        const start = async () => {
-            updateUI('{{ __("Đang tìm đối thủ...") }}', true);
-            errorCount = 0;
-            waitSeconds = 0;
+    // Replace your existing showMatchFoundModal function
+    function showMatchFoundModal(data, isBot = false) {
+        let countdown = 5;
 
-            try {
-                const response = await axios.post(MatchmakingConfig.routes.findMatch, { session_id: sessionId });
+        const matchTitle = isBot ? '{{ __("Đã ghép với AI!") }}' : '{{ __("Đã tìm thấy đối thủ!") }}';
 
-                if (response.data.code === 1) {
-                    sessionStorage.setItem('match_session_id', response.data.session_id || sessionId);
-                    updateUI(response.data.message, true);
+        // Upgraded to Liquid Glass UI
+        const modalHTML = `
+            <div class="modal fade" id="countdownModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content text-center" style="background: var(--glass-bg-dark); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-top: 2px solid rgba(255, 215, 0, 0.5); border-radius: 12px; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), inset 0 3px 15px var(--liquid-highlight); overflow: hidden;">
 
-                    // Begin asynchronous polling loop
-                    isPolling = true;
-                    pollingTimer = setTimeout(pollStatus, MatchmakingConfig.pollIntervalMs);
-                } else {
-                    updateUI(response.data.message, false);
-                }
-            } catch (error) {
-                console.error("Matchmaking Error:", error);
-                updateUI('{{ __("Lỗi kết nối server.") }}', false);
-            }
-        };
-
-        // UI: Match Found Modal Logic
-        const showMatchFoundModal = (data, isBot = false) => {
-            let countdown = 5;
-            const matchTitle = isBot ? '{{ __("Đã ghép với AI!") }}' : '{{ __("Đã tìm thấy đối thủ!") }}';
-
-            const modalHTML = `
-                <div class="modal fade" id="countdownModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content text-center" style="background: var(--glass-bg-dark); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-top: 2px solid rgba(255, 215, 0, 0.5); border-radius: 12px; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), inset 0 3px 15px var(--liquid-highlight); overflow: hidden;">
-                            <div style="background: linear-gradient(90deg, rgba(138, 21, 21, 0.5), rgba(92, 10, 10, 0.3)); border-bottom: 1px solid var(--glass-border); padding: 16px 0;">
-                                <h4 class="mb-0" style="font-family: 'Texturina', serif; color: var(--royal-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);">
-                                    <img width="38" height="38" src="/img/xiangqipieces/wiki/rK.svg" alt="{{ __("Cờ tướng") }}" class="mr-2" style="filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.8));">
-                                    ${matchTitle}
-                                </h4>
-                            </div>
-                            <div class="p-4" style="background: transparent;">
-                                <p class="h5 mb-3" style="color: var(--royal-gold-light); font-weight: 600; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);">
-                                    {{ __("Ván cờ sẽ bắt đầu sau:") }}
-                                </p>
-                                <div class="display-1 font-weight-bold mb-3" id="countdownNumber" style="font-family: 'Texturina', serif; background: linear-gradient(to bottom, #fff, var(--royal-gold)); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 0 30px var(--royal-red-light), 0 0 60px var(--royal-red-dark); line-height: 1.2;">
-                                    ${countdown}
-                                </div>
-                                <hr style="border-top: 1px solid rgba(255, 215, 0, 0.2); box-shadow: 0 1px 2px rgba(0,0,0,0.5); margin: 20px 0;">
-                                <p class="mb-0" style="color: var(--royal-gold); font-size: 1.1rem; font-weight: 500; text-shadow: 0 0 5px rgba(255, 215, 0, 0.4);">
-                                    <i class="fas fa-hourglass-half fa-spin mr-2" style="animation-duration: 2s;"></i> {{ __("Chuẩn bị sẵn sàng...") }}
-                                </p>
-                            </div>
+                        <!-- Thematic Glass Header -->
+                        <div style="background: linear-gradient(90deg, rgba(138, 21, 21, 0.5), rgba(92, 10, 10, 0.3)); border-bottom: 1px solid var(--glass-border); padding: 16px 0;">
+                            <h4 class="mb-0" style="font-family: 'Texturina', serif; color: var(--royal-gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);">
+                                <img width="38" height="38" src="/img/xiangqipieces/wiki/rK.svg" alt="{{ __("Cờ tướng") }}" class="mr-2" style="filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.8));">
+                                ${matchTitle}
+                            </h4>
                         </div>
+
+                        <!-- Modal Body -->
+                        <div class="p-4" style="background: transparent;">
+                            <p class="h5 mb-3" style="color: var(--royal-gold-light); font-weight: 600; text-shadow: 1px 1px 3px rgba(0,0,0,0.8);">
+                                {{ __("Ván cờ sẽ bắt đầu sau:") }}
+                            </p>
+
+                            <!-- Glossy Countdown Number (Epic Glow) -->
+                            <div class="display-1 font-weight-bold mb-3" id="countdownNumber" style="font-family: 'Texturina', serif; background: linear-gradient(to bottom, #fff, var(--royal-gold)); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 0 30px var(--royal-red-light), 0 0 60px var(--royal-red-dark); line-height: 1.2;">
+                                ${countdown}
+                            </div>
+
+                            <hr style="border-top: 1px solid rgba(255, 215, 0, 0.2); box-shadow: 0 1px 2px rgba(0,0,0,0.5); margin: 20px 0;">
+
+                            <!-- Footer Text -->
+                            <p class="mb-0" style="color: var(--royal-gold); font-size: 1.1rem; font-weight: 500; text-shadow: 0 0 5px rgba(255, 215, 0, 0.4);">
+                                <i class="fas fa-hourglass-half fa-spin mr-2" style="animation-duration: 2s;"></i> {{ __("Chuẩn bị sẵn sàng...") }}
+                            </p>
+                        </div>
+
                     </div>
                 </div>
+            </div>
+        `;
+
+        if (!document.getElementById("countdownModal")) {
+            document.body.insertAdjacentHTML("beforeend", modalHTML);
+        } else {
+            document.querySelector('#countdownModal h4').innerHTML = `
+                <img width="42" height="42" src="/img/xiangqipieces/wiki/rK.svg" alt="{{ __("Cờ tướng") }}" class="mr-2" style="filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.8));">
+                ${matchTitle}
             `;
+        }
 
-            if (!document.getElementById("countdownModal")) {
-                document.body.insertAdjacentHTML("beforeend", modalHTML);
-            } else {
-                document.querySelector('#countdownModal h4').innerHTML = `
-                    <img width="42" height="42" src="/img/xiangqipieces/wiki/rK.svg" alt="{{ __("Cờ tướng") }}" class="mr-2" style="filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.8));">
-                    ${matchTitle}
-                `;
-            }
+        const tickSound = new Audio("/sound/tick.mp3");
+        const $modal = $('#countdownModal');
+        $modal.modal('show');
 
-            const tickSound = new Audio("/sound/tick.mp3");
-            const $modal = $('#countdownModal');
-            $modal.modal('show');
+        // ... (Keep the rest of your countdown Interval logic exactly the same)
+        const countdownEl = document.getElementById("countdownNumber");
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            countdownEl.textContent = countdown;
+            tickSound.currentTime = 0;
+            tickSound.play().catch(() => {});
 
-            const countdownEl = document.getElementById("countdownNumber");
-            const countdownInterval = setInterval(() => {
-                countdown--;
-                countdownEl.textContent = countdown;
-                tickSound.currentTime = 0;
-                tickSound.play().catch(() => {}); // Catch prevents console spam if user hasn't interacted with DOM
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                $modal.modal('hide');
+                $modal.remove();
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open');
 
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
-                    $modal.modal('hide');
-                    $modal.remove();
-                    $('.modal-backdrop').remove();
-                    $('body').removeClass('modal-open');
+                let targetUrl = '';
+                if (isBot) {
+                    targetUrl = aiTargetUrl;
+                    document.getElementById('match-status').innerText = '{{ __("Đang vào trận với AI...") }}';
+                } else {
+                    targetUrl = (data.side === 'red')
+                        ? routes.roomRed.replace(':code', data.room_code)
+                        : routes.roomBlack.replace(':code', data.room_code);
 
-                    let targetUrl = '';
-                    if (isBot) {
-                        targetUrl = MatchmakingConfig.aiTargetUrl;
-                        updateUI('{{ __("Đang vào trận với AI...") }}', null);
-                    } else {
-                        targetUrl = (data.side === 'red')
-                            ? MatchmakingConfig.routes.roomRed.replace(':code', data.room_code)
-                            : MatchmakingConfig.routes.roomBlack.replace(':code', data.room_code);
-
-                        updateUI(`{{ __("Đã tìm thấy!") }} {{ __("Vào phòng") }} "${data.room_name}".`, null);
-                    }
-                    window.location.href = targetUrl;
+                    document.getElementById('match-status').innerText =
+                        `{{ __("Đã tìm thấy!") }} {{ __("Vào phòng") }} "${data.room_name}".`;
                 }
-            }, 1000);
-        };
-
-        // Expose Public API
-        return {
-            init: () => {
-                if (elements.btn) {
-                    elements.btn.addEventListener('click', start);
-                }
+                window.location.href = targetUrl;
             }
-        };
-    })();
-
-    // Initialize Matchmaker
-    document.addEventListener("DOMContentLoaded", () => {
-        Matchmaker.init();
-    });
+        }, 1000);
+    }
 </script>
