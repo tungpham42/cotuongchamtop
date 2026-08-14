@@ -477,42 +477,103 @@ class RoomController extends Controller
         ]);
     }
 
-    public function findMatch(Request $request): JsonResponse
+    /**
+     * Xử lý ghép trận cho người chơi vãng lai (Guest)
+     */
+    public function findMatch(Request $request)
     {
-        $sessionId = (string) ($request->input('session_id') ?: $request->session()->get('match_session_id', Str::random(32)));
-        $request->session()->put('match_session_id', $sessionId);
-
-        $room = $this->prepareAnonymousRoom($sessionId);
-        $matched = $room && $room->host_session && $room->guest_session;
-        $isHost = $room->host_session === $sessionId;
-
-        return response()->json([
-            'code' => 1,
-            'message' => $matched ? __('Đã tìm thấy đối thủ!') : __('Đang tìm trận...'),
-            'session_id' => $sessionId,
-            'matched' => $matched,
-            'room_code' => $room->code,
-            'room_name' => $room->name,
-            'side' => $matched ? ($isHost ? 'red' : 'black') : null,
-        ]);
-    }
-
-    public function checkMatchStatus(Request $request): JsonResponse
-    {
+        // Nhận session_id dạng 'guest_xxx' gửi từ Frontend
         $sessionId = $request->input('session_id');
-        if (!$sessionId) return response()->json(['status' => 'error', 'message' => __('Không tìm thấy phiên bản kết nối (Session ID).')], 400);
 
-        $room = $this->prepareAnonymousRoom((string) $sessionId);
+        DB::beginTransaction();
 
-        if ($room->host_session && $room->guest_session) {
-            $isHost = $room->host_session == $sessionId;
+        try {
+            // 1. TÌM PHÒNG CÓ VỊ TRÍ QUÂN ĐEN (anonymous_black_id) ĐANG TRỐNG
+            // Dùng lockForUpdate() để khóa dòng này trong DB, chống 2 người cùng lọt vào 1 phòng
+            $waitingRoom = Room::whereNull('anonymous_black_id')
+                ->where('anonymous_red_id', '!=', $sessionId) // Tránh tự ghép với chính mình
+                ->where('status', 'waiting')
+                ->lockForUpdate()
+                ->first();
+
+            if ($waitingRoom) {
+                // Ghép thành công: Gán player này làm Đen (anonymous_black_id)
+                $waitingRoom->anonymous_black_id = $sessionId;
+                $waitingRoom->status = 'playing'; // Đổi trạng thái sang 'playing'
+                $waitingRoom->save();
+
+                DB::commit();
+
+                return response()->json([
+                    'code' => 1,
+                    'status' => 'matched',
+                    'message' => __('Đã tìm thấy đối thủ!'),
+                    'room_code' => $waitingRoom->code,
+                    'room_name' => $waitingRoom->name,
+                    'side' => 'black',
+                    'session_id' => $sessionId,
+                ]);
+            }
+
+            // 2. NẾU KHÔNG CÓ PHÒNG CHỜ, TỰ TẠO PHÒNG MỚI (LÀM CẦẦU ĐỎ)
+            $myRoom = Room::where('anonymous_red_id', $sessionId)
+                ->where('status', 'waiting')
+                ->first();
+
+            if (!$myRoom) {
+                $myRoom = new Room();
+                $myRoom->code = md5(time());
+                $myRoom->name = Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]);
+                $myRoom->anonymous_red_id = $sessionId; // Gán làm Đỏ
+                $myRoom->anonymous_black_id = null;      // Đợi người chơi Đen vào
+                $myRoom->status = 'waiting';
+                $myRoom->fen = env('INITIAL_FEN', 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1');
+                $myRoom->save();
+            }
+
+            DB::commit();
+
             return response()->json([
-                'status'    => 'matched',
-                'room_code' => $room->code,
-                'room_name' => $room->name,
-                'side'      => $isHost ? 'red' : 'black',
+                'code' => 1,
+                'status' => 'waiting',
+                'message' => __('Đang tìm đối thủ...'),
+                'session_id' => $sessionId,
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'code' => 0,
+                'status' => 'error',
+                'message' => __('Lỗi kết nối server.'),
             ]);
         }
+    }
+
+    /**
+     * Polling kiểm tra trạng thái phòng ghép trận
+     */
+    public function checkMatchStatus(Request $request)
+    {
+        $sessionId = $request->input('session_id');
+
+        // Tìm phòng đã chuyển sang 'playing' mà player này tham gia (ở vị trí Đỏ hoặc Đen)
+        $room = Room::where(function($query) use ($sessionId) {
+                $query->where('anonymous_red_id', $sessionId)
+                      ->orWhere('anonymous_black_id', $sessionId);
+            })
+            ->where('status', 'playing')
+            ->first();
+
+        if ($room) {
+            return response()->json([
+                'status' => 'matched',
+                'room_code' => $room->code,
+                'room_name' => $room->name,
+                'side' => ($room->anonymous_red_id === $sessionId) ? 'red' : 'black'
+            ]);
+        }
+
         return response()->json(['status' => 'waiting']);
     }
 
