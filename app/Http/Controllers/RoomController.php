@@ -335,35 +335,44 @@ class RoomController extends Controller
     {
         $initialFen = env('INITIAL_FEN', self::INITIAL_FEN);
 
-        $currentRoom = Room::ongoing()
-            ->where(fn($q) => $q->where('host_session', $sessionId)->orWhere('guest_session', $sessionId))
-            ->first();
+        return DB::transaction(function () use ($sessionId, $initialFen) {
+            // 1. Check if the player is already in an ongoing room, locking it just in case
+            $currentRoom = Room::ongoing()
+                ->where(fn($q) => $q->where('host_session', $sessionId)->orWhere('guest_session', $sessionId))
+                ->lockForUpdate()
+                ->first();
 
-        if ($currentRoom) {
-            $currentRoom->touch('modified_at');
-            return $currentRoom;
-        }
+            if ($currentRoom) {
+                $currentRoom->touch('modified_at');
+                return $currentRoom;
+            }
 
-        $availableRoom = Room::availableForAnonymousMatch($initialFen)->first();
+            // 2. Find an available room and strictly lock it for this transaction
+            $availableRoom = Room::availableForAnonymousMatch($initialFen)
+                ->lockForUpdate()
+                ->first();
 
-        if ($availableRoom) {
-            $updated = Room::where('code', $availableRoom->code)
-                ->whereNull('guest_session')
-                ->update(['guest_session' => $sessionId, 'modified_at' => now()]);
+            if ($availableRoom) {
+                // Since the row is locked, no other request can assign a guest_session at the exact same time
+                $availableRoom->update([
+                    'guest_session' => $sessionId,
+                    'modified_at' => now()
+                ]);
 
-            if ($updated) return Room::where('code', $availableRoom->code)->first();
-            return $this->prepareAnonymousRoom($sessionId);
-        }
+                return $availableRoom;
+            }
 
-        return Room::create([
-            'code'          => md5(time() . $sessionId . uniqid('', true)),
-            'fen'           => $initialFen,
-            'name'          => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
-            'host_session'  => $sessionId,
-            'red_time'      => 600,
-            'black_time'    => 600,
-            'modified_at'   => now(),
-        ]);
+            // 3. No rooms available, create a new one securely
+            return Room::create([
+                'code'          => md5(time() . $sessionId . uniqid('', true)),
+                'fen'           => $initialFen,
+                'name'          => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
+                'host_session'  => $sessionId,
+                'red_time'      => 600,
+                'black_time'    => 600,
+                'modified_at'   => now(),
+            ]);
+        });
     }
 
     /**
