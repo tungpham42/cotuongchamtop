@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use App\Models\Room;
 use App\Services\PuzzleService;
 use App\Services\RoomService;
 use App\Services\UserService;
@@ -28,7 +29,8 @@ class ViewServiceProvider extends ServiceProvider
             'ai',
             'human',
             'userList',
-            'tournaments.*'
+            'tournaments.*',
+            'app.*',
         ];
 
         View::composer($viewsWithSharedData, function ($view) use ($puzzleService, $roomService, $userService) {
@@ -41,6 +43,7 @@ class ViewServiceProvider extends ServiceProvider
                 'firstPagePlayedBoards' => $roomService->getFirstPagePlayedBoards(),
                 'players' => $userService->getPlayers(),
                 'firstPagePlayers' => $userService->getFirstPagePlayers(),
+                'initialFen' => Room::INITIAL_FEN,
             ]);
         });
     }

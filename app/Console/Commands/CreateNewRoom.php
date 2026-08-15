@@ -31,7 +31,7 @@ class CreateNewRoom extends Command
     {
         Room::updateOrInsert(
             ['code' => md5(time())],
-            ['fen' => env('INITIAL_FEN'), 'host_id' => NULL, 'result' => NULL, 'name' => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]), 'pass' => NULL, 'modified_at' => date('Y-m-d H:i:s')]
+            ['fen' => Room::INITIAL_FEN, 'host_id' => NULL, 'result' => NULL, 'name' => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]), 'pass' => NULL, 'modified_at' => date('Y-m-d H:i:s')]
         );
         $this->info('New room created successfully!');
     }

@@ -94,7 +94,7 @@ class RoomController extends Controller
 
     public static function getNewRoom(): JsonResponse
     {
-        $firstRoom = Room::where('fen', env('INITIAL_FEN', self::INITIAL_FEN))
+        $firstRoom = Room::where('fen', self::INITIAL_FEN)
             ->whereNull('pass')
             ->whereNull('host_id')
             ->whereNull('result')
@@ -333,7 +333,7 @@ class RoomController extends Controller
 
     public function prepareAnonymousRoom(string $sessionId): Room
     {
-        $initialFen = env('INITIAL_FEN', self::INITIAL_FEN);
+        $initialFen = self::INITIAL_FEN;
 
         return DB::transaction(function () use ($sessionId, $initialFen) {
             // 1. Check if the player is already in an ongoing room, locking it just in case

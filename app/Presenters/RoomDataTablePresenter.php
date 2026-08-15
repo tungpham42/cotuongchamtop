@@ -71,7 +71,7 @@ class RoomDataTablePresenter
                 case '0': return '<span class="badge badge-status badge-offline"><i class="fas fa-handshake"></i> '.$this->t['draw'].'</span>';
                 case '1': return '<span class="badge badge-status" style="background: linear-gradient(to bottom, #8a1515, #5c0a0a); color: var(--royal-gold); border: 1px solid var(--royal-gold);"><i class="fas fa-crown"></i> '.$this->t['host_won'].'</span>';
             }
-        } else if ($row->fen == env('INITIAL_FEN', RoomController::INITIAL_FEN)) {
+        } else if ($row->fen == RoomController::INITIAL_FEN) {
             return '<span class="badge badge-status" style="background: rgba(255,255,255,0.05); color: #aaa; border: 1px dashed rgba(212, 175, 55, 0.3);"><i class="fas fa-hourglass-start"></i> '.$this->t['not_started'].'</span>';
         }
         return '<span class="badge badge-status badge-online"><i class="fas fa-circle"></i> '.$this->t['ongoing'].'</span>';
@@ -87,7 +87,7 @@ class RoomDataTablePresenter
 
         $actionBtn = '';
         if (!isset($row->host_id)) {
-            if ($row->fen == env('INITIAL_FEN', RoomController::INITIAL_FEN)) {
+            if ($row->fen == RoomController::INITIAL_FEN) {
                 $btnHref = empty($row->pass) ? $urlRed : $urlHost;
                 $actionBtn = '<a class="btn btn-danger pulse-red text-light mr-1 showPromotion" style="min-width: 100px;" data-fen="'.$row->fen.'" data-code="'.$row->code.'" href="'.$btnHref.'"><i class="far fa-mouse"></i> '.$this->t['play'].'</a>';
 
