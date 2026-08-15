@@ -23,7 +23,10 @@ class RoomUpdated implements ShouldBroadcastNow
     // Đặt tên kênh (channel) dựa trên mã phòng
     public function broadcastOn()
     {
-        return new Channel('room.' . $this->room->code);
+        return [
+            new Channel('room.' . $this->room->code), // For players in the game room
+            new Channel('lobby')                      // For the global room list/datatable
+        ];
     }
 
     // (Tùy chọn) Đặt tên sự kiện

@@ -200,9 +200,21 @@
             $(window).on('resize', function () {
                 table.columns.adjust();
             });
-            setInterval( function () {
-                table.ajax.reload( null, false );
-            }, 15000 );
+            if (typeof window.Echo !== 'undefined') {
+                window.Echo.channel('lobby')
+                    .listen('.room.updated', (e) => {
+                        console.log('Room updated via Pusher:', e);
+                        // Silently reload the table data without resetting pagination/sorting
+                        table.ajax.reload(null, false);
+                    });
+            } else {
+                console.warn('Laravel Echo is not loaded. Falling back to polling.');
+                // Fallback just in case WebSockets fail or aren't configured on the client
+                setInterval( function () {
+                    table.ajax.reload( null, false );
+                }, 15000 );
+            }
+
             $('.dataTables_length').addClass('bs-select');
         });
 
