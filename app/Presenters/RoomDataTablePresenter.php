@@ -65,15 +65,32 @@ class RoomDataTablePresenter
 
     public function formatResult($row): string
     {
-        if (isset($row->result)) {
-            switch ($row->result) {
-                case '-1': return '<span class="badge badge-status" style="background: linear-gradient(145deg, #252a36, #121418); color: var(--royal-gold); border: 1px solid var(--royal-gold);"><i class="fas fa-crown"></i> '.$this->t['guest_won'].'</span>';
-                case '0': return '<span class="badge badge-status badge-offline"><i class="fas fa-handshake"></i> '.$this->t['draw'].'</span>';
-                case '1': return '<span class="badge badge-status" style="background: linear-gradient(to bottom, #8a1515, #5c0a0a); color: var(--royal-gold); border: 1px solid var(--royal-gold);"><i class="fas fa-crown"></i> '.$this->t['host_won'].'</span>';
+        // 1. Determine the effective result, prioritizing timeouts
+        $effectiveResult = $row->result ?? null;
+
+        if (isset($row->red_time) && $row->red_time <= 0) {
+            $effectiveResult = '-1'; // Red ran out of time, Guest (Black) wins
+        } elseif (isset($row->black_time) && $row->black_time <= 0) {
+            $effectiveResult = '1'; // Black ran out of time, Host (Red) wins
+        }
+
+        // 2. Render the appropriate badge based on the effective result
+        if (isset($effectiveResult)) {
+            switch ((string) $effectiveResult) {
+                case '-1':
+                    return '<span class="badge badge-status" style="background: linear-gradient(145deg, #252a36, #121418); color: var(--royal-gold); border: 1px solid var(--royal-gold);"><i class="fas fa-crown"></i> '.$this->t['guest_won'].'</span>';
+                case '0':
+                    return '<span class="badge badge-status badge-offline"><i class="fas fa-handshake"></i> '.$this->t['draw'].'</span>';
+                case '1':
+                    return '<span class="badge badge-status" style="background: linear-gradient(to bottom, #8a1515, #5c0a0a); color: var(--royal-gold); border: 1px solid var(--royal-gold);"><i class="fas fa-crown"></i> '.$this->t['host_won'].'</span>';
             }
-        } else if ($row->fen == RoomController::INITIAL_FEN) {
+        }
+
+        // 3. Fallback logic for games without a definitive result
+        if ($row->fen == RoomController::INITIAL_FEN) {
             return '<span class="badge badge-status" style="background: rgba(255,255,255,0.05); color: #aaa; border: 1px dashed rgba(212, 175, 55, 0.3);"><i class="fas fa-hourglass-start"></i> '.$this->t['not_started'].'</span>';
         }
+
         return '<span class="badge badge-status badge-online"><i class="fas fa-circle"></i> '.$this->t['ongoing'].'</span>';
     }
 
