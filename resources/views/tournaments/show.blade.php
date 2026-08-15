@@ -191,53 +191,62 @@
         <h4 class="mb-4" style="color: var(--royal-gold); font-family: 'Texturina', serif; text-transform: uppercase; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);">
             <i class="fad fa-sitemap" style="color: var(--royal-red-light);"></i> {{ __('Sơ đồ thi đấu') }}
         </h4>
-        <div class="bracket-container custom-scrollbar">
+
+        <!-- Added Flexbox properties to horizontally align the rounds -->
+        <div class="bracket-container custom-scrollbar d-flex flex-nowrap" style="gap: 2.5rem; overflow-x: auto; padding: 20px 10px; min-height: 400px;">
 
             @foreach($rounds as $roundNumber => $matches)
-                <div class="bracket-round">
-                    <h6 class="h5 text-center mb-0" style="color: var(--royal-gold-light); font-family: 'Texturina', serif; text-transform: uppercase;">{{ __('Vòng') }} {{ $roundNumber }}</h6>
+                <!-- Make each round a flex column so it stretches to full height -->
+                <div class="bracket-round d-flex flex-column" style="min-width: 260px;">
+                    <h6 class="h5 text-center mb-4" style="color: var(--royal-gold-light); font-family: 'Texturina', serif; text-transform: uppercase;">{{ __('Vòng') }} {{ $roundNumber }}</h6>
 
-                    @foreach($matches as $match)
-                        @php
-                            $hostIsWinner = $match->result === 1;
-                            $guestIsWinner = $match->result === -1;
-                        @endphp
-                        <div class="match-card">
-                            <div class="match-player red-side {{ $hostIsWinner ? 'match-winner' : '' }}">
-                                <span><i class="fad fa-chess-pawn"></i> {{ $match->host->name ?? __('Chờ đối thủ...') }}</span>
-                                @if($hostIsWinner) <i class="fad fa-crown" style="color: var(--royal-gold); filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.8));"></i> @endif
-                            </div>
-
-                            <div class="match-player black-side {{ $guestIsWinner ? 'match-winner' : '' }}">
-                                <span><i class="fad fa-chess-pawn"></i> {{ $match->guest->name ?? __('Chờ đối thủ...') }}</span>
-                                @if($guestIsWinner) <i class="fad fa-crown" style="color: var(--royal-gold); filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.8));"></i> @endif
-                            </div>
+                    <!-- Wrapper to evenly distribute the matches vertically -->
+                    <div class="matches-wrapper d-flex flex-column flex-grow-1" style="justify-content: space-around; gap: 1rem;">
+                        @foreach($matches as $match)
                             @php
-                                $roomUrl = localized_url('room.watch', ['code' => $match->code]);
-                                if (auth()->check()) {
-                                    if (auth()->id() === $match->host_id && $match->result === null) {
-                                        $roomUrl = localized_url('room.red', ['code' => $match->code]);
-                                    } elseif (auth()->id() === $match->guest_id && $match->result === null) {
-                                        $roomUrl = localized_url('room.black', ['code' => $match->code]);
-                                    } elseif ($match->result !== null) {
-                                        $roomUrl = localized_url('room.watch', ['code' => $match->code]);
-                                    }
-                                }
+                                $hostIsWinner = $match->result === 1;
+                                $guestIsWinner = $match->result === -1;
                             @endphp
-                            <a href="{{ $roomUrl }}" class="bracket-room-link font-weight-bold">
-                                @if(is_null($match->result))
-                                    <i class="fad fa-mouse"></i> {{ __('Vào phòng đấu') }}
-                                @else
-                                    <i class="fad fa-archive"></i> {{ __('Xem kết quả') }}
-                                @endif
-                            </a>
-                        </div>
-                    @endforeach
+                            <div class="match-card shadow-sm" style="background: rgba(28, 17, 10, 0.9); border: 1px solid var(--royal-wood); border-radius: 6px; overflow: hidden; position: relative;">
+                                <div class="match-player red-side p-2 {{ $hostIsWinner ? 'match-winner font-weight-bold' : '' }}" style="border-bottom: 1px solid #3a2218;">
+                                    <span style="color: #ffb7b2;"><i class="fad fa-chess-pawn"></i> {{ $match->host->name ?? __('Chờ đối thủ...') }}</span>
+                                    @if($hostIsWinner) <i class="fad fa-crown float-right mt-1" style="color: var(--royal-gold); filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.8));"></i> @endif
+                                </div>
+
+                                <div class="match-player black-side p-2 {{ $guestIsWinner ? 'match-winner font-weight-bold' : '' }}">
+                                    <span style="color: #c9c9c9;"><i class="fad fa-chess-pawn"></i> {{ $match->guest->name ?? __('Chờ đối thủ...') }}</span>
+                                    @if($guestIsWinner) <i class="fad fa-crown float-right mt-1" style="color: var(--royal-gold); filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.8));"></i> @endif
+                                </div>
+
+                                @php
+                                    $roomUrl = localized_url('room.watch', ['code' => $match->code]);
+                                    if (auth()->check()) {
+                                        if (auth()->id() === $match->host_id && $match->result === null) {
+                                            $roomUrl = localized_url('room.red', ['code' => $match->code]);
+                                        } elseif (auth()->id() === $match->guest_id && $match->result === null) {
+                                            $roomUrl = localized_url('room.black', ['code' => $match->code]);
+                                        } elseif ($match->result !== null) {
+                                            $roomUrl = localized_url('room.watch', ['code' => $match->code]);
+                                        }
+                                    }
+                                @endphp
+
+                                <a href="{{ $roomUrl }}" class="bracket-room-link font-weight-bold d-block text-center p-1" style="background: var(--royal-wood); color: var(--royal-gold-light); font-size: 0.85rem; text-decoration: none;">
+                                    @if(is_null($match->result))
+                                        <i class="fad fa-mouse"></i> {{ __('Vào phòng đấu') }}
+                                    @else
+                                        <i class="fad fa-archive"></i> {{ __('Xem kết quả') }}
+                                    @endif
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             @endforeach
 
         </div>
     @else
+        <!-- Existing Empty State Block remains unchanged -->
         <div class="p-5 mt-4 text-center shadow-lg" style="background: var(--glass-bg-dark); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-top: 2px solid rgba(255, 215, 0, 0.5); border-radius: 12px; box-shadow: var(--liquid-shadow), inset 0 2px 15px var(--liquid-highlight);">
             <i class="fad fa-project-diagram fa-4x mb-3" style="color: var(--royal-gold); filter: drop-shadow(0 0 10px rgba(212,175,55,0.5));"></i>
             <h5 style="color: var(--royal-gold); font-family: 'Texturina', serif; text-transform: uppercase;">{{ __('Sơ đồ giải đấu chưa được tạo.') }}</h5>
