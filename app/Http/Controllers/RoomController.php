@@ -336,33 +336,66 @@ class RoomController extends Controller
         $initialFen = self::INITIAL_FEN;
 
         return DB::transaction(function () use ($sessionId, $initialFen) {
-            // 1. Check if the player is already in an ongoing room, locking it just in case
-            $currentRoom = Room::ongoing()
-                ->where(fn($q) => $q->where('host_session', $sessionId)->orWhere('guest_session', $sessionId))
+            /*
+             * A matchmaking session can belong to exactly one room.
+             * Check this before looking for another room so repeated requests
+             * from the same browser never consume another seat.
+             *
+             * Do NOT use Room::ongoing() here because a waiting room has only
+             * host_session and no guest_session yet, so it is not considered
+             * "ongoing" by that scope.
+             */
+            $currentRoom = Room::whereNull('result')
+                ->whereNull('pass')
+                ->where('fen', $initialFen)
+                ->where(function ($query) use ($sessionId) {
+                    $query->where('host_session', $sessionId)
+                        ->orWhere('guest_session', $sessionId);
+                })
                 ->lockForUpdate()
+                ->orderByDesc('modified_at')
                 ->first();
 
             if ($currentRoom) {
-                $currentRoom->touch('modified_at');
                 return $currentRoom;
             }
 
-            // 2. Find an available room and strictly lock it for this transaction
-            $availableRoom = Room::availableForAnonymousMatch($initialFen)
+            /*
+             * Match against the newest room that has exactly ONE player.
+             *
+             * This creates the required queueing behaviour:
+             *   room A: player 1 + player 2 -> full, never selected again
+             *   room B: player 3 waits      -> selected for player 4
+             *   room C: player 5 waits      -> selected for player 6
+             *
+             * Only rooms with the initial FEN participate in this automatic
+             * matchmaking pool. A finished/full/in-progress room is ignored.
+             */
+            $availableRoom = Room::where('fen', $initialFen)
+                ->whereNull('pass')
+                ->whereNull('result')
+                ->whereNotNull('host_session')
+                ->whereNull('guest_session')
+                ->orderByDesc('modified_at')
                 ->lockForUpdate()
                 ->first();
 
             if ($availableRoom) {
-                // Since the row is locked, no other request can assign a guest_session at the exact same time
+                // The row is locked, so concurrent requests cannot take the
+                // same second seat and turn this into a 3-player room.
                 $availableRoom->update([
                     'guest_session' => $sessionId,
-                    'modified_at' => now()
+                    'modified_at'   => now(),
                 ]);
 
-                return $availableRoom;
+                return $availableRoom->fresh();
             }
 
-            // 3. No rooms available, create a new one securely
+            /*
+             * No one-player room exists: create a brand-new waiting room.
+             * The creator is always the red/host player; the next session
+             * assigned to this row becomes black/guest.
+             */
             return Room::create([
                 'code'          => md5(time() . $sessionId . uniqid('', true)),
                 'fen'           => $initialFen,
