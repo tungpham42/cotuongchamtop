@@ -331,6 +331,50 @@ class RoomController extends Controller
         return $response;
     }
 
+    public function prepareAnonymousRoom(string $sessionId): Room
+    {
+        $initialFen = self::INITIAL_FEN;
+
+        return DB::transaction(function () use ($sessionId, $initialFen) {
+            // 1. Check if the player is already in an ongoing room, locking it just in case
+            $currentRoom = Room::ongoing()
+                ->where(fn($q) => $q->where('host_session', $sessionId)->orWhere('guest_session', $sessionId))
+                ->lockForUpdate()
+                ->first();
+
+            if ($currentRoom) {
+                $currentRoom->touch('modified_at');
+                return $currentRoom;
+            }
+
+            // 2. Find an available room and strictly lock it for this transaction
+            $availableRoom = Room::availableForAnonymousMatch($initialFen)
+                ->lockForUpdate()
+                ->first();
+
+            if ($availableRoom) {
+                // Since the row is locked, no other request can assign a guest_session at the exact same time
+                $availableRoom->update([
+                    'guest_session' => $sessionId,
+                    'modified_at' => now()
+                ]);
+
+                return $availableRoom;
+            }
+
+            // 3. No rooms available, create a new one securely
+            return Room::create([
+                'code'          => md5(time() . $sessionId . uniqid('', true)),
+                'fen'           => $initialFen,
+                'name'          => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
+                'host_session'  => $sessionId,
+                'red_time'      => 600,
+                'black_time'    => 600,
+                'modified_at'   => now(),
+            ]);
+        });
+    }
+
     /**
      * Unified Anonymous Quick Match utilizing App Locale
      */
@@ -442,95 +486,24 @@ class RoomController extends Controller
         ]);
     }
 
-    public function prepareAnonymousRoom(string $sessionId): Room
-    {
-        $initialFen = self::INITIAL_FEN;
-
-        // BEST PRACTICE: Pass a retry count (e.g., 3) to the transaction to auto-recover from transient deadlocks.
-        return DB::transaction(function () use ($sessionId, $initialFen) {
-            // 1. Check if the player is already in an ongoing room.
-            // Using first() without lockForUpdate() here reduces unnecessary write-locks on active games.
-            $currentRoom = Room::ongoing()
-                ->where(fn($q) => $q->where('host_session', $sessionId)->orWhere('guest_session', $sessionId))
-                ->first();
-
-            if ($currentRoom) {
-                // Only touch modified_at if the room isn't finished to keep the session alive.
-                $currentRoom->touch('modified_at');
-                return $currentRoom;
-            }
-
-            // 2. Find an available room and strictly lock it for this transaction.
-            $availableRoom = Room::availableForAnonymousMatch($initialFen)
-                // BEST PRACTICE: Ignore "zombie" rooms older than 15-30 seconds to prevent matching with disconnected users.
-                ->where('modified_at', '>=', now()->subSeconds(15))
-                ->lockForUpdate()
-                // BEST PRACTICE: skipLocked() ensures concurrent users don't wait on the same DB row lock.
-                // If User A is locking Room 1, User B immediately skips to Room 2.
-                ->skipLocked()
-                ->first();
-
-            if ($availableRoom) {
-                // Securely join the existing room
-                $availableRoom->update([
-                    'guest_session' => $sessionId,
-                    'modified_at' => now()
-                ]);
-
-                return $availableRoom;
-            }
-
-            // 3. No available rooms, create a new one securely
-            return Room::create([
-                'code'          => md5(time() . $sessionId . uniqid('', true)),
-                'fen'           => $initialFen,
-                'name'          => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
-                'host_session'  => $sessionId,
-                'red_time'      => 600,
-                'black_time'    => 600,
-                'modified_at'   => now(),
-            ]);
-        }, 3);
-    }
-
-    /**
-     * Unified match finding endpoint.
-     * Replaces both findMatch and anonymousQuickMatch to enforce the DRY principle.
-     */
     public function findMatch(Request $request): JsonResponse
     {
-        // Consolidate session ID handling
         $sessionId = (string) ($request->input('session_id') ?: $request->session()->get('match_session_id', Str::random(32)));
+        $request->session()->put('match_session_id', $sessionId);
 
-        if (!$request->session()->has('match_session_id')) {
-            $request->session()->put('match_session_id', $sessionId);
-        }
+        $room = $this->prepareAnonymousRoom($sessionId);
+        $matched = $room && $room->host_session && $room->guest_session;
+        $isHost = $room->host_session === $sessionId;
 
-        try {
-            $room = $this->prepareAnonymousRoom($sessionId);
-            $matched = $room && $room->host_session && $room->guest_session;
-            $isHost = $room->host_session === $sessionId;
-
-            return response()->json([
-                'code' => 1,
-                // BEST PRACTICE: Consistently use the localization helper __() for all UI strings.
-                'message' => $matched ? __('Đã tìm thấy đối thủ!') : __('Đang tìm trận...'),
-                'session_id' => $sessionId,
-                'matched' => $matched,
-                'room_code' => $room->code,
-                'room_name' => $room->name,
-                'side' => $matched ? ($isHost ? 'red' : 'black') : null,
-                'color' => $matched ? ($isHost ? __('red') : __('black')) : null,
-            ]);
-
-        } catch (\Exception $e) {
-            // BEST PRACTICE: Catch unexpected DB transaction failures so the frontend doesn't crash on a 500 error.
-            return response()->json([
-                'code' => 0,
-                'message' => __('Lỗi hệ thống khi tìm trận. Vui lòng thử lại.'),
-                'error' => config('app.debug') ? $e->getMessage() : null
-            ], 500);
-        }
+        return response()->json([
+            'code' => 1,
+            'message' => $matched ? __('Đã tìm thấy đối thủ!') : __('Đang tìm trận...'),
+            'session_id' => $sessionId,
+            'matched' => $matched,
+            'room_code' => $room->code,
+            'room_name' => $room->name,
+            'side' => $matched ? ($isHost ? 'red' : 'black') : null,
+        ]);
     }
 
     public function checkMatchStatus(Request $request): JsonResponse
