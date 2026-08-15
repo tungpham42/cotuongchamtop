@@ -314,7 +314,7 @@
                                                 data: {
                                                     'ma-phong': maPhong,
                                                     'ten-phong': roomName.trim(),
-                                                    'FEN': '{{ env('INITIAL_FEN') }}',
+                                                    'FEN': '{{ config('xiangqi.initial_fen') }}',
                                                     'pass': '',
                                                     'host_id': '{{ auth()->id() }}'
                                                 },

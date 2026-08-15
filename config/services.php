@@ -78,4 +78,9 @@ return [
         'username' => env('COTURN_USERNAME', 'turn_user'),
         'credential' => env('COTURN_CREDENTIAL', 'turn_password'),
     ],
+
+    'groq' => [
+        'api_key' => env('GROQ_API_KEY'),
+        'model'   => env('GROQ_MODEL')
+    ]
 ];

@@ -49,10 +49,10 @@ EOT;
 
     public function __construct()
     {
-        $this->apiKey = env('GROQ_API_KEY');
+        $this->apiKey = config('services.groq.api_key');
 
         // Nếu có model trong ENV, đưa nó lên đầu danh sách ưu tiên
-        $envModel = env('GROQ_MODEL');
+        $envModel = config('services.groq.model');
         if ($envModel && !in_array($envModel, $this->availableModels)) {
             array_unshift($this->availableModels, $envModel);
         }
