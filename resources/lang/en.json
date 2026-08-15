@@ -781,5 +781,9 @@
     "Bật/Tắt Camera": "Toggle Camera",
     "Lật Camera": "Mirror Camera",
     "Không thể truy cập Camera/Microphone của bạn.": "Cannot access your Camera/Microphone.",
-    "Đã sao chép!": "Copied!"
+    "Đã sao chép!": "Copied!",
+    "Đang tìm phòng gần nhất...": "Searching for the nearest room...",
+    "Không tìm thấy phòng phù hợp.": "No suitable room found.",
+    "Đã tìm thấy phòng. Đang vào trận...": "Room found. Entering the match...",
+    "Không thể tìm trận lúc này. Vui lòng thử lại.": "Unable to find a match at this time. Please try again."
 }

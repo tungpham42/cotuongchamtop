@@ -1728,5 +1728,9 @@
     "Bật/Tắt Camera": "Bật/Tắt Camera",
     "Lật Camera": "Lật Camera",
     "Không thể truy cập Camera/Microphone của bạn.": "Không thể truy cập Camera/Microphone của bạn.",
-    "Đã sao chép!": "Đã sao chép!"
+    "Đã sao chép!": "Đã sao chép!",
+    "Đang tìm phòng gần nhất...": "Đang tìm phòng gần nhất...",
+    "Không tìm thấy phòng phù hợp.": "Không tìm thấy phòng phù hợp.",
+    "Đã tìm thấy phòng. Đang vào trận...": "Đã tìm thấy phòng. Đang vào trận...",
+    "Không thể tìm trận lúc này. Vui lòng thử lại.": "Không thể tìm trận lúc này. Vui lòng thử lại."
 }

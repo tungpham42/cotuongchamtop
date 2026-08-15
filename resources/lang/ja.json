@@ -783,5 +783,9 @@
     "Bật/Tắt Camera": "カメラのオン/オフ",
     "Lật Camera": "カメラを反転",
     "Không thể truy cập Camera/Microphone của bạn.": "カメラとマイクにアクセスできません。",
-    "Đã sao chép!": "コピーしました！"
+    "Đã sao chép!": "コピーしました！",
+    "Đang tìm phòng gần nhất...": "最寄りの部屋を検索中...",
+    "Không tìm thấy phòng phù hợp.": "適切な部屋が見つかりませんでした。",
+    "Đã tìm thấy phòng. Đang vào trận...": "ルームが見つかりました。マッチに参加します...",
+    "Không thể tìm trận lúc này. Vui lòng thử lại.": "現在、一致するものは見つかりませんでした。もう一度お試しください。"
 }
