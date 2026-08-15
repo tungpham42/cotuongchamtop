@@ -183,24 +183,28 @@ class TournamentController extends Controller
     /**
      * Send email notifications to both players of a newly scheduled room.
      */
-    public function notifyMatchPlayers(User $player1, User $player2, Room $room): void
+    public function notifyMatchPlayers(?User $player1, ?User $player2, Room $room): void
     {
         $mailController = app(MailController::class);
         $lang = app()->getLocale();
 
-        // Generate separate URLs for Red (Player 1) and Black (Player 2)
-        $roomUrlRed = localized_url('room.red', ['code' => $room->code]);
-        $roomUrlBlack = localized_url('room.black', ['code' => $room->code]);
+        // Safely determine player names, using the fallback from your frontend for missing opponents
+        $p1Name = $player1 ? $player1->name : __('Chờ đối thủ...');
+        $p2Name = $player2 ? $player2->name : __('Chờ đối thủ...');
 
         // Send to Player 1 (Red)
-        if (isset($player1->email)) {
-            $emailDataP1 = $this->getTournamentEmailContent($lang, $player2->name, $player1->name, $room->name, $roomUrlRed);
+        if ($player1 && !empty($player1->email)) {
+            $roomUrlRed = localized_url('room.red', ['code' => $room->code]);
+            $emailDataP1 = $this->getTournamentEmailContent($lang, $p2Name, $p1Name, $room->name, $roomUrlRed);
+
             $mailController->sendSmtpMail($player1->email, $emailDataP1['subject'], $emailDataP1['content'], $emailDataP1['smtp_messages']);
         }
 
         // Send to Player 2 (Black)
-        if (isset($player2->email)) {
-            $emailDataP2 = $this->getTournamentEmailContent($lang, $player1->name, $player2->name, $room->name, $roomUrlBlack);
+        if ($player2 && !empty($player2->email)) {
+            $roomUrlBlack = localized_url('room.black', ['code' => $room->code]);
+            $emailDataP2 = $this->getTournamentEmailContent($lang, $p1Name, $p2Name, $room->name, $roomUrlBlack);
+
             $mailController->sendSmtpMail($player2->email, $emailDataP2['subject'], $emailDataP2['content'], $emailDataP2['smtp_messages']);
         }
     }
