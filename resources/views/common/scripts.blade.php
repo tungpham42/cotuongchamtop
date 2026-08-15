@@ -35,11 +35,18 @@
 
     const createBootboxAsync = (method) => (options) => {
         return new Promise((resolve) => {
-            // 1. Flexibility: Allow passing a simple string instead of a full object
-            const config = typeof options === 'string' ? { message: options } : { ...options };
+            // Bootbox 'prompt' uses 'title' for its main text, while others use 'message'
+            const primaryKey = method === 'prompt' ? 'title' : 'message';
 
-            // 2. Safety: Provide a fallback message to prevent the Bootbox crash
-            config.message = config.message || "An unexpected event occurred.";
+            // 1. Flexibility: Map a simple string to the correct property for the method
+            const config = typeof options === 'string'
+                ? { [primaryKey]: options }
+                : { ...options };
+
+            // 2. Safety: Only apply the fallback if the config lacks BOTH message and title
+            if (!config.message && !config.title) {
+                config[primaryKey] = "An unexpected event occurred.";
+            }
 
             // 3. Execution: Call the requested Bootbox method and resolve the promise
             bootbox[method]({
