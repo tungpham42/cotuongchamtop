@@ -17,13 +17,17 @@ class MailController extends Controller
             $mail->SMTPDebug = 0;
             $mail->isSMTP();
             $mail->CharSet = 'UTF-8';
-            $mail->Host = env('MAIL_HOST');
-            $mail->SMTPAuth = true;
-            $mail->Username = env('MAIL_USERNAME');
-            $mail->Password = env('MAIL_PASSWORD');
-            $mail->SMTPSecure = env('MAIL_ENCRYPTION');
-            $mail->Port = env('MAIL_PORT');
-            $mail->setFrom(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+
+            // Replaced env() with config()
+            $mail->Host       = config('mail.mailers.smtp.host');
+            $mail->SMTPAuth   = true;
+            $mail->Username   = config('mail.mailers.smtp.username');
+            $mail->Password   = config('mail.mailers.smtp.password');
+            $mail->SMTPSecure = config('mail.mailers.smtp.encryption');
+            $mail->Port       = config('mail.mailers.smtp.port');
+
+            $mail->setFrom(config('mail.from.address'), config('mail.from.name'));
+
             $mail->addAddress($recipient);
             $mail->addReplyTo($recipient, 'Tung Pham');
             $mail->isHTML(true);
