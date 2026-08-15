@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Atrox\Haikunator;
+use App\Http\Controllers\RoomController;
 
 class AnonymousQuickMatchJob implements ShouldQueue
 {
@@ -55,7 +56,7 @@ class AnonymousQuickMatchJob implements ShouldQueue
         $roomCode = md5(time() . $this->sessionId);
         Room::create([
             'code' => $roomCode,
-            'fen' => env('INITIAL_FEN'),
+            'fen' => RoomController::INITIAL_FEN,
             'name' => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
             'host_session' => $this->sessionId,
             'guest_session' => null,

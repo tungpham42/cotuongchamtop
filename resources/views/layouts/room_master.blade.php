@@ -386,6 +386,11 @@
             @if ($role === 'watch')
                 return false;
             @else
+                {{-- Disable drag in tournament mode if room lacks 2 players --}}
+                @if (isset($room->tournament_id) && (!isset($room->host_id) || !isset($room->guest_id)))
+                    return false;
+                @endif
+
                 if (game.game_over()) return false;
                 if (typeof systemPaused !== 'undefined' && systemPaused) return false;
                 if ((game.turn() === 'r' && piece.search(/^b/) !== -1) || (game.turn() === 'b' && piece.search(/^r/) !== -1)) return false;
@@ -528,7 +533,8 @@
                     draggable: {{ ($room->red_time == 0 || $room->black_time == 0) ? 'false' : 'true' }},
                     position: 'start',
                 @else
-                    draggable: true,
+                    {{-- Disable draggable config in tournament mode if room lacks 2 players --}}
+                    draggable: {{ (isset($room->tournament_id) && (!isset($room->host_id) || !isset($room->guest_id))) ? 'false' : 'true' }},
                     position: game.fen(),
                 @endif
                 orientation: "{{ $orientation }}",

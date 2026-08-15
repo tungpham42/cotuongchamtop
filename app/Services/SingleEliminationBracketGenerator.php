@@ -6,6 +6,7 @@ use App\Contracts\BracketGeneratorInterface;
 use App\Models\Tournament;
 use App\Models\Room;
 use Illuminate\Database\Eloquent\Collection;
+use App\Http\Controllers\RoomController;
 
 class SingleEliminationBracketGenerator implements BracketGeneratorInterface
 {
@@ -24,7 +25,7 @@ class SingleEliminationBracketGenerator implements BracketGeneratorInterface
             for ($i = 0; $i < $matchesInRound; $i++) {
                 $room = Room::create([
                     'code' => md5(time() . uniqid()), // Generate unique room code[cite: 1]
-                    'fen' => env('INITIAL_FEN'),
+                    'fen' => RoomController::INITIAL_FEN,
                     'tournament_id' => $tournament->id,
                     'tournament_round' => $round,
                     'red_time' => 600,
