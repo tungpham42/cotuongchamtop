@@ -780,5 +780,6 @@
     "Bật/Tắt Mic": "Toggle Mic",
     "Bật/Tắt Camera": "Toggle Camera",
     "Lật Camera": "Mirror Camera",
-    "Không thể truy cập Camera/Microphone của bạn.": "Cannot access your Camera/Microphone."
+    "Không thể truy cập Camera/Microphone của bạn.": "Cannot access your Camera/Microphone.",
+    "Đã sao chép!": "Copied!"
 }
