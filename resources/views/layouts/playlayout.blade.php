@@ -57,6 +57,7 @@
 </head>
 <body class="{{ $bodyClass }}">
     @include('common.afterBody')
+    @include('common.adsenseTop')
     @include('layouts.partials.header')
     @include('layouts.partials.analysisModal')
     @if (session('status'))
