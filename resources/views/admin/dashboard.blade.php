@@ -328,7 +328,7 @@
                             </div>
                             <div class="text-right shrink-0">
                                 <div class="rounded-full bg-rose-50 text-rose-700 px-2 py-1 text-[10px] font-extrabold">{{ $room->created_at->diffForHumans(null, true) }}</div>
-                                <a href="{{ route('admin.rooms.show', $room) }}" class="mt-1 inline-block text-xs font-bold text-indigo-600 hover:text-indigo-800">Inspect</a>
+                                <a href="{{ route('admin.rooms.edit', $room) }}" class="mt-1 inline-block text-xs font-bold text-indigo-600 hover:text-indigo-800">Inspect</a>
                             </div>
                         </div>
                     @empty
