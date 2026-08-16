@@ -322,7 +322,7 @@
                             <div class="min-w-0">
                                 <div class="flex items-center gap-2">
                                     <span class="h-7 w-7 rounded-lg bg-slate-100 flex items-center justify-center text-xs text-slate-500"><i class="fa-solid fa-door-open"></i></span>
-                                    <span class="font-mono text-sm font-bold text-slate-900">{{ $room->code }}</span>
+                                    <span class="font-mono text-sm font-bold text-slate-900">{{ $room->name }}</span>
                                 </div>
                                 <div class="mt-1 text-xs text-slate-400 truncate">Host: {{ $room->host ? $room->host->name : 'Unknown' }}</div>
                             </div>
@@ -388,7 +388,7 @@
                                     </div>
                                     <div class="min-w-0 flex-1">
                                         <div class="flex items-center gap-2">
-                                            <span class="font-mono text-sm font-bold text-slate-800">{{ $room->code }}</span>
+                                            <span class="font-mono text-sm font-bold text-slate-800">{{ $room->name }}</span>
                                             <span class="rounded-full px-2 py-0.5 text-[10px] font-extrabold {{ $status['class'] }}">
                                                 <i class="fa-solid {{ $status['icon'] }} mr-1"></i>{{ $status['label'] }}
                                             </span>
