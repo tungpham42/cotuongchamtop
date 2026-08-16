@@ -5,369 +5,557 @@
 @section('content')
 
 @php
-    // Small helper to render a consistent up/down/flat trend badge from a % value
     $trend = function ($pct) {
         if ($pct > 0) return ['color' => 'text-emerald-700', 'bg' => 'bg-emerald-50', 'icon' => 'fa-arrow-up', 'sign' => '+'];
         if ($pct < 0) return ['color' => 'text-rose-700', 'bg' => 'bg-rose-50', 'icon' => 'fa-arrow-down', 'sign' => ''];
-        return ['color' => 'text-gray-500', 'bg' => 'bg-gray-100', 'icon' => 'fa-minus', 'sign' => ''];
+        return ['color' => 'text-slate-500', 'bg' => 'bg-slate-100', 'icon' => 'fa-minus', 'sign' => ''];
     };
+
     $userTrend  = $trend($stats['user_growth_pct']);
     $matchTrend = $trend($stats['match_growth_pct']);
+
+    $completion = min(max((float) $stats['completion_rate'], 0), 100);
+    $activeRooms = (int) $stats['active_rooms'];
+    $waitingRooms = (int) $stats['waiting_rooms'];
+    $ongoingRooms = (int) $roomDistribution['ongoing'];
 @endphp
 
-<!-- Quick Actions -->
-<div class="mb-8 flex flex-wrap gap-4">
-    <a href="{{ route('admin.users.index') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">
-        <i class="fa-solid fa-user-plus mr-2"></i> Manage Users
-    </a>
-    <a href="{{ route('admin.rooms.index') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">
-        <i class="fa-solid fa-chess-board mr-2"></i> View Rooms
-    </a>
-    <a href="{{ route('admin.tournaments.index') }}" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">
-        <i class="fa-solid fa-trophy mr-2"></i> Tournaments
-    </a>
-    <a href="{{ route('admin.puzzles.index') }}" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-sm">
-        <i class="fa-solid fa-puzzle-piece mr-2"></i> Manage Puzzles
-    </a>
-</div>
+<div class="space-y-8">
 
-<!-- KPI Metric Cards -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    {{-- Hero / command center --}}
+    <section class="relative overflow-hidden rounded-[28px] bg-slate-950 text-white shadow-lift">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(99,102,241,.38),transparent_28%),radial-gradient(circle_at_90%_5%,rgba(14,165,233,.30),transparent_26%)]"></div>
+        <div class="relative p-6 sm:p-8 lg:p-10">
+            <div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-7">
+                <div class="max-w-2xl">
+                    <div class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[.18em] text-indigo-100">
+                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                        Live admin overview
+                    </div>
+                    <h2 class="mt-5 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.05]">
+                        The board is alive.
+                        <span class="text-indigo-300">Keep the arena moving.</span>
+                    </h2>
+                    <p class="mt-4 max-w-xl text-sm sm:text-base leading-7 text-slate-300">
+                        A single place to monitor players, rooms, puzzles and tournaments — with the most important signals surfaced first.
+                    </p>
+                </div>
 
-    <!-- Total Users -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <div class="flex items-center justify-between">
-            <p class="text-xs font-semibold uppercase text-gray-400">Total Users</p>
-            <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center text-lg"><i class="fa-solid fa-users"></i></div>
-        </div>
-        <p class="text-2xl font-bold text-gray-800 mt-3">{{ number_format($stats['total_users']) }}</p>
-        <div class="flex items-center gap-2 mt-2">
-            <span class="{{ $userTrend['color'] }} {{ $userTrend['bg'] }} text-xs font-semibold px-2 py-0.5 rounded-full">
-                <i class="fa-solid {{ $userTrend['icon'] }} mr-1"></i>{{ $userTrend['sign'] }}{{ $stats['user_growth_pct'] }}%
-            </span>
-            <span class="text-xs text-gray-400">{{ $stats['new_users_week'] }} new this week</span>
-        </div>
-    </div>
-
-    <!-- Total Matches -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <div class="flex items-center justify-between">
-            <p class="text-xs font-semibold uppercase text-gray-400">Total Matches</p>
-            <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-lg"><i class="fa-solid fa-chess"></i></div>
-        </div>
-        <p class="text-2xl font-bold text-blue-600 mt-3">{{ number_format($stats['total_matches']) }}</p>
-        <div class="flex items-center gap-2 mt-2">
-            <span class="{{ $matchTrend['color'] }} {{ $matchTrend['bg'] }} text-xs font-semibold px-2 py-0.5 rounded-full">
-                <i class="fa-solid {{ $matchTrend['icon'] }} mr-1"></i>{{ $matchTrend['sign'] }}{{ $stats['match_growth_pct'] }}%
-            </span>
-            <span class="text-xs text-gray-400">{{ $stats['matches_today'] }} today</span>
-        </div>
-    </div>
-
-    <!-- Active Rooms -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <div class="flex items-center justify-between">
-            <p class="text-xs font-semibold uppercase text-gray-400">Active Rooms</p>
-            <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center text-lg"><i class="fa-solid fa-chess-board"></i></div>
-        </div>
-        <p class="text-2xl font-bold text-emerald-600 mt-3">{{ number_format($stats['active_rooms']) }}</p>
-        <div class="flex items-center gap-2 mt-2">
-            <span class="text-xs text-gray-400"><i class="fa-solid fa-hourglass-half mr-1"></i>{{ $stats['waiting_rooms'] }} waiting for opponent</span>
-        </div>
-    </div>
-
-    <!-- Completion Rate -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <div class="flex items-center justify-between">
-            <p class="text-xs font-semibold uppercase text-gray-400">Completion Rate</p>
-            <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-lg flex items-center justify-center text-lg"><i class="fa-solid fa-flag-checkered"></i></div>
-        </div>
-        <p class="text-2xl font-bold text-teal-600 mt-3">{{ $stats['completion_rate'] }}%</p>
-        <div class="w-full bg-gray-100 rounded-full h-2 mt-3">
-            <div class="bg-teal-500 h-2 rounded-full" style="width: {{ min($stats['completion_rate'], 100) }}%"></div>
-        </div>
-    </div>
-
-    <!-- Tournaments -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <div class="flex items-center justify-between">
-            <p class="text-xs font-semibold uppercase text-gray-400">Tournaments</p>
-            <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center text-lg"><i class="fa-solid fa-trophy"></i></div>
-        </div>
-        <p class="text-2xl font-bold text-amber-600 mt-3">{{ number_format($stats['total_tournaments']) }}</p>
-        <div class="flex items-center gap-2 mt-2">
-            <span class="text-xs text-gray-400">{{ $stats['new_tournaments_month'] }} created this month</span>
-        </div>
-    </div>
-
-    <!-- Puzzles -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <div class="flex items-center justify-between">
-            <p class="text-xs font-semibold uppercase text-gray-400">Puzzles</p>
-            <div class="w-10 h-10 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center text-lg"><i class="fa-solid fa-puzzle-piece"></i></div>
-        </div>
-        <p class="text-2xl font-bold text-purple-600 mt-3">{{ number_format($stats['total_puzzles']) }}</p>
-        <div class="flex items-center gap-2 mt-2">
-            <span class="text-xs text-gray-400">{{ $stats['new_puzzles_month'] }} added this month</span>
-        </div>
-    </div>
-
-    <!-- Avg Matches / Day -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <div class="flex items-center justify-between">
-            <p class="text-xs font-semibold uppercase text-gray-400">Avg Matches / Day</p>
-            <div class="w-10 h-10 bg-sky-50 text-sky-600 rounded-lg flex items-center justify-center text-lg"><i class="fa-solid fa-chart-simple"></i></div>
-        </div>
-        <p class="text-2xl font-bold text-sky-600 mt-3">{{ $avgMatchesPerDay }}</p>
-        <div class="flex items-center gap-2 mt-2">
-            <span class="text-xs text-gray-400">over the last 14 days</span>
-        </div>
-    </div>
-
-    <!-- Needs Attention -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border {{ $staleRooms->count() > 0 ? 'border-rose-200' : 'border-gray-100' }}">
-        <div class="flex items-center justify-between">
-            <p class="text-xs font-semibold uppercase text-gray-400">Needs Attention</p>
-            <div class="w-10 h-10 {{ $staleRooms->count() > 0 ? 'bg-rose-50 text-rose-600' : 'bg-gray-50 text-gray-400' }} rounded-lg flex items-center justify-center text-lg">
-                <i class="fa-solid fa-triangle-exclamation"></i>
+                <div class="grid grid-cols-2 gap-3 sm:gap-4 xl:min-w-[360px]">
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <div class="text-xs font-semibold text-slate-400">Playing now</div>
+                        <div class="mt-1 text-2xl font-extrabold">{{ number_format($ongoingRooms) }}</div>
+                        <div class="mt-1 text-xs text-emerald-300"><i class="fa-solid fa-circle text-[7px] mr-1"></i>Live rooms</div>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <div class="text-xs font-semibold text-slate-400">Waiting</div>
+                        <div class="mt-1 text-2xl font-extrabold">{{ number_format($waitingRooms) }}</div>
+                        <div class="mt-1 text-xs text-amber-300"><i class="fa-solid fa-hourglass-half mr-1"></i>Matchmaking</div>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <div class="text-xs font-semibold text-slate-400">Matches today</div>
+                        <div class="mt-1 text-2xl font-extrabold">{{ number_format($stats['matches_today']) }}</div>
+                        <div class="mt-1 text-xs text-sky-300"><i class="fa-solid fa-bolt mr-1"></i>Today</div>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <div class="text-xs font-semibold text-slate-400">Completion</div>
+                        <div class="mt-1 text-2xl font-extrabold">{{ $completion }}%</div>
+                        <div class="mt-2 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                            <div class="h-full rounded-full bg-indigo-300" style="width: {{ $completion }}%"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <p class="text-2xl font-bold {{ $staleRooms->count() > 0 ? 'text-rose-600' : 'text-gray-800' }} mt-3">{{ $staleRooms->count() }}</p>
-        <div class="flex items-center gap-2 mt-2">
-            <span class="text-xs text-gray-400">stale rooms (15+ min unmatched)</span>
-        </div>
-    </div>
-</div>
+    </section>
 
-<!-- Interactive Charts Row 1 -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-    <!-- Line Chart: Monthly User Growth -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <h2 class="text-base font-semibold text-gray-700 mb-4"><i class="fa-solid fa-chart-line mr-2 text-indigo-500"></i> User Registrations</h2>
-        <div class="relative h-64">
-            <canvas id="userGrowthChart"></canvas>
+    {{-- Quick actions --}}
+    <section>
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <div class="text-[11px] font-extrabold uppercase tracking-[.18em] text-slate-400">Shortcuts</div>
+                <h3 class="mt-1 text-lg font-extrabold text-slate-900">Jump into the action</h3>
+            </div>
         </div>
-    </div>
 
-    <!-- Bar Chart: Match Activity (14 Days) -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <h2 class="text-base font-semibold text-gray-700 mb-4"><i class="fa-solid fa-chart-column mr-2 text-blue-500"></i> Matches (Last 14 Days)</h2>
-        <div class="relative h-64">
-            <canvas id="matchTrendChart"></canvas>
-        </div>
-    </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <a href="{{ route('admin.users.index') }}" class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-soft transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lift">
+                <div class="flex items-start justify-between">
+                    <span class="h-11 w-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-slate-300 group-hover:text-indigo-500"></i>
+                </div>
+                <div class="mt-4 text-sm font-extrabold text-slate-900">Manage users</div>
+                <div class="mt-1 text-xs leading-5 text-slate-500">Review registrations and player activity.</div>
+            </a>
 
-    <!-- Doughnut Chart: Room Status Distribution -->
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <h2 class="text-base font-semibold text-gray-700 mb-4"><i class="fa-solid fa-chart-pie mr-2 text-emerald-500"></i> Room Status</h2>
-        <div class="relative h-64 flex justify-center items-center">
-            <canvas id="roomStatusChart"></canvas>
-        </div>
-    </div>
-</div>
+            <a href="{{ route('admin.rooms.index') }}" class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-soft transition hover:-translate-y-1 hover:border-emerald-200 hover:shadow-lift">
+                <div class="flex items-start justify-between">
+                    <span class="h-11 w-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <i class="fa-solid fa-chess-board"></i>
+                    </span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-slate-300 group-hover:text-emerald-500"></i>
+                </div>
+                <div class="mt-4 text-sm font-extrabold text-slate-900">Inspect rooms</div>
+                <div class="mt-1 text-xs leading-5 text-slate-500">See waiting, live and completed matches.</div>
+            </a>
 
-<!-- Interactive Charts Row 2 -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-    <!-- Bar Chart: Tournament Creation Trend -->
-    <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <h2 class="text-base font-semibold text-gray-700 mb-4"><i class="fa-solid fa-trophy mr-2 text-amber-500"></i> Tournaments Created (Last 6 Months)</h2>
-        <div class="relative h-64">
-            <canvas id="tournamentGrowthChart"></canvas>
-        </div>
-    </div>
+            <a href="{{ route('admin.tournaments.index') }}" class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-soft transition hover:-translate-y-1 hover:border-amber-200 hover:shadow-lift">
+                <div class="flex items-start justify-between">
+                    <span class="h-11 w-11 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <i class="fa-solid fa-trophy"></i>
+                    </span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-slate-300 group-hover:text-amber-500"></i>
+                </div>
+                <div class="mt-4 text-sm font-extrabold text-slate-900">Tournaments</div>
+                <div class="mt-1 text-xs leading-5 text-slate-500">Manage competitive events and participants.</div>
+            </a>
 
-    <!-- Needs Attention Panel -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-            <h2 class="text-base font-semibold text-gray-700"><i class="fa-solid fa-triangle-exclamation mr-2 text-rose-500"></i> Stale Rooms</h2>
-            <a href="{{ route('admin.rooms.index') }}" class="text-xs font-medium text-rose-600 hover:text-rose-800">View All</a>
+            <a href="{{ route('admin.puzzles.index') }}" class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-soft transition hover:-translate-y-1 hover:border-fuchsia-200 hover:shadow-lift">
+                <div class="flex items-start justify-between">
+                    <span class="h-11 w-11 rounded-2xl bg-fuchsia-50 text-fuchsia-600 flex items-center justify-center">
+                        <i class="fa-solid fa-puzzle-piece"></i>
+                    </span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-slate-300 group-hover:text-fuchsia-500"></i>
+                </div>
+                <div class="mt-4 text-sm font-extrabold text-slate-900">Puzzle library</div>
+                <div class="mt-1 text-xs leading-5 text-slate-500">Keep tactics and learning content fresh.</div>
+            </a>
         </div>
-        <div class="flex-1 divide-y divide-gray-50">
-            @forelse($staleRooms as $room)
-                <div class="px-6 py-3 flex items-center justify-between">
+    </section>
+
+    {{-- KPI grid --}}
+    <section>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wide text-slate-400">Total users</span>
+                    <span class="h-10 w-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><i class="fa-solid fa-users"></i></span>
+                </div>
+                <div class="mt-4 flex items-end justify-between gap-3">
                     <div>
-                        <p class="font-mono text-sm font-medium text-gray-900">{{ $room->code }}</p>
-                        <p class="text-xs text-gray-400">Host: {{ $room->host ? $room->host->name : 'Unknown' }}</p>
+                        <div class="text-3xl font-extrabold tracking-tight text-slate-900">{{ number_format($stats['total_users']) }}</div>
+                        <div class="mt-2 text-xs text-slate-400">{{ number_format($stats['new_users_week']) }} new this week</div>
                     </div>
-                    <div class="text-right">
-                        <span class="bg-rose-100 text-rose-700 text-xs font-medium px-2 py-0.5 rounded">{{ $room->created_at->diffForHumans(null, true) }}</span>
-                        <p class="text-xs text-gray-400 mt-1">
-                            <a href="{{ route('admin.rooms.show', $room) }}" class="text-indigo-600 hover:text-indigo-800">Inspect</a>
-                        </p>
+                    <span class="{{ $userTrend['color'] }} {{ $userTrend['bg'] }} rounded-full px-2.5 py-1 text-[11px] font-extrabold">
+                        <i class="fa-solid {{ $userTrend['icon'] }} mr-1"></i>{{ $userTrend['sign'] }}{{ $stats['user_growth_pct'] }}%
+                    </span>
+                </div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wide text-slate-400">Total matches</span>
+                    <span class="h-10 w-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center"><i class="fa-solid fa-chess-knight"></i></span>
+                </div>
+                <div class="mt-4 flex items-end justify-between gap-3">
+                    <div>
+                        <div class="text-3xl font-extrabold tracking-tight text-slate-900">{{ number_format($stats['total_matches']) }}</div>
+                        <div class="mt-2 text-xs text-slate-400">{{ number_format($stats['matches_today']) }} played today</div>
+                    </div>
+                    <span class="{{ $matchTrend['color'] }} {{ $matchTrend['bg'] }} rounded-full px-2.5 py-1 text-[11px] font-extrabold">
+                        <i class="fa-solid {{ $matchTrend['icon'] }} mr-1"></i>{{ $matchTrend['sign'] }}{{ $stats['match_growth_pct'] }}%
+                    </span>
+                </div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wide text-slate-400">Active rooms</span>
+                    <span class="h-10 w-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="fa-solid fa-gamepad"></i></span>
+                </div>
+                <div class="mt-4 flex items-end justify-between">
+                    <div>
+                        <div class="text-3xl font-extrabold tracking-tight text-slate-900">{{ number_format($activeRooms) }}</div>
+                        <div class="mt-2 text-xs text-slate-400">{{ number_format($waitingRooms) }} waiting for opponent</div>
+                    </div>
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-extrabold text-emerald-700">
+                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Live
+                    </span>
+                </div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wide text-slate-400">Completion rate</span>
+                    <span class="h-10 w-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center"><i class="fa-solid fa-flag-checkered"></i></span>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-end justify-between">
+                        <div class="text-3xl font-extrabold tracking-tight text-slate-900">{{ $completion }}%</div>
+                        <span class="text-xs font-semibold text-slate-400">all rooms</span>
+                    </div>
+                    <div class="mt-4 h-2 rounded-full bg-slate-100 overflow-hidden">
+                        <div class="h-full rounded-full bg-gradient-to-r from-violet-500 to-indigo-500" style="width: {{ $completion }}%"></div>
                     </div>
                 </div>
-            @empty
-                <div class="px-6 py-8 text-center text-emerald-600 text-sm">
-                    <i class="fa-solid fa-circle-check text-2xl mb-2 block"></i>
-                    All rooms are matching quickly. Nothing needs attention.
+            </div>
+
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wide text-slate-400">Tournaments</span>
+                    <span class="h-10 w-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><i class="fa-solid fa-trophy"></i></span>
                 </div>
-            @endforelse
-        </div>
-    </div>
-</div>
+                <div class="mt-4 text-3xl font-extrabold tracking-tight text-slate-900">{{ number_format($stats['total_tournaments']) }}</div>
+                <div class="mt-2 text-xs text-slate-400">{{ number_format($stats['new_tournaments_month']) }} created this month</div>
+            </div>
 
-<!-- Data Tables Row -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-    <!-- Recent Users Table -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-            <h2 class="text-base font-semibold text-gray-700"><i class="fa-solid fa-user-clock mr-2 text-indigo-500"></i> Recent Registrations</h2>
-            <a href="{{ route('admin.users.index') }}" class="text-xs font-medium text-indigo-600 hover:text-indigo-800">View All</a>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left text-gray-500">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                    <tr>
-                        <th scope="col" class="px-6 py-3">Name</th>
-                        <th scope="col" class="px-6 py-3">Email</th>
-                        <th scope="col" class="px-6 py-3">Joined</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($recentUsers as $user)
-                        <tr class="bg-white border-b hover:bg-gray-50">
-                            <td class="px-6 py-4 font-medium text-gray-900 flex items-center gap-2">
-                                <img src="{{ $user->getAvatarUrl() }}" class="w-6 h-6 rounded-full object-cover border" alt="">
-                                {{ $user->name }}
-                            </td>
-                            <td class="px-6 py-4">{{ $user->email }}</td>
-                            <td class="px-6 py-4">{{ $user->created_at->diffForHumans() }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="px-6 py-4 text-center text-gray-400">No recent users found.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wide text-slate-400">Puzzle library</span>
+                    <span class="h-10 w-10 rounded-xl bg-fuchsia-50 text-fuchsia-600 flex items-center justify-center"><i class="fa-solid fa-puzzle-piece"></i></span>
+                </div>
+                <div class="mt-4 text-3xl font-extrabold tracking-tight text-slate-900">{{ number_format($stats['total_puzzles']) }}</div>
+                <div class="mt-2 text-xs text-slate-400">{{ number_format($stats['new_puzzles_month']) }} added this month</div>
+            </div>
 
-    <!-- Recent Rooms Table -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-            <h2 class="text-base font-semibold text-gray-700"><i class="fa-solid fa-gamepad mr-2 text-emerald-500"></i> Recent Rooms</h2>
-            <a href="{{ route('admin.rooms.index') }}" class="text-xs font-medium text-emerald-600 hover:text-emerald-800">View All</a>
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wide text-slate-400">Avg. matches / day</span>
+                    <span class="h-10 w-10 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center"><i class="fa-solid fa-chart-line"></i></span>
+                </div>
+                <div class="mt-4 text-3xl font-extrabold tracking-tight text-slate-900">{{ $avgMatchesPerDay }}</div>
+                <div class="mt-2 text-xs text-slate-400">14-day average</div>
+            </div>
+
+            <div class="rounded-2xl border {{ $staleRooms->count() > 0 ? 'border-rose-200 bg-rose-50/40' : 'border-slate-200 bg-white' }} p-5 shadow-soft">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wide {{ $staleRooms->count() > 0 ? 'text-rose-500' : 'text-slate-400' }}">Needs attention</span>
+                    <span class="h-10 w-10 rounded-xl {{ $staleRooms->count() > 0 ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-400' }} flex items-center justify-center"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                </div>
+                <div class="mt-4 flex items-end justify-between">
+                    <div>
+                        <div class="text-3xl font-extrabold tracking-tight {{ $staleRooms->count() > 0 ? 'text-rose-700' : 'text-slate-900' }}">{{ $staleRooms->count() }}</div>
+                        <div class="mt-2 text-xs {{ $staleRooms->count() > 0 ? 'text-rose-600' : 'text-slate-400' }}">rooms waiting 15+ min</div>
+                    </div>
+                    @if($staleRooms->count() > 0)
+                        <a href="{{ route('admin.rooms.index') }}" class="text-xs font-extrabold text-rose-700 hover:text-rose-900">Inspect <i class="fa-solid fa-arrow-right ml-1"></i></a>
+                    @endif
+                </div>
+            </div>
         </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left text-gray-500">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                    <tr>
-                        <th scope="col" class="px-6 py-3">Code</th>
-                        <th scope="col" class="px-6 py-3">Host</th>
-                        <th scope="col" class="px-6 py-3">Status</th>
-                        <th scope="col" class="px-6 py-3">Updated</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($recentRooms as $room)
-                        <tr class="bg-white border-b hover:bg-gray-50">
-                            <td class="px-6 py-4 font-mono font-medium text-gray-900">{{ $room->code }}</td>
-                            <td class="px-6 py-4">{{ $room->host ? $room->host->name : 'Unknown' }}</td>
-                            <td class="px-6 py-4">
-                                @if($room->result)
-                                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">Finished</span>
-                                @elseif($room->guest_id)
-                                    <span class="bg-emerald-100 text-emerald-800 text-xs font-medium px-2.5 py-0.5 rounded">Playing</span>
-                                @else
-                                    <span class="bg-amber-100 text-amber-800 text-xs font-medium px-2.5 py-0.5 rounded">Waiting</span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 text-xs text-gray-400">{{ optional($room->modified_at)->diffForHumans() ?? '—' }}</td>
-                        </tr>
+    </section>
+
+    {{-- Analytics --}}
+    <section>
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-4">
+            <div>
+                <div class="text-[11px] font-extrabold uppercase tracking-[.18em] text-slate-400">Analytics</div>
+                <h3 class="mt-1 text-lg font-extrabold text-slate-900">Performance at a glance</h3>
+            </div>
+            <div class="text-xs text-slate-400">Live data from the current admin overview</div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+            <div class="xl:col-span-2 rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+                <div class="flex items-center justify-between gap-4 mb-5">
+                    <div>
+                        <h4 class="font-extrabold text-slate-900">User registrations</h4>
+                        <p class="text-xs text-slate-400 mt-1">Monthly growth · last 6 months</p>
+                    </div>
+                    <span class="h-9 w-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><i class="fa-solid fa-users"></i></span>
+                </div>
+                <div class="h-72"><canvas id="userGrowthChart"></canvas></div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+                <div class="flex items-center justify-between gap-4 mb-5">
+                    <div>
+                        <h4 class="font-extrabold text-slate-900">Room health</h4>
+                        <p class="text-xs text-slate-400 mt-1">Current room distribution</p>
+                    </div>
+                    <span class="h-9 w-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="fa-solid fa-chart-pie"></i></span>
+                </div>
+                <div class="h-72"><canvas id="roomStatusChart"></canvas></div>
+            </div>
+
+            <div class="xl:col-span-2 rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+                <div class="flex items-center justify-between gap-4 mb-5">
+                    <div>
+                        <h4 class="font-extrabold text-slate-900">Match activity</h4>
+                        <p class="text-xs text-slate-400 mt-1">Completed matches · last 14 days</p>
+                    </div>
+                    <span class="h-9 w-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center"><i class="fa-solid fa-chart-column"></i></span>
+                </div>
+                <div class="h-72"><canvas id="matchTrendChart"></canvas></div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+                <div class="flex items-center justify-between gap-4 mb-5">
+                    <div>
+                        <h4 class="font-extrabold text-slate-900">Tournament momentum</h4>
+                        <p class="text-xs text-slate-400 mt-1">Created · last 6 months</p>
+                    </div>
+                    <span class="h-9 w-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><i class="fa-solid fa-trophy"></i></span>
+                </div>
+                <div class="h-72"><canvas id="tournamentGrowthChart"></canvas></div>
+            </div>
+        </div>
+    </section>
+
+    {{-- Operations --}}
+    <section>
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <div class="text-[11px] font-extrabold uppercase tracking-[.18em] text-slate-400">Operations</div>
+                <h3 class="mt-1 text-lg font-extrabold text-slate-900">What needs your attention</h3>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+            <div class="xl:col-span-1 rounded-2xl border border-slate-200 bg-white shadow-soft overflow-hidden">
+                <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                    <div>
+                        <h4 class="font-extrabold text-slate-900">Stale rooms</h4>
+                        <p class="text-xs text-slate-400 mt-1">Waiting too long for an opponent</p>
+                    </div>
+                    <span class="h-9 w-9 rounded-xl {{ $staleRooms->count() ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600' }} flex items-center justify-center">
+                        <i class="fa-solid {{ $staleRooms->count() ? 'fa-triangle-exclamation' : 'fa-check' }}"></i>
+                    </span>
+                </div>
+
+                <div class="divide-y divide-slate-100">
+                    @forelse($staleRooms as $room)
+                        <div class="px-5 py-4 flex items-center justify-between gap-4">
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="h-7 w-7 rounded-lg bg-slate-100 flex items-center justify-center text-xs text-slate-500"><i class="fa-solid fa-door-open"></i></span>
+                                    <span class="font-mono text-sm font-bold text-slate-900">{{ $room->code }}</span>
+                                </div>
+                                <div class="mt-1 text-xs text-slate-400 truncate">Host: {{ $room->host ? $room->host->name : 'Unknown' }}</div>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <div class="rounded-full bg-rose-50 text-rose-700 px-2 py-1 text-[10px] font-extrabold">{{ $room->created_at->diffForHumans(null, true) }}</div>
+                                <a href="{{ route('admin.rooms.show', $room) }}" class="mt-1 inline-block text-xs font-bold text-indigo-600 hover:text-indigo-800">Inspect</a>
+                            </div>
+                        </div>
                     @empty
-                        <tr>
-                            <td colspan="4" class="px-6 py-4 text-center text-gray-400">No active rooms found.</td>
-                        </tr>
+                        <div class="px-5 py-10 text-center">
+                            <div class="mx-auto h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div class="mt-3 text-sm font-bold text-slate-800">All clear</div>
+                            <div class="mt-1 text-xs text-slate-400">No stale waiting rooms right now.</div>
+                        </div>
                     @endforelse
-                </tbody>
-            </table>
+                </div>
+            </div>
+
+            <div class="xl:col-span-2 rounded-2xl border border-slate-200 bg-white shadow-soft overflow-hidden">
+                <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                    <div>
+                        <h4 class="font-extrabold text-slate-900">Recent activity</h4>
+                        <p class="text-xs text-slate-400 mt-1">Newest registrations and rooms</p>
+                    </div>
+                    <a href="{{ route('admin.users.index') }}" class="text-xs font-extrabold text-indigo-600 hover:text-indigo-800">View users</a>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 lg:divide-x divide-slate-100">
+                    <div>
+                        <div class="px-5 py-3 bg-slate-50/70 text-[10px] uppercase tracking-[.16em] font-extrabold text-slate-400">New players</div>
+                        <div class="divide-y divide-slate-100">
+                            @forelse($recentUsers as $user)
+                                <div class="px-5 py-3.5 flex items-center gap-3">
+                                    <img src="{{ $user->getAvatarUrl() }}" class="w-9 h-9 rounded-xl object-cover border border-slate-200" alt="">
+                                    <div class="min-w-0 flex-1">
+                                        <div class="text-sm font-bold text-slate-800 truncate">{{ $user->name }}</div>
+                                        <div class="text-xs text-slate-400 truncate">{{ $user->email }}</div>
+                                    </div>
+                                    <div class="text-[10px] font-semibold text-slate-400 shrink-0">{{ $user->created_at->diffForHumans() }}</div>
+                                </div>
+                            @empty
+                                <div class="px-5 py-8 text-center text-xs text-slate-400">No recent users found.</div>
+                            @endforelse
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="px-5 py-3 bg-slate-50/70 text-[10px] uppercase tracking-[.16em] font-extrabold text-slate-400">Recent rooms</div>
+                        <div class="divide-y divide-slate-100">
+                            @forelse($recentRooms as $room)
+                                @php
+                                    $status = $room->result
+                                        ? ['label' => 'Finished', 'class' => 'bg-slate-100 text-slate-600', 'icon' => 'fa-flag-checkered']
+                                        : ($room->guest_id
+                                            ? ['label' => 'Playing', 'class' => 'bg-emerald-50 text-emerald-700', 'icon' => 'fa-bolt']
+                                            : ['label' => 'Waiting', 'class' => 'bg-amber-50 text-amber-700', 'icon' => 'fa-hourglass-half']);
+                                @endphp
+                                <div class="px-5 py-3.5 flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500">
+                                        <i class="fa-solid fa-door-open text-sm"></i>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-center gap-2">
+                                            <span class="font-mono text-sm font-bold text-slate-800">{{ $room->code }}</span>
+                                            <span class="rounded-full px-2 py-0.5 text-[10px] font-extrabold {{ $status['class'] }}">
+                                                <i class="fa-solid {{ $status['icon'] }} mr-1"></i>{{ $status['label'] }}
+                                            </span>
+                                        </div>
+                                        <div class="text-xs text-slate-400 mt-1 truncate">
+                                            {{ $room->host ? $room->host->name : 'Unknown' }}
+                                        </div>
+                                    </div>
+                                    <div class="text-[10px] font-semibold text-slate-400 shrink-0">{{ optional($room->modified_at)->diffForHumans() ?? '—' }}</div>
+                                </div>
+                            @empty
+                                <div class="px-5 py-8 text-center text-xs text-slate-400">No recent rooms found.</div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
+
 </div>
 @endsection
 
 @push('scripts')
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener('DOMContentLoaded', function () {
+    const common = {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 700, easing: 'easeOutQuart' },
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                backgroundColor: '#0f172a',
+                titleColor: '#fff',
+                bodyColor: '#cbd5e1',
+                padding: 12,
+                cornerRadius: 10,
+                displayColors: false
+            }
+        },
+        scales: {
+            x: {
+                grid: { display: false },
+                border: { display: false },
+                ticks: { color: '#94a3b8', font: { size: 11 } }
+            },
+            y: {
+                beginAtZero: true,
+                border: { display: false },
+                grid: { color: 'rgba(148,163,184,.12)' },
+                ticks: { color: '#94a3b8', font: { size: 11 }, precision: 0 }
+            }
+        }
+    };
 
-        const baseOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
-        };
+    const makeGradient = (ctx, top, bottom) => {
+        const gradient = ctx.createLinearGradient(0, 0, 0, 280);
+        gradient.addColorStop(0, top);
+        gradient.addColorStop(1, bottom);
+        return gradient;
+    };
 
-        // Chart 1: User Growth Line Chart
-        new Chart(document.getElementById('userGrowthChart').getContext('2d'), {
+    const userEl = document.getElementById('userGrowthChart');
+    if (userEl) {
+        const ctx = userEl.getContext('2d');
+        new Chart(ctx, {
             type: 'line',
             data: {
                 labels: {!! json_encode($userGrowth->pluck('month')) !!},
                 datasets: [{
-                    label: 'New Registrations',
+                    label: 'New registrations',
                     data: {!! json_encode($userGrowth->pluck('count')) !!},
-                    borderColor: '#4f46e5',
-                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    borderColor: '#6366f1',
+                    backgroundColor: makeGradient(ctx, 'rgba(99,102,241,.23)', 'rgba(99,102,241,0)'),
                     fill: true,
-                    tension: 0.3,
-                    borderWidth: 2,
-                    pointRadius: 4
+                    tension: .42,
+                    borderWidth: 3,
+                    pointRadius: 3,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#6366f1',
+                    pointBorderWidth: 2
                 }]
             },
-            options: baseOptions
+            options: common
         });
+    }
 
-        // Chart 2: Matches (14 Days) Bar Chart
-        new Chart(document.getElementById('matchTrendChart').getContext('2d'), {
+    const matchEl = document.getElementById('matchTrendChart');
+    if (matchEl) {
+        new Chart(matchEl.getContext('2d'), {
             type: 'bar',
             data: {
                 labels: {!! json_encode($last14Days->pluck('date')) !!},
                 datasets: [{
-                    label: 'Matches Played',
+                    label: 'Matches played',
                     data: {!! json_encode($last14Days->pluck('count')) !!},
-                    backgroundColor: '#3b82f6',
-                    borderRadius: 4
+                    backgroundColor: '#38bdf8',
+                    hoverBackgroundColor: '#0284c7',
+                    borderRadius: 8,
+                    borderSkipped: false,
+                    maxBarThickness: 26
                 }]
             },
-            options: baseOptions
+            options: {
+                ...common,
+                scales: {
+                    ...common.scales,
+                    x: { ...common.scales.x, ticks: { ...common.scales.x.ticks, maxRotation: 0, autoSkip: true, maxTicksLimit: 7 } }
+                }
+            }
         });
+    }
 
-        // Chart 3: Room Status Doughnut Chart
-        new Chart(document.getElementById('roomStatusChart').getContext('2d'), {
+    const roomEl = document.getElementById('roomStatusChart');
+    if (roomEl) {
+        new Chart(roomEl.getContext('2d'), {
             type: 'doughnut',
             data: {
-                labels: ['Ongoing', 'Finished', 'Waiting'],
+                labels: ['Playing', 'Finished', 'Waiting'],
                 datasets: [{
                     data: [
                         {{ $roomDistribution['ongoing'] }},
                         {{ $roomDistribution['finished'] }},
                         {{ $roomDistribution['waiting'] }}
                     ],
-                    backgroundColor: ['#10b981', '#6b7280', '#f59e0b'],
-                    borderWidth: 0
+                    backgroundColor: ['#10b981', '#94a3b8', '#f59e0b'],
+                    borderWidth: 0,
+                    hoverOffset: 6
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom' } }
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: { usePointStyle: true, pointStyle: 'circle', padding: 18, color: '#64748b', font: { size: 11, weight: 600 } }
+                    },
+                    tooltip: common.plugins.tooltip
+                }
             }
         });
+    }
 
-        // Chart 4: Tournament Growth Bar Chart
-        new Chart(document.getElementById('tournamentGrowthChart').getContext('2d'), {
+    const tournamentEl = document.getElementById('tournamentGrowthChart');
+    if (tournamentEl) {
+        new Chart(tournamentEl.getContext('2d'), {
             type: 'bar',
             data: {
                 labels: {!! json_encode($tournamentGrowth->pluck('month')) !!},
                 datasets: [{
-                    label: 'Tournaments Created',
+                    label: 'Tournaments created',
                     data: {!! json_encode($tournamentGrowth->pluck('count')) !!},
-                    backgroundColor: '#f59e0b',
-                    borderRadius: 4
+                    backgroundColor: '#fbbf24',
+                    hoverBackgroundColor: '#d97706',
+                    borderRadius: 8,
+                    borderSkipped: false,
+                    maxBarThickness: 32
                 }]
             },
-            options: baseOptions
+            options: common
         });
-    });
+    }
+});
 </script>
 @endpush
