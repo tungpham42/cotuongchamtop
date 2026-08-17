@@ -114,6 +114,7 @@ class TournamentController extends Controller
 
                 $room = Room::create([
                     'code' => md5(time() . uniqid() . $round . $i),
+                    'name' => 'TBD vs TBD', // Assigning a default name for rooms without players yet
                     'fen' => Room::INITIAL_FEN,
                     'tournament_id' => $tournament->id,
                     'tournament_round' => $round,
