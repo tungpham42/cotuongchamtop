@@ -28,7 +28,10 @@ class DeleteNonameRoomsCommand extends Command
      */
     public function handle()
     {
-        Room::where('name', '=', null)->orWhere('name', '=', '')->delete(); // Roomms have no name
+        Room::where('name', '=', null)
+            ->orWhere('name', '=', '')
+            ->whereNull('tournament_id')
+            ->delete(); // Roomms have no name
 
         $this->info('Rooms with no name have been deleted.');
     }
