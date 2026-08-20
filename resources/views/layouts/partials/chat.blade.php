@@ -55,7 +55,7 @@ $initialLog = is_file($room_path) ? file_get_contents($room_path) : '';
     flex-direction: column;
     width: 100%;
     max-width: 420px;
-    height: 550px;
+    height: 450px;
 
     /* Integrated Liquid Glass Enclosure */
     background: var(--glass-bg-dark);
