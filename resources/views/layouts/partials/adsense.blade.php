@@ -9,7 +9,7 @@
         data-ad-slot="7831723879"
         data-ad-format="auto"
         data-full-width-responsive="true"></ins>
-    <a class="w-100 hoc-link" href="https://blog.cotuong.top"><img title="{{ __("Cờ tướng") }}" alt="{{ __("Cờ tướng") }}" class="w-100 h-auto mx-auto d-block" src="{{ $cdnUrl }}/img/xiangqi-board.jpg" ></a>
+    <a class="w-100 hoc-link" href="https://www.facebook.com/groups/HoiChoiCoTuong"><img title="{{ __("Cờ tướng") }}" alt="{{ __("Cờ tướng") }}" class="w-100 h-auto mx-auto d-block" src="{{ $cdnUrl }}/img/xiangqi-board.jpg" ></a>
     <script>
     (adsbygoogle = window.adsbygoogle || []).push({});
     </script>

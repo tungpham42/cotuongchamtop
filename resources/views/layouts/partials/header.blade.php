@@ -49,7 +49,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </li>
 
           <li class="nav-item">
-            <a class="showPromotion" target="_blank" href="https://www.facebook.com/groups/HoiChoiCoTuong"><i class="far fa-user-friends"></i> {{ __("Nhóm Facebook") }}</a>
+            <a class="showPromotion" target="_blank" href="https://cotuong.top/blog"><i class="far fa-blog"></i> {{ __("Blog") }}</a>
           </li>
 
           @guest
