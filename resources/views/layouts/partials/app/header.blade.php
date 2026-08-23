@@ -65,7 +65,7 @@
           </li>
 
           <li class="nav-item">
-            <a class="showPromotion" target="_blank" href="https://cotuong.top/blog"><i class="far fa-blog"></i> {{ __("Blog") }}</a>
+            <a class="showPromotion" target="_blank" href="https://blog.cotuong.top"><i class="far fa-blog"></i> {{ __("Blog") }}</a>
           </li>
 
           @guest
