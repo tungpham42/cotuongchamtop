@@ -25,6 +25,98 @@
         border-color: #6366f1 !important;
         box-shadow: none !important;
     }
+
+    /*
+     * Style các thẻ HTML bên trong nội dung soạn thảo (.ck-content).
+     * Vì vùng soạn thảo là contenteditable nên trình duyệt áp dụng các
+     * quy tắc CSS này ngay lập tức (real time) mỗi khi người dùng gõ,
+     * dán nội dung, hoặc dùng toolbar để chèn heading/list/table/...
+     */
+    .wysiwyg-editor .ck-content {
+        line-height: 1.7;
+        color: #334155;
+    }
+    .wysiwyg-editor .ck-content h1,
+    .wysiwyg-editor .ck-content h2,
+    .wysiwyg-editor .ck-content h3,
+    .wysiwyg-editor .ck-content h4 {
+        font-weight: 700;
+        color: #1e293b;
+        line-height: 1.3;
+        margin-top: 1.25em;
+        margin-bottom: 0.5em;
+    }
+    .wysiwyg-editor .ck-content h1 { font-size: 1.75rem; }
+    .wysiwyg-editor .ck-content h2 { font-size: 1.5rem; }
+    .wysiwyg-editor .ck-content h3 { font-size: 1.25rem; }
+    .wysiwyg-editor .ck-content h4 { font-size: 1.1rem; }
+    .wysiwyg-editor .ck-content p {
+        margin-top: 0;
+        margin-bottom: 1em;
+    }
+    .wysiwyg-editor .ck-content a {
+        color: #6366f1;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+    }
+    .wysiwyg-editor .ck-content a:hover {
+        color: #4f46e5;
+    }
+    .wysiwyg-editor .ck-content strong { font-weight: 700; color: #1e293b; }
+    .wysiwyg-editor .ck-content em { font-style: italic; }
+    .wysiwyg-editor .ck-content ul,
+    .wysiwyg-editor .ck-content ol {
+        margin: 0 0 1em;
+        padding-left: 1.5em;
+    }
+    .wysiwyg-editor .ck-content ul { list-style: disc; }
+    .wysiwyg-editor .ck-content ol { list-style: decimal; }
+    .wysiwyg-editor .ck-content li { margin-bottom: 0.35em; }
+    .wysiwyg-editor .ck-content blockquote {
+        margin: 1em 0;
+        padding: 0.5em 1.25em;
+        border-left: 4px solid #6366f1;
+        background: #eef2ff;
+        color: #475569;
+        font-style: italic;
+        border-radius: 0.5rem;
+    }
+    .wysiwyg-editor .ck-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.75rem;
+        margin: 0.75em 0;
+    }
+    .wysiwyg-editor .ck-content figure.table {
+        margin: 1em 0;
+    }
+    .wysiwyg-editor .ck-content table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+    }
+    .wysiwyg-editor .ck-content table td,
+    .wysiwyg-editor .ck-content table th {
+        border: 1px solid #e2e8f0;
+        padding: 0.5em 0.75em;
+    }
+    .wysiwyg-editor .ck-content table th {
+        background: #f1f5f9;
+        font-weight: 700;
+        color: #1e293b;
+    }
+    .wysiwyg-editor .ck-content code {
+        background: #f1f5f9;
+        color: #db2777;
+        padding: 0.15em 0.4em;
+        border-radius: 0.35rem;
+        font-size: 0.875em;
+    }
+    .wysiwyg-editor .ck-content hr {
+        border: none;
+        border-top: 1px solid #e2e8f0;
+        margin: 1.5em 0;
+    }
 </style>
 @endpush
 
@@ -145,6 +237,14 @@
             })
             .then(function (editor) {
                 ckEditors[locale] = editor;
+
+                // Đồng bộ nội dung HTML sang textarea ẩn theo thời gian thực
+                // (mỗi khi nội dung trong CKEditor thay đổi), thay vì chỉ đồng bộ
+                // lúc submit form.
+                const hiddenInput = document.getElementById('content-input-' + locale);
+                editor.model.document.on('change:data', function () {
+                    hiddenInput.value = editor.getData();
+                });
             })
             .catch(function (error) {
                 console.error('CKEditor init error (' + locale + '):', error);
