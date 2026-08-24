@@ -2978,3 +2978,285 @@ table.dataTable.dtr-inline.collapsed
     color: #ffb74d;
     border-left: 4px solid #ff9800;
 }
+
+/* ==========================================================================
+   TIN TỨC / ARTICLES — LIQUID GLASS ROYAL EDITORIAL THEME
+   ========================================================================== */
+
+/* --- Hero / Search Banner --- */
+.article-hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--glass-bg-red), var(--glass-bg-dark) 70%);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-top: 2px solid rgba(255, 215, 0, 0.5);
+    border-radius: 18px;
+    padding: 2.25rem 2rem;
+    box-shadow: var(--liquid-shadow), inset 0 2px 15px var(--liquid-highlight);
+}
+
+.article-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(255, 215, 0, 0.15), transparent 55%);
+    pointer-events: none;
+}
+
+.article-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--royal-gold);
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+.article-hero-title {
+    margin: 0.35rem 0 0 !important;
+}
+
+.article-hero-subtitle {
+    font-family: "Plus Jakarta Sans", sans-serif !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    color: var(--royal-gold-light) !important;
+    opacity: 0.75;
+    -webkit-text-fill-color: initial;
+    text-shadow: none;
+    margin-bottom: 0;
+}
+
+/* --- Search Form --- */
+.article-search .form-control {
+    background: rgba(11, 12, 16, 0.55) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: var(--royal-gold-light) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    height: 100%;
+}
+
+.article-search .form-control::placeholder {
+    color: rgba(255, 242, 204, 0.45);
+}
+
+.article-search .form-control:focus {
+    border-color: var(--royal-gold) !important;
+    box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.25) !important;
+}
+
+/* --- Glossy Royal Buttons (generic, reused across article views) --- */
+.btn-royal {
+    background: linear-gradient(135deg, var(--royal-red), #5c0a0a) !important;
+    border: 1px solid var(--royal-gold) !important;
+    color: var(--royal-gold-light) !important;
+    box-shadow: var(--liquid-shadow), inset 0 2px 8px rgba(255, 215, 0, 0.15) !important;
+}
+
+.btn-royal:hover {
+    color: #fff !important;
+    background: linear-gradient(135deg, var(--royal-red-light), var(--royal-red)) !important;
+    box-shadow:
+        0 10px 20px rgba(0, 0, 0, 0.8),
+        0 0 15px rgba(212, 175, 55, 0.4),
+        inset 0 2px 10px rgba(255, 255, 255, 0.3) !important;
+}
+
+.btn-royal-outline {
+    background: var(--glass-bg-dark) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: var(--royal-gold-light) !important;
+    box-shadow: var(--liquid-shadow), inset 0 2px 5px var(--liquid-highlight) !important;
+}
+
+.btn-royal-outline:hover {
+    color: var(--royal-gold) !important;
+    border-color: var(--royal-gold) !important;
+    background: rgba(37, 42, 54, 0.6) !important;
+    box-shadow:
+        0 10px 20px rgba(0, 0, 0, 0.8),
+        0 0 15px rgba(212, 175, 55, 0.3),
+        inset 0 2px 10px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* --- Article Grid Card --- */
+.article-card {
+    background: var(--glass-bg-dark) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--liquid-shadow), inset 0 2px 15px var(--liquid-highlight) !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.article-card:hover {
+    transform: translateY(-6px) scale(1.015);
+    border-color: rgba(212, 175, 55, 0.6) !important;
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.9),
+        0 0 25px rgba(212, 175, 55, 0.3),
+        inset 0 4px 20px var(--liquid-highlight) !important;
+}
+
+.article-card-band {
+    height: 5px;
+    background: linear-gradient(90deg, var(--royal-red), var(--royal-gold), var(--royal-red));
+    background-size: 200% 100%;
+    animation: gradientBG 6s ease infinite;
+}
+
+.article-card-title {
+    font-size: 1.05rem !important;
+    line-height: 1.4;
+}
+
+.article-card-title a {
+    color: var(--royal-gold-light) !important;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.article-card-title a:hover {
+    color: var(--royal-gold) !important;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+}
+
+.article-card-excerpt {
+    font-family: "Plus Jakarta Sans", sans-serif !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    color: rgba(255, 242, 204, 0.6) !important;
+    text-shadow: none;
+    font-size: 0.9rem;
+}
+
+.article-card-footer {
+    background: linear-gradient(90deg, transparent, var(--glass-bg-red), transparent) !important;
+    border-top: 1px solid rgba(255, 215, 0, 0.2) !important;
+    backdrop-filter: blur(8px);
+}
+
+.article-meta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255, 215, 0, 0.08);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--royal-gold-light);
+}
+
+/* --- Empty State --- */
+.article-empty {
+    background: var(--glass-bg-dark) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px dashed var(--glass-border) !important;
+    border-radius: 16px;
+    color: var(--royal-gold-light) !important;
+}
+
+.article-empty svg {
+    color: var(--royal-gold) !important;
+    opacity: 0.6;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
+}
+
+/* --- Article Detail --- */
+.article-detail-card {
+    background: var(--glass-bg-dark) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border) !important;
+    border-top: 2px solid rgba(255, 215, 0, 0.5) !important;
+    border-radius: 18px;
+    box-shadow: var(--liquid-shadow), inset 0 2px 20px var(--liquid-highlight) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.article-detail-title {
+    line-height: 1.35;
+}
+
+.article-detail-meta {
+    border-bottom: 1px solid rgba(255, 215, 0, 0.15) !important;
+}
+
+/* Long-form content injected via {!! $article->content !!} */
+.article-body {
+    color: rgba(255, 242, 204, 0.85);
+}
+
+.article-body :is(h1, h2, h3, h4, h5, h6) {
+    letter-spacing: 0.5px;
+    margin-top: 1.75rem;
+}
+
+.article-body p {
+    color: rgba(255, 242, 204, 0.85);
+    margin-bottom: 1.1rem;
+}
+
+.article-body a {
+    color: var(--royal-gold);
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 3px;
+}
+
+.article-body a:hover {
+    color: #fff;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
+}
+
+.article-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--liquid-shadow);
+    margin: 1rem 0;
+}
+
+.article-body blockquote {
+    border-left: 4px solid var(--royal-gold);
+    background: rgba(255, 215, 0, 0.05);
+    padding: 1rem 1.5rem;
+    border-radius: 0 8px 8px 0;
+    color: var(--royal-gold-light);
+    font-style: italic;
+}
+
+.article-body ul,
+.article-body ol {
+    color: rgba(255, 242, 204, 0.85);
+    padding-left: 1.5rem;
+}
+
+.article-body hr {
+    border-color: rgba(255, 215, 0, 0.2);
+    margin: 2rem 0;
+}
+
+.article-body table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.article-body table th,
+.article-body table td {
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    padding: 0.5rem 0.75rem;
+}
