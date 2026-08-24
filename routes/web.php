@@ -130,10 +130,14 @@ Route::get('/test-engine', function() {
     echo "<pre>" . $e->getTraceAsString() . "</pre>";
   }
 });
+Route::get('/sitemap_index.xml', [SitemapController::class, 'sitemapIndex'])->name('sitemap.sitemapIndex');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.index');
 Route::get('/sitemap-puzzles-{locale}.xml', [SitemapController::class, 'puzzles'])
     ->whereIn('locale', ['vi', 'en', 'ja', 'ko', 'zh'])
     ->name('sitemap.puzzles');
+Route::get('/sitemap-articles-{locale}.xml', [SitemapController::class, 'articles'])
+    ->whereIn('locale', ['vi', 'en', 'ja', 'ko', 'zh'])
+    ->name('sitemap.articles');
 
 // Custom route to bypass Laravel's strict auth requirement
 Route::post('/custom/broadcasting/auth', [BroadcastAuthController::class, 'authenticate']);
