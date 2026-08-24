@@ -3,20 +3,27 @@
 @section('title', 'Chỉnh sửa Bài Viết #' . $article->id)
 
 @push('styles')
-<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
 <style>
-    .quill-editor .ql-container {
+    .wysiwyg-editor .ck-editor__editable_inline {
         min-height: 220px;
         font-size: 0.875rem;
+        padding: 0 1rem;
     }
-    .quill-editor .ql-toolbar {
-        border-top-left-radius: 0.75rem;
-        border-top-right-radius: 0.75rem;
-        background: #f8fafc;
+    .wysiwyg-editor .ck.ck-toolbar {
+        border-top-left-radius: 0.75rem !important;
+        border-top-right-radius: 0.75rem !important;
+        background: #f8fafc !important;
+        border-color: #e2e8f0 !important;
     }
-    .quill-editor .ql-container {
-        border-bottom-left-radius: 0.75rem;
-        border-bottom-right-radius: 0.75rem;
+    .wysiwyg-editor .ck.ck-editor__main > .ck-editor__editable {
+        border-bottom-left-radius: 0.75rem !important;
+        border-bottom-right-radius: 0.75rem !important;
+        border-color: #e2e8f0 !important;
+        background: #f8fafc !important;
+    }
+    .wysiwyg-editor .ck.ck-editor__main > .ck-editor__editable.ck-focused {
+        border-color: #6366f1 !important;
+        box-shadow: none !important;
     }
 </style>
 @endpush
@@ -96,7 +103,7 @@
 
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-2">Nội dung ({{ strtoupper($code) }})</label>
-                            <div id="editor-{{ $code }}" class="quill-editor border border-slate-200 bg-slate-50">{!! old("translations.$code.content", $trans->content ?? '') !!}</div>
+                            <div id="editor-{{ $code }}" class="wysiwyg-editor">{!! old("translations.$code.content", $trans->content ?? '') !!}</div>
                             <textarea id="content-input-{{ $code }}" name="translations[{{ $code }}][content]" class="hidden">{{ old("translations.$code.content", $trans->content ?? '') }}</textarea>
                         </div>
 
@@ -118,33 +125,51 @@
 @endsection
 
 @push('scripts')
-<script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
+<script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
 <script>
-    // Khởi tạo trình soạn thảo WYSIWYG (Quill) cho từng ngôn ngữ
-    const quillEditors = {};
-    const quillToolbarOptions = [
-        [{ header: [1, 2, 3, false] }],
-        ['bold', 'italic', 'underline', 'strike'],
-        [{ color: [] }, { background: [] }],
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        [{ align: [] }],
-        ['blockquote', 'code-block'],
-        ['link', 'image'],
-        ['clean']
-    ];
+    // Khởi tạo trình soạn thảo WYSIWYG (CKEditor 5) cho từng ngôn ngữ
+    const ckEditors = {};
+    const ckReady = [];
 
-    document.querySelectorAll('.quill-editor').forEach(function (el) {
+    document.querySelectorAll('.wysiwyg-editor').forEach(function (el) {
         const locale = el.id.replace('editor-', '');
-        quillEditors[locale] = new Quill('#' + el.id, {
-            theme: 'snow',
-            modules: { toolbar: quillToolbarOptions }
-        });
+        const initPromise = ClassicEditor
+            .create(el, {
+                toolbar: [
+                    'heading', '|',
+                    'bold', 'italic', 'link', '|',
+                    'bulletedList', 'numberedList', '|',
+                    'outdent', 'indent', '|',
+                    'blockQuote', 'insertTable', 'mediaEmbed', '|',
+                    'undo', 'redo'
+                ]
+            })
+            .then(function (editor) {
+                ckEditors[locale] = editor;
+            })
+            .catch(function (error) {
+                console.error('CKEditor init error (' + locale + '):', error);
+            });
+        ckReady.push(initPromise);
     });
 
-    // Trước khi submit, đồng bộ nội dung HTML từ Quill vào textarea ẩn
-    document.querySelector('form').addEventListener('submit', function () {
-        Object.keys(quillEditors).forEach(function (locale) {
-            document.getElementById('content-input-' + locale).value = quillEditors[locale].root.innerHTML;
+    // Trước khi submit, đồng bộ nội dung HTML từ CKEditor vào textarea ẩn.
+    // Chặn submit mặc định cho tới khi mọi editor đã khởi tạo xong, để
+    // tránh trường hợp người dùng bấm Cập nhật quá nhanh trước khi CKEditor sẵn sàng.
+    const articleForm = document.querySelector('form');
+    articleForm.addEventListener('submit', function (e) {
+        if (ckReady.length && Object.keys(ckEditors).length < ckReady.length) {
+            e.preventDefault();
+            Promise.all(ckReady).then(function () {
+                Object.keys(ckEditors).forEach(function (locale) {
+                    document.getElementById('content-input-' + locale).value = ckEditors[locale].getData();
+                });
+                articleForm.submit();
+            });
+            return;
+        }
+        Object.keys(ckEditors).forEach(function (locale) {
+            document.getElementById('content-input-' + locale).value = ckEditors[locale].getData();
         });
     });
 
