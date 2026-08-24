@@ -1,6 +1,6 @@
 @extends('layouts.mainlayout')
 
-@section('og_image', asset('img/news.jpg'))
+@section('og_image', $article->featured_image_url ?? asset('img/news.jpg'))
 
 @section('aboveContent')
 <div class="container my-5">
@@ -15,6 +15,12 @@
                         </svg>
                         {{ __('Tin tức') }}
                     </span>
+
+                    <!-- Ảnh đại diện -->
+                    @if($article->featured_image)
+                        <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}"
+                             class="w-100 rounded-4 mb-4" style="aspect-ratio: 1200 / 630; object-fit: cover;">
+                    @endif
 
                     <!-- Tiêu đề bài viết -->
                     <h1 class="article-detail-title fw-bold mb-3">{{ $article->title }}</h1>

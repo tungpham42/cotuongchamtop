@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class AdminArticleController extends Controller
@@ -44,11 +45,19 @@ class AdminArticleController extends Controller
 
         DB::beginTransaction();
         try {
+            // Ảnh đại diện là optional, lưu trên disk 'public' (chạy
+            // `php artisan storage:link` nếu chưa link). Path tương đối được
+            // lưu vào DB, URL đầy đủ build qua Article::featured_image_url.
+            $featuredImagePath = $request->hasFile('featured_image')
+                ? $request->file('featured_image')->store('articles', 'public')
+                : null;
+
             // 1. Tạo bài viết gốc
             $article = Article::create([
                 'author_id' => auth()->id(),
                 'status' => $request->status,
                 'views' => 0,
+                'featured_image' => $featuredImagePath,
             ]);
 
             // 2. Lưu các bản dịch
@@ -94,9 +103,24 @@ class AdminArticleController extends Controller
         DB::beginTransaction();
         try {
             // 1. Cập nhật bảng chính
-            $article->update([
-                'status' => $request->status,
-            ]);
+            $mainData = ['status' => $request->status];
+
+            if ($request->hasFile('featured_image')) {
+                // Có ảnh mới upload: xoá ảnh cũ trước để không rác storage,
+                // rồi lưu ảnh mới.
+                if ($article->featured_image) {
+                    Storage::disk('public')->delete($article->featured_image);
+                }
+                $mainData['featured_image'] = $request->file('featured_image')->store('articles', 'public');
+            } elseif ($request->boolean('remove_featured_image')) {
+                // Không upload ảnh mới, nhưng người dùng tick "Xoá ảnh hiện tại"
+                if ($article->featured_image) {
+                    Storage::disk('public')->delete($article->featured_image);
+                }
+                $mainData['featured_image'] = null;
+            }
+
+            $article->update($mainData);
 
             // 2. Cập nhật hoặc tạo mới bản dịch (updateOrCreate)
             foreach ($request->translations as $locale => $data) {
@@ -128,6 +152,12 @@ class AdminArticleController extends Controller
      */
     public function destroy(Article $article)
     {
+        // Xoá file ảnh đại diện khỏi storage trước, vì xoá record DB không
+        // tự động dọn file vật lý.
+        if ($article->featured_image) {
+            Storage::disk('public')->delete($article->featured_image);
+        }
+
         // CascadeOnDelete trong migration sẽ tự động xoá dữ liệu bảng article_translations
         $article->delete();
 
@@ -146,6 +176,10 @@ class AdminArticleController extends Controller
             'status' => 'required|in:published,draft',
             'translations' => 'required|array',
             "translations.{$this->defaultLocale}.title" => 'required|string|max:255',
+            // Ratio 1200/630 chấp nhận mọi kích thước cùng tỉ lệ (vd 1200x630,
+            // 2400x1260...), không bắt buộc đúng pixel để không quá khắt khe
+            // với ảnh người dùng upload.
+            'featured_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:4096|dimensions:ratio=1200/630',
         ];
     }
 
@@ -154,6 +188,9 @@ class AdminArticleController extends Controller
         return [
             "translations.{$this->defaultLocale}.title.required" =>
                 'Tiêu đề ngôn ngữ mặc định (' . strtoupper($this->defaultLocale) . ') là bắt buộc.',
+            'featured_image.dimensions' => 'Ảnh đại diện phải có tỉ lệ 1200x630 (vd: 1200x630, 1600x840...).',
+            'featured_image.image' => 'File tải lên phải là hình ảnh.',
+            'featured_image.max' => 'Ảnh đại diện không được vượt quá 4MB.',
         ];
     }
 

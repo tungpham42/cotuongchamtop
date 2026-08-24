@@ -137,7 +137,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.articles.store') }}" method="POST">
+    <form action="{{ route('admin.articles.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <!-- Card: Thông tin chung -->
@@ -150,6 +150,20 @@
                         <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Xuất bản (Published)</option>
                         <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Bản nháp (Draft)</option>
                     </select>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">
+                        Ảnh đại diện
+                        <span class="text-slate-400 font-normal ml-1">- Tỉ lệ 1200x630 (chuẩn ảnh chia sẻ mạng xã hội)</span>
+                    </label>
+                    <input type="file" name="featured_image" id="featured_image" accept="image/png,image/jpeg,image/webp"
+                           class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-3 file:py-1.5 file:text-indigo-600 file:font-semibold focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition">
+                    @error('featured_image')
+                        <p class="text-xs text-rose-500 mt-1.5">{{ $message }}</p>
+                    @enderror
+                    <img id="featured_image_preview" src="" alt="Xem trước ảnh đại diện"
+                         class="hidden mt-3 rounded-xl border border-slate-200 w-full max-w-sm object-cover"
+                         style="aspect-ratio: 1200 / 630;">
                 </div>
             </div>
         </div>
@@ -268,6 +282,23 @@
         Object.keys(ckEditors).forEach(function (locale) {
             document.getElementById('content-input-' + locale).value = ckEditors[locale].getData();
         });
+    });
+
+    // Xem trước ảnh đại diện ngay khi người dùng chọn file, trước khi submit
+    const featuredImageInput = document.getElementById('featured_image');
+    const featuredImagePreview = document.getElementById('featured_image_preview');
+    featuredImageInput.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (!file) {
+            featuredImagePreview.classList.add('hidden');
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+            featuredImagePreview.src = ev.target.result;
+            featuredImagePreview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
     });
 
     function switchTab(locale) {
