@@ -38,7 +38,7 @@
     <!-- Lưới bài viết -->
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @forelse($articles as $article)
-            <div class="col">
+            <div class="col mb-4">
                 <div class="card article-card h-100 border-0">
                     <div class="article-card-band"></div>
                     <div class="card-body d-flex flex-column">
