@@ -130,6 +130,15 @@
                         </span>
                         Tournaments
                     </a>
+
+                    <a href="{{ route('admin.articles.index') }}"
+                       class="group flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition
+                       {{ request()->routeIs('admin.articles.*') ? 'bg-white/10 text-white nav-active' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                        <span class="w-8 h-8 rounded-lg flex items-center justify-center {{ request()->routeIs('admin.articles.*') ? 'bg-rose-500/20 text-rose-200' : 'bg-white/5 text-slate-400 group-hover:text-white' }}">
+                            <i class="fa-solid fa-newspaper text-sm"></i>
+                        </span>
+                        Articles
+                    </a>
                 </nav>
             </div>
 

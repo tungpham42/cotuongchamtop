@@ -20,6 +20,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminPuzzleController;
 use App\Http\Controllers\AdminRoomController;
+use App\Http\Controllers\AdminArticleController;
 use App\Http\Controllers\AdminTournamentController;
 use App\Http\Controllers\AdminTournamentParticipantController;
 use App\Actions\Room\GetRandomRoomAction;
@@ -56,6 +57,7 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->name('admin.')->gr
     Route::resource('puzzles', AdminPuzzleController::class);
     Route::resource('rooms', AdminRoomController::class);
     Route::resource('tournaments', AdminTournamentController::class);
+    Route::resource('articles', AdminArticleController::class);
     Route::get('tournaments/{tournament}/participants', [AdminTournamentParticipantController::class, 'index'])->name('tournaments.participants.index');
     Route::post('tournaments/{tournament}/participants', [AdminTournamentParticipantController::class, 'store'])->name('tournaments.participants.store');
     Route::delete('tournaments/{tournament}/participants/{user}', [AdminTournamentParticipantController::class, 'destroy'])->name('tournaments.participants.destroy');

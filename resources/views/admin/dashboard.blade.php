@@ -122,6 +122,17 @@
                 <div class="mt-4 text-sm font-extrabold text-slate-900">Puzzle library</div>
                 <div class="mt-1 text-xs leading-5 text-slate-500">Keep tactics and learning content fresh.</div>
             </a>
+
+            <a href="{{ route('admin.articles.index') }}" class="group rounded-2xl border border-slate-200 bg-white p-5 shadow-soft transition hover:-translate-y-1 hover:border-rose-200 hover:shadow-lift">
+                <div class="flex items-start justify-between">
+                    <span class="h-11 w-11 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                        <i class="fa-solid fa-newspaper"></i>
+                    </span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-slate-300 group-hover:text-rose-500"></i>
+                </div>
+                <div class="mt-4 text-sm font-extrabold text-slate-900">Manage articles</div>
+                <div class="mt-1 text-xs leading-5 text-slate-500">Publish and translate site content.</div>
+            </a>
         </div>
     </section>
 
@@ -209,6 +220,23 @@
                 </div>
                 <div class="mt-4 text-3xl font-extrabold tracking-tight text-slate-900">{{ number_format($stats['total_puzzles']) }}</div>
                 <div class="mt-2 text-xs text-slate-400">{{ number_format($stats['new_puzzles_month']) }} added this month</div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wide text-slate-400">Articles</span>
+                    <span class="h-10 w-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center"><i class="fa-solid fa-newspaper"></i></span>
+                </div>
+                <div class="mt-4 flex items-end justify-between gap-3">
+                    <div>
+                        <div class="text-3xl font-extrabold tracking-tight text-slate-900">{{ number_format($stats['total_articles']) }}</div>
+                        <div class="mt-2 text-xs text-slate-400">{{ number_format($stats['new_articles_month']) }} added this month</div>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <div class="text-[11px] font-extrabold text-emerald-700">{{ number_format($stats['published_articles']) }} live</div>
+                        <div class="text-[11px] font-extrabold text-slate-400">{{ number_format($stats['draft_articles']) }} draft</div>
+                    </div>
+                </div>
             </div>
 
             <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
@@ -405,6 +433,53 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- Content --}}
+    <section>
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <div class="text-[11px] font-extrabold uppercase tracking-[.18em] text-slate-400">Content</div>
+                <h3 class="mt-1 text-lg font-extrabold text-slate-900">Latest articles</h3>
+            </div>
+            <a href="{{ route('admin.articles.index') }}" class="text-xs font-extrabold text-indigo-600 hover:text-indigo-800">View all <i class="fa-solid fa-arrow-right ml-1"></i></a>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white shadow-soft overflow-hidden">
+            <div class="divide-y divide-slate-100">
+                @forelse($recentArticles as $article)
+                    <div class="px-5 py-3.5 flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600 shrink-0">
+                            <i class="fa-solid fa-newspaper text-sm"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-bold text-slate-800 truncate">{{ $article->title ?? '(No translation yet)' }}</span>
+                                @if($article->status == 'published')
+                                    <span class="rounded-full px-2 py-0.5 text-[10px] font-extrabold bg-emerald-50 text-emerald-700 shrink-0">Published</span>
+                                @else
+                                    <span class="rounded-full px-2 py-0.5 text-[10px] font-extrabold bg-slate-100 text-slate-600 shrink-0">Draft</span>
+                                @endif
+                            </div>
+                            <div class="text-xs text-slate-400 mt-1">{{ number_format($article->views) }} views</div>
+                        </div>
+                        <div class="flex items-center gap-3 shrink-0">
+                            <div class="text-[10px] font-semibold text-slate-400">{{ $article->created_at->diffForHumans() }}</div>
+                            <a href="{{ route('admin.articles.edit', $article->id) }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">Edit</a>
+                        </div>
+                    </div>
+                @empty
+                    <div class="px-5 py-10 text-center">
+                        <div class="mx-auto h-12 w-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                            <i class="fa-solid fa-newspaper"></i>
+                        </div>
+                        <div class="mt-3 text-sm font-bold text-slate-800">No articles yet</div>
+                        <div class="mt-1 text-xs text-slate-400">Create your first article to see it here.</div>
+                        <a href="{{ route('admin.articles.create') }}" class="mt-3 inline-block text-xs font-extrabold text-indigo-600 hover:text-indigo-800">Add article <i class="fa-solid fa-arrow-right ml-1"></i></a>
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>
