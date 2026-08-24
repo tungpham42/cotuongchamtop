@@ -248,6 +248,31 @@ foreach ($localizedTournamentPages as $pageKey => $page) {
     }
 }
 
+// ==========================================
+// ARTICLE ROUTES (Unified Localized Setup)
+// ==========================================
+// URL segments per locale live in config/locales.php -> 'paths' ('article.index',
+// 'article.show'), the same place every other localized_path() key is defined —
+// LocalizedUrlService::path() throws if a key isn't registered there, so both
+// keys must exist in that config for this loop to work.
+//
+// ArticleController@index / @show already build their own view data via
+// localized_page_data(), so — unlike the tournaments block above — these
+// routes don't need a 'titles' map or ->defaults('headTitle', ...); the
+// controller is the single source of truth for that.
+foreach (config('locales.supported', []) as $locale) {
+
+    $isDefaultLocale = $locale === config('locales.default', 'vi');
+
+    Route::get(localized_path('article.index', [], $locale), [ArticleController::class, 'index'])
+        ->middleware("locale:{$locale}")
+        ->name($isDefaultLocale ? 'article.index' : "{$locale}.article.index");
+
+    Route::get(localized_path('article.show', ['slug' => '{slug}'], $locale), [ArticleController::class, 'show'])
+        ->middleware("locale:{$locale}")
+        ->name($isDefaultLocale ? 'article.show' : "{$locale}.article.show");
+}
+
 Route::post('/startTimer/{roomCode}/{player}', [RoomController::class, 'startTimer']);
 Route::post('/switchTurn/{roomCode}', [RoomController::class, 'switchTurn']);
 Route::get('/getTime/{roomCode}', [RoomController::class, 'getTime']);

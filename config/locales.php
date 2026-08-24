@@ -120,5 +120,8 @@ return [
         'change.ui'              => ['vi' => 'doi-giao-dien', 'en' => 'change-ui', 'ja' => 'ui-henko', 'ko' => 'ui-byeongyeong', 'zh' => 'genggai-ui'],
         'profile.picture.upload' => ['vi' => 'doi-anh-dai-dien', 'en' => 'upload-profile-picture', 'ja' => 'purofiru-gazo-appurodo', 'ko' => 'peulopil-sajin-eoblodeu', 'zh' => 'shangchuan-touxiang'],
         'profile.picture.remove' => ['vi' => 'xoa-anh-dai-dien', 'en' => 'remove-profile-picture', 'ja' => 'purofiru-gazo-sakujo', 'ko' => 'peulopil-sajin-sakje', 'zh' => 'shanchu-touxiang'],
+
+        'article.index' => ['vi' => 'bai-viet', 'en' => 'articles', 'ja' => 'kiji', 'ko' => 'gisa', 'zh' => 'wenzhang'],
+        'article.show'  => ['vi' => 'bai-viet/{slug}', 'en' => 'articles/{slug}', 'ja' => 'kiji/{slug}', 'ko' => 'gisa/{slug}', 'zh' => 'wenzhang/{slug}'],
     ],
 ];
