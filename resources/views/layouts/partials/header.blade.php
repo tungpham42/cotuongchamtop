@@ -49,6 +49,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </li>
 
           <li class="nav-item">
+            <a class="showPromotion" href="{{ localized_url('article.index') }}"><i class="far fa-newspaper"></i> {{ __("Tin tức") }}</a>
+          </li>
+          <li class="nav-item">
             <a class="showPromotion" target="_blank" href="https://blog.cotuong.top"><i class="far fa-blog"></i> {{ __("Blog") }}</a>
           </li>
 
