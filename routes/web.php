@@ -14,6 +14,7 @@ use App\Http\Controllers\PuzzleController;
 use App\Http\Controllers\TimerController;
 use App\Http\Controllers\PayOSController;
 use App\Http\Controllers\TournamentController;
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\BroadcastAuthController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\AdminController;
