@@ -72,6 +72,45 @@ class LocalizedUrlService
         return $urls;
     }
 
+    /**
+     * Same as alternatePaths(), but lets each locale supply its own route
+     * parameters instead of reusing one shared set.
+     *
+     * This matters whenever a route parameter is itself translated — e.g. an
+     * article slug that differs per ArticleTranslation. Reusing the current
+     * locale's slug for every other locale (as alternatePaths() does) would
+     * build a link that 404s or points at the wrong record.
+     *
+     * @param array<string, array<string, mixed>> $parametersByLocale Route
+     *        parameters keyed by locale. A locale missing from this array
+     *        falls back to the default locale's parameters.
+     */
+    public function alternatePathsForLocales(string $key, array $parametersByLocale): array
+    {
+        $paths = [];
+
+        foreach ($this->supportedLocales() as $locale) {
+            $parameters = $parametersByLocale[$locale]
+                ?? $parametersByLocale[$this->defaultLocale()]
+                ?? [];
+
+            $paths[$locale] = $this->path($key, $parameters, $locale);
+        }
+
+        return $paths;
+    }
+
+    public function alternateUrlsForLocales(string $key, array $parametersByLocale): array
+    {
+        $urls = [];
+
+        foreach ($this->alternatePathsForLocales($key, $parametersByLocale) as $locale => $path) {
+            $urls[$locale] = url($path);
+        }
+
+        return $urls;
+    }
+
     public function detectLocaleFromPath(string $path): string
     {
         $firstSegment = Str::of($path)->trim('/')->explode('/')->first();

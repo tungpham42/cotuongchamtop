@@ -25,9 +25,25 @@ if (!function_exists('localized_alternate_paths')) {
 }
 
 if (!function_exists('localized_page_data')) {
-    function localized_page_data(string $key, string $locale, array $data = [], array $parameters = []): array
+    /**
+     * @param array $parameters Shared route parameters used for every locale.
+     *        Fine for keys whose parameters don't change per locale (e.g. an id).
+     * @param array $parametersByLocale Optional. Route parameters keyed by
+     *        locale, for keys where a parameter is itself translated (e.g. an
+     *        article slug, which differs per ArticleTranslation). When given,
+     *        this takes precedence over $parameters.
+     */
+    function localized_page_data(string $key, string $locale, array $data = [], array $parameters = [], array $parametersByLocale = []): array
     {
-        $paths = localized_alternate_paths($key, $parameters);
+        $service = app(LocalizedUrlService::class);
+
+        if (!empty($parametersByLocale)) {
+            $paths = $service->alternatePathsForLocales($key, $parametersByLocale);
+            $alternateUrls = $service->alternateUrlsForLocales($key, $parametersByLocale);
+        } else {
+            $paths = $service->alternatePaths($key, $parameters);
+            $alternateUrls = $service->alternateUrls($key, $parameters);
+        }
 
         return array_merge([
             'locale' => $locale,
@@ -37,7 +53,7 @@ if (!function_exists('localized_page_data')) {
             'langKoUrl' => $paths['ko'] ?? '/ko',
             'langZhUrl' => $paths['zh'] ?? '/zh',
             'canonicalUrl' => $paths[$locale] ?? ($paths[config('locales.default', 'vi')] ?? '/'),
-            'alternateUrls' => app(LocalizedUrlService::class)->alternateUrls($key, $parameters),
+            'alternateUrls' => $alternateUrls,
         ], $data);
     }
 }

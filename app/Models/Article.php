@@ -16,4 +16,17 @@ class Article extends Model
 
     // Eager load mặc định để tránh lỗi N+1 query khi lặp danh sách
     protected $with = ['translation'];
+
+    /**
+     * Map of locale => slug, built from the (plural) `translations` relation.
+     *
+     * Note this is a *different* relation from the default-eager-loaded
+     * `translation` (singular, current-locale) above — callers must
+     * `->with('translations')` explicitly before using this, otherwise it
+     * triggers an N+1 query per call.
+     */
+    public function slugsByLocale(): array
+    {
+        return $this->translations->pluck('slug', 'locale')->toArray();
+    }
 }

@@ -57,6 +57,7 @@ class ArticleController extends Controller
     {
         $locale = app()->getLocale();
         $defaultLocale = config('locales.default', 'vi');
+        $supportedLocales = config('locales.supported', [$defaultLocale]);
 
         // 'slug' không nằm trên bảng articles mà nằm trên article_translations,
         // nên phải tìm qua quan hệ translations() thay vì where('slug', ...) trực tiếp
@@ -67,10 +68,25 @@ class ArticleController extends Controller
                 $q->whereIn('locale', array_unique([$locale, $defaultLocale]))
                   ->where('slug', $slug);
             })
+            // Cần load toàn bộ bản dịch (không chỉ bản dịch của locale hiện tại)
+            // để build link chuyển ngôn ngữ / hreflang trỏ đúng slug của từng locale.
+            ->with('translations')
             ->firstOrFail();
 
         // Tăng lượt view (Nếu site traffic lớn, cân nhắc chuyển đoạn này vào Queue/Job để tránh lock DB)
         $article->increment('views');
+
+        // Mỗi locale có slug riêng (ArticleTranslation::slug). Build map slug
+        // theo từng locale để link đổi ngôn ngữ / thẻ hreflang trỏ đúng bài viết
+        // ở locale đó, thay vì dùng lại slug của locale hiện tại (dễ vỡ 404 vì
+        // slug đó chưa chắc tồn tại ở locale khác).
+        $slugsByLocale = $article->slugsByLocale();
+        $parametersByLocale = [];
+        foreach ($supportedLocales as $loc) {
+            $parametersByLocale[$loc] = [
+                'slug' => $slugsByLocale[$loc] ?? $slugsByLocale[$defaultLocale] ?? $slug,
+            ];
+        }
 
         $data = [
             'headTitle' => $article->title ?? __('Chi tiết bài viết'),
@@ -83,6 +99,12 @@ class ArticleController extends Controller
             'cdnUrl' => url(''),
         ];
 
-        return view('articles.show', localized_page_data('article.show', $locale, $data, ['slug' => $slug]));
+        return view('articles.show', localized_page_data(
+            'article.show',
+            $locale,
+            $data,
+            [],
+            $parametersByLocale
+        ));
     }
 }
