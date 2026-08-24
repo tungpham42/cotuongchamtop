@@ -1,5 +1,7 @@
 @extends('layouts.mainlayout')
 
+@section('og_image', asset('img/news.jpg'))
+
 @section('aboveContent')
 <div class="container my-5">
     <div class="row justify-content-center">
