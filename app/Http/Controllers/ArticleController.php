@@ -32,7 +32,7 @@ class ArticleController extends Controller
                 });
             })
             ->latest('created_at')
-            ->paginate(12)
+            ->paginate(6)
             ->withQueryString(); // Giữ lại query string khi chuyển trang
 
         $data = [
