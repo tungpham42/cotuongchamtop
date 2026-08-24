@@ -2,7 +2,6 @@
 
 @section('title', 'Thêm Bài Viết Mới')
 
-@push('styles')
 <style>
     .wysiwyg-editor .ck-editor__editable_inline {
         min-height: 180px;
@@ -118,7 +117,6 @@
         margin: 1.5em 0;
     }
 </style>
-@endpush
 
 @section('content')
 <div class="fade-up max-w-5xl mx-auto">
