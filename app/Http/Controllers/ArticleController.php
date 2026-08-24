@@ -16,12 +16,20 @@ class ArticleController extends Controller
     {
         $locale = app()->getLocale();
         $search = $request->input('query');
+        $defaultLocale = config('locales.default', 'vi');
 
         // Query danh sách bài viết
         $articles = Article::query()
             // ->where('status', 'published') // Bỏ comment nếu bảng articles của bạn có cột status
-            ->when($search, function ($query, $search) {
-                $query->where('title', 'like', "%{$search}%");
+            ->when($search, function ($query) use ($search, $locale, $defaultLocale) {
+                // 'title' không nằm trên bảng articles mà nằm trên article_translations,
+                // nên phải tìm qua quan hệ translations() thay vì where('title', ...) trực tiếp.
+                // Tìm ở locale hiện tại HOẶC locale mặc định để không bỏ sót bài viết
+                // chưa có bản dịch cho ngôn ngữ đang xem.
+                $query->whereHas('translations', function ($q) use ($search, $locale, $defaultLocale) {
+                    $q->whereIn('locale', array_unique([$locale, $defaultLocale]))
+                      ->where('title', 'like', "%{$search}%");
+                });
             })
             ->latest('created_at')
             ->paginate(12)
@@ -48,11 +56,17 @@ class ArticleController extends Controller
     public function show(string $slug): View
     {
         $locale = app()->getLocale();
+        $defaultLocale = config('locales.default', 'vi');
 
-        // Lấy bài viết, throw 404 nếu không tìm thấy
+        // 'slug' không nằm trên bảng articles mà nằm trên article_translations,
+        // nên phải tìm qua quan hệ translations() thay vì where('slug', ...) trực tiếp
+        // (cách cũ sẽ vỡ vì cột 'slug' không tồn tại trên bảng articles).
         $article = Article::query()
-            ->where('slug', $slug)
             // ->where('status', 'published')
+            ->whereHas('translations', function ($q) use ($slug, $locale, $defaultLocale) {
+                $q->whereIn('locale', array_unique([$locale, $defaultLocale]))
+                  ->where('slug', $slug);
+            })
             ->firstOrFail();
 
         // Tăng lượt view (Nếu site traffic lớn, cân nhắc chuyển đoạn này vào Queue/Job để tránh lock DB)

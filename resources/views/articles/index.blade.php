@@ -73,7 +73,7 @@
 
     <!-- Phân trang -->
     <div class="d-flex justify-content-center mt-5">
-        {{ $articles->links('vendor.pagination.articleVi') }}
+        {{ $articles->links('vendor.pagination.vi') }}
     </div>
 </div>
 @endsection
