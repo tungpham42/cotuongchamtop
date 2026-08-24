@@ -5,7 +5,7 @@
 @push('styles')
 <style>
     .wysiwyg-editor .ck-editor__editable_inline {
-        min-height: 220px;
+        min-height: 180px;
         font-size: 0.875rem;
         padding: 0 1rem;
     }
@@ -65,8 +65,8 @@
         </div>
 
         <!-- Card: Bản dịch đa ngôn ngữ -->
-        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden mb-8">
-            <div class="border-b border-slate-200/80 px-2 pt-2 bg-slate-50/50 flex overflow-x-auto" id="langTabs">
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm mb-8">
+            <div class="border-b border-slate-200/80 rounded-t-2xl px-2 pt-2 bg-slate-50/50 flex overflow-x-auto" id="langTabs">
                 @foreach($locales as $index => $code)
                     <button type="button"
                             onclick="switchTab('{{ $code }}')"
