@@ -785,5 +785,11 @@
     "Đang tìm phòng gần nhất...": "Searching for the nearest room...",
     "Không tìm thấy phòng phù hợp.": "No suitable room found.",
     "Đã tìm thấy phòng. Đang vào trận...": "Room found. Entering the match...",
-    "Không thể tìm trận lúc này. Vui lòng thử lại.": "Unable to find a match at this time. Please try again."
+    "Không thể tìm trận lúc này. Vui lòng thử lại.": "Unable to find a match at this time. Please try again.",
+    "lượt xem": "views",
+    "Quay lại danh sách": "Back to list",
+    "Danh sách bài viết": "Article List",
+    "Cập nhật những bài viết mới nhất": "Stay updated with the latest articles",
+    "Tìm kiếm bài viết...": "Search articles...",
+    "Chưa có bài viết nào.": "No articles yet."
 }
