@@ -58,8 +58,7 @@ class AdminArticleController extends Controller
                     $article->translations()->create([
                         'locale'  => $locale,
                         'title'   => $data['title'],
-                        // Tự động tạo slug nếu để trống
-                        'slug'    => !empty($data['slug']) ? Str::slug($data['slug']) : Str::slug($data['title']),
+                        'slug'    => $this->resolveSlug($data['slug'] ?? null, $data['title'], $locale),
                         'content' => $data['content'] ?? null,
                     ]);
                 }
@@ -106,7 +105,7 @@ class AdminArticleController extends Controller
                         ['locale' => $locale], // Điều kiện tìm kiếm
                         [                      // Dữ liệu cần cập nhật/thêm mới
                             'title'   => $data['title'],
-                            'slug'    => !empty($data['slug']) ? Str::slug($data['slug']) : Str::slug($data['title']),
+                            'slug'    => $this->resolveSlug($data['slug'] ?? null, $data['title'], $locale),
                             'content' => $data['content'] ?? null,
                         ]
                     );
@@ -156,5 +155,46 @@ class AdminArticleController extends Controller
             "translations.{$this->defaultLocale}.title.required" =>
                 'Tiêu đề ngôn ngữ mặc định (' . strtoupper($this->defaultLocale) . ') là bắt buộc.',
         ];
+    }
+
+    /**
+     * Quyết định slug cuối cùng cho một bản dịch: dùng slug người dùng nhập
+     * nếu có, ngược lại tự sinh từ tiêu đề. Luôn đi qua makeSlug() để xử lý
+     * đúng các ngôn ngữ không dùng chữ Latin (ja/ko/zh).
+     */
+    protected function resolveSlug(?string $manualSlug, string $title, string $locale): string
+    {
+        $source = !empty($manualSlug) ? $manualSlug : $title;
+
+        return $this->makeSlug($source, $locale);
+    }
+
+    /**
+     * Str::slug() chỉ bỏ dấu cho chữ Latin — bảng ASCII map dựng sẵn của
+     * Laravel không có ký tự Hán/Nhật/Hàn, nên với tiêu đề tiếng Nhật, Hàn,
+     * Trung, toàn bộ ký tự bị loại bỏ và slug ra chuỗi rỗng (rồi lưu rỗng
+     * hoặc vỡ ràng buộc unique).
+     *
+     * Cách xử lý: nếu có ext-intl, phiên âm sang Latin trước (Hán → Pinyin,
+     * Nhật → romaji gần đúng, Hàn → Latin hoá Hangul) rồi mới slug hoá bình
+     * thường. Nếu không có ext-intl, hoặc kết quả phiên âm vẫn rỗng, dùng
+     * slug ngẫu nhiên có tiền tố locale để không bao giờ lưu slug rỗng.
+     */
+    protected function makeSlug(string $source, string $locale): string
+    {
+        if (function_exists('transliterator_transliterate')) {
+            $latin = @transliterator_transliterate('Any-Latin; Latin-ASCII', $source);
+            if (!empty($latin)) {
+                $source = $latin;
+            }
+        }
+
+        $slug = Str::slug($source);
+
+        if (empty($slug)) {
+            $slug = $locale . '-' . Str::random(8);
+        }
+
+        return $slug;
     }
 }
