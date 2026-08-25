@@ -41,8 +41,10 @@
             <div class="col mb-4">
                 <div class="card article-card h-100 border-0">
                     @if($article->featured_image)
-                        <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}"
-                             class="article-card-img w-100" style="aspect-ratio: 1200 / 630; object-fit: cover;">
+                        <a href="{{ route($showRoute, ['slug' => $article->slug]) }}" class="text-decoration-none">
+                            <img src="{{ $article->featured_image_url }}" alt="{{ $article->title }}"
+                                class="article-card-img w-100" style="aspect-ratio: 1200 / 630; object-fit: cover;">
+                        </a>
                     @else
                         <div class="article-card-band"></div>
                     @endif
