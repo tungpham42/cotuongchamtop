@@ -38,6 +38,11 @@
     <!-- Lưới bài viết -->
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @forelse($articles as $article)
+            @php
+                $showRoute = app()->getLocale() === config('locales.default', 'vi')
+                            ? 'article.show'
+                            : app()->getLocale() . '.article.show';
+            @endphp
             <div class="col mb-4">
                 <div class="card article-card h-100 border-0">
                     @if($article->featured_image)
@@ -50,11 +55,6 @@
                     @endif
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title article-card-title fw-bold mb-3">
-                            @php
-                                $showRoute = app()->getLocale() === config('locales.default', 'vi')
-                                           ? 'article.show'
-                                           : app()->getLocale() . '.article.show';
-                            @endphp
                             <a href="{{ route($showRoute, ['slug' => $article->slug]) }}" class="text-decoration-none" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                                 {{ $article->title }}
                             </a>
