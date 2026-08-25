@@ -31,7 +31,7 @@
 <div style="background-color: transparent" class="container-fluid userPuzzles puzzles px-0">
     <div class="container mx-auto px-3 pt-0">
         <div id="user-puzzles" class="row my-0">
-            <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-puzzle-piece" style="color: var(--royal-gold); text-shadow: 0 0 10px var(--royal-gold);"></i> {{ $puzzleCollection->total() }} <a class="text-light animate-light showPromotion" href="{{ localized_url('puzzle.list') }}">{{ __('thế cờ') }}</a>, <a class="text-light animate-light showPromotion" href="{{ localized_url('puzzle.setup') }}">{{ __('tạo mới ngay') }}</a></h2>
+            <h2 class="d-block w-100 text-light ml-3 mb-4"><i class="fas fa-puzzle-piece" style="color: var(--royal-gold); text-shadow: 0 0 10px var(--royal-gold);"></i> {{ $puzzleCollection->total() }} <a class="text-light animate showPromotion" href="{{ localized_url('puzzle.list') }}">{{ __('thế cờ') }}</a>, <a class="text-light animate showPromotion" href="{{ localized_url('puzzle.setup') }}">{{ __('tạo mới ngay') }}</a></h2>
             {{ $puzzleCollection->links('vendor.pagination.userVi') }}
 
             @foreach($puzzleCollection as $userPuzzle)

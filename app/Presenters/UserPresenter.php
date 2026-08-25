@@ -50,8 +50,8 @@ class UserPresenter
         $profileLink = localized_url('app.player', ['id' => $userId]);
 
         $nameText = $isProfile ? $user->name : '# ' . $userId . '  ' . $user->name;
-        $linkClass = $forRoom ? 'text-light showPromotion animate-light' : 'text-danger showPromotion animate';
-        if ($isProfile) $linkClass = 'text-light showPromotion animate-light';
+        $linkClass = $forRoom ? 'text-light showPromotion animate' : 'text-danger showPromotion animate';
+        if ($isProfile) $linkClass = 'text-light showPromotion animate';
 
         return $onlineStatus . '&nbsp;<img src="' . $avatarSrc . '" style="width: '.$dimension.'px; height: '.$dimension.'px; object-fit: cover; border-radius: 4px;" />&nbsp;<a class="'.$linkClass.'" href="' . $profileLink . '">' . $nameText . '</a>';
     }

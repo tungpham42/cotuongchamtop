@@ -66,8 +66,8 @@
             <h2 class="d-block w-100 text-light ml-3 mb-4">
                 <i class="fas fa-puzzle-piece"></i>
                 {{ $puzzlesPage->total() }}
-                <a class="text-light animate-light showPromotion" href="{{ url('/tat-ca-the-co') }}">{{ $text['list'] }}</a>,
-                <a class="text-light animate-light showPromotion" href="{{ url($text['setupUrl']) }}">{{ $text['create'] }}</a>
+                <a class="text-light animate showPromotion" href="{{ url('/tat-ca-the-co') }}">{{ $text['list'] }}</a>,
+                <a class="text-light animate showPromotion" href="{{ url($text['setupUrl']) }}">{{ $text['create'] }}</a>
             </h2>
             {{ $puzzlesPage->links($text['pagination']) }}
 

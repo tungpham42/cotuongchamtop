@@ -10,7 +10,7 @@
     <div class="container mx-auto px-3 pt-0">
         <div class="row my-0">
             <h2 class="d-block w-100 text-light ml-3 mb-4">
-                <i class="fas fa-trophy-alt" style="color: var(--royal-gold); text-shadow: 0 0 10px var(--royal-gold);"></i> {{ $boardCollection->total() }} {{ __('ván cờ') }} <a class="text-light animate-light showPromotion" href="{{ localized_url('user.list') }}">{{ __('đang thi đấu') }}</a>
+                <i class="fas fa-trophy-alt" style="color: var(--royal-gold); text-shadow: 0 0 10px var(--royal-gold);"></i> {{ $boardCollection->total() }} {{ __('ván cờ') }} <a class="text-light animate showPromotion" href="{{ localized_url('user.list') }}">{{ __('đang thi đấu') }}</a>
             </h2>
             {{ $boardCollection->links('vendor.pagination.boardVi') }}
 
