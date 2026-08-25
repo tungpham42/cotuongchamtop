@@ -1,5 +1,7 @@
 @extends('layouts.gamelayout')
 
+@section('og_image', asset('img/puzzle.jpg'))
+
 @section('aboveBoard')
     <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Bàn cờ thế") }}">{{ __("Bạn đang xếp") }}<span id="puzzle-title"></span></h5>
     <p class="w-100 text-center mt-0 mb-1">
