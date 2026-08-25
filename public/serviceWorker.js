@@ -1,11 +1,11 @@
 // 1. Versioning: Change this version string to force a cache update
-const CACHE_VERSION = "v6";
+const CACHE_VERSION = "v7";
 const CACHE_NAME = `game-pwa-${CACHE_VERSION}`;
 
 // 2. Updated Asset List based on latest HTML/layout includes
 const FILES_TO_CACHE = [
     "/",
-    "/css/index_new.css?v=59",
+    "/css/index_new.css?v=60",
     "/css/fa/css/all.min.css",
     "/js/theme-manager.js?v=1",
     "/js/scripts.js?v=18",
