@@ -331,26 +331,39 @@ class RoomController extends Controller
         return $response;
     }
 
-    public function prepareAnonymousRoom(string $sessionId): Room
+    /**
+     * Core matchmaking logic, shared by guest (session-based) and
+     * authenticated (user-based) matchmaking.
+     *
+     * Guests are paired via host_session/guest_session; logged-in users are
+     * paired via host_id/guest_id. Because a guest room never touches the
+     * *_id columns and a logged-in room never touches the *_session columns,
+     * the two pools never mix automatically - a guest can never be matched
+     * into a logged-in user's room and vice versa.
+     */
+    private function prepareMatchRoom(int|string $identifier, bool $isAuthenticated): Room
     {
         $initialFen = self::INITIAL_FEN;
+        $hostColumn = $isAuthenticated ? 'host_id' : 'host_session';
+        $guestColumn = $isAuthenticated ? 'guest_id' : 'guest_session';
 
-        return DB::transaction(function () use ($sessionId, $initialFen) {
+        return DB::transaction(function () use ($identifier, $initialFen, $isAuthenticated, $hostColumn, $guestColumn) {
             /*
-             * A matchmaking session can belong to exactly one room.
-             * Check this before looking for another room so repeated requests
-             * from the same browser never consume another seat.
+             * A matchmaking identity (guest session or user id) can belong to
+             * exactly one room. Check this before looking for another room so
+             * repeated requests from the same browser/user never consume
+             * another seat.
              *
              * Do NOT use Room::ongoing() here because a waiting room has only
-             * host_session and no guest_session yet, so it is not considered
-             * "ongoing" by that scope.
+             * a host and no guest yet, so it is not considered "ongoing" by
+             * that scope.
              */
             $currentRoom = Room::whereNull('result')
                 ->whereNull('pass')
                 ->where('fen', $initialFen)
-                ->where(function ($query) use ($sessionId) {
-                    $query->where('host_session', $sessionId)
-                        ->orWhere('guest_session', $sessionId);
+                ->where(function ($query) use ($identifier, $hostColumn, $guestColumn) {
+                    $query->where($hostColumn, $identifier)
+                        ->orWhere($guestColumn, $identifier);
                 })
                 ->lockForUpdate()
                 ->orderByDesc('modified_at')
@@ -361,7 +374,8 @@ class RoomController extends Controller
             }
 
             /*
-             * Match against the newest room that has exactly ONE player.
+             * Match against the newest room that has exactly ONE player in
+             * the same pool (guest or logged-in).
              *
              * This creates the required queueing behaviour:
              *   room A: player 1 + player 2 -> full, never selected again
@@ -374,8 +388,9 @@ class RoomController extends Controller
             $availableRoom = Room::where('fen', $initialFen)
                 ->whereNull('pass')
                 ->whereNull('result')
-                ->whereNotNull('host_session')
-                ->whereNull('guest_session')
+                ->whereNotNull($hostColumn)
+                ->whereNull($guestColumn)
+                ->when($isAuthenticated, fn ($query) => $query->where('host_id', '!=', $identifier))
                 ->orderByDesc('modified_at')
                 ->lockForUpdate()
                 ->first();
@@ -384,28 +399,36 @@ class RoomController extends Controller
                 // The row is locked, so concurrent requests cannot take the
                 // same second seat and turn this into a 3-player room.
                 $availableRoom->update([
-                    'guest_session' => $sessionId,
-                    'modified_at'   => now(),
+                    $guestColumn  => $identifier,
+                    'modified_at' => now(),
                 ]);
 
                 return $availableRoom->fresh();
             }
 
             /*
-             * No one-player room exists: create a brand-new waiting room.
-             * The creator is always the red/host player; the next session
-             * assigned to this row becomes black/guest.
+             * No one-player room exists in this pool: create a brand-new
+             * waiting room. The creator is always the red/host player; the
+             * next identity assigned to this row becomes black/guest.
              */
             return Room::create([
-                'code'          => md5(time() . $sessionId . uniqid('', true)),
-                'fen'           => $initialFen,
-                'name'          => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
-                'host_session'  => $sessionId,
-                'red_time'      => 600,
-                'black_time'    => 600,
-                'modified_at'   => now(),
+                'code'        => md5(time() . $identifier . uniqid('', true)),
+                'fen'         => $initialFen,
+                'name'        => Haikunator::haikunate(["tokenLength" => 0, "delimiter" => " "]),
+                $hostColumn   => $identifier,
+                'red_time'    => 600,
+                'black_time'  => 600,
+                'modified_at' => now(),
             ]);
         });
+    }
+
+    /**
+     * Kept for the existing anonymous-only endpoints below.
+     */
+    public function prepareAnonymousRoom(string $sessionId): Room
+    {
+        return $this->prepareMatchRoom($sessionId, false);
     }
 
     /**
@@ -521,10 +544,49 @@ class RoomController extends Controller
 
     public function findMatch(Request $request): JsonResponse
     {
+        $user = auth()->user();
+
+        if ($user) {
+            return $this->findMatchForUser($user);
+        }
+
+        return $this->findMatchForGuest($request);
+    }
+
+    /**
+     * Match a logged-in user against another logged-in user, using their
+     * user id (host_id/guest_id) rather than a browser session.
+     */
+    private function findMatchForUser($user): JsonResponse
+    {
+        $room = $this->prepareMatchRoom($user->id, true);
+        $matched = $room && $room->host_id && $room->guest_id;
+        $isHost = (int) $room->host_id === (int) $user->id;
+
+        $opponentId = $matched ? ($isHost ? $room->guest_id : $room->host_id) : null;
+        $opponentName = $opponentId ? User::find($opponentId)?->name : null;
+
+        return response()->json([
+            'code' => 1,
+            'message' => $matched ? __('Đã tìm thấy đối thủ!') : __('Đang tìm trận...'),
+            'matched' => $matched,
+            'room_code' => $room->code,
+            'room_name' => $room->name,
+            'side' => $matched ? ($isHost ? 'red' : 'black') : null,
+            'opponent_name' => $opponentName,
+        ]);
+    }
+
+    /**
+     * Match a guest against another guest, using their browser session id,
+     * exactly as before.
+     */
+    private function findMatchForGuest(Request $request): JsonResponse
+    {
         $sessionId = (string) ($request->input('session_id') ?: $request->session()->get('match_session_id', Str::random(32)));
         $request->session()->put('match_session_id', $sessionId);
 
-        $room = $this->prepareAnonymousRoom($sessionId);
+        $room = $this->prepareMatchRoom($sessionId, false);
         $matched = $room && $room->host_session && $room->guest_session;
         $isHost = $room->host_session === $sessionId;
 
@@ -541,10 +603,27 @@ class RoomController extends Controller
 
     public function checkMatchStatus(Request $request): JsonResponse
     {
+        $user = auth()->user();
+
+        if ($user) {
+            $room = $this->prepareMatchRoom($user->id, true);
+
+            if ($room->host_id && $room->guest_id) {
+                $isHost = (int) $room->host_id === (int) $user->id;
+                return response()->json([
+                    'status'    => 'matched',
+                    'room_code' => $room->code,
+                    'room_name' => $room->name,
+                    'side'      => $isHost ? 'red' : 'black',
+                ]);
+            }
+            return response()->json(['status' => 'waiting']);
+        }
+
         $sessionId = $request->input('session_id');
         if (!$sessionId) return response()->json(['status' => 'error', 'message' => __('Không tìm thấy phiên bản kết nối (Session ID).')], 400);
 
-        $room = $this->prepareAnonymousRoom((string) $sessionId);
+        $room = $this->prepareMatchRoom((string) $sessionId, false);
 
         if ($room->host_session && $room->guest_session) {
             $isHost = $room->host_session == $sessionId;
