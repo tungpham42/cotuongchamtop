@@ -1093,7 +1093,7 @@ $localizedBoardPages = [
         'view' => 'puzzleAi',
         'level' => '6',
         'titles' => [
-            'vi' => ['title' => 'Giải cờ thế', 'levelTxt' => 'Khó nhất'],
+            'vi' => ['title' => 'Giải thế cờ', 'levelTxt' => 'Khó nhất'],
             'en' => ['title' => 'Solve puzzle', 'levelTxt' => 'Hardest'],
             'ja' => ['title' => 'パズルを解く', 'levelTxt' => '最も難しい'],
             'ko' => ['title' => '퍼즐을 풀다', 'levelTxt' => '가장 단단한'],
