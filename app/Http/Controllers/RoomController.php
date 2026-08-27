@@ -6,6 +6,7 @@ use DB;
 use Exception;
 use App\Models\Room;
 use App\Models\User;
+use App\Models\KarmaLog;
 use App\Events\RoomUpdated;
 use App\Actions\Room\UpdateRoomEloAction;
 use App\Actions\User\AwardMatchPlayedKarmaAction;
@@ -226,7 +227,10 @@ class RoomController extends Controller
                 }
 
                 $messageKey = $this->getResultMessageKey($auth_id === $room->host_id, $result);
-                return response()->json(['success' => __($messageKey)]);
+                return response()->json([
+                    'success' => __($messageKey),
+                    'karma' => $this->getKarmaEarnedForUser($room, $auth_id),
+                ]);
             });
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 403);
@@ -263,6 +267,33 @@ class RoomController extends Controller
         }
     }
 
+    /**
+     * Karma earned by a specific user for this room's match (both the
+     * "played" and, if applicable, "win" awards). Read back from the
+     * karma_logs table rather than the in-request award calls, so it's
+     * correct even when this HTTP call was the *second* request for the
+     * same room (i.e. the opponent's browser calling in after the result
+     * was already recorded by the first caller).
+     */
+    private function getKarmaEarnedForUser(Room $room, ?int $userId): array
+    {
+        if (!$userId) {
+            return [];
+        }
+
+        return KarmaLog::where('reference_id', $room->id)
+            ->where('user_id', $userId)
+            ->whereIn('reason', ['match_played', 'match_win'])
+            ->get(['amount', 'reason'])
+            ->map(fn ($log) => [
+                'amount' => $log->amount,
+                'reason' => $log->reason,
+                'label' => KarmaLog::reasonLabel($log->reason),
+            ])
+            ->values()
+            ->all();
+    }
+
     private function getResultMessageKey(bool $isHost, string $result): string
     {
         if ($result === '0') return 'Hòa.';
@@ -284,8 +315,6 @@ class RoomController extends Controller
 
     public function updateSideResult(
         Request $request,
-        AwardMatchPlayedKarmaAction $playedKarma,
-        AwardMatchWinKarmaAction $winKarma
     ): JsonResponse {
         if ($request->has('lang')) app()->setLocale((string) $request->input('lang'));
 
@@ -294,7 +323,6 @@ class RoomController extends Controller
         if ($room && is_null($room->result)) {
             $result = (string) $request->input('result');
             $room->update(['result' => $result, 'modified_at' => now()]);
-            $this->awardMatchKarma($room, $result, $playedKarma, $winKarma);
         }
 
         $successMessages = [
@@ -302,7 +330,9 @@ class RoomController extends Controller
             'black' => ['-1' => __('Black won!'), '0' => __('Draw.'), '1' => __('Black lost!')],
         ];
 
-        return response()->json(['success' => $successMessages[$request->input('side')][$request->input('result')] ?? __('Result recorded.')]);
+        return response()->json([
+            'success' => $successMessages[$request->input('side')][$request->input('result')] ?? __('Result recorded.'),
+        ]);
     }
 
     public function show(Room $room, string $code): ?string

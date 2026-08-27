@@ -35,4 +35,19 @@ class KarmaLog extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Human-readable label for a karma reason code, used by both the
+     * server (session-flashed login karma) and the API responses
+     * (match karma) that drive the bootbox notifications.
+     */
+    public static function reasonLabel(string $reason): string
+    {
+        return match ($reason) {
+            'daily_login' => __('Đăng nhập hằng ngày'),
+            'match_played' => __('Tham gia trận đấu'),
+            'match_win' => __('Chiến thắng trận đấu'),
+            default => __('Karma'),
+        };
+    }
 }

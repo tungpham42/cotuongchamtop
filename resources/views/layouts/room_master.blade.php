@@ -265,6 +265,7 @@
                     dataType: 'json'
                 }).done(function(data) {
                     if (data && data.success) successMsg = data.success;
+                    if (data && data.karma) successMsg += buildKarmaMessage(data.karma);
                 }).always(function() {
                     bootbox.alert({
                         message: successMsg,

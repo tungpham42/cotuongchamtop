@@ -64,6 +64,40 @@
     // Make Pusher globally available for Echo
     window.Pusher = Pusher;
 
+    // ==========================================
+    // KARMA NOTIFICATIONS
+    // ==========================================
+
+    // Turns a list of { amount, reason, label } entries (as returned by
+    // /api/updateResult, /api/updateSideResult, or session-flashed on
+    // login) into an HTML snippet for a bootbox message.
+    function buildKarmaMessage(karmaEntries) {
+        if (!Array.isArray(karmaEntries) || !karmaEntries.length) return '';
+
+        const lines = karmaEntries.map((k) => `+${k.amount} karma — ${k.label}`);
+
+        return '<hr class="my-2">' +
+            '<div class="text-warning font-weight-bold">' +
+            '<i class="fas fa-seedling"></i> ' +
+            lines.join('<br>') +
+            '</div>';
+    }
+
+    // Pops a standalone bootbox for karma earned outside of an existing
+    // result dialog (e.g. the daily login bonus on page load).
+    function showKarmaBootbox(karmaEntries) {
+        const message = buildKarmaMessage(karmaEntries);
+        if (!message) return;
+
+        bootbox.alert({
+            message: message,
+            size: 'small',
+            centerVertical: true,
+            closeButton: false,
+            buttons: { ok: { className: 'btn-danger pulse-red', label: '{{ __("Oki") }}' } }
+        });
+    }
+
     // Initialize Echo using your Laravel .env variables
     window.Echo = new Echo({
         broadcaster: 'pusher',
