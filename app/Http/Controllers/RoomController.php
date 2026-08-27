@@ -8,6 +8,8 @@ use App\Models\Room;
 use App\Models\User;
 use App\Events\RoomUpdated;
 use App\Actions\Room\UpdateRoomEloAction;
+use App\Actions\User\AwardMatchPlayedKarmaAction;
+use App\Actions\User\AwardMatchWinKarmaAction;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
@@ -198,8 +200,11 @@ class RoomController extends Controller
         }
     }
 
-    public function updateResult(Request $request): JsonResponse
-    {
+    public function updateResult(
+        Request $request,
+        AwardMatchPlayedKarmaAction $playedKarma,
+        AwardMatchWinKarmaAction $winKarma
+    ): JsonResponse {
         $code = (string) $request->input('ma-phong');
         $result = (string) $request->input('result');
         $auth_id = (int) (auth()->id() ?? $request->input('id'));
@@ -207,7 +212,7 @@ class RoomController extends Controller
         if ($request->has('lang')) app()->setLocale((string) $request->input('lang'));
 
         try {
-            return DB::transaction(function () use ($code, $result, $auth_id) {
+            return DB::transaction(function () use ($code, $result, $auth_id, $playedKarma, $winKarma) {
                 $room = Room::lockForUpdate()->where('code', $code)->firstOrFail();
 
                 if (!in_array($auth_id, [$room->host_id, $room->guest_id])) {
@@ -217,6 +222,7 @@ class RoomController extends Controller
                 if (is_null($room->result)) {
                     $room->update(['result' => $result, 'modified_at' => now()]);
                     $this->advanceTournament($room, $result);
+                    $this->awardMatchKarma($room, $result, $playedKarma, $winKarma);
                 }
 
                 $messageKey = $this->getResultMessageKey($auth_id === $room->host_id, $result);
@@ -224,6 +230,36 @@ class RoomController extends Controller
             });
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 403);
+        }
+    }
+
+    /**
+     * Award karma for a finished match: everyone who was a registered
+     * (non-guest) participant gets the "played" karma, and the winner
+     * additionally gets the "win" karma. Draws get no win bonus.
+     * Safe to call for guest-session matches, since User::find() on a
+     * null/non-existent id simply returns null and is skipped.
+     */
+    private function awardMatchKarma(
+        Room $room,
+        string $result,
+        AwardMatchPlayedKarmaAction $playedKarma,
+        AwardMatchWinKarmaAction $winKarma
+    ): void {
+        $host = $room->host_id ? User::find($room->host_id) : null;
+        $guest = $room->guest_id ? User::find($room->guest_id) : null;
+
+        if ($host) {
+            $playedKarma->execute($host, $room->id);
+        }
+        if ($guest) {
+            $playedKarma->execute($guest, $room->id);
+        }
+
+        if ($result === '1' && $host) {
+            $winKarma->execute($host, $room->id);
+        } elseif ($result === '-1' && $guest) {
+            $winKarma->execute($guest, $room->id);
         }
     }
 
@@ -246,14 +282,19 @@ class RoomController extends Controller
         }
     }
 
-    public function updateSideResult(Request $request): JsonResponse
-    {
+    public function updateSideResult(
+        Request $request,
+        AwardMatchPlayedKarmaAction $playedKarma,
+        AwardMatchWinKarmaAction $winKarma
+    ): JsonResponse {
         if ($request->has('lang')) app()->setLocale((string) $request->input('lang'));
 
         $room = Room::where('code', $request->input('ma-phong'))->first();
 
         if ($room && is_null($room->result)) {
-            $room->update(['result' => $request->input('result'), 'modified_at' => now()]);
+            $result = (string) $request->input('result');
+            $room->update(['result' => $result, 'modified_at' => now()]);
+            $this->awardMatchKarma($room, $result, $playedKarma, $winKarma);
         }
 
         $successMessages = [

@@ -18,6 +18,7 @@ class KarmaLog extends Model
         'user_id',
         'amount',
         'reason',
+        'reference_id',
     ];
 
     /**
@@ -27,6 +28,7 @@ class KarmaLog extends Model
      */
     protected $casts = [
         'amount' => 'integer',
+        'reference_id' => 'integer',
     ];
 
     public function user()
