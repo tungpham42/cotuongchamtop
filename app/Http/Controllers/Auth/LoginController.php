@@ -118,40 +118,35 @@ class LoginController extends Controller
         $socialUser = Socialite::driver($driver)->user();
         $redirectUrl = $this->redirectTo();
 
-        if ($driver === 'zalo') {
-            if (null !== $socialUser->getId()) {
-                $user = User::firstOrCreate(
-                    ['name' => $socialUser->getName()],
-                    ['email' => md5(time()).'.zalo@cotuong.top']
-                );
-
-                Auth::login($user, true);
-
-                $this->awardLoginKarma->execute($user);
-
-                broadcast(new PlayersUpdated()); // Trigger update
-
-                return Redirect::to($redirectUrl)->with('success', __("Bạn đã đăng nhập bằng {$providerName} thành công!"));
-            }
-            return Redirect::to($redirectUrl)->withErrors(['message' => __('Tài khoản của bạn không hợp lệ.')]);
+        if (null === $socialUser->getEmail()) {
+            return Redirect::to($redirectUrl)->withErrors([
+                'message' => __('Email của bạn không hợp lệ.'),
+            ]);
         }
 
-        if (null !== $socialUser->getEmail()) {
-            $user = User::firstOrCreate(
-                ['email' => $socialUser->getEmail()],
-                ['name' => $socialUser->getName()]
-            );
+        $user = User::firstOrCreate(
+            ['email' => $socialUser->getEmail()],
+            ['name' => $socialUser->getName()]
+        );
 
-            Auth::login($user, true);
+        return $this->completeSocialLogin($user, $redirectUrl, $providerName);
+    }
 
-            $this->awardLoginKarma->execute($user);
+    /**
+     * Shared success path for any social login: auth, karma, broadcast, redirect.
+     */
+    private function completeSocialLogin(User $user, string $redirectUrl, string $providerName)
+    {
+        Auth::login($user, true);
 
-            broadcast(new PlayersUpdated()); // Trigger update
+        $this->awardLoginKarma->execute($user);
 
-            return Redirect::to($redirectUrl)->with('success', __("Bạn đã đăng nhập bằng {$providerName} thành công!"));
-        }
+        broadcast(new PlayersUpdated());
 
-        return Redirect::to($redirectUrl)->withErrors(['message' => __('Email của bạn không hợp lệ.')]);
+        return Redirect::to($redirectUrl)->with(
+            'success',
+            __("Bạn đã đăng nhập bằng {$providerName} thành công!")
+        );
     }
 
     // Facebook
