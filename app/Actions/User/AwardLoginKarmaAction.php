@@ -9,26 +9,17 @@ use Illuminate\Support\Facades\Session;
 
 class AwardLoginKarmaAction
 {
-    private const DAILY_LOGIN_KARMA = 1;
-    private const REASON = 'daily_login';
+    private const LOGIN_KARMA = 1;
+    private const REASON = 'every_login';
 
     public function execute(User $user): void
     {
-        $alreadyAwardedToday = KarmaLog::where('user_id', $user->id)
-            ->where('reason', self::REASON)
-            ->whereDate('created_at', today())
-            ->exists();
-
-        if ($alreadyAwardedToday) {
-            return;
-        }
-
         DB::transaction(function () use ($user) {
-            $user->increment('karma', self::DAILY_LOGIN_KARMA);
+            $user->increment('karma', self::LOGIN_KARMA);
 
             KarmaLog::create([
                 'user_id' => $user->id,
-                'amount' => self::DAILY_LOGIN_KARMA,
+                'amount' => self::LOGIN_KARMA,
                 'reason' => self::REASON,
             ]);
         });
@@ -37,7 +28,7 @@ class AwardLoginKarmaAction
         // (right after the login redirect) to pop a bootbox notification.
         Session::flash('karma_earned', [
             [
-                'amount' => self::DAILY_LOGIN_KARMA,
+                'amount' => self::LOGIN_KARMA,
                 'reason' => self::REASON,
                 'label' => KarmaLog::reasonLabel(self::REASON),
             ],

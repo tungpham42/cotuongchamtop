@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->integer('amount');
-            $table->string('reason'); // e.g. 'daily_login'
+            $table->string('reason'); // e.g. 'every_login'
             $table->timestamps();
         });
 

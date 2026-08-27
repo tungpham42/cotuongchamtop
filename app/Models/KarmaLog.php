@@ -44,7 +44,7 @@ class KarmaLog extends Model
     public static function reasonLabel(string $reason): string
     {
         return match ($reason) {
-            'daily_login' => __('Đăng nhập hằng ngày'),
+            'every_login' => __('Đăng nhập thành công'),
             'match_played' => __('Tham gia trận đấu'),
             'match_win' => __('Chiến thắng trận đấu'),
             default => __('Karma'),
