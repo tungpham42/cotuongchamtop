@@ -12,7 +12,7 @@ class AwardLoginKarmaAction
     private const LOGIN_KARMA = 1;
     private const REASON = 'every_login';
 
-    public function execute(User $user): void
+    public function execute(User $user): array
     {
         DB::transaction(function () use ($user) {
             $user->increment('karma', self::LOGIN_KARMA);
@@ -24,14 +24,16 @@ class AwardLoginKarmaAction
             ]);
         });
 
-        // Flashed once, read by the layout on the very next page load
-        // (right after the login redirect) to pop a bootbox notification.
-        Session::flash('karma_earned', [
+        $reward = [
             [
                 'amount' => self::LOGIN_KARMA,
                 'reason' => self::REASON,
                 'label' => KarmaLog::reasonLabel(self::REASON),
             ],
-        ]);
+        ];
+
+        Session::flash('karma_earned', $reward);
+
+        return $reward;
     }
 }
