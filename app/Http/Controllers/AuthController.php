@@ -9,10 +9,11 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Google\Client as GoogleClient;
 use Illuminate\Support\Str;
+use App\Actions\User\AwardLoginKarmaAction;
 
 class AuthController extends Controller
 {
-    public function handleOneTapCallback(Request $request)
+    public function handleOneTapCallback(Request $request, AwardLoginKarmaAction $awardLoginKarma)
     {
         $locale = app()->getLocale();
         $localizedHome = ($locale === 'vi') ? '/' : '/' . $locale;
@@ -52,6 +53,8 @@ class AuthController extends Controller
 
                 // 5. Log the user in
                 Auth::login($user);
+
+                $awardLoginKarma->execute($user);
 
                 // 6. Redirect back to the previous page
                 return Redirect::to($previousUrl)->with('success', __('Bạn đã đăng nhập bằng Google thành công!'));

@@ -13,12 +13,13 @@ use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use App\Models\Session as DbSession;
 use App\Events\PlayersUpdated;
+use App\Actions\User\AwardLoginKarmaAction;
 
 class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
-    public function __construct()
+    public function __construct(private AwardLoginKarmaAction $awardLoginKarma)
     {
         $this->middleware('guest')->except('logout');
     }
@@ -62,6 +63,8 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
+            $this->awardLoginKarma->execute(Auth::user());
+
             // Trigger real-time UI update when a user logs in
             // broadcast(new PlayersUpdated());
 
@@ -124,6 +127,8 @@ class LoginController extends Controller
 
                 Auth::login($user, true);
 
+                $this->awardLoginKarma->execute($user);
+
                 broadcast(new PlayersUpdated()); // Trigger update
 
                 return Redirect::to($redirectUrl)->with('success', __("Bạn đã đăng nhập bằng {$providerName} thành công!"));
@@ -138,6 +143,8 @@ class LoginController extends Controller
             );
 
             Auth::login($user, true);
+
+            $this->awardLoginKarma->execute($user);
 
             broadcast(new PlayersUpdated()); // Trigger update
 
