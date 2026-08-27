@@ -386,7 +386,7 @@
     </main>
     @include('layouts.partials.playFooter')
     @include('common.onlineCounter')
-        @if (session('karma_earned'))
+    @if (session('karma_earned'))
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 if (typeof showKarmaBootbox === 'function') {
