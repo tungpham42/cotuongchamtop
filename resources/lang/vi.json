@@ -1590,6 +1590,7 @@
     "No credential provided.": "Không có thông tin xác thực nào được cung cấp.",
     "Invalid Google Token.": "Google Token không hợp lệ.",
     "Login failed: :message": "Đăng nhập thất bại: :message",
+    "Login failed": "Đăng nhập thất bại",
     "Cờ tướng 2 người": "Cờ tướng 2 người",
     "Cùng chơi với nhiều tính năng hấp dẫn như cờ tướng 2 người, cờ tướng online, chơi cờ tướng với máy, cờ thế và Thi đấu xếp hạng!": "Cùng chơi với nhiều tính năng hấp dẫn như cờ tướng 2 người, cờ tướng online, chơi cờ tướng với máy, cờ thế và Thi đấu xếp hạng!",
     "Kết quả tìm kiếm cho từ khóa \":query\"": "Kết quả tìm kiếm cho từ khóa \":query\"",
