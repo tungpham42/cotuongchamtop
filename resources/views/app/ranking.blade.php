@@ -25,6 +25,7 @@
                                     <th class="text-center" scope="col">{{ __("Hạng") }}</th>
                                     <th class="text-center" scope="col">{{ __("Tên") }}</th>
                                     <th class="text-center" scope="col">Elo</th>
+                                    <th class="text-center" scope="col">Karma</th>
                                     <th class="text-center" scope="col">{{ __("Ngày giờ gia nhập") }}</th>
                                     <th class="text-center" scope="col">{{ __("Lần trực tuyến gần nhất") }}</th>
                                 </tr>
@@ -37,6 +38,7 @@
                                     </td>
                                     <td class="text-center name">{!! $userPresenter->renderPlayerName($user->id) !!}</td>
                                     <td class="text-center elo text-gold font-weight-bold" style="font-size: 1.1em;">{!! $userPresenter->renderElo($user->id) !!}</td>
+                                    <td class="text-center karma text-info font-weight-bold" style="font-size: 1.1em;"><i class="fas fa-seedling"></i> {{ $user->karma ?? 0 }}</td>
                                     <td class="text-center room-time">{{ $user->created_at }}</td>
                                     <td class="text-center room-time">{{ $user->last_seen_at }}</td>
                                 </tr>
