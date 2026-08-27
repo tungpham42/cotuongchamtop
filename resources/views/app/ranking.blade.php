@@ -25,7 +25,7 @@
                                     <th class="text-center" scope="col">{{ __("Hạng") }}</th>
                                     <th class="text-center" scope="col">{{ __("Tên") }}</th>
                                     <th class="text-center" scope="col">Elo</th>
-                                    <th class="text-center" scope="col">Karma</th>
+                                    <th class="text-center" scope="col">{{ __("Karma") }}</th>
                                     <th class="text-center" scope="col">{{ __("Ngày giờ gia nhập") }}</th>
                                     <th class="text-center" scope="col">{{ __("Lần trực tuyến gần nhất") }}</th>
                                 </tr>
