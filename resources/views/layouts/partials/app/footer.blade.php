@@ -38,6 +38,9 @@
             <a target="_blank" class="buy showPromotion" href="https://www.codester.com/items/41601/multilingual-chinese-chess-game-with-many-options?ref=tungpham"><i class="fal fa-shopping-cart"></i> {{ __("Mua mã nguồn") }}</a>
           </li>
           <li>
+            <a target="_blank" class="proxy showPromotion" href="https://proxyviet.org?ref=PROXYVIET-EECAD4F"><i class="fal fa-shield-alt"></i> {{ __("Mua Proxy giá rẻ") }}</a>
+          </li>
+          <li>
             <a target="_blank" class="hikari showPromotion" href="https://hikarilearn.io.vn/"><i class="fal fa-book-reader"></i> {{ __("Học tiếng Nhật") }}</a>
           </li>
           <li>

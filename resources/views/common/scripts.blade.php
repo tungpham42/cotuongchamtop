@@ -74,11 +74,10 @@
     function buildKarmaMessage(karmaEntries) {
         if (!Array.isArray(karmaEntries) || !karmaEntries.length) return '';
 
-        const lines = karmaEntries.map((k) => `+${k.amount} {{ __('karma') }} — ${k.label}`);
+        const lines = karmaEntries.map((k) => `<i class="fas fa-gem"></i> +${k.amount} {{ __('karma') }} — ${k.label}`);
 
         return '<hr class="my-2">' +
             '<div class="text-warning font-weight-bold">' +
-            '<i class="fas fa-seedling"></i> ' +
             lines.join('<br>') +
             '</div>';
     }
