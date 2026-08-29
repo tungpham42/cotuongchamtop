@@ -64,7 +64,7 @@ class LoginController extends Controller
             $this->awardLoginKarma->execute(Auth::user());
 
             // Trigger real-time UI update when a user logs in
-            // broadcast(new PlayersUpdated());
+            broadcast(new PlayersUpdated());
 
             return Redirect::to($this->redirectTo());
         }
@@ -142,7 +142,7 @@ class LoginController extends Controller
 
         $karmaReward = $this->awardLoginKarma->execute($user);
 
-        // broadcast(new PlayersUpdated());
+        broadcast(new PlayersUpdated());
 
         return Redirect::to($redirectUrl)
             ->with('success', __("Bạn đã đăng nhập bằng {$providerName} thành công!"))
