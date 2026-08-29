@@ -40,7 +40,9 @@ class LoginController extends Controller
      */
     private function storePreviousUrl()
     {
-        Session::put('previousUrl', url()->previous());
+        if (!str_contains(url()->previous(), localized_url('login')) || !str_contains(url()->previous(), localized_url('register'))) {
+            Session::put('previousUrl', url()->previous());
+        }
     }
 
     public function showLoginForm()
@@ -64,7 +66,7 @@ class LoginController extends Controller
             $this->awardLoginKarma->execute(Auth::user());
 
             // Trigger real-time UI update when a user logs in
-            broadcast(new PlayersUpdated());
+            // broadcast(new PlayersUpdated());
 
             return Redirect::to($this->redirectTo());
         }
@@ -142,7 +144,7 @@ class LoginController extends Controller
 
         $karmaReward = $this->awardLoginKarma->execute($user);
 
-        broadcast(new PlayersUpdated());
+        // broadcast(new PlayersUpdated());
 
         return Redirect::to($redirectUrl)
             ->with('success', __("Bạn đã đăng nhập bằng {$providerName} thành công!"))
