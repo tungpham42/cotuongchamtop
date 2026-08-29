@@ -135,16 +135,17 @@ class LoginController extends Controller
     /**
      * Shared success path for any social login: auth, karma, broadcast, redirect.
      */
-    private function completeSocialLogin(
-        User $user,
-        string $redirectUrl,
-        string $providerName
-    ) {
+    private function completeSocialLogin(User $user, string $redirectUrl, string $providerName)
+    {
         Auth::login($user, true);
 
         $karmaReward = $this->awardLoginKarma->execute($user);
 
-        broadcast(new PlayersUpdated());
+        try {
+            broadcast(new PlayersUpdated());
+        } catch (\Throwable $e) {
+            report($e); // log it, but don't let it break the login flow
+        }
 
         return Redirect::to($redirectUrl)
             ->with('success', __("Bạn đã đăng nhập bằng {$providerName} thành công!"))
