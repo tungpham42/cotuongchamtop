@@ -91,6 +91,22 @@ body {
     border-top: 1px solid rgba(212, 175, 55, 0.2);
 }
 
+/* ==========================================================================
+   TEXT SELECTION (CUNG ĐÌNH HUẾ GLOSSY THEME)
+   ========================================================================== */
+
+::selection {
+    background: var(--royal-gold);
+    color: var(--royal-red-dark);
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+::-moz-selection {
+    background: var(--royal-gold);
+    color: var(--royal-red-dark);
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
 /* Responsive Width Utilities */
 
 /* SM - >= 576px */
