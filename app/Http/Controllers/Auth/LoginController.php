@@ -40,7 +40,7 @@ class LoginController extends Controller
      */
     private function storePreviousUrl()
     {
-        if (!str_contains(url()->previous(), localized_url('login')) && !str_contains(url()->previous(), localized_url('register'))) {
+        if (!str_contains(url()->previous(), localized_url('login')) && !str_contains(url()->previous(), localized_url('register')) && !str_contains(url()->previous(), localized_url('logout'))) {
             Session::put('previousUrl', url()->previous());
         }
     }
@@ -66,7 +66,7 @@ class LoginController extends Controller
             $this->awardLoginKarma->execute(Auth::user());
 
             // Trigger real-time UI update when a user logs in
-            // broadcast(new PlayersUpdated());
+            broadcast(new PlayersUpdated());
 
             return Redirect::to($this->redirectTo());
         }
@@ -94,7 +94,7 @@ class LoginController extends Controller
         $locale = app()->getLocale();
         $localizedHome = ($locale === 'vi') ? '/' : '/' . $locale;
 
-        $previousUrl = url()->previous() && url()->previous() !== url('/logout')
+        $previousUrl = url()->previous() && url()->previous() !== localized_url('logout')
             ? url()->previous()
             : $localizedHome;
 
