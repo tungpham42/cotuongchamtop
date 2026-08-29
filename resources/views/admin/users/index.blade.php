@@ -38,6 +38,7 @@
                 <tr class="border-b bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                     <th class="p-4">User</th>
                     <th class="p-4">Elo</th>
+                    <th class="p-4">Gems</th>
                     <th class="p-4">Role</th>
                     <th class="p-4">Plan</th>
                     <th class="p-4">Joined</th>
@@ -55,6 +56,12 @@
                             </div>
                         </td>
                         <td class="p-4 font-medium">{{ number_format($user->elo) }}</td>
+                        <td class="p-4 font-medium">
+                            <span class="inline-flex items-center gap-1.5 text-emerald-700">
+                                <i class="fa-solid fa-gem text-emerald-500 text-xs"></i>
+                                {{ number_format($user->gems ?? 0) }}
+                            </span>
+                        </td>
                         <td class="p-4">
                             @if ($user->is_admin)
                                 <span class="px-2 py-1 text-xs font-semibold text-purple-700 bg-purple-100 rounded-full">Admin</span>
@@ -79,7 +86,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="p-8 text-center text-gray-400">No users found.</td>
+                        <td colspan="7" class="p-8 text-center text-gray-400">No users found.</td>
                     </tr>
                 @endforelse
             </tbody>

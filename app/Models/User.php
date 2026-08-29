@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Models\Room;
 use App\Models\Tournament;
 use App\Models\PayosPayment;
+use App\Models\KarmaLog;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -87,6 +88,26 @@ class User extends Authenticatable
     public function payosPayments()
     {
         return $this->hasMany(PayosPayment::class);
+    }
+
+    public function karmaLogs()
+    {
+        return $this->hasMany(KarmaLog::class);
+    }
+
+    /**
+     * Gems are not stored on the user — they're the running total of
+     * this user's KarmaLog amounts. When the caller has eager-loaded
+     * the sum (e.g. User::withSum('karmaLogs as gems_sum', 'amount')),
+     * that value is used; otherwise it's computed on demand.
+     */
+    public function getGemsAttribute(): int
+    {
+        if (array_key_exists('gems_sum', $this->attributes)) {
+            return (int) $this->attributes['gems_sum'];
+        }
+
+        return (int) $this->karmaLogs()->sum('amount');
     }
 
     public function setRole($role)

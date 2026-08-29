@@ -10,7 +10,7 @@ class AdminUserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::query();
+        $query = User::query()->withSum('karmaLogs as gems_sum', 'amount');
 
         // Search Filter
         if ($request->filled('search')) {
@@ -57,6 +57,8 @@ class AdminUserController extends Controller
 
     public function edit(User $user)
     {
+        $user->loadSum('karmaLogs as gems_sum', 'amount');
+
         return view('admin.users.edit', compact('user'));
     }
 
