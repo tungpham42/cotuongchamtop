@@ -78,8 +78,19 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        // Capture the user ID before they are logged out
+        // Capture the user ID and previous URL BEFORE the session is touched
         $userId = Auth::id();
+
+        $locale = app()->getLocale();
+        $localizedHome = ($locale === 'vi') ? '/' : '/' . $locale;
+
+        $candidateUrl = url()->previous();
+
+        // Only trust the previous URL if it points back to our own app
+        // (guards against open-redirect via a spoofed Referer header)
+        $previousUrl = ($candidateUrl && str_starts_with($candidateUrl, url('/')) && $candidateUrl !== localized_url('logout'))
+            ? $candidateUrl
+            : $localizedHome;
 
         if ($userId) {
             // Instantly delete all lingering database sessions for this user across all devices/tabs
@@ -90,13 +101,6 @@ class LoginController extends Controller
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
-        $locale = app()->getLocale();
-        $localizedHome = ($locale === 'vi') ? '/' : '/' . $locale;
-
-        $previousUrl = url()->previous() && url()->previous() !== localized_url('logout')
-            ? url()->previous()
-            : $localizedHome;
 
         return Redirect::to($previousUrl)->with('success', __('Bạn đã đăng xuất thành công!'));
     }
