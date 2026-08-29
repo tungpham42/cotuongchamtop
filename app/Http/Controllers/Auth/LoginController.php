@@ -36,12 +36,29 @@ class LoginController extends Controller
     }
 
     /**
+     * Detects login/register pages in ANY locale, so switching language
+     * while on those pages doesn't get stored as the "previous" page.
+     */
+    private function isAuthPage(string $url): bool
+    {
+        $path = parse_url($url, PHP_URL_PATH) ?? '';
+        $path = rtrim($path, '/');
+
+        // Strip a leading locale segment, e.g. /en, /ja, /ko, /zh (vi has no prefix)
+        $path = preg_replace('#^/(en|ja|ko|zh)(?=/|$)#', '', $path);
+
+        return (bool) preg_match('#/(login|register|logout)$#', $path);
+    }
+
+    /**
      * Helper to store the previous URL prior to logging in
      */
     private function storePreviousUrl()
     {
-        if (!str_contains(url()->previous(), localized_url('login')) && !str_contains(url()->previous(), localized_url('register'))) {
-            Session::put('previousUrl', url()->previous());
+        $previous = url()->previous();
+
+        if ($previous && !$this->isAuthPage($previous)) {
+            Session::put('previousUrl', $previous);
         }
     }
 
