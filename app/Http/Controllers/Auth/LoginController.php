@@ -40,9 +40,7 @@ class LoginController extends Controller
      */
     private function storePreviousUrl()
     {
-        if (!str_contains(url()->previous(), localized_url('login')) && !str_contains(url()->previous(), localized_url('register'))) {
-            Session::put('previousUrl', url()->previous());
-        }
+        Session::put('previousUrl', url()->previous());
     }
 
     public function showLoginForm()
