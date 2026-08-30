@@ -3362,3 +3362,260 @@ table.dataTable.dtr-inline.collapsed
     border: 1px solid rgba(255, 215, 0, 0.2);
     padding: 0.5rem 0.75rem;
 }
+
+/* ==========================================================================
+   GEMS TIER DECORATIONS (LIQUID GLASS + CUNG ĐÌNH HUẾ GLOSSY GLOW)
+   Colors mirror App\Support\GemsTier::color()/frameGlow() so the animated
+   glow always matches the static inline styles UserPresenter renders.
+   ========================================================================== */
+
+.gems-decoration {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transform-origin: center;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.gems-decoration:hover {
+    transform: scale(1.25);
+}
+
+.avatar-frame {
+    position: relative;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.avatar-frame:hover {
+    transform: translateY(-2px) scale(1.04);
+}
+
+/* --- Bronze: faintest breathing glow --- */
+.gems-decoration--bronze i {
+    animation: gemsIconGlowBronze 3.4s ease-in-out infinite;
+}
+.avatar-frame--bronze {
+    animation: avatarGlowBronze 3.4s ease-in-out infinite;
+}
+@keyframes gemsIconGlowBronze {
+    0%,
+    100% {
+        filter: drop-shadow(0 0 2px rgba(168, 118, 62, 0.5));
+    }
+    50% {
+        filter: drop-shadow(0 0 5px rgba(168, 118, 62, 0.85));
+    }
+}
+@keyframes avatarGlowBronze {
+    0%,
+    100% {
+        box-shadow: 0 0 3px rgba(168, 118, 62, 0.45);
+    }
+    50% {
+        box-shadow: 0 0 7px rgba(168, 118, 62, 0.75);
+    }
+}
+
+/* --- Silver: faint, slightly brighter than Bronze --- */
+.gems-decoration--silver i {
+    animation: gemsIconGlowSilver 3.1s ease-in-out infinite;
+}
+.avatar-frame--silver {
+    animation: avatarGlowSilver 3.1s ease-in-out infinite;
+}
+@keyframes gemsIconGlowSilver {
+    0%,
+    100% {
+        filter: drop-shadow(0 0 2px rgba(154, 164, 173, 0.55));
+    }
+    50% {
+        filter: drop-shadow(0 0 6px rgba(154, 164, 173, 0.9));
+    }
+}
+@keyframes avatarGlowSilver {
+    0%,
+    100% {
+        box-shadow: 0 0 4px rgba(154, 164, 173, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 9px rgba(154, 164, 173, 0.8);
+    }
+}
+
+/* --- Gold: noticeably richer, matches the site's royal-gold glow --- */
+.gems-decoration--gold i {
+    animation: gemsIconGlowGold 2.6s ease-in-out infinite;
+}
+.avatar-frame--gold {
+    animation: avatarGlowGold 2.6s ease-in-out infinite;
+}
+@keyframes gemsIconGlowGold {
+    0%,
+    100% {
+        filter: drop-shadow(0 0 3px rgba(230, 184, 0, 0.65));
+    }
+    50% {
+        filter: drop-shadow(0 0 9px rgba(255, 215, 0, 0.95));
+    }
+}
+@keyframes avatarGlowGold {
+    0%,
+    100% {
+        box-shadow: 0 0 6px rgba(230, 184, 0, 0.6);
+    }
+    50% {
+        box-shadow: 0 0 16px rgba(255, 215, 0, 0.95);
+    }
+}
+
+/* --- Platinum: cool icy pulse, a touch faster than Gold --- */
+.gems-decoration--platinum i {
+    animation: gemsIconGlowPlatinum 2.3s ease-in-out infinite;
+}
+.avatar-frame--platinum {
+    animation: avatarGlowPlatinum 2.3s ease-in-out infinite;
+}
+@keyframes gemsIconGlowPlatinum {
+    0%,
+    100% {
+        filter: drop-shadow(0 0 3px rgba(91, 192, 222, 0.75));
+    }
+    50% {
+        filter: drop-shadow(0 0 10px rgba(91, 192, 222, 1));
+    }
+}
+@keyframes avatarGlowPlatinum {
+    0%,
+    100% {
+        box-shadow: 0 0 8px rgba(91, 192, 222, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(91, 192, 222, 1);
+    }
+}
+
+/* --- Diamond: strong pulse + a slow rotating shimmer ring --- */
+.gems-decoration--diamond i {
+    animation: gemsIconGlowDiamond 2s ease-in-out infinite;
+}
+.avatar-frame--diamond {
+    animation: avatarGlowDiamond 2s ease-in-out infinite;
+}
+@keyframes gemsIconGlowDiamond {
+    0%,
+    100% {
+        filter: drop-shadow(0 0 4px rgba(123, 63, 228, 0.85));
+    }
+    50% {
+        filter: drop-shadow(0 0 12px rgba(181, 123, 255, 1));
+    }
+}
+@keyframes avatarGlowDiamond {
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(123, 63, 228, 0.8);
+    }
+    50% {
+        box-shadow: 0 0 24px rgba(181, 123, 255, 1);
+    }
+}
+.avatar-frame--diamond::before {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: inherit;
+    background: conic-gradient(
+        from 0deg,
+        transparent,
+        rgba(255, 255, 255, 0.75),
+        transparent 35%
+    );
+    animation: gemsShimmerSpin 3s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* --- Legendary: fastest pulse, rotating royal-red/gold shimmer, subtle pop --- */
+.gems-decoration--legendary i {
+    animation: gemsIconGlowLegendary 1.7s ease-in-out infinite;
+}
+.avatar-frame--legendary {
+    animation:
+        avatarGlowLegendary 1.7s ease-in-out infinite,
+        avatarPopLegendary 4s ease-in-out infinite;
+}
+@keyframes gemsIconGlowLegendary {
+    0%,
+    100% {
+        filter: drop-shadow(0 0 5px rgba(255, 77, 79, 0.9));
+    }
+    50% {
+        filter: drop-shadow(0 0 14px rgba(255, 179, 71, 1));
+    }
+}
+@keyframes avatarGlowLegendary {
+    0%,
+    100% {
+        box-shadow: 0 0 14px rgba(255, 77, 79, 0.85);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(255, 179, 71, 1);
+    }
+}
+@keyframes avatarPopLegendary {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.045);
+    }
+}
+.avatar-frame--legendary::before {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: inherit;
+    background: conic-gradient(
+        from 0deg,
+        var(--royal-red),
+        var(--royal-gold),
+        var(--royal-red-light),
+        var(--royal-gold),
+        var(--royal-red)
+    );
+    animation: gemsShimmerSpin 2.4s linear infinite;
+    pointer-events: none;
+    filter: blur(2px);
+    opacity: 0.65;
+    z-index: -1;
+}
+
+@keyframes gemsShimmerSpin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Respect users who've asked the OS/browser to reduce motion */
+@media (prefers-reduced-motion: reduce) {
+    .gems-decoration,
+    .gems-decoration i,
+    .avatar-frame,
+    .avatar-frame--bronze,
+    .avatar-frame--silver,
+    .avatar-frame--gold,
+    .avatar-frame--platinum,
+    .avatar-frame--diamond,
+    .avatar-frame--legendary {
+        animation: none !important;
+    }
+    .avatar-frame--diamond::before,
+    .avatar-frame--legendary::before {
+        animation: none !important;
+        opacity: 0.35;
+    }
+}
