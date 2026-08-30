@@ -81,7 +81,7 @@ class UserPresenter
 
         $title = $tier->label() . ' · ' . $user->gems . ' ' . __('karma');
 
-        return '<span class="avatar-frame ' . $tier->frameCssClass() . '" data-user-id="' . $user->id . '" data-tier="' . $tier->value . '" title="' . e($title) . '" style="' . $frameStyle . '">'
+        return '<span data-toggle="tooltip" data-placement="top" class="avatar-frame ' . $tier->frameCssClass() . '" data-user-id="' . $user->id . '" data-tier="' . $tier->value . '" title="' . e($title) . '" style="' . $frameStyle . '">'
             . '<img src="' . $avatarSrc . '" style="display: block; width: ' . $dimension . 'px; height: ' . $dimension . 'px; object-fit: cover; border-radius: ' . $innerRadius . 'px;" />'
             . '</span>';
     }
@@ -184,7 +184,7 @@ class UserPresenter
         $tier = $user->gems_tier;
         $title = $tier->label() . ' · ' . $user->gems . ' ' . __('karma');
 
-        return '<span class="gems-decoration gems-decoration--' . $tier->value . '" data-user-id="' . $user->id . '" title="' . e($title) . '">'
+        return '<span data-toggle="tooltip" data-placement="top" class="gems-decoration gems-decoration--' . $tier->value . '" data-user-id="' . $user->id . '" title="' . e($title) . '">'
             . '<i class="fad ' . $tier->icon() . '" style="color: ' . $tier->color() . ';"></i>'
             . '</span>';
     }
