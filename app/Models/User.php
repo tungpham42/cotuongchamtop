@@ -7,6 +7,7 @@ use App\Models\Room;
 use App\Models\Tournament;
 use App\Models\PayosPayment;
 use App\Models\KarmaLog;
+use App\Support\GemsTier;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -108,6 +109,15 @@ class User extends Authenticatable
         }
 
         return (int) $this->karmaLogs()->sum('amount');
+    }
+
+    /**
+     * The decoration tier (Bronze..Legendary) this user's current gems
+     * total unlocks. See App\Support\GemsTier for the thresholds.
+     */
+    public function getGemsTierAttribute(): GemsTier
+    {
+        return GemsTier::fromGems($this->gems);
     }
 
     public function setRole($role)

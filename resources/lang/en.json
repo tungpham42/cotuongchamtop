@@ -800,5 +800,11 @@
     "karma": "gem",
     "Karma": "Gem",
     "Karma:": "Gem:",
-    "Mua Proxy giá rẻ": "Cheap Proxy"
+    "Mua Proxy giá rẻ": "Cheap Proxy",
+    "Đồng": "Bronze",
+    "Bạc": "Silver",
+    "Vàng": "Gold",
+    "Bạch Kim": "Platinum",
+    "Kim Cương": "Diamond",
+    "Huyền Thoại": "Legendary"
 }

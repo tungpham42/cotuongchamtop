@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Room;
 use App\Models\Session as DbSession;
 use App\Actions\User\CalculateUserStats;
+use App\Support\GemsTier;
 use Avatar;
 use Illuminate\Support\Facades\Cache;
 
@@ -32,6 +33,60 @@ class UserPresenter
         return '<span class="user-status-indicator" data-user-id="' . $userId . '"> <i title="' . $statusTitle . '" class="' . $statusClass . ' fad fa-circle"></i></span>';
     }
 
+    /**
+     * Renders the Karma/Gems decoration badge for a user — a small icon
+     * whose look (icon + color) reflects the tier unlocked by their
+     * current gems total (see App\Support\GemsTier). Standalone use only
+     * (e.g. a profile header, a leaderboard column) — renderPlayerName()
+     * conveys the tier via the avatar frame instead, to avoid showing the
+     * same information twice next to the same avatar.
+     */
+    public function renderGemsDecoration(?int $userId): string
+    {
+        if (!$userId) {
+            return '';
+        }
+
+        $user = User::find($userId);
+        if (!$user) {
+            return '';
+        }
+
+        return $this->buildGemsBadge($user);
+    }
+
+    /**
+     * Builds the avatar image wrapped in a ring framed/colored per the
+     * user's GemsTier — thicker and more glowing at higher tiers. This is
+     * what renderPlayerName() uses instead of a bare <img>.
+     */
+    public function renderAvatar(User $user, int $dimension, int $fontSize): string
+    {
+        $avatarSrc = $user->profile_picture
+            ? asset('storage/' . $user->profile_picture)
+            : Avatar::create($user->name)->setDimension($dimension)->setFontSize($fontSize);
+
+        /** @var GemsTier $tier */
+        $tier = $user->gems_tier;
+        $thickness = $tier->frameThickness();
+        $innerRadius = 4;
+        $outerRadius = $innerRadius + $thickness;
+        $glow = $tier->frameGlow();
+
+        $frameStyle = 'display: inline-block;'
+            . ' line-height: 0;'
+            . ' padding: ' . $thickness . 'px;'
+            . ' border-radius: ' . $outerRadius . 'px;'
+            . ' background: ' . $tier->frameBackground() . ';'
+            . ($glow ? ' box-shadow: ' . $glow . ';' : '');
+
+        $title = $tier->label() . ' · ' . $user->gems . ' Gems';
+
+        return '<span class="avatar-frame ' . $tier->frameCssClass() . '" data-user-id="' . $user->id . '" data-tier="' . $tier->value . '" title="' . e($title) . '" style="' . $frameStyle . '">'
+            . '<img src="' . $avatarSrc . '" style="display: block; width: ' . $dimension . 'px; height: ' . $dimension . 'px; object-fit: cover; border-radius: ' . $innerRadius . 'px;" />'
+            . '</span>';
+    }
+
     public function renderPlayerName(?int $userId, bool $forRoom = false, bool $isProfile = false): string
     {
         $user = User::find($userId);
@@ -46,14 +101,14 @@ class UserPresenter
         $dimension = $forRoom ? 28 : 38;
         $fontSize = $forRoom ? 14 : 19;
 
-        $avatarSrc = $user->profile_picture ? asset('storage/' . $user->profile_picture) : Avatar::create($user->name)->setDimension($dimension)->setFontSize($fontSize);
+        $avatar = $this->renderAvatar($user, $dimension, $fontSize);
         $profileLink = localized_url('app.player', ['id' => $userId]);
 
         $nameText = $isProfile ? $user->name : '# ' . $userId . '  ' . $user->name;
         $linkClass = $forRoom ? 'text-light showPromotion animate-light' : 'text-danger showPromotion animate';
         if ($isProfile) $linkClass = 'text-light showPromotion animate-light';
 
-        return $onlineStatus . '&nbsp;<img src="' . $avatarSrc . '" style="width: '.$dimension.'px; height: '.$dimension.'px; object-fit: cover; border-radius: 4px;" />&nbsp;<a class="'.$linkClass.'" href="' . $profileLink . '">' . $nameText . '</a>';
+        return $onlineStatus . '&nbsp;' . $avatar . '&nbsp;<a class="'.$linkClass.'" href="' . $profileLink . '">' . $nameText . '</a>';
     }
 
     public function renderPlayersTitle(string $roomCode): string
@@ -118,5 +173,20 @@ class UserPresenter
         }
 
         return $rank . '/' . $totalUsers;
+    }
+
+    /**
+     * Small tier badge markup, shared by renderGemsDecoration() and
+     * anywhere else that wants the icon without the avatar frame.
+     */
+    private function buildGemsBadge(User $user): string
+    {
+        /** @var GemsTier $tier */
+        $tier = $user->gems_tier;
+        $title = $tier->label() . ' · ' . $user->gems . ' Gems';
+
+        return '<span class="gems-decoration gems-decoration--' . $tier->value . '" data-user-id="' . $user->id . '" title="' . e($title) . '">'
+            . '<i class="fad ' . $tier->icon() . '" style="color: ' . $tier->color() . ';"></i>'
+            . '</span>';
     }
 }
