@@ -79,7 +79,7 @@ class UserPresenter
             . ' background: ' . $tier->frameBackground() . ';'
             . ($glow ? ' box-shadow: ' . $glow . ';' : '');
 
-        $title = $tier->label() . ' · ' . $user->gems . ' Gems';
+        $title = $tier->label() . ' · ' . $user->gems . ' ' . __('karma');
 
         return '<span class="avatar-frame ' . $tier->frameCssClass() . '" data-user-id="' . $user->id . '" data-tier="' . $tier->value . '" title="' . e($title) . '" style="' . $frameStyle . '">'
             . '<img src="' . $avatarSrc . '" style="display: block; width: ' . $dimension . 'px; height: ' . $dimension . 'px; object-fit: cover; border-radius: ' . $innerRadius . 'px;" />'
@@ -176,29 +176,33 @@ class UserPresenter
 
     /**
      * Wraps renderAvatar()'s framed avatar with the gems badge overlaid as
-     * a small chip on the bottom-right corner — a white backing circle
-     * keeps the icon legible against any avatar image, sized proportional
-     * to the avatar so it stays subtle rather than competing with it.
+     * a chip on the bottom-right corner — a white backing circle with a
+     * tier-colored ring keeps the icon legible and prominent against any
+     * avatar image, sized proportional to the avatar.
      */
     private function renderAvatarWithGemsBadge(User $user, int $dimension, int $fontSize): string
     {
         $avatar = $this->renderAvatar($user, $dimension, $fontSize);
         $gemsBadge = $this->buildGemsBadge($user);
 
-        $badgeSize = max(12, (int) round($dimension * 0.4));
-        $iconSize = max(8, (int) round($badgeSize * 0.6));
+        /** @var GemsTier $tier */
+        $tier = $user->gems_tier;
+
+        $badgeSize = max(18, (int) round($dimension * 0.58));
+        $iconSize = max(10, (int) round($badgeSize * 0.62));
 
         $badgeStyle = 'position: absolute;'
-            . ' bottom: -2px;'
-            . ' right: -2px;'
+            . ' bottom: -4px;'
+            . ' right: -4px;'
             . ' width: ' . $badgeSize . 'px;'
             . ' height: ' . $badgeSize . 'px;'
             . ' display: flex;'
             . ' align-items: center;'
             . ' justify-content: center;'
             . ' background: #fff;'
+            . ' border: 2px solid ' . $tier->color() . ';'
             . ' border-radius: 50%;'
-            . ' box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.3);'
+            . ' box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15), 0 2px 5px rgba(0, 0, 0, 0.45);'
             . ' font-size: ' . $iconSize . 'px;'
             . ' line-height: 1;';
 
