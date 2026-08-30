@@ -32,10 +32,10 @@ enum GemsTier: string
     public static function fromGems(int $gems): self
     {
         return match (true) {
-            $gems >= 1000 => self::Legendary,
-            $gems >= 400  => self::Diamond,
-            $gems >= 200  => self::Platinum,
-            $gems >= 75   => self::Gold,
+            $gems >= 500 => self::Legendary,
+            $gems >= 200  => self::Diamond,
+            $gems >= 100  => self::Platinum,
+            $gems >= 50   => self::Gold,
             $gems >= 20   => self::Silver,
             default       => self::Bronze,
         };
@@ -49,10 +49,10 @@ enum GemsTier: string
         return match ($this) {
             self::Bronze    => 0,
             self::Silver    => 20,
-            self::Gold      => 75,
-            self::Platinum  => 200,
-            self::Diamond   => 400,
-            self::Legendary => 1000,
+            self::Gold      => 50,
+            self::Platinum  => 100,
+            self::Diamond   => 200,
+            self::Legendary => 500,
         };
     }
 
@@ -121,9 +121,9 @@ enum GemsTier: string
     public function frameThickness(): int
     {
         return match ($this) {
-            self::Bronze, self::Silver     => 2,
-            self::Gold, self::Platinum     => 3,
-            self::Diamond, self::Legendary => 4,
+            self::Bronze, self::Silver     => 4,
+            self::Gold, self::Platinum     => 5,
+            self::Diamond, self::Legendary => 6,
         };
     }
 

@@ -36,10 +36,9 @@ class UserPresenter
     /**
      * Renders the Karma/Gems decoration badge for a user — a small icon
      * whose look (icon + color) reflects the tier unlocked by their
-     * current gems total (see App\Support\GemsTier). Standalone use only
-     * (e.g. a profile header, a leaderboard column) — renderPlayerName()
-     * conveys the tier via the avatar frame instead, to avoid showing the
-     * same information twice next to the same avatar.
+     * current gems total (see App\Support\GemsTier). For standalone use
+     * (e.g. a profile header, a leaderboard column) where only the badge
+     * is wanted without the avatar frame; renderPlayerName() renders both.
      */
     public function renderGemsDecoration(?int $userId): string
     {
@@ -98,6 +97,7 @@ class UserPresenter
         }
 
         $onlineStatus = $this->renderOnlineStatusIndicator($userId);
+        $gemsBadge = $this->buildGemsBadge($user);
         $dimension = $forRoom ? 28 : 38;
         $fontSize = $forRoom ? 14 : 19;
 
@@ -108,7 +108,7 @@ class UserPresenter
         $linkClass = $forRoom ? 'text-light showPromotion animate-light' : 'text-danger showPromotion animate';
         if ($isProfile) $linkClass = 'text-light showPromotion animate-light';
 
-        return $onlineStatus . '&nbsp;' . $avatar . '&nbsp;<a class="'.$linkClass.'" href="' . $profileLink . '">' . $nameText . '</a>';
+        return $onlineStatus . $gemsBadge . '&nbsp;' . $avatar . '&nbsp;<a class="'.$linkClass.'" href="' . $profileLink . '">' . $nameText . '</a>';
     }
 
     public function renderPlayersTitle(string $roomCode): string
