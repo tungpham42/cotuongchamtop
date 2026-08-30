@@ -145,13 +145,14 @@ enum GemsTier: string
     }
 
     /**
-     * CSS `box-shadow` value giving the frame a glow, or null for tiers
-     * that shouldn't glow (Bronze/Silver — kept understated on purpose).
+     * CSS `box-shadow` value giving the frame a glow — subtle for
+     * Bronze/Silver, increasingly strong through Legendary.
      */
-    public function frameGlow(): ?string
+    public function frameGlow(): string
     {
         return match ($this) {
-            self::Bronze, self::Silver => null,
+            self::Bronze    => '0 0 3px rgba(168, 118, 62, 0.45)',
+            self::Silver    => '0 0 4px rgba(154, 164, 173, 0.5)',
             self::Gold      => '0 0 6px rgba(230, 184, 0, 0.6)',
             self::Platinum  => '0 0 8px rgba(91, 192, 222, 0.7)',
             self::Diamond   => '0 0 10px rgba(123, 63, 228, 0.8)',

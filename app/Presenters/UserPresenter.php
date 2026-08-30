@@ -100,7 +100,7 @@ class UserPresenter
         $dimension = $forRoom ? 28 : 38;
         $fontSize = $forRoom ? 14 : 19;
 
-        $avatar = $this->renderAvatarWithGemsBadge($user, $dimension, $fontSize);
+        $avatar = $this->renderAvatar($user, $dimension, $fontSize);
         $profileLink = localized_url('app.player', ['id' => $userId]);
 
         $nameText = $isProfile ? $user->name : '# ' . $userId . '  ' . $user->name;
@@ -172,44 +172,6 @@ class UserPresenter
         }
 
         return $rank . '/' . $totalUsers;
-    }
-
-    /**
-     * Wraps renderAvatar()'s framed avatar with the gems badge overlaid as
-     * a chip on the bottom-right corner — a white backing circle with a
-     * tier-colored ring keeps the icon legible and prominent against any
-     * avatar image, sized proportional to the avatar.
-     */
-    private function renderAvatarWithGemsBadge(User $user, int $dimension, int $fontSize): string
-    {
-        $avatar = $this->renderAvatar($user, $dimension, $fontSize);
-        $gemsBadge = $this->buildGemsBadge($user);
-
-        /** @var GemsTier $tier */
-        $tier = $user->gems_tier;
-
-        $badgeSize = max(18, (int) round($dimension * 0.58));
-        $iconSize = max(10, (int) round($badgeSize * 0.62));
-
-        $badgeStyle = 'position: absolute;'
-            . ' bottom: -4px;'
-            . ' right: -4px;'
-            . ' width: ' . $badgeSize . 'px;'
-            . ' height: ' . $badgeSize . 'px;'
-            . ' display: flex;'
-            . ' align-items: center;'
-            . ' justify-content: center;'
-            . ' background: #fff;'
-            . ' border: 2px solid ' . $tier->color() . ';'
-            . ' border-radius: 50%;'
-            . ' box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15), 0 2px 5px rgba(0, 0, 0, 0.45);'
-            . ' font-size: ' . $iconSize . 'px;'
-            . ' line-height: 1;';
-
-        return '<span style="position: relative; display: inline-block; line-height: 0; vertical-align: middle;">'
-            . $avatar
-            . '<span style="' . $badgeStyle . '">' . $gemsBadge . '</span>'
-            . '</span>';
     }
 
     /**
