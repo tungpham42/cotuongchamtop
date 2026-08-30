@@ -63,7 +63,7 @@
                     <h5>{{ __("Lần trực tuyến gần nhất:") }} <span class="text-light">{{ $player->last_seen_at }}</span></h5>
                     <h5>{{ __("Thứ hạng:") }} {!! $userPresenter->renderPlayerRank($player->id) !!}</h5>
                     <h5>Elo: <span id="elo" class="text-gold font-weight-bold" style="font-size: 1.2em;">{!! $userPresenter->renderElo($player->id) !!}</span></h5>
-                    <h5>{{ __("Karma:") }} <span id="karma" class="text-info font-weight-bold" style="font-size: 1.2em;"><i class="fas fa-gem"></i> {{ $player->karma ?? 0 }}</span></h5>
+                    <h5>{{ __("Karma:") }} <span id="karma" class="text-info font-weight-bold" style="font-size: 1.2em;"><i class="fas fa-gem"></i> {{ $player->karma ?? 0 }}</span> {!! $userPresenter->renderGemsDecoration($player->id) !!}</h5>
                     <hr style="border-color: rgba(212, 175, 55, 0.2);">
                     <h5>{{ __("Số trận thắng:") }} <span id="winPoints" class="text-success font-weight-bold">{!! $userPresenter->renderStat($player->id, 'win') !!}</span></h5>
                     <h5>{{ __("Số trận hòa:") }} <span id="drawPoints" class="text-warning font-weight-bold">{!! $userPresenter->renderStat($player->id, 'draw') !!}</span></h5>
