@@ -97,18 +97,17 @@ class UserPresenter
         }
 
         $onlineStatus = $this->renderOnlineStatusIndicator($userId);
-        $gemsBadge = $this->buildGemsBadge($user);
         $dimension = $forRoom ? 28 : 38;
         $fontSize = $forRoom ? 14 : 19;
 
-        $avatar = $this->renderAvatar($user, $dimension, $fontSize);
+        $avatar = $this->renderAvatarWithGemsBadge($user, $dimension, $fontSize);
         $profileLink = localized_url('app.player', ['id' => $userId]);
 
         $nameText = $isProfile ? $user->name : '# ' . $userId . '  ' . $user->name;
         $linkClass = $forRoom ? 'text-light showPromotion animate-light' : 'text-danger showPromotion animate';
         if ($isProfile) $linkClass = 'text-light showPromotion animate-light';
 
-        return $onlineStatus . $gemsBadge . '&nbsp;' . $avatar . '&nbsp;<a class="'.$linkClass.'" href="' . $profileLink . '">' . $nameText . '</a>';
+        return $onlineStatus . '&nbsp;' . $avatar . '&nbsp;<a class="'.$linkClass.'" href="' . $profileLink . '">' . $nameText . '</a>';
     }
 
     public function renderPlayersTitle(string $roomCode): string
@@ -176,6 +175,40 @@ class UserPresenter
     }
 
     /**
+     * Wraps renderAvatar()'s framed avatar with the gems badge overlaid as
+     * a small chip on the bottom-right corner — a white backing circle
+     * keeps the icon legible against any avatar image, sized proportional
+     * to the avatar so it stays subtle rather than competing with it.
+     */
+    private function renderAvatarWithGemsBadge(User $user, int $dimension, int $fontSize): string
+    {
+        $avatar = $this->renderAvatar($user, $dimension, $fontSize);
+        $gemsBadge = $this->buildGemsBadge($user);
+
+        $badgeSize = max(12, (int) round($dimension * 0.4));
+        $iconSize = max(8, (int) round($badgeSize * 0.6));
+
+        $badgeStyle = 'position: absolute;'
+            . ' bottom: -2px;'
+            . ' right: -2px;'
+            . ' width: ' . $badgeSize . 'px;'
+            . ' height: ' . $badgeSize . 'px;'
+            . ' display: flex;'
+            . ' align-items: center;'
+            . ' justify-content: center;'
+            . ' background: #fff;'
+            . ' border-radius: 50%;'
+            . ' box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.3);'
+            . ' font-size: ' . $iconSize . 'px;'
+            . ' line-height: 1;';
+
+        return '<span style="position: relative; display: inline-block; line-height: 0; vertical-align: middle;">'
+            . $avatar
+            . '<span style="' . $badgeStyle . '">' . $gemsBadge . '</span>'
+            . '</span>';
+    }
+
+    /**
      * Small tier badge markup, shared by renderGemsDecoration() and
      * anywhere else that wants the icon without the avatar frame.
      */
@@ -183,7 +216,7 @@ class UserPresenter
     {
         /** @var GemsTier $tier */
         $tier = $user->gems_tier;
-        $title = $tier->label() . ' · ' . $user->gems . ' Gems';
+        $title = $tier->label() . ' · ' . $user->gems . ' ' . __('karma');
 
         return '<span class="gems-decoration gems-decoration--' . $tier->value . '" data-user-id="' . $user->id . '" title="' . e($title) . '">'
             . '<i class="fad ' . $tier->icon() . '" style="color: ' . $tier->color() . ';"></i>'
