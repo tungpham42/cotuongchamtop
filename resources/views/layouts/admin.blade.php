@@ -43,6 +43,9 @@
     <style>
         html { scroll-behavior: smooth; }
         body { font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+        aside#adminSidebar {
+            overflow: auto;
+        }
         .admin-bg {
             background:
                 radial-gradient(circle at 15% 15%, rgba(99,102,241,.12), transparent 28%),
