@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', $game->title)
-@section('og_image', 'https://placehold.co/1200x630/BB5F1A/FFFFFF/jpeg?font=roboto&text=' . urlencode($game->description))
+@section('og_image', 'https://placehold.co/1200x630/DA251D/FFFF00/jpeg?font=roboto&text=' . urlencode($game->description))
 @section('meta_description', Str::limit($game->description, 150))
 
 @section('content')
