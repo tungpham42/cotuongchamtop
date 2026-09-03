@@ -335,7 +335,7 @@
                 @auth
                     @if(auth()->id() === $game->user_id)
                     <div class="mb-3">
-                        <a href="{{ route('games.edit', $game->slug) }}" class="btn btn-danger w-100 fw-bold d-flex align-items-center justify-content-center gap-2">
+                        <a href="{{ route('admin.games.edit', $game->slug) }}" class="btn btn-danger w-100 fw-bold d-flex align-items-center justify-content-center gap-2">
                             <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                             Chỉnh sửa ván cờ
                         </a>
