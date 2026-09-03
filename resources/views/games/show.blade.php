@@ -191,7 +191,7 @@
 
                 {{-- Board Graphic Container --}}
                 <div class="mx-auto p-1 p-sm-2" style="max-width: 420px;">
-                    <div id="xiangqi-board" style="width: 100%"></div>
+                    <div id="ban-co" style="width: 100%"></div>
                 </div>
 
                 {{-- Progress Bar --}}
@@ -285,7 +285,7 @@
                 </div>
 
                 {{-- Step Counter --}}
-                <div class="text-center font-monospace fw-bold mt-3 text-gold-light small">
+                <div class="text-center font-monospace fw-bold mt-3 text-gold-light small royal-card-title">
                     {{ __('Bước:') }} <span id="current-step" class="text-warning fs-5 ms-1">0</span> / <span id="total-steps" class="ms-1">0</span>
                 </div>
             </div>
@@ -541,7 +541,7 @@
             return fen.split(' ')[0];
         }
 
-        board = Xiangqiboard('xiangqi-board', {
+        board = Xiangqiboard('ban-co', {
             position: getBoardFen(fenHistory[0]),
             showNotation: true,
             draggable: false,
