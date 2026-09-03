@@ -299,14 +299,14 @@ foreach (config('locales.supported', []) as $locale) {
 // article routes above: URL segments live in config/locales.php ->
 // 'paths' ('games.library', 'games.show'). 'library' is registered
 // before 'show' for each locale so the literal '.../thu-vien' segment
-// is matched before the '{game}' wildcard ever gets a chance to swallow
+// is matched before the '{slug}' wildcard ever gets a chance to swallow
 // it.
 // ==========================================
 foreach (config('locales.supported', []) as $locale) {
     Route::get(localized_path('games.library', [], $locale), [GameController::class, 'library'])
         ->middleware("locale:{$locale}");
 
-    Route::get(localized_path('games.show', ['game' => '{game}'], $locale), [GameController::class, 'show'])
+    Route::get(localized_path('games.show', ['slug' => '{slug}'], $locale), [GameController::class, 'show'])
         ->middleware("locale:{$locale}");
 }
 

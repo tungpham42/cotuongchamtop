@@ -58,7 +58,7 @@
         <div class="row g-4">
             @foreach ($games as $game)
                 <div class="col-12 col-sm-6 col-lg-4">
-                    <a href="{{ localized_path('games.show', ['game' => $game->slug]) }}"
+                    <a href="{{ localized_path('games.show', ['slug' => $game->slug]) }}"
                        class="article-card d-flex flex-column h-100 text-decoration-none">
                         <div class="article-card-band"></div>
 
