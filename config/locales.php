@@ -123,5 +123,10 @@ return [
 
         'article.index' => ['vi' => 'bai-viet', 'en' => 'articles', 'ja' => 'kiji', 'ko' => 'gisa', 'zh' => 'wenzhang'],
         'article.show'  => ['vi' => 'bai-viet/{slug}', 'en' => 'articles/{slug}', 'ja' => 'kiji/{slug}', 'ko' => 'gisa/{slug}', 'zh' => 'wenzhang/{slug}'],
+
+        // Games (shared game library — CRUD is admin-only, these two are the
+        // only public-facing pages for the games feature)
+        'games.library' => ['vi' => 'thu-vien', 'en' => 'library', 'ja' => 'raiburari', 'ko' => 'raibeureoli', 'zh' => 'tushuguan'],
+        'games.show'    => ['vi' => 'van-co/{slug}', 'en' => 'games/{slug}', 'ja' => 'kifu/{slug}', 'ko' => 'gibo/{slug}', 'zh' => 'qipu/{slug}'],
     ],
 ];

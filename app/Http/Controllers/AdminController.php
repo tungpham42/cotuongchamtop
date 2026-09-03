@@ -7,6 +7,7 @@ use App\Models\Room;
 use App\Models\Tournament;
 use App\Models\Puzzle;
 use App\Models\Article;
+use App\Models\Game;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -54,6 +55,10 @@ class AdminController extends Controller
             'published_articles'    => Article::where('status', 'published')->count(),
             'draft_articles'        => Article::where('status', 'draft')->count(),
             'new_articles_month'    => Article::where('created_at', '>=', now()->startOfMonth())->count(),
+
+            'total_games'           => Game::count(),
+            'new_games_month'       => Game::where('created_at', '>=', now()->startOfMonth())->count(),
+            'total_game_views'      => (int) Game::sum('views'),
 
             'completion_rate'       => $totalRooms > 0 ? round(($totalMatches / $totalRooms) * 100, 1) : 0,
         ];
@@ -140,6 +145,11 @@ class AdminController extends Controller
         // ==========================================
         $recentArticles = Article::with('translation')->latest()->take(5)->get();
 
+        // ==========================================
+        // 9. Recent Games (for the Content section)
+        // ==========================================
+        $recentGames = Game::with('user')->latest()->take(5)->get();
+
         return view('admin.dashboard', compact(
             'stats',
             'userGrowth',
@@ -150,7 +160,8 @@ class AdminController extends Controller
             'staleRooms',
             'recentUsers',
             'recentRooms',
-            'recentArticles'
+            'recentArticles',
+            'recentGames'
         ));
     }
 

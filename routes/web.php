@@ -15,6 +15,7 @@ use App\Http\Controllers\TimerController;
 use App\Http\Controllers\PayOSController;
 use App\Http\Controllers\TournamentController;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\GameController;
 use App\Http\Controllers\BroadcastAuthController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\AdminController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AdminPuzzleController;
 use App\Http\Controllers\AdminRoomController;
 use App\Http\Controllers\AdminArticleController;
+use App\Http\Controllers\AdminGameController;
 use App\Http\Controllers\AdminTournamentController;
 use App\Http\Controllers\AdminTournamentParticipantController;
 use App\Actions\Room\GetRandomRoomAction;
@@ -59,6 +61,7 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->name('admin.')->gr
     Route::resource('rooms', AdminRoomController::class);
     Route::resource('tournaments', AdminTournamentController::class);
     Route::resource('articles', AdminArticleController::class);
+    Route::resource('games', AdminGameController::class)->except(['show']);
     Route::get('tournaments/{tournament}/participants', [AdminTournamentParticipantController::class, 'index'])->name('tournaments.participants.index');
     Route::post('tournaments/{tournament}/participants', [AdminTournamentParticipantController::class, 'store'])->name('tournaments.participants.store');
     Route::delete('tournaments/{tournament}/participants/{user}', [AdminTournamentParticipantController::class, 'destroy'])->name('tournaments.participants.destroy');
@@ -284,6 +287,29 @@ foreach (config('locales.supported', []) as $locale) {
     Route::get(localized_path('article.show', ['slug' => '{slug}'], $locale), [ArticleController::class, 'show'])
         ->middleware("locale:{$locale}")
         ->name($isDefaultLocale ? 'article.show' : "{$locale}.article.show");
+}
+
+// ==========================================
+// GAME ROUTES (Public: browse the shared library and view a game)
+// CRUD is admin-only — see Route::resource('games', ...) in the admin
+// group above; that one intentionally stays unlocalized like the other
+// admin resources.
+//
+// These two public pages follow the same Unified Localized Setup as the
+// article routes above: URL segments live in config/locales.php ->
+// 'paths' ('games.library', 'games.show'). 'library' is registered
+// before 'show' for each locale so the literal '.../thu-vien' segment
+// is matched before the '{game}' wildcard ever gets a chance to swallow
+// it.
+// ==========================================
+foreach (config('locales.supported', []) as $locale) {
+    Route::get(localized_path('games.library', [], $locale), [GameController::class, 'library'])
+        ->middleware("locale:{$locale}")
+        ->name('games.library');
+
+    Route::get(localized_path('games.show', ['game' => '{game}'], $locale), [GameController::class, 'show'])
+        ->middleware("locale:{$locale}")
+        ->name('games.show');
 }
 
 Route::post('/startTimer/{roomCode}/{player}', [RoomController::class, 'startTimer']);
