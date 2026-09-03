@@ -260,7 +260,7 @@
                         <div x-show="open"
                              x-transition
                              class="position-absolute end-0 bottom-100 mb-2 rounded-3 royal-glass-card overflow-hidden shadow-lg"
-                             style="display: none; width: 120px; z-index: 1050; background: rgba(11, 12, 16, 0.95);">
+                             style="bottom: 30px; display: none; width: 120px; z-index: 1050; background: rgba(11, 12, 16, 0.95);">
                             <div class="py-1">
                                 <template x-for="option in options" :key="option.value">
                                     <button @click="updateSpeed(option.value)"
