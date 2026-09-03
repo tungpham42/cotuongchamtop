@@ -24,12 +24,12 @@
     <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Bạn đang giải cờ thế với máy") }}">
         {{ __("Bạn đang giải") }} @if($puzzleName) "{{ $puzzleName }}" @else cờ thế @endif
     </h5>
-@endsection
-
-@section('rightSide')
     <p class="w-100 text-center m-0">
         <span class="rounded p-0 d-block" id="game-status"></span>
     </p>
+@endsection
+
+@section('rightSide')
     <p class="w-100 text-center mx-0 mb-0 mt-2">
         <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> {{ __("HẾT TRẬN") }}</span>
     </p>

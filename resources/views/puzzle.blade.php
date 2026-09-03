@@ -4,6 +4,9 @@
 
 @section('aboveBoard')
     <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Bàn cờ thế") }}">{{ __("Bạn đang xếp") }}<span id="puzzle-title"></span></h5>
+    <p class="w-100 text-center m-0">
+        <span class="rounded p-0 d-block" id="game-status"></span>
+    </p>
     <p class="w-100 text-center mt-0 mb-1">
         <a data-step="1" data-intro="Ấn vào đây để tải bàn cờ về khi đã xếp xong" id="capture" class="btn btn-danger btn-lg text-light" href="javascript:void(0);" data-toggle="tooltip" data-placement="top" title="{{ __("Lưu thành ảnh nào") }}"><i class="fad fa-download"></i> {{ __("Tải bàn cờ thế") }}</a>
         @include('common.volumeBtn')
@@ -12,9 +15,6 @@
 @endsection
 
 @section('rightSide')
-    <p class="w-100 text-center m-0">
-        <span class="rounded p-0 d-block" id="game-status"></span>
-    </p>
     <p class="w-100 text-center mx-0 mb-0 mt-2">
         <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> {{ __("HẾT TRẬN") }}</span>
     </p>
