@@ -190,7 +190,11 @@
 </style>
 
 <div class="container py-3">
-
+    <audio id="nuoc-co">
+        <source src="{{ asset('sound/nuocCo.mp3') }}" type="audio/mpeg">
+        <source src="{{ asset('sound/nuocCo.wav') }}" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
     {{-- Kicker Badge --}}
     <div class="d-flex justify-content-center mb-4">
         <span class="badge badge-royal rounded-pill px-3 py-2 text-uppercase d-inline-flex align-items-center" style="gap: 0.5rem;">
@@ -625,6 +629,18 @@
         function goToStep(step) {
             if (step < 0) step = 0;
             if (step > totalSteps) step = totalSteps;
+
+            // Play the move sound if the step is actually changing
+            if (currentStep !== step) {
+                const moveSound = document.getElementById('nuoc-co');
+                if (moveSound) {
+                    moveSound.currentTime = 0; // Reset to start so rapid moves don't overlap awkwardly
+                    moveSound.play().catch(function(error) {
+                        // Catch and ignore autoplay restrictions if the user hasn't interacted with the document yet
+                        console.log("Audio play prevented by browser policy:", error);
+                    });
+                }
+            }
 
             currentStep = step;
             $('#current-step').text(currentStep);

@@ -91,8 +91,8 @@
         <div class="container-fluid game px-0" itemscope itemtype="http://schema.org/Game">
             <div class="container {{ isset($board) ? 'px-3 pb-0 pt-3' : 'p-3' }}">
                 <audio id="nuoc-co">
-                    <source src="{{ $cdnUrl }}/sound/nuocCo.mp3" type="audio/mpeg">
-                    <source src="{{ $cdnUrl }}/sound/nuocCo.wav" type="audio/wav">
+                    <source src="{{ asset('sound/nuocCo.mp3') }}" type="audio/mpeg">
+                    <source src="{{ asset('sound/nuocCo.wav') }}" type="audio/wav">
                     Your browser does not support the audio element.
                 </audio>
                 <audio id="het-tran">
