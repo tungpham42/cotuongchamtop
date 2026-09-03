@@ -304,12 +304,10 @@ foreach (config('locales.supported', []) as $locale) {
 // ==========================================
 foreach (config('locales.supported', []) as $locale) {
     Route::get(localized_path('games.library', [], $locale), [GameController::class, 'library'])
-        ->middleware("locale:{$locale}")
-        ->name('games.library');
+        ->middleware("locale:{$locale}");
 
     Route::get(localized_path('games.show', ['game' => '{game}'], $locale), [GameController::class, 'show'])
-        ->middleware("locale:{$locale}")
-        ->name('games.show');
+        ->middleware("locale:{$locale}");
 }
 
 Route::post('/startTimer/{roomCode}/{player}', [RoomController::class, 'startTimer']);
