@@ -10,7 +10,7 @@
                          ->created_at, ->translation->slug — được cung cấp bởi
                          Article model + Translatable trait).
         $carouselTitle string|null  Tiêu đề section (mặc định: 'Bài viết mới nhất')
-        $seeAllRoute   string|null  Tên route "Xem tất cả" (mặc định: 'articles.index')
+        $seeAllRoute   string|null  Tên route "Xem tất cả" (mặc định: 'article.index')
 
     Lưu ý: file này chỉ include 1 lần / trang vì có JS khởi tạo scroll bên dưới.
     Nếu dùng nhiều carousel trên cùng 1 trang, đổi id 'article-carousel'
@@ -19,7 +19,7 @@
 
 @php
     $carouselTitle = $carouselTitle ?? __('Bài viết mới nhất');
-    $seeAllRoute = $seeAllRoute ?? 'articles.index';
+    $seeAllRoute = $seeAllRoute ?? localized_url('article.index');
 @endphp
 
 @if (isset($articles) && $articles->count() > 0)
@@ -181,7 +181,7 @@
                             );
                         @endphp
                         <a
-                            href="{{ $articleSlug ? route('articles.show', ['slug' => $articleSlug]) : '#' }}"
+                            href="{{ $articleSlug ? localized_url('article.show', ['slug' => $articleSlug]) : '#' }}"
                             class="article-card"
                         >
                             @if ($article->featured_image_url)
