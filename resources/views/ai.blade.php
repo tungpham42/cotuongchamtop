@@ -32,7 +32,7 @@
         </div>
     @else
         {{-- STANDARD AI UI --}}
-        <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Cấp độ") }} máy: {{ __($levelTxt) }}">{{ __('Bạn đang') }} {{ __($action) }} {{ __('với máy') }}<span id="puzzle-title"></span></h5>
+        <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Cấp độ") }}: {{ __($levelTxt) }}">{{ __('Bạn đang') }} {{ __($action) }} {{ __('với máy') }}<span id="puzzle-title"></span></h5>
     @endif
 @endsection
 

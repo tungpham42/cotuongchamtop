@@ -80,54 +80,62 @@ $cdnUrl = "https://cotuong.r.worldssl.net"; // url('')
 $fenRegex = "[a-zA-Z0-9\-\/\s|&nbsp;]+";
 // Common function to get random room
 Route::get('/test-engine', function() {
-  try {
-    echo "<h1>Pikafish Engine Test</h1>";
+  // The old version of this route instantiated \App\Services\XiangqiEngineService
+  // directly, which spawned a brand-new Pikafish process (with its ~2s+ boot
+  // cost) on every single hit — the exact per-request pattern the engine-pool
+  // refactor got rid of. That class no longer exists. This route now exercises
+  // the actual warm worker pool through XiangqiEngineClient instead, the same
+  // path XiangqiController uses, so what you see here matches production
+  // behavior rather than bypassing it.
+  if (app()->environment('production')) {
+    abort(404);
+  }
 
-    // Check if files exist
+  try {
+    echo "<h1>Pikafish Engine Pool Test</h1>";
+
+    // Check if the underlying binary/network files are present at all —
+    // still useful, since every worker needs these to boot.
     $enginePath = storage_path('engines/pikafish_vps');
     $networkPath = storage_path('engines/pikafish.nnue');
 
-    echo "<p>Engine exists: " . (file_exists($enginePath) ? 'YES' : 'NO') . "</p>";
-    echo "<p>Network exists: " . (file_exists($networkPath) ? 'YES' : 'NO') . "</p>";
+    echo "<p>Engine binary exists: " . (file_exists($enginePath) ? 'YES' : 'NO') . "</p>";
+    echo "<p>Network file exists: " . (file_exists($networkPath) ? 'YES' : 'NO') . "</p>";
 
     if (file_exists($enginePath)) {
       echo "<p>Engine executable: " . (is_executable($enginePath) ? 'YES' : 'NO') . "</p>";
     }
-
     if (file_exists($networkPath)) {
       echo "<p>Network size: " . filesize($networkPath) . " bytes</p>";
     }
 
-    // Test engine
-    $engine = new \App\Services\XiangqiEngineService();
+    $client = new \App\Services\XiangqiEngineClient();
+    $status = $client->poolStatus();
 
-    echo "<p>Engine initialized: " . ($engine->isReady() ? 'YES' : 'NO') . "</p>";
+    echo "<h2>Worker pool status</h2>";
+    echo "<p>Workers available: <strong>{$status['available']} / {$status['total']}</strong></p>";
 
-    if ($engine->isReady()) {
+    if ($status['available'] === 0) {
+      echo "<p style='color: red;'>No workers responding. Run <code>php artisan xiangqi:pool:ensure</code> "
+         . "and check <code>storage/app/xiangqi/engine-*.log</code> for boot errors.</p>";
+    } else {
       $fen = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1';
-      $bestMove = $engine->getBestMove($fen, 3000);
+      $start = microtime(true);
+      $bestMove = $client->getBestMove($fen, 3000);
+      $elapsedMs = round((microtime(true) - $start) * 1000);
 
-      echo "<p>Best move: <strong>" . ($bestMove ?? 'NOT FOUND') . "</strong></p>";
-      echo "<p>FEN: " . $fen . "</p>";
-
-      // Test API endpoint
-      echo "<h2>API Test</h2>";
-      $client = new \GuzzleHttp\Client();
-      $response = $client->post(url('/api/xiangqi/best-move'), [
-        'form_params' => [
-          'fen' => $fen,
-          'timeout' => 2000,
-          'level' => 3,
-          '_token' => csrf_token()
-        ]
-      ]);
-
-      $result = json_decode($response->getBody(), true);
-      echo "<p>API Response: " . json_encode($result) . "</p>";
+      echo "<p>Best move: <strong>" . ($bestMove ?? 'NOT FOUND (fell through to fallback logic)') . "</strong></p>";
+      echo "<p>FEN: " . htmlspecialchars($fen) . "</p>";
+      echo "<p>Round-trip time: {$elapsedMs}ms (a cold-spawn engine would be seconds; this should be well under a second from a warm worker)</p>";
     }
-  } catch (Exception $e) {
-    echo "<p style='color: red;'>Error: " . $e->getMessage() . "</p>";
-    echo "<pre>" . $e->getTraceAsString() . "</pre>";
+
+    // Hitting our own HTTP API from within a route on the same request adds
+    // an extra network round trip for no benefit now that the client above
+    // already exercises the same code path the API route calls — dropped
+    // rather than kept as dead weight.
+  } catch (\Throwable $e) {
+    echo "<p style='color: red;'>Error: " . htmlspecialchars($e->getMessage()) . "</p>";
+    echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
   }
 });
 Route::get('/sitemap_index.xml', [SitemapController::class, 'sitemapIndex'])->name('sitemap.sitemapIndex');
