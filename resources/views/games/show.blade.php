@@ -391,11 +391,6 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<link rel="stylesheet" href="{{ asset('css/xiangqiboard.css?v=1') }}" />
-<script src="{{ asset('js/xiangqiboard.js?v=2') }}"></script>
-<script src="{{ asset('js/xiangqi.js') }}"></script>
-
 <script>
     $(document).ready(function() {
         const dbInitialFen = @json($game->initial_fen);
@@ -549,7 +544,7 @@
             position: getBoardFen(fenHistory[0]),
             showNotation: true,
             draggable: false,
-            pieceTheme: '{{ asset('img/xiangqipieces/wikipedia/{piece}.svg') }}'
+            pieceTheme: '{{ asset('img/xiangqipieces/quan/{piece}.svg') }}'
         });
 
         $(window).on('resize', function() {
