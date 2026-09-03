@@ -122,6 +122,15 @@
                         Puzzles
                     </a>
 
+                    <a href="{{ route('admin.games.index') }}"
+                       class="group flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition
+                       {{ request()->routeIs('admin.games.*') ? 'bg-white/10 text-white nav-active' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                        <span class="w-8 h-8 rounded-lg flex items-center justify-center {{ request()->routeIs('admin.games.*') ? 'bg-teal-500/20 text-teal-200' : 'bg-white/5 text-slate-400 group-hover:text-white' }}">
+                            <i class="fa-solid fa-book-open text-sm"></i>
+                        </span>
+                        Games
+                    </a>
+
                     <a href="{{ route('admin.tournaments.index') }}"
                        class="group flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition
                        {{ request()->routeIs('admin.tournaments.*') ? 'bg-white/10 text-white nav-active' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
