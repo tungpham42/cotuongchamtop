@@ -179,7 +179,7 @@
             <svg style="width: 14px; height: 14px;" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.958a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.368 2.447a1 1 0 00-.363 1.118l1.287 3.957c.3.922-.755 1.688-1.538 1.118l-3.367-2.447a1 1 0 00-1.176 0l-3.367 2.447c-.783.57-1.838-.196-1.538-1.118l1.287-3.957a1 1 0 00-.363-1.118L2.062 9.385c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.951-.69l1.286-3.958z"></path>
             </svg>
-            Kỳ Phổ Ván Đấu
+            {{ __('Kỳ Phổ Ván Đấu') }}
         </span>
     </div>
 
@@ -190,8 +190,8 @@
             <div class="royal-glass-card p-3 p-md-4">
 
                 {{-- Board Graphic Container --}}
-                <div class="board-container-frame mx-auto p-1 p-sm-2" style="max-width: 420px;">
-                    <div id="ban-co" style="width: 100%"></div>
+                <div class="mx-auto p-1 p-sm-2" style="max-width: 420px;">
+                    <div id="xiangqi-board" style="width: 100%"></div>
                 </div>
 
                 {{-- Progress Bar --}}
@@ -202,22 +202,22 @@
                 {{-- Controls Toolbar --}}
                 <div class="d-flex align-items-center justify-content-center flex-wrap gap-2 gap-sm-3 mt-4">
                     <div class="d-flex align-items-center gap-1 gap-sm-2 p-1 rounded-pill" style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(212, 175, 55, 0.2);">
-                        <button id="btn-start" class="btn btn-royal-icon" data-tippy-content="Về đầu">
+                        <button id="btn-start" class="btn btn-royal-icon" data-tippy-content="{{ __('Về đầu') }}">
                             <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
                         </button>
-                        <button id="btn-prev" class="btn btn-royal-icon" data-tippy-content="Lùi 1 bước">
+                        <button id="btn-prev" class="btn btn-royal-icon" data-tippy-content="{{ __('Lùi 1 bước') }}">
                             <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                         </button>
 
-                        <button id="btn-autoplay" class="btn btn-royal-play pulse-glow mx-1" data-tippy-content="Phát tự động">
+                        <button id="btn-autoplay" class="btn btn-royal-play pulse-glow mx-1" data-tippy-content="{{ __('Phát tự động') }}">
                             <svg id="icon-play" style="width: 24px; height: 24px;" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
                             <svg id="icon-pause" class="d-none" style="width: 24px; height: 24px;" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
                         </button>
 
-                        <button id="btn-next" class="btn btn-royal-icon" data-tippy-content="Tới 1 bước">
+                        <button id="btn-next" class="btn btn-royal-icon" data-tippy-content="{{ __('Tới 1 bước') }}">
                             <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </button>
-                        <button id="btn-end" class="btn btn-royal-icon" data-tippy-content="Tới cuối">
+                        <button id="btn-end" class="btn btn-royal-icon" data-tippy-content="{{ __('Tới cuối') }}">
                             <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
                         </button>
                     </div>
@@ -227,11 +227,11 @@
                             open: false,
                             speed: '1000',
                             options: [
-                                { value: '4000', label: '0.25x' },
-                                { value: '2000', label: '0.5x' },
-                                { value: '1000', label: '1.0x' },
-                                { value: '666', label: '1.5x' },
-                                { value: '500', label: '2.0x' }
+                                { value: '4000', label: '{{ __('0.25x') }}' },
+                                { value: '2000', label: '{{ __('0.5x') }}' },
+                                { value: '1000', label: '{{ __('1.0x') }}' },
+                                { value: '666', label: '{{ __('1.5x') }}' },
+                                { value: '500', label: '{{ __('2.0x') }}' }
                             ],
                             get currentLabel() {
                                 return this.options.find(opt => opt.value === this.speed).label;
@@ -253,7 +253,7 @@
                                 type="button"
                                 class="btn btn-dark d-flex align-items-center justify-content-between gap-2 px-3 py-2 border rounded-3 fw-bold text-warning"
                                 style="min-width: 90px; border-color: rgba(212, 175, 55, 0.4) !important;">
-                            <span x-text="currentLabel">1.0x</span>
+                            <span x-text="currentLabel">{{ __('1.0x') }}</span>
                             <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
 
@@ -275,18 +275,18 @@
                         </div>
 
                         <select id="autoplay-speed" class="d-none">
-                            <option value="4000">0.25x</option>
-                            <option value="2000">0.5x</option>
-                            <option value="1000" selected>1.0x</option>
-                            <option value="666">1.5x</option>
-                            <option value="500">2.0x</option>
+                            <option value="4000">{{ __('0.25x') }}</option>
+                            <option value="2000">{{ __('0.5x') }}</option>
+                            <option value="1000" selected>{{ __('1.0x') }}</option>
+                            <option value="666">{{ __('1.5x') }}</option>
+                            <option value="500">{{ __('2.0x') }}</option>
                         </select>
                     </div>
                 </div>
 
                 {{-- Step Counter --}}
                 <div class="text-center font-monospace fw-bold mt-3 text-gold-light small">
-                    Bước: <span id="current-step" class="text-warning fs-5 ms-1">0</span> / <span id="total-steps" class="ms-1">0</span>
+                    {{ __('Bước:') }} <span id="current-step" class="text-warning fs-5 ms-1">0</span> / <span id="total-steps" class="ms-1">0</span>
                 </div>
             </div>
         </div>
@@ -303,7 +303,7 @@
                 <div class="d-flex flex-wrap gap-2 mb-4">
                     <span class="chip-stat d-inline-flex align-items-center gap-1">
                         <svg style="width: 14px; height: 14px;" class="text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        {{ number_format($game->views) }} lượt xem
+                        {{ number_format($game->views) }} {{ __('lượt xem') }}
                     </span>
                     <span class="chip-stat d-inline-flex align-items-center gap-1">
                         <svg style="width: 14px; height: 14px;" class="text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -311,7 +311,7 @@
                     </span>
                     <span class="chip-stat d-inline-flex align-items-center gap-1">
                         <svg style="width: 14px; height: 14px;" class="text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                        <span id="stat-total-moves">0</span> nước đi
+                        <span id="stat-total-moves">0</span> {{ __('nước đi') }}
                     </span>
                 </div>
 
@@ -322,7 +322,7 @@
                     </div>
                     <div>
                         <div class="fw-bold text-light small">{{ $game->user->name }}</div>
-                        <div class="text-muted extra-small" style="font-size: 0.75rem;">Tác giả ván cờ</div>
+                        <div class="text-muted extra-small" style="font-size: 0.75rem;">{{ __('Tác giả ván cờ') }}</div>
                     </div>
                 </div>
 
@@ -337,7 +337,7 @@
                     <div class="mb-3">
                         <a href="{{ route('admin.games.edit', $game->slug) }}" class="btn btn-danger w-100 fw-bold d-flex align-items-center justify-content-center gap-2">
                             <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                            Chỉnh sửa ván cờ
+                            {{ __('Chỉnh sửa ván cờ') }}
                         </a>
                     </div>
                     @endif
@@ -345,21 +345,21 @@
 
                 {{-- Social Share Section --}}
                 <div class="pt-3 border-top border-secondary border-opacity-25">
-                    <div class="text-uppercase text-muted fw-bold extra-small mb-3" style="font-size: 0.75rem; letter-spacing: 1px;">Chia sẻ ván cờ</div>
+                    <div class="text-uppercase text-muted fw-bold extra-small mb-3" style="font-size: 0.75rem; letter-spacing: 1px;">{{ __('Chia sẻ ván cờ') }}</div>
                     <div class="d-flex align-items-center gap-2">
-                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}" target="_blank" class="social-share-btn" data-tippy-content="Chia sẻ Facebook">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}" target="_blank" class="social-share-btn" data-tippy-content="{{ __('Chia sẻ Facebook') }}">
                             <svg style="width: 18px; height: 18px;" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"></path></svg>
                         </a>
 
-                        <a href="https://twitter.com/intent/tweet?url={{ urlencode(url()->current()) }}&text={{ urlencode($game->title) }}" target="_blank" class="social-share-btn" data-tippy-content="Chia sẻ X (Twitter)">
+                        <a href="https://twitter.com/intent/tweet?url={{ urlencode(url()->current()) }}&text={{ urlencode($game->title) }}" target="_blank" class="social-share-btn" data-tippy-content="{{ __('Chia sẻ X (Twitter)') }}">
                             <svg style="width: 18px; height: 18px;" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
                         </a>
 
-                        <a href="https://www.threads.net/intent/post?text={{ urlencode($game->title . ' ' . url()->current()) }}" target="_blank" class="social-share-btn" data-tippy-content="Chia sẻ Threads">
+                        <a href="https://www.threads.net/intent/post?text={{ urlencode($game->title . ' ' . url()->current()) }}" target="_blank" class="social-share-btn" data-tippy-content="{{ __('Chia sẻ Threads') }}">
                             <svg style="width: 16px; height: 16px;" fill="currentColor" viewBox="0 0 192 192"><path d="M141.537 88.9883C140.71 88.5919 139.87 88.2104 139.019 87.8451C137.537 60.5382 122.616 44.905 97.5619 44.745C97.4484 44.7443 97.3355 44.7443 97.222 44.7443C82.2364 44.7443 69.7731 51.1409 62.102 62.7807L75.881 72.2328C81.6116 63.5383 90.6052 61.6848 97.2286 61.6848C97.3051 61.6848 97.3819 61.6848 97.4576 61.6855C105.707 61.7381 111.932 64.1366 115.961 68.814C118.893 72.2193 120.854 76.925 121.825 82.8638C114.511 81.6207 106.601 81.2385 98.145 81.7233C74.3247 83.0954 59.0111 96.9879 60.0396 116.292C60.5615 126.084 65.4397 134.508 73.775 140.011C80.8224 144.663 89.899 146.938 99.3323 146.423C111.79 145.74 121.563 140.987 128.381 132.296C133.559 125.696 136.834 117.143 138.28 106.366C144.217 109.949 148.617 114.664 151.047 120.332C155.179 129.967 155.42 145.8 142.501 158.708C131.182 170.016 117.576 174.908 97.0135 175.059C74.2042 174.89 56.9538 167.575 45.7381 153.317C35.2355 139.966 29.8077 120.682 29.6052 96C29.8077 71.3178 35.2355 52.0336 45.7381 38.6827C56.9538 24.4249 74.2039 17.11 97.0132 16.9405C119.988 17.1113 137.539 24.4614 149.184 38.708C154.894 45.6981 159.199 54.6488 162.037 64.9503L178.184 60.6422C174.744 47.9622 169.331 37.0357 161.965 28.1872C147.036 10.146 124.965 0.217327 97.0132 0C64.714 0.238473 43.606 9.88283 29.597 27.6974C15.8608 45.1633 8.85075 68.618 8.60522 96C8.85075 123.382 15.8608 146.837 29.597 164.303C43.606 182.117 64.714 191.761 97.0135 192C124.935 191.782 146.873 181.865 161.68 163.791C178.077 143.774 175.433 121.229 166.726 100.916C161.854 89.545 153.308 80.5342 141.537 88.9883ZM98.4405 129.507C88.0005 130.095 77.1544 125.409 76.6189 115.343C76.2234 107.925 82.3506 102.321 96.195 101.405C104.28 100.869 111.411 101.353 118.232 102.731C117.067 112.585 111.954 120.301 105.148 124.9C103.111 126.276 100.887 127.284 98.4405 129.507Z"/></svg>
                         </a>
 
-                        <button onclick="navigator.clipboard.writeText(window.location.href); Swal.fire({toast: true, position: 'top-end', icon: 'success', title: 'Đã sao chép liên kết!', showConfirmButton: false, timer: 2000});" class="social-share-btn" data-tippy-content="Sao chép liên kết">
+                        <button onclick="navigator.clipboard.writeText(window.location.href); Swal.fire({toast: true, position: 'top-end', icon: 'success', title: '{{ __('Đã sao chép liên kết!') }}', showConfirmButton: false, timer: 2000});" class="social-share-btn" data-tippy-content="{{ __('Sao chép liên kết') }}">
                             <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                         </button>
                     </div>
@@ -371,15 +371,15 @@
                 <div class="d-flex align-items-center justify-content-between mb-3 gap-2 flex-wrap">
                     <h2 class="h6 text-warning fw-bold mb-0 d-flex align-items-center gap-2">
                         <svg style="width: 18px; height: 18px;" class="text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                        Biên Bản Ván Cờ
+                        {{ __('Biên Bản Ván Cờ') }}
                     </h2>
 
                     <select id="notation-lang" class="form-select form-select-sm bg-dark text-warning border rounded-pill" style="width: auto; font-size: 0.75rem; border-color: rgba(212, 175, 55, 0.4) !important;">
-                        <option value="vi" selected>Tiếng Việt</option>
-                        <option value="en">English</option>
-                        <option value="ja">日本語</option>
-                        <option value="ko">한국어</option>
-                        <option value="zh">中文</option>
+                        <option value="vi" selected>{{ __('Tiếng Việt') }}</option>
+                        <option value="en">{{ __('English') }}</option>
+                        <option value="ja">{{ __('日本語') }}</option>
+                        <option value="ko">{{ __('한국어') }}</option>
+                        <option value="zh">{{ __('中文') }}</option>
                     </select>
                 </div>
 
@@ -390,6 +390,11 @@
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<link rel="stylesheet" href="{{ asset('css/xiangqiboard.css?v=1') }}" />
+<script src="{{ asset('js/xiangqiboard.js?v=2') }}"></script>
+<script src="{{ asset('js/xiangqi.js') }}"></script>
 
 <script>
     $(document).ready(function() {
@@ -540,11 +545,11 @@
             return fen.split(' ')[0];
         }
 
-        board = Xiangqiboard('ban-co', {
+        board = Xiangqiboard('xiangqi-board', {
             position: getBoardFen(fenHistory[0]),
             showNotation: true,
             draggable: false,
-            pieceTheme: '{{ asset('img/xiangqipieces/quan/{piece}.svg') }}'
+            pieceTheme: '{{ asset('img/xiangqipieces/wikipedia/{piece}.svg') }}'
         });
 
         $(window).on('resize', function() {
@@ -629,7 +634,7 @@
             const btnPlay = $('#btn-autoplay');
             btnPlay.css('background', 'linear-gradient(135deg, #e63946, #8a1515)');
 
-            if (btnPlay[0]._tippy) btnPlay[0]._tippy.setContent('Tạm dừng');
+            if (btnPlay[0]._tippy) btnPlay[0]._tippy.setContent({!! json_encode(__('Tạm dừng')) !!});
 
             const speed = parseInt($('#autoplay-speed').val());
 
@@ -653,7 +658,7 @@
             const btnPlay = $('#btn-autoplay');
             btnPlay.css('background', 'linear-gradient(135deg, #d4af37, #8a1515)');
 
-            if (btnPlay[0]._tippy) btnPlay[0]._tippy.setContent('Phát tự động');
+            if (btnPlay[0]._tippy) btnPlay[0]._tippy.setContent({!! json_encode(__('Phát tự động')) !!});
         }
 
         $('#btn-autoplay').click(function() {
