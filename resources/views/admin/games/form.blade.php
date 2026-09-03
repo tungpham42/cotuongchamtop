@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="fade-up max-w-3xl mx-auto">
-    <a href="{{ route('games.my_games') }}"
+    <a href="{{ route('admin.games.index') }}"
        class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-indigo-600 transition mb-5">
         <i class="fa-solid fa-arrow-left text-xs"></i>
         Quay lại danh sách
@@ -85,7 +85,7 @@
                     <i class="fa-solid fa-floppy-disk"></i>
                     {{ $game->exists ? 'Lưu thay đổi' : 'Tạo ván cờ' }}
                 </button>
-                <a href="{{ route('games.my_games') }}"
+                <a href="{{ route('admin.games.index') }}"
                    class="px-5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
                     Huỷ
                 </a>
