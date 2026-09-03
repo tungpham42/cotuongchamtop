@@ -8,14 +8,14 @@
         <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-3">
             <div>
                 <span class="article-hero-eyebrow">
-                    <i class="fa-solid fa-chess-board"></i> {{ __('Thư viện') }}
+                    <i class="fas fa-database"></i> {{ __('Thư viện') }}
                 </span>
                 <h1 class="article-hero-title h2 mb-1">{{ __('Thư viện ván cờ') }}</h1>
                 <p class="article-hero-subtitle mb-0">{{ __('Xem lại các ván cờ được chia sẻ trên hệ thống.') }}</p>
             </div>
 
             <span class="article-meta-pill">
-                <i class="fa-regular fa-clone"></i>
+                <i class="far fa-clone"></i>
                 {{ number_format($games->total()) }} {{ __('ván cờ') }}
             </span>
         </div>
@@ -43,7 +43,7 @@
 
             <div class="col-4 col-md-2">
                 <button type="submit" class="btn btn-royal w-100 h-100">
-                    <i class="fa-solid fa-magnifying-glass me-1"></i> {{ __('Tìm') }}
+                    <i class="fas fa-search me-1"></i> {{ __('Tìm') }}
                 </button>
             </div>
         </form>
@@ -51,7 +51,7 @@
 
     @if ($games->isEmpty())
         <div class="article-empty text-center py-5">
-            <i class="fa-regular fa-chess-board fa-2x mb-3 d-block"></i>
+            <i class="far fa-database fa-2x mb-3 d-block"></i>
             {{ __('Không tìm thấy ván cờ nào phù hợp.') }}
         </div>
     @else
@@ -71,11 +71,11 @@
 
                             <div class="d-flex flex-wrap gap-2">
                                 <span class="article-meta-pill">
-                                    <i class="fa-regular fa-user"></i>
+                                    <i class="far fa-user"></i>
                                     {{ $game->user->name ?? __('Ẩn danh') }}
                                 </span>
                                 <span class="article-meta-pill">
-                                    <i class="fa-regular fa-eye"></i>
+                                    <i class="far fa-eye"></i>
                                     {{ number_format($game->views) }}
                                 </span>
                             </div>

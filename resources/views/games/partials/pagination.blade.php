@@ -3,10 +3,10 @@
         <ul class="gm-pagination-list">
             <li>
                 @if ($paginator->onFirstPage())
-                    <span class="gm-page-link gm-disabled"><i class="fa-solid fa-angle-left"></i></span>
+                    <span class="gm-page-link gm-disabled"><i class="fas fa-angle-left"></i></span>
                 @else
                     <a href="{{ $paginator->previousPageUrl() }}" rel="prev" class="gm-page-link">
-                        <i class="fa-solid fa-angle-left"></i>
+                        <i class="fas fa-angle-left"></i>
                     </a>
                 @endif
             </li>
@@ -24,10 +24,10 @@
             <li>
                 @if ($paginator->hasMorePages())
                     <a href="{{ $paginator->nextPageUrl() }}" rel="next" class="gm-page-link">
-                        <i class="fa-solid fa-angle-right"></i>
+                        <i class="fas fa-angle-right"></i>
                     </a>
                 @else
-                    <span class="gm-page-link gm-disabled"><i class="fa-solid fa-angle-right"></i></span>
+                    <span class="gm-page-link gm-disabled"><i class="fas fa-angle-right"></i></span>
                 @endif
             </li>
         </ul>
