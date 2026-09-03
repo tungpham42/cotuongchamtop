@@ -374,12 +374,17 @@
                         {{ __('Biên Bản Ván Cờ') }}
                     </h2>
 
+                    @php
+                        $notationLang = in_array(app()->getLocale(), ['vi', 'en', 'ja', 'ko', 'zh'])
+                            ? app()->getLocale()
+                            : 'vi';
+                    @endphp
                     <select id="notation-lang" class="form-select form-select-sm bg-dark text-warning border rounded-pill" style="width: auto; font-size: 0.75rem; border-color: rgba(212, 175, 55, 0.4) !important;">
-                        <option value="vi" selected>{{ __('Tiếng Việt') }}</option>
-                        <option value="en">{{ __('English') }}</option>
-                        <option value="ja">{{ __('日本語') }}</option>
-                        <option value="ko">{{ __('한국어') }}</option>
-                        <option value="zh">{{ __('中文') }}</option>
+                        <option value="vi" @selected($notationLang === 'vi')>{{ __('Tiếng Việt') }}</option>
+                        <option value="en" @selected($notationLang === 'en')>{{ __('English') }}</option>
+                        <option value="ja" @selected($notationLang === 'ja')>{{ __('日本語') }}</option>
+                        <option value="ko" @selected($notationLang === 'ko')>{{ __('한국어') }}</option>
+                        <option value="zh" @selected($notationLang === 'zh')>{{ __('中文') }}</option>
                     </select>
                 </div>
 
@@ -502,7 +507,7 @@
             zh: toChineseNotation
         };
 
-        let currentLang = 'vi';
+        let currentLang = @json($notationLang);
         const notationHistories = { vi: [], en: [], ja: [], ko: [], zh: [] };
 
         if (Array.isArray(movesData)) {
