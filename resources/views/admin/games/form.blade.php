@@ -16,7 +16,7 @@
         </h2>
         <p class="text-sm text-slate-500 mb-6">Chia sẻ thế cờ hoặc một trận đấu hay của bạn.</p>
 
-        <form id="gameForm" action="{{ $game->exists ? route('games.update', $game->slug) : route('games.store') }}" method="POST" class="space-y-5">
+        <form id="gameForm" action="{{ $game->exists ? route('admin.games.update', $game->slug) : route('admin.games.store') }}" method="POST" class="space-y-5">
             @csrf
             @if($game->exists)
                 @method('PUT')
