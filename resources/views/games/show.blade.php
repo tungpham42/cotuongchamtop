@@ -5,7 +5,7 @@
 @section('meta_description', Str::limit($game->description, 150))
 
 @section('content')
-
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
     /* Royal Liquid Glass Theme Enhancements for Bootstrap */
     .royal-glass-card {
