@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use App\Models\Article;
 use App\Models\Room;
 use App\Services\PuzzleService;
 use App\Services\RoomService;
@@ -44,6 +45,10 @@ class ViewServiceProvider extends ServiceProvider
                 'players' => $userService->getPlayers(),
                 'firstPagePlayers' => $userService->getFirstPagePlayers(),
                 'initialFen' => Room::INITIAL_FEN,
+                'articles' => Article::with('translation')
+                    ->latest()
+                    ->take(12)
+                    ->get(),
             ]);
         });
     }

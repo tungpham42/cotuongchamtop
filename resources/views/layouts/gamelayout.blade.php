@@ -100,7 +100,8 @@
                     <source src="{{ $cdnUrl }}/sound/hetTran.wav" type="audio/wav">
                     Your browser does not support the audio element.
                 </audio>
-                @include('common.hero')
+                {{-- @include('common.hero') --}}
+                @include('common.articleCarousel', ['articles' => $articles ?? collect()])
                 <div class="row">
                     @include('layouts.partials.findMatch')
                 </div>
