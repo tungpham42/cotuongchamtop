@@ -383,6 +383,7 @@ header.site-header a:not(.navbar-brand):hover::before {
 /* Menu states active */
 body.home header.site-header a.home,
 body.news header.site-header a.news,
+body.library header.site-header a.library,
 body.puzzle header.site-header a.puzzle,
 body.setup header.site-header a.setup,
 body.about header.site-header a.about,
@@ -397,7 +398,8 @@ body.contact header.site-header a.contact {
     color: var(--royal-gold);
 }
 body.home header.site-header a.home:before,
-body.news header.site-header a.news:before,
+body.news header.site-header a.news,
+body.library header.site-header a.library:before,
 body.puzzle header.site-header a.puzzle:before,
 body.setup header.site-header a.setup:before,
 body.about header.site-header a.about:before,

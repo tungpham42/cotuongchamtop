@@ -50,7 +50,7 @@ class GameController extends Controller
 
         $data = [
             'headTitle' => __('Thư viện ván cờ'),
-            'bodyClass' => 'games-list',
+            'bodyClass' => 'games-list library',
             'games' => $games,
             'search' => $search,
             'sort' => $sort,
@@ -85,7 +85,7 @@ class GameController extends Controller
 
         $data = [
             'headTitle' => $gameModel->title ?? __('Chi tiết ván cờ'),
-            'bodyClass' => 'game-detail',
+            'bodyClass' => 'game-detail library',
             'game' => $gameModel,
 
             // Bắt buộc phải có để main layout không bị lỗi undefined variable
