@@ -169,13 +169,31 @@
     .pulse-glow {
         animation: pulseGlow 2s infinite;
     }
+
+    /* Bootstrap 4 has no gap-* utilities; these two spots need a value
+       that changes at the sm breakpoint, so a tiny helper class is used
+       instead of inline style. */
+    .gap-toolbar {
+        gap: 0.5rem;
+    }
+    .gap-controls {
+        gap: 0.25rem;
+    }
+    @media (min-width: 576px) {
+        .gap-toolbar {
+            gap: 1rem;
+        }
+        .gap-controls {
+            gap: 0.5rem;
+        }
+    }
 </style>
 
 <div class="container py-3">
 
     {{-- Kicker Badge --}}
     <div class="d-flex justify-content-center mb-4">
-        <span class="badge badge-royal rounded-pill px-3 py-2 text-uppercase d-inline-flex align-items-center gap-2">
+        <span class="badge badge-royal rounded-pill px-3 py-2 text-uppercase d-inline-flex align-items-center" style="gap: 0.5rem;">
             <svg style="width: 14px; height: 14px;" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.958a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.368 2.447a1 1 0 00-.363 1.118l1.287 3.957c.3.922-.755 1.688-1.538 1.118l-3.367-2.447a1 1 0 00-1.176 0l-3.367 2.447c-.783.57-1.838-.196-1.538-1.118l1.287-3.957a1 1 0 00-.363-1.118L2.062 9.385c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.951-.69l1.286-3.958z"></path>
             </svg>
@@ -183,10 +201,10 @@
         </span>
     </div>
 
-    <div class="row g-4">
+    <div class="row">
 
         {{-- Left / Main Xiangqi Board Column --}}
-        <div class="col-12 col-lg-8">
+        <div class="col-12 col-lg-8 mb-4 mb-lg-0">
             <div class="royal-glass-card p-3 p-md-4">
 
                 {{-- Board Graphic Container --}}
@@ -200,8 +218,8 @@
                 </div>
 
                 {{-- Controls Toolbar --}}
-                <div class="d-flex align-items-center justify-content-center flex-wrap gap-2 gap-sm-3 mt-4">
-                    <div class="d-flex align-items-center gap-1 gap-sm-2 p-1 rounded-pill" style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(212, 175, 55, 0.2);">
+                <div class="d-flex align-items-center justify-content-center flex-wrap gap-toolbar mt-4">
+                    <div class="d-flex align-items-center gap-controls p-1 rounded-pill" style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(212, 175, 55, 0.2);">
                         <button id="btn-start" class="btn btn-royal-icon" data-tippy-content="{{ __('Về đầu') }}">
                             <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
                         </button>
@@ -251,22 +269,22 @@
 
                         <button @click="open = !open"
                                 type="button"
-                                class="btn btn-dark d-flex align-items-center justify-content-between gap-2 px-3 py-2 border rounded-3 fw-bold text-warning"
-                                style="min-width: 90px; border-color: rgba(212, 175, 55, 0.4) !important;">
+                                class="btn btn-dark d-flex align-items-center justify-content-between px-3 py-2 border fw-bold text-warning"
+                                style="min-width: 90px; border-color: rgba(212, 175, 55, 0.4) !important; border-radius: 0.5rem; gap: 0.5rem;">
                             <span x-text="currentLabel">{{ __('1.0x') }}</span>
                             <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
 
                         <div x-show="open"
                              x-transition
-                             class="position-absolute end-0 bottom-100 mb-2 rounded-3 royal-glass-card overflow-hidden shadow-lg"
-                             style="bottom: 30px; display: none; width: 120px; z-index: 1050; background: rgba(11, 12, 16, 0.95);">
+                             class="position-absolute mb-2 royal-glass-card overflow-hidden shadow-lg"
+                             style="right: 0; bottom: 30px; display: none; width: 120px; z-index: 1050; background: rgba(11, 12, 16, 0.95);">
                             <div class="py-1">
                                 <template x-for="option in options" :key="option.value">
                                     <button @click="updateSpeed(option.value)"
                                             type="button"
                                             :class="{'text-warning fw-bold bg-dark': speed === option.value, 'text-light': speed !== option.value}"
-                                            class="w-100 text-start px-3 py-2 border-0 bg-transparent text-decoration-none d-flex align-items-center justify-content-between small">
+                                            class="w-100 text-left px-3 py-2 border-0 bg-transparent text-decoration-none d-flex align-items-center justify-content-between small">
                                         <span x-text="option.label"></span>
                                         <svg x-show="speed === option.value" style="width: 14px; height: 14px;" class="text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                                     </button>
@@ -286,37 +304,37 @@
 
                 {{-- Step Counter --}}
                 <div class="text-center font-monospace fw-bold mt-3 text-gold-light small royal-card-title">
-                    {{ __('Bước:') }} <span id="current-step" class="text-warning fs-5 ms-1">0</span> / <span id="total-steps" class="ms-1">0</span>
+                    {{ __('Bước:') }} <span id="current-step" class="text-warning ml-1" style="font-size: 1.25rem;">0</span> / <span id="total-steps" class="ml-1">0</span>
                 </div>
             </div>
         </div>
 
         {{-- Right / Game Details & Notation Column --}}
-        <div class="col-12 col-lg-4 d-flex flex-column gap-4">
+        <div class="col-12 col-lg-4 d-flex flex-column" style="gap: 1.5rem;">
 
             {{-- Info Card --}}
             <div class="royal-glass-card p-4">
                 <h1 class="h4 text-warning fw-bold mb-2 text-uppercase">{{ $game->title }}</h1>
-                <div style="height: 3px; width: 50px; background: linear-gradient(90deg, var(--royal-gold), var(--royal-red)); mb-3" class="rounded mb-3"></div>
+                <div style="height: 3px; width: 50px; background: linear-gradient(90deg, var(--royal-gold), var(--royal-red));" class="rounded mb-3"></div>
 
                 {{-- Stat chips --}}
-                <div class="d-flex flex-wrap gap-2 mb-4">
-                    <span class="chip-stat d-inline-flex align-items-center gap-1">
+                <div class="d-flex flex-wrap mb-4" style="gap: 0.5rem;">
+                    <span class="chip-stat d-inline-flex align-items-center" style="gap: 0.25rem;">
                         <svg style="width: 14px; height: 14px;" class="text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         {{ number_format($game->views) }} {{ __('lượt xem') }}
                     </span>
-                    <span class="chip-stat d-inline-flex align-items-center gap-1">
+                    <span class="chip-stat d-inline-flex align-items-center" style="gap: 0.25rem;">
                         <svg style="width: 14px; height: 14px;" class="text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         {{ $game->created_at->format('d/m/Y') }}
                     </span>
-                    <span class="chip-stat d-inline-flex align-items-center gap-1">
+                    <span class="chip-stat d-inline-flex align-items-center" style="gap: 0.25rem;">
                         <svg style="width: 14px; height: 14px;" class="text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                         <span id="stat-total-moves">0</span> {{ __('nước đi') }}
                     </span>
                 </div>
 
                 {{-- Author Info --}}
-                <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom border-secondary border-opacity-25">
+                <div class="d-flex align-items-center pb-3 mb-3 border-bottom" style="gap: 1rem; border-bottom-color: rgba(108, 117, 125, 0.25) !important;">
                     <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white shadow-sm" style="width: 42px; height: 42px; background: linear-gradient(135deg, #8a1515, #d4af37); border: 2px solid var(--royal-gold);">
                         {{ substr($game->user->name, 0, 1) }}
                     </div>
@@ -327,7 +345,7 @@
                 </div>
 
                 @if($game->description)
-                    <div class="text-light small mb-4 opacity-75">
+                    <div class="text-light small mb-4" style="opacity: 0.75;">
                         <p class="m-0">{{ $game->description }}</p>
                     </div>
                 @endif
@@ -335,7 +353,7 @@
                 @auth
                     @if(auth()->id() === $game->user_id)
                     <div class="mb-3">
-                        <a href="{{ route('admin.games.edit', $game->slug) }}" class="btn btn-danger w-100 fw-bold d-flex align-items-center justify-content-center gap-2">
+                        <a href="{{ route('admin.games.edit', $game->slug) }}" class="btn btn-danger w-100 fw-bold d-flex align-items-center justify-content-center" style="gap: 0.5rem;">
                             <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                             {{ __('Chỉnh sửa ván cờ') }}
                         </a>
@@ -344,9 +362,9 @@
                 @endauth
 
                 {{-- Social Share Section --}}
-                <div class="pt-3 border-top border-secondary border-opacity-25">
+                <div class="pt-3 border-top" style="border-top-color: rgba(108, 117, 125, 0.25) !important;">
                     <div class="text-uppercase text-muted fw-bold extra-small mb-3" style="font-size: 0.75rem; letter-spacing: 1px;">{{ __('Chia sẻ ván cờ') }}</div>
-                    <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center" style="gap: 0.5rem;">
                         <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}" target="_blank" class="social-share-btn" data-tippy-content="{{ __('Chia sẻ Facebook') }}">
                             <svg style="width: 18px; height: 18px;" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"></path></svg>
                         </a>
@@ -368,8 +386,8 @@
 
             {{-- Moves Notation List Card --}}
             <div class="royal-glass-card p-4 flex-grow-1 d-flex flex-column" style="min-height: 380px; max-height: 480px;">
-                <div class="d-flex align-items-center justify-content-between mb-3 gap-2 flex-wrap">
-                    <h2 class="h6 text-warning fw-bold mb-0 d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap" style="gap: 0.5rem;">
+                    <h2 class="h6 text-warning fw-bold mb-0 d-flex align-items-center" style="gap: 0.5rem;">
                         <svg style="width: 18px; height: 18px;" class="text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                         {{ __('Biên Bản Ván Cờ') }}
                     </h2>
@@ -379,7 +397,7 @@
                             ? app()->getLocale()
                             : 'vi';
                     @endphp
-                    <select id="notation-lang" class="form-select form-select-sm bg-dark text-warning border rounded-pill" style="width: auto; font-size: 0.75rem; border-color: rgba(212, 175, 55, 0.4) !important;">
+                    <select id="notation-lang" class="custom-select custom-select-sm bg-dark text-warning border rounded-pill" style="width: auto; font-size: 0.75rem; border-color: rgba(212, 175, 55, 0.4) !important;">
                         <option value="vi" @selected($notationLang === 'vi')>{{ __('Tiếng Việt') }}</option>
                         <option value="en" @selected($notationLang === 'en')>{{ __('English') }}</option>
                         <option value="ja" @selected($notationLang === 'ja')>{{ __('日本語') }}</option>
@@ -388,7 +406,7 @@
                     </select>
                 </div>
 
-                <div id="moves-list" class="moves-container flex-grow-1 overflow-auto pe-2 d-grid align-content-start gap-1" style="grid-template-columns: auto 1fr 1fr;">
+                <div id="moves-list" class="moves-container flex-grow-1 overflow-auto pr-2 align-content-start" style="display: grid; grid-template-columns: auto 1fr 1fr; gap: 0.25rem;">
                 </div>
             </div>
 
@@ -566,7 +584,7 @@
             $('#stat-total-moves').text(totalSteps);
 
             if (totalSteps === 0) {
-                listContainer.html(`<div class="grid-column-span-2 text-center text-muted fst-italic mt-4">${noMovesText[currentLang]}</div>`);
+                listContainer.html(`<div class="text-center text-muted font-italic mt-4" style="grid-column: span 2;">${noMovesText[currentLang]}</div>`);
                 $('#total-steps').text(0);
                 return;
             }
@@ -580,12 +598,12 @@
                 const stepNumber = Math.ceil(i / 2);
 
                 if (isRed) {
-                    listContainer.append(`<div class="text-start text-muted opacity-50 user-select-none py-1 small" style="width: 24px;">${stepNumber}.</div>`);
+                    listContainer.append(`<div class="text-left text-muted user-select-none py-1 small" style="width: 24px; opacity: 0.5;">${stepNumber}.</div>`);
                 }
 
                 const moveText = activeHistory[i - 1];
                 const dotColor = isRed ? '#e63946' : '#a0a0a0';
-                const moveBtn = $(`<button class="d-flex align-items-center gap-2 move-btn" data-step="${i}"><span class="d-inline-block rounded-circle flex-shrink-0" style="width: 6px; height: 6px; background-color: ${dotColor};"></span>${moveText}</button>`);
+                const moveBtn = $(`<button class="d-flex align-items-center move-btn" data-step="${i}" style="gap: 0.5rem;"><span class="d-inline-block rounded-circle flex-shrink-0" style="width: 6px; height: 6px; background-color: ${dotColor};"></span>${moveText}</button>`);
                 listContainer.append(moveBtn);
             }
 
