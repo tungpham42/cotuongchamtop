@@ -82,6 +82,7 @@
             <a data-toggle="tooltip" data-placement="bottom" title="Tìm phòng trống" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ localized_url('room.list') }}"><i class="fas fa-list-alt text-dark"></i> {{ __("Sảnh chờ") }}</a>
         </div>
     </div>
+    @include('layouts.partials.hint')
 @endsection
 
 @section('belowContent')
@@ -267,6 +268,18 @@
                 $('#game-status').removeClass('black').addClass('red');
             } else if (game.turn() === 'b') {
                 $('#game-status').removeClass('red').addClass('black');
+            }
+
+            // Hint only ever suggests the player's (Red's) own next move —
+            // disable it whenever it isn't Red's turn (i.e. while the AI
+            // is about to move or thinking), so the button never invites
+            // a click that fetchHint() would just refuse anyway.
+            if ($('#hint-btn').length) {
+                if (game.turn() === 'r' && !game.game_over()) {
+                    $('#hint-btn').removeClass('disabled').attr('aria-disabled', false);
+                } else {
+                    $('#hint-btn').addClass('disabled').attr('aria-disabled', true);
+                }
             }
 
             $('#game-status').html(status);

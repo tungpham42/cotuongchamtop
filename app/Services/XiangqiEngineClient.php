@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Services\Xiangqi\PikafishProcess;
+
 /**
  * Replaces the old XiangqiEngineService for the web request path.
  *
@@ -38,11 +40,19 @@ class XiangqiEngineClient
 
     public function analyzePosition(string $fen, int $depth = 15): ?array
     {
+        // Same +3.0s IPC/queueing grace getBestMove() adds on top of the
+        // engine's own budget — the socket timeout must stay a bit looser
+        // than the worker's internal wait (PikafishProcess::analyze), or
+        // we'd give up on the response a moment before the worker sends
+        // it. Using the same formula the worker uses (via the shared
+        // static method) means this never drifts out of sync with it.
+        $readTimeoutSeconds = PikafishProcess::analysisTimeoutSeconds($depth) + 3.0;
+
         $response = $this->request([
             'action' => 'analyze',
             'fen' => $fen,
             'depth' => $depth,
-        ], 30.0);
+        ], $readTimeoutSeconds);
 
         return $response['analysis'] ?? null;
     }

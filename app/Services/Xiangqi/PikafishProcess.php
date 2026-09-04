@@ -145,9 +145,31 @@ class PikafishProcess
         $this->send('position fen ' . $fen);
         $this->send('go depth ' . $depth);
 
-        $output = $this->readUntil('bestmove', 30.0);
+        $output = $this->readUntil('bestmove', self::analysisTimeoutSeconds($depth));
 
         return $this->parseAnalysis($output);
+    }
+
+    /**
+     * Depth-scaled time budget for a "go depth N" search to return
+     * bestmove. A flat ceiling (the old hardcoded 30.0) is wrong in both
+     * directions: deep searches (depth approaching the controller's max
+     * of 30) can legitimately run past 30s and get cut off mid-search,
+     * while shallow searches (depth 5-10, which typically resolve in a
+     * couple seconds) hold the pipe open far longer than they need to.
+     *
+     * This is intentionally the single source of truth for that budget:
+     * XiangqiEngineClient::analyzePosition() calls this same method (it's
+     * a pure calculation, no I/O) to size its socket read timeout, so the
+     * web-request side and the worker side never disagree about how long
+     * a given depth is allowed to take.
+     */
+    public static function analysisTimeoutSeconds(int $depth): float
+    {
+        $depth = max(1, $depth);
+        $seconds = 4.0 + ($depth * 1.2);
+
+        return min(max($seconds, 5.0), 60.0);
     }
 
     private function parseAnalysis(string $output): array
