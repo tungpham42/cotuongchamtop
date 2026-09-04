@@ -200,12 +200,11 @@
                 }
             }
 
-            /** Text for one half-move: color + Kỳ Phổ notation, no move number
-             *  (the move number is now shown once per full move — see
-             *  showHintModal, which pairs Red with its Black reply). */
-            function moveLabel(boardState, move) {
-                const piece = boardState[squareToFileRank(move.substring(0, 2)).file + ',' + squareToFileRank(move.substring(0, 2)).rank];
-                const colorLabel = piece && piece.color === 'b' ? '{{ __("Đen") }}' : '{{ __("Đỏ") }}';
+            /** Text for one half-move: color + Kỳ Phổ notation, explicitly alternating */
+            function moveLabel(boardState, move, index) {
+                // The widget only triggers on Red's turn, so index 0 is always Red.
+                const isRed = (index % 2 === 0);
+                const colorLabel = isRed ? '{{ __("Đỏ") }}' : '{{ __("Đen") }}';
                 return colorLabel + ': ' + kyphoNotation(boardState, move);
             }
 
@@ -241,35 +240,20 @@
                     const $list = hintDialog.find('#hint-move-list');
                     const boardState = parseFenBoard(fen);
 
-                    // moves[] is always Red-first (fetchHint only ever runs
-                    // on Red's turn), so pairing two half-moves per <li>
-                    // — Red then its Black reply — lines up with the <ol>'s
-                    // own 1/2/3 auto-numbering and shows both sides' moves
-                    // for that turn together, instead of a separate line
-                    // (with its own, redundant number) per half-move.
-                    for (let i = 0; i < moves.length; i += 2) {
-                        const redMove = moves[i];
-                        const blackMove = moves[i + 1];
-
-                        const redText = moveLabel(boardState, redMove);
-                        applyMoveToBoard(boardState, redMove);
+                    // Render all moves sequentially in a single list.
+                    // It explicitly enforces the Red-first alternation on every line.
+                    moves.forEach(function (move, index) {
+                        const text = moveLabel(boardState, move, index);
+                        applyMoveToBoard(boardState, move);
 
                         const $li = $('<li>');
-                        const $red = $('<span>').addClass('hint-move-half').text(redText).css('cursor', 'pointer');
-                        $red.on('click', function () { highlightHintMove(redMove); });
-                        $li.append($red);
+                        const $moveSpan = $('<span>').addClass('hint-move-half').text(text).css('cursor', 'pointer');
 
-                        if (blackMove) {
-                            const blackText = moveLabel(boardState, blackMove);
-                            applyMoveToBoard(boardState, blackMove);
+                        $moveSpan.on('click', function () { highlightHintMove(move); });
 
-                            const $black = $('<span>').addClass('hint-move-half').text(blackText).css('cursor', 'pointer');
-                            $black.on('click', function () { highlightHintMove(blackMove); });
-                            $li.append($('<span>').text('  \u2014  ')).append($black);
-                        }
-
+                        $li.append($moveSpan);
                         $list.append($li);
-                    }
+                    });
 
                     // Immediately show the very next move so the player
                     // has something actionable as soon as the modal opens.
