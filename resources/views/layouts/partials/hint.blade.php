@@ -19,6 +19,15 @@
     Black-to-move position and the first move shown is never the
     computer's.
 
+    The engine call this widget makes can take a second or more, and
+    fetchHint() only captures the FEN at the moment it's called — so
+    while a request is outstanding, window.isHintPending is set true
+    and ai.blade.php's onDragStart/resign/undo/reset/switch all check
+    it and refuse to change the position until the hint resolves. If
+    the position somehow changes anyway, fetchHint() re-requests
+    against whatever FEN is actually current rather than display a
+    hint for a position that's no longer on the board.
+
         Level          value   hint cap (half-moves)
         Mới chơi       1       8
         Dễ             2       5
@@ -84,6 +93,14 @@
             let hintRequestInFlight = false;
             let hintHighlightTimer = null;
             let hintDialog = null;
+
+            // Mirrors hintRequestInFlight but on `window`, so ai.blade.php's
+            // onDragStart and its resign/undo/reset/switch handlers can see
+            // it too. Without this, the player could change the position
+            // (move a piece, undo, reset, switch sides) while a hint request
+            // is still waiting on the engine, and the hint that eventually
+            // renders would describe a position that no longer exists.
+            window.isHintPending = false;
 
             const STRAIGHT_MOVERS = ['r', 'c', 'p', 'k']; // xe, pháo, tốt, tướng: move in straight lines
             // mã (n), tượng (b), sĩ (a) always change both file and rank
@@ -342,7 +359,7 @@
                 });
             }
 
-            function fetchHint() {
+            async function fetchHint() {
                 if (hintRequestInFlight) return;
                 if (typeof game === 'undefined' || typeof game.fen !== 'function') return;
                 if (typeof game.game_over === 'function' && game.game_over()) return;
@@ -359,21 +376,39 @@
                 if (typeof isComputerThinking !== 'undefined' && isComputerThinking) return;
 
                 hintRequestInFlight = true;
+                window.isHintPending = true;
                 const $btn = $('#hint-btn');
                 const originalHtml = $btn.html();
                 $btn.addClass('disabled').attr('aria-disabled', true)
                     .html('<i class="fas fa-spinner fa-spin"></i> {{ __("Đang tính toán") }}...');
 
-                const currentFen = game.fen();
+                try {
+                    let requestFen = game.fen();
+                    let moves = await fetchPvChain(requestFen, HINT_CAP);
 
-                fetchPvChain(currentFen, HINT_CAP).then(function (moves) {
-                    showHintModal(moves, currentFen);
-                }).catch(function () {
-                    showHintModal([], currentFen);
-                }).then(function () {
+                    // Dragging, resign, undo, reset and switch are all
+                    // blocked while window.isHintPending is true (see
+                    // ai.blade.php), so in the normal case the position
+                    // can't move on under us. This loop is a defensive
+                    // backstop for any other path that might change
+                    // game.fen() while the engine call above was in
+                    // flight — if the live position no longer matches
+                    // what we just analyzed, redo the request against
+                    // whatever is actually current instead of showing a
+                    // stale suggestion.
+                    while (typeof game.fen === 'function' && game.fen() !== requestFen) {
+                        requestFen = game.fen();
+                        moves = await fetchPvChain(requestFen, HINT_CAP);
+                    }
+
+                    showHintModal(moves, requestFen);
+                } catch (e) {
+                    showHintModal([], game.fen());
+                } finally {
                     hintRequestInFlight = false;
+                    window.isHintPending = false;
                     $btn.removeClass('disabled').attr('aria-disabled', false).html(originalHtml);
-                });
+                }
             }
 
             $(document).on('click', '#hint-btn', function (e) {

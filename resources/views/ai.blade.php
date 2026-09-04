@@ -113,7 +113,7 @@
         }
 
         function onDragStart (source, piece, position, orientation) {
-            if (game.in_checkmate() === true || game.in_draw() === true || piece.search(/^b/) !== -1 || isComputerThinking) {
+            if (game.in_checkmate() === true || game.in_draw() === true || piece.search(/^b/) !== -1 || isComputerThinking || (typeof isHintPending !== 'undefined' && isHintPending)) {
                 return false;
             }
         }
@@ -351,13 +351,13 @@
         });
 
         $('#resign').on('click', function() {
-            if (isComputerThinking) return;
+            if (isComputerThinking || (typeof isHintPending !== 'undefined' && isHintPending)) return;
             game.load(game.fen() + ' resign');
             updateStatus();
         });
 
         $('#undo').on('click', function(){
-            if (isComputerThinking) return;
+            if (isComputerThinking || (typeof isHintPending !== 'undefined' && isHintPending)) return;
             if (game.history().length >= 2) {
                 game.undo();
                 game.undo();
@@ -369,11 +369,12 @@
         });
 
         $('#switch').on('click', function() {
-            if (isComputerThinking) return;
+            if (isComputerThinking || (typeof isHintPending !== 'undefined' && isHintPending)) return;
             board.flip();
         });
 
         $('#reset').on('click', function() {
+            if (typeof isHintPending !== 'undefined' && isHintPending) return;
             isComputerThinking = false;
             resignAlertShown = false;
             board.position('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR');
