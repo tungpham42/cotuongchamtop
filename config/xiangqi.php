@@ -9,5 +9,5 @@ return [
     'socket_dir' => env('XIANGQI_SOCKET_DIR', storage_path('app/xiangqi')),
 
     // Must match the numprocs value in the supervisor config.
-    'worker_count' => env('XIANGQI_WORKER_COUNT', 4),
+    'worker_count' => env('XIANGQI_WORKER_COUNT', 12),
 ];
