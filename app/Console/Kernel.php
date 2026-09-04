@@ -63,7 +63,6 @@ class Kernel extends ConsoleKernel
         // that died. See deploy/README.md in the xiangqi refactor bundle.
         $schedule->command(XiangqiPoolEnsureCommand::class)
             ->everyMinute()
-            ->withoutOverlapping(2)
             ->runInBackground()
             ->appendOutputTo(storage_path('logs/xiangqi-pool-ensure.log'));
     }
