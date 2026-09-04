@@ -25,8 +25,11 @@ class XiangqiPoolStopCommand extends Command
 
         for ($id = 0; $id < $workerCount; $id++) {
             $pidPath = rtrim($socketDir, '/') . "/engine-{$id}.pid";
+            $startedPath = rtrim($socketDir, '/') . "/engine-{$id}.started";
+
             if (!file_exists($pidPath)) {
                 $this->line("[worker {$id}] no pid file, nothing to stop");
+                @unlink($startedPath);
                 continue;
             }
 
@@ -43,6 +46,7 @@ class XiangqiPoolStopCommand extends Command
             }
 
             @unlink($pidPath);
+            @unlink($startedPath);
         }
 
         return self::SUCCESS;

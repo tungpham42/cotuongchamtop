@@ -23,12 +23,44 @@ use Illuminate\Console\Command;
  *
  * Uses a flock so overlapping cron runs (or a slow run) can't spawn
  * duplicate workers for the same id.
+ *
+ * BOOT-GRACE WINDOW: a freshly launched worker writes its pid file
+ * immediately (see XiangqiEngineWorkerCommand::handle()) but only binds
+ * its socket once PikafishProcess::start() finishes, which can
+ * legitimately take up to ~25s (10s uciok + 15s readyok) even without
+ * contention, and longer under a cold-start where all N workers are
+ * loading the same .nnue file at once. Without a grace period, a cron
+ * tick landing in that window sees "pid running, socket not answering"
+ * and concludes the worker is dead — then kills its own pid file/socket
+ * and launches a SECOND process for the same id, which fights the first
+ * for the socket path and can leave the pid file pointing at whichever
+ * one lost. This class tracks a launch timestamp per worker and refuses
+ * to declare a worker dead on ping failure alone until that grace window
+ * has elapsed.
  */
 class XiangqiPoolEnsureCommand extends Command
 {
     protected $signature = 'xiangqi:pool:ensure';
 
     protected $description = 'Start any Xiangqi engine workers that are not currently running';
+
+    /**
+     * Generous ceiling for a single worker's full boot: proc_open +
+     * uciok (up to 10s) + readyok (up to 15s) + a little slack for
+     * scheduling delay under a cold-start pool. Keep this at or above
+     * PikafishProcess's own uciok/readyok ceilings (10s + 15s) or you'll
+     * reintroduce the exact race this is meant to prevent.
+     */
+    private const BOOT_GRACE_SECONDS = 30.0;
+
+    /**
+     * Delay between launching consecutive cold-start workers. Loading the
+     * same .nnue file 12x simultaneously is the single biggest cause of
+     * any one worker blowing past BOOT_GRACE_SECONDS in the first place —
+     * staggering launches keeps disk/CPU/RAM contention down so each
+     * worker's own boot stays close to its unloaded-machine time.
+     */
+    private const LAUNCH_STAGGER_SECONDS = 2.0;
 
     public function handle(): int
     {
@@ -47,8 +79,14 @@ class XiangqiPoolEnsureCommand extends Command
         }
 
         try {
+            $launchedAny = false;
             for ($id = 0; $id < $workerCount; $id++) {
-                $this->ensureWorker($id, $socketDir);
+                // Stagger only actual launches, not the (common, cheap)
+                // case where a worker is already alive and we just skip it.
+                if ($launchedAny) {
+                    usleep((int) (self::LAUNCH_STAGGER_SECONDS * 1_000_000));
+                }
+                $launchedAny = $this->ensureWorker($id, $socketDir) || $launchedAny;
             }
         } finally {
             flock($lockHandle, LOCK_UN);
@@ -58,19 +96,24 @@ class XiangqiPoolEnsureCommand extends Command
         return self::SUCCESS;
     }
 
-    private function ensureWorker(int $id, string $socketDir): void
+    /**
+     * @return bool true if this call actually launched a new process for $id
+     */
+    private function ensureWorker(int $id, string $socketDir): bool
     {
         $pidPath = rtrim($socketDir, '/') . "/engine-{$id}.pid";
+        $startedPath = $this->startedPath($socketDir, $id);
 
-        if ($this->isWorkerAlive($id, $pidPath)) {
+        if ($this->isWorkerAlive($id, $pidPath, $startedPath)) {
             $this->line("[worker {$id}] alive, skipping");
-            return;
+            return false;
         }
 
         $this->warn("[worker {$id}] not running — starting it");
 
-        // Stale files from a crashed process.
+        // Stale files from a crashed process (or a loser of a prior race).
         @unlink($pidPath);
+        @unlink($startedPath);
         @unlink(rtrim($socketDir, '/') . "/engine-{$id}.sock");
 
         $logPath = rtrim($socketDir, '/') . "/engine-{$id}.log";
@@ -85,6 +128,11 @@ class XiangqiPoolEnsureCommand extends Command
         // isn't available.
         $launcher = $this->hasSetsid() ? 'setsid' : 'nohup';
 
+        // Record the launch time BEFORE shelling out, so there is no
+        // window where a worker is running-but-unpingable with no
+        // corresponding grace-period record.
+        file_put_contents($startedPath, microtime(true));
+
         $cmd = "{$launcher} {$php} {$artisan} xiangqi:engine-worker {$id} >> {$log} 2>&1 < /dev/null & echo \$!";
         $pid = trim((string) shell_exec($cmd));
 
@@ -92,16 +140,22 @@ class XiangqiPoolEnsureCommand extends Command
             $this->info("[worker {$id}] launched with pid {$pid} (check {$logPath} for boot status)");
         } else {
             $this->error("[worker {$id}] failed to launch — check that exec/shell_exec is allowed for CLI PHP");
+            @unlink($startedPath);
         }
+
+        return true;
     }
 
     /**
-     * A worker only counts as "alive" if its PID file points at a running
-     * process that is actually our worker (guards against a stale PID
-     * having been reused by an unrelated process) AND it responds to a
-     * ping on its socket.
+     * A worker counts as "alive" if:
+     *   - its PID file points at a running process that is actually our
+     *     worker (guards against a stale PID having been reused by an
+     *     unrelated process), AND EITHER
+     *   - it responds to a ping on its socket, OR
+     *   - it's still within its boot-grace window, in which case a failed
+     *     ping just means "still loading," not "dead."
      */
-    private function isWorkerAlive(int $id, string $pidPath): bool
+    private function isWorkerAlive(int $id, string $pidPath, string $startedPath): bool
     {
         if (!file_exists($pidPath)) {
             return false;
@@ -112,10 +166,41 @@ class XiangqiPoolEnsureCommand extends Command
             return false;
         }
 
-        // Process exists, but confirm it's actually accepting connections
-        // and not, say, stuck mid-boot loading the network file forever.
         $client = new XiangqiEngineClient();
-        return $client->pingWorker($id);
+        if ($client->pingWorker($id)) {
+            // Fully up — grace record no longer needed.
+            @unlink($startedPath);
+            return true;
+        }
+
+        if ($this->withinBootGrace($startedPath)) {
+            $this->line("[worker {$id}] pid running, not answering yet — within boot grace, treating as alive");
+            return true;
+        }
+
+        return false;
+    }
+
+    private function withinBootGrace(string $startedPath): bool
+    {
+        if (!file_exists($startedPath)) {
+            // No record of when this one launched (e.g. it predates this
+            // fix, or the file was cleaned up some other way). Fail safe
+            // toward "no grace" rather than granting an indefinite pass.
+            return false;
+        }
+
+        $startedAt = (float) trim((string) file_get_contents($startedPath));
+        if ($startedAt <= 0) {
+            return false;
+        }
+
+        return (microtime(true) - $startedAt) < self::BOOT_GRACE_SECONDS;
+    }
+
+    private function startedPath(string $socketDir, int $id): string
+    {
+        return rtrim($socketDir, '/') . "/engine-{$id}.started";
     }
 
     private function isPidRunning(int $pid, int $expectedId): bool
