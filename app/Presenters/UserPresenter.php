@@ -84,7 +84,7 @@ class UserPresenter
         $title = $tier->label() . ' · ' . $user->gems . ' ' . __('karma');
 
         // Wrap the badge with absolute positioning to place it on the top left corner
-        $gemsBadge = '<span style="position: absolute; top: -8px; left: -8px; z-index: 10; user-select: none;">' . $this->buildGemsBadge($user) . '</span>';
+        $gemsBadge = '<span style="position: absolute; bottom: -8px; left: -8px; z-index: 10; user-select: none;">' . $this->buildGemsBadge($user) . '</span>';
 
         return '<span data-toggle="tooltip" data-placement="top" class="avatar-frame ' . $tier->frameCssClass() . '" data-user-id="' . $user->id . '" data-tier="' . $tier->value . '" title="' . e($title) . '" style="' . $frameStyle . '">'
             . '<img src="' . $avatarSrc . '" style="display: block; width: ' . $dimension . 'px; height: ' . $dimension . 'px; object-fit: cover; border-radius: ' . $innerRadius . 'px;" />'
