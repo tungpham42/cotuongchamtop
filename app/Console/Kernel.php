@@ -61,11 +61,7 @@ class Kernel extends ConsoleKernel
         // Keeps the warm Pikafish worker pool alive without Supervisor:
         // checks each worker's pid + socket every minute and respawns any
         // that died. See deploy/README.md in the xiangqi refactor bundle.
-        $schedule->command(XiangqiPoolEnsureCommand::class)
-            ->everyMinute()
-            ->withoutOverlapping(1) // 1 minute is enough, since the command itself uses a flock
-            ->runInBackground()
-            ->appendOutputTo(storage_path('logs/xiangqi-pool-ensure.log'));
+        $schedule->command(XiangqiPoolEnsureCommand::class)->everyMinute()->appendOutputTo(storage_path('logs/xiangqi-pool-ensure.log'));
     }
 
     /**
