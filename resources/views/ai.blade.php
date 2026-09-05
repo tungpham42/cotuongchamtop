@@ -82,7 +82,7 @@
             <a data-toggle="tooltip" data-placement="bottom" title="Tìm phòng trống" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ localized_url('room.list') }}"><i class="fas fa-list-alt text-dark"></i> {{ __("Sảnh chờ") }}</a>
         </div>
     </div>
-    @include('layouts.partials.hint')
+    {{-- @include('layouts.partials.hint') --}}
 @endsection
 
 @section('belowContent')
