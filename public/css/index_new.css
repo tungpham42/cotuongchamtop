@@ -1401,7 +1401,7 @@ body.setup #ban-co {
 }
 
 /* 2. Prevent room names from breaking, and truncate them if they are too long */
-.table td.room-code span {
+table.table:not(#danh-sach-ky-thu) td.room-code span {
     padding: 4px 7px 5px;
     background: rgba(212, 175, 55, 0.2);
     border-radius: 4px;
@@ -1494,7 +1494,7 @@ body.setup #ban-co {
     font-family: "Noto Sans Mono", monospace;
     font-weight: 600;
 }
-.table td.room-code span {
+table.table:not(#danh-sach-ky-thu) td.room-code span {
     padding: 4px 7px 5px;
     background: rgba(212, 175, 55, 0.2);
     border-radius: 4px;
