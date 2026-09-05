@@ -72,7 +72,9 @@ class UserPresenter
         $outerRadius = $innerRadius + $thickness;
         $glow = $tier->frameGlow();
 
+        // Added 'position: relative;' to allow the badge to be positioned absolutely within this frame
         $frameStyle = 'display: inline-block;'
+            . ' position: relative;'
             . ' line-height: 0;'
             . ' padding: ' . $thickness . 'px;'
             . ' border-radius: ' . $outerRadius . 'px;'
@@ -81,8 +83,12 @@ class UserPresenter
 
         $title = $tier->label() . ' · ' . $user->gems . ' ' . __('karma');
 
+        // Wrap the badge with absolute positioning to place it on the top left corner
+        $gemsBadge = '<span style="position: absolute; top: -8px; left: -8px; z-index: 10; user-select: none;">' . $this->buildGemsBadge($user) . '</span>';
+
         return '<span data-toggle="tooltip" data-placement="top" class="avatar-frame ' . $tier->frameCssClass() . '" data-user-id="' . $user->id . '" data-tier="' . $tier->value . '" title="' . e($title) . '" style="' . $frameStyle . '">'
             . '<img src="' . $avatarSrc . '" style="display: block; width: ' . $dimension . 'px; height: ' . $dimension . 'px; object-fit: cover; border-radius: ' . $innerRadius . 'px;" />'
+            . $gemsBadge
             . '</span>';
     }
 
@@ -107,6 +113,7 @@ class UserPresenter
         $linkClass = $forRoom ? 'text-light showPromotion animate-light' : 'text-danger showPromotion animate';
         if ($isProfile) $linkClass = 'text-light showPromotion animate-light';
 
+        // Reverted to original state without the inline flex styling and badge concatenation
         return $onlineStatus . '&nbsp;' . $avatar . '&nbsp;<a class="'.$linkClass.'" href="' . $profileLink . '">' . $nameText . '</a>';
     }
 
@@ -182,9 +189,8 @@ class UserPresenter
     {
         /** @var GemsTier $tier */
         $tier = $user->gems_tier;
-        $title = $tier->label() . ' · ' . $user->gems . ' ' . __('karma');
 
-        return '<span data-toggle="tooltip" data-placement="top" class="gems-decoration gems-decoration--' . $tier->value . '" data-user-id="' . $user->id . '" title="' . e($title) . '">'
+        return '<span class="gems-decoration gems-decoration--' . $tier->value . '" data-user-id="' . $user->id . '">'
             . '<i class="fad ' . $tier->icon() . '" style="color: ' . $tier->color() . ';"></i>'
             . '</span>';
     }
