@@ -9,70 +9,40 @@ use Illuminate\Console\Command;
  * `php artisan xiangqi:pool:ensure`
  *
  * Replaces what Supervisor was doing: makes sure `worker_count` engine
- * workers are alive, and (re)spawns any that aren't. This is now a
- * *backstop*, not the primary recovery mechanism — each worker it
- * launches is wrapped in its own tiny detached respawn loop (see
- * launchWorker() below), so a worker that crashes restarts itself within
- * about a second on its own, without waiting for this command to run
- * again. That's what actually keeps the pool from ever going fully dark:
- * with N workers each self-healing independently, a single crash never
- * takes the whole pool down, and cron/this command only matters for the
- * case where a worker (or its loop) never started in the first place —
- * e.g. right after a fresh deploy or server reboot.
+ * workers are alive, and (re)spawns any that aren't — fully detached, so
+ * they keep running after this command exits. Meant to be run:
  *
- * Meant to run from three places, all of which converge on the same
- * idempotent logic below:
+ *   1. Once manually after deploy, to bring the pool up.
+ *   2. Every minute via Laravel's scheduler — in Laravel 9 that means
+ *      registering it in app/Console/Kernel.php's schedule() method (see
+ *      the Kernel.php in this bundle), so a crashed worker is back within
+ *      ~60s without any manual intervention. That only needs the one
+ *      standard Laravel cron entry (`php artisan schedule:run` every
+ *      minute) most Laravel 9 apps already have — no bespoke crontab
+ *      line required.
  *
- *   1. Once manually after deploy, to bring the pool up the first time.
- *   2. Every minute via Laravel's scheduler (app/Console/Kernel.php),
- *      passing --respect-stop, as a safety net in case a respawn loop
- *      itself died (e.g. OOM-killed along with its child).
- *   3. On-demand, triggered by XiangqiEngineClient itself (also with
- *      --respect-stop) the moment a web request finds zero workers
- *      responding — so recovery starts immediately on the first failed
- *      request instead of waiting for the next cron tick.
- *
- * Uses a flock so overlapping runs (cron, self-heal, manual) can't spawn
+ * Uses a flock so overlapping cron runs (or a slow run) can't spawn
  * duplicate workers for the same id.
- *
- * INTENTIONAL STOP: `xiangqi:pool:stop` writes a pool-wide stop-flag file
- * before it signals workers, and each respawn loop checks that flag
- * before relaunching its worker — so a deliberate stop (e.g. before a
- * deploy) actually stays stopped instead of being fought by the next
- * cron tick or self-heal trigger. Passing --respect-stop here makes this
- * command honor that flag (no-op while it's present); running the
- * command WITHOUT --respect-stop — i.e. a human typing
- * `php artisan xiangqi:pool:ensure` — always clears the flag and brings
- * the pool back up, matching what an operator expects that command to
- * do.
  *
  * BOOT-GRACE WINDOW: a freshly launched worker writes its pid file
  * immediately (see XiangqiEngineWorkerCommand::handle()) but only binds
  * its socket once PikafishProcess::start() finishes, which can
  * legitimately take up to ~25s (10s uciok + 15s readyok) even without
  * contention, and longer under a cold-start where all N workers are
- * loading the same .nnue file at once. Without a grace period, a check
- * landing in that window sees "pid running, socket not answering" and
- * concludes the worker is dead — then kills its own pid file/socket and
- * launches a SECOND process for the same id, which fights the first for
- * the socket path and can leave the pid file pointing at whichever one
- * lost. This class tracks a launch timestamp per worker and refuses to
- * declare a worker dead on ping failure alone until that grace window
+ * loading the same .nnue file at once. Without a grace period, a cron
+ * tick landing in that window sees "pid running, socket not answering"
+ * and concludes the worker is dead — then kills its own pid file/socket
+ * and launches a SECOND process for the same id, which fights the first
+ * for the socket path and can leave the pid file pointing at whichever
+ * one lost. This class tracks a launch timestamp per worker and refuses
+ * to declare a worker dead on ping failure alone until that grace window
  * has elapsed.
  */
 class XiangqiPoolEnsureCommand extends Command
 {
-    protected $signature = 'xiangqi:pool:ensure
-        {--respect-stop : No-op if the pool was intentionally stopped via xiangqi:pool:stop. Used by cron and by the self-heal trigger; a plain manual run never passes this and always clears the stop flag.}';
+    protected $signature = 'xiangqi:pool:ensure';
 
     protected $description = 'Start any Xiangqi engine workers that are not currently running';
-
-    /**
-     * Shared with XiangqiPoolStopCommand — the presence of this file means
-     * "an operator deliberately stopped the pool, don't auto-restart it."
-     * Keep this filename in sync between the two commands.
-     */
-    public const STOP_FLAG_FILENAME = 'pool.stopped';
 
     /**
      * Generous ceiling for a single worker's full boot: proc_open +
@@ -100,15 +70,6 @@ class XiangqiPoolEnsureCommand extends Command
         if (!is_dir($socketDir)) {
             mkdir($socketDir, 0770, true);
         }
-
-        $stopFlagPath = rtrim($socketDir, '/') . '/' . self::STOP_FLAG_FILENAME;
-        if ($this->option('respect-stop') && file_exists($stopFlagPath)) {
-            $this->info('Pool was intentionally stopped — skipping (run `php artisan xiangqi:pool:ensure` without --respect-stop to bring it back up).');
-            return self::SUCCESS;
-        }
-        // A plain/manual run always means "I want the pool up," so it
-        // clears any stale intentional-stop flag before proceeding.
-        @unlink($stopFlagPath);
 
         $lockPath = rtrim($socketDir, '/') . '/pool-ensure.lock';
         $lockHandle = fopen($lockPath, 'c');
@@ -151,86 +112,38 @@ class XiangqiPoolEnsureCommand extends Command
         $this->warn("[worker {$id}] not running — starting it");
 
         // Stale files from a crashed process (or a loser of a prior race).
-        // Note: we deliberately do NOT touch the pool-wide stop flag here —
-        // handle() already resolved that before we got this far.
         @unlink($pidPath);
         @unlink($startedPath);
         @unlink(rtrim($socketDir, '/') . "/engine-{$id}.sock");
-        @unlink($this->loopPidPath($socketDir, $id));
 
         $logPath = rtrim($socketDir, '/') . "/engine-{$id}.log";
+        $artisan = escapeshellarg(base_path('artisan'));
+        $php = escapeshellarg(PHP_BINARY);
+        $log = escapeshellarg($logPath);
+
+        // setsid fully detaches the process from this command's session so
+        // it survives long after `php artisan xiangqi:pool:ensure` (and,
+        // if run from cron, cron's own short-lived shell) has exited.
+        // nohup additionally ignores SIGHUP as a fallback where setsid
+        // isn't available.
+        $launcher = $this->hasSetsid() ? 'setsid' : 'nohup';
 
         // Record the launch time BEFORE shelling out, so there is no
         // window where a worker is running-but-unpingable with no
         // corresponding grace-period record.
         file_put_contents($startedPath, microtime(true));
 
-        $loopPid = $this->launchWorker($id, $socketDir, $logPath);
+        $cmd = "{$launcher} {$php} {$artisan} xiangqi:engine-worker {$id} >> {$log} 2>&1 < /dev/null & echo \$!";
+        $pid = trim((string) shell_exec($cmd));
 
-        if (ctype_digit((string) $loopPid) && (int) $loopPid > 0) {
-            file_put_contents($this->loopPidPath($socketDir, $id), $loopPid);
-            $this->info("[worker {$id}] launched self-respawning loop (pid {$loopPid}) — check {$logPath} for boot status");
+        if (ctype_digit($pid)) {
+            $this->info("[worker {$id}] launched with pid {$pid} (check {$logPath} for boot status)");
         } else {
             $this->error("[worker {$id}] failed to launch — check that exec/shell_exec is allowed for CLI PHP");
             @unlink($startedPath);
         }
 
         return true;
-    }
-
-    /**
-     * Launches worker $id inside its own tiny detached shell loop instead
-     * of as a one-shot process. If the worker exits for any reason —
-     * crash, OOM kill, an unhandled exception escaping handle() — the
-     * loop relaunches it after a short pause, all without needing
-     * xiangqi:pool:ensure to notice and intervene. That's what turns a
-     * worker crash into a ~1-2s blip instead of an up-to-60s outage for
-     * that worker (previously bounded only by the cron interval).
-     *
-     * The loop checks the pool-wide stop flag before each relaunch, so an
-     * intentional `xiangqi:pool:stop` is honored instead of being
-     * immediately undone by the very thing that's supposed to keep
-     * workers alive.
-     *
-     * setsid detaches the LOOP itself (not just the php process inside
-     * it) from this command's session, so the loop survives long after
-     * `php artisan xiangqi:pool:ensure` — and, if run from cron, cron's
-     * own short-lived shell — has exited. Falls back to nohup, which
-     * only ignores SIGHUP, where setsid isn't available.
-     *
-     * @return int|null the loop's own pid, or null if launching failed
-     */
-    private function launchWorker(int $id, string $socketDir, string $logPath): ?int
-    {
-        $artisan = escapeshellarg(base_path('artisan'));
-        $php = escapeshellarg(PHP_BINARY);
-        $log = escapeshellarg($logPath);
-        $stopFlag = escapeshellarg(rtrim($socketDir, '/') . '/' . self::STOP_FLAG_FILENAME);
-
-        $loopScript =
-            'while true; do ' .
-                "echo \"\$(date -Iseconds) [worker {$id}] (re)starting\" >> {$log}; " .
-                "{$php} {$artisan} xiangqi:engine-worker {$id} >> {$log} 2>&1 < /dev/null; " .
-                "code=\$?; " .
-                "if [ -f {$stopFlag} ]; then " .
-                    "echo \"\$(date -Iseconds) [worker {$id}] exited (code \$code), stop flag present — not respawning\" >> {$log}; " .
-                    'break; ' .
-                'fi; ' .
-                "echo \"\$(date -Iseconds) [worker {$id}] exited (code \$code) — respawning in 1s\" >> {$log}; " .
-                'sleep 1; ' .
-            'done';
-
-        $launcher = $this->hasSetsid() ? 'setsid' : 'nohup';
-        $cmd = "{$launcher} bash -c " . escapeshellarg($loopScript) . " >> {$log} 2>&1 < /dev/null & echo \$!";
-
-        $pid = trim((string) shell_exec($cmd));
-
-        return ctype_digit($pid) ? (int) $pid : null;
-    }
-
-    private function loopPidPath(string $socketDir, int $id): string
-    {
-        return rtrim($socketDir, '/') . "/engine-{$id}.loop.pid";
     }
 
     /**
