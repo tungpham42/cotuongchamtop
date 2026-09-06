@@ -83,23 +83,44 @@ $cdnUrl = "https://cotuong.r.worldssl.net"; // url('')
 $fenRegex = "[a-zA-Z0-9\-\/\s|&nbsp;]+";
 // Common function to get random room
 Route::get('/test-engine', function() {
-  // Exercises XiangqiEngineClient the same way XiangqiController does:
-  // there's no worker pool anymore, so this spawns a real Pikafish
-  // process for the one test move below and reports how long the whole
-  // cold start + move took.
+  // The old version of this route instantiated \App\Services\XiangqiEngineService
+  // directly, which spawned a brand-new Pikafish process (with its ~2s+ boot
+  // cost) on every single hit — the exact per-request pattern the engine-pool
+  // refactor got rid of. That class no longer exists. This route now exercises
+  // the actual warm worker pool through XiangqiEngineClient instead, the same
+  // path XiangqiController uses, so what you see here matches production
+  // behavior rather than bypassing it.
   if (app()->environment('production')) {
     abort(404);
   }
 
   try {
-    echo "<h1>Pikafish Engine Test</h1>";
+    echo "<h1>Pikafish Engine Pool Test</h1>";
+
+    // Check if the underlying binary/network files are present at all —
+    // still useful, since every worker needs these to boot.
+    $enginePath = storage_path('engines/pikafish_vps');
+    $networkPath = storage_path('engines/pikafish.nnue');
+
+    echo "<p>Engine binary exists: " . (file_exists($enginePath) ? 'YES' : 'NO') . "</p>";
+    echo "<p>Network file exists: " . (file_exists($networkPath) ? 'YES' : 'NO') . "</p>";
+
+    if (file_exists($enginePath)) {
+      echo "<p>Engine executable: " . (is_executable($enginePath) ? 'YES' : 'NO') . "</p>";
+    }
+    if (file_exists($networkPath)) {
+      echo "<p>Network size: " . filesize($networkPath) . " bytes</p>";
+    }
 
     $client = new \App\Services\XiangqiEngineClient();
+    $status = $client->poolStatus();
 
-    echo "<p>Engine files present and executable: " . ($client->isEngineAvailable() ? 'YES' : 'NO') . "</p>";
+    echo "<h2>Worker pool status</h2>";
+    echo "<p>Workers available: <strong>{$status['available']} / {$status['total']}</strong></p>";
 
-    if (!$client->isEngineAvailable()) {
-      echo "<p style='color: red;'>Engine binary or network file missing/not executable under storage/engines/ — check that first.</p>";
+    if ($status['available'] === 0) {
+      echo "<p style='color: red;'>No workers responding. Run <code>php artisan xiangqi:pool:ensure</code> "
+         . "and check <code>storage/app/xiangqi/engine-*.log</code> for boot errors.</p>";
     } else {
       $fen = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1';
       $start = microtime(true);
@@ -108,8 +129,13 @@ Route::get('/test-engine', function() {
 
       echo "<p>Best move: <strong>" . ($bestMove ?? 'NOT FOUND (fell through to fallback logic)') . "</strong></p>";
       echo "<p>FEN: " . htmlspecialchars($fen) . "</p>";
-      echo "<p>Round-trip time: {$elapsedMs}ms (this is a full cold start — proc_open + UCI handshake + the move itself — since the engine isn't kept warm between requests)</p>";
+      echo "<p>Round-trip time: {$elapsedMs}ms (a cold-spawn engine would be seconds; this should be well under a second from a warm worker)</p>";
     }
+
+    // Hitting our own HTTP API from within a route on the same request adds
+    // an extra network round trip for no benefit now that the client above
+    // already exercises the same code path the API route calls — dropped
+    // rather than kept as dead weight.
   } catch (\Throwable $e) {
     echo "<p style='color: red;'>Error: " . htmlspecialchars($e->getMessage()) . "</p>";
     echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
