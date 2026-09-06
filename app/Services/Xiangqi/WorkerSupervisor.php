@@ -2,60 +2,85 @@
 
 namespace App\Services\Xiangqi;
 
-use App\Services\XiangqiEngineClient;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Single source of truth for "is worker $id alive, and if not, start it."
+ * Thin wrapper around `supervisorctl`, the process manager now
+ * responsible for keeping the Pikafish worker pool alive on CentOS 9.
  *
- * This used to live entirely inside XiangqiPoolEnsureCommand. It's been
- * pulled out here so the SAME logic can be triggered from two independent
- * places, giving the pool two layers of self-healing that don't depend on
- * each other:
+ * This class used to contain ALL of the pool's self-healing logic:
+ * detached `while true; do ...; done` respawn shell loops launched via
+ * shell_exec, a peer-watchdog ring where each worker checked one
+ * neighbor, PID-file bookkeeping, /proc/{pid}/cmdline sanity checks, and
+ * a "boot grace" window to avoid false-killing a still-loading worker.
+ * All of that is deleted. `supervisord` does it natively and more
+ * reliably:
  *
- *   1. XiangqiPoolEnsureCommand — a full sweep over every worker id, run
- *      manually, via cron, and via XiangqiEngineClient's request-triggered
- *      self-heal.
- *   2. Each running worker's own peer-watchdog (see
- *      XiangqiEngineWorkerCommand) — every worker, while idle between
- *      connections, periodically checks on ONE neighbor in a ring
- *      (worker N watches worker N+1) and spawns it directly if it's down.
- *      This means the fleet keeps healing itself even if pool:ensure,
- *      cron, and the web-triggered self-heal were ALL somehow disabled —
- *      as long as at least one worker is alive, the ring eventually
- *      notices and repairs any gap.
+ *   - supervisord starts every `xiangqi-worker_00`..`xiangqi-worker_NN`
+ *     process on boot (autostart=true in the .ini) — this replaces the
+ *     old "nothing was ever started" cron backstop entirely; there is no
+ *     longer a scheduled `xiangqi:pool:ensure` tick in Kernel.php.
+ *   - supervisord restarts a worker the moment its process exits, for
+ *     any reason — crash, OOM kill, an unhandled exception escaping
+ *     handle() — via autorestart=true. This replaces BOTH the detached
+ *     respawn loop AND the ring watchdog in one stroke, and does it
+ *     better: supervisord is one already-running daemon (managed by
+ *     systemd, started at boot) that is not itself a sibling worker, so
+ *     there's no "what if the thing that respawns me also died"
+ *     bootstrapping problem to solve with a ring.
+ *   - `supervisorctl start|stop xiangqi-worker:*` replaces
+ *     XiangqiPoolEnsureCommand/XiangqiPoolStopCommand's manual
+ *     pid-file + flock + shell_exec dance.
  *
- * Every entry point funnels through ensureWorker(), which takes a
- * per-worker-id lock before touching anything — so a cron sweep, a peer
- * watchdog check, and a manual run can all reach the same id at the same
- * moment without racing to spawn duplicate processes.
+ * What's LEFT for this class to do, now that process supervision itself
+ * is someone else's job:
+ *
+ *   1. Ask supervisord whether a given worker id is RUNNING.
+ *   2. Ask supervisord to (re)start one worker or the whole group.
+ *   3. Track the "intentionally stopped" flag. supervisord has no idea
+ *      that a stop was deliberate vs. transient — see STOP_FLAG_FILENAME
+ *      below for why the app still needs to track that itself.
+ *
+ * See deploy/supervisord/xiangqi-workers.ini for the actual process
+ * definitions and deploy/README-supervisor.md for CentOS 9 setup
+ * (installing supervisord, socket permissions, SELinux notes).
  */
 class WorkerSupervisor
 {
     /**
+     * The supervisord "program" name from xiangqi-workers.ini. Process
+     * names within the group follow supervisord's numprocs convention:
+     * `xiangqi-worker_00`, `xiangqi-worker_01`, ... — see
+     * process_name=%(program_name)s_%(process_num)02d in the .ini.
+     */
+    public const PROGRAM_GROUP = 'xiangqi-worker';
+
+    /**
      * Presence of this file means "an operator deliberately stopped the
-     * pool via xiangqi:pool:stop — don't auto-restart it." Cleared only by
-     * a manual, non---respect-stop run of xiangqi:pool:ensure.
+     * pool via xiangqi:pool:stop — don't auto-restart it."
+     *
+     * This still has to live in the app (not in supervisord) because
+     * supervisord's own state doesn't distinguish "an operator ran
+     * `supervisorctl stop` on purpose before a deploy" from "a worker is
+     * momentarily down for some other reason." Without this flag,
+     * XiangqiEngineClient's request-triggered self-heal would call
+     * `supervisorctl start` on a pool an operator just intentionally took
+     * down mid-deploy, undoing the stop within milliseconds.
+     *
+     * Cleared only by a manual, non---respect-stop run of
+     * `xiangqi:pool:ensure`.
      */
     public const STOP_FLAG_FILENAME = 'pool.stopped';
 
-    /**
-     * Generous ceiling for a single worker's full boot: proc_open +
-     * uciok (up to 10s) + readyok (up to 15s) + a little slack for
-     * scheduling delay under a cold-start pool. Keep this at or above
-     * PikafishProcess's own uciok/readyok ceilings (10s + 15s) or you'll
-     * reintroduce the exact "pid running, socket not answering yet" race
-     * this is meant to prevent.
-     */
-    private const BOOT_GRACE_SECONDS = 30.0;
-
     private string $socketDir;
     private int $workerCount;
+    private string $supervisorctlBin;
 
-    public function __construct(?string $socketDir = null, ?int $workerCount = null)
+    public function __construct(?string $socketDir = null, ?int $workerCount = null, ?string $supervisorctlBin = null)
     {
         $this->socketDir = rtrim($socketDir ?? config('xiangqi.socket_dir', storage_path('app/xiangqi')), '/');
         $this->workerCount = $workerCount ?? (int) config('xiangqi.worker_count', 12);
+        $this->supervisorctlBin = $supervisorctlBin ?? config('xiangqi.supervisorctl_bin', '/usr/bin/supervisorctl');
 
         if (!is_dir($this->socketDir)) {
             @mkdir($this->socketDir, 0770, true);
@@ -72,7 +97,7 @@ class WorkerSupervisor
         return file_exists($this->stopFlagPath());
     }
 
-    /** Called by xiangqi:pool:stop, before it signals any individual worker. */
+    /** Called by xiangqi:pool:stop, before it asks supervisord to stop anything. */
     public function writeStopFlag(): void
     {
         file_put_contents($this->stopFlagPath(), (string) microtime(true));
@@ -85,17 +110,45 @@ class WorkerSupervisor
     }
 
     /**
-     * Make sure worker $id is alive, launching it (wrapped in its own
-     * self-respawn loop) if it isn't. Safe to call concurrently for the
-     * same id from multiple processes — a per-id lock means only one
-     * caller ever wins the race to actually spawn.
+     * supervisord's fully-qualified process name for worker $id, e.g.
+     * "xiangqi-worker:xiangqi-worker_03". Matches numprocs_start=0 and
+     * the %(process_num)02d format in xiangqi-workers.ini.
+     */
+    public function processName(int $id): string
+    {
+        return sprintf('%s:%s_%02d', self::PROGRAM_GROUP, self::PROGRAM_GROUP, $id);
+    }
+
+    /**
+     * True if supervisord currently reports this worker's OS process as
+     * RUNNING. This says nothing about whether the Pikafish engine
+     * inside it has finished loading and is answering pings — that's a
+     * separate, faster-changing concern XiangqiEngineClient::pingWorker()
+     * already handles over the worker's own unix socket. Conflating the
+     * two was exactly the bug class the old BOOT_GRACE_SECONDS logic
+     * existed to paper over; keeping them separate here means this class
+     * no longer needs to know anything about boot timing at all.
+     */
+    public function isWorkerRunning(int $id): bool
+    {
+        $output = $this->supervisorctl(['status', $this->processName($id)]);
+        return (bool) preg_match('/\bRUNNING\b/', $output);
+    }
+
+    /**
+     * Ask supervisord to start worker $id if it isn't already running.
+     * Idempotent and safe to call concurrently from multiple
+     * processes/requests — supervisorctl itself serializes against
+     * supervisord's control socket, so there's no need for the
+     * file-based per-id flock the old ensureWorker() used.
      *
      * @param bool $respectStop if true, this is a no-op while the pool is
-     *     intentionally stopped. Automatic callers (cron, client self-heal,
-     *     peer watchdogs) should always pass true (the default). A manual
-     *     `pool:ensure` run resolves the stop flag itself before calling
-     *     this, so it passes false.
-     * @return bool true if this call actually launched a new process
+     *     intentionally stopped. Automatic callers (the request-triggered
+     *     self-heal in XiangqiEngineClient) should always pass true. A
+     *     manual `xiangqi:pool:ensure` run resolves the stop flag itself
+     *     before calling this, so it passes false.
+     * @return bool true if a start was actually issued (i.e. the worker
+     *     was not already reported RUNNING)
      */
     public function ensureWorker(int $id, bool $respectStop = true): bool
     {
@@ -103,219 +156,60 @@ class WorkerSupervisor
             return false;
         }
 
-        $lockPath = "{$this->socketDir}/engine-{$id}.spawn.lock";
-        $lockHandle = @fopen($lockPath, 'c');
-        if (!$lockHandle || !flock($lockHandle, LOCK_EX | LOCK_NB)) {
-            // Someone else (cron sweep, another worker's watchdog, a
-            // manual run) is already deciding about this exact id.
+        if ($this->isWorkerRunning($id)) {
             return false;
         }
 
-        try {
-            return $this->ensureWorkerLocked($id);
-        } finally {
-            flock($lockHandle, LOCK_UN);
-            fclose($lockHandle);
-        }
-    }
-
-    private function ensureWorkerLocked(int $id): bool
-    {
-        $pidPath = $this->pidPath($id);
-        $startedPath = $this->startedPath($id);
-
-        if ($this->isWorkerAlive($id, $pidPath, $startedPath)) {
-            return false;
-        }
-
-        Log::warning("[xiangqi supervisor] worker {$id} not running — starting it");
-
-        // Stale files from a crashed process (or a loser of a prior race).
-        @unlink($pidPath);
-        @unlink($startedPath);
-        @unlink($this->socketPath($id));
-        @unlink($this->loopPidPath($id));
-
-        $logPath = $this->logPath($id);
-
-        // Record the launch time BEFORE shelling out, so there is no
-        // window where a worker is running-but-unpingable with no
-        // corresponding grace-period record.
-        file_put_contents($startedPath, microtime(true));
-
-        $loopPid = $this->launchWorker($id, $logPath);
-
-        if ($loopPid !== null) {
-            file_put_contents($this->loopPidPath($id), $loopPid);
-            Log::info("[xiangqi supervisor] worker {$id} launched self-respawning loop (pid {$loopPid})");
-        } else {
-            Log::error("[xiangqi supervisor] worker {$id} failed to launch — check that exec/shell_exec is allowed for CLI PHP");
-            @unlink($startedPath);
-        }
+        Log::warning("[xiangqi supervisor] worker {$id} not running — issuing supervisorctl start");
+        $this->supervisorctl(['start', $this->processName($id)]);
 
         return true;
     }
 
     /**
-     * Launches worker $id inside its own tiny detached shell loop instead
-     * of as a one-shot process. If the worker exits for any reason —
-     * crash, OOM kill, an unhandled exception escaping handle() — the
-     * loop relaunches it after a short pause, all without needing
-     * anything external to notice and intervene.
-     *
-     * The loop checks the pool-wide stop flag before each relaunch, so an
-     * intentional `xiangqi:pool:stop` is honored instead of being
-     * immediately undone by the very thing that's supposed to keep
-     * workers alive.
-     *
-     * setsid detaches the LOOP itself (not just the php process inside
-     * it) from the calling process's session, so it survives long after
-     * that process exits. Falls back to nohup (SIGHUP only) where setsid
-     * isn't available.
-     *
-     * @return int|null the loop's own pid, or null if launching failed
+     * Ask supervisord to start every worker that isn't already running.
+     * Used by XiangqiEngineClient's on-demand self-heal (when a request
+     * finds the whole pool unreachable) and by `xiangqi:pool:ensure`.
      */
-    private function launchWorker(int $id, string $logPath): ?int
+    public function startAll(bool $respectStop = true): void
     {
-        $artisan = escapeshellarg(base_path('artisan'));
-        $php = escapeshellarg(PHP_BINARY);
-        $log = escapeshellarg($logPath);
-        $stopFlag = escapeshellarg($this->stopFlagPath());
+        if ($respectStop && $this->isStopped()) {
+            return;
+        }
 
-        $loopScript =
-            'while true; do ' .
-                "echo \"\$(date -Iseconds) [worker {$id}] (re)starting\" >> {$log}; " .
-                "{$php} {$artisan} xiangqi:engine-worker {$id} >> {$log} 2>&1 < /dev/null; " .
-                "code=\$?; " .
-                "if [ -f {$stopFlag} ]; then " .
-                    "echo \"\$(date -Iseconds) [worker {$id}] exited (code \$code), stop flag present — not respawning\" >> {$log}; " .
-                    'break; ' .
-                'fi; ' .
-                "echo \"\$(date -Iseconds) [worker {$id}] exited (code \$code) — respawning in 1s\" >> {$log}; " .
-                'sleep 1; ' .
-            'done';
+        $this->supervisorctl(['start', self::PROGRAM_GROUP . ':*']);
+    }
 
-        $launcher = $this->hasSetsid() ? 'setsid' : 'nohup';
-        $cmd = "{$launcher} bash -c " . escapeshellarg($loopScript) . " >> {$log} 2>&1 < /dev/null & echo \$!";
-
-        $pid = trim((string) shell_exec($cmd));
-
-        return ctype_digit($pid) ? (int) $pid : null;
+    /** Used by `xiangqi:pool:stop`. */
+    public function stopAll(): void
+    {
+        $this->supervisorctl(['stop', self::PROGRAM_GROUP . ':*']);
     }
 
     /**
-     * A worker counts as "alive" if:
-     *   - its PID file points at a running process that is actually our
-     *     worker (guards against a stale PID having been reused by an
-     *     unrelated process), AND EITHER
-     *   - it responds to a ping on its socket, OR
-     *   - it's still within its boot-grace window, in which case a failed
-     *     ping just means "still loading," not "dead."
+     * Raw `supervisorctl status` output for every worker in the group,
+     * for diagnostics/health endpoints. One line per worker, e.g.
+     * "xiangqi-worker:xiangqi-worker_00   RUNNING   pid 1234, uptime 0:12:03".
      */
-    private function isWorkerAlive(int $id, string $pidPath, string $startedPath): bool
+    public function statusAll(): string
     {
-        if (!file_exists($pidPath)) {
-            return false;
-        }
-
-        $pid = (int) trim((string) file_get_contents($pidPath));
-        if ($pid <= 0 || !$this->isPidRunning($pid, $id)) {
-            return false;
-        }
-
-        $client = new XiangqiEngineClient($this->socketDir, $this->workerCount);
-        if ($client->pingWorker($id)) {
-            // Fully up — grace record no longer needed.
-            @unlink($startedPath);
-            return true;
-        }
-
-        return $this->withinBootGrace($startedPath);
-    }
-
-    private function withinBootGrace(string $startedPath): bool
-    {
-        if (!file_exists($startedPath)) {
-            // No record of when this one launched. Fail safe toward "no
-            // grace" rather than granting an indefinite pass.
-            return false;
-        }
-
-        $startedAt = (float) trim((string) file_get_contents($startedPath));
-        if ($startedAt <= 0) {
-            return false;
-        }
-
-        return (microtime(true) - $startedAt) < self::BOOT_GRACE_SECONDS;
+        return $this->supervisorctl(['status', self::PROGRAM_GROUP . ':*']);
     }
 
     /**
-     * Best-effort sanity check on Linux: confirm the running process
-     * actually is this worker, not an unrelated process that reused the
-     * PID after a crash. Reads raw (null-separated) /proc/{pid}/cmdline
-     * and matches whole argv entries — matching on a naively
-     * space-joined string with strpos() would let worker id 1 match a
-     * cmdline that actually belongs to worker 11 (or a --socket-dir
-     * containing "1"), which matters a lot now that workers spawn other
-     * workers: a false match here means a dead sibling gets silently
-     * skipped instead of respawned.
+     * Shells out to supervisorctl. Best-effort: supervisorctl's own exit
+     * code/stderr on a transient RPC hiccup shouldn't blow up a web
+     * request, so failures here just come back as empty/unmatched output
+     * rather than throwing — callers already treat "not confirmed
+     * running" and "confirmed not running" the same way.
      */
-    private function isPidRunning(int $pid, int $expectedId): bool
+    private function supervisorctl(array $args): string
     {
-        if (function_exists('posix_kill') && !posix_kill($pid, 0)) {
-            return false;
-        } elseif (!function_exists('posix_kill') && !is_dir("/proc/{$pid}")) {
-            return false;
-        }
+        $cmd = escapeshellcmd($this->supervisorctlBin) . ' '
+            . implode(' ', array_map('escapeshellarg', $args))
+            . ' 2>&1';
 
-        $cmdlinePath = "/proc/{$pid}/cmdline";
-        if (is_readable($cmdlinePath)) {
-            $raw = (string) file_get_contents($cmdlinePath);
-            $args = array_filter(explode("\0", $raw), fn ($a) => $a !== '');
-
-            if (!in_array('xiangqi:engine-worker', $args, true)) {
-                return false;
-            }
-            if (!in_array((string) $expectedId, $args, true)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private function hasSetsid(): bool
-    {
-        static $has = null;
-        if ($has === null) {
-            $has = trim((string) shell_exec('command -v setsid')) !== '';
-        }
-        return $has;
-    }
-
-    public function pidPath(int $id): string
-    {
-        return "{$this->socketDir}/engine-{$id}.pid";
-    }
-
-    public function startedPath(int $id): string
-    {
-        return "{$this->socketDir}/engine-{$id}.started";
-    }
-
-    public function socketPath(int $id): string
-    {
-        return "{$this->socketDir}/engine-{$id}.sock";
-    }
-
-    public function loopPidPath(int $id): string
-    {
-        return "{$this->socketDir}/engine-{$id}.loop.pid";
-    }
-
-    public function logPath(int $id): string
-    {
-        return "{$this->socketDir}/engine-{$id}.log";
+        return (string) @shell_exec($cmd);
     }
 
     private function stopFlagPath(): string
