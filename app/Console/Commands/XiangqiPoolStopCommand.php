@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Services\Xiangqi\WorkerSupervisor;
 use Illuminate\Console\Command;
 
 /**
@@ -12,17 +13,18 @@ use Illuminate\Console\Command;
  * or for maintenance. Run `xiangqi:pool:ensure` afterwards (or wait for
  * the next cron tick) to bring them back up.
  *
- * IMPORTANT: this writes a pool-wide stop flag BEFORE signaling anything,
- * for two reasons that both matter now that workers self-heal:
+ * IMPORTANT: this writes a pool-wide stop flag (via WorkerSupervisor)
+ * BEFORE signaling anything, for two reasons that both matter now that
+ * workers self-heal at two independent layers:
  *
- *   1. Each worker's respawn loop (launched by XiangqiPoolEnsureCommand)
- *      checks this flag before relaunching a worker that just exited —
- *      without it, SIGTERM'ing a worker here would just cause its own
- *      loop to bring it right back within ~1s, and this command would
- *      appear to do nothing.
- *   2. The scheduler ticks xiangqi:pool:ensure every minute with
- *      --respect-stop specifically so it also backs off while this flag
- *      is present, instead of undoing an intentional stop within 60s.
+ *   1. Each worker's own respawn loop checks this flag before relaunching
+ *      a worker that just exited.
+ *   2. Each worker's ring-watchdog (see XiangqiEngineWorkerCommand) also
+ *      checks it before spawning a downed neighbor.
+ *
+ * Without the flag, SIGTERM'ing a worker here would just cause its own
+ * loop — or its neighbor's watchdog — to bring it right back within a
+ * second or two, and this command would appear to do nothing.
  *
  * The flag is only cleared by running `xiangqi:pool:ensure` WITHOUT
  * --respect-stop (i.e. a human explicitly bringing the pool back up).
@@ -35,41 +37,31 @@ class XiangqiPoolStopCommand extends Command
 
     public function handle(): int
     {
-        $socketDir = config('xiangqi.socket_dir', storage_path('app/xiangqi'));
-
-        // Was previously hardcoded to 4 here while Ensure/Client defaulted
-        // to 12 — meaning a pool of 12 workers would only ever have its
-        // first 4 stopped, leaving 8 running "invisibly" through a deploy.
-        // Keep this in lockstep with the other commands' default.
-        $workerCount = (int) config('xiangqi.worker_count', 12);
-
-        if (!is_dir($socketDir)) {
-            mkdir($socketDir, 0770, true);
-        }
+        $supervisor = new WorkerSupervisor();
 
         // Write the stop flag FIRST, before touching any individual
-        // worker, so there's no window where a loop could still decide to
-        // respawn because it checked the flag a moment too early.
-        $stopFlagPath = rtrim($socketDir, '/') . '/' . XiangqiPoolEnsureCommand::STOP_FLAG_FILENAME;
-        file_put_contents($stopFlagPath, (string) microtime(true));
+        // worker, so there's no window where a loop or a watchdog could
+        // still decide to respawn because it checked the flag a moment
+        // too early.
+        $supervisor->writeStopFlag();
         $this->info('Pool marked as intentionally stopped.');
 
-        for ($id = 0; $id < $workerCount; $id++) {
-            $this->stopWorker($id, $socketDir);
+        for ($id = 0; $id < $supervisor->workerCount(); $id++) {
+            $this->stopWorker($supervisor, $id);
         }
 
         return self::SUCCESS;
     }
 
-    private function stopWorker(int $id, string $socketDir): void
+    private function stopWorker(WorkerSupervisor $supervisor, int $id): void
     {
-        $pidPath = rtrim($socketDir, '/') . "/engine-{$id}.pid";
-        $startedPath = rtrim($socketDir, '/') . "/engine-{$id}.started";
-        $loopPidPath = rtrim($socketDir, '/') . "/engine-{$id}.loop.pid";
+        $pidPath = $supervisor->pidPath($id);
+        $startedPath = $supervisor->startedPath($id);
+        $loopPidPath = $supervisor->loopPidPath($id);
 
         // Kill the respawn loop itself first (if any) so it can't react
         // to the worker's exit at all — belt-and-suspenders alongside the
-        // stop flag the loop also checks on its own.
+        // stop flag the loop (and any watching neighbor) also checks.
         if (file_exists($loopPidPath)) {
             $loopPid = (int) trim((string) file_get_contents($loopPidPath));
             if ($loopPid > 0 && $this->isPidAlive($loopPid)) {
