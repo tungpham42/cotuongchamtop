@@ -6,16 +6,15 @@ use App\Helpers\XiangqiHelper;
 use Exception;
 
 /**
- * Wraps a single, long-lived Pikafish UCI subprocess.
+ * Wraps a single Pikafish UCI subprocess.
  *
- * This class is meant to be instantiated ONCE per worker process (see
- * XiangqiEngineWorkerCommand) and reused for many requests, not created
- * per HTTP request. That's the whole point of the refactor: the expensive
- * proc_open() + UCI handshake + network load happens once, at worker boot,
- * not on every "best move" call.
- *
- * I/O is done with stream_select() so we block efficiently on the pipe
- * instead of spinning in a usleep() loop burning CPU while waiting.
+ * XiangqiEngineClient creates one of these per request that needs the
+ * engine, calls start(), makes exactly one bestMove()/analyze() call, and
+ * then stop()s it — there's no pool of these kept warm between requests.
+ * start() has no artificial sleep in it: it waits (via stream_select, not
+ * a usleep() poll loop) only as long as the engine actually takes to
+ * report uciok/readyok, so the per-request cold start is as prompt as a
+ * fresh proc_open() + UCI handshake + network load can be.
  */
 class PikafishProcess
 {
@@ -158,11 +157,10 @@ class PikafishProcess
      * while shallow searches (depth 5-10, which typically resolve in a
      * couple seconds) hold the pipe open far longer than they need to.
      *
-     * This is intentionally the single source of truth for that budget:
-     * XiangqiEngineClient::analyzePosition() calls this same method (it's
-     * a pure calculation, no I/O) to size its socket read timeout, so the
-     * web-request side and the worker side never disagree about how long
-     * a given depth is allowed to take.
+     * This is the single source of truth for that budget — analyze()
+     * below is the only caller, since XiangqiEngineClient now runs in the
+     * same process and just waits on this call directly; there's no
+     * separate socket read timeout to keep in sync with it anymore.
      */
     public static function analysisTimeoutSeconds(int $depth): float
     {

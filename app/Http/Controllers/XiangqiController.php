@@ -14,13 +14,12 @@ class XiangqiController extends Controller
 
     public function __construct(XiangqiEngineClient $xiangqiEngine)
     {
-        // IMPORTANT: this used to be `new XiangqiEngineService()`, which
-        // spawned a whole Pikafish process (proc_open + UCI handshake +
-        // a hardcoded 2s sleep) on the constructor of EVERY request to
-        // EVERY route in this controller, including /status and /health.
-        // XiangqiEngineClient is just a thin socket client — constructing
-        // it does no I/O at all, so routes that don't need the engine
-        // (validateFen, switchActiveColor, getPieceInfo, etc.) pay nothing.
+        // Constructing XiangqiEngineClient does no I/O at all (just two
+        // storage_path() lookups), so routes that don't touch the engine
+        // (validateFen, switchActiveColor, getPieceInfo, etc.) still pay
+        // nothing. The actual Pikafish process is spawned on demand, only
+        // inside getBestMove()/analyzePosition(), and torn back down right
+        // after — there's no persistent worker pool to manage.
         $this->xiangqiEngine = $xiangqiEngine;
     }
 
@@ -47,9 +46,11 @@ class XiangqiController extends Controller
         $usedFallback = false;
 
         try {
-            // This call now either comes back fast from a warm engine, or
-            // fails fast (short connect timeout) if every worker is busy —
-            // it never blocks on an engine boot.
+            // Spawns a fresh Pikafish process, waits for it to become
+            // ready (no fixed sleep — moves on as soon as uciok/readyok
+            // actually arrive), gets the move, then shuts it back down.
+            // Any engine failure below falls through to the fallback
+            // move generator rather than surfacing an error to the user.
             $bestMove = $this->xiangqiEngine->getBestMove($fen, $adjustedTimeout);
         } catch (\Throwable $e) {
             Log::error('Xiangqi engine client error: ' . $e->getMessage());
@@ -142,7 +143,7 @@ class XiangqiController extends Controller
         if ($analysis === null) {
             return response()->json([
                 'success' => false,
-                'error' => 'Engine pool unavailable for analysis',
+                'error' => 'Engine unavailable for analysis',
             ], 503);
         }
 
@@ -236,19 +237,16 @@ class XiangqiController extends Controller
     }
 
     /**
-     * Cheap pool status: pings each worker socket (sub-millisecond, local
-     * unix socket) instead of the old behavior of fully booting an engine
-     * just to answer "is it available".
+     * Cheap status check: confirms the engine binary and network file are
+     * present and executable, without actually spawning Pikafish. There's
+     * no pool to ping — the engine only runs while a request is being
+     * served.
      */
     public function getEngineStatus(): JsonResponse
     {
-        $status = $this->xiangqiEngine->poolStatus();
-
         return response()->json([
             'success' => true,
-            'ready' => $status['available'] > 0,
-            'workers_available' => $status['available'],
-            'workers_total' => $status['total'],
+            'ready' => $this->xiangqiEngine->isEngineAvailable(),
         ]);
     }
 
@@ -256,53 +254,36 @@ class XiangqiController extends Controller
     {
         $networkExists = file_exists(storage_path('engines/pikafish.nnue'));
         $engineExists = file_exists(storage_path('engines/pikafish_vps'));
-        $status = $this->xiangqiEngine->poolStatus();
+        $engineExecutable = $engineExists && is_executable(storage_path('engines/pikafish_vps'));
 
-        $health = 'unhealthy';
-        if ($status['available'] === $status['total'] && $status['total'] > 0) {
-            $health = 'healthy';
-        } elseif ($status['available'] > 0) {
-            $health = 'degraded';
-        }
+        $health = ($engineExists && $networkExists && $engineExecutable) ? 'healthy' : 'unhealthy';
 
         return response()->json([
             'success' => true,
             'status' => $health,
-            'workers_available' => $status['available'],
-            'workers_total' => $status['total'],
             'files' => [
                 'engine_exists' => $engineExists,
                 'network_exists' => $networkExists,
-                'engine_executable' => $engineExists ? is_executable(storage_path('engines/pikafish_vps')) : false,
+                'engine_executable' => $engineExecutable,
             ],
             'timestamp' => now()->toISOString(),
         ]);
     }
 
     /**
-     * Workers are kept alive by Laravel's scheduler (xiangqi:pool:ensure,
-     * running every minute via app/Console/Kernel.php), not by the web
-     * request lifecycle, so there's nothing meaningful for PHP to
-     * "restart" here from within an HTTP request. Use the artisan
-     * commands directly instead (see deploy/README.md):
-     *
-     *   php artisan xiangqi:pool:stop      # graceful shutdown, e.g. before a deploy
-     *   php artisan xiangqi:pool:ensure    # bring workers back up immediately,
-     *                                      # rather than waiting for the next
-     *                                      # scheduler tick
-     *
-     * This endpoint just reports current pool health so a dashboard/
-     * monitor can decide whether one of those needs running.
+     * There's no persistent engine process to restart anymore — Pikafish
+     * is spawned fresh for each getBestMove()/analyzePosition() call and
+     * torn down right after, so nothing is left running between requests
+     * for this endpoint to bounce. Kept only so any existing dashboard
+     * hitting this route doesn't 404; it just reports whether the engine
+     * binary/network are in place to spawn from.
      */
     public function restartEngine(): JsonResponse
     {
-        $status = $this->xiangqiEngine->poolStatus();
-
         return response()->json([
             'success' => true,
-            'note' => 'Engine workers are managed by the scheduler (xiangqi:pool:ensure). Use: php artisan xiangqi:pool:stop && php artisan xiangqi:pool:ensure',
-            'workers_available' => $status['available'],
-            'workers_total' => $status['total'],
+            'note' => 'Nothing to restart: the engine is started fresh per request, not kept as a persistent process.',
+            'ready' => $this->xiangqiEngine->isEngineAvailable(),
         ]);
     }
 }

@@ -11,21 +11,15 @@ use App\Console\Commands\UpdatePointsCommand;
 use App\Console\Commands\UpdatePuzzleSlugsCommand;
 use App\Console\Commands\UpdateRoomsCommand;
 use App\Console\Commands\CreateNewRoom;
-use App\Console\Commands\XiangqiPoolEnsureCommand;
 
 class Kernel extends ConsoleKernel
 {
     /**
      * The Artisan commands provided by your application.
      *
-     * Note: XiangqiEngineWorkerCommand and XiangqiPoolStopCommand aren't
-     * listed here on purpose — commands() below already auto-loads every
-     * class in app/Console/Commands via $this->load(), so anything not
-     * needed directly by the scheduler doesn't need a manual entry. They
-     * still work fine as `php artisan xiangqi:engine-worker` and
-     * `php artisan xiangqi:pool:stop`. XiangqiPoolEnsureCommand IS listed
-     * here only because it's referenced by class name in schedule() below,
-     * same as your other scheduled commands.
+     * Note: commands() below already auto-loads every class in
+     * app/Console/Commands via $this->load(), so anything not needed
+     * directly by the scheduler doesn't need a manual entry here.
      *
      * @var array
      */
@@ -38,7 +32,6 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\UpdateRoomsCommand::class,
         // \App\Console\Commands\UpdateSitemapCommand::class,
         \App\Console\Commands\CreateNewRoom::class,
-        \App\Console\Commands\XiangqiPoolEnsureCommand::class,
     ];
 
     /**
@@ -58,14 +51,9 @@ class Kernel extends ConsoleKernel
         $schedule->command(CreateNewRoom::class)->everySixHours($minutes = 0);
         // $schedule->command(UpdateSitemapCommand::class)->daily();
 
-        // Keeps the warm Pikafish worker pool alive without Supervisor:
-        // checks each worker's pid + socket every minute and respawns any
-        // that died. See deploy/README.md in the xiangqi refactor bundle.
-        $schedule->command(XiangqiPoolEnsureCommand::class)
-            ->everyMinute()
-            ->withoutOverlapping(1)
-            ->runInBackground()
-            ->appendOutputTo(storage_path('logs/xiangqi-pool-ensure.log'));
+        // No Xiangqi entry here anymore: there's no worker pool to keep
+        // alive. XiangqiEngineClient spawns and tears down a Pikafish
+        // process per request instead, so nothing needs a cron tick.
     }
 
     /**
