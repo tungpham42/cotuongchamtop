@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Services\Xiangqi\PikafishProcess;
-use App\Services\Xiangqi\WorkerSupervisor;
 
 /**
  * Replaces the old XiangqiEngineService for the web request path.
@@ -15,15 +14,14 @@ use App\Services\Xiangqi\WorkerSupervisor;
  * for seconds — the controller already has a fallback move generator for
  * exactly this case.
  *
- * SELF-HEAL: on CentOS 9, each worker is a supervisord-managed process
- * (autorestart=true — see deploy/supervisord/xiangqi-workers.ini), so a
- * single crashed worker recovers on its own in a second or two and this
- * class never needs to know about that. But if EVERY worker is
- * unreachable — nothing was ever started (fresh deploy / reboot before
- * supervisord's own autostart has run, or supervisord itself was
- * restarted) — this class asks supervisord (via WorkerSupervisor) to
- * start the whole group the moment it notices, rather than silently
- * reporting zero and waiting on supervisord's own retry backoff. It's
+ * SELF-HEAL: each worker now runs inside its own respawn loop (see
+ * XiangqiPoolEnsureCommand), so a single crashed worker recovers on its
+ * own in about a second and this class never needs to know about that.
+ * But if EVERY worker is unreachable — nothing was ever started (fresh
+ * deploy / reboot), or every loop somehow died together — this class
+ * kicks off `xiangqi:pool:ensure --respect-stop` in the background the
+ * moment it notices, rather than silently reporting zero and leaving
+ * recovery to whenever the next cron minute happens to land. It's
  * rate-limited via a cooldown file so a burst of concurrent requests
  * during an outage triggers this once, not once per request.
  */
@@ -35,10 +33,9 @@ class XiangqiEngineClient
 
     /**
      * Minimum time between self-heal triggers. Must comfortably exceed a
-     * single worker's worst-case boot time (~25-30s — Pikafish's own
-     * uciok/readyok handshake in PikafishProcess, plus supervisord's
-     * `startsecs` in xiangqi-workers.ini) so we don't fire a second
-     * `supervisorctl start` while the first batch of launches is still
+     * single worker's worst-case boot time (~25-30s, see PikafishProcess
+     * and XiangqiPoolEnsureCommand's BOOT_GRACE_SECONDS) so we don't fire
+     * a second `pool:ensure` while the first one's launches are still
      * legitimately warming up.
      */
     private const SELF_HEAL_COOLDOWN_SECONDS = 45.0;
@@ -106,24 +103,17 @@ class XiangqiEngineClient
     }
 
     /**
-     * Asks supervisord (via WorkerSupervisor) to start any xiangqi-worker
-     * process that isn't already running, so a fully-down pool starts
-     * recovering the instant a request notices, instead of waiting on
-     * supervisord's own per-process retry backoff for every worker at
-     * once. respectStop=true means this never fights a deliberate
+     * Kicks off `php artisan xiangqi:pool:ensure --respect-stop` in the
+     * background so a fully-down pool starts recovering the instant a
+     * request notices, instead of waiting for the next cron tick (up to
+     * 60s away). --respect-stop means this never fights a deliberate
      * `xiangqi:pool:stop` (e.g. mid-deploy).
      *
-     * This used to shell out to `php artisan xiangqi:pool:ensure
-     * --respect-stop` in the background. Now that supervisord owns
-     * process supervision, WorkerSupervisor::startAll() just runs
-     * `supervisorctl start xiangqi-worker:*` directly — no need to spin
-     * up a whole separate PHP/artisan process just to issue one command.
-     *
      * Fire-and-forget and best-effort: failures here are swallowed. This
-     * is a convenience nudge on top of supervisord's own
-     * autostart/autorestart, not a load-bearing recovery path — the
-     * caller (poolStatus/request) has already decided what to tell the
-     * user regardless of whether this succeeds.
+     * is a convenience nudge on top of the respawn loops and cron, not a
+     * load-bearing recovery path — the caller (poolStatus/request) has
+     * already decided what to tell the user regardless of whether this
+     * succeeds.
      */
     private function triggerSelfHeal(): void
     {
@@ -136,14 +126,19 @@ class XiangqiEngineClient
             }
         }
 
-        // Write the cooldown marker BEFORE calling out so a burst of
+        // Write the cooldown marker BEFORE shelling out so a burst of
         // concurrent requests can't all pass the check above at once.
         if (!is_dir($this->socketDir)) {
             @mkdir($this->socketDir, 0770, true);
         }
         @file_put_contents($cooldownPath, (string) microtime(true));
 
-        (new WorkerSupervisor($this->socketDir, $this->workerCount))->startAll(respectStop: true);
+        $artisan = escapeshellarg(base_path('artisan'));
+        $php = escapeshellarg(PHP_BINARY);
+        $log = escapeshellarg(rtrim($this->socketDir, '/') . '/self-heal.log');
+
+        $cmd = "{$php} {$artisan} xiangqi:pool:ensure --respect-stop >> {$log} 2>&1 < /dev/null &";
+        @shell_exec($cmd);
     }
 
     public function isAnyWorkerReady(): bool

@@ -3,17 +3,17 @@
 namespace App\Console\Commands;
 
 use App\Services\Xiangqi\PikafishProcess;
+use App\Services\Xiangqi\WorkerSupervisor;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 /**
  * `php artisan xiangqi:engine-worker {id}`
  *
- * Runs forever as ONE OS process. On CentOS 9 it is launched and kept
- * alive by supervisord (see deploy/supervisord/xiangqi-workers.ini),
- * NOT by a hand-rolled shell respawn loop or a peer-watchdog ring — both
- * of those have been deleted. Each worker still has a unique id, its own
- * socket, and its own pre-warmed Pikafish subprocess.
+ * Runs forever as ONE OS process, launched (by WorkerSupervisor, from
+ * either XiangqiPoolEnsureCommand or another worker's watchdog — see
+ * below) inside a detached respawn loop. Each worker has a unique id, its
+ * own socket, and its own pre-warmed Pikafish subprocess.
  *
  * Protocol on the Unix socket: one line of JSON in, one line of JSON out.
  *   in:  {"action":"best_move","fen":"...","timeout":3000}
@@ -27,31 +27,26 @@ use Illuminate\Support\Facades\Log;
  * several worker sockets and falls back gracefully if all are momentarily
  * busy, so we don't need an async event loop here.
  *
- * SELF-HEALING, top to bottom (much shorter than it used to be):
+ * SELF-HEALING, top to bottom:
  *   1. If the Pikafish SUBPROCESS dies but this PHP worker process is
  *      still alive, handle() below notices (isReady() check after each
  *      connection) and restarts just the subprocess — no OS process churn
- *      at all. This is the one layer that has to live in-process, since
- *      supervisord only sees this PHP process, not the child engine
- *      binary it manages internally via proc_open().
+ *      at all.
  *   2. If this whole PHP worker process dies (crash, OOM, an unhandled
- *      exception), supervisord (autorestart=true) restarts it. This
- *      replaces the old detached shell respawn loop AND the ring
- *      watchdog that used to live in this file — supervisord is a single
- *      already-running daemon independent of any worker, so "what
- *      restarts the thing that restarts workers" is no longer a problem
- *      this codebase has to solve for itself.
- *   3. supervisord itself is started by systemd at boot
- *      (systemctl enable supervisord) and restarts every worker
- *      immediately (autostart=true), covering the case that used to need
- *      a cron-driven `xiangqi:pool:ensure` backstop: nothing was ever
- *      started in the first place.
- *
- * Graceful shutdown: supervisord sends SIGTERM on `supervisorctl stop` /
- * during a restart, waits up to `stopwaitsecs` (see the .ini), then
- * SIGKILLs if the process hasn't exited. We still handle SIGTERM/SIGINT
- * below so a stop is clean (socket/pid files removed, engine subprocess
- * terminated) rather than relying on the SIGKILL fallback every time.
+ *      exception), the detached shell loop it was launched inside
+ *      (WorkerSupervisor::launchWorker) restarts it within ~1-2s.
+ *   3. PEER WATCHDOG (new): while idle waiting for a connection, this
+ *      worker also periodically checks on ONE neighbor — worker N watches
+ *      worker (N+1) mod workerCount, forming a ring — and spawns it
+ *      directly via WorkerSupervisor if it's down. This covers the case
+ *      where even a neighbor's respawn loop is gone (e.g. both the loop
+ *      and its child got OOM-killed together): as long as ANY worker in
+ *      the ring is alive, it will eventually notice and repair the gap,
+ *      with no dependency on cron or a central "ensure" process at all.
+ *   4. `xiangqi:pool:ensure` (manual, cron every minute, and triggered
+ *      on-demand by XiangqiEngineClient when a web request finds the
+ *      whole pool down) is the final backstop for the case none of the
+ *      above can reach: nothing was ever started in the first place.
  */
 class XiangqiEngineWorkerCommand extends Command
 {
@@ -61,12 +56,23 @@ class XiangqiEngineWorkerCommand extends Command
 
     protected $description = 'Run one persistent, pre-warmed Pikafish worker listening on a unix socket';
 
+    /**
+     * How often (in idle accept-timeout ticks, each ~5s) this worker
+     * checks on its watched neighbor. Every tick would still be cheap —
+     * a ping to a local unix socket plus a pid check — but there's no
+     * need to check more often than a neighbor's own boot-grace window
+     * could meaningfully change, so this trades a little detection
+     * latency for less log/ping noise. 3 ticks ≈ 15s.
+     */
+    private const WATCHDOG_EVERY_N_IDLE_TICKS = 3;
+
     public function handle(): int
     {
         $id = (int) $this->argument('id');
         $socketDir = $this->option('socket-dir') ?: config('xiangqi.socket_dir', storage_path('app/xiangqi'));
         $socketPath = rtrim($socketDir, '/') . "/engine-{$id}.sock";
         $pidPath = rtrim($socketDir, '/') . "/engine-{$id}.pid";
+        $workerCount = (int) config('xiangqi.worker_count', 12);
 
         if (!is_dir($socketDir)) {
             mkdir($socketDir, 0770, true);
@@ -75,10 +81,9 @@ class XiangqiEngineWorkerCommand extends Command
             unlink($socketPath);
         }
 
-        // Record our own PID purely for diagnostics/health checks now —
-        // nothing in-app reads it to decide whether to respawn us
-        // anymore (supervisord tracks that itself), but it's still handy
-        // for `kill -0` sanity checks from ops tooling.
+        // Record our own PID so WorkerSupervisor (whether invoked by
+        // xiangqi:pool:ensure or by a neighbor's watchdog) can tell later
+        // whether we're still alive.
         file_put_contents($pidPath, getmypid());
 
         $enginePath = storage_path('engines/pikafish_vps');
@@ -98,8 +103,21 @@ class XiangqiEngineWorkerCommand extends Command
         chmod($socketPath, 0660);
         $this->info("[worker {$id}] listening on {$socketPath}");
 
-        // Handle graceful shutdown (SIGTERM from `supervisorctl stop` or
-        // a restart; SIGINT if run in a foreground terminal for testing).
+        // Watch exactly one neighbor, forming a ring across the whole
+        // pool. Skip entirely for a single-worker pool (nothing else to
+        // watch). Picking (id+1) mod N rather than something random keeps
+        // coverage complete and easy to reason about: every id has
+        // exactly one watcher and watches exactly one other id.
+        $watchId = $workerCount > 1 ? ($id + 1) % $workerCount : null;
+        $supervisor = $watchId !== null ? new WorkerSupervisor($socketDir, $workerCount) : null;
+        $idleTicks = 0;
+
+        if ($watchId !== null) {
+            $this->info("[worker {$id}] watching worker {$watchId} as part of the self-heal ring");
+        }
+
+        // Handle graceful shutdown (SIGTERM from xiangqi:pool:stop, or
+        // SIGINT if run in a foreground terminal for testing).
         $shouldStop = false;
         if (function_exists('pcntl_signal')) {
             pcntl_async_signals(true);
@@ -108,10 +126,12 @@ class XiangqiEngineWorkerCommand extends Command
         }
 
         while (!$shouldStop) {
-            // Short accept timeout just so we notice $shouldStop promptly;
-            // there's no watchdog tick to drive anymore.
-            $conn = @stream_socket_accept($server, 5);
+            $conn = @stream_socket_accept($server, 5); // 5s so we can check $shouldStop periodically
             if ($conn === false) {
+                if ($supervisor !== null && ++$idleTicks >= self::WATCHDOG_EVERY_N_IDLE_TICKS) {
+                    $idleTicks = 0;
+                    $this->checkOnNeighbor($supervisor, $id, $watchId);
+                }
                 continue;
             }
 
@@ -126,8 +146,7 @@ class XiangqiEngineWorkerCommand extends Command
 
             // Self-heal: if the engine subprocess died (crash, OOM, etc.),
             // restart it before serving the next request instead of
-            // silently failing forever. supervisord has no visibility
-            // into this child process, so this has to stay in-app.
+            // silently failing forever.
             if (!$engine->isReady()) {
                 Log::warning("[xiangqi worker {$id}] engine not ready, restarting");
                 $engine->stop();
@@ -142,6 +161,24 @@ class XiangqiEngineWorkerCommand extends Command
         @unlink($pidPath);
         $this->info("[worker {$id}] stopped");
         return self::SUCCESS;
+    }
+
+    /**
+     * Checks on the one neighbor this worker is responsible for and
+     * spawns it (via the shared, lock-protected WorkerSupervisor) if it's
+     * down. Any failure here is logged and swallowed — a watchdog hiccup
+     * should never take down the worker actually serving requests.
+     */
+    private function checkOnNeighbor(WorkerSupervisor $supervisor, int $selfId, int $watchId): void
+    {
+        try {
+            $launched = $supervisor->ensureWorker($watchId);
+            if ($launched) {
+                $this->warn("[worker {$selfId}] ring watchdog: worker {$watchId} was down — spawn triggered");
+            }
+        } catch (\Throwable $e) {
+            Log::error("[xiangqi worker {$selfId}] ring watchdog error for worker {$watchId}: " . $e->getMessage());
+        }
     }
 
     private function handleConnection($conn, PikafishProcess $engine, int $id): void
