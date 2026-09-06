@@ -34,7 +34,7 @@
         </div>
     @endif
     <main>
-        @include('common.xiangqiBanner')
+        {{-- @include('common.xiangqiBanner') --}}
         @yield('aboveContent')
         <div class="sharethis-inline-reaction-buttons"></div>
         @include('common.ads')
