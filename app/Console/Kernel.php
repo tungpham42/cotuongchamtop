@@ -58,10 +58,17 @@ class Kernel extends ConsoleKernel
         $schedule->command(CreateNewRoom::class)->everySixHours($minutes = 0);
         // $schedule->command(UpdateSitemapCommand::class)->daily();
 
-        // Keeps the warm Pikafish worker pool alive without Supervisor:
-        // checks each worker's pid + socket every minute and respawns any
-        // that died. See deploy/README.md in the xiangqi refactor bundle.
-        $schedule->command(XiangqiPoolEnsureCommand::class)
+        // Backstop for the warm Pikafish worker pool. Each worker now
+        // self-heals within ~1-2s via its own respawn loop (see
+        // XiangqiPoolEnsureCommand), and XiangqiEngineClient also triggers
+        // this same command on-demand the instant a web request finds the
+        // whole pool down. This scheduled tick just covers the remaining
+        // gap: a respawn loop itself dying, or the pool never having been
+        // started at all (e.g. right after a server reboot before the
+        // deploy/self-heal path had a chance to run). --respect-stop means
+        // it never fights a deliberate `xiangqi:pool:stop` mid-deploy.
+        // See deploy/README.md in the xiangqi refactor bundle.
+        $schedule->command(XiangqiPoolEnsureCommand::class, ['--respect-stop'])
             ->everyMinute()
             ->withoutOverlapping(1)
             ->runInBackground()

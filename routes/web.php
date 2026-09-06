@@ -115,12 +115,34 @@ Route::get('/test-engine', function() {
     $client = new \App\Services\XiangqiEngineClient();
     $status = $client->poolStatus();
 
+    // poolStatus() already kicked off a background self-heal (pool:ensure
+    // --respect-stop) the instant it saw zero workers, same as a real
+    // request would via getBestMove()/analyzePosition(). Rather than
+    // reporting that immediately and blaming the operator, give recovery
+    // a few seconds to land — a worker that's merely mid-boot (or one
+    // whose respawn loop just restarted it) typically answers a ping
+    // well within this window even though the full ~25-30s cold boot
+    // hasn't finished.
+    $pollDeadline = microtime(true) + 8.0;
+    while ($status['available'] === 0 && microtime(true) < $pollDeadline) {
+      usleep(500_000);
+      $status = $client->poolStatus();
+    }
+
     echo "<h2>Worker pool status</h2>";
     echo "<p>Workers available: <strong>{$status['available']} / {$status['total']}</strong></p>";
 
     if ($status['available'] === 0) {
-      echo "<p style='color: red;'>No workers responding. Run <code>php artisan xiangqi:pool:ensure</code> "
-         . "and check <code>storage/app/xiangqi/engine-*.log</code> for boot errors.</p>";
+      // Every worker self-heals on its own (respawn loop) and the client
+      // already asked the pool to (re)start itself above, so this is no
+      // longer something a person needs to fix by hand — it just means
+      // the pool is still cold-booting (loading the .nnue file can
+      // legitimately take up to ~25-30s per worker). Refresh in a bit.
+      echo "<p style='color: #b45309;'>Engine pool is starting up — this can take up to ~30s on a cold start "
+         . "(recovery was triggered automatically). Refreshing shortly…</p>";
+      echo "<script>setTimeout(() => location.reload(), 5000);</script>";
+      echo "<noscript><p>Refresh the page in a few seconds.</p></noscript>";
+      echo "<p>For diagnostics: <code>storage/app/xiangqi/engine-*.log</code> and <code>self-heal.log</code>.</p>";
     } else {
       $fen = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1';
       $start = microtime(true);
