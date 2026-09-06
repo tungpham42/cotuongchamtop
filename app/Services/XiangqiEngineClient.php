@@ -23,7 +23,7 @@ class XiangqiEngineClient
     public function __construct(?string $socketDir = null, ?int $workerCount = null, float $connectTimeoutSeconds = 0.15)
     {
         $this->socketDir = $socketDir ?? config('xiangqi.socket_dir', storage_path('app/xiangqi'));
-        $this->workerCount = $workerCount ?? (int) config('xiangqi.worker_count', 4);
+        $this->workerCount = $workerCount ?? (int) config('xiangqi.worker_count', 5);
         $this->connectTimeoutSeconds = $connectTimeoutSeconds;
     }
 

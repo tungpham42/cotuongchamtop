@@ -65,7 +65,7 @@ class XiangqiPoolEnsureCommand extends Command
     public function handle(): int
     {
         $socketDir = config('xiangqi.socket_dir', storage_path('app/xiangqi'));
-        $workerCount = (int) config('xiangqi.worker_count', 12);
+        $workerCount = (int) config('xiangqi.worker_count', 5);
 
         if (!is_dir($socketDir)) {
             mkdir($socketDir, 0770, true);

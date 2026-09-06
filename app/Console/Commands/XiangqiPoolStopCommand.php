@@ -21,7 +21,7 @@ class XiangqiPoolStopCommand extends Command
     public function handle(): int
     {
         $socketDir = config('xiangqi.socket_dir', storage_path('app/xiangqi'));
-        $workerCount = (int) config('xiangqi.worker_count', 4);
+        $workerCount = (int) config('xiangqi.worker_count', 5);
 
         for ($id = 0; $id < $workerCount; $id++) {
             $pidPath = rtrim($socketDir, '/') . "/engine-{$id}.pid";
