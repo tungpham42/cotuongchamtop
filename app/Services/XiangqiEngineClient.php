@@ -69,6 +69,11 @@ class XiangqiEngineClient
                 $available++;
             }
         }
+
+        if ($available === 0) {
+            $this->triggerPoolEnsure();
+        }
+
         return ['available' => $available, 'total' => $this->workerCount];
     }
 
@@ -80,6 +85,9 @@ class XiangqiEngineClient
                 return true;
             }
         }
+
+        $this->triggerPoolEnsure();
+
         return false;
     }
 
@@ -117,7 +125,60 @@ class XiangqiEngineClient
             }
         }
 
+        // Every socket was missing/refused/timed out — from this request's
+        // point of view the pool is fully down. Kick off pool:ensure in the
+        // background so the *next* request has a chance, instead of every
+        // request failing silently until the next cron tick (up to 60s away).
+        $this->triggerPoolEnsure();
+
         return [];
+    }
+
+    /**
+     * Fire `php artisan xiangqi:pool:ensure` in the background (detached,
+     * non-blocking — same setsid/nohup pattern XiangqiPoolEnsureCommand
+     * itself uses to launch workers) the moment we notice zero workers
+     * responding, rather than waiting for the next scheduler tick.
+     *
+     * Debounced via a lock file: xiangqi:pool:ensure already takes its own
+     * flock, which prevents overlapping *runs*, but does nothing to stop a
+     * burst of concurrent web requests during an outage from each calling
+     * shell_exec() here and piling up processes in the table while one
+     * ensure run is still mid-flight (which, remember, can legitimately
+     * take BOOT_GRACE_SECONDS-ish per cold-started worker). This cooldown
+     * makes a storm of simultaneous callers trigger it once.
+     */
+    private function triggerPoolEnsure(): void
+    {
+        if (!config('xiangqi.auto_ensure_on_empty', true)) {
+            return;
+        }
+
+        if (!is_dir($this->socketDir)) {
+            @mkdir($this->socketDir, 0770, true);
+        }
+
+        $triggerPath = rtrim($this->socketDir, '/') . '/pool-ensure-trigger.lock';
+        $cooldownSeconds = (float) config('xiangqi.auto_ensure_cooldown_seconds', 10.0);
+
+        $lastTriggered = @filemtime($triggerPath);
+        if ($lastTriggered !== false && (time() - $lastTriggered) < $cooldownSeconds) {
+            return; // triggered recently — let that run finish before we try again
+        }
+
+        // Touch the lock file before shelling out, so concurrent requests
+        // racing us here see a fresh mtime immediately rather than all
+        // passing the check together.
+        @touch($triggerPath);
+
+        $artisan = escapeshellarg(base_path('artisan'));
+        $php = escapeshellarg(PHP_BINARY);
+        $launcher = trim((string) shell_exec('command -v setsid')) !== '' ? 'setsid' : 'nohup';
+
+        // Detached and output-discarded: this runs on the request thread,
+        // so it must return immediately regardless of how long
+        // xiangqi:pool:ensure itself takes to finish.
+        shell_exec("{$launcher} {$php} {$artisan} xiangqi:pool:ensure > /dev/null 2>&1 < /dev/null &");
     }
 
     private function requestOnSocket(string $socketPath, array $payload, float $readTimeoutSeconds): ?array
