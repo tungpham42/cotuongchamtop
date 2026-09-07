@@ -221,7 +221,7 @@
             function moveLabel(boardState, move, index) {
                 // The widget only triggers on Red's turn, so index 0 is always Red.
                 const isRed = (index % 2 === 0);
-                const colorLabel = isRed ? '{{ __("Đen") }}' : '{{ __("Đỏ") }}';
+                const colorLabel = isRed ? '{{ __("Đỏ") }}' : '{{ __("Đen") }}';
                 return colorLabel + ': ' + kyphoNotation(boardState, move);
             }
 
