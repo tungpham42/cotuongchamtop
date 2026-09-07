@@ -114,11 +114,6 @@ class XiangqiController extends Controller
 
     /**
      * Return a hint for the Red side only.
-     *
-     * The hint must always be calculated from Red's perspective, even when
-     * the supplied FEN says it is Black's turn. Pikafish follows the FEN
-     * active-color field, so we normalize that field to Red before asking
-     * the engine for a best move.
      */
     public function getHintMove(Request $request): JsonResponse
     {
@@ -140,22 +135,20 @@ class XiangqiController extends Controller
         }
 
         $parts = preg_split('/\s+/', $fen);
-        $originalActiveColor = $parts[1] ?? 'b';
+        $activeColor = $parts[1] ?? null;
 
-        /*
-         * Always force Red to move for hint calculation.
-         *
-         * This is important because the engine uses the FEN active-color
-         * field to decide which side it should play. We want the hint to
-         * show a move Red can make, not a reply for Black.
-         */
-        $parts[1] = 'b';  // Force Red to move
-        $redFen = implode(' ', $parts);
+        if ($activeColor !== 'r') {
+            return response()->json([
+                'success' => false,
+                'error' => 'Hint is only available when Red is to move',
+                'active_color' => $activeColor,
+            ], 422);
+        }
 
         $adjustedTimeout = $this->getAdjustedTimeout($timeout, $level);
 
         try {
-            $bestMove = $this->xiangqiEngine->getBestMove($redFen, $adjustedTimeout);
+            $bestMove = $this->xiangqiEngine->getBestMove($fen, $adjustedTimeout);
         } catch (\Throwable $e) {
             Log::error('Xiangqi hint engine error: ' . $e->getMessage());
             return response()->json([
@@ -167,7 +160,7 @@ class XiangqiController extends Controller
         if (!$bestMove) {
             return response()->json([
                 'success' => false,
-                'error' => 'No Red hint move available for this position',
+                'error' => 'No hint move available for this position',
             ], 503);
         }
 
@@ -175,9 +168,7 @@ class XiangqiController extends Controller
             'success' => true,
             'hint_move' => $bestMove,
             'fen' => $fen,
-            'engine_fen' => $redFen,
-            'original_active_color' => $originalActiveColor,
-            'hint_color' => 'b',
+            'active_color' => 'r',
             'level' => $level,
             'timeout' => $adjustedTimeout,
         ]);
