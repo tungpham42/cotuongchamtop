@@ -217,52 +217,12 @@
                 }
             }
 
-            /**
-             * Text for one half-move: color + Kỳ Phổ notation.
-             *
-             * The color is read from the actual piece sitting on the move's
-             * source square in `boardState` (which is derived straight from
-             * the FEN and kept in sync move-by-move by applyMoveToBoard) —
-             * NOT guessed from index parity. Index parity assumes the PV
-             * always starts with Red and alternates perfectly, which is an
-             * assumption about the *engine's* behavior; it says nothing
-             * about which piece is actually on that square in this FEN.
-             * Trusting the assumption over the FEN is exactly what caused
-             * a Black move to get displayed under a "Đỏ" label when that
-             * assumption didn't hold. Falling back to index parity only
-             * covers the (should-be-impossible) case where the square is
-             * empty in boardState, mirroring kyphoNotation's own fallback.
-             */
+            /** Text for one half-move: color + Kỳ Phổ notation, explicitly alternating */
             function moveLabel(boardState, move, index) {
-                const from = squareToFileRank(move.substring(0, 2));
-                const piece = boardState[from.file + ',' + from.rank];
-                const isRed = piece ? (piece.color === 'r') : (index % 2 === 0);
+                // The widget only triggers on Red's turn, so index 0 is always Red.
+                const isRed = (index % 2 === 0);
                 const colorLabel = isRed ? '{{ __("Đỏ") }}' : '{{ __("Đen") }}';
                 return colorLabel + ': ' + kyphoNotation(boardState, move);
-            }
-
-            /**
-             * Drop any leading moves in the PV that aren't actually a Red
-             * move, per the FEN — determined the same way moveLabel does,
-             * by checking the real piece on the source square rather than
-             * trusting that the engine's PV began on Red's turn. The hint
-             * widget's whole purpose is "here's what YOU (Red) can play
-             * next", so the first move shown must be a real Red move; if
-             * the PV came back starting with a Black move for any reason,
-             * skip it (and any more leading Black moves) rather than show
-             * the player a move they can't make.
-             */
-            function trimToFirstRedMove(moves, fen) {
-                const boardState = parseFenBoard(fen);
-                let i = 0;
-                while (i < moves.length) {
-                    const from = squareToFileRank(moves[i].substring(0, 2));
-                    const piece = boardState[from.file + ',' + from.rank];
-                    if (!piece || piece.color === 'r') break;
-                    applyMoveToBoard(boardState, moves[i]);
-                    i++;
-                }
-                return moves.slice(i);
             }
 
             // --------------------------------------------------------------
@@ -424,7 +384,7 @@
 
                 try {
                     let requestFen = game.fen();
-                    let moves = trimToFirstRedMove(await fetchPvChain(requestFen, HINT_CAP), requestFen);
+                    let moves = await fetchPvChain(requestFen, HINT_CAP);
 
                     // Dragging, resign, undo, reset and switch are all
                     // blocked while window.isHintPending is true (see
@@ -438,7 +398,7 @@
                     // stale suggestion.
                     while (typeof game.fen === 'function' && game.fen() !== requestFen) {
                         requestFen = game.fen();
-                        moves = trimToFirstRedMove(await fetchPvChain(requestFen, HINT_CAP), requestFen);
+                        moves = await fetchPvChain(requestFen, HINT_CAP);
                     }
 
                     showHintModal(moves, requestFen);
