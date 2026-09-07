@@ -56,6 +56,7 @@
             <a data-toggle="tooltip" data-placement="bottom" title="Tìm phòng trống" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ localized_url('room.list') }}"><i class="fas fa-list-alt text-dark"></i> {{ __("Sảnh chờ") }}</a>
         </div>
     </div>
+    @include('layouts.partials.hint')
 @endsection
 
 @section('belowContent')
@@ -90,6 +91,67 @@
         let isComputerThinking = false;
         let resignAlertShown = false;
         let kypho = null;
+        let isHintPending = false;
+        let hintMove = null;
+
+        function clearHint() {
+            hintMove = null;
+            $('#ban-co .square-2b8ce').removeClass('hint-from hint-to');
+        }
+
+        function showHint(move) {
+            clearHint();
+            if (!move || move.length !== 4) return;
+            hintMove = { from: move.substring(0, 2), to: move.substring(2, 4) };
+            $('#ban-co .square-' + hintMove.from).addClass('hint-from');
+            $('#ban-co .square-' + hintMove.to).addClass('hint-to');
+        }
+
+        async function fetchHint() {
+            if (isHintPending || isComputerThinking || game.game_over() || game.turn() !== 'r') return;
+
+            isHintPending = true;
+            clearHint();
+            $('#hint-btn').addClass('disabled').attr('aria-disabled', true);
+            $('#game-status').append(' <i class="fas fa-spinner fa-spin"></i>');
+
+            try {
+                const response = await fetch('/api/xiangqi/hint', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fen: game.fen(),
+                        timeout: 700,
+                        level: {{ $level }}
+                    })
+                });
+
+                const data = await response.json();
+                if (!response.ok || !data.success || !data.hint_move) {
+                    throw new Error(data.error || 'Hint unavailable');
+                }
+
+                // Do not apply a response belonging to an older board position.
+                if (game.turn() !== 'r' || game.fen() !== data.fen) return;
+                showHint(data.hint_move);
+            } catch (error) {
+                clearHint();
+                if (typeof bootbox !== 'undefined') {
+                    bootbox.alert({
+                        message: '{{ __('Không thể lấy gợi ý nước đi lúc này.') }}',
+                        size: 'small'
+                    });
+                }
+            } finally {
+                isHintPending = false;
+                updateStatus();
+            }
+        }
+
 
         function removeGreySquares () {
             $('#ban-co .square-2b8ce').removeClass('highlight');
@@ -102,7 +164,7 @@
 
         function onDragStart (source, piece, position, orientation) {
             if (game.in_checkmate() === true || game.in_draw() === true ||
-                piece.search(/^b/) !== -1 || isComputerThinking) {
+                piece.search(/^b/) !== -1 || isComputerThinking || isHintPending) {
                 return false;
             }
         }
@@ -110,6 +172,7 @@
         async function makeBestMove() {
             if (isComputerThinking || game.game_over()) return;
 
+            clearHint();
             isComputerThinking = true;
             $('#game-status').html('{{ __("Đang suy nghĩ") }}... <i class="fas fa-spinner fa-spin"></i>');
 
@@ -181,6 +244,7 @@
         }
 
         function makeRandomMove() {
+            clearHint();
             const moves = game.moves({verbose: true});
             if (moves.length > 0) {
                 const randomMove = moves[Math.floor(Math.random() * moves.length)];
@@ -197,7 +261,8 @@
         }
 
         function onDrop (source, target) {
-            if (isComputerThinking) return 'snapback';
+            if (isComputerThinking || isHintPending) return 'snapback';
+            clearHint();
 
             let move = game.move({
                 from: source,
@@ -239,6 +304,7 @@
         }
 
         function onSnapEnd () {
+            clearHint();
             board.position(game.fen());
             nuocCo.play();
             updateStatus();
@@ -275,6 +341,15 @@
                 $('#game-status').removeClass('black').addClass('red');
             } else if (game.turn() === 'b') {
                 $('#game-status').removeClass('red').addClass('black');
+            }
+
+            // Hint only suggests the player's (Red's) next move.
+            if ($('#hint-btn').length) {
+                if (game.turn() === 'r' && !game.game_over()) {
+                    $('#hint-btn').removeClass('disabled').attr('aria-disabled', false);
+                } else {
+                    $('#hint-btn').addClass('disabled').attr('aria-disabled', true);
+                }
             }
 
             $('#game-status').html(status);
@@ -350,8 +425,14 @@
                 makeBestMove();
             }
         });
+        $('#hint-btn').on('click', function(e){
+            e.preventDefault();
+            fetchHint();
+        });
+
         $('#resign').on('click', function() {
-            if (isComputerThinking) return;
+            clearHint();
+            if (isComputerThinking || isHintPending) return;
             game.load(game.fen() + ' resign');
             updateStatus();
         });
@@ -379,6 +460,8 @@
         });
 
         $('#reset').on('click', function() {
+            clearHint();
+            if (isHintPending) return;
             isComputerThinking = false;
             resignAlertShown = false;
             board.position('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR');
@@ -434,6 +517,13 @@
                 setTimeout(makeBestMove, 1000);
             });
         @endif
+        const hintStyle = document.createElement('style');
+        hintStyle.textContent = `
+            #ban-co .hint-from { background-color: #4caf50 !important; box-shadow: inset 0 0 0 4px rgba(255,255,255,.45); }
+            #ban-co .hint-to { background-color: #ff9800 !important; box-shadow: inset 0 0 0 4px rgba(255,255,255,.45); }
+        `;
+        document.head.appendChild(hintStyle);
+
     </script>
     @include('layouts.partials.players')
     @include('layouts.partials.userPuzzles')

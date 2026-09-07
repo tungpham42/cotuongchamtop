@@ -102,6 +102,66 @@
         let isComputerThinking = false;
         let resignAlertShown = false;
         let kypho = null;
+        let isHintPending = false;
+        let hintMove = null;
+
+        function clearHint() {
+            hintMove = null;
+            $('#ban-co .square-2b8ce').removeClass('hint-from hint-to');
+        }
+
+        function showHint(move) {
+            clearHint();
+            if (!move || move.length !== 4) return;
+            hintMove = { from: move.substring(0, 2), to: move.substring(2, 4) };
+            $('#ban-co .square-' + hintMove.from).addClass('hint-from');
+            $('#ban-co .square-' + hintMove.to).addClass('hint-to');
+        }
+
+        async function fetchHint() {
+            if (isHintPending || isComputerThinking || game.game_over() || game.turn() !== 'r') return;
+
+            isHintPending = true;
+            clearHint();
+            $('#hint-btn').addClass('disabled').attr('aria-disabled', true);
+            $('#game-status').append(' <i class="fas fa-spinner fa-spin"></i>');
+
+            try {
+                const response = await fetch('/api/xiangqi/hint', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fen: game.fen(),
+                        timeout: 700,
+                        level: {{ $level ?? 3 }}
+                    })
+                });
+
+                const data = await response.json();
+                if (!response.ok || !data.success || !data.hint_move) {
+                    throw new Error(data.error || 'Hint unavailable');
+                }
+
+                // Do not apply a response belonging to an older board position.
+                if (game.turn() !== 'r' || game.fen() !== data.fen) return;
+                showHint(data.hint_move);
+            } catch (error) {
+                clearHint();
+                if (typeof bootbox !== 'undefined') {
+                    bootbox.alert({
+                        message: '{{ __('Không thể lấy gợi ý nước đi lúc này.') }}',
+                        size: 'small'
+                    });
+                }
+            } finally {
+                isHintPending = false;
+                updateStatus();
+            }
+        }
 
         function removeGreySquares () {
             $('#ban-co .square-2b8ce').removeClass('highlight');
@@ -140,6 +200,7 @@
                 const data = await response.json();
 
                 if (data.success && data.best_move) {
+                    clearHint();
                     const move = convertEngineMoveToXiangqiJS(data.best_move);
 
                     if (move) {
@@ -189,6 +250,7 @@
         }
 
         function makeRandomMove() {
+            clearHint();
             const moves = game.moves({verbose: true});
             if (moves.length > 0) {
                 const randomMove = moves[Math.floor(Math.random() * moves.length)];
@@ -203,7 +265,8 @@
         }
 
         function onDrop (source, target) {
-            if (isComputerThinking) return 'snapback';
+            if (isComputerThinking || isHintPending) return 'snapback';
+            clearHint();
 
             let move = game.move({
                 from: source,
@@ -350,13 +413,20 @@
             }
         });
 
+        $('#hint-btn').on('click', function(e){
+            e.preventDefault();
+            fetchHint();
+        });
+
         $('#resign').on('click', function() {
+            clearHint();
             if (isComputerThinking || (typeof isHintPending !== 'undefined' && isHintPending)) return;
             game.load(game.fen() + ' resign');
             updateStatus();
         });
 
         $('#undo').on('click', function(){
+            clearHint();
             if (isComputerThinking || (typeof isHintPending !== 'undefined' && isHintPending)) return;
             if (game.history().length >= 2) {
                 game.undo();
@@ -369,11 +439,13 @@
         });
 
         $('#switch').on('click', function() {
+            clearHint();
             if (isComputerThinking || (typeof isHintPending !== 'undefined' && isHintPending)) return;
             board.flip();
         });
 
         $('#reset').on('click', function() {
+            clearHint();
             if (typeof isHintPending !== 'undefined' && isHintPending) return;
             isComputerThinking = false;
             resignAlertShown = false;
@@ -406,6 +478,8 @@
             .fa-spinner { margin-left: 5px; }
             .disabled { opacity: 0.5; pointer-events: none; }
             .highlight { background-color: #ffeb3b !important; opacity: 0.6; }
+            #ban-co .hint-from { background-color: #4caf50 !important; box-shadow: inset 0 0 0 4px rgba(255,255,255,.45); }
+            #ban-co .hint-to { background-color: #ff9800 !important; box-shadow: inset 0 0 0 4px rgba(255,255,255,.45); }
         `;
         document.head.appendChild(style);
 

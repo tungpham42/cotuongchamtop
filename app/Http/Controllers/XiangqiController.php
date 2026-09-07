@@ -112,6 +112,68 @@ class XiangqiController extends Controller
         }
     }
 
+    /**
+     * Return a hint for the Red side only.
+     */
+    public function getHintMove(Request $request): JsonResponse
+    {
+        $request->validate([
+            'fen' => 'required|string',
+            'timeout' => 'sometimes|integer|min:100|max:10000',
+            'level' => 'sometimes|integer|min:1|max:8',
+        ]);
+
+        $fen = trim($request->input('fen'));
+        $timeout = (int) $request->input('timeout', 700);
+        $level = (int) $request->input('level', 3);
+
+        if (!XiangqiHelper::validateFen($fen)) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Invalid Xiangqi FEN position',
+            ], 422);
+        }
+
+        $parts = preg_split('/\s+/', $fen);
+        $activeColor = $parts[1] ?? null;
+
+        if ($activeColor !== 'r') {
+            return response()->json([
+                'success' => false,
+                'error' => 'Hint is only available when Red is to move',
+                'active_color' => $activeColor,
+            ], 422);
+        }
+
+        $adjustedTimeout = $this->getAdjustedTimeout($timeout, $level);
+
+        try {
+            $bestMove = $this->xiangqiEngine->getBestMove($fen, $adjustedTimeout);
+        } catch (\Throwable $e) {
+            Log::error('Xiangqi hint engine error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Xiangqi engine unavailable',
+            ], 503);
+        }
+
+        if (!$bestMove) {
+            return response()->json([
+                'success' => false,
+                'error' => 'No hint move available for this position',
+            ], 503);
+        }
+
+        return response()->json([
+            'success' => true,
+            'hint_move' => $bestMove,
+            'fen' => $fen,
+            'active_color' => 'r',
+            'level' => $level,
+            'timeout' => $adjustedTimeout,
+        ]);
+    }
+
     public function analyzePosition(Request $request): JsonResponse
     {
         $request->validate([

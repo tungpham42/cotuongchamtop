@@ -28,6 +28,7 @@ Route::controller(ChessAnalysisController::class)->prefix('chess')->group(functi
 
 Route::controller(XiangqiController::class)->prefix('xiangqi')->group(function () {
     Route::post('/best-move', 'getBestMove');
+    Route::post('/hint', 'getHintMove');
     Route::post('/analyze', 'analyzePosition');
     Route::get('/status', 'getEngineStatus');
     Route::get('/health', 'healthCheck');
