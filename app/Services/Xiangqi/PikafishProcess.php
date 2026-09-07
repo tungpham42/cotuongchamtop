@@ -185,15 +185,21 @@ class PikafishProcess
         if (preg_match('/bestmove\s+(\S+)/', $output, $m)) {
             $analysis['best_move'] = XiangqiHelper::normalizeMove($m[1]);
         }
-        if (preg_match('/score\s+(cp|mate)\s+(-?\d+)/', $output, $m)) {
-            $analysis['score_type'] = $m[1];
-            $analysis['score'] = (int) $m[2];
+        // $output accumulates one "info depth N ... score ... pv ..." line
+        // per iterative-deepening pass, from depth 1 up to the requested
+        // depth, followed by a single final "bestmove ...". preg_match()
+        // (no _all) returns the FIRST match in the string — i.e. depth 1's
+        // score/depth/pv, not the deepest, most-searched one we actually
+        // asked for. Use preg_match_all and take the last capture instead.
+        if (preg_match_all('/score\s+(cp|mate)\s+(-?\d+)/', $output, $m)) {
+            $analysis['score_type'] = end($m[1]);
+            $analysis['score'] = (int) end($m[2]);
         }
-        if (preg_match('/\bdepth\s+(\d+)/', $output, $m)) {
-            $analysis['depth'] = (int) $m[1];
+        if (preg_match_all('/\bdepth\s+(\d+)/', $output, $m)) {
+            $analysis['depth'] = (int) end($m[1]);
         }
-        if (preg_match('/\spv\s+([^\r\n]+)/', $output, $m)) {
-            $pv = explode(' ', trim($m[1]));
+        if (preg_match_all('/\spv\s+([^\r\n]+)/', $output, $m)) {
+            $pv = explode(' ', trim(end($m[1])));
             $analysis['pv'] = array_map([XiangqiHelper::class, 'normalizeMove'], array_filter($pv));
         }
 

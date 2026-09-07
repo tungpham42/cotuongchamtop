@@ -334,12 +334,17 @@
                             return;
                         }
 
-                        // Every FEN sent to /api/xiangqi/analyze must have
-                        // Red as the active color — the engine is always
-                        // being asked "what should Red play here", for
-                        // every round of this chain, not just the opening
-                        // move.
-                        const fenToSend = withRedToMove(currentFen);
+                        // Only force Red-to-move on this chain's first round
+                        // (collected is still empty) so the hint's opening
+                        // move is always one the player can actually play.
+                        // Later rounds keep whatever color naturally follows
+                        // from replaying the PV so far — those half-moves
+                        // legitimately alternate sides, and forcing Red on
+                        // them would ask the engine an incoherent question
+                        // (moving red pieces on Black's actual turn).
+                        const fenToSend = (collected.length === 0)
+                            ? withRedToMove(currentFen)
+                            : currentFen;
 
                         const depth = Math.min(30, Math.max(12, remaining + 8));
 
