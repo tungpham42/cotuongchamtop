@@ -291,6 +291,22 @@
             }
 
             /**
+             * Return a copy of `fen` with the active-color field forced to
+             * 'r' (Red). The player is always Red, so any FEN we send to
+             * the engine for a hint must ask "what should Red play here" —
+             * even when the FEN on hand momentarily has Black to move (see
+             * the fetchHint() turn-window note above).
+             */
+            function withRedToMove(fen) {
+                const parts = fen.split(' ');
+                if (parts.length >= 2 && parts[1] !== 'r') {
+                    parts[1] = 'r';
+                    return parts.join(' ');
+                }
+                return fen;
+            }
+
+            /**
              * A single "go depth N" call has no guarantee of returning a PV as
              * long as N — engines commonly cut the extracted line short (hash
              * cutoffs, mate found early, etc.), so requesting depth == HINT_CAP
@@ -318,19 +334,15 @@
                             return;
                         }
 
-                        // ---- SỬA TẠI ĐÂY ----
-                        // Chỉ ép active color thành 'r' nếu đây là lần gọi đầu tiên
-                        // (collected rỗng) để đảm bảo nước đi đầu tiên là của Đỏ.
-                        // Các lần sau giữ nguyên active color đúng theo lượt.
-                        let fenToSend = currentFen;
-                        if (collected.length === 0) {
-                            let parts = fenToSend.split(' ');
-                            if (parts.length >= 2 && parts[1] !== 'r') {
-                                parts[1] = 'r';
-                                fenToSend = parts.join(' ');
-                            }
-                        }
-                        // ---- KẾT THÚC SỬA ----
+                        // Only force Red-to-move on this chain's first round
+                        // (collected is still empty) so the hint's opening
+                        // move is always one the player can actually play.
+                        // Later rounds keep whatever color naturally follows
+                        // from replaying the PV so far — those half-moves
+                        // legitimately alternate sides.
+                        const fenToSend = (collected.length === 0)
+                            ? withRedToMove(currentFen)
+                            : currentFen;
 
                         const depth = Math.min(30, Math.max(12, remaining + 8));
 
@@ -407,26 +419,16 @@
                     .html('<i class="fas fa-spinner fa-spin"></i> {{ __("Đang tính toán") }}...');
 
                 try {
-                    // Lấy FEN hiện tại và đảm bảo active color là 'r' (Đỏ)
-                    // để engine tính nước đi cho Đỏ.
-                    let requestFen = game.fen();
-                    let fenParts = requestFen.split(' ');
-                    if (fenParts.length >= 2 && fenParts[1] !== 'r') {
-                        fenParts[1] = 'r';
-                        requestFen = fenParts.join(' ');
-                    }
-
+                    // Grab the current FEN and force Red to move, so the
+                    // engine always analyzes for the player's side.
+                    let requestFen = withRedToMove(game.fen());
                     let moves = await fetchPvChain(requestFen, HINT_CAP);
 
-                    // Defensive loop: nếu bàn cờ thay đổi trong lúc đang gọi,
-                    // ta lấy FEN mới và ép 'r' rồi gọi lại.
+                    // Defensive loop: if the board changed while the request
+                    // was in flight, re-fetch (again forcing Red-to-move)
+                    // and re-request against whatever is actually current.
                     while (typeof game.fen === 'function') {
-                        let currentFen = game.fen();
-                        let parts = currentFen.split(' ');
-                        if (parts.length >= 2 && parts[1] !== 'r') {
-                            parts[1] = 'r';
-                            currentFen = parts.join(' ');
-                        }
+                        const currentFen = withRedToMove(game.fen());
                         if (currentFen === requestFen) break;
                         requestFen = currentFen;
                         moves = await fetchPvChain(requestFen, HINT_CAP);
