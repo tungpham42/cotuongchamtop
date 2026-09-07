@@ -168,3 +168,5 @@ vendor/
 playwright-report/
 test-results/
 blob-report/
+
+composer.lock
