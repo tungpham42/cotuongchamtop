@@ -140,7 +140,7 @@ class XiangqiController extends Controller
         }
 
         $parts = preg_split('/\s+/', $fen);
-        $originalActiveColor = $parts[1] ?? 'r';
+        $originalActiveColor = $parts[1] ?? 'b';
 
         /*
          * Always force Red to move for hint calculation.
@@ -149,7 +149,7 @@ class XiangqiController extends Controller
          * field to decide which side it should play. We want the hint to
          * show a move Red can make, not a reply for Black.
          */
-        $parts[1] = 'r';
+        $parts[1] = 'b';  // Force Red to move
         $redFen = implode(' ', $parts);
 
         $adjustedTimeout = $this->getAdjustedTimeout($timeout, $level);
@@ -177,7 +177,7 @@ class XiangqiController extends Controller
             'fen' => $fen,
             'engine_fen' => $redFen,
             'original_active_color' => $originalActiveColor,
-            'hint_color' => 'r',
+            'hint_color' => 'b',
             'level' => $level,
             'timeout' => $adjustedTimeout,
         ]);
