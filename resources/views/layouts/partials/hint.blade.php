@@ -318,8 +318,20 @@
                             return;
                         }
 
-                        // Depth per round only needs to cover what's still missing,
-                        // plus a buffer since PV length isn't guaranteed to match depth.
+                        // ---- SỬA TẠI ĐÂY ----
+                        // Chỉ ép active color thành 'r' nếu đây là lần gọi đầu tiên
+                        // (collected rỗng) để đảm bảo nước đi đầu tiên là của Đỏ.
+                        // Các lần sau giữ nguyên active color đúng theo lượt.
+                        let fenToSend = currentFen;
+                        if (collected.length === 0) {
+                            let parts = fenToSend.split(' ');
+                            if (parts.length >= 2 && parts[1] !== 'r') {
+                                parts[1] = 'r';
+                                fenToSend = parts.join(' ');
+                            }
+                        }
+                        // ---- KẾT THÚC SỬA ----
+
                         const depth = Math.min(30, Math.max(12, remaining + 8));
 
                         $.ajax({
@@ -327,7 +339,7 @@
                             url: '{{ url('/api/xiangqi/analyze') }}',
                             contentType: 'application/json',
                             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                            data: JSON.stringify({ fen: currentFen, depth: depth }),
+                            data: JSON.stringify({ fen: fenToSend, depth: depth }),
                             dataType: 'json'
                         }).done(function (data) {
                             const pv = (data && data.success && data.analysis && Array.isArray(data.analysis.pv))
@@ -345,7 +357,7 @@
                             // Advance a scratch instance so the next round's analyze
                             // call continues exactly where this round's PV left off.
                             const scratch = new Xiangqi();
-                            scratch.load(currentFen);
+                            scratch.load(currentFen); // load với FEN gốc (chưa ép)
                             let allApplied = true;
                             take.forEach(function (mv) {
                                 const applied = scratch.move({
@@ -395,8 +407,8 @@
                     .html('<i class="fas fa-spinner fa-spin"></i> {{ __("Đang tính toán") }}...');
 
                 try {
-                    // Get current FEN and ensure active color is 'r' (Red)
-                    // so the engine suggests Red's move, not Black's.
+                    // Lấy FEN hiện tại và đảm bảo active color là 'r' (Đỏ)
+                    // để engine tính nước đi cho Đỏ.
                     let requestFen = game.fen();
                     let fenParts = requestFen.split(' ');
                     if (fenParts.length >= 2 && fenParts[1] !== 'r') {
@@ -406,8 +418,8 @@
 
                     let moves = await fetchPvChain(requestFen, HINT_CAP);
 
-                    // Defensive loop: if the board position changed while we were
-                    // fetching, re-fetch with the new FEN (always ensuring 'r').
+                    // Defensive loop: nếu bàn cờ thay đổi trong lúc đang gọi,
+                    // ta lấy FEN mới và ép 'r' rồi gọi lại.
                     while (typeof game.fen === 'function') {
                         let currentFen = game.fen();
                         let parts = currentFen.split(' ');
