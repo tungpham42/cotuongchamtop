@@ -279,6 +279,41 @@
             }
 
             /**
+             * This app's own Xiangqi.js game state (and every FEN that flows
+             * through parseFenBoard/kyphoNotation/applyMoveToBoard above)
+             * spells the side-to-move field 'r' for Red and 'b' for Black
+             * (see ai.blade.php's reset(): '...RNBAKABNR r - - 0 1'). Pikafish
+             * is a standard UCI engine, though, and — like ordinary chess
+             * FEN — only recognizes 'w' (Red moves first, same as White) or
+             * 'b' there; it does not know the token 'r'.
+             *
+             * Every OTHER caller of the engine happens to dodge this: the
+             * computer-move flow (ai.blade.php's makeBestMove) only ever
+             * calls the engine with Black to move, and 'b' means the same
+             * thing in both conventions. fetchHint() is the one caller that
+             * asks the engine for a Red move, i.e. exactly the field value
+             * that differs — send the raw app FEN through unchanged and
+             * Pikafish falls back to treating the position as Black-to-move,
+             * so the PV it returns is a Black continuation. showHintModal()
+             * then mislabels that first move "Đỏ" because moveLabel() always
+             * assumes index 0 is the player's move — hence a Black move
+             * shown under a Red label.
+             *
+             * Fix: rewrite just the wire copy of the FEN's active-color
+             * field before it leaves the browser. The app's own game/scratch
+             * state (currentFen below, boardState, etc.) keeps using the
+             * native 'r'/'b' form throughout — only the payload actually
+             * POSTed to /api/xiangqi/analyze needs the engine's spelling.
+             */
+            function toEngineFen(fen) {
+                const parts = fen.split(' ');
+                if (parts[1] === 'r') {
+                    parts[1] = 'w';
+                }
+                return parts.join(' ');
+            }
+
+            /**
              * A single "go depth N" call has no guarantee of returning a PV as
              * long as N — engines commonly cut the extracted line short (hash
              * cutoffs, mate found early, etc.), so requesting depth == HINT_CAP
@@ -315,7 +350,7 @@
                             url: '{{ url('/api/xiangqi/analyze') }}',
                             contentType: 'application/json',
                             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                            data: JSON.stringify({ fen: currentFen, depth: depth }),
+                            data: JSON.stringify({ fen: toEngineFen(currentFen), depth: depth }),
                             dataType: 'json'
                         }).done(function (data) {
                             const pv = (data && data.success && data.analysis && Array.isArray(data.analysis.pv))
