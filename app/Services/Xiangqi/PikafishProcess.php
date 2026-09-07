@@ -101,6 +101,38 @@ class PikafishProcess
     }
 
     /**
+     * Translate the app's internal FEN active-color notation to the one
+     * Pikafish's UCI FEN parser actually expects.
+     *
+     * The frontend (resources/views/xiangqi/ai_blade.php, via the
+     * xiangqi.js library — see game.fen() / game.load()) produces FEN
+     * with 'r' for "Red to move" and 'b' for "Black to move". Pikafish,
+     * like Stockfish, only recognizes 'w' (Red/white side) and 'b'
+     * (Black) — anything that isn't literally 'w' is parsed as Black.
+     *
+     * Without this translation, a FEN with 'r' (Red to move) is silently
+     * misread by the engine as "Black to move", so the engine always
+     * searches — and returns — a Black-side move, regardless of whose
+     * turn it actually is. This is why bestMove() looked like it "only
+     * ever returns Black's move": every call, including hint requests
+     * that are only ever made when Red is confirmed to move, was
+     * effectively asking the engine to play Black.
+     *
+     * Only the string handed to the engine over UCI needs this; the
+     * app's own FEN (as validated/read by XiangqiHelper) is untouched.
+     */
+    private function toEngineFen(string $fen): string
+    {
+        $parts = preg_split('/\s+/', trim($fen));
+
+        if (isset($parts[1]) && $parts[1] === 'r') {
+            $parts[1] = 'w';
+        }
+
+        return implode(' ', $parts);
+    }
+
+    /**
      * Ask for the best move on a position. Uses stream_select to wait for
      * output instead of a usleep() poll loop, so we only wake up when data
      * is actually available and never spend more wall-clock time waiting
@@ -116,7 +148,7 @@ class PikafishProcess
         }
 
         $this->drain();
-        $this->send('position fen ' . $fen);
+        $this->send('position fen ' . $this->toEngineFen($fen));
         $this->send('go movetime ' . $timeoutMs);
 
         $graceSeconds = 3.0;
@@ -142,7 +174,7 @@ class PikafishProcess
         }
 
         $this->drain();
-        $this->send('position fen ' . $fen);
+        $this->send('position fen ' . $this->toEngineFen($fen));
         $this->send('go depth ' . $depth);
 
         $output = $this->readUntil('bestmove', self::analysisTimeoutSeconds($depth));
