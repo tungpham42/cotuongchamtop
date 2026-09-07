@@ -519,8 +519,16 @@
         @endif
         const hintStyle = document.createElement('style');
         hintStyle.textContent = `
-            #ban-co .hint-from { background-color: #4caf50 !important; box-shadow: inset 0 0 0 4px rgba(255,255,255,.45); }
-            #ban-co .hint-to { background-color: #ff9800 !important; box-shadow: inset 0 0 0 4px rgba(255,255,255,.45); }
+            #ban-co .hint-from {
+                background: radial-gradient(circle, rgba(52, 211, 153, 0.65) 0%, rgba(16, 185, 129, 0.4) 100%) !important;
+                box-shadow: inset 0 0 0 3px #059669, 0 4px 10px rgba(16, 185, 129, 0.35) !important;
+                border-radius: 8px;
+            }
+            #ban-co .hint-to {
+                background: radial-gradient(circle, rgba(251, 191, 36, 0.75) 0%, rgba(245, 158, 11, 0.45) 100%) !important;
+                box-shadow: inset 0 0 0 3px #d97706, 0 4px 12px rgba(245, 158, 11, 0.4) !important;
+                border-radius: 8px;
+            }
         `;
         document.head.appendChild(hintStyle);
 
