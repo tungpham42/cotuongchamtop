@@ -395,21 +395,28 @@
                     .html('<i class="fas fa-spinner fa-spin"></i> {{ __("Đang tính toán") }}...');
 
                 try {
+                    // Get current FEN and ensure active color is 'r' (Red)
+                    // so the engine suggests Red's move, not Black's.
                     let requestFen = game.fen();
+                    let fenParts = requestFen.split(' ');
+                    if (fenParts.length >= 2 && fenParts[1] !== 'r') {
+                        fenParts[1] = 'r';
+                        requestFen = fenParts.join(' ');
+                    }
+
                     let moves = await fetchPvChain(requestFen, HINT_CAP);
 
-                    // Dragging, resign, undo, reset and switch are all
-                    // blocked while window.isHintPending is true (see
-                    // ai.blade.php), so in the normal case the position
-                    // can't move on under us. This loop is a defensive
-                    // backstop for any other path that might change
-                    // game.fen() while the engine call above was in
-                    // flight — if the live position no longer matches
-                    // what we just analyzed, redo the request against
-                    // whatever is actually current instead of showing a
-                    // stale suggestion.
-                    while (typeof game.fen === 'function' && game.fen() !== requestFen) {
-                        requestFen = game.fen();
+                    // Defensive loop: if the board position changed while we were
+                    // fetching, re-fetch with the new FEN (always ensuring 'r').
+                    while (typeof game.fen === 'function') {
+                        let currentFen = game.fen();
+                        let parts = currentFen.split(' ');
+                        if (parts.length >= 2 && parts[1] !== 'r') {
+                            parts[1] = 'r';
+                            currentFen = parts.join(' ');
+                        }
+                        if (currentFen === requestFen) break;
+                        requestFen = currentFen;
                         moves = await fetchPvChain(requestFen, HINT_CAP);
                     }
 
