@@ -22,6 +22,7 @@
 @endsection
 
 @section('rightSide')
+    @include('layouts.partials.hint')
     <p class="w-100 text-center mx-0 mb-0 mt-2">
         <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> {{ __("HẾT TRẬN") }}</span>
     </p>
@@ -86,7 +87,6 @@
         <a data-step="4" data-intro="Ấn vào đây để tự giải bàn cờ" id="board" class="add-fen w-25 btn btn-dark btn-lg" href="{{ url('/ban-co') }}"><i class="fad fa-user"></i> Tự giải</a>
         <a data-step="5" data-intro="Ấn vào đây để {{ __("chơi") }} lại từ đầu" id="reset" class="w-25 btn btn-dark btn-lg"><i class="fad fa-redo-alt"></i> {{ __("Chơi lại") }}</a>
     </p>
-    @include('layouts.partials.hint')
     @include('layouts.partials.kypho')
     <script>
         let board = null;
