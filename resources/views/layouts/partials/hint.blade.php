@@ -4,7 +4,7 @@
         id="hint-btn"
         class="btn btn-dark btn-lg"
         data-toggle="tooltip" data-placement="top"
-        title="{{ __('Xem trước tối đa') }} {{ $hintCap }} {{ __('nước đi') }}">
+        >
         <i class="fad fa-lightbulb-on"></i> {{ __('Gợi ý') }}
     </a>
 </div>
