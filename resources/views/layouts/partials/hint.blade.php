@@ -217,10 +217,23 @@
                 }
             }
 
-            /** Text for one half-move: color + Kỳ Phổ notation, explicitly alternating */
+            /**
+             * Text for one half-move: color + Kỳ Phổ notation.
+             * This version determines the color directly from the piece's
+             * 'color' property in boardState, so it works correctly even if
+             * the PV does not start with Red (though in practice it always
+             * will because we only trigger on Red's turn).
+             */
             function moveLabel(boardState, move, index) {
-                // The widget only triggers on Red's turn, so index 0 is always Red.
-                const isRed = (index % 2 === 0);
+                const from = squareToFileRank(move.substring(0, 2));
+                const piece = boardState[from.file + ',' + from.rank];
+                if (!piece) {
+                    // fallback: use index parity if piece not found (rare)
+                    const isRed = (index % 2 === 0);
+                    const colorLabel = isRed ? '{{ __("Đỏ") }}' : '{{ __("Đen") }}';
+                    return colorLabel + ': ' + kyphoNotation(boardState, move);
+                }
+                const isRed = (piece.color === 'r');
                 const colorLabel = isRed ? '{{ __("Đỏ") }}' : '{{ __("Đen") }}';
                 return colorLabel + ': ' + kyphoNotation(boardState, move);
             }
@@ -258,7 +271,6 @@
                     const boardState = parseFenBoard(fen);
 
                     // Render all moves sequentially in a single list.
-                    // It explicitly enforces the Red-first alternation on every line.
                     moves.forEach(function (move, index) {
                         const text = moveLabel(boardState, move, index);
                         applyMoveToBoard(boardState, move);
