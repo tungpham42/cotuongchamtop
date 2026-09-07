@@ -82,7 +82,6 @@
             <a data-toggle="tooltip" data-placement="bottom" title="Tìm phòng trống" id="room-list" class="dropdown-item rooms-list" style="cursor: pointer !important;" href="{{ localized_url('room.list') }}"><i class="fas fa-list-alt text-dark"></i> {{ __("Sảnh chờ") }}</a>
         </div>
     </div>
-    @include('layouts.partials.hint')
 @endsection
 
 @section('belowContent')
@@ -94,6 +93,7 @@
         <a data-step="5" data-intro="Nơi luyện tập với chính mình nhé" class="w-25 btn btn-dark btn-lg showPromotion" href="{{ url('/' . __('choi-mot-minh')) }}"><i class="fad fa-user"></i> {{ __("Một mình") }}</a>
         <a data-step="4" data-intro="Ấn vào đây để {{ __("chơi") }} lại từ đầu" id="reset" class="w-25 btn btn-dark btn-lg"><i class="fad fa-redo-alt"></i> {{ __("Chơi lại") }}</a>
     </p>
+    @include('layouts.partials.hint')
     @include('layouts.partials.kypho')
 
     <script>
