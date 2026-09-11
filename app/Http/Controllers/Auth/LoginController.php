@@ -102,7 +102,7 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Redirect::to($previousUrl)->with('success', __('Bạn đã đăng xuất thành công!'));
+        return Redirect::to(localized_url('ai.home'))->with('success', __('Bạn đã đăng xuất thành công!'));
     }
 
     /**
