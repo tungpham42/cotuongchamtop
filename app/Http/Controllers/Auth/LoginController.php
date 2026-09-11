@@ -81,8 +81,14 @@ class LoginController extends Controller
         $candidateUrl = url()->previous();
 
         // Only trust the previous URL if it points back to our own app
-        // (guards against open-redirect via a spoofed Referer header)
-        $previousUrl = ($candidateUrl && str_starts_with($candidateUrl, url('/')) && $candidateUrl !== localized_url('logout'))
+        // (guards against open-redirect via a spoofed Referer header) AND
+        // isn't itself an auth page (login/register/logout) in ANY locale.
+        // Without the auth-page check, a stale Referer/previous-url that
+        // still points at e.g. /dang-nhap (because the user reached the
+        // current page via client-side navigation, or passed through the
+        // login page earlier in the session) would bounce the user straight
+        // back to the login screen right after they just logged out.
+        $previousUrl = ($candidateUrl && str_starts_with($candidateUrl, url('/')) && !$this->isAuthPage($candidateUrl))
             ? $candidateUrl
             : localized_url('ai.home');
 
@@ -97,6 +103,25 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to($previousUrl)->with('success', __('Bạn đã đăng xuất thành công!'));
+    }
+
+    /**
+     * Determine whether the given absolute URL points to one of our
+     * authentication pages (login/register/logout), checked against every
+     * supported locale's localized path so a stale previous-URL from a
+     * different-locale auth page is still caught.
+     */
+    private function isAuthPage(string $url): bool
+    {
+        foreach (['login', 'register', 'logout'] as $key) {
+            foreach (config('locales.supported', ['vi']) as $locale) {
+                if (str_starts_with($url, localized_url($key, [], $locale))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /*
