@@ -15,11 +15,8 @@ class AuthController extends Controller
 {
     public function handleOneTapCallback(Request $request, AwardLoginKarmaAction $awardLoginKarma)
     {
-        $locale = app()->getLocale();
-        $localizedHome = ($locale === 'vi') ? '/' : '/' . $locale;
-
-        // Use the conditional localized home as the fallback
-        $previousUrl = Session::get('previousUrl', $localizedHome);
+        // Use the localized profile page as the fallback
+        $previousUrl = Session::get('previousUrl', localized_url('app.profile'));
 
         // 1. Get the ID Token sent by Google
         $token = $request->input('credential'); // Google sends this field via POST

@@ -29,10 +29,7 @@ class LoginController extends Controller
      */
     public function redirectTo()
     {
-        $locale = app()->getLocale();
-        $localizedHome = ($locale === 'vi') ? '/' : '/' . $locale;
-
-        return Session::get('previousUrl', $localizedHome);
+        return Session::get('previousUrl', localized_url('app.profile'));
     }
 
     /**
