@@ -1,8 +1,6 @@
 @extends('layouts.mainlayout')
 
-@section('og_image')
-    {{ asset('img/og/lobby.jpg') }}
-@endsection
+@section('og_image', asset('img/og/lobby.jpg'))
 
 @section('aboveContent')
     <div class="container-fluid game px-0">
