@@ -1,5 +1,7 @@
 @extends('layouts.mainlayout')
 
+@section('og_image', asset('img/og/the-co.jpg'))
+
 @section('aboveContent')
     <div class="container-fluid game px-0">
         <div class="container p-3">
