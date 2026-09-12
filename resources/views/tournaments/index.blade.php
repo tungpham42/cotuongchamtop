@@ -1,5 +1,6 @@
 @extends('layouts.app')
 
+@section('og_image', asset('img/og/giai-dau.jpg'))
 
 @section('content')
 <div class="container mt-4">

@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('og_image', asset('img/og/thu-vien.jpg'))
+
 @section('content')
 <div class="container gm-page">
 

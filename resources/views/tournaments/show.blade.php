@@ -1,6 +1,5 @@
 @extends('layouts.app')
 
-
 @section('meta_description', $tournament->description ?? 'Giải đấu cờ tướng hấp dẫn.')
 
 @section('og_image', $tournament->cover_photo ? asset('storage/' . $tournament->cover_photo) : asset('img/1200x630.jpg'))
