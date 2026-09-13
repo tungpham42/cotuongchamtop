@@ -58,23 +58,34 @@ class XiangqiEngineClient
     }
 
     /**
+     * "Available" here means actually able to serve a request (ready),
+     * not merely "socket exists and answered a ping" — a worker that's
+     * still loading the engine answers ping with success=true but
+     * ready=false, and callers care whether it can play a move, not
+     * whether the socket happens to be up. Counting on `success` alone
+     * let a pool where every worker was stuck mid-boot report itself as
+     * "available" and skip triggering an ensure. This also keeps the
+     * trigger condition consistent with isAnyWorkerReady(): both now
+     * fire whenever zero workers are actually ready, not just when zero
+     * sockets respond at all.
+     *
      * @return array{available:int, total:int}
      */
     public function poolStatus(): array
     {
-        $available = 0;
+        $ready = 0;
         for ($i = 0; $i < $this->workerCount; $i++) {
             $resp = $this->pingWorkerRaw($i);
-            if ($resp['success'] ?? false) {
-                $available++;
+            if (($resp['success'] ?? false) && ($resp['ready'] ?? false)) {
+                $ready++;
             }
         }
 
-        if ($available === 0) {
+        if ($ready === 0) {
             $this->triggerPoolEnsure();
         }
 
-        return ['available' => $available, 'total' => $this->workerCount];
+        return ['available' => $ready, 'total' => $this->workerCount];
     }
 
     public function isAnyWorkerReady(): bool
