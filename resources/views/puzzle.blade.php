@@ -140,7 +140,11 @@
             $('#header-status').html(': '+status);
 
             if (game.game_over()) {
-                hetTran.play();
+                if (game.in_checkmate()) {
+                    XiangqiSound.playCheckmate();
+                } else {
+                    XiangqiSound.playStalemate();
+                }
                 $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
                 $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> {{ __("Hết trận") }}');
             }

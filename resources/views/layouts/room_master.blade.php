@@ -164,6 +164,29 @@
             currentFEN = game.fen();
         @endif
 
+        // Best-effort "has a move already been made" flag, used only to
+        // decide whether the very next move gets the "opening" chime
+        // instead of a plain move/check sound.
+        let hasMoved = currentFEN !== '{{ config('xiangqi.initial_fen') }}';
+
+        // Picks the right synthesized sound for the move that was just
+        // applied to `game`. Checkmate/stalemate are left to updateStatus()
+        // so they aren't doubled up with a plain "move" or "check" sound.
+        function playMoveResultSound () {
+            if (typeof XiangqiSound === 'undefined') return;
+            if (game.in_checkmate() || game.in_draw()) return;
+            if (!hasMoved) {
+                hasMoved = true;
+                XiangqiSound.playOpening();
+                return;
+            }
+            if (game.in_check()) {
+                XiangqiSound.playCheck();
+                return;
+            }
+            XiangqiSound.playMove();
+        }
+
         function updateFenCode(roomCode, moveIccs) {
             @if ($role === 'watch')
                 board.position(game.fen(), true);
@@ -229,12 +252,7 @@
                         board.position(newFEN, true); // Animate di chuyển quân cờ
 
                         if (!newFEN.includes('resign')) {
-                            if (typeof nuocCo !== 'undefined') {
-                                let playPromise = nuocCo.play();
-                                if (playPromise !== undefined) {
-                                    playPromise.catch(error => { console.warn("Audio playback prevented by browser:", error); });
-                                }
-                            }
+                            playMoveResultSound();
                         }
 
                         if (typeof kypho !== 'undefined' && kypho !== null) {
@@ -356,7 +374,7 @@
         function onMouseoutSquare (square, piece) { removeGreySquares(); }
 
         function onSnapEnd () {
-            nuocCo.play();
+            playMoveResultSound();
             updateFenCode('{{ $roomCode }}', lastMoveIccs);
             lastMoveIccs = null;
         }
@@ -426,7 +444,11 @@
             if (game.game_over()) {
                 if (!hasGameOverSound) {
                     hasGameOverSound = true;
-                    hetTran.play();
+                    if (game.in_checkmate()) {
+                        XiangqiSound.playCheckmate();
+                    } else {
+                        XiangqiSound.playStalemate();
+                    }
                 }
                 $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> {{ __("Hết trận") }}');
                 $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');

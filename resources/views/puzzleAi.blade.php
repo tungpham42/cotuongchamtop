@@ -93,6 +93,25 @@
         let kypho = null;
         let isHintPending = false;
         let hintMove = null;
+        let hasMoved = false;
+
+        // Picks the right synthesized sound for the move that was just made.
+        // Checkmate/stalemate are left to updateStatus() so they aren't
+        // doubled up with a plain "move" or "check" sound.
+        function playMoveResultSound () {
+            if (typeof XiangqiSound === 'undefined') return;
+            if (game.in_checkmate() || game.in_draw()) return;
+            if (!hasMoved) {
+                hasMoved = true;
+                XiangqiSound.playOpening();
+                return;
+            }
+            if (game.in_check()) {
+                XiangqiSound.playCheck();
+                return;
+            }
+            XiangqiSound.playMove();
+        }
 
         function clearHint() {
             hintMove = null;
@@ -201,7 +220,7 @@
                                 kypho.recordMove(moveResult);
                             }
                             board.position(game.fen());
-                            nuocCo.play();
+                            playMoveResultSound();
                             updateStatus();
                         } else {
                             makeRandomMove();
@@ -254,7 +273,7 @@
                         kypho.recordMove(moveResult);
                     }
                     board.position(game.fen());
-                    nuocCo.play();
+                    playMoveResultSound();
                     updateStatus();
                 }
             }
@@ -306,7 +325,7 @@
         function onSnapEnd () {
             clearHint();
             board.position(game.fen());
-            nuocCo.play();
+            playMoveResultSound();
             updateStatus();
         }
 
@@ -359,8 +378,12 @@
             }
 
             if (game.game_over()) {
-                if (typeof hetTran !== 'undefined') {
-                    hetTran.play();
+                if (typeof XiangqiSound !== 'undefined') {
+                    if (game.in_checkmate()) {
+                        XiangqiSound.playCheckmate();
+                    } else {
+                        XiangqiSound.playStalemate();
+                    }
                 }
                 if (typeof $('#header-status') !== 'undefined' && $('#header-status').length) {
                     $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
@@ -444,8 +467,8 @@
                 game.undo();
                 game.undo();
                 board.position(game.fen());
-                if (typeof nuocCo !== 'undefined') {
-                    nuocCo.play();
+                if (typeof XiangqiSound !== 'undefined') {
+                    XiangqiSound.playMove();
                 }
                 updateStatus();
                 if (kypho) {
@@ -464,6 +487,7 @@
             if (isHintPending) return;
             isComputerThinking = false;
             resignAlertShown = false;
+            hasMoved = false;
             board.position('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR');
             game.load('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1');
             $('#game-status').removeClass('black').addClass('red');

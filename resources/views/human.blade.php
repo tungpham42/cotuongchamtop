@@ -54,6 +54,24 @@
         let colorToHighlight = null;
         let squareClass = 'square-2b8ce';
         let showHighlight = true;
+        let hasMoved = false;
+
+        // Picks the right synthesized sound for the move that was just made.
+        // Checkmate/stalemate are left to updateStatus() so they aren't
+        // doubled up with a plain "move" or "check" sound.
+        function playMoveResultSound () {
+            if (game.in_checkmate() || game.in_draw()) return;
+            if (!hasMoved) {
+                hasMoved = true;
+                XiangqiSound.playOpening();
+                return;
+            }
+            if (game.in_check()) {
+                XiangqiSound.playCheck();
+                return;
+            }
+            XiangqiSound.playMove();
+        }
 
         function removeHighlights (color) {
             $board.find('.' + squareClass).removeClass('highlight-' + color);
@@ -133,7 +151,7 @@
         function onSnapEnd () {
             board.position(game.fen());
             $('#FEN').val(game.fen());
-            nuocCo.play();
+            playMoveResultSound();
             updateStatus();
         }
 
@@ -176,7 +194,11 @@
             $('#game-status').html(status);
             $('#header-status').html(': '+status);
             if (game.game_over()) {
-                hetTran.play();
+                if (game.in_checkmate()) {
+                    XiangqiSound.playCheckmate();
+                } else {
+                    XiangqiSound.playStalemate();
+                }
                 $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> {{ __("Hết trận") }}');
                 $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
             }
@@ -242,7 +264,7 @@
         $('#undo').on('click', function(){
             game.undo();
             board.position(game.fen());
-            nuocCo.play();
+            XiangqiSound.playMove();
             updateStatus();
             if (kypho) {
                 kypho.setMoves(game.history());
@@ -250,6 +272,7 @@
         });
         $('#switch').on('click', board.flip);
         $('#reset').on('click', function() {
+            hasMoved = false;
             board.position('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR');
             game.load('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1');
             $('#game-status').removeClass('black').addClass('red');

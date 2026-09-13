@@ -90,6 +90,24 @@
         let squareToHighlight = null;
         let colorToHighlight = null;
         let squareClass = 'square-2b8ce';
+        let hasMoved = false;
+
+        // Picks the right synthesized sound for the move that was just made.
+        // Checkmate/stalemate are left to updateStatus() so they aren't
+        // doubled up with a plain "move" or "check" sound.
+        function playMoveResultSound () {
+            if (game.in_checkmate() || game.in_draw()) return;
+            if (!hasMoved) {
+                hasMoved = true;
+                XiangqiSound.playOpening();
+                return;
+            }
+            if (game.in_check()) {
+                XiangqiSound.playCheck();
+                return;
+            }
+            XiangqiSound.playMove();
+        }
 
         function removeHighlights (color) {
             $board.find('.' + squareClass).removeClass('highlight-' + color);
@@ -161,7 +179,7 @@
         function onSnapEnd () {
             board.position(board.fen());
             $('#FEN').val(game.fen());
-            nuocCo.play();
+            playMoveResultSound();
             updateStatus();
         }
 
@@ -201,7 +219,11 @@
             $('#game-status').html(status);
             $('#header-status').html(': '+status);
             if (game.game_over()) {
-                hetTran.play();
+                if (game.in_checkmate()) {
+                    XiangqiSound.playCheckmate();
+                } else {
+                    XiangqiSound.playStalemate();
+                }
                 $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
                 $('#game-over').removeClass('d-none').addClass('d-inline-block');
             }

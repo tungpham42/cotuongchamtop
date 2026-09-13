@@ -112,6 +112,25 @@
         let kypho = null;
         let isHintPending = false;
         let hintMove = null;
+        let hasMoved = false;
+
+        // Picks the right synthesized sound for the move that was just made.
+        // Checkmate/stalemate are left to updateStatus() so they aren't
+        // doubled up with a plain "move" or "check" sound.
+        function playMoveResultSound () {
+            if (typeof XiangqiSound === 'undefined') return;
+            if (game.in_checkmate() || game.in_draw()) return;
+            if (!hasMoved) {
+                hasMoved = true;
+                XiangqiSound.playOpening();
+                return;
+            }
+            if (game.in_check()) {
+                XiangqiSound.playCheck();
+                return;
+            }
+            XiangqiSound.playMove();
+        }
 
         function clearHint() {
             hintMove = null;
@@ -220,7 +239,7 @@
                                 kypho.recordMove(moveResult);
                             }
                             board.position(game.fen());
-                            nuocCo.play();
+                            playMoveResultSound();
                             updateStatus();
                         } else {
                             console.error('Invalid move from engine:', data.best_move);
@@ -277,7 +296,7 @@
                         kypho.recordMove(moveResult);
                     }
                     board.position(game.fen());
-                    nuocCo.play();
+                    playMoveResultSound();
                     updateStatus();
                 }
             }
@@ -329,7 +348,7 @@
         function onSnapEnd () {
             clearHint();
             board.position(game.fen());
-            nuocCo.play();
+            playMoveResultSound();
             updateStatus();
         }
 
@@ -375,7 +394,11 @@
             $('#game-status').html(status);
             $('#header-status').html(': '+status);
             if (game.game_over()) {
-                hetTran.play();
+                if (game.in_checkmate()) {
+                    XiangqiSound.playCheckmate();
+                } else {
+                    XiangqiSound.playStalemate();
+                }
                 $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
                 $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> {{ __("Hết trận") }}');
             }
@@ -445,7 +468,7 @@
                 game.undo();
                 game.undo();
                 board.position(game.fen());
-                nuocCo.play();
+                XiangqiSound.playMove();
                 updateStatus();
                 if (kypho) {
                     kypho.setMoves(game.history());
@@ -461,6 +484,7 @@
             clearHint();
             if (isHintPending) return;
             isComputerThinking = false;
+            hasMoved = false;
             board.position('{{ $fen }}');
             game.load('{{ $fen }}');
             $('#game-status').removeClass('black').addClass('red');

@@ -90,16 +90,12 @@
         <span id="checkmateText">{{ __('Chiếu!') }}</span>
         <div class="container-fluid game px-0" itemscope itemtype="http://schema.org/Game">
             <div class="container {{ isset($board) ? 'px-3 pb-0 pt-3' : 'p-3' }}">
-                <audio id="nuoc-co">
-                    <source src="{{ asset('sound/nuocCo.mp3') }}" type="audio/mpeg">
-                    <source src="{{ asset('sound/nuocCo.wav') }}" type="audio/wav">
-                    Your browser does not support the audio element.
-                </audio>
-                <audio id="het-tran">
-                    <source src="{{ $cdnUrl }}/sound/hetTran.mp3" type="audio/mpeg">
-                    <source src="{{ $cdnUrl }}/sound/hetTran.wav" type="audio/wav">
-                    Your browser does not support the audio element.
-                </audio>
+                {{-- Kept as empty, muteable elements only so the existing volume
+                     toggle (which targets <audio> tags) still has something to
+                     mute; actual playback now happens via XiangqiSound (AudioContext). --}}
+                <audio id="nuoc-co" style="display:none"></audio>
+                <audio id="het-tran" style="display:none"></audio>
+                @include('common.xiangqiSound')
                 {{-- @include('common.hero') --}}
                 {{-- @include('common.articleCarousel', ['articles' => $articles ?? collect()]) --}}
                 <div class="row">
