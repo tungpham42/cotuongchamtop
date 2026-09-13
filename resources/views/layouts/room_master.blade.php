@@ -184,6 +184,17 @@
                 XiangqiSound.playCheck();
                 return;
             }
+            // Inspect the last move to determine if a piece was taken
+            const history = game.history({ verbose: true });
+            if (history.length > 0) {
+                const lastMove = history[history.length - 1];
+
+                // Xiangqi.js sets a 'captured' property or a 'c' flag for captures
+                if (lastMove.captured || (lastMove.flags && lastMove.flags.includes('c'))) {
+                    XiangqiSound.playCapture();
+                    return;
+                }
+            }
             XiangqiSound.playMove();
         }
 
