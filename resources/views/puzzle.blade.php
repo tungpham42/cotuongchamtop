@@ -81,7 +81,7 @@
             if (board.fen() != history[history.length - 1]){
                 history.push(board.fen());
             }
-            window.playMoveSound();
+            XiangqiSound.playMove();
             console.log(history);
         }
 
