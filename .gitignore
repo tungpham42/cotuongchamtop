@@ -170,3 +170,4 @@ test-results/
 blob-report/
 
 composer.lock
+storage/app/analytics/service-account.json
