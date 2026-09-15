@@ -8,6 +8,7 @@ use App\Models\KarmaLog;
 use App\Models\Room;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminMarketingController extends Controller
 {
