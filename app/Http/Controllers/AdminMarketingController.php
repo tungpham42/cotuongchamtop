@@ -85,4 +85,16 @@ class AdminMarketingController extends Controller
             'stats', 'funnel', 'signupTrend', 'retentionSnapshot', 'contentViewsByType', 'topArticles', 'topGames'
         ));
     }
+
+    /**
+     * Percentage change between two period counts, used for KPI trend badges.
+     */
+    private function percentChange(int $previous, int $current): float
+    {
+        if ($previous === 0) {
+            return $current > 0 ? 100.0 : 0.0;
+        }
+
+        return round((($current - $previous) / $previous) * 100, 1);
+    }
 }
