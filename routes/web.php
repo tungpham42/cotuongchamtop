@@ -26,6 +26,7 @@ use App\Http\Controllers\AdminArticleController;
 use App\Http\Controllers\AdminGameController;
 use App\Http\Controllers\AdminTournamentController;
 use App\Http\Controllers\AdminTournamentParticipantController;
+use App\Http\Controllers\AdminMarketingController;
 use App\Actions\Room\GetRandomRoomAction;
 use App\Actions\Room\GetRoomQueriesAction;
 use App\Actions\User\GetUserQueriesAction;
@@ -54,6 +55,7 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->name('admin.')->gr
 
     // Admin Dashboard
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/marketing', [AdminMarketingController::class, 'index'])->name('marketing');
 
     // Future routes can go here (e.g., users management, tournaments approval, etc.)
     Route::resource('users', AdminUserController::class);

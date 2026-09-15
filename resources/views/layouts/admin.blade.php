@@ -98,6 +98,15 @@
                         Dashboard
                     </a>
 
+                    <a href="{{ route('admin.marketing') }}"
+                       class="group flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition
+                       {{ request()->routeIs('admin.marketing') ? 'bg-white/10 text-white nav-active' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                        <span class="w-8 h-8 rounded-lg flex items-center justify-center {{ request()->routeIs('admin.marketing') ? 'bg-indigo-500/20 text-indigo-200' : 'bg-white/5 text-slate-400 group-hover:text-white' }}">
+                            <i class="fa-solid fa-chart-pie text-sm"></i>
+                        </span>
+                        Marketing
+                    </a>
+
                     <a href="{{ route('admin.users.index') }}"
                        class="group flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition
                        {{ request()->routeIs('admin.users.*') ? 'bg-white/10 text-white nav-active' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
