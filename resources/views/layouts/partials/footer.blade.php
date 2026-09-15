@@ -52,7 +52,7 @@
         <p>{{ __("Chúng tôi trên mạng xã hội") }}</p>
         <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.youtube.com/@CoTuongVlog/videos"><i class="fab fa-youtube"></i></a>
         <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.facebook.com/CoTuongPage/"><i class="fab fa-facebook-square rounded"></i></a>
-        <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.linkedin.com/company/cotuong/"><i class="fab fa-linkedin rounded"></i></a>
+        <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.tiktok.com/@cotuongchamtop"><i class="fab fa-tiktok"></i></a>
       </div>
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
         <p>{{ __('Đã xác thực HTML5 và CSS3') }}</p>
