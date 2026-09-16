@@ -267,9 +267,10 @@ document.addEventListener('DOMContentLoaded', function () {
             { key: 'bofu', title: 'BOFU', sub: funnel.labels?.bofu ?? 'Conversions', value: formatBofuValue(), color: palette.rose, widthPct: bofuWidthPct },
         ];
 
-        // The label shown on the arrow between MOFU and BOFU differs for revenue.
+        // The label shown on the arrow between MOFU and BOFU differs for revenue:
+        // show the exact ad revenue total rather than a derived per-1,000-sessions rate.
         const bofuArrowLabel = isRevenue
-            ? `${formatBofuValue()} total &middot; ${formatCurrencyValue(funnel.revenue_per_1000_sessions ?? 0)} / 1,000 sessions`
+            ? `${formatBofuValue()} ad revenue`
             : `${funnel.bofu_rate}% of MOFU`;
         const rates = [null, `${funnel.mofu_rate}% of TOFU`, bofuArrowLabel];
 
