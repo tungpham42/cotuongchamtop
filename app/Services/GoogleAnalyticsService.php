@@ -48,10 +48,10 @@ class GoogleAnalyticsService
     public function overview(string $startDate, string $endDate): array
     {
         return $this->remember('overview', $startDate, $endDate, function () use ($startDate, $endDate) {
-            $response = $this->client->runReport(new RunReportRequest([
-                'property' => $this->property,
-                'dateRanges' => [new DateRange(['start_date' => $startDate, 'end_date' => $endDate])],
-                'metrics' => [
+            $request = (new RunReportRequest())
+                ->setProperty($this->property)
+                ->setDateRanges([$this->dateRange($startDate, $endDate)])
+                ->setMetrics([
                     new Metric(['name' => 'sessions']),
                     new Metric(['name' => 'activeUsers']),
                     new Metric(['name' => 'newUsers']),
@@ -59,8 +59,9 @@ class GoogleAnalyticsService
                     new Metric(['name' => 'averageSessionDuration']),
                     new Metric(['name' => 'screenPageViews']),
                     new Metric(['name' => 'conversions']),
-                ],
-            ]));
+                ]);
+
+            $response = $this->client->runReport($request);
 
             $row = $response->getRows()[0] ?? null;
 
@@ -88,20 +89,21 @@ class GoogleAnalyticsService
     public function timeseries(string $startDate, string $endDate): array
     {
         return $this->remember('timeseries', $startDate, $endDate, function () use ($startDate, $endDate) {
-            $response = $this->client->runReport(new RunReportRequest([
-                'property' => $this->property,
-                'dateRanges' => [new DateRange(['start_date' => $startDate, 'end_date' => $endDate])],
-                'dimensions' => [new Dimension(['name' => 'date'])],
-                'metrics' => [
+            $request = (new RunReportRequest())
+                ->setProperty($this->property)
+                ->setDateRanges([$this->dateRange($startDate, $endDate)])
+                ->setDimensions([new Dimension(['name' => 'date'])])
+                ->setMetrics([
                     new Metric(['name' => 'sessions']),
                     new Metric(['name' => 'activeUsers']),
-                ],
-                'orderBys' => [
-                    new OrderBy([
-                        'dimension' => new DimensionOrderBy(['dimension_name' => 'date']),
-                    ]),
-                ],
-            ]));
+                ])
+                ->setOrderBys([
+                    (new OrderBy())->setDimension(
+                        (new DimensionOrderBy())->setDimensionName('date')
+                    ),
+                ]);
+
+            $response = $this->client->runReport($request);
 
             $labels = [];
             $sessions = [];
@@ -125,23 +127,23 @@ class GoogleAnalyticsService
     public function topPages(string $startDate, string $endDate, int $limit = 10): array
     {
         return $this->remember("top_pages_{$limit}", $startDate, $endDate, function () use ($startDate, $endDate, $limit) {
-            $response = $this->client->runReport(new RunReportRequest([
-                'property' => $this->property,
-                'dateRanges' => [new DateRange(['start_date' => $startDate, 'end_date' => $endDate])],
-                'dimensions' => [new Dimension(['name' => 'pagePath'])],
-                'metrics' => [
+            $request = (new RunReportRequest())
+                ->setProperty($this->property)
+                ->setDateRanges([$this->dateRange($startDate, $endDate)])
+                ->setDimensions([new Dimension(['name' => 'pagePath'])])
+                ->setMetrics([
                     new Metric(['name' => 'screenPageViews']),
                     new Metric(['name' => 'sessions']),
                     new Metric(['name' => 'averageSessionDuration']),
-                ],
-                'orderBys' => [
-                    new OrderBy([
-                        'metric' => new MetricOrderBy(['metric_name' => 'screenPageViews']),
-                        'desc' => true,
-                    ]),
-                ],
-                'limit' => $limit,
-            ]));
+                ])
+                ->setOrderBys([
+                    (new OrderBy())
+                        ->setMetric((new MetricOrderBy())->setMetricName('screenPageViews'))
+                        ->setDesc(true),
+                ])
+                ->setLimit($limit);
+
+            $response = $this->client->runReport($request);
 
             return $this->mapRows($response, ['path'], ['views', 'sessions', 'avg_duration']);
         });
@@ -153,18 +155,18 @@ class GoogleAnalyticsService
     public function trafficSources(string $startDate, string $endDate): array
     {
         return $this->remember('traffic_sources', $startDate, $endDate, function () use ($startDate, $endDate) {
-            $response = $this->client->runReport(new RunReportRequest([
-                'property' => $this->property,
-                'dateRanges' => [new DateRange(['start_date' => $startDate, 'end_date' => $endDate])],
-                'dimensions' => [new Dimension(['name' => 'sessionDefaultChannelGroup'])],
-                'metrics' => [new Metric(['name' => 'sessions'])],
-                'orderBys' => [
-                    new OrderBy([
-                        'metric' => new MetricOrderBy(['metric_name' => 'sessions']),
-                        'desc' => true,
-                    ]),
-                ],
-            ]));
+            $request = (new RunReportRequest())
+                ->setProperty($this->property)
+                ->setDateRanges([$this->dateRange($startDate, $endDate)])
+                ->setDimensions([new Dimension(['name' => 'sessionDefaultChannelGroup'])])
+                ->setMetrics([new Metric(['name' => 'sessions'])])
+                ->setOrderBys([
+                    (new OrderBy())
+                        ->setMetric((new MetricOrderBy())->setMetricName('sessions'))
+                        ->setDesc(true),
+                ]);
+
+            $response = $this->client->runReport($request);
 
             return $this->mapRows($response, ['channel'], ['sessions']);
         });
@@ -176,18 +178,18 @@ class GoogleAnalyticsService
     public function deviceBreakdown(string $startDate, string $endDate): array
     {
         return $this->remember('devices', $startDate, $endDate, function () use ($startDate, $endDate) {
-            $response = $this->client->runReport(new RunReportRequest([
-                'property' => $this->property,
-                'dateRanges' => [new DateRange(['start_date' => $startDate, 'end_date' => $endDate])],
-                'dimensions' => [new Dimension(['name' => 'deviceCategory'])],
-                'metrics' => [new Metric(['name' => 'activeUsers'])],
-                'orderBys' => [
-                    new OrderBy([
-                        'metric' => new MetricOrderBy(['metric_name' => 'activeUsers']),
-                        'desc' => true,
-                    ]),
-                ],
-            ]));
+            $request = (new RunReportRequest())
+                ->setProperty($this->property)
+                ->setDateRanges([$this->dateRange($startDate, $endDate)])
+                ->setDimensions([new Dimension(['name' => 'deviceCategory'])])
+                ->setMetrics([new Metric(['name' => 'activeUsers'])])
+                ->setOrderBys([
+                    (new OrderBy())
+                        ->setMetric((new MetricOrderBy())->setMetricName('activeUsers'))
+                        ->setDesc(true),
+                ]);
+
+            $response = $this->client->runReport($request);
 
             return $this->mapRows($response, ['device'], ['users']);
         });
@@ -199,19 +201,19 @@ class GoogleAnalyticsService
     public function topCountries(string $startDate, string $endDate, int $limit = 10): array
     {
         return $this->remember("countries_{$limit}", $startDate, $endDate, function () use ($startDate, $endDate, $limit) {
-            $response = $this->client->runReport(new RunReportRequest([
-                'property' => $this->property,
-                'dateRanges' => [new DateRange(['start_date' => $startDate, 'end_date' => $endDate])],
-                'dimensions' => [new Dimension(['name' => 'country'])],
-                'metrics' => [new Metric(['name' => 'activeUsers'])],
-                'orderBys' => [
-                    new OrderBy([
-                        'metric' => new MetricOrderBy(['metric_name' => 'activeUsers']),
-                        'desc' => true,
-                    ]),
-                ],
-                'limit' => $limit,
-            ]));
+            $request = (new RunReportRequest())
+                ->setProperty($this->property)
+                ->setDateRanges([$this->dateRange($startDate, $endDate)])
+                ->setDimensions([new Dimension(['name' => 'country'])])
+                ->setMetrics([new Metric(['name' => 'activeUsers'])])
+                ->setOrderBys([
+                    (new OrderBy())
+                        ->setMetric((new MetricOrderBy())->setMetricName('activeUsers'))
+                        ->setDesc(true),
+                ])
+                ->setLimit($limit);
+
+            $response = $this->client->runReport($request);
 
             return $this->mapRows($response, ['country'], ['users']);
         });
@@ -245,6 +247,17 @@ class GoogleAnalyticsService
                 'error' => 'Could not load Google Analytics data: ' . $e->getMessage(),
             ];
         }
+    }
+
+    /**
+     * Build a DateRange via its fluent setters (start_date/end_date are
+     * already snake_case, so the array constructor works fine for this one).
+     */
+    protected function dateRange(string $startDate, string $endDate): DateRange
+    {
+        return (new DateRange())
+            ->setStartDate($startDate)
+            ->setEndDate($endDate);
     }
 
     protected function remember(string $key, string $startDate, string $endDate, \Closure $callback)
