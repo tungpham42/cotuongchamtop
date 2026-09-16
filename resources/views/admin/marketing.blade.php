@@ -1,4 +1,4 @@
-@extends('admin')
+@extends('layouts.admin')
 
 @section('title', 'Marketing Reports')
 
