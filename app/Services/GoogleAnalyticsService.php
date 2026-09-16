@@ -62,7 +62,6 @@ class GoogleAnalyticsService
                     new Metric(['name' => 'engagementRate']),
                     new Metric(['name' => 'averageSessionDuration']),
                     new Metric(['name' => 'screenPageViews']),
-                    new Metric(['name' => 'conversions']),
                 ]);
 
             $response = $this->client->runReport($request);
@@ -82,9 +81,35 @@ class GoogleAnalyticsService
                 'engagement_rate' => round(((float) $values[3]) * 100, 1),
                 'avg_session_duration' => round((float) $values[4]),
                 'page_views' => (int) $values[5],
-                'conversions' => (int) $values[6],
+                'conversions' => (int) round($this->conversionsCount($startDate, $endDate)),
             ];
         });
+    }
+
+    /**
+     * The overview "Conversions" card should reflect whatever this business
+     * has actually defined as its real conversion (the funnel's BOFU stage),
+     * not GA4's blanket "conversions" metric — that counts every event
+     * marked as a Key Event site-wide, which may include things unrelated
+     * to this product's actual conversion (or double-count against a
+     * revenue-based BOFU). Revenue isn't a headcount, so when BOFU is set
+     * to "revenue" mode we fall back to GA4's generic conversions count,
+     * since there's no other sensible number to show here.
+     */
+    protected function conversionsCount(string $startDate, string $endDate): float
+    {
+        $bofu = config('analytics.funnel.bofu', []);
+        $type = $bofu['type'] ?? 'revenue';
+
+        if ($type === 'event' && ! empty($bofu['event'])) {
+            return $this->eventCount($startDate, $endDate, $bofu['event']);
+        }
+
+        if ($type === 'metric' && ! empty($bofu['metric'])) {
+            return $this->metricValue($startDate, $endDate, $bofu['metric']);
+        }
+
+        return $this->metricValue($startDate, $endDate, 'conversions');
     }
 
     /**
@@ -252,8 +277,9 @@ class GoogleAnalyticsService
 
             if ($isRevenue) {
                 // Revenue isn't a headcount, so "% of MOFU" doesn't apply.
-                // Show the exact revenue total (already in $bofu['value']) plus
-                // revenue per engaged session as supporting context.
+                // Report it as revenue per 1,000 sessions (an RPM-style rate)
+                // and revenue per engaged session instead.
+                $result['revenue_per_1000_sessions'] = $tofu['value'] > 0 ? round($bofu['value'] / $tofu['value'] * 1000, 2) : 0.0;
                 $result['revenue_per_engaged_session'] = $mofu['value'] > 0 ? round($bofu['value'] / $mofu['value'], 4) : 0.0;
                 $result['bofu_rate'] = null;
                 $result['overall_rate'] = null;
@@ -467,6 +493,7 @@ class GoogleAnalyticsService
             'mofu_rate' => 0,
             'bofu_rate' => 0,
             'overall_rate' => 0,
+            'revenue_per_1000_sessions' => 0,
             'revenue_per_engaged_session' => 0,
             'labels' => [
                 'tofu' => config('analytics.funnel.tofu.label') ?: 'Sessions',
