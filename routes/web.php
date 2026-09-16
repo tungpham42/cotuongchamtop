@@ -56,7 +56,7 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->name('admin.')->gr
     // Admin Dashboard
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/marketing', [AdminMarketingController::class, 'index'])->name('marketing');
-
+    Route::get('/marketing/data', [AdminMarketingController::class, 'data'])->name('marketing.data');
     // Future routes can go here (e.g., users management, tournaments approval, etc.)
     Route::resource('users', AdminUserController::class);
     Route::resource('puzzles', AdminPuzzleController::class);
