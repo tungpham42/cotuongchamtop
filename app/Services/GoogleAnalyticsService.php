@@ -241,7 +241,7 @@ class GoogleAnalyticsService
                 'mofu' => $mofu['value'],
                 'bofu' => $bofu['value'],
                 'is_revenue' => $isRevenue,
-                'currency' => $isRevenue ? config('analytics.funnel.bofu.currency', 'USD') : null,
+                'currency' => $isRevenue ? config('analytics.funnel.bofu.currency', 'VND') : null,
                 'mofu_rate' => $tofu['value'] > 0 ? round($mofu['value'] / $tofu['value'] * 100, 1) : 0.0,
                 'labels' => [
                     'tofu' => $tofu['label'],
@@ -464,7 +464,7 @@ class GoogleAnalyticsService
             'mofu' => 0,
             'bofu' => 0,
             'is_revenue' => $isRevenue,
-            'currency' => $bofuStage['currency'] ?? 'USD',
+            'currency' => $bofuStage['currency'] ?? 'VND',
             'mofu_rate' => 0,
             'bofu_rate' => 0,
             'overall_rate' => 0,

@@ -232,13 +232,26 @@ document.addEventListener('DOMContentLoaded', function () {
     function renderFunnel(funnel) {
         const isRevenue = !!funnel.is_revenue;
 
+        const bofuCurrency = funnel.currency || 'VND';
+
+        const formatCurrencyValue = (value) => {
+            try {
+                // VND has no minor unit — Intl handles this correctly on its own,
+                // but we pin fraction digits to 0 for VND to avoid "₫0.00" noise.
+                const options = { style: 'currency', currency: bofuCurrency };
+                if (bofuCurrency === 'VND') {
+                    options.minimumFractionDigits = 0;
+                    options.maximumFractionDigits = 0;
+                }
+                return new Intl.NumberFormat(undefined, options).format(value);
+            } catch (e) {
+                return `${Number(value).toLocaleString()} ${bofuCurrency}`;
+            }
+        };
+
         const formatBofuValue = () => {
             if (!isRevenue) return Number(funnel.bofu).toLocaleString();
-            try {
-                return new Intl.NumberFormat(undefined, { style: 'currency', currency: funnel.currency || 'USD' }).format(funnel.bofu);
-            } catch (e) {
-                return `${funnel.bofu} ${funnel.currency || 'USD'}`;
-            }
+            return formatCurrencyValue(funnel.bofu);
         };
 
         // Revenue isn't a headcount, so it can't share the sessions-based width
@@ -256,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // The label shown on the arrow between MOFU and BOFU differs for revenue.
         const bofuArrowLabel = isRevenue
-            ? `${formatBofuValue()} total &middot; $${funnel.revenue_per_1000_sessions ?? 0} / 1,000 sessions`
+            ? `${formatBofuValue()} total &middot; ${formatCurrencyValue(funnel.revenue_per_1000_sessions ?? 0)} / 1,000 sessions`
             : `${funnel.bofu_rate}% of MOFU`;
         const rates = [null, `${funnel.mofu_rate}% of TOFU`, bofuArrowLabel];
 
@@ -285,7 +298,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const overallLabel = document.querySelector('#funnelCard .text-slate-400.mb-6');
         if (overallLabel) {
             overallLabel.textContent = isRevenue
-                ? `Awareness, engagement, and ad revenue for this period — ${formatBofuValue()} earned, $${funnel.revenue_per_engaged_session ?? 0} per engaged session.`
+                ? `Awareness, engagement, and ad revenue for this period — ${formatBofuValue()} earned, ${formatCurrencyValue(funnel.revenue_per_engaged_session ?? 0)} per engaged session.`
                 : `Awareness, engagement, and conversion for this period — ${funnel.overall_rate}% overall TOFU→BOFU conversion.`;
         }
     }
