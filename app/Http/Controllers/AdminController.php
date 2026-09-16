@@ -166,6 +166,134 @@ class AdminController extends Controller
     }
 
     /**
+     * Admin-only engine pool diagnostic page (mirrors the old /test-engine
+     * dev route, but lives behind the auth + IsAdmin middleware instead of
+     * being gated purely by app()->environment()).
+     *
+     * Exercises the warm XiangqiEngineClient worker pool — the same path
+     * XiangqiController uses in production — rather than spinning up a
+     * fresh engine process per request. All markup/styling lives in the
+     * admin.test-engine view; this method only gathers the data.
+     */
+    public function testEngine()
+    {
+        $checkedAt = now()->format('D, d M Y H:i:s');
+        $overallOk = true;
+        $checks    = [];
+        $pool      = null;
+        $moveTest  = null;
+        $error     = null;
+
+        try {
+            // --- 1. Filesystem checks -------------------------------------------------
+            $enginePath  = storage_path('engines/pikafish_vps');
+            $networkPath = storage_path('engines/pikafish.nnue');
+
+            $binaryExists  = file_exists($enginePath);
+            $networkExists = file_exists($networkPath);
+            $isExecutable  = $binaryExists && is_executable($enginePath);
+            $networkSize   = $networkExists ? filesize($networkPath) : null;
+
+            $overallOk = $overallOk && $binaryExists && $networkExists && $isExecutable;
+
+            $checks = [
+                [
+                    'title'    => 'Engine Binary',
+                    'icon'     => '⚙️',
+                    'ok'       => $binaryExists,
+                    'subtitle' => $binaryExists ? 'pikafish_vps found on disk' : 'Missing at ' . $enginePath,
+                ],
+                [
+                    'title'    => 'Network File',
+                    'icon'     => '🧠',
+                    'ok'       => $networkExists,
+                    'subtitle' => $networkExists ? $this->formatBytes($networkSize) . ' on disk' : 'Missing at ' . $networkPath,
+                ],
+                [
+                    'title'    => 'Executable Permission',
+                    'icon'     => '🔐',
+                    'ok'       => $isExecutable,
+                    'subtitle' => $isExecutable ? 'Binary is runnable' : 'Not executable — check chmod',
+                ],
+            ];
+
+            // --- 2. Worker pool status --------------------------------------------------
+            $client = new \App\Services\XiangqiEngineClient();
+            $status = $client->poolStatus();
+            $available = (int) ($status['available'] ?? 0);
+            $total     = (int) ($status['total'] ?? 0);
+            $poolHealthy = $available > 0;
+            $overallOk = $overallOk && $poolHealthy;
+
+            $pool = [
+                'available' => $available,
+                'total'     => $total,
+                'pct'       => $total > 0 ? round(($available / $total) * 100) : 0,
+                'healthy'   => $poolHealthy,
+                'tone'      => $poolHealthy ? ($available === $total ? 'good' : 'warn') : 'bad',
+                'label'     => $poolHealthy ? ($available === $total ? 'Healthy' : 'Degraded') : 'Down',
+            ];
+
+            // --- 3. Live move test (only if we have a worker to ask) --------------------
+            if ($poolHealthy) {
+                $fen = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1';
+                $start = microtime(true);
+                $bestMove = $client->getBestMove($fen, 3000);
+                $elapsedMs = (int) round((microtime(true) - $start) * 1000);
+                $moveFound = !is_null($bestMove);
+                $overallOk = $overallOk && $moveFound;
+
+                $moveTest = [
+                    'fen'        => $fen,
+                    'bestMove'   => $bestMove,
+                    'moveFound'  => $moveFound,
+                    'elapsedMs'  => $elapsedMs,
+                    'speedTone'  => $elapsedMs < 400 ? 'good' : ($elapsedMs < 1000 ? 'warn' : 'bad'),
+                    'speedLabel' => $elapsedMs < 400 ? '⚡ Fast' : ($elapsedMs < 1000 ? '🙂 OK' : '🐢 Slow'),
+                ];
+            }
+        } catch (\Throwable $e) {
+            $overallOk = false;
+            $error = [
+                'message' => $e->getMessage(),
+                'trace'   => $e->getTraceAsString(),
+            ];
+        }
+
+        return view('admin.test-engine', [
+            'checkedAt'   => $checkedAt,
+            'overallOk'   => $overallOk,
+            'statusTone'  => $overallOk ? 'good' : 'bad',
+            'statusLabel' => $overallOk ? 'All systems operational' : 'Attention needed',
+            'checks'      => $checks,
+            'pool'        => $pool,
+            'moveTest'    => $moveTest,
+            'error'       => $error,
+        ]);
+    }
+
+    /**
+     * Human-readable byte size for the engine diagnostics page.
+     */
+    private function formatBytes(?int $bytes): string
+    {
+        if ($bytes === null) {
+            return '—';
+        }
+
+        $units = ['B', 'KB', 'MB', 'GB'];
+        $i = 0;
+        $value = (float) $bytes;
+
+        while ($value >= 1024 && $i < count($units) - 1) {
+            $value /= 1024;
+            $i++;
+        }
+
+        return round($value, $i === 0 ? 0 : 1) . ' ' . $units[$i];
+    }
+
+    /**
      * Percentage change between two period counts, used for KPI trend badges.
      */
     private function percentChange(int $previous, int $current): float

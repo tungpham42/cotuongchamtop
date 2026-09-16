@@ -161,6 +161,18 @@
                         Articles
                     </a>
                 </nav>
+
+                <div class="px-3 mt-6 mb-3 text-[11px] font-bold uppercase tracking-[.18em] text-slate-500">System</div>
+                <nav class="space-y-1.5">
+                    <a href="{{ route('admin.test-engine') }}"
+                       class="group flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-semibold transition
+                       {{ request()->routeIs('admin.test-engine') ? 'bg-white/10 text-white nav-active' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                        <span class="w-8 h-8 rounded-lg flex items-center justify-center {{ request()->routeIs('admin.test-engine') ? 'bg-cyan-500/20 text-cyan-200' : 'bg-white/5 text-slate-400 group-hover:text-white' }}">
+                            <i class="fa-solid fa-server text-sm"></i>
+                        </span>
+                        Engine Diagnostics
+                    </a>
+                </nav>
             </div>
 
             <div class="mt-auto p-5">
