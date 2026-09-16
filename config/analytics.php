@@ -75,7 +75,7 @@ return [
             'label' => env('GA_FUNNEL_TOFU_LABEL'),
         ],
         'mofu' => [
-            'type' => env('GA_FUNNEL_MOFU_TYPE', 'event'), // metric | event
+            'type' => env('GA_FUNNEL_MOFU_TYPE', 'metric'), // metric | event
             'metric' => env('GA_FUNNEL_MOFU_METRIC', 'engagedSessions'),
             'event' => env('GA_FUNNEL_MOFU_EVENT', 'game_started'), // e.g. AI game started, room joined/created
             'label' => env('GA_FUNNEL_MOFU_LABEL'),
@@ -84,7 +84,7 @@ return [
             'type' => env('GA_FUNNEL_BOFU_TYPE', 'revenue'), // metric | event | revenue
             'metric' => env('GA_FUNNEL_BOFU_METRIC', 'conversions'),
             'event' => env('GA_FUNNEL_BOFU_EVENT', 'sign_up'), // e.g. 'sign_up', 'tournament_paid'
-            'currency' => env('GA_FUNNEL_BOFU_CURRENCY', 'USD'), // display only, revenue mode
+            'currency' => env('GA_FUNNEL_BOFU_CURRENCY', 'VND'), // display only, revenue mode
             'label' => env('GA_FUNNEL_BOFU_LABEL'),
         ],
     ],
