@@ -34,13 +34,18 @@
     {{-- Overview cards --}}
     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4" id="overviewCards">
         @php
+            $conversionsIsRevenue = $report['overview']['conversions_is_revenue'] ?? false;
+            $conversionsCurrency = $report['overview']['conversions_currency'] ?? 'VND';
+
             $cards = [
                 ['key' => 'sessions', 'label' => 'Sessions', 'icon' => 'fa-arrow-trend-up', 'color' => 'indigo'],
                 ['key' => 'active_users', 'label' => 'Active Users', 'icon' => 'fa-users', 'color' => 'sky'],
                 ['key' => 'new_users', 'label' => 'New Users', 'icon' => 'fa-user-plus', 'color' => 'emerald'],
                 ['key' => 'engagement_rate', 'label' => 'Engagement', 'icon' => 'fa-bolt', 'color' => 'amber', 'suffix' => '%'],
                 ['key' => 'page_views', 'label' => 'Page Views', 'icon' => 'fa-eye', 'color' => 'fuchsia'],
-                ['key' => 'conversions', 'label' => 'Conversions', 'icon' => 'fa-flag-checkered', 'color' => 'rose'],
+                $conversionsIsRevenue
+                    ? ['key' => 'conversions', 'label' => 'Ad Revenue (BOFU)', 'icon' => 'fa-sack-dollar', 'color' => 'rose', 'currency' => $conversionsCurrency]
+                    : ['key' => 'conversions', 'label' => 'Conversions', 'icon' => 'fa-flag-checkered', 'color' => 'rose'],
             ];
         @endphp
         @foreach ($cards as $c)
@@ -48,8 +53,14 @@
                 <div class="w-9 h-9 rounded-xl bg-{{ $c['color'] }}-500/10 text-{{ $c['color'] }}-600 flex items-center justify-center mb-3">
                     <i class="fa-solid {{ $c['icon'] }} text-sm"></i>
                 </div>
-                <div class="text-2xl font-extrabold text-slate-900 leading-tight" data-metric="{{ $c['key'] }}">
-                    {{ number_format($report['overview'][$c['key']]) }}{{ $c['suffix'] ?? '' }}
+                <div class="text-2xl font-extrabold text-slate-900 leading-tight"
+                     data-metric="{{ $c['key'] }}"
+                     @if (isset($c['currency'])) data-currency="{{ $c['currency'] }}" @endif>
+                    @if (isset($c['currency']))
+                        {{ number_format($report['overview'][$c['key']]) }} {{ $c['currency'] }}
+                    @else
+                        {{ number_format($report['overview'][$c['key']]) }}{{ $c['suffix'] ?? '' }}
+                    @endif
                 </div>
                 <div class="text-xs font-semibold text-slate-400 mt-1">{{ $c['label'] }}</div>
             </div>
@@ -190,9 +201,27 @@ document.addEventListener('DOMContentLoaded', function () {
         deviceChart = new Chart(ctx, { type: 'pie', data, options: { plugins: { legend: { position: 'bottom' } } } });
     }
 
+    function formatCurrencyValue(value, currency) {
+        try {
+            const options = { style: 'currency', currency: currency || 'VND' };
+            if ((currency || 'VND') === 'VND') {
+                options.minimumFractionDigits = 0;
+                options.maximumFractionDigits = 0;
+            }
+            return new Intl.NumberFormat(undefined, options).format(value);
+        } catch (e) {
+            return `${Number(value).toLocaleString()} ${currency || 'VND'}`;
+        }
+    }
+
     function renderOverview(overview) {
         document.querySelectorAll('[data-metric]').forEach(el => {
             const key = el.dataset.metric;
+            const currency = el.dataset.currency;
+            if (currency) {
+                el.textContent = formatCurrencyValue(overview[key] ?? 0, currency);
+                return;
+            }
             const suffix = key === 'engagement_rate' ? '%' : '';
             el.textContent = Number(overview[key] ?? 0).toLocaleString() + suffix;
         });
@@ -267,10 +296,9 @@ document.addEventListener('DOMContentLoaded', function () {
             { key: 'bofu', title: 'BOFU', sub: funnel.labels?.bofu ?? 'Conversions', value: formatBofuValue(), color: palette.rose, widthPct: bofuWidthPct },
         ];
 
-        // The label shown on the arrow between MOFU and BOFU differs for revenue:
-        // show the exact ad revenue total rather than a derived per-1,000-sessions rate.
+        // The label shown on the arrow between MOFU and BOFU differs for revenue.
         const bofuArrowLabel = isRevenue
-            ? `${formatBofuValue()} ad revenue`
+            ? `${formatBofuValue()} total &middot; ${formatCurrencyValue(funnel.revenue_per_1000_sessions ?? 0)} / 1,000 sessions`
             : `${funnel.bofu_rate}% of MOFU`;
         const rates = [null, `${funnel.mofu_rate}% of TOFU`, bofuArrowLabel];
 

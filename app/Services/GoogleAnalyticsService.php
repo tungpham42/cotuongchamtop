@@ -74,6 +74,9 @@ class GoogleAnalyticsService
 
             $values = array_map(fn ($v) => $v->getValue(), iterator_to_array($row->getMetricValues()));
 
+            $isRevenue = (config('analytics.funnel.bofu.type', 'revenue')) === 'revenue';
+            $conversions = $this->conversionsCount($startDate, $endDate);
+
             return [
                 'sessions' => (int) $values[0],
                 'active_users' => (int) $values[1],
@@ -81,20 +84,21 @@ class GoogleAnalyticsService
                 'engagement_rate' => round(((float) $values[3]) * 100, 1),
                 'avg_session_duration' => round((float) $values[4]),
                 'page_views' => (int) $values[5],
-                'conversions' => (int) round($this->conversionsCount($startDate, $endDate)),
+                'conversions' => $isRevenue ? round($conversions, 2) : (int) round($conversions),
+                'conversions_is_revenue' => $isRevenue,
+                'conversions_currency' => $isRevenue ? config('analytics.funnel.bofu.currency', 'VND') : null,
             ];
         });
     }
 
     /**
-     * The overview "Conversions" card should reflect whatever this business
-     * has actually defined as its real conversion (the funnel's BOFU stage),
-     * not GA4's blanket "conversions" metric — that counts every event
-     * marked as a Key Event site-wide, which may include things unrelated
-     * to this product's actual conversion (or double-count against a
-     * revenue-based BOFU). Revenue isn't a headcount, so when BOFU is set
-     * to "revenue" mode we fall back to GA4's generic conversions count,
-     * since there's no other sensible number to show here.
+     * The overview "Conversions" card should mirror whatever the funnel's
+     * BOFU stage actually measures, not GA4's blanket "conversions" metric
+     * (every event marked as a Key Event site-wide, which may have nothing
+     * to do with this product's real conversion). When BOFU is configured
+     * as AdSense revenue, "conversions" for this business *is* that revenue
+     * figure, so surface the exact AdSense total here instead of a
+     * headcount that wouldn't mean anything in revenue mode.
      */
     protected function conversionsCount(string $startDate, string $endDate): float
     {
@@ -109,7 +113,9 @@ class GoogleAnalyticsService
             return $this->metricValue($startDate, $endDate, $bofu['metric']);
         }
 
-        return $this->metricValue($startDate, $endDate, 'conversions');
+        // 'revenue' (the default): BOFU is AdSense revenue, so that's what
+        // "conversions" means here.
+        return $this->metricValue($startDate, $endDate, 'totalAdRevenue');
     }
 
     /**
@@ -468,6 +474,8 @@ class GoogleAnalyticsService
 
     protected function emptyOverview(): array
     {
+        $isRevenue = (config('analytics.funnel.bofu.type', 'revenue')) === 'revenue';
+
         return [
             'sessions' => 0,
             'active_users' => 0,
@@ -476,6 +484,8 @@ class GoogleAnalyticsService
             'avg_session_duration' => 0,
             'page_views' => 0,
             'conversions' => 0,
+            'conversions_is_revenue' => $isRevenue,
+            'conversions_currency' => $isRevenue ? config('analytics.funnel.bofu.currency', 'VND') : null,
         ];
     }
 
