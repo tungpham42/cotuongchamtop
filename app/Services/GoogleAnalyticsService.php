@@ -231,7 +231,7 @@ class GoogleAnalyticsService
     {
         return $this->remember('funnel', $startDate, $endDate, function () use ($startDate, $endDate) {
             $tofu = $this->resolveStage($startDate, $endDate, config('analytics.funnel.tofu', []), 'Sessions');
-            $mofu = $this->resolveStage($startDate, $endDate, config('analytics.funnel.mofu', []), 'Sign Ups');
+            $mofu = $this->resolveStage($startDate, $endDate, config('analytics.funnel.mofu', []), 'Engaged Sessions');
             $bofu = $this->resolveStage($startDate, $endDate, config('analytics.funnel.bofu', []), 'Conversions');
 
             $isRevenue = $bofu['type'] === 'revenue';
@@ -472,7 +472,7 @@ class GoogleAnalyticsService
             'revenue_per_engaged_session' => 0,
             'labels' => [
                 'tofu' => config('analytics.funnel.tofu.label') ?: 'Sessions',
-                'mofu' => config('analytics.funnel.mofu.label') ?: 'Sign Ups',
+                'mofu' => config('analytics.funnel.mofu.label') ?: 'Engaged Sessions',
                 'bofu' => $bofuStage['label'] ?: ($isRevenue ? 'Ad Revenue' : 'Conversions'),
             ],
         ];

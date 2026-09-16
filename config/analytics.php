@@ -60,12 +60,11 @@ return [
     |
     | Generic GA4 defaults ("engagedSessions", "conversions") rarely describe
     | what actually matters for a specific product. For a game/community site
-    | like this one, MOFU engagement is better measured by an actual "sign_up"
-    | event than by GA4's 10-second "engaged session" heuristic, and BOFU
-    | conversion is whatever your business monetizes on further down funnel
-    | (paid tournament entries via PayOS, a purchase event, or ad revenue).
-    | Set the stages below to match that, then mark the events as Key Events
-    | in GA4 Admin.
+    | like this one, engagement is better measured by an actual gameplay
+    | event than by GA4's 10-second "engaged session" heuristic, and the
+    | real conversion is whatever your business monetizes on (sign-ups,
+    | paid tournament entries via PayOS, or ad revenue). Set the stages
+    | below to match that, then mark the events as Key Events in GA4 Admin.
     |
     */
     'funnel' => [
@@ -76,15 +75,15 @@ return [
             'label' => env('GA_FUNNEL_TOFU_LABEL'),
         ],
         'mofu' => [
-            'type' => env('GA_FUNNEL_MOFU_TYPE', 'event'), // metric | event
+            'type' => env('GA_FUNNEL_MOFU_TYPE', 'metric'), // metric | event
             'metric' => env('GA_FUNNEL_MOFU_METRIC', 'engagedSessions'),
-            'event' => env('GA_FUNNEL_MOFU_EVENT', 'sign_up'), // e.g. 'sign_up', 'game_started', 'room_joined'
+            'event' => env('GA_FUNNEL_MOFU_EVENT', 'game_started'), // e.g. AI game started, room joined/created
             'label' => env('GA_FUNNEL_MOFU_LABEL'),
         ],
         'bofu' => [
             'type' => env('GA_FUNNEL_BOFU_TYPE', 'revenue'), // metric | event | revenue
             'metric' => env('GA_FUNNEL_BOFU_METRIC', 'conversions'),
-            'event' => env('GA_FUNNEL_BOFU_EVENT', 'tournament_paid'), // e.g. 'tournament_paid', 'purchase'
+            'event' => env('GA_FUNNEL_BOFU_EVENT', 'sign_up'), // e.g. 'sign_up', 'tournament_paid'
             'currency' => env('GA_FUNNEL_BOFU_CURRENCY', 'VND'), // display only, revenue mode
             'label' => env('GA_FUNNEL_BOFU_LABEL'),
         ],
