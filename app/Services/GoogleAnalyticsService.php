@@ -9,6 +9,7 @@ use Google\Analytics\Data\V1beta\Metric;
 use Google\Analytics\Data\V1beta\OrderBy;
 use Google\Analytics\Data\V1beta\OrderBy\DimensionOrderBy;
 use Google\Analytics\Data\V1beta\OrderBy\MetricOrderBy;
+use Google\Analytics\Data\V1beta\RunReportRequest;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
@@ -47,7 +48,7 @@ class GoogleAnalyticsService
     public function overview(string $startDate, string $endDate): array
     {
         return $this->remember('overview', $startDate, $endDate, function () use ($startDate, $endDate) {
-            $response = $this->client->runReport([
+            $response = $this->client->runReport(new RunReportRequest([
                 'property' => $this->property,
                 'dateRanges' => [new DateRange(['start_date' => $startDate, 'end_date' => $endDate])],
                 'metrics' => [
@@ -59,7 +60,7 @@ class GoogleAnalyticsService
                     new Metric(['name' => 'screenPageViews']),
                     new Metric(['name' => 'conversions']),
                 ],
-            ]);
+            ]));
 
             $row = $response->getRows()[0] ?? null;
 
@@ -87,7 +88,7 @@ class GoogleAnalyticsService
     public function timeseries(string $startDate, string $endDate): array
     {
         return $this->remember('timeseries', $startDate, $endDate, function () use ($startDate, $endDate) {
-            $response = $this->client->runReport([
+            $response = $this->client->runReport(new RunReportRequest([
                 'property' => $this->property,
                 'dateRanges' => [new DateRange(['start_date' => $startDate, 'end_date' => $endDate])],
                 'dimensions' => [new Dimension(['name' => 'date'])],
@@ -100,7 +101,7 @@ class GoogleAnalyticsService
                         'dimension' => new DimensionOrderBy(['dimension_name' => 'date']),
                     ]),
                 ],
-            ]);
+            ]));
 
             $labels = [];
             $sessions = [];
@@ -124,7 +125,7 @@ class GoogleAnalyticsService
     public function topPages(string $startDate, string $endDate, int $limit = 10): array
     {
         return $this->remember("top_pages_{$limit}", $startDate, $endDate, function () use ($startDate, $endDate, $limit) {
-            $response = $this->client->runReport([
+            $response = $this->client->runReport(new RunReportRequest([
                 'property' => $this->property,
                 'dateRanges' => [new DateRange(['start_date' => $startDate, 'end_date' => $endDate])],
                 'dimensions' => [new Dimension(['name' => 'pagePath'])],
@@ -140,7 +141,7 @@ class GoogleAnalyticsService
                     ]),
                 ],
                 'limit' => $limit,
-            ]);
+            ]));
 
             return $this->mapRows($response, ['path'], ['views', 'sessions', 'avg_duration']);
         });
@@ -152,7 +153,7 @@ class GoogleAnalyticsService
     public function trafficSources(string $startDate, string $endDate): array
     {
         return $this->remember('traffic_sources', $startDate, $endDate, function () use ($startDate, $endDate) {
-            $response = $this->client->runReport([
+            $response = $this->client->runReport(new RunReportRequest([
                 'property' => $this->property,
                 'dateRanges' => [new DateRange(['start_date' => $startDate, 'end_date' => $endDate])],
                 'dimensions' => [new Dimension(['name' => 'sessionDefaultChannelGroup'])],
@@ -163,7 +164,7 @@ class GoogleAnalyticsService
                         'desc' => true,
                     ]),
                 ],
-            ]);
+            ]));
 
             return $this->mapRows($response, ['channel'], ['sessions']);
         });
@@ -175,7 +176,7 @@ class GoogleAnalyticsService
     public function deviceBreakdown(string $startDate, string $endDate): array
     {
         return $this->remember('devices', $startDate, $endDate, function () use ($startDate, $endDate) {
-            $response = $this->client->runReport([
+            $response = $this->client->runReport(new RunReportRequest([
                 'property' => $this->property,
                 'dateRanges' => [new DateRange(['start_date' => $startDate, 'end_date' => $endDate])],
                 'dimensions' => [new Dimension(['name' => 'deviceCategory'])],
@@ -186,7 +187,7 @@ class GoogleAnalyticsService
                         'desc' => true,
                     ]),
                 ],
-            ]);
+            ]));
 
             return $this->mapRows($response, ['device'], ['users']);
         });
@@ -198,7 +199,7 @@ class GoogleAnalyticsService
     public function topCountries(string $startDate, string $endDate, int $limit = 10): array
     {
         return $this->remember("countries_{$limit}", $startDate, $endDate, function () use ($startDate, $endDate, $limit) {
-            $response = $this->client->runReport([
+            $response = $this->client->runReport(new RunReportRequest([
                 'property' => $this->property,
                 'dateRanges' => [new DateRange(['start_date' => $startDate, 'end_date' => $endDate])],
                 'dimensions' => [new Dimension(['name' => 'country'])],
@@ -210,7 +211,7 @@ class GoogleAnalyticsService
                     ]),
                 ],
                 'limit' => $limit,
-            ]);
+            ]));
 
             return $this->mapRows($response, ['country'], ['users']);
         });
