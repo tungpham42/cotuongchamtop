@@ -232,54 +232,92 @@ class GoogleAnalyticsService
         return $this->remember('funnel', $startDate, $endDate, function () use ($startDate, $endDate) {
             $tofuMetric = config('analytics.funnel.tofu_metric', 'sessions');
             $mofuMetric = config('analytics.funnel.mofu_metric', 'engagedSessions');
-            $bofuMetric = config('analytics.funnel.bofu_metric', 'conversions');
-            $bofuEventName = config('analytics.funnel.bofu_event_name');
+            $bofuType = config('analytics.funnel.bofu_type', 'count'); // count | event | revenue
 
+            // TOFU and MOFU always come from the same two-metric report.
             $request = (new RunReportRequest())
                 ->setProperty($this->property)
                 ->setDateRanges([$this->dateRange($startDate, $endDate)])
                 ->setMetrics([
                     new Metric(['name' => $tofuMetric]),
                     new Metric(['name' => $mofuMetric]),
-                    new Metric(['name' => $bofuMetric]),
                 ]);
 
             $response = $this->client->runReport($request);
             $row = $response->getRows()[0] ?? null;
 
-            $tofu = $mofu = $bofu = 0.0;
-
+            $tofu = $mofu = 0.0;
             if ($row) {
-                [$tofu, $mofu, $bofu] = array_map(
+                [$tofu, $mofu] = array_map(
                     fn ($v) => (float) $v->getValue(),
                     iterator_to_array($row->getMetricValues())
                 );
             }
-
-            // If a specific key event was configured for BOFU, count that
-            // event directly instead of using the generic "conversions" metric.
-            if ($bofuEventName) {
-                $bofu = $this->eventCount($startDate, $endDate, $bofuEventName);
-            }
-
             $tofu = (int) round($tofu);
             $mofu = (int) round($mofu);
-            $bofu = (int) round($bofu);
 
-            return [
+            $isRevenue = $bofuType === 'revenue';
+            $bofuLabel = null;
+            $bofu = 0.0;
+
+            if ($isRevenue) {
+                $bofu = round($this->metricValue($startDate, $endDate, 'totalAdRevenue'), 2);
+                $bofuLabel = 'Ad Revenue';
+            } elseif ($bofuType === 'event' && config('analytics.funnel.bofu_event_name')) {
+                $eventName = config('analytics.funnel.bofu_event_name');
+                $bofu = (int) round($this->eventCount($startDate, $endDate, $eventName));
+                $bofuLabel = 'Event: ' . $eventName;
+            } else {
+                $bofuMetric = config('analytics.funnel.bofu_metric', 'conversions');
+                $bofu = (int) round($this->metricValue($startDate, $endDate, $bofuMetric));
+                $bofuLabel = $this->metricLabel($bofuMetric);
+            }
+
+            $result = [
                 'tofu' => $tofu,
                 'mofu' => $mofu,
                 'bofu' => $bofu,
+                'is_revenue' => $isRevenue,
+                'currency' => $isRevenue ? config('analytics.funnel.bofu_currency', 'USD') : null,
                 'mofu_rate' => $tofu > 0 ? round($mofu / $tofu * 100, 1) : 0.0,
-                'bofu_rate' => $mofu > 0 ? round($bofu / $mofu * 100, 1) : 0.0,
-                'overall_rate' => $tofu > 0 ? round($bofu / $tofu * 100, 1) : 0.0,
                 'labels' => [
                     'tofu' => $this->metricLabel($tofuMetric),
                     'mofu' => $this->metricLabel($mofuMetric),
-                    'bofu' => $bofuEventName ? 'Event: ' . $bofuEventName : $this->metricLabel($bofuMetric),
+                    'bofu' => $bofuLabel,
                 ],
             ];
+
+            if ($isRevenue) {
+                // Revenue isn't a headcount, so "% of MOFU" doesn't apply.
+                // Report it as revenue per 1,000 sessions (an RPM-style rate)
+                // and revenue per engaged session instead.
+                $result['revenue_per_1000_sessions'] = $tofu > 0 ? round($bofu / $tofu * 1000, 2) : 0.0;
+                $result['revenue_per_engaged_session'] = $mofu > 0 ? round($bofu / $mofu, 4) : 0.0;
+                $result['bofu_rate'] = null;
+                $result['overall_rate'] = null;
+            } else {
+                $result['bofu_rate'] = $mofu > 0 ? round($bofu / $mofu * 100, 1) : 0.0;
+                $result['overall_rate'] = $tofu > 0 ? round($bofu / $tofu * 100, 1) : 0.0;
+            }
+
+            return $result;
         });
+    }
+
+    /**
+     * Fetch a single aggregate metric value (no dimensions) for the period.
+     */
+    protected function metricValue(string $startDate, string $endDate, string $metricName): float
+    {
+        $request = (new RunReportRequest())
+            ->setProperty($this->property)
+            ->setDateRanges([$this->dateRange($startDate, $endDate)])
+            ->setMetrics([new Metric(['name' => $metricName])]);
+
+        $response = $this->client->runReport($request);
+        $row = $response->getRows()[0] ?? null;
+
+        return $row ? (float) $row->getMetricValues()[0]->getValue() : 0.0;
     }
 
     /**
@@ -422,10 +460,14 @@ class GoogleAnalyticsService
             'tofu' => 0,
             'mofu' => 0,
             'bofu' => 0,
+            'is_revenue' => config('analytics.funnel.bofu_type') === 'revenue',
+            'currency' => config('analytics.funnel.bofu_currency', 'USD'),
             'mofu_rate' => 0,
             'bofu_rate' => 0,
             'overall_rate' => 0,
-            'labels' => ['tofu' => 'Sessions', 'mofu' => 'Engaged Sessions', 'bofu' => 'Conversions'],
+            'revenue_per_1000_sessions' => 0,
+            'revenue_per_engaged_session' => 0,
+            'labels' => ['tofu' => 'Sessions', 'mofu' => 'Engaged Sessions', 'bofu' => 'Ad Revenue'],
         ];
     }
 }

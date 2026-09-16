@@ -230,21 +230,42 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function renderFunnel(funnel) {
+        const isRevenue = !!funnel.is_revenue;
+
+        const formatBofuValue = () => {
+            if (!isRevenue) return Number(funnel.bofu).toLocaleString();
+            try {
+                return new Intl.NumberFormat(undefined, { style: 'currency', currency: funnel.currency || 'USD' }).format(funnel.bofu);
+            } catch (e) {
+                return `${funnel.bofu} ${funnel.currency || 'USD'}`;
+            }
+        };
+
+        // Revenue isn't a headcount, so it can't share the sessions-based width
+        // scale with TOFU/MOFU — give it a fixed proportion of the MOFU bar instead.
+        const bofuWidthPct = isRevenue
+            ? Math.max(20, Math.min(70, Math.round((funnel.tofu > 0 ? funnel.mofu / funnel.tofu : 0.5) * 70)))
+            : (funnel.tofu > 0 ? Math.max(12, Math.min(100, Math.round((funnel.bofu / funnel.tofu) * 100))) : 12);
+
         const stages = [
-            { key: 'tofu', title: 'TOFU', sub: funnel.labels?.tofu ?? 'Sessions', value: funnel.tofu, color: palette.indigo, widthPct: 100 },
-            { key: 'mofu', title: 'MOFU', sub: funnel.labels?.mofu ?? 'Engaged Sessions', value: funnel.mofu, color: palette.sky,
+            { key: 'tofu', title: 'TOFU', sub: funnel.labels?.tofu ?? 'Sessions', value: Number(funnel.tofu).toLocaleString(), color: palette.indigo, widthPct: 100 },
+            { key: 'mofu', title: 'MOFU', sub: funnel.labels?.mofu ?? 'Engaged Sessions', value: Number(funnel.mofu).toLocaleString(), color: palette.sky,
               widthPct: funnel.tofu > 0 ? Math.max(25, Math.min(100, Math.round((funnel.mofu / funnel.tofu) * 100))) : 25 },
-            { key: 'bofu', title: 'BOFU', sub: funnel.labels?.bofu ?? 'Conversions', value: funnel.bofu, color: palette.rose,
-              widthPct: funnel.tofu > 0 ? Math.max(12, Math.min(100, Math.round((funnel.bofu / funnel.tofu) * 100))) : 12 },
+            { key: 'bofu', title: 'BOFU', sub: funnel.labels?.bofu ?? 'Conversions', value: formatBofuValue(), color: palette.rose, widthPct: bofuWidthPct },
         ];
-        const rates = [null, funnel.mofu_rate, funnel.bofu_rate];
+
+        // The label shown on the arrow between MOFU and BOFU differs for revenue.
+        const bofuArrowLabel = isRevenue
+            ? `${formatBofuValue()} total &middot; $${funnel.revenue_per_1000_sessions ?? 0} / 1,000 sessions`
+            : `${funnel.bofu_rate}% of MOFU`;
+        const rates = [null, `${funnel.mofu_rate}% of TOFU`, bofuArrowLabel];
 
         const container = document.getElementById('funnelStages');
         container.innerHTML = stages.map((s, i) => {
             const arrow = i === 0 ? '' : `
                 <div class="flex flex-col items-center py-1 text-slate-400">
                     <i class="fa-solid fa-chevron-down text-xs"></i>
-                    <span class="text-[11px] font-bold text-slate-500">${rates[i]}% of ${stages[i - 1].title}</span>
+                    <span class="text-[11px] font-bold text-slate-500">${rates[i]}</span>
                 </div>`;
             return `${arrow}
                 <div class="w-full flex justify-center">
@@ -255,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <div class="text-[11px] font-bold uppercase tracking-wider opacity-80">${s.title}</div>
                                 <div class="text-xs opacity-80">${s.sub}</div>
                             </div>
-                            <div class="text-xl font-extrabold whitespace-nowrap">${Number(s.value).toLocaleString()}</div>
+                            <div class="text-xl font-extrabold whitespace-nowrap">${s.value}</div>
                         </div>
                     </div>
                 </div>`;
@@ -263,7 +284,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const overallLabel = document.querySelector('#funnelCard .text-slate-400.mb-6');
         if (overallLabel) {
-            overallLabel.textContent = `Awareness, engagement, and conversion for this period — ${funnel.overall_rate}% overall TOFU→BOFU conversion.`;
+            overallLabel.textContent = isRevenue
+                ? `Awareness, engagement, and ad revenue for this period — ${formatBofuValue()} earned, $${funnel.revenue_per_engaged_session ?? 0} per engaged session.`
+                : `Awareness, engagement, and conversion for this period — ${funnel.overall_rate}% overall TOFU→BOFU conversion.`;
         }
     }
 

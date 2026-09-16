@@ -46,19 +46,25 @@ return [
     |
     |   TOFU (awareness)   -> sessions          anyone who landed on the site
     |   MOFU (engagement)  -> engagedSessions    GA4's own "stuck around" metric
-    |   BOFU (conversion)  -> conversions, OR a specific event you name below
+    |   BOFU (conversion)  -> one of three modes, set via bofu_type below:
     |
-    | If you've marked a key event in GA4 (e.g. "sign_up", "room_created",
-    | "tournament_register"), set bofu_event_name to it and BOFU will count
-    | that event specifically instead of the generic "conversions" metric.
-    | Leave it null to use "conversions".
+    |     'count'    -> the generic "conversions" metric (default)
+    |     'event'    -> a specific key event you name in bofu_event_name
+    |                   (e.g. "sign_up", "room_created")
+    |     'revenue'  -> AdSense/ad revenue via GA4's "totalAdRevenue" metric.
+    |                   Requires linking AdSense to this GA4 property under
+    |                   AdSense > Account > Access and authorization >
+    |                   Google Analytics integration. Reports $0 (not an
+    |                   error) until that link is made and data has flowed.
     |
     */
     'funnel' => [
         'tofu_metric' => env('GA_FUNNEL_TOFU_METRIC', 'sessions'),
         'mofu_metric' => env('GA_FUNNEL_MOFU_METRIC', 'engagedSessions'),
+        'bofu_type' => env('GA_FUNNEL_BOFU_TYPE', 'count'), // count | event | revenue
         'bofu_metric' => env('GA_FUNNEL_BOFU_METRIC', 'conversions'),
         'bofu_event_name' => env('GA_FUNNEL_BOFU_EVENT'), // e.g. 'sign_up'
+        'bofu_currency' => env('GA_FUNNEL_BOFU_CURRENCY', 'USD'), // display only
     ],
 
 ];
