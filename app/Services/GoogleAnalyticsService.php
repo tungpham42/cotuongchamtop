@@ -5,6 +5,10 @@ namespace App\Services;
 use Google\Analytics\Data\V1beta\Client\BetaAnalyticsDataClient;
 use Google\Analytics\Data\V1beta\DateRange;
 use Google\Analytics\Data\V1beta\Dimension;
+use Google\Analytics\Data\V1beta\Filter;
+use Google\Analytics\Data\V1beta\Filter\StringFilter;
+use Google\Analytics\Data\V1beta\Filter\StringFilter\MatchType;
+use Google\Analytics\Data\V1beta\FilterExpression;
 use Google\Analytics\Data\V1beta\Metric;
 use Google\Analytics\Data\V1beta\OrderBy;
 use Google\Analytics\Data\V1beta\OrderBy\DimensionOrderBy;
@@ -220,6 +224,105 @@ class GoogleAnalyticsService
     }
 
     /**
+     * TOFU / MOFU / BOFU funnel, built from GA4 metrics (see config/analytics.php
+     * to point BOFU at a specific tracked event instead of generic conversions).
+     */
+    public function funnel(string $startDate, string $endDate): array
+    {
+        return $this->remember('funnel', $startDate, $endDate, function () use ($startDate, $endDate) {
+            $tofuMetric = config('analytics.funnel.tofu_metric', 'sessions');
+            $mofuMetric = config('analytics.funnel.mofu_metric', 'engagedSessions');
+            $bofuMetric = config('analytics.funnel.bofu_metric', 'conversions');
+            $bofuEventName = config('analytics.funnel.bofu_event_name');
+
+            $request = (new RunReportRequest())
+                ->setProperty($this->property)
+                ->setDateRanges([$this->dateRange($startDate, $endDate)])
+                ->setMetrics([
+                    new Metric(['name' => $tofuMetric]),
+                    new Metric(['name' => $mofuMetric]),
+                    new Metric(['name' => $bofuMetric]),
+                ]);
+
+            $response = $this->client->runReport($request);
+            $row = $response->getRows()[0] ?? null;
+
+            $tofu = $mofu = $bofu = 0.0;
+
+            if ($row) {
+                [$tofu, $mofu, $bofu] = array_map(
+                    fn ($v) => (float) $v->getValue(),
+                    iterator_to_array($row->getMetricValues())
+                );
+            }
+
+            // If a specific key event was configured for BOFU, count that
+            // event directly instead of using the generic "conversions" metric.
+            if ($bofuEventName) {
+                $bofu = $this->eventCount($startDate, $endDate, $bofuEventName);
+            }
+
+            $tofu = (int) round($tofu);
+            $mofu = (int) round($mofu);
+            $bofu = (int) round($bofu);
+
+            return [
+                'tofu' => $tofu,
+                'mofu' => $mofu,
+                'bofu' => $bofu,
+                'mofu_rate' => $tofu > 0 ? round($mofu / $tofu * 100, 1) : 0.0,
+                'bofu_rate' => $mofu > 0 ? round($bofu / $mofu * 100, 1) : 0.0,
+                'overall_rate' => $tofu > 0 ? round($bofu / $tofu * 100, 1) : 0.0,
+                'labels' => [
+                    'tofu' => $this->metricLabel($tofuMetric),
+                    'mofu' => $this->metricLabel($mofuMetric),
+                    'bofu' => $bofuEventName ? 'Event: ' . $bofuEventName : $this->metricLabel($bofuMetric),
+                ],
+            ];
+        });
+    }
+
+    /**
+     * Fetch a total event count filtered to a single named event (e.g. "sign_up").
+     */
+    protected function eventCount(string $startDate, string $endDate, string $eventName): float
+    {
+        $request = (new RunReportRequest())
+            ->setProperty($this->property)
+            ->setDateRanges([$this->dateRange($startDate, $endDate)])
+            ->setMetrics([new Metric(['name' => 'eventCount'])])
+            ->setDimensionFilter(
+                (new FilterExpression())->setFilter(
+                    (new Filter())
+                        ->setFieldName('eventName')
+                        ->setStringFilter(
+                            (new StringFilter())
+                                ->setValue($eventName)
+                                ->setMatchType(MatchType::EXACT)
+                        )
+                )
+            );
+
+        $response = $this->client->runReport($request);
+        $row = $response->getRows()[0] ?? null;
+
+        return $row ? (float) $row->getMetricValues()[0]->getValue() : 0.0;
+    }
+
+    protected function metricLabel(string $metric): string
+    {
+        return match ($metric) {
+            'sessions' => 'Sessions',
+            'newUsers' => 'New Users',
+            'activeUsers' => 'Active Users',
+            'engagedSessions' => 'Engaged Sessions',
+            'conversions' => 'Conversions',
+            'screenPageViews' => 'Page Views',
+            default => $metric,
+        };
+    }
+
+    /**
      * Fetch every dataset the marketing dashboard needs in one call.
      */
     public function fullReport(string $startDate, string $endDate): array
@@ -232,6 +335,7 @@ class GoogleAnalyticsService
                 'traffic_sources' => $this->trafficSources($startDate, $endDate),
                 'devices' => $this->deviceBreakdown($startDate, $endDate),
                 'countries' => $this->topCountries($startDate, $endDate),
+                'funnel' => $this->funnel($startDate, $endDate),
                 'error' => null,
             ];
         } catch (Throwable $e) {
@@ -244,6 +348,7 @@ class GoogleAnalyticsService
                 'traffic_sources' => [],
                 'devices' => [],
                 'countries' => [],
+                'funnel' => $this->emptyFunnel(),
                 'error' => 'Could not load Google Analytics data: ' . $e->getMessage(),
             ];
         }
@@ -308,6 +413,19 @@ class GoogleAnalyticsService
             'avg_session_duration' => 0,
             'page_views' => 0,
             'conversions' => 0,
+        ];
+    }
+
+    protected function emptyFunnel(): array
+    {
+        return [
+            'tofu' => 0,
+            'mofu' => 0,
+            'bofu' => 0,
+            'mofu_rate' => 0,
+            'bofu_rate' => 0,
+            'overall_rate' => 0,
+            'labels' => ['tofu' => 'Sessions', 'mofu' => 'Engaged Sessions', 'bofu' => 'Conversions'],
         ];
     }
 }

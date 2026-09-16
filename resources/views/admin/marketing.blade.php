@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('admin')
 
 @section('title', 'Marketing Reports')
 
@@ -54,6 +54,19 @@
                 <div class="text-xs font-semibold text-slate-400 mt-1">{{ $c['label'] }}</div>
             </div>
         @endforeach
+    </div>
+
+    {{-- Marketing funnel: TOFU / MOFU / BOFU --}}
+    <div class="fade-up bg-white rounded-2xl shadow-soft border border-slate-100 p-6" id="funnelCard">
+        <div class="flex items-center justify-between mb-1">
+            <h2 class="text-sm font-extrabold text-slate-800">Marketing Funnel</h2>
+            <span class="text-xs font-semibold text-slate-400">TOFU &rarr; MOFU &rarr; BOFU</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-6">Awareness, engagement, and conversion for this period.</p>
+
+        <div class="flex flex-col items-center gap-2 max-w-xl mx-auto" id="funnelStages">
+            {{-- populated by renderFunnel() in JS, including on initial load --}}
+        </div>
     </div>
 
     {{-- Sessions/users trend + traffic sources --}}
@@ -216,6 +229,44 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>`).join('');
     }
 
+    function renderFunnel(funnel) {
+        const stages = [
+            { key: 'tofu', title: 'TOFU', sub: funnel.labels?.tofu ?? 'Sessions', value: funnel.tofu, color: palette.indigo, widthPct: 100 },
+            { key: 'mofu', title: 'MOFU', sub: funnel.labels?.mofu ?? 'Engaged Sessions', value: funnel.mofu, color: palette.sky,
+              widthPct: funnel.tofu > 0 ? Math.max(25, Math.min(100, Math.round((funnel.mofu / funnel.tofu) * 100))) : 25 },
+            { key: 'bofu', title: 'BOFU', sub: funnel.labels?.bofu ?? 'Conversions', value: funnel.bofu, color: palette.rose,
+              widthPct: funnel.tofu > 0 ? Math.max(12, Math.min(100, Math.round((funnel.bofu / funnel.tofu) * 100))) : 12 },
+        ];
+        const rates = [null, funnel.mofu_rate, funnel.bofu_rate];
+
+        const container = document.getElementById('funnelStages');
+        container.innerHTML = stages.map((s, i) => {
+            const arrow = i === 0 ? '' : `
+                <div class="flex flex-col items-center py-1 text-slate-400">
+                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                    <span class="text-[11px] font-bold text-slate-500">${rates[i]}% of ${stages[i - 1].title}</span>
+                </div>`;
+            return `${arrow}
+                <div class="w-full flex justify-center">
+                    <div class="rounded-2xl px-5 py-4 text-white shadow-sm transition-all duration-500"
+                         style="width: ${s.widthPct}%; background: ${s.color};">
+                        <div class="flex items-center justify-between gap-3">
+                            <div>
+                                <div class="text-[11px] font-bold uppercase tracking-wider opacity-80">${s.title}</div>
+                                <div class="text-xs opacity-80">${s.sub}</div>
+                            </div>
+                            <div class="text-xl font-extrabold whitespace-nowrap">${Number(s.value).toLocaleString()}</div>
+                        </div>
+                    </div>
+                </div>`;
+        }).join('');
+
+        const overallLabel = document.querySelector('#funnelCard .text-slate-400.mb-6');
+        if (overallLabel) {
+            overallLabel.textContent = `Awareness, engagement, and conversion for this period — ${funnel.overall_rate}% overall TOFU→BOFU conversion.`;
+        }
+    }
+
     function renderAll(report) {
         renderOverview(report.overview);
         buildTrendChart(report.timeseries);
@@ -223,6 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
         buildDeviceChart(report.devices);
         renderTopPages(report.top_pages);
         renderCountries(report.countries);
+        renderFunnel(report.funnel);
     }
 
     async function fetchRange(range) {
