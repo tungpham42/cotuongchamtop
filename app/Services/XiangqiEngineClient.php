@@ -182,52 +182,14 @@ class XiangqiEngineClient
         // passing the check together.
         @touch($triggerPath);
 
-        $phpBinary = $this->resolvePhpBinary();
-        if ($phpBinary === null) {
-            // Don't shell out a command we already know is broken — that
-            // used to silently build "setsid '' /path/artisan ..." (empty
-            // PHP_BINARY, common when this runs inside a PHP-FPM request)
-            // and fail invisibly, since this whole call is wrapped in
-            // "> /dev/null 2>&1". Log it instead so an outage is visible.
-            \Illuminate\Support\Facades\Log::error(
-                'xiangqi: could not resolve a usable PHP CLI binary to trigger pool:ensure '
-                . '(PhpExecutableFinder and PHP_BINARY both empty/non-executable). '
-                . 'Set XIANGQI_PHP_BINARY in .env and wire it into config/xiangqi.php as php_binary.'
-            );
-            return;
-        }
-
         $artisan = escapeshellarg(base_path('artisan'));
-        $php = escapeshellarg($phpBinary);
+        $php = escapeshellarg(PHP_BINARY);
         $launcher = trim((string) shell_exec('command -v setsid')) !== '' ? 'setsid' : 'nohup';
 
         // Detached and output-discarded: this runs on the request thread,
         // so it must return immediately regardless of how long
         // xiangqi:pool:ensure itself takes to finish.
         shell_exec("{$launcher} {$php} {$artisan} xiangqi:pool:ensure > /dev/null 2>&1 < /dev/null &");
-    }
-
-    /**
-     * Resolve a real, executable CLI PHP binary.
-     *
-     * PHP_BINARY alone is not safe here: this class is constructed on the
-     * web request path (poolStatus()/isAnyWorkerReady() are called from
-     * controllers), so this code frequently runs under PHP-FPM, where
-     * PHP_BINARY commonly resolves to an empty string rather than a CLI
-     * php path. escapeshellarg('') used to build a silently-broken
-     * "setsid '' ..." command. Prefer Symfony's PhpExecutableFinder (more
-     * reliable across SAPIs), fall back to PHP_BINARY, then to an
-     * explicit config value — and return null (instead of a broken
-     * string) if nothing resolves, so callers can fail loudly/log rather
-     * than shell out garbage.
-     */
-    private function resolvePhpBinary(): ?string
-    {
-        $candidate = (new \Symfony\Component\Process\PhpExecutableFinder())->find(false)
-            ?: (PHP_BINARY !== '' ? PHP_BINARY : null)
-            ?: config('xiangqi.php_binary');
-
-        return ($candidate && is_executable($candidate)) ? $candidate : null;
     }
 
     private function requestOnSocket(string $socketPath, array $payload, float $readTimeoutSeconds): ?array

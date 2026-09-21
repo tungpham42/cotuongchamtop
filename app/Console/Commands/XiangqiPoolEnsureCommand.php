@@ -118,7 +118,7 @@ class XiangqiPoolEnsureCommand extends Command
 
         $logPath = rtrim($socketDir, '/') . "/engine-{$id}.log";
         $artisan = escapeshellarg(base_path('artisan'));
-        $php = escapeshellarg($this->resolvePhpBinary());
+        $php = escapeshellarg(PHP_BINARY);
         $log = escapeshellarg($logPath);
 
         // setsid fully detaches the process from this command's session so
@@ -235,47 +235,5 @@ class XiangqiPoolEnsureCommand extends Command
             $has = trim((string) shell_exec('command -v setsid')) !== '';
         }
         return $has;
-    }
-
-    /**
-     * Resolve a real, executable CLI PHP binary to launch workers with.
-     *
-     * PHP_BINARY is NOT safe to use here on its own: it resolves correctly
-     * when this command runs under the CLI SAPI (e.g. from cron via
-     * `php artisan schedule:run`), but it resolves to an EMPTY STRING under
-     * most PHP-FPM setups. This command can legitimately run in-process
-     * under FPM too — e.g. the ops web page's "Run" button calls
-     * Artisan::call('xiangqi:pool:ensure', ...) directly inside the web
-     * request instead of shelling out to a fresh CLI process. When that
-     * happened, escapeshellarg(PHP_BINARY) produced escapeshellarg(''),
-     * which silently built a broken shell command
-     * ("setsid '' /path/artisan ...") — setsid then failed with
-     * "setsid: failed to execute : No such file or directory" and the
-     * worker never started, with no exception thrown anywhere.
-     *
-     * Symfony's PhpExecutableFinder is far more reliable across SAPIs
-     * (it checks PHP_BINARY, PHP_BINDIR, and common install locations),
-     * so try that first, then PHP_BINARY, then an explicit configured
-     * fallback (set XIANGQI_PHP_BINARY in .env for unusual environments).
-     * If none of those resolve to something actually executable, throw
-     * instead of quietly shelling out a command that can't possibly work.
-     */
-    private function resolvePhpBinary(): string
-    {
-        $candidate = (new \Symfony\Component\Process\PhpExecutableFinder())->find(false)
-            ?: (PHP_BINARY !== '' ? PHP_BINARY : null)
-            ?: config('xiangqi.php_binary');
-
-        if (!$candidate || !is_executable($candidate)) {
-            throw new \RuntimeException(
-                'Could not resolve a usable PHP CLI binary to launch xiangqi workers '
-                . '(PhpExecutableFinder and PHP_BINARY both came up empty/non-executable — '
-                . 'this commonly happens when this command runs in-process under PHP-FPM). '
-                . 'Set XIANGQI_PHP_BINARY in .env to your CLI php path (e.g. /usr/bin/php) '
-                . 'and wire it into config/xiangqi.php as php_binary.'
-            );
-        }
-
-        return $candidate;
     }
 }

@@ -10,6 +10,4 @@ return [
 
     // Must match the numprocs value in the supervisor config.
     'worker_count' => env('XIANGQI_WORKER_COUNT', 5),
-
-    'php_binary' => env('XIANGQI_PHP_BINARY'),
 ];
