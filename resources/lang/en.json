@@ -860,5 +860,6 @@
     "Gợi ý": "Hint",
     "Không có gợi ý cho thế cờ hiện tại.": "No hint is available for the current position.",
     "Nước đi gợi ý": "Suggested Moves",
-    "Đang tính toán": "Calculating"
+    "Đang tính toán": "Calculating",
+    "Đăng nhập để xem gợi ý": "Login to show hint"
 }
