@@ -1,3 +1,4 @@
+@auth
 <div class="hint-widget mx-auto text-center my-1" id="hint-widget">
     <a data-step="6"
         data-intro="{{ __('Ấn vào đây để xem trước những nước đi máy gợi ý') }}"
@@ -8,3 +9,4 @@
         <i class="fad fa-lightbulb-on"></i> {{ __('Gợi ý') }}
     </a>
 </div>
+@endauth
