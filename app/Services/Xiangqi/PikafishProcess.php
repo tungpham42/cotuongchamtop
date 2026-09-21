@@ -63,7 +63,10 @@ class PikafishProcess
         stream_set_write_buffer($this->pipes[0], 0);
 
         $this->send('uci');
-        $this->waitFor('uciok', 10.0);
+        $uciResponse = $this->waitFor('uciok', 10.0);
+        if (strpos($uciResponse, 'uciok') === false) {
+            throw new Exception($this->describeStartupFailure('Engine did not answer "uci"', $uciResponse));
+        }
 
         $this->send('setoption name UCI_Variant value xiangqi');
         $this->send('setoption name EvalFile value ' . $this->networkPath);
@@ -76,10 +79,62 @@ class PikafishProcess
         $response = $this->waitFor('readyok', 15.0);
 
         if (strpos($response, 'readyok') === false) {
-            throw new Exception('Engine did not become ready: ' . substr($response, 0, 300));
+            throw new Exception($this->describeStartupFailure('Engine did not become ready', $response));
         }
 
         $this->ready = true;
+    }
+
+    /**
+     * Build an actionable error for a failed startup handshake.
+     *
+     * A dead engine used to look exactly like a slow one: the 'uciok' wait
+     * result was ignored, and stderr (where the shell and the engine say why
+     * they died) was never read. This reports the exit status, what that
+     * status usually means, and whatever the engine wrote to stderr/stdout.
+     */
+    private function describeStartupFailure(string $what, string $stdout): string
+    {
+        $stderr = '';
+        if (isset($this->pipes[2]) && is_resource($this->pipes[2])) {
+            // Non-blocking (set in start()), so this returns what's there now.
+            $stderr = trim((string) stream_get_contents($this->pipes[2]));
+        }
+
+        $state = 'process is still running but silent';
+        if (is_resource($this->process)) {
+            $status = proc_get_status($this->process);
+            if ($status['running'] && is_resource($this->pipes[1] ?? null) && feof($this->pipes[1])) {
+                // stdout closed, so the engine is going away; give the OS a
+                // moment to report how it exited.
+                for ($i = 0; $i < 10 && $status['running']; $i++) {
+                    usleep(20000);
+                    $status = proc_get_status($this->process);
+                }
+            }
+            if (!$status['running']) {
+                $code = $status['signaled'] ? 128 + (int) $status['termsig'] : (int) $status['exitcode'];
+                $state = $code < 0
+                    ? 'process has exited (status unavailable)'
+                    : 'process exited with code ' . $code . self::exitCodeHint($code);
+            }
+        }
+
+        return $what . ' (' . $state . ')'
+            . ($stderr !== '' ? ' | stderr: ' . substr($stderr, 0, 500) : '')
+            . ($stdout !== '' ? ' | stdout: ' . substr($stdout, 0, 300) : '');
+    }
+
+    private static function exitCodeHint(int $code): string
+    {
+        $hints = [
+            126 => ' - found but could not be executed: permission denied, a noexec mount, or a binary built for another CPU architecture',
+            127 => ' - not found: missing file or missing shared library',
+            132 => ' - illegal instruction: the binary uses CPU features this server lacks',
+            139 => ' - segmentation fault',
+        ];
+
+        return $hints[$code] ?? '';
     }
 
     public function isAlive(): bool
