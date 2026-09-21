@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\XiangqiEngineClient;
 use Illuminate\Console\Command;
+use Symfony\Component\Process\PhpExecutableFinder;
 
 /**
  * `php artisan xiangqi:pool:ensure`
@@ -62,6 +63,19 @@ class XiangqiPoolEnsureCommand extends Command
      */
     private const LAUNCH_STAGGER_SECONDS = 2.0;
 
+    /**
+     * How long to wait for a freshly launched worker to write its pid file.
+     * The worker does that first thing in handle(), right after Laravel
+     * boots, long before the (slow) engine load. If it hasn't appeared by
+     * now the launch itself failed, not the engine.
+     */
+    private const LAUNCH_VERIFY_SECONDS = 8.0;
+
+    // Outcomes of ensureWorker().
+    private const ALIVE = 0;
+    private const LAUNCHED = 1;
+    private const FAILED = 2;
+
     public function handle(): int
     {
         $socketDir = config('xiangqi.socket_dir', storage_path('app/xiangqi'));
@@ -80,33 +94,56 @@ class XiangqiPoolEnsureCommand extends Command
 
         try {
             $launchedAny = false;
+            $failed = false;
             for ($id = 0; $id < $workerCount; $id++) {
                 // Stagger only actual launches, not the (common, cheap)
                 // case where a worker is already alive and we just skip it.
                 if ($launchedAny) {
                     usleep((int) (self::LAUNCH_STAGGER_SECONDS * 1_000_000));
                 }
-                $launchedAny = $this->ensureWorker($id, $socketDir) || $launchedAny;
+
+                $result = $this->ensureWorker($id, $socketDir);
+
+                if ($result === self::LAUNCHED) {
+                    $launchedAny = true;
+                } elseif ($result === self::FAILED) {
+                    // The cause (php path, exec disabled, ...) almost always
+                    // applies to every worker, so don't wait it out N times.
+                    $failed = true;
+                    break;
+                }
             }
         } finally {
             flock($lockHandle, LOCK_UN);
             fclose($lockHandle);
         }
 
+        if ($failed) {
+            $this->error('Stopped after a worker failed to launch. Fix the error above, then run this command again.');
+            return self::FAILURE;
+        }
+
         return self::SUCCESS;
     }
 
     /**
-     * @return bool true if this call actually launched a new process for $id
+     * @return int self::ALIVE (nothing to do), self::LAUNCHED (a new process
+     *             is up and has written its pid file) or self::FAILED
      */
-    private function ensureWorker(int $id, string $socketDir): bool
+    private function ensureWorker(int $id, string $socketDir): int
     {
         $pidPath = rtrim($socketDir, '/') . "/engine-{$id}.pid";
         $startedPath = $this->startedPath($socketDir, $id);
 
         if ($this->isWorkerAlive($id, $pidPath, $startedPath)) {
             $this->line("[worker {$id}] alive, skipping");
-            return false;
+            return self::ALIVE;
+        }
+
+        $php = $this->phpBinary();
+        if ($php === null) {
+            $this->error("[worker {$id}] can't launch: no CLI php binary found. Set 'php_binary' in config/xiangqi.php to its full path (run `which php` over SSH).");
+            return self::FAILED;
         }
 
         $this->warn("[worker {$id}] not running — starting it");
@@ -118,7 +155,7 @@ class XiangqiPoolEnsureCommand extends Command
 
         $logPath = rtrim($socketDir, '/') . "/engine-{$id}.log";
         $artisan = escapeshellarg(base_path('artisan'));
-        $php = escapeshellarg(PHP_BINARY);
+        $phpArg = escapeshellarg($php);
         $log = escapeshellarg($logPath);
 
         // setsid fully detaches the process from this command's session so
@@ -132,18 +169,99 @@ class XiangqiPoolEnsureCommand extends Command
         // window where a worker is running-but-unpingable with no
         // corresponding grace-period record.
         file_put_contents($startedPath, microtime(true));
+        $logOffset = is_file($logPath) ? (int) filesize($logPath) : 0;
 
-        $cmd = "{$launcher} {$php} {$artisan} xiangqi:engine-worker {$id} >> {$log} 2>&1 < /dev/null & echo \$!";
+        $cmd = "{$launcher} {$phpArg} {$artisan} xiangqi:engine-worker {$id} >> {$log} 2>&1 < /dev/null & echo \$!";
         $pid = trim((string) shell_exec($cmd));
 
-        if (ctype_digit($pid)) {
-            $this->info("[worker {$id}] launched with pid {$pid} (check {$logPath} for boot status)");
-        } else {
-            $this->error("[worker {$id}] failed to launch — check that exec/shell_exec is allowed for CLI PHP");
+        if (!ctype_digit($pid)) {
+            $this->error("[worker {$id}] failed to launch — check that exec/shell_exec is allowed for this PHP");
             @unlink($startedPath);
+            return self::FAILED;
         }
 
-        return true;
+        // `echo $!` prints the background job's pid even when the launcher
+        // then fails to exec (e.g. "setsid: failed to execute ..."), so a
+        // numeric pid proves nothing. The worker writes its own pid file
+        // as its first act; wait for that as the real proof of life.
+        if (!$this->waitForPidFile($pidPath, self::LAUNCH_VERIFY_SECONDS)) {
+            $output = $this->logSince($logPath, $logOffset);
+            $this->error("[worker {$id}] launcher ran (pid {$pid}) but the worker never started.");
+            $this->error($output !== '' ? "[worker {$id}] launch output: {$output}" : "[worker {$id}] no launch output; see {$logPath}");
+            @unlink($startedPath);
+            return self::FAILED;
+        }
+
+        $this->info("[worker {$id}] launched with pid {$pid} (check {$logPath} for boot status)");
+
+        return self::LAUNCHED;
+    }
+
+    /**
+     * Full path of a CLI php binary to launch workers with.
+     *
+     * PHP_BINARY can't be used directly: when this command runs inside a
+     * web request (PHP-FPM), it is empty or points at php-fpm itself, and
+     * `setsid '' artisan ...` dies with
+     * "setsid: failed to execute : No such file or directory".
+     */
+    private function phpBinary(): ?string
+    {
+        // An explicit setting always wins (and is trusted; a bad path
+        // shows up in the launch output rather than being silently skipped).
+        $configured = config('xiangqi.php_binary');
+        if (is_string($configured) && $configured !== '') {
+            return $configured;
+        }
+
+        $candidates = [
+            (new PhpExecutableFinder())->find(false) ?: null,
+            PHP_BINDIR . '/php',
+            '/usr/local/bin/php',
+            '/usr/bin/php',
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (!is_string($candidate) || $candidate === '') {
+                continue;
+            }
+            $name = strtolower(basename($candidate));
+            if (str_contains($name, 'fpm') || str_contains($name, 'cgi')) {
+                continue; // not a CLI binary
+            }
+            if (is_file($candidate) && is_executable($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+
+    private function waitForPidFile(string $pidPath, float $timeoutSeconds): bool
+    {
+        $deadline = microtime(true) + $timeoutSeconds;
+
+        do {
+            clearstatcache(true, $pidPath);
+            if (is_file($pidPath) && trim((string) file_get_contents($pidPath)) !== '') {
+                return true;
+            }
+            usleep(100000);
+        } while (microtime(true) < $deadline);
+
+        return false;
+    }
+
+    /** Whatever was appended to the worker log since $offset, on one line. */
+    private function logSince(string $logPath, int $offset): string
+    {
+        if (!is_file($logPath)) {
+            return '';
+        }
+
+        $text = (string) file_get_contents($logPath, false, null, $offset);
+
+        return substr(trim((string) preg_replace('/\s+/', ' ', $text)), 0, 400);
     }
 
     /**
