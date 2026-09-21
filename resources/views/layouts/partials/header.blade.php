@@ -29,7 +29,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <nav class="navbar py-0">
         <ul class="nav navbar-nav align-items-center">
           <li class="nav-item">
-            <a class="home showPromotion" href="{{ $homeUrl }}"><i class="far fa-house"></i> {{ __("Trang chủ") }}</a>
+            <a class="home showPromotion" href="{{ $homeUrl }}"><i class="far fa-home-lg-alt"></i> {{ __("Trang chủ") }}</a>
           </li>
 
           <li class="dropdown">
