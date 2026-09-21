@@ -49,6 +49,120 @@ Route::get('/test-redis', function () {
 });
 
 // ==========================================
+// SECRET OPS: XIANGQI ENGINE POOL CONTROL
+// ==========================================
+// URL:  /_ops/{XIANGQI_OPS_SECRET}/xiangqi-pool
+// Set XIANGQI_OPS_SECRET in .env (24+ random chars, see config/xiangqi_ops.php).
+// Without a valid secret every URL below answers 404, so the page doesn't reveal it exists.
+// For a second lock, add 'auth' and IsAdmin::class to the middleware array.
+$xiangqiOpsGuard = function (?string $given): void {
+    $expected = (string) config('xiangqi_ops.secret');
+
+    if (strlen($expected) < 24 || ! hash_equals($expected, (string) $given)) {
+        abort(404);
+    }
+};
+
+$xiangqiPoolStatus = function (): ?array {
+    try {
+        $status = (new \App\Services\XiangqiEngineClient())->poolStatus();
+
+        return [
+            'available' => (int) ($status['available'] ?? 0),
+            'total'     => (int) ($status['total'] ?? 0),
+        ];
+    } catch (\Throwable $e) {
+        return null;
+    }
+};
+
+Route::prefix('_ops/{secret}/xiangqi-pool')
+    ->name('ops.xiangqi-pool.')
+    ->middleware(['throttle:40,1' /*, 'auth', IsAdmin::class */])
+    ->group(function () use ($xiangqiOpsGuard, $xiangqiPoolStatus) {
+
+        // The control page.
+        Route::get('/', function (string $secret) use ($xiangqiOpsGuard, $xiangqiPoolStatus) {
+            $xiangqiOpsGuard($secret);
+
+            return response()
+                ->view('ops.xiangqi-pool', [
+                    'pool'      => $xiangqiPoolStatus(),
+                    'statusUrl' => route('ops.xiangqi-pool.status', ['secret' => $secret]),
+                    'runUrl'    => route('ops.xiangqi-pool.run', ['secret' => $secret]),
+                    'command'   => 'php artisan xiangqi:pool:ensure',
+                ])
+                ->withHeaders([
+                    'Cache-Control'   => 'no-store',
+                    'X-Robots-Tag'    => 'noindex, nofollow, noarchive',
+                    'Referrer-Policy' => 'no-referrer',
+                ]);
+        })->name('show');
+
+        // Live worker count, polled by the page.
+        Route::get('/status', function (string $secret) use ($xiangqiOpsGuard, $xiangqiPoolStatus) {
+            $xiangqiOpsGuard($secret);
+
+            $pool = $xiangqiPoolStatus();
+
+            return response()
+                ->json($pool ? ['ok' => true] + $pool : ['ok' => false])
+                ->header('Cache-Control', 'no-store');
+        })->name('status');
+
+        // The button. POST only, so CSRF applies and links or crawlers can't trigger it.
+        Route::post('/run', function (string $secret) use ($xiangqiOpsGuard, $xiangqiPoolStatus) {
+            $xiangqiOpsGuard($secret);
+
+            // Workers take a few seconds each to boot; don't let PHP cut the request short.
+            @set_time_limit(120);
+
+            // One run at a time (double clicks, two people, two tabs).
+            $lock = Cache::lock('xiangqi-pool-ensure-web', 120);
+            if (! $lock->get()) {
+                return response()->json([
+                    'ok'      => false,
+                    'message' => 'Another run is already in progress.',
+                ], 409);
+            }
+
+            $buffer   = new \Symfony\Component\Console\Output\BufferedOutput(
+                \Symfony\Component\Console\Output\OutputInterface::VERBOSITY_NORMAL,
+                false // no ANSI colour codes in the browser
+            );
+            $started  = microtime(true);
+            $exitCode = 1;
+            $error    = null;
+
+            try {
+                $exitCode = \Illuminate\Support\Facades\Artisan::call('xiangqi:pool:ensure', [], $buffer);
+            } catch (\Throwable $e) {
+                $error = $e->getMessage();
+            } finally {
+                $lock->release();
+            }
+
+            $output = $buffer->fetch();
+
+            if ($error !== null) {
+                return response()->json([
+                    'ok'      => false,
+                    'message' => 'The command threw an exception: ' . $error,
+                    'output'  => $output,
+                ], 500)->header('Cache-Control', 'no-store');
+            }
+
+            return response()->json([
+                'ok'          => $exitCode === 0,
+                'exit_code'   => $exitCode,
+                'output'      => $output,
+                'duration_ms' => (int) round((microtime(true) - $started) * 1000),
+                'pool'        => $xiangqiPoolStatus(),
+            ])->header('Cache-Control', 'no-store');
+        })->name('run');
+    });
+
+// ==========================================
 // ADMIN ROUTES
 // ==========================================
 Route::middleware(['auth', IsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
