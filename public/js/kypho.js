@@ -538,7 +538,7 @@
                     );
 
                     ctx.fillStyle = "#ffffff";
-                    ctx.font = "36px bolder sans-serif";
+                    ctx.font = "42px sans-serif";
                     ctx.fillText(
                         L.video_footer || "Tạo bởi nền tảng COTUONG.TOP",
                         canvas.width / 2,
