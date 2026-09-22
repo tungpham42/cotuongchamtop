@@ -23,8 +23,8 @@
     }
 @endphp
 
-<meta property="og:title" content="{{ __(':title - Cờ Tướng 2 Người Online, Cờ Thế & Đánh Với Máy, Giải Đấu', ['title' => $siteTitle]) }}" >
-<title>{{ __(':title - Cờ Tướng 2 Người Online, Cờ Thế & Đánh Với Máy, Giải Đấu', ['title' => $siteTitle]) }}</title>
+<meta property="og:title" content="{{ __(':title - Cờ Tướng Online Miễn Phí – Chơi Cờ Tướng 2 Người, Với Máy & Cờ Thế', ['title' => $siteTitle]) }}" >
+<title>{{ __(':title - Cờ Tướng Online Miễn Phí – Chơi Cờ Tướng 2 Người, Với Máy & Cờ Thế', ['title' => $siteTitle]) }}</title>
 @include('common.head')
 @include('common.scripts')
 <script>
