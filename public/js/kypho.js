@@ -537,12 +537,12 @@
                         boardHeight,
                     );
 
-                    ctx.fillStyle = "#888888";
-                    ctx.font = "29px sans-serif";
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "36px bolder sans-serif";
                     ctx.fillText(
                         L.video_footer || "Tạo bởi nền tảng COTUONG.TOP",
                         canvas.width / 2,
-                        canvas.height - 100,
+                        canvas.height - 120,
                     );
 
                     // Nhường luồng cho trình duyệt render, chống giật lag
