@@ -16,12 +16,11 @@
     <a id="hint-btn-guest"
         href="javascript:void(0)"
         class="btn btn-dark btn-lg"
-        onclick="var n = document.getElementById('hint-login-notice'); n.classList.remove('d-none'); clearTimeout(window._hintNoticeTimer); window._hintNoticeTimer = setTimeout(function () { n.classList.add('d-none'); }, 3000);"
         >
         <i class="fad fa-lightbulb-on"></i> {{ __('Gợi ý') }}
     </a>
-    <div id="hint-login-notice" class="alert alert-dark d-none mt-2 mb-0" role="alert">
-        <i class="fad fa-lock"></i> {{ __('Đăng nhập để xem gợi ý') }}
+    <div id="hint-login-notice" class="alert alert-dark mt-2 mb-0" role="alert">
+        <a href="{{ localized_url('login') }}"><i class="fad fa-lock"></i> {{ __('Đăng nhập để xem gợi ý') }}</a>
     </div>
 </div>
 @endguest
