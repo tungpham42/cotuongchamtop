@@ -19,7 +19,7 @@
         >
         <i class="fad fa-lightbulb-on"></i> {{ __('Gợi ý') }}
     </a>
-    <div id="hint-login-notice" class="alert alert-dark mt-2 mb-0" role="alert">
+    <div id="hint-login-notice" class="mt-2 mb-0">
         <a class="text-light" href="{{ localized_url('login') }}"><i class="fad fa-lock"></i> {{ __('Đăng nhập để xem gợi ý') }}</a>
     </div>
 </div>
