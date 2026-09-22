@@ -113,7 +113,7 @@
                             @include('layouts.partials.themeSelector')
                             {{-- @include('layouts.partials.analyzeBtn') --}}
                         </div>
-                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mb-auto">
+                        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mb-auto mt-5">
                             @yield('rightSide')
                         </div>
                     </div>
