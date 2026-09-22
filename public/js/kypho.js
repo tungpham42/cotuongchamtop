@@ -538,9 +538,9 @@
                     );
 
                     ctx.fillStyle = "#888888";
-                    ctx.font = "24px sans-serif";
+                    ctx.font = "29px sans-serif";
                     ctx.fillText(
-                        L.video_footer || "Tạo bởi nền tảng Cờ Tướng",
+                        L.video_footer || "Tạo bởi nền tảng COTUONG.TOP",
                         canvas.width / 2,
                         canvas.height - 100,
                     );
