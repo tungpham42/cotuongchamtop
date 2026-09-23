@@ -7,6 +7,9 @@
         <div>
             <h2 class="text-xl font-extrabold text-slate-900">Ván cờ</h2>
             <p class="text-sm text-slate-500 mt-1">Quản lý toàn bộ ván cờ hiển thị trong thư viện công khai.</p>
+            <span class="px-3 py-1 text-xs font-semibold bg-indigo-50 text-indigo-700 rounded-full border border-indigo-100">
+                Tổng cộng: {{ number_format($games->total()) }}
+            </span>
         </div>
         <a href="{{ route('admin.games.create') }}"
            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold shadow-lift hover:bg-indigo-500 transition">
