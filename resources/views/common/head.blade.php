@@ -9,7 +9,7 @@
 <meta property="og:image" content="@yield('og_image', url('/img/1200x630.jpg'))">
 <meta property="og:image:width" content="@yield('og_image_width', '1200')" >
 <meta property="og:image:height" content="@yield('og_image_height', '630')" >
-<meta property="og:image:alt" content="@yield('og_image_alt', 'Cờ tướng 2 người')" >
+<meta property="og:image:alt" content="@yield('og_image_alt', __('Cờ tướng 2 người'))" >
 <meta property="og:image:type" content="@yield('og_image_type', 'image/jpeg')" />
 
 {{-- SEO: Canonical and Hreflang Tags --}}
