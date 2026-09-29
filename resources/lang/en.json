@@ -1,5 +1,6 @@
 {
     "meta_keywords": "xiangqi, Chinese chess, Chinese chess online, play xiangqi online, play Chinese chess online, xiangqi game, Chinese chess game, free xiangqi, free Chinese chess, xiangqi puzzles, Chinese chess puzzles, xiangqi tactics, Chinese chess tactics, xiangqi board, Chinese chess board",
+    "meta_desc": "Play Xiangqi (Chinese Chess) online for free: PvP matches, AI games, puzzles, tournaments, and game records. Practice tactics and improve your Xiangqi skills.",
     "1\" data-intro=\"Dùng mã phòng này để tìm kiếm trận đấu\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Sao chép mã phòng này nhé\"><i class=\"fad fa-trophy-alt\"></i> Mã phòng": "2\" data-intro=\"Use this room code to search for match\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Copy this room code\"><i class=\"fad fa-trophy-alt\"></i> Room code",
     "2\" data-intro=\"Ấn vào đây nếu bạn không biết đi nước nào\" id=\"resign\" class=\"btn btn-dark btn-lg\"><i class=\"fad fa-flag\"></i> Bỏ cuộc": "1\" data-intro=\"Click here if you are out of clues\" id=\"resign\" class=\"btn btn-dark btn-lg\"><i class=\"fad fa-flag\"></i> Resign",
     "Nhập mật khẩu để vào phòng": "Please enter the password for this Room",
@@ -645,7 +646,6 @@
     "Login failed: :message": "Login failed: :message",
     "Login failed": "Login failed",
     "Cờ tướng 2 người": "2-player Xiangqi",
-    "Cùng chơi với nhiều tính năng hấp dẫn như cờ tướng 2 người, cờ tướng online, chơi cờ tướng với máy, cờ thế và Thi đấu xếp hạng!": "Enjoy many exciting features such as 2-player Xiangqi, online matches, playing against AI, puzzles, and Ranked matches!",
     "Kết quả tìm kiếm cho từ khóa \":query\"": "Search results for \":query\"",
     "Cờ Tướng Online Miễn Phí – Chơi Cờ Tướng 2 Người, Với Máy & Cờ Thế": "Xiangqi (Chinese Chess): Play PvP, AI, Puzzles & Tournaments",
     ":title - Cờ Tướng Online Miễn Phí – Chơi Cờ Tướng 2 Người, Với Máy & Cờ Thế": ":title - Xiangqi (Chinese Chess): Play PvP, AI, Puzzles & Tournaments",

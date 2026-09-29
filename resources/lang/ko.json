@@ -1,5 +1,6 @@
 {
     "meta_keywords": "중국장기, 샹치, 중국 체스, 중국장기 온라인, 샹치 온라인, 중국장기 게임, 샹치 게임, 무료 중국장기, 무료 샹치, 중국장기 퍼즐, 샹치 퍼즐, 중국장기 전술, 샹치 전술, 중국장기 대국",
+    "meta_desc": "샹치(중국 장기)를 무료로 온라인에서 즐겨보세요. 2인 대전, AI 대국, 퍼즐, 기보와 토너먼트로 전술과 실력을 연습할 수 있습니다.",
     "1\" data-intro=\"Dùng mã phòng này để tìm kiếm trận đấu\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Sao chép mã phòng này nhé\"><i class=\"fad fa-trophy-alt\"></i> Mã phòng": "2\" data-intro=\"이 방 코드를 사용하여 매치를 검색하세요\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"이 룸 코드를 복사\"><i class=\"fad fa-trophy-alt\"></i> 객실코드",
     "2\" data-intro=\"Ấn vào đây nếu bạn không biết đi nước nào\" id=\"resign\" class=\"btn btn-dark btn-lg\"><i class=\"fad fa-flag\"></i> Bỏ cuộc": "1\" data-intro=\"단서가 부족한 경우 여기를 클릭하세요\" id=\"resign\" class=\"btn btn-dark btn-lg\"><i class=\"fad fa-flag\"></i> 사직하다",
     "Nhập mật khẩu để vào phòng": "이 회의실의 비밀번호를 입력하십시오",
@@ -646,7 +647,6 @@
     "Login failed: :message": "로그인 실패: :message",
     "Login failed": "로그인 실패",
     "Cờ tướng 2 người": "2인용 장기",
-    "Cùng chơi với nhiều tính năng hấp dẫn như cờ tướng 2 người, cờ tướng online, chơi cờ tướng với máy, cờ thế và Thi đấu xếp hạng!": "2인용 장기, 온라인 장기, AI와 대전, 퍼즐, 랭크 매치 등 다양하고 흥미로운 기능과 함께 플레이하세요!",
     "Kết quả tìm kiếm cho từ khóa \":query\"": "\":query\" 검색 결과",
     "Cờ Tướng Online Miễn Phí – Chơi Cờ Tướng 2 Người, Với Máy & Cờ Thế": "샹치 온라인, 퍼즐 및 무료 AI 대전",
     ":title - Cờ Tướng Online Miễn Phí – Chơi Cờ Tướng 2 Người, Với Máy & Cờ Thế": ":title - 샹치 온라인, 퍼즐 및 무료 AI 대전",

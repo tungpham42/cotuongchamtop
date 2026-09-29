@@ -1,5 +1,6 @@
 {
     "meta_keywords": "中国象棋, 象棋, 中国象棋在线, 象棋在线, 在线象棋游戏, 中国象棋游戏, 象棋游戏, 免费中国象棋, 免费象棋, 中国象棋残局, 象棋残局, 中国象棋棋谱, 象棋棋谱, 中国象棋战术, 象棋对弈",
+    "meta_desc": "免费在线玩中国象棋（象棋）：双人对战、人机对弈、残局、棋谱和比赛。练习战术，提升棋力，随时开始中国象棋对局。",
     "1\" data-intro=\"Dùng mã phòng này để tìm kiếm trận đấu\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"Sao chép mã phòng này nhé\"><i class=\"fad fa-trophy-alt\"></i> Mã phòng:": "2\" data-intro=\"使用此房间代码进行匹配搜索\" class=\"alert alert-dark d-inline-block\" role=\"alert\" data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-title=\"复制这个房间代码\"><i class=\"fad fa-trophy-alt\"></i> 房间代码：",
     "2\" data-intro=\"Ấn vào đây nếu bạn không biết đi nước nào\" id=\"resign\" class=\"btn btn-dark btn-lg\"><i class=\"fad fa-flag\"></i> Bỏ cuộc": "1\" data-intro=\"如果您没有线索，请点击这里\" id=\"resign\" class=\"btn btn-dark btn-lg\"><i class=\"fad fa-flag\"></i> 辞职",
     "Nhập mật khẩu để vào phòng:": "请输入此房间的密码：",
@@ -649,7 +650,6 @@
     "Login failed: :message": "登录失败：:message",
     "Login failed": "登录失败",
     "Cờ tướng 2 người": "双人象棋",
-    "Cùng chơi với nhiều tính năng hấp dẫn như cờ tướng 2 người, cờ tướng online, chơi cờ tướng với máy, cờ thế và Thi đấu xếp hạng!": "一起来玩吧，享受双人象棋、在线对战、人机对战、残局挑战和排位赛等众多激动人心的功能！",
     "Kết quả tìm kiếm cho từ khóa \":query\"": "\":query\" 的搜索结果",
     "Cờ Tướng Online Miễn Phí – Chơi Cờ Tướng 2 Người, Với Máy & Cờ Thế": "在线象棋、残局破解与免费人机对战",
     ":title - Cờ Tướng Online Miễn Phí – Chơi Cờ Tướng 2 Người, Với Máy & Cờ Thế": ":title - 在线象棋、残局破解与免费人机对战",

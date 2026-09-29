@@ -9,8 +9,8 @@
 <meta name="description" content="@yield('meta_description')" >
 <meta property="og:description" content="@yield('meta_description')" >
 @else
-<meta name="description" content="{{ __('Cùng chơi với nhiều tính năng hấp dẫn như cờ tướng 2 người, cờ tướng online, chơi cờ tướng với máy, cờ thế và Thi đấu xếp hạng!') }}" >
-<meta property="og:description" content="{{ __('Cùng chơi với nhiều tính năng hấp dẫn như cờ tướng 2 người, cờ tướng online, chơi cờ tướng với máy, cờ thế và Thi đấu xếp hạng!') }}" >
+<meta name="description" content="{{ __('meta_desc') }}" >
+<meta property="og:description" content="{{ __('meta_desc') }}" >
 @endif
 
 @php
