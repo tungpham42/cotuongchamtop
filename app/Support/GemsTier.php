@@ -93,7 +93,7 @@ enum GemsTier: string
             self::Bronze    => 'fa-shield',
             self::Silver    => 'fa-shield-alt',
             self::Gold      => 'fa-award',
-            self::Platinum  => 'fa-gem',
+            self::Platinum  => 'fa-medal',
             self::Diamond   => 'fa-gem',
             self::Legendary => 'fa-crown',
         };
@@ -108,7 +108,7 @@ enum GemsTier: string
             self::Bronze    => '#a8763e',
             self::Silver    => '#9aa4ad',
             self::Gold      => '#e6b800',
-            self::Platinum  => '#5bc0de',
+            self::Platinum  => '#E5E4E2',
             self::Diamond   => '#7b3fe4',
             self::Legendary => '#ff4d4f',
         };
