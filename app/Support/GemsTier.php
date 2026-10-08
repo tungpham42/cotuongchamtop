@@ -13,6 +13,14 @@ namespace App\Support;
  *    in a colored/gradient ring that gets thicker and glows more at higher
  *    tiers.
  *
+ * Design rules (so tiers never blur together):
+ *  - Every tier owns a distinct hue: copper, steel, gold, cyan, violet, fire.
+ *  - Every tier owns a distinct icon silhouette (shield, star, medal,
+ *    trophy, gem, crown), so rank is readable even without color.
+ *  - Material gets richer going up: metallic gradient -> animated shimmer
+ *    -> pulsing sparkle -> rotating fire ring (see gems-tier.css).
+ *  - Ring thickness and glow radius both grow with tier.
+ *
  * Thresholds are deliberately generous at the bottom (karma accrues
  * slowly from things like every_login / match_played / match_win) and
  * compress toward the top so the highest badges stay meaningful.
@@ -86,84 +94,98 @@ enum GemsTier: string
     /**
      * Font Awesome Duotone icon suffix for the small badge (project already
      * loads the `fad` set, see UserPresenter::renderOnlineStatusIndicator).
+     *
+     * One unique silhouette per tier: shield -> star -> medal -> trophy ->
+     * gem -> crown.
      */
     public function icon(): string
     {
         return match ($this) {
             self::Bronze    => 'fa-shield',
-            self::Silver    => 'fa-shield-alt',
-            self::Gold      => 'fa-award',
-            self::Platinum  => 'fa-medal',
+            self::Silver    => 'fa-star',
+            self::Gold      => 'fa-medal',
+            self::Platinum  => 'fa-trophy',
             self::Diamond   => 'fa-gem',
             self::Legendary => 'fa-crown',
         };
     }
 
     /**
-     * Flat accent color used by the small badge icon.
+     * Flat accent color used by the small badge icon. Mid-tone on purpose
+     * so each reads on both light and dark backgrounds.
      */
     public function color(): string
     {
         return match ($this) {
-            self::Bronze    => '#a8763e',
-            self::Silver    => '#9aa4ad',
-            self::Gold      => '#e6b800',
-            self::Platinum  => '#E5E4E2',
-            self::Diamond   => '#7b3fe4',
-            self::Legendary => '#ff4d4f',
+            self::Bronze    => '#cd7f32', // copper
+            self::Silver    => '#8e9bab', // cool steel
+            self::Gold      => '#ffb300', // rich amber gold
+            self::Platinum  => '#14b8d4', // ice cyan
+            self::Diamond   => '#a855f7', // vivid violet
+            self::Legendary => '#ff3d2e', // fire red
         };
     }
 
     /**
-     * Ring thickness (px) for the avatar frame. Grows with tier so higher
-     * ranks are recognizable at a glance even before reading the tooltip.
+     * Ring thickness (px) for the avatar frame. Strictly increasing past
+     * Silver so higher ranks stand out at a glance.
      */
     public function frameThickness(): int
     {
         return match ($this) {
-            self::Bronze, self::Silver     => 4,
-            self::Gold, self::Platinum     => 5,
-            self::Diamond, self::Legendary => 6,
+            self::Bronze    => 3,
+            self::Silver    => 4,
+            self::Gold      => 5,
+            self::Platinum  => 5,
+            self::Diamond   => 6,
+            self::Legendary => 7,
         };
     }
 
     /**
-     * CSS `background` value for the avatar frame ring. Lower tiers get a
-     * flat color; Gold and up get a gradient so the frame reads as a more
-     * premium material.
+     * CSS `background` value for the avatar frame ring.
+     *
+     *  - Bronze/Silver/Gold: multi-stop metallic gradients (dark-light-dark)
+     *    that read as polished metal rather than a flat color.
+     *  - Platinum: icy cyan sheen with white highlights.
+     *  - Diamond: violet-to-magenta facets with a bright white "cut" stop.
+     *  - Legendary: conic fire ring. It reads --gems-angle, which
+     *    gems-tier.css animates to spin it; unstyled it stays a static ring.
      */
     public function frameBackground(): string
     {
         return match ($this) {
-            self::Bronze    => '#a8763e',
-            self::Silver    => '#9aa4ad',
-            self::Gold      => 'linear-gradient(135deg, #f5d16b, #e6b800)',
-            self::Platinum  => 'linear-gradient(135deg, #bdeaf7, #5bc0de)',
-            self::Diamond   => 'linear-gradient(135deg, #b57bff, #7b3fe4)',
-            self::Legendary => 'linear-gradient(135deg, #ff4d4f, #ffb347, #ff4d4f)',
+            self::Bronze    => 'linear-gradient(135deg, #e8b37a 0%, #cd7f32 40%, #8a4b17 70%, #d99a5b 100%)',
+            self::Silver    => 'linear-gradient(135deg, #ffffff 0%, #b4c0cd 35%, #6f7d8c 65%, #e3e9ef 100%)',
+            self::Gold      => 'linear-gradient(135deg, #fff3b0 0%, #ffcc1f 30%, #b87c00 62%, #ffe27a 100%)',
+            self::Platinum  => 'linear-gradient(135deg, #f0fdff 0%, #67e8f9 30%, #0e8fb0 62%, #c8f6ff 100%)',
+            self::Diamond   => 'linear-gradient(135deg, #f5e9ff 0%, #c084fc 25%, #7c3aed 50%, #e879f9 75%, #f5e9ff 100%)',
+            self::Legendary => 'conic-gradient(from var(--gems-angle, 0deg), #ff1744, #ff9100, #ffea00, #ff9100, #ff1744)',
         };
     }
 
     /**
-     * CSS `box-shadow` value giving the frame a glow — subtle for
-     * Bronze/Silver, increasingly strong through Legendary.
+     * CSS `box-shadow` value giving the frame a glow. Radius and opacity
+     * climb every tier; Diamond and Legendary use layered shadows (tight
+     * bright core + wide soft halo) for a real "aura" look.
      */
     public function frameGlow(): string
     {
         return match ($this) {
-            self::Bronze    => '0 0 3px rgba(168, 118, 62, 0.45)',
-            self::Silver    => '0 0 4px rgba(154, 164, 173, 0.5)',
-            self::Gold      => '0 0 6px rgba(230, 184, 0, 0.6)',
-            self::Platinum  => '0 0 8px rgba(91, 192, 222, 0.7)',
-            self::Diamond   => '0 0 10px rgba(123, 63, 228, 0.8)',
-            self::Legendary => '0 0 14px rgba(255, 77, 79, 0.85)',
+            self::Bronze    => '0 0 3px rgba(205, 127, 50, 0.45)',
+            self::Silver    => '0 0 5px rgba(142, 155, 171, 0.55)',
+            self::Gold      => '0 0 8px rgba(255, 179, 0, 0.65)',
+            self::Platinum  => '0 0 10px rgba(20, 184, 212, 0.75)',
+            self::Diamond   => '0 0 6px rgba(232, 121, 249, 0.9), 0 0 16px rgba(168, 85, 247, 0.7)',
+            self::Legendary => '0 0 8px rgba(255, 234, 0, 0.8), 0 0 20px rgba(255, 61, 46, 0.85), 0 0 34px rgba(255, 145, 0, 0.5)',
         };
     }
 
     /**
-     * BEM-style hook for a stylesheet to add extras inline styles can't do
-     * (e.g. a slow rotating gradient or shimmer keyframe on Legendary).
-     * Purely a class name — no behavior is implied if left unstyled.
+     * BEM-style hook for a stylesheet to add extras inline styles can't do.
+     * See gems-tier.css: shimmer on Gold/Platinum, sparkle pulse on Diamond,
+     * spinning fire ring on Legendary. Purely a class name — nothing breaks
+     * if left unstyled.
      */
     public function frameCssClass(): string
     {
