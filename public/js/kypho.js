@@ -542,7 +542,7 @@
                     ctx.fillText(
                         L.video_footer || "Tạo bởi nền tảng COTUONG.TOP",
                         canvas.width / 2,
-                        canvas.height - 200,
+                        canvas.height - 220,
                     );
 
                     // Nhường luồng cho trình duyệt render, chống giật lag
