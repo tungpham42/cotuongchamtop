@@ -1,0 +1,188 @@
+{
+  "browser": "154.0.8037.99",
+  "scope": "actual timer core and DOM; simulated API/time except real interval baseline; no backend E2E",
+  "results": [
+    {
+      "name": "normal countdown without synchronization",
+      "status": "baseline passed",
+      "observed": {
+        "time": {
+          "red": 600,
+          "black": 600
+        },
+        "activePlayer": "red",
+        "serverMoveElapsed": 0,
+        "isGameOver": false,
+        "red": "9:55",
+        "black": "10:00",
+        "move": "1:55"
+      }
+    },
+    {
+      "name": "sync after 1 second resets clock backwards",
+      "status": "bug reproduced",
+      "expected": "9:59 after sync",
+      "observed": {
+        "before": {
+          "time": {
+            "red": 600,
+            "black": 600
+          },
+          "activePlayer": "red",
+          "serverMoveElapsed": 0,
+          "isGameOver": false,
+          "red": "9:59",
+          "black": "10:00",
+          "move": "1:59"
+        },
+        "after": {
+          "time": {
+            "red": 600,
+            "black": 600
+          },
+          "activePlayer": "red",
+          "serverMoveElapsed": 0,
+          "isGameOver": false,
+          "red": "10:00",
+          "black": "10:00",
+          "move": "2:00"
+        }
+      }
+    },
+    {
+      "name": "frequent sync freezes display then jumps",
+      "status": "bug reproduced",
+      "observed": [
+        {
+          "ms": 500,
+          "red": "10:00",
+          "move": "2:00"
+        },
+        {
+          "ms": 1000,
+          "red": "10:00",
+          "move": "2:00"
+        },
+        {
+          "ms": 1500,
+          "red": "10:00",
+          "move": "2:00"
+        },
+        {
+          "ms": 2000,
+          "red": "9:58",
+          "move": "1:58"
+        }
+      ]
+    },
+    {
+      "name": "paused:red continues countdown",
+      "status": "bug reproduced",
+      "expected": "8:20 and stopped",
+      "observed": {
+        "time": {
+          "red": 500,
+          "black": 600
+        },
+        "activePlayer": "red",
+        "serverMoveElapsed": 30,
+        "isGameOver": false,
+        "red": "8:15",
+        "black": "10:00",
+        "move": "1:25"
+      }
+    },
+    {
+      "name": "older snapshot rolls optimistic turn back",
+      "status": "bug reproduced",
+      "expected": "black remains active",
+      "observed": {
+        "before": {
+          "time": {
+            "red": 599,
+            "black": 600
+          },
+          "activePlayer": "black",
+          "serverMoveElapsed": 0,
+          "isGameOver": false,
+          "red": "9:59",
+          "black": "10:00",
+          "move": "2:00"
+        },
+        "after": {
+          "time": {
+            "red": 600,
+            "black": 600
+          },
+          "activePlayer": "red",
+          "serverMoveElapsed": 1,
+          "isGameOver": false,
+          "red": "10:00",
+          "black": "10:00",
+          "move": "1:59"
+        }
+      }
+    },
+    {
+      "name": "snapshot delayed by 800ms loses 800ms",
+      "status": "bug reproduced",
+      "expectedRemaining": 598.2,
+      "calculatedRemaining": 599,
+      "lagSeconds": 0.8,
+      "observed": {
+        "time": {
+          "red": 600,
+          "black": 600
+        },
+        "activePlayer": "red",
+        "serverMoveElapsed": 0,
+        "isGameOver": false,
+        "red": "9:59",
+        "black": "10:00",
+        "move": "1:59"
+      }
+    },
+    {
+      "name": "premature local timeout cannot recover from server sync",
+      "status": "bug reproduced",
+      "expected": "server correction should be accepted before finalizing",
+      "observed": {
+        "time": {
+          "red": 1,
+          "black": 600
+        },
+        "activePlayer": null,
+        "serverMoveElapsed": 0,
+        "isGameOver": true,
+        "red": "0:00",
+        "black": "10:00",
+        "move": "1:59",
+        "submitted": [
+          [
+            "audit",
+            "-1"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "real browser interval and DOM update cost",
+      "status": "baseline passed",
+      "observed": {
+        "time": {
+          "red": 600,
+          "black": 600
+        },
+        "activePlayer": "red",
+        "serverMoveElapsed": 0,
+        "isGameOver": false,
+        "red": "9:57",
+        "black": "10:00",
+        "move": "1:57",
+        "ticks": 32,
+        "meanTickMs": 0.05625000083819032,
+        "maxTickMs": 0.20000000298023224
+      }
+    }
+  ]
+}
