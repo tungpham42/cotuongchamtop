@@ -28,7 +28,7 @@
     <span id="room-name">{{ __('Tên phòng') }}: {{ $room->name }}</span>
 
     @if ($role !== 'watch')
-        @include('layouts.partials.timer')
+        {{-- @include('layouts.partials.timer') --}}
 
         <!-- INCLUDE VIDEO CALL COMPONENT HERE -->
         @if(isset($room->host_id) && in_array($role, ['host', 'guest', 'red', 'black']) && auth()->check())
