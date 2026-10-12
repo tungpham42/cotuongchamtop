@@ -147,9 +147,15 @@
 
     // Đã đổi url('/') thành url('/api') để trỏ đúng vào group API của bạn
     const apiBase = "{{ url('/api') }}";
+    let requestSequence = 0, mutationGeneration = 0;
 
     // Refactored apiReq to support explicit HTTP methods (e.g., POST with no body)
     const apiReq = async (endpoint, methodOrBody = 'GET', bodyData = null) => {
+        const requestId = ++requestSequence;
+        const generation = mutationGeneration;
+        const sentAt = performance.now();
+        const abortController = new AbortController();
+        const requestTimeout = setTimeout(() => abortController.abort(), 8000);
         let method = 'GET';
         let body = null;
 
@@ -164,6 +170,7 @@
         try {
             const options = {
                 method: method,
+                signal: abortController.signal,
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': csrfToken,
@@ -178,9 +185,13 @@
 
             const res = await fetch(`${apiBase}/${endpoint}`, options);
             if (!res.ok) throw new Error(`API Error: ${res.status}`);
-            return await res.json();
+            const data = await res.json();
+            return { ...data, _requestId: requestId, _generation: generation,
+                _sentAt: sentAt, _receivedAt: performance.now() };
         } catch (err) {
             console.error(err);
+        } finally {
+            clearTimeout(requestTimeout);
         }
     };
 
@@ -192,21 +203,41 @@
     const MOVE_TIME_LIMIT = 120;
     let time = { red: 600, black: 600 };
     let serverMoveElapsed = 0, activePlayer = null, isGameOver = false;
-    let tickInterval = null, localLastUpdate = Date.now();
+    let tickInterval = null, localLastUpdate = performance.now();
+    let pausedPlayer = null, pendingMove = null;
+    let lastSnapshotAt = -Infinity, lastRequestId = 0;
+    let lastRevision = -1;
+    let serverOffset = null, bestRoundTrip = Infinity;
+    let syncInFlight = false, lastTimeoutCheck = -Infinity;
+    let timeoutRetryAt = 0;
+    let readinessInFlight = false;
 
     let playersOnline = 0;
     window.hasMatchStarted = false;
 
     const formatTime = (s) => `${Math.floor(s / 60)}:${(Math.floor(s) % 60).toString().padStart(2, '0')}`;
-    const stopAll = () => clearInterval(tickInterval);
-    const startAll = () => { stopAll(); localLastUpdate = Date.now(); tickInterval = setInterval(updateUI, 100); };
+    const stopAll = () => { clearInterval(tickInterval); tickInterval = null; };
+    // Starting a renderer must not change the snapshot's time anchor.
+    const startAll = () => { if (tickInterval === null) tickInterval = setInterval(updateUI, 100); };
+    const setText = (node, value) => { if (node.textContent !== value) node.textContent = value; };
+    const refreshTimer = async () => {
+        if (syncInFlight || pendingMove || isGameOver) return;
+        syncInFlight = true;
+        try {
+            const data = await apiReq(`getTime/${roomCode}`);
+            syncTimerState(data);
+            return data;
+        }
+        finally { syncInFlight = false; }
+    };
 
-    const updateUI = () => {
+    const updateUI = (checkExpiry = true) => {
         if (isGameOver) return;
 
-        const elapsed = activePlayer ? (Date.now() - localLastUpdate) / 1000 : 0;
+        const elapsed = activePlayer ? Math.max(0, performance.now() - localLastUpdate) / 1000 : 0;
         const current = { red: time.red, black: time.black };
         const moveTime = { red: MOVE_TIME_LIMIT, black: MOVE_TIME_LIMIT };
+        if (pausedPlayer) moveTime[pausedPlayer] = Math.max(0, MOVE_TIME_LIMIT - serverMoveElapsed);
 
         if (activePlayer) {
             current[activePlayer] = Math.max(0, current[activePlayer] - elapsed);
@@ -215,55 +246,93 @@
         }
 
         ['red', 'black'].forEach(side => {
-            ui[side].clock.innerText = formatTime(Math.ceil(current[side]));
-            ui[side].moveClock.innerText = formatTime(Math.ceil(moveTime[side]));
+            setText(ui[side].clock, formatTime(Math.ceil(current[side])));
+            setText(ui[side].moveClock, formatTime(Math.ceil(moveTime[side])));
             ui[side].moveClock.classList.toggle('danger', moveTime[side] <= 10 && activePlayer === side);
             ui[side].box.classList.toggle('active', activePlayer === side);
         });
 
-        if (current.red <= 0 || current.black <= 0) {
-            isGameOver = true;
-            stopAll();
-            activePlayer = null;
-            ui.red.box.classList.remove("active");
-            ui.black.box.classList.remove("active");
-
-            if (typeof updateResult === 'function') {
-                const result = current.red <= 0 && current.black <= 0 ? '0' : (current.red <= 0 ? '-1' : '1');
-                updateResult(roomCode, result);
-            }
+        if (checkExpiry && activePlayer && (current.red <= 0 || current.black <= 0) &&
+            performance.now() - lastTimeoutCheck >= 1000) {
+            lastTimeoutCheck = performance.now();
+            // A local estimate may be wrong; only the server can confirm expiry.
+            refreshTimer();
         }
     };
 
     const syncTimerState = (serverData) => {
-        if (isGameOver || !serverData) return;
+        if (isGameOver || !serverData) return false;
 
+        if (serverData._generation !== undefined && serverData._generation !== mutationGeneration) return false;
+        if (pendingMove && serverData.fen !== pendingMove.fen) return false;
+        const snapshotAt = Number(serverData.snapshot_at);
+        const hasTimestamp = Number.isFinite(snapshotAt);
+        const revision = Number(serverData.timer_revision ?? lastRevision);
+        if (serverData.timer_revision !== undefined && (!Number.isSafeInteger(revision) || revision < 0)) return false;
+        if (revision < lastRevision) return false;
+        if (revision === lastRevision && hasTimestamp && snapshotAt < lastSnapshotAt) return false;
+        if (revision === lastRevision && serverData._requestId && serverData._requestId < lastRequestId) return false;
+
+        const newRed = Number(serverData.red_time), newBlack = Number(serverData.black_time);
+        const newMoveElapsed = Number(serverData.move_elapsed || 0);
         const sPlayer = serverData.active_player;
+        if (![newRed, newBlack, newMoveElapsed].every(Number.isFinite) ||
+            ![null, undefined, 'waiting', 'red', 'black', 'paused:red', 'paused:black'].includes(sPlayer)) return false;
+
         let newActivePlayer = null;
+        pausedPlayer = null;
 
         if (!sPlayer || sPlayer === 'waiting') {
             window.hasMatchStarted = false;
         } else {
-            newActivePlayer = sPlayer.startsWith('paused:') ? sPlayer.split(':')[1] : sPlayer;
+            if (sPlayer.startsWith('paused:')) pausedPlayer = sPlayer.split(':')[1];
+            else newActivePlayer = sPlayer;
             window.hasMatchStarted = true;
         }
 
-        const newRed = parseFloat(serverData.red_time);
-        const newBlack = parseFloat(serverData.black_time);
+        // Estimate server clock offset using the fastest HTTP sample. Events use
+        // the same offset, so network transport time is included in elapsed.
+        if (hasTimestamp && Number.isFinite(serverData._sentAt) && Number.isFinite(serverData._receivedAt)) {
+            const roundTrip = serverData._receivedAt - serverData._sentAt;
+            if (roundTrip >= 0 && roundTrip < bestRoundTrip) {
+                bestRoundTrip = roundTrip;
+                serverOffset = snapshotAt - (serverData._sentAt + serverData._receivedAt) / 2;
+            }
+        }
+        const age = hasTimestamp && serverOffset !== null
+            ? Math.max(0, performance.now() + serverOffset - snapshotAt) : 0;
 
-        if (activePlayer !== newActivePlayer || Math.abs(time.red - newRed) > 1.5 || Math.abs(time.black - newBlack) > 1.5) {
-            time.red = newRed;
-            time.black = newBlack;
-            serverMoveElapsed = parseFloat(serverData.move_elapsed || 0);
+        time.red = Math.max(0, newRed);
+        time.black = Math.max(0, newBlack);
+        serverMoveElapsed = Math.max(0, newMoveElapsed);
+        activePlayer = newActivePlayer;
+        localLastUpdate = performance.now() - age;
+        if (hasTimestamp) lastSnapshotAt = snapshotAt;
+        lastRevision = revision;
+        if (serverData._requestId) lastRequestId = serverData._requestId;
+        if (serverData.fen && !pendingMove) {
+            window.dispatchEvent(new CustomEvent('room:timer-snapshot', { detail: serverData }));
         }
 
-        activePlayer = newActivePlayer;
-        localLastUpdate = Date.now();
+        // Include paused move time in the final render before stopping.
+        if ((serverData.result !== null && serverData.result !== undefined) ||
+            (serverData.timed_out === true && performance.now() >= timeoutRetryAt)) {
+            const result = serverData.result ?? (sPlayer === 'red' ? '-1' : '1');
+            updateUI(false);
+            isGameOver = true;
+            stopAll();
+            activePlayer = null;
+            ui.red.box.classList.remove('active');
+            ui.black.box.classList.remove('active');
+            if (typeof updateResult === 'function') updateResult(roomCode, String(result), serverData.timed_out === true);
+            return true;
+        }
 
         updateUI();
 
         if (activePlayer) startAll();
         else stopAll();
+        return true;
     };
 
     const handlePresenceChange = () => {
@@ -273,9 +342,7 @@
             ui.black.box.classList.remove('paused-offline');
 
             // Explicitly pass 'POST' method for startMatch
-            apiReq(`startMatch/${roomCode}`, 'POST').then(() => {
-                apiReq(`getTime/${roomCode}`).then(syncTimerState);
-            });
+            apiReq(`startMatch/${roomCode}`, 'POST').then(syncTimerState);
         }
 
         if (!window.hasMatchStarted && playersOnline < 2) {
@@ -285,13 +352,14 @@
     };
 
     const checkRoomReadiness = async () => {
-        if (window.hasMatchStarted) return;
+        if (window.hasMatchStarted || readinessInFlight) return;
+        readinessInFlight = true;
 
         try {
             const res = await apiReq('getRoomIds', { 'ma-phong': roomCode });
 
-            const hasHost = res && (res.host_id || res.host_session);
-            const hasGuest = res && (res.guest_id || res.guest_session);
+            const hasHost = res && (res.host_id || res.has_host);
+            const hasGuest = res && (res.guest_id || res.has_guest);
 
             if (hasHost && hasGuest) {
                 window.hasMatchStarted = true;
@@ -299,16 +367,21 @@
                 ui.black.box.classList.remove('paused-offline');
 
                 // Explicitly pass 'POST' method for startMatch
-                await apiReq(`startMatch/${roomCode}`, 'POST');
-                apiReq(`getTime/${roomCode}`).then(syncTimerState);
+                syncTimerState(await apiReq(`startMatch/${roomCode}`, 'POST'));
             }
         } catch (e) {
             console.warn("Error checking room readiness:", e);
+        } finally {
+            readinessInFlight = false;
         }
     };
 
-    window.switchTurn = async (rc, currentPlayer) => {
-        const elapsed = (Date.now() - localLastUpdate) / 1000;
+    window.switchTurn = async (rc, currentPlayer, movePayload = null) => {
+        if (isGameOver || pendingMove || activePlayer !== currentPlayer) return null;
+        mutationGeneration++;
+        const generation = mutationGeneration;
+        const elapsed = Math.max(0, performance.now() - localLastUpdate) / 1000;
+        pendingMove = { fen: movePayload?.FEN };
 
         if (time[currentPlayer]) {
             time[currentPlayer] = Math.max(0, time[currentPlayer] - elapsed);
@@ -317,14 +390,28 @@
 
         activePlayer = currentPlayer === 'red' ? 'black' : 'red';
         serverMoveElapsed = 0;
-        localLastUpdate = Date.now();
+        localLastUpdate = performance.now();
 
         updateUI();
         startAll();
 
-        apiReq(`switchTurn/${rc}`, { current_player: currentPlayer }).then(serverData => {
-            if (serverData) syncTimerState(serverData);
-        });
+        const serverData = await apiReq(movePayload ? 'updateFEN' : `switchTurn/${rc}`,
+            { ...movePayload, current_player: currentPlayer });
+        if (generation !== mutationGeneration) return null;
+        pendingMove = null;
+        if (serverData) syncTimerState(serverData);
+        else {
+            const recovered = await refreshTimer();
+            return recovered ? { ...recovered, success: recovered.fen === movePayload?.FEN } : null;
+        }
+        return serverData;
+    };
+    window.canSubmitRoomMove = side => !isGameOver && !pendingMove && activePlayer === side;
+    window.resumeRoomTimer = () => {
+        isGameOver = false;
+        timeoutRetryAt = performance.now() + 3000;
+        lastTimeoutCheck = timeoutRetryAt;
+        return refreshTimer();
     };
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -344,26 +431,27 @@
         }
 
         if (window.Echo) {
+            window.Echo.connector?.pusher?.connection?.bind('connected', refreshTimer);
             window.Echo.join(`room.${roomCode}`)
                 .here(users => { playersOnline = users.length; handlePresenceChange(); })
                 .joining(() => { playersOnline++; handlePresenceChange(); })
                 .leaving(() => { playersOnline = Math.max(0, playersOnline - 1); handlePresenceChange(); });
 
-            let syncTimeout = null;
-
             window.Echo.channel(`room.${roomCode}`)
                 .listen('.room.updated', (e) => {
                     if (e.room) {
                         checkRoomReadiness();
-                        clearTimeout(syncTimeout);
-                        syncTimeout = setTimeout(() => {
-                            apiReq(`getTime/${roomCode}`).then(syncTimerState);
-                        }, 200);
+                        if (e.timer) syncTimerState(e.timer);
+                        else refreshTimer();
                     }
                 });
         }
 
-        apiReq(`getTime/${roomCode}`).then(syncTimerState);
+        refreshTimer();
+        // Recover from missed events without overlapping HTTP polls.
+        setInterval(() => { if (!document.hidden) refreshTimer(); }, 15000);
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshTimer(); });
+        window.addEventListener('online', refreshTimer);
 
         const startMatchFallbackInterval = setInterval(() => {
             if (window.hasMatchStarted) {

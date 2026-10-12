@@ -136,7 +136,8 @@ class RoomTimerTest extends TestCase
         $redRoom->active_player = 'red';
         $redRoom->shouldReceive('update')
             ->once()
-            ->with(['result' => '-1', 'modified_at' => Mockery::type(Carbon::class)])
+            ->withArgs(fn ($attributes) => $attributes['result'] === '-1' &&
+                $attributes['modified_at'] instanceof \DateTimeInterface)
             ->andReturn(true);
 
         $this->assertTrue($redRoom->processTimeout());
@@ -145,9 +146,39 @@ class RoomTimerTest extends TestCase
         $blackRoom->active_player = 'black';
         $blackRoom->shouldReceive('update')
             ->once()
-            ->with(['result' => '1', 'modified_at' => Mockery::type(Carbon::class)])
+            ->withArgs(fn ($attributes) => $attributes['result'] === '1' &&
+                $attributes['modified_at'] instanceof \DateTimeInterface)
             ->andReturn(true);
 
         $this->assertTrue($blackRoom->processTimeout());
+    }
+
+    public function test_turn_switch_preserves_fractions_and_rejects_duplicate_turn(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-10-12 12:00:00.500'));
+        $room = Mockery::mock(Room::class)->makePartial();
+        $room->fill([
+            'code' => 'FRACTION', 'active_player' => 'red',
+            'red_time' => 600, 'black_time' => 600,
+            'last_update' => now()->subMilliseconds(1250),
+        ]);
+        $room->shouldReceive('save')->once()->andReturn(true);
+        $this->assertTrue($room->switchTurn('red'));
+        $this->assertSame(598.75, $room->red_time);
+        $this->assertSame('black', $room->active_player);
+        $this->assertSame(1, $room->timer_revision);
+        $this->assertFalse($room->switchTurn('red'));
+        $this->assertSame(598.75, $room->red_time);
+    }
+
+    public function test_future_anchor_does_not_add_time_to_the_clock(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-10-12 12:00:00'));
+        $room = new Room([
+            'active_player' => 'red', 'red_time' => 600, 'black_time' => 600,
+            'last_update' => now()->addSeconds(5),
+        ]);
+        $this->assertSame(600.0, $room->getCalculatedTimes()['red_time']);
+        $this->assertSame(0.0, $room->getCalculatedTimes()['move_elapsed']);
     }
 }
