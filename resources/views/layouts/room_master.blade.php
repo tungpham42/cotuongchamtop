@@ -27,9 +27,8 @@
     @endif
     <span id="room-name">{{ __('Tên phòng') }}: {{ $room->name }}</span>
 
-    @include('layouts.partials.timer')
-
     @if ($role !== 'watch')
+        {{-- @include('layouts.partials.timer') --}}
 
         <!-- INCLUDE VIDEO CALL COMPONENT HERE -->
         @if(isset($room->host_id) && in_array($role, ['host', 'guest', 'red', 'black']) && auth()->check())
@@ -152,24 +151,6 @@
         let kypho = null;
         let lastMoveIccs = null;
         let expectedFEN = null;
-        let boardRevision = {{ (int) ($room->timer_revision ?? 0) }};
-        // HTTP recovery also restores a move that was never accepted by the server.
-        window.addEventListener('room:timer-snapshot', event => {
-            const data = event.detail;
-            const revision = Number(data.timer_revision ?? boardRevision);
-            if (revision < boardRevision) return;
-            boardRevision = revision;
-            expectedFEN = null;
-            if (data.fen && data.fen !== game.fen()) {
-                const positionChanged = data.fen.split(' ')[0] !== game.fen().split(' ')[0];
-                currentFEN = data.fen;
-                game.load(data.fen);
-                board.position(data.fen, true);
-                if (positionChanged && !data.fen.includes('resign')) playMoveResultSound();
-                if (kypho) kypho.syncMoves('{{ url('/api') }}/readMoves/{{ $roomCode }}');
-                updateStatus();
-            }
-        });
 
         @if ($role === 'watch')
             let serverFen = '{!! $room->fen !!}';
@@ -228,31 +209,16 @@
                     dataType: 'text'
                 });
             @else
-                const previousFEN = currentFEN;
                 currentFEN = game.fen();
                 expectedFEN = game.fen();
-                const payload = { 'ma-phong': roomCode, 'FEN': game.fen(), 'expected_fen': previousFEN };
+                const payload = { 'ma-phong': roomCode, 'FEN': game.fen() };
                 if (moveIccs) { payload.move = moveIccs; }
 
-                // Save the move and clock together; render the new turn immediately.
-                if (moveIccs || !game.game_over()) {
+                // [SỬA Ở ĐÂY] Gọi chuyển lượt ngay lập tức trên Client (Optimistic UI)
+                if (!game.game_over()) {
                     let activeColor = game.turn() === 'b' ? 'red' : 'black';
                     if (typeof window.switchTurn === 'function') {
-                        return window.switchTurn(roomCode, activeColor, payload).then(data => {
-                            if (data && data.timer_revision < boardRevision) return;
-                            if (data) {
-                                boardRevision = Number(data.timer_revision ?? boardRevision);
-                                expectedFEN = null;
-                            }
-                            if (data?.success === false && data.fen) {
-                                expectedFEN = null;
-                                currentFEN = data.fen;
-                                game.load(data.fen);
-                                board.position(data.fen, true);
-                                updateStatus();
-                            }
-                            if (kypho) kypho.syncMoves('{{ url('/api') }}/readMoves/' + roomCode);
-                        });
+                        window.switchTurn('{{ $roomCode }}', activeColor);
                     }
                 }
 
@@ -265,7 +231,6 @@
                 }).done(function() {
                     // Chỉ đồng bộ kỳ phổ sau khi FEN đã lưu
                     if (kypho) { kypho.syncMoves('{{ url('/api') }}/readMoves/' + roomCode); }
-                    updateStatus();
                 });
             @endif
         }
@@ -275,21 +240,18 @@
                 .listen('.room.updated', (e) => {
                     let newFEN = e.room.fen;
                     if (!newFEN) return;
-                    const revision = Number(e.timer?.timer_revision ?? boardRevision);
-                    if (revision < boardRevision) return;
 
                     // -------------------------------------------------------------
                     // FIX RUBBER-BANDING (GIẬT CỤC CỜ)
                     // Bỏ qua bản tin FEN cũ do race condition của API switchTurn
                     // -------------------------------------------------------------
-                    if (expectedFEN && newFEN !== expectedFEN && game.fen() === expectedFEN && revision <= boardRevision) {
+                    if (expectedFEN && newFEN !== expectedFEN && game.fen() === expectedFEN) {
                         return;
                     }
                     // Khi server trả về đúng FEN mới nhất, ta mở khóa
-                    if (expectedFEN && (newFEN === expectedFEN || revision > boardRevision)) {
+                    if (expectedFEN && newFEN === expectedFEN) {
                         expectedFEN = null;
                     }
-                    boardRevision = revision;
 
                     // So sánh phần vị trí quân cờ (bỏ qua lượt đi, đếm số bước ở đuôi FEN)
                     let newBoardState = newFEN.split(' ')[0];
@@ -320,29 +282,20 @@
         }
 
         @if ($role !== 'watch')
-        function updateResult(roomCode, result, timeout = false) {
+        function updateResult(roomCode, result) {
             if (alertShown) return;
             alertShown = true;
-            let timeoutRejected = false;
-            const recoverTimeout = () => {
-                if (!timeout) return;
-                timeoutRejected = true;
-                alertShown = false;
-                window.resumeRoomTimer?.();
-            };
             @if($role !== 'random' && auth()->check() && (auth()->id() == $room->host_id || auth()->id() == $room->guest_id))
                 let successMsg = '{{ __("Trận đấu kết thúc") }}';
                 $.ajax({
                     type: "POST",
                     url: '{{ url('/api') }}/updateResult',
-                    data: { 'ma-phong': roomCode, 'result': result, 'timeout': timeout ? 1 : 0, 'id': '{{ auth()->id() }}', 'lang': '{{ __('vi') }}' },
+                    data: { 'ma-phong': roomCode, 'result': result, 'id': '{{ auth()->id() }}', 'lang': '{{ __('vi') }}' },
                     dataType: 'json'
                 }).done(function(data) {
-                    if (timeout && data?.success === false) { recoverTimeout(); return; }
                     if (data && data.success) successMsg = data.success;
                     if (data && data.karma) successMsg += buildKarmaMessage(data.karma);
-                }).fail(recoverTimeout).always(function() {
-                    if (timeoutRejected) return;
+                }).always(function() {
                     bootbox.alert({
                         message: successMsg,
                         size: 'small',
@@ -373,13 +326,11 @@
                 $.ajax({
                     type: "POST",
                     url: '{{ url('/api') }}/updateSideResult',
-                    data: { 'ma-phong': roomCode, 'result': result, 'timeout': timeout ? 1 : 0, 'lang': '{{ __('vi') }}', 'side': '{{ $updateSide }}' },
+                    data: { 'ma-phong': roomCode, 'result': result, 'lang': '{{ __('vi') }}', 'side': '{{ $updateSide }}' },
                     dataType: 'json'
                 }).done(function(data) {
-                    if (timeout && data?.success === false) { recoverTimeout(); return; }
                     if (data && data.success) sideMsg = data.success;
-                }).fail(recoverTimeout).always(function() {
-                    if (timeoutRejected) return;
+                }).always(function() {
                     bootbox.alert({
                         message: sideMsg,
                         size: 'small',
@@ -407,7 +358,6 @@
                 @endif
 
                 if (game.game_over()) return false;
-                if (window.canSubmitRoomMove && !window.canSubmitRoomMove(game.turn() === 'r' ? 'red' : 'black')) return false;
                 if (typeof systemPaused !== 'undefined' && systemPaused) return false;
                 if ((game.turn() === 'r' && piece.search(/^b/) !== -1) || (game.turn() === 'b' && piece.search(/^r/) !== -1)) return false;
                 if ((board.orientation() == 'red' && game.turn() === 'b') || (board.orientation() == 'black' && game.turn() === 'r')) return false;
@@ -421,8 +371,7 @@
                 updateStatus();
             @else
                 if (move !== null) { lastMoveIccs = move.iccs; } else { return 'snapback'; }
-                // A terminal result must wait until its final move is stored.
-                if (!game.game_over()) updateStatus();
+                updateStatus();
             @endif
         }
 
@@ -437,9 +386,8 @@
 
         function onSnapEnd () {
             playMoveResultSound();
-            const saved = updateFenCode('{{ $roomCode }}', lastMoveIccs);
+            updateFenCode('{{ $roomCode }}', lastMoveIccs);
             lastMoveIccs = null;
-            saved?.then?.(() => updateStatus());
         }
 
         function updatePlayersTitle() {

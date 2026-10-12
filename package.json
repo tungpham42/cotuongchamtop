@@ -7,8 +7,7 @@
         "hot": "mix watch --hot",
         "prod": "npm run production",
         "production": "mix --production",
-        "test:e2e": "npx playwright test",
-        "test:timer": "node scripts/timer-lag-audit.cjs"
+        "test:e2e": "npx playwright test"
     },
     "devDependencies": {
         "@playwright/test": "^1.57.0",

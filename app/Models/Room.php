@@ -14,8 +14,6 @@ class Room extends Model
     protected $primaryKey = 'code';
     protected $keyType = 'string';
     public $incrementing = false;
-    protected $casts = ['last_update' => 'datetime'];
-    protected $dateFormat = 'Y-m-d H:i:s.v';
     public const INITIAL_FEN = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1';
 
     public $fillable = [
@@ -55,7 +53,7 @@ class Room extends Model
 
     public function hasTimedOut(): bool
     {
-        if ($this->result !== null || !in_array($this->active_player, ['red', 'black'], true)) {
+        if (!$this->active_player || $this->active_player === 'waiting' || str_starts_with($this->active_player, 'paused:')) {
             return false;
         }
 
@@ -80,12 +78,8 @@ class Room extends Model
         return false;
     }
 
-    public function switchTurn(string $currentPlayer): bool
+    public function switchTurn(string $currentPlayer): void
     {
-        // Callers must hold a row lock. A retry must never charge the same turn twice.
-        if ($this->result !== null || $this->active_player !== $currentPlayer || $this->hasTimedOut()) {
-            return false;
-        }
         $elapsed = $this->getSecondsSinceLastUpdate();
         $totalMoveElapsed = $this->getBufferedMoveElapsed() + $elapsed;
 
@@ -102,9 +96,7 @@ class Room extends Model
         $this->active_player = $currentPlayer === 'red' ? 'black' : 'red';
         $this->last_update = now();
         $this->modified_at = now();
-        $this->timer_revision = (int) $this->timer_revision + 1;
         $this->save();
-        return true;
     }
 
     public function getCalculatedTimes(): array
@@ -117,7 +109,7 @@ class Room extends Model
             ? explode(':', $this->active_player)[1]
             : $this->active_player;
 
-        if (in_array($this->active_player, ['red', 'black'], true)) {
+        if ($this->active_player && !str_starts_with($this->active_player, 'paused:')) {
             $elapsed = $this->getSecondsSinceLastUpdate();
             $moveElapsed += $elapsed;
 
@@ -135,11 +127,6 @@ class Room extends Model
             'black_time'    => round($blackTime, 3),
             'move_elapsed'  => round($moveElapsed, 3),
             'active_player' => $this->active_player,
-            'snapshot_at'   => now()->getTimestampMs(),
-            'timer_revision' => (int) $this->timer_revision,
-            'fen'           => $this->fen,
-            'result'        => $this->result,
-            'timed_out'     => $this->hasTimedOut(),
         ];
     }
 
@@ -148,7 +135,7 @@ class Room extends Model
     private function getSecondsSinceLastUpdate(): float
     {
         $lastUpdate = $this->last_update ? Carbon::parse($this->last_update) : now();
-        return max(0, $lastUpdate->diffInMilliseconds(now(), false) / 1000);
+        return $lastUpdate->diffInMilliseconds(now()) / 1000;
     }
 
     private function getBufferedMoveElapsed(): float

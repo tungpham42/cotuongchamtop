@@ -14,12 +14,10 @@ class RoomUpdated implements ShouldBroadcastNow
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $room;
-    public $timer;
 
     public function __construct(Room $room)
     {
         $this->room = $room;
-        $this->timer = $room->getCalculatedTimes();
     }
 
     // Đặt tên kênh (channel) dựa trên mã phòng

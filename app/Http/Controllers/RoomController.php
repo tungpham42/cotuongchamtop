@@ -160,71 +160,27 @@ class RoomController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        // New room clients save the board and clock in one locked operation.
-        // Keep the legacy FEN-only path for callers that do not submit a move.
-        if ($request->has('current_player')) {
-            $request->validate([
-                'ma-phong' => 'required|string',
-                'FEN' => 'required|string',
-                'expected_fen' => 'required|string',
-                'current_player' => 'required|in:red,black',
-                'move' => 'nullable|string',
-            ]);
+        $room = Room::firstOrNew(['code' => $request->input('ma-phong')]);
 
-            [$room, $accepted, $changed] = DB::transaction(function () use ($request) {
-                $room = Room::where('code', $request->input('ma-phong'))->lockForUpdate()->firstOrFail();
-                if ($room->result !== null || $room->hasTimedOut()) {
-                    return [$room, false, false];
-                }
-                // An identical retry is successful without charging another turn.
-                if ($room->fen === $request->input('FEN')) {
-                    return [$room, true, false];
-                }
-                if ($room->fen !== $request->input('expected_fen') ||
-                    $room->active_player !== $request->input('current_player')) {
-                    return [$room, false, false];
-                }
-
-                $room->fen = $request->input('FEN');
-                $move = $request->input('move');
-                if ($move && Schema::hasColumn('rooms', 'moves')) {
-                    $moves = json_decode($room->moves ?: '[]', true) ?: [];
-                    $moves[] = $move;
-                    $room->moves = json_encode($moves);
-                }
-                if (!$room->switchTurn($request->input('current_player'))) {
-                    return [$room->fresh(), false, false];
-                }
-                return [$room, true, true];
-            });
-
-            // Broadcast after commit so readers cannot observe half a move.
-            if ($changed) broadcast(new RoomUpdated($room));
-            return response()->json(array_merge($room->getCalculatedTimes(), [
-                'success' => $accepted,
-            ]));
+        if (!is_null($room->result)) {
+            return response()->json(['success' => false, 'message' => __('Game already finished')], 400);
         }
 
-        $room = DB::transaction(function () use ($request) {
-            $room = Room::where('code', $request->input('ma-phong'))->lockForUpdate()->first()
-                ?? new Room(['code' => $request->input('ma-phong')]);
-            if ($room->result !== null) return null;
-            $room->fen = $request->input('FEN');
-            $room->modified_at = now();
-            $move = $request->input('move');
-            if ($move && Schema::hasColumn('rooms', 'moves')) {
-                $moves = !empty($room->moves) ? json_decode($room->moves, true) : [];
-                if (is_array($moves) && end($moves) !== $move) {
-                    $moves[] = $move;
-                    $room->moves = json_encode($moves);
-                }
+        $room->fen = $request->input('FEN');
+        $room->modified_at = now();
+        $move = $request->input('move');
+
+        if ($move && Schema::hasColumn('rooms', 'moves')) {
+            $moves = !empty($room->moves) ? json_decode($room->moves, true) : [];
+            if (is_array($moves) && end($moves) !== $move) {
+                $moves[] = $move;
+                $room->moves = json_encode($moves);
             }
-            $room->timer_revision = (int) $room->timer_revision + 1;
-            $room->save();
-            return $room;
-        });
-        if (!$room) return response()->json(['success' => false, 'message' => __('Game already finished')], 400);
-        broadcast(new RoomUpdated($room));
+        }
+
+        $room->save();
+        broadcast(new RoomUpdated($room->fresh()));
+
         return response()->json(['success' => true]);
     }
 
@@ -257,7 +213,7 @@ class RoomController extends Controller
         if ($request->has('lang')) app()->setLocale((string) $request->input('lang'));
 
         try {
-            return DB::transaction(function () use ($request, $code, $result, $auth_id, $playedKarma, $winKarma) {
+            return DB::transaction(function () use ($code, $result, $auth_id, $playedKarma, $winKarma) {
                 $room = Room::lockForUpdate()->where('code', $code)->firstOrFail();
 
                 if (!in_array($auth_id, [$room->host_id, $room->guest_id])) {
@@ -265,10 +221,6 @@ class RoomController extends Controller
                 }
 
                 if (is_null($room->result)) {
-                    if ($request->boolean('timeout') && (!$room->hasTimedOut() ||
-                        $result !== ($room->active_player === 'red' ? '-1' : '1'))) {
-                        return response()->json(['success' => false, 'message' => 'Timer is still running.'], 409);
-                    }
                     $room->update(['result' => $result, 'modified_at' => now()]);
                     $this->advanceTournament($room, $result);
                     $this->awardMatchKarma($room, $result, $playedKarma, $winKarma);
@@ -366,17 +318,12 @@ class RoomController extends Controller
     ): JsonResponse {
         if ($request->has('lang')) app()->setLocale((string) $request->input('lang'));
 
-        $accepted = DB::transaction(function () use ($request) {
-            $room = Room::where('code', $request->input('ma-phong'))->lockForUpdate()->firstOrFail();
-            if (is_null($room->result)) {
-                $result = (string) $request->input('result');
-                if ($request->boolean('timeout') && (!$room->hasTimedOut() ||
-                    $result !== ($room->active_player === 'red' ? '-1' : '1'))) return false;
-                $room->update(['result' => $result, 'modified_at' => now()]);
-            }
-            return true;
-        });
-        if (!$accepted) return response()->json(['success' => false], 409);
+        $room = Room::where('code', $request->input('ma-phong'))->first();
+
+        if ($room && is_null($room->result)) {
+            $result = (string) $request->input('result');
+            $room->update(['result' => $result, 'modified_at' => now()]);
+        }
 
         $successMessages = [
             'red' => ['-1' => __('Red lost!'), '0' => __('Draw.'), '1' => __('Red won!')],
@@ -607,30 +554,36 @@ class RoomController extends Controller
         $currentPlayer = $request->input('current_player');
         if (!in_array($currentPlayer, ['red', 'black'])) return response()->json(['error' => 'Invalid player'], 422);
 
-        [$room, $changed] = DB::transaction(function () use ($roomCode, $currentPlayer) {
-            $room = Room::where('code', $roomCode)->lockForUpdate()->firstOrFail();
-            return [$room, $room->switchTurn($currentPlayer)];
-        });
-        if ($changed) broadcast(new RoomUpdated($room));
-        return response()->json(array_merge($room->getCalculatedTimes(), ['success' => $changed]));
+        $room = Room::where('code', $roomCode)->firstOrFail();
+        $room->switchTurn($currentPlayer);
+
+        $freshRoom = $room->fresh();
+        broadcast(new RoomUpdated($freshRoom));
+
+        $times = $freshRoom->getCalculatedTimes();
+
+        return response()->json([
+            'success'       => true,
+            'red_time'      => $times['red_time'],
+            'black_time'    => $times['black_time'],
+            'active_player' => $times['active_player'],
+            'move_elapsed'  => 0,
+            'last_update'   => optional($freshRoom->last_update)->toDateTimeString(),
+        ]);
     }
 
     public function startTimer(string $roomCode, string $player): JsonResponse
     {
-        if (!in_array($player, ['red', 'black'], true)) return response()->json(['error' => 'Invalid player'], 422);
-        [$room, $changed] = DB::transaction(function () use ($roomCode, $player) {
-            $room = Room::where('code', $roomCode)->lockForUpdate()->firstOrFail();
-            $changed = $room->result === null && $room->active_player === "paused:{$player}";
-            if ($changed) {
-                $room->active_player = $player;
-                $room->last_update = now();
-                $room->timer_revision = (int) $room->timer_revision + 1;
-                $room->save();
-            }
-            return [$room, $changed];
-        });
-        if ($changed) broadcast(new RoomUpdated($room));
-        return response()->json(array_merge($room->getCalculatedTimes(), ['success' => $changed]));
+        $room = Room::where('code', $roomCode)->first();
+        if (!$room) return response()->json(['error' => 'Room not found'], 404);
+
+        if ($room->active_player === "paused:{$player}") {
+            $room->active_player = $player;
+            $room->save();
+            broadcast(new RoomUpdated($room->fresh()));
+        }
+
+        return response()->json(['success' => true, 'active_player' => $player]);
     }
 
     public function getTime(string $roomCode): JsonResponse
@@ -645,18 +598,19 @@ class RoomController extends Controller
 
     public function saveTime(Request $request, string $roomCode): JsonResponse
     {
-        $request->validate(['red_time' => 'sometimes|numeric', 'black_time' => 'sometimes|numeric']);
-        $room = DB::transaction(function () use ($request, $roomCode) {
-            $room = Room::where('code', $roomCode)->lockForUpdate()->firstOrFail();
-            $room->red_time = max(0, (float) $request->input('red_time', $room->red_time));
-            $room->black_time = max(0, (float) $request->input('black_time', $room->black_time));
-            $room->last_update = now();
-            $room->timer_revision = (int) $room->timer_revision + 1;
-            $room->save();
-            return $room;
-        });
-        broadcast(new RoomUpdated($room));
-        return response()->json(array_merge($room->getCalculatedTimes(), ['success' => true]));
+        $room = Room::where('code', $roomCode)->firstOrFail();
+
+        $room->red_time = max(0, (int) $request->input('red_time', $room->red_time));
+        $room->black_time = max(0, (int) $request->input('black_time', $room->black_time));
+        $room->last_update = now();
+        $room->save();
+
+        return response()->json([
+            'success' => true,
+            'red_time' => $room->red_time,
+            'black_time' => $room->black_time,
+            'last_update' => $room->last_update,
+        ]);
     }
 
     public function findMatch(Request $request): JsonResponse
@@ -756,21 +710,18 @@ class RoomController extends Controller
 
     public function startMatch(string $roomCode): JsonResponse
     {
-        [$room, $changed] = DB::transaction(function () use ($roomCode) {
-            $room = Room::where('code', $roomCode)->lockForUpdate()->firstOrFail();
-            $ready = ($room->host_id || $room->host_session) && ($room->guest_id || $room->guest_session);
-            $changed = $room->result === null && $ready && in_array($room->active_player, [null, 'waiting'], true);
-            if ($changed) {
-                $room->active_player = 'red';
-                $room->last_update = now();
-                $room->modified_at = now();
-                $room->timer_revision = (int) $room->timer_revision + 1;
-                $room->save();
-            }
-            return [$room, $changed];
-        });
-        if ($changed) broadcast(new RoomUpdated($room));
-        return response()->json(array_merge($room->getCalculatedTimes(), ['success' => true]));
+        $room = Room::where('code', $roomCode)->first();
+
+        if ($room && $room->active_player === 'waiting') {
+            $room->active_player = 'red';
+            $room->last_update = now();
+            $room->modified_at = now();
+            $room->save();
+
+            broadcast(new RoomUpdated($room->fresh()));
+        }
+
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -790,14 +741,9 @@ class RoomController extends Controller
     public function getRoomIds(Request $request): JsonResponse
     {
         $code = $request->input('ma-phong') ?? $request->input('code');
-        $roomData = Room::select('host_id', 'guest_id', 'host_session', 'guest_session')->where('code', $code)->first();
+        $roomData = Room::select('host_id', 'guest_id')->where('code', $code)->first();
 
-        return response()->json($roomData ? [
-            'host_id' => $roomData->host_id,
-            'guest_id' => $roomData->guest_id,
-            'has_host' => (bool) ($roomData->host_id || $roomData->host_session),
-            'has_guest' => (bool) ($roomData->guest_id || $roomData->guest_session),
-        ] : []);
+        return response()->json($roomData ? $roomData->toArray() : []);
     }
 
     /**

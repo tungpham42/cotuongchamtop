@@ -102,13 +102,7 @@
         broadcaster: 'pusher',
         key: '{{ config("broadcasting.connections.pusher.key") }}',
         cluster: '{{ config("broadcasting.connections.pusher.options.cluster", "ap1") }}',
-        forceTLS: {{ config('broadcasting.connections.pusher.options.useTLS', true) ? 'true' : 'false' }},
-        @if(config('broadcasting.connections.pusher.options.host'))
-        wsHost: '{{ config("broadcasting.connections.pusher.options.host") }}',
-        wsPort: {{ (int) config('broadcasting.connections.pusher.options.port', 80) }},
-        wssPort: {{ (int) config('broadcasting.connections.pusher.options.port', 443) }},
-        enabledTransports: ['ws', 'wss'],
-        @endif
+        forceTLS: true,
         authEndpoint: '/custom/broadcasting/auth',
         auth: {
             headers: {
