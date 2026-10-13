@@ -32,7 +32,7 @@
 
         <!-- INCLUDE VIDEO CALL COMPONENT HERE -->
         @if(isset($room->host_id) && in_array($role, ['host', 'guest', 'red', 'black']) && auth()->check())
-            <div class="w-50 mx-auto">
+            <div class="w-75 mx-auto">
                 @include('layouts.partials.videoCall')
             </div>
         @endif
