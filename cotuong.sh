@@ -2,7 +2,7 @@
 
 rm .git/index.lock
 git stash
-git pull origin master
+git pull origin chu-kha
 php artisan migrate
 php artisan optimize:clear
 php artisan optimize
