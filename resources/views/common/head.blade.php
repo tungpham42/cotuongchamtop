@@ -80,15 +80,4 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-WM9GZXN');</script>
 @include('common.schemaOrg')
 <script type="text/javascript" src="{{ asset('js/theme-manager.js?v=1') }}"></script>
-
-@guest
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-
-<div id="g_id_onload"
-     data-client_id="{{ config('services.google.client_id') }}"
-     data-login_uri="{{ route('login.google.onetap') }}"
-     data-auto_prompt="true"
-     data-position="top_right">
-</div>
-@endguest
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>

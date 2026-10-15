@@ -48,16 +48,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
           </li>
 
-          {{-- <li class="nav-item">
-            <a class="news showPromotion" href="{{ localized_url('article.index') }}"><i class="far fa-newspaper"></i> {{ __("Bài viết") }}</a>
-          </li>
-          <li class="nav-item">
-            <a class="library showPromotion" href="{{ localized_url('games.library') }}"><i class="far fa-database"></i> {{ __("Thư viện") }}</a>
-          </li>
-          <li class="nav-item">
-            <a class="showPromotion" target="_blank" href="https://blog.cotuong.top"><i class="far fa-blog"></i> {{ __("Blog") }}</a>
-          </li> --}}
-
           @guest
             @if (Route::has('login'))
               <li class="nav-item ml-2">
