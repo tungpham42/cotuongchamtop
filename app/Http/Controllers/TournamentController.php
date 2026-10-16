@@ -313,7 +313,7 @@ class TournamentController extends Controller
 
         return view('tournaments.index', localized_page_data('tournaments.index', app()->getLocale(), [
             'headTitle' => $request->route('headTitle'),
-            'bodyClass' => 'dashboard tournament',
+            'bodyClass' => 'tournament',
             'tournaments' => $tournaments,
             'randomRoom' => app(GetRandomRoomAction::class)->execute(),
             'roomCode' => '',
@@ -331,7 +331,7 @@ class TournamentController extends Controller
 
         return view('tournaments.show', localized_page_data('tournaments.show', app()->getLocale(), [
             'headTitle'  => $tournament->name,
-            'bodyClass' => 'dashboard tournament',
+            'bodyClass' => 'tournament',
             'tournament' => $tournament,
             'rounds' => $rounds,
             'randomRoom' => app(GetRandomRoomAction::class)->execute(),
@@ -345,7 +345,7 @@ class TournamentController extends Controller
         $this->checkAuth();
         return view('tournaments.create', localized_page_data('tournaments.create', app()->getLocale(), [
             'headTitle' => $request->route('headTitle'),
-            'bodyClass' => 'dashboard tournament',
+            'bodyClass' => 'tournament',
             'randomRoom' => app(GetRandomRoomAction::class)->execute(),
             'roomCode' => '',
             'cdnUrl' => url(''),
@@ -383,7 +383,7 @@ class TournamentController extends Controller
 
         return view('tournaments.edit', localized_page_data('tournaments.edit', app()->getLocale(), [
             'headTitle' => $request->route('headTitle') . ': ' . $tournament->name,
-            'bodyClass' => 'dashboard tournament',
+            'bodyClass' => 'tournament',
             'tournament' => $tournament,
             'randomRoom' => app(GetRandomRoomAction::class)->execute(),
             'roomCode' => '',
