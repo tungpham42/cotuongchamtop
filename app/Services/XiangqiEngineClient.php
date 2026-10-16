@@ -102,19 +102,21 @@ class XiangqiEngineClient
         return false;
     }
 
-   /**
-     * True if worker $id responded ready to a ping.
-     * $timeoutSeconds lets the pool-ensure command wait longer for a busy worker.
+    /**
+     * True if worker $id responded ready to a ping. Used by
+     * XiangqiPoolEnsureCommand (the cron-driven Supervisor replacement)
+     * to decide whether a worker with a live PID is actually serving
+     * requests, not just running-but-stuck.
      */
-    public function pingWorker(int $id, float $timeoutSeconds = 0.2): bool
+    public function pingWorker(int $id): bool
     {
-        $resp = $this->pingWorkerRaw($id, $timeoutSeconds);
+        $resp = $this->pingWorkerRaw($id);
         return ($resp['success'] ?? false) && ($resp['ready'] ?? false);
     }
 
-    private function pingWorkerRaw(int $id, float $timeoutSeconds = 0.2): array
+    private function pingWorkerRaw(int $id): array
     {
-        return $this->requestOnSocket($this->socketPath($id), ['action' => 'ping'], $timeoutSeconds) ?? [];
+        return $this->requestOnSocket($this->socketPath($id), ['action' => 'ping'], 0.2) ?? [];
     }
 
     /**
