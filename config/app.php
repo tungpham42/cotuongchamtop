@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://cotuong.top'),
+    'url' => env('APP_URL', 'https://cotuong.vietnamcleveland.com'),
 
     'asset_url' => env('ASSET_URL', null),
 

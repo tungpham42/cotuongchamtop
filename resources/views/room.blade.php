@@ -12,7 +12,7 @@
   <div class="input-group-prepend">
     <span class="input-group-text" id="url-addon"><i class="fal fa-copy"></i></span>
   </div>
-  <input type="text" class="form-control" id="url" aria-describedby="url-addon" value="https://cotuong.top/phong/{{ $roomCode }}/duoc-moi" />
+  <input type="text" class="form-control" id="url" aria-describedby="url-addon" value="https://cotuong.vietnamcleveland.com/phong/{{ $roomCode }}/duoc-moi" />
 </div>
 <p class="w-100 text-center mt-2">
   <span class="side-color red">{{ __("QUÂN ĐỎ") }}</span>

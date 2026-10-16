@@ -29,7 +29,7 @@ class UpdateSitemapCommand extends Command
     public function handle()
     {
         $path = public_path('sitemap.xml');
-        SitemapGenerator::create('https://cotuong.top/')->getSitemap()->writeToFile($path);
+        SitemapGenerator::create('https://cotuong.vietnamcleveland.com/')->getSitemap()->writeToFile($path);
         $this->info('Sitemap updated successfully!');
     }
 }

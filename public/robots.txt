@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://cotuong.top/sitemap.xml
+Sitemap: https://cotuong.vietnamcleveland.com/sitemap.xml

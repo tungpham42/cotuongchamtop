@@ -151,10 +151,10 @@ Responsibilities:
 - Validate the locale against `config('locales.supported')`.
 - Call `app()->setLocale($locale)`.
 - Share common variables with views:
-  - `locale`
-  - `canonicalUrl`
-  - `alternateUrls`
-  - supported locale list
+    - `locale`
+    - `canonicalUrl`
+    - `alternateUrls`
+    - supported locale list
 
 ### 3. Localized URL Service
 
@@ -366,13 +366,40 @@ Target Blade:
 Each localized page should expose:
 
 ```html
-<link rel="canonical" href="https://cotuong.top/current-locale-url">
-<link rel="alternate" hreflang="vi" href="https://cotuong.top/phong/abc">
-<link rel="alternate" hreflang="en" href="https://cotuong.top/room/abc">
-<link rel="alternate" hreflang="ja" href="https://cotuong.top/rumu/abc">
-<link rel="alternate" hreflang="ko" href="https://cotuong.top/bang/abc">
-<link rel="alternate" hreflang="zh" href="https://cotuong.top/fangjian/abc">
-<link rel="alternate" hreflang="x-default" href="https://cotuong.top/phong/abc">
+<link
+    rel="canonical"
+    href="https://cotuong.vietnamcleveland.com/current-locale-url"
+/>
+<link
+    rel="alternate"
+    hreflang="vi"
+    href="https://cotuong.vietnamcleveland.com/phong/abc"
+/>
+<link
+    rel="alternate"
+    hreflang="en"
+    href="https://cotuong.vietnamcleveland.com/room/abc"
+/>
+<link
+    rel="alternate"
+    hreflang="ja"
+    href="https://cotuong.vietnamcleveland.com/rumu/abc"
+/>
+<link
+    rel="alternate"
+    hreflang="ko"
+    href="https://cotuong.vietnamcleveland.com/bang/abc"
+/>
+<link
+    rel="alternate"
+    hreflang="zh"
+    href="https://cotuong.vietnamcleveland.com/fangjian/abc"
+/>
+<link
+    rel="alternate"
+    hreflang="x-default"
+    href="https://cotuong.vietnamcleveland.com/phong/abc"
+/>
 ```
 
 The canonical URL should normally point to the current locale URL, not always to Vietnamese, when each language page has unique translated content. The `hreflang` set tells search engines that these are equivalent localized versions.

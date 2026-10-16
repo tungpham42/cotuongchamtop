@@ -355,7 +355,7 @@
                         context.fillStyle = '#444422';
                         context.textAlign = 'center';
                         context.textBaseline = 'middle';
-                        context.fillText('COTUONG.TOP', canvas.width / 2, canvas.height / 2);
+                        context.fillText('cotuong.vietnamcleveland.com', canvas.width / 2, canvas.height / 2);
 
                         canvas.toBlob(function(blob) {
                             saveAs(blob, "ban-co-{{ date('Y-m-d h:i:s A') }}.png");

@@ -1,3 +1,3 @@
 <?php
-header('Location: https://cotuong.top/');
+header('Location: https://cotuong.vietnamcleveland.com/');
 exit;

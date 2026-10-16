@@ -32,7 +32,7 @@
             <a class="contact showPromotion" href="{{ localized_url('contact') }}"><i class="fal fa-envelope"></i> {{ __("Liên hệ") }}</a>
           </li>
           <li>
-            <a target="_blank" class="game showPromotion" href="https://game.cotuong.top"><i class="fal fa-gamepad-alt"></i> {{ __("Trò chơi") }}</a>
+            <a target="_blank" class="game showPromotion" href="https://game.cotuong.vietnamcleveland.com"><i class="fal fa-gamepad-alt"></i> {{ __("Trò chơi") }}</a>
           </li>
           <li>
             <a target="_blank" class="buy showPromotion" href="https://www.codester.com/items/41601/multilingual-chinese-chess-game-with-many-options?ref=tungpham"><i class="fal fa-shopping-cart"></i> {{ __("Mua mã nguồn") }}</a>

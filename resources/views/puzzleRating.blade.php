@@ -665,7 +665,7 @@
 
                         context.font = 'bold 16px serif';
                         context.textAlign = 'right';
-                        context.fillText('COTUONG.TOP', finalCanvas.width - 10, originalCanvas.height + paddingTop + (paddingBottom / 2));
+                        context.fillText('cotuong.vietnamcleveland.com', finalCanvas.width - 10, originalCanvas.height + paddingTop + (paddingBottom / 2));
 
                         finalCanvas.toBlob(function(blob) {
                             saveAs(blob, "ban-co-{{ date('Y-m-d h:i:s A') }}.png");

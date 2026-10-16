@@ -1,6 +1,6 @@
 RewriteEngine on
-RewriteCond %{HTTP_HOST} ^cotuong.top$ [NC,OR]
-RewriteCond %{HTTP_HOST} ^www.cotuong.top$
+RewriteCond %{HTTP_HOST} ^cotuong.vietnamcleveland.com$ [NC,OR]
+RewriteCond %{HTTP_HOST} ^www.cotuong.vietnamcleveland.com$
 RewriteCond %{REQUEST_URI} !public/
 RewriteRule (.*) /public/$1 [L]
 <IfModule LiteSpeed>

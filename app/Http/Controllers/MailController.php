@@ -104,7 +104,7 @@ class MailController extends Controller
 
         return $this->sendSmtpMail(
             $guestEmail,
-            __('Xiangqi Challenge on cotuong.top: An Invitation from ":host"', ['host' => $hostName]),
+            __('Xiangqi Challenge on cotuong.vietnamcleveland.com: An Invitation from ":host"', ['host' => $hostName]),
             __('compete_email_body', [
                 'guest' => $guestName,
                 'room'  => $roomName,
