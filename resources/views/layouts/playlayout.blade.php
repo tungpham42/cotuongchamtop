@@ -390,5 +390,6 @@
             });
         </script>
     @endif
+    <script src="/thongbao.js" defer></script>
 </body>
 </html>
