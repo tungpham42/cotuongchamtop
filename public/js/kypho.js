@@ -540,8 +540,7 @@
                     ctx.fillStyle = "#ffffff";
                     ctx.font = "42px sans-serif";
                     ctx.fillText(
-                        L.video_footer ||
-                            "Tạo bởi nền tảng cotuong.vietnamcleveland.com",
+                        L.video_footer || "cotuong.vietnamcleveland.com",
                         canvas.width / 2,
                         canvas.height - 220,
                     );
