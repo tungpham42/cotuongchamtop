@@ -47,14 +47,15 @@
           <li class="nav-item">
             <a class="home showPromotion" href="{{ $homeUrl }}"><i class="far fa-home-lg-alt"></i> {{ __("Trang chủ") }}</a>
           </li>
-
+          <li class="nav-item">
+            <a class="tournament showPromotion" href="{{ $tournamentListUrl }}"><i class="far fa-swords"></i> {{ __("Giải đấu") }}</a>
+          </li>
           <li class="dropdown">
             <a id="dashboardDropdown" class="dashboard room trophy thi-dau dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false">
               <i class="far fa-trophy-alt"></i> {{ __("Thi đấu") }}
             </a>
             <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow" aria-labelledby="dashboardDropdown">
               <a class="rooms-list showPromotion dropdown-item{{ url()->current() == $roomListUrl ? ' active disabled' : '' }}" href="{{ $roomListUrl }}"><i class="far fa-list-alt"></i> {{ __("Sảnh chờ") }}</a>
-              <a class="showPromotion dropdown-item{{ url()->current() == $tournamentListUrl ? ' active disabled' : '' }}" href="{{ $tournamentListUrl }}"><i class="far fa-swords"></i> {{ __("Giải đấu") }}</a>
               <a class="showPromotion dropdown-item{{ url()->current() == $membersUrl ? ' active disabled' : '' }}" href="{{ $membersUrl }}"><i class="far fa-users"></i> {{ __("Thành viên") }}</a>
               <a class="setup puzzle showPromotion dropdown-item{{ url()->current() == $puzzleListUrl ? ' active disabled' : '' }}" href="{{ $puzzleListUrl }}"><i class="far fa-puzzle-piece"></i> {{ __("Cờ thế") }}</a>
               <a class="showPromotion dropdown-item{{ url()->current() == $playingUrl ? ' active disabled' : '' }}" href="{{ $playingUrl }}"><i class="far fa-list"></i> {{ __("Đang thi đấu") }}</a>

@@ -383,6 +383,7 @@ header.site-header a:not(.navbar-brand):hover::before {
 /* Menu states active */
 body.home header.site-header a.home,
 body.news header.site-header a.news,
+body.tournament header.site-header a.tournament,
 body.library header.site-header a.library,
 body.puzzle header.site-header a.puzzle,
 body.setup header.site-header a.setup,
