@@ -400,6 +400,7 @@ body.contact header.site-header a.contact {
 }
 body.home header.site-header a.home:before,
 body.news header.site-header a.news,
+body.tournament header.site-header a.tournament:before,
 body.library header.site-header a.library:before,
 body.puzzle header.site-header a.puzzle:before,
 body.setup header.site-header a.setup:before,
