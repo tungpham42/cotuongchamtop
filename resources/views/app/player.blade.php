@@ -70,37 +70,6 @@
                     <h5>{{ __("Số trận thua:") }} <span id="losePoints" class="text-danger font-weight-bold">{!! $userPresenter->renderStat($player->id, 'lose') !!}</span></h5>
                     <h5>{{ __("Tổng số trận đã đấu xong:") }} <span id="totalPoints" class="text-light font-weight-bold">{!! $userPresenter->renderStat($player->id, 'total') !!}</span></h5>
 
-                    @if (auth()->check() && $player->id === auth()->id())
-                    <div id="standard-plan" class="alert alert-warning d-flex align-items-center justify-content-between mt-4 mb-0 shadow-lg" style="background: rgba(212, 175, 55, 0.1); border: 1px solid var(--royal-gold); color: var(--royal-gold-light);">
-                        <div class="text-left">
-                            <strong class="text-gold"><i class="fas fa-crown"></i> {{ __("Gói hiện tại:") }}</strong>
-                            @if (auth()->user()->isStandard())
-                                {{ __("Standard (đã ẩn quảng cáo)") }}
-                                @if (auth()->user()->subscription_started_at)
-                                    <small class="text-muted">({{ __("kích hoạt") }} {{ auth()->user()->subscription_started_at->format('d/m/Y H:i') }})</small>
-                                @endif
-                            @else
-                                {{ __("Miễn phí (đang hiển thị quảng cáo)") }}
-                                @php $latestPayment = auth()->user()->payosPayments()->latest()->first(); @endphp
-                                @if ($latestPayment && $latestPayment->status !== 'paid')
-                                    <br><small class="text-muted">{{ __("Giao dịch gần nhất:") }} {{ $latestPayment->status }} - mã {{ $latestPayment->order_code }}</small>
-                                @endif
-                            @endif
-                        </div>
-                        @if (!auth()->user()->isStandard())
-                        <form method="POST" action="{{ route('payos.standard') }}" class="mb-0">
-                            @csrf
-                            <button type="submit" class="btn btn-danger pulse-red">
-                                <i class="far fa-crown"></i>
-                                {{ __("Nâng cấp Standard -") }} {{ number_format(config('payos.standard_amount', 100000), 0, ',', '.') }}đ
-                            </button>
-                        </form>
-                        @else
-                        <span class="badge badge-success p-2" style="background: linear-gradient(to bottom, #d4af37, #b89020); color: #0b0c10;">Ads Free</span>
-                        @endif
-                    </div>
-                    @endif
-
                     @if ($player->id == auth()->id() && !str_contains(url()->current(), url('/ky-thu').'/'))
                     <div class="w-100 text-left mt-4">
                         <a href="{{ localized_url('app.name') }}" class="btn btn-dark showPromotion"><i class="fad fa-user-edit"></i> {{ __("Đổi tên") }}</a>
