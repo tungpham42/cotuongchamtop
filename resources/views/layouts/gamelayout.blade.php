@@ -141,7 +141,6 @@
                         </div>
                     </div>
                 @endif
-                @include('common.adsenseBetween')
                 <div class="row">
                     <div class="col-12">
                         @if ( $roomCode != '' )
