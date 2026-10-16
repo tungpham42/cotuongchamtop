@@ -1,12 +1,12 @@
 <footer>
   <div class="container">
     <div class="row py-5 px-0">
-      <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3 vcard">
+      <div class="col-12 col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-3 vcard">
         <p>{{ __("Email liên hệ") }}</p>
         <a class="w-100 email showPromotion" href="mailto:vietnamcleveland@gmail.com">vietnamcleveland@gmail.com</a>
         <p class="mt-3">{{ __("Bản quyền") }} <i class="fal fa-copyright"></i> {{ date('Y') }} The Vietnamese Community in Greater Cleveland</p>
       </div>
-      <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
+      <div class="col-12 col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-3">
         <ul class="list-unstyled">
           <li>
             <a class="home showPromotion" href="{{ localized_url('home') }}"><i class="fal fa-home-lg-alt"></i> {{ __("Trang chủ") }}</a>
@@ -31,13 +31,7 @@
           </li>
         </ul>
       </div>
-      <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
-        <p>{{ __("Chúng tôi trên mạng xã hội") }}</p>
-        <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.youtube.com/@CoTuongVlog/videos"><i class="fab fa-youtube"></i></a>
-        <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.facebook.com/CoTuongPage/"><i class="fab fa-facebook-square rounded"></i></a>
-        <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.tiktok.com/@cotuongchamtop"><i class="fab fa-tiktok"></i></a>
-      </div>
-      <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
+      <div class="col-12 col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-3">
         <p>{{ __("Đã xác thực HTML5 và CSS3") }}</p>
         <a title="Valid HTML5" class="w-100 mr-2 display-4 text-decoration-none showPromotion" target="_blank" href="https://validator.w3.org/check?uri=referer">
           <i class="fab fa-html5"></i>
