@@ -85,7 +85,7 @@
         </div>
     @endif
     <main>
-        {{-- @include('common.xiangqiBanner') --}}
+        @include('common.xiangqiBanner')
         <span id="checkmateText">{{ __('Chiếu!') }}</span>
         <div class="container-fluid game px-0" itemscope itemtype="http://schema.org/Game">
             <div class="container {{ isset($board) ? 'px-3 pb-0 pt-3' : 'p-3' }}">
