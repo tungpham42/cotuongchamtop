@@ -51,13 +51,10 @@
                 <div class="col-md-3 text-center">
                     <ul class="list-unstyled mb-0">
                         <li><i class="fas fa-map-marker-alt fa-2x"></i>
-                            <p>{{ __("TP. Hồ Chí Minh, 756000,") }} <br/>Việt Nam</p>
-                        </li>
-                        <li><i class="fas fa-phone mt-4 fa-2x"></i>
-                            <p>+ 84 368 571 310</p>
+                            <p>7804 Madison Ave., Cleveland, OH 44102</p>
                         </li>
                         <li><i class="fas fa-envelope mt-4 fa-2x"></i>
-                            <p><a class="text-light" href="mailto:tung.42@gmail.com">tung.42@gmail.com</a></p>
+                            <p><a class="text-light" href="mailto:vietnamcleveland@gmail.com">vietnamcleveland@gmail.com</a></p>
                         </li>
                     </ul>
                 </div>

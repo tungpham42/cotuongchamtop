@@ -3,9 +3,8 @@
     <div class="row py-5 px-0">
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3 vcard">
         <p>{{ __("Email liên hệ") }}</p>
-        <a class="w-100 email showPromotion" href="mailto:tung.42@gmail.com">tung.42@gmail.com</a>
-        <p class="mt-3">{{ __("Bản quyền") }} <i class="fal fa-copyright"></i> {{ date('Y') }} <a class="url fn h-card showPromotion" target="_blank" href="https://tungpham42.github.io/">Phạm Tùng</a></p>
-        <div class="bg-white p-1" style="width: fit-content; border-radius: 0.5rem;"><a href="https://soft.io.vn" target="_blank"><img alt="Logo Soft" height="40" class="me-2" src="{{ asset('img/soft-logo.webp') }}"></a></div>
+        <a class="w-100 email showPromotion" href="mailto:vietnamcleveland@gmail.com">vietnamcleveland@gmail.com</a>
+        <p class="mt-3">{{ __("Bản quyền") }} <i class="fal fa-copyright"></i> {{ date('Y') }} The Vietnamese Community in Greater Cleveland</p>
       </div>
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
         <ul class="list-unstyled">

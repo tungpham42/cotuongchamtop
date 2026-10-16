@@ -74,7 +74,7 @@ class MailController extends Controller
         $subject = $request->input('subject');
 
         $content   = "<p>From: {$name}</p><p>Email: {$email}</p><p>Message: {$message}</p>";
-        $recipient = "tung.42@gmail.com";
+        $recipient = "vietnamcleveland@gmail.com";
 
         $smtpMessages = [
             __('Email not sent'),
