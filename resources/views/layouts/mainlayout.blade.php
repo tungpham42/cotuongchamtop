@@ -6,7 +6,6 @@
 <body class="{{ $bodyClass }}">
     @include('common.afterBody')
     @include('common.themes')
-    @include('common.adsenseTop')
     @include('layouts.partials.header')
     @if (session('status'))
         <div class="container">
