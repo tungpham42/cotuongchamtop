@@ -30,21 +30,6 @@
           <li>
             <a class="contact showPromotion" href="{{ localized_url('contact') }}"><i class="fal fa-envelope"></i> {{ __("Liên hệ") }}</a>
           </li>
-          <li>
-            <a target="_blank" class="game showPromotion" href="https://game.cotuong.vietnamcleveland.com"><i class="fal fa-gamepad-alt"></i> {{ __("Trò chơi") }}</a>
-          </li>
-          <li>
-            <a target="_blank" class="buy showPromotion" href="https://www.codester.com/items/41601/multilingual-chinese-chess-game-with-many-options?ref=tungpham"><i class="fal fa-shopping-cart"></i> {{ __("Mua mã nguồn") }}</a>
-          </li>
-          <li>
-            <a target="_blank" class="proxy showPromotion" href="https://proxyviet.org?ref=PROXYVIET-EECAD4F"><i class="fal fa-shield-alt"></i> {{ __("Mua Proxy giá rẻ") }}</a>
-          </li>
-          <li>
-            <a target="_blank" class="hikari showPromotion" href="https://hikarilearn.io.vn/"><i class="fal fa-book-reader"></i> {{ __("Học tiếng Nhật") }}</a>
-          </li>
-          <li>
-            <a target="_blank" class="hololab showPromotion" href="https://hololab.vn/"><i class="fal fa-cube"></i> Hologram</a>
-          </li>
         </ul>
       </div>
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
