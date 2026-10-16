@@ -98,11 +98,11 @@
           <li class="dropdown language-switcher ml-3 pl-3">
             <a class="lang dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false"><i class="far fa-language"></i> {{ $localeLabels[$locale] ?? __('Tiếng Việt') }}</a>
             <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow">
-              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangViUrl ? ' active disabled' : '' }}" href="{{ url($currentLangViUrl) }}"><span class="shadow-sm fi fi-vn mr-2"></span> {{ __("Tiếng Việt") }}</a>
-              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangEnUrl ? ' active disabled' : '' }}" href="{{ url($currentLangEnUrl) }}"><span class="shadow-sm fi fi-us mr-2"></span> {{ __("English") }}</a>
-              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangJaUrl ? ' active disabled' : '' }}" href="{{ url($currentLangJaUrl) }}"><span class="shadow-sm fi fi-jp mr-2"></span> {{ __("日本語") }}</a>
-              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangKoUrl ? ' active disabled' : '' }}" href="{{ url($currentLangKoUrl) }}"><span class="shadow-sm fi fi-kr mr-2"></span> {{ __("한국어") }}</a>
-              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangZhUrl ? ' active disabled' : '' }}" href="{{ url($currentLangZhUrl) }}"><span class="shadow-sm fi fi-cn mr-2"></span> {{ __("中文") }}</a>
+              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangViUrl ? ' active disabled' : '' }}" href="{{ url($currentLangViUrl) }}">{{ __("Tiếng Việt") }}</a>
+              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangEnUrl ? ' active disabled' : '' }}" href="{{ url($currentLangEnUrl) }}">{{ __("English") }}</a>
+              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangJaUrl ? ' active disabled' : '' }}" href="{{ url($currentLangJaUrl) }}">{{ __("日本語") }}</a>
+              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangKoUrl ? ' active disabled' : '' }}" href="{{ url($currentLangKoUrl) }}">{{ __("한국어") }}</a>
+              <a class="dropdown-item showPromotion{{ $currentCanonicalUrl === $currentLangZhUrl ? ' active disabled' : '' }}" href="{{ url($currentLangZhUrl) }}">{{ __("中文") }}</a>
             </div>
           </li>
 
