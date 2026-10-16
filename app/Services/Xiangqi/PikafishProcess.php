@@ -8,14 +8,8 @@ use Exception;
 /**
  * Wraps a single, long-lived Pikafish UCI subprocess.
  *
- * This class is meant to be instantiated ONCE per worker process (see
- * XiangqiEngineWorkerCommand) and reused for many requests, not created
- * per HTTP request. That's the whole point of the refactor: the expensive
- * proc_open() + UCI handshake + network load happens once, at worker boot,
- * not on every "best move" call.
- *
- * I/O is done with stream_select() so we block efficiently on the pipe
- * instead of spinning in a usleep() loop burning CPU while waiting.
+ * Instantiated ONCE per worker process (see XiangqiEngineWorkerCommand) and
+ * reused for many requests.
  */
 class PikafishProcess
 {
@@ -25,6 +19,7 @@ class PikafishProcess
     private string $networkPath;
     private bool $running = false;
     private bool $ready = false;
+    private bool $searching = false; // true while a "go" has not yet produced "bestmove"
     private string $buffer = '';
 
     public function __construct(string $enginePath, string $networkPath)
@@ -51,7 +46,8 @@ class PikafishProcess
             2 => ['pipe', 'w'],
         ];
 
-        $this->process = proc_open($this->enginePath, $descriptors, $this->pipes, null, null);
+        // Run from the engine's own directory so it can find side files.
+        $this->process = proc_open($this->enginePath, $descriptors, $this->pipes, dirname($this->enginePath), null);
 
         if (!is_resource($this->process)) {
             throw new Exception('Failed to start Pikafish engine process');
@@ -68,13 +64,9 @@ class PikafishProcess
             throw new Exception($this->describeStartupFailure('Engine did not answer "uci"', $uciResponse));
         }
 
-        $this->send('setoption name UCI_Variant value xiangqi');
+        // Pikafish has no UCI_Variant option (that's Fairy-Stockfish), so it is not sent.
         $this->send('setoption name EvalFile value ' . $this->networkPath);
 
-        // No fixed sleep here. We just wait (with a select-based, non-busy
-        // wait) for the engine to actually confirm it's ready, up to a
-        // generous ceiling for network loading. If it's ready in 300ms we
-        // move on in 300ms, not 2000ms.
         $this->send('isready');
         $response = $this->waitFor('readyok', 15.0);
 
@@ -85,19 +77,10 @@ class PikafishProcess
         $this->ready = true;
     }
 
-    /**
-     * Build an actionable error for a failed startup handshake.
-     *
-     * A dead engine used to look exactly like a slow one: the 'uciok' wait
-     * result was ignored, and stderr (where the shell and the engine say why
-     * they died) was never read. This reports the exit status, what that
-     * status usually means, and whatever the engine wrote to stderr/stdout.
-     */
     private function describeStartupFailure(string $what, string $stdout): string
     {
         $stderr = '';
         if (isset($this->pipes[2]) && is_resource($this->pipes[2])) {
-            // Non-blocking (set in start()), so this returns what's there now.
             $stderr = trim((string) stream_get_contents($this->pipes[2]));
         }
 
@@ -105,8 +88,6 @@ class PikafishProcess
         if (is_resource($this->process)) {
             $status = proc_get_status($this->process);
             if ($status['running'] && is_resource($this->pipes[1] ?? null) && feof($this->pipes[1])) {
-                // stdout closed, so the engine is going away; give the OS a
-                // moment to report how it exited.
                 for ($i = 0; $i < 10 && $status['running']; $i++) {
                     usleep(20000);
                     $status = proc_get_status($this->process);
@@ -156,43 +137,22 @@ class PikafishProcess
     }
 
     /**
-     * Translate the app's internal FEN active-color notation to the one
-     * Pikafish's UCI FEN parser actually expects.
+     * Build a clean 6-field FEN for Pikafish.
      *
-     * The frontend (resources/views/xiangqi/ai_blade.php, via the
-     * xiangqi.js library — see game.fen() / game.load()) produces FEN
-     * with 'r' for "Red to move" and 'b' for "Black to move". Pikafish,
-     * like Stockfish, only recognizes 'w' (Red/white side) and 'b'
-     * (Black) — anything that isn't literally 'w' is parsed as Black.
-     *
-     * Without this translation, a FEN with 'r' (Red to move) is silently
-     * misread by the engine as "Black to move", so the engine always
-     * searches — and returns — a Black-side move, regardless of whose
-     * turn it actually is. This is why bestMove() looked like it "only
-     * ever returns Black's move": every call, including hint requests
-     * that are only ever made when Red is confirmed to move, was
-     * effectively asking the engine to play Black.
-     *
-     * Only the string handed to the engine over UCI needs this; the
-     * app's own FEN (as validated/read by XiangqiHelper) is untouched.
+     * The app's FEN uses 'r' for Red to move; Pikafish only understands 'w'
+     * (Red) and 'b' (Black). Extra trailing tokens (e.g. " resign") are
+     * dropped and missing fields are filled in.
      */
     private function toEngineFen(string $fen): string
     {
         $parts = preg_split('/\s+/', trim($fen));
+        $color = (($parts[1] ?? 'r') === 'b') ? 'b' : 'w';
+        $half = (isset($parts[4]) && ctype_digit($parts[4])) ? $parts[4] : '0';
+        $full = (isset($parts[5]) && ctype_digit($parts[5])) ? $parts[5] : '1';
 
-        if (isset($parts[1]) && $parts[1] === 'r') {
-            $parts[1] = 'w';
-        }
-
-        return implode(' ', $parts);
+        return "{$parts[0]} {$color} - - {$half} {$full}";
     }
 
-    /**
-     * Ask for the best move on a position. Uses stream_select to wait for
-     * output instead of a usleep() poll loop, so we only wake up when data
-     * is actually available and never spend more wall-clock time waiting
-     * than $timeoutMs plus a small grace window.
-     */
     public function bestMove(string $fen, int $timeoutMs): ?string
     {
         if (!$this->isReady()) {
@@ -202,12 +162,14 @@ class PikafishProcess
             throw new Exception('Invalid Xiangqi FEN position: ' . $fen);
         }
 
-        $this->drain();
+        $this->prepareForSearch();
         $this->send('position fen ' . $this->toEngineFen($fen));
         $this->send('go movetime ' . $timeoutMs);
+        $this->searching = true;
 
         $graceSeconds = 3.0;
         $output = $this->readUntil('bestmove', ($timeoutMs / 1000) + $graceSeconds);
+        $this->searching = (strpos($output, 'bestmove') === false);
 
         if (preg_match('/bestmove\s+(\S+)/', $output, $m)) {
             $move = trim($m[1]);
@@ -228,29 +190,31 @@ class PikafishProcess
             throw new Exception('Invalid Xiangqi FEN position: ' . $fen);
         }
 
-        $this->drain();
+        $this->prepareForSearch();
         $this->send('position fen ' . $this->toEngineFen($fen));
         $this->send('go depth ' . $depth);
+        $this->searching = true;
 
         $output = $this->readUntil('bestmove', self::analysisTimeoutSeconds($depth));
+        $this->searching = (strpos($output, 'bestmove') === false);
 
         return $this->parseAnalysis($output);
     }
 
     /**
-     * Depth-scaled time budget for a "go depth N" search to return
-     * bestmove. A flat ceiling (the old hardcoded 30.0) is wrong in both
-     * directions: deep searches (depth approaching the controller's max
-     * of 30) can legitimately run past 30s and get cut off mid-search,
-     * while shallow searches (depth 5-10, which typically resolve in a
-     * couple seconds) hold the pipe open far longer than they need to.
-     *
-     * This is intentionally the single source of truth for that budget:
-     * XiangqiEngineClient::analyzePosition() calls this same method (it's
-     * a pure calculation, no I/O) to size its socket read timeout, so the
-     * web-request side and the worker side never disagree about how long
-     * a given depth is allowed to take.
+     * If a previous search never delivered "bestmove" (timed out), stop it
+     * and wait for its output so it can't leak into the next search.
      */
+    private function prepareForSearch(): void
+    {
+        if ($this->searching) {
+            $this->send('stop');
+            $this->readUntil('bestmove', 2.0);
+            $this->searching = false;
+        }
+        $this->drain();
+    }
+
     public static function analysisTimeoutSeconds(int $depth): float
     {
         $depth = max(1, $depth);
@@ -272,12 +236,6 @@ class PikafishProcess
         if (preg_match('/bestmove\s+(\S+)/', $output, $m)) {
             $analysis['best_move'] = XiangqiHelper::normalizeMove($m[1]);
         }
-        // $output accumulates one "info depth N ... score ... pv ..." line
-        // per iterative-deepening pass, from depth 1 up to the requested
-        // depth, followed by a single final "bestmove ...". preg_match()
-        // (no _all) returns the FIRST match in the string — i.e. depth 1's
-        // score/depth/pv, not the deepest, most-searched one we actually
-        // asked for. Use preg_match_all and take the last capture instead.
         if (preg_match_all('/score\s+(cp|mate)\s+(-?\d+)/', $output, $m)) {
             $analysis['score_type'] = end($m[1]);
             $analysis['score'] = (int) end($m[2]);
@@ -293,7 +251,6 @@ class PikafishProcess
         return $analysis;
     }
 
-    /** Send a UCI command. No artificial delay — fflush is enough. */
     private function send(string $command): void
     {
         if (!$this->running || !is_resource($this->process)) {
@@ -303,19 +260,20 @@ class PikafishProcess
         fflush($this->pipes[0]);
     }
 
-    /** Non-blocking drain of anything left in stdout from a previous call. */
+    /** Non-blocking drain of stdout and stderr (a full stderr pipe would block the engine). */
     private function drain(): void
     {
         $this->buffer = '';
         while (($chunk = fread($this->pipes[1], 8192)) !== false && $chunk !== '') {
             // discard
         }
+        if (is_resource($this->pipes[2] ?? null)) {
+            while (($chunk = fread($this->pipes[2], 8192)) !== false && $chunk !== '') {
+                // discard
+            }
+        }
     }
 
-    /**
-     * Block (efficiently, via stream_select) until $needle appears in
-     * stdout or $timeoutSeconds elapses. Returns everything read.
-     */
     private function readUntil(string $needle, float $timeoutSeconds): string
     {
         $deadline = microtime(true) + $timeoutSeconds;
@@ -337,15 +295,14 @@ class PikafishProcess
             $changed = @stream_select($read, $write, $except, $sec, $usec);
 
             if ($changed === false) {
-                break; // interrupted / error — return what we have
+                break;
             }
             if ($changed === 0) {
-                continue; // timed out this iteration, loop re-checks deadline
+                continue;
             }
 
             $chunk = fread($this->pipes[1], 8192);
             if ($chunk === false || $chunk === '') {
-                // EOF or nothing to read right now
                 if (feof($this->pipes[1])) {
                     $this->running = false;
                     break;
@@ -382,6 +339,7 @@ class PikafishProcess
         }
         $this->running = false;
         $this->ready = false;
+        $this->searching = false;
     }
 
     public function __destruct()
