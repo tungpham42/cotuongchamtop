@@ -236,7 +236,7 @@ class AdminController extends Controller
 
             // --- 3. Live move test (only if we have a worker to ask) --------------------
             if ($poolHealthy) {
-                $fen = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1';
+                $fen = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1';
                 $start = microtime(true);
                 $bestMove = $client->getBestMove($fen, 3000);
                 $elapsedMs = (int) round((microtime(true) - $start) * 1000);
