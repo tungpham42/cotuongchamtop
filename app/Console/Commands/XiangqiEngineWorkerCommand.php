@@ -54,7 +54,7 @@ class XiangqiEngineWorkerCommand extends Command
         // tell later whether we're still alive without needing Supervisor.
         file_put_contents($pidPath, getmypid());
 
-        $enginePath = storage_path('engines/pikafish_ubuntu');
+        $enginePath = storage_path('engines/pikafish');
         $networkPath = storage_path('engines/pikafish.nnue');
 
         $this->info("[worker {$id}] starting Pikafish (pid " . getmypid() . ")...");

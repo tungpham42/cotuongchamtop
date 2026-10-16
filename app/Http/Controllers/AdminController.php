@@ -186,7 +186,7 @@ class AdminController extends Controller
 
         try {
             // --- 1. Filesystem checks -------------------------------------------------
-            $enginePath  = storage_path('engines/pikafish_ubuntu');
+            $enginePath  = storage_path('engines/pikafish');
             $networkPath = storage_path('engines/pikafish.nnue');
 
             $binaryExists  = file_exists($enginePath);
