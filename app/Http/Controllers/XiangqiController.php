@@ -29,7 +29,7 @@ class XiangqiController extends Controller
         $request->validate([
             'fen' => 'required|string',
             'timeout' => 'sometimes|integer|min:100|max:30000',
-            'level' => 'sometimes|integer|min:1|max:8',
+            'level' => 'sometimes|integer|min:1|max:5',
         ]);
 
         $fen = $request->input('fen');
@@ -59,7 +59,7 @@ class XiangqiController extends Controller
         if (!$bestMove) {
             $bestMove = $this->getFallbackMove($fen);
             $usedFallback = true;
-            Log::warning('Xiangqi: engine returned no move, using RANDOM fallback: ' . $bestMove . ' | fen=' . $fen);
+            Log::info('Using fallback move: ' . $bestMove);
         }
 
         return response()->json([
@@ -81,7 +81,6 @@ class XiangqiController extends Controller
             3 => 1.0,  // Bình thường
             4 => 1.5,  // Khó
             5 => 2.0,  // Khó nhất: slower
-            8 => 2.5,  // Master
         ];
 
         $multiplier = $multipliers[$level] ?? 1.0;

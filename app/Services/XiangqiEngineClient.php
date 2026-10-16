@@ -5,18 +5,17 @@ namespace App\Services;
 use App\Services\Xiangqi\PikafishProcess;
 
 /**
- * Thin, cheap-to-construct client for the warm Pikafish worker sockets.
+ * Replaces the old XiangqiEngineService for the web request path.
  *
- * Each request takes an exclusive per-worker lock (engine-N.busy) so it only
- * ever talks to a FREE worker. Without this, a unix socket happily accepts
- * connections into its backlog while the worker is mid-search, so requests
- * queued behind busy workers, timed out, and got random fallback moves.
+ * This is intentionally "dumb" and cheap to construct: it does NOT start
+ * any engine process. It just knows where the warm worker sockets live and
+ * talks to whichever one is free. If every worker is momentarily busy, it
+ * fails fast (short connect timeout) rather than blocking the HTTP request
+ * for seconds — the controller already has a fallback move generator for
+ * exactly this case.
  */
 class XiangqiEngineClient
 {
-    /** Max time a request waits for any worker to become free. */
-    private const MAX_WAIT_FOR_FREE_WORKER = 1.5;
-
     private string $socketDir;
     private int $workerCount;
     private float $connectTimeoutSeconds;
@@ -41,6 +40,12 @@ class XiangqiEngineClient
 
     public function analyzePosition(string $fen, int $depth = 15): ?array
     {
+        // Same +3.0s IPC/queueing grace getBestMove() adds on top of the
+        // engine's own budget — the socket timeout must stay a bit looser
+        // than the worker's internal wait (PikafishProcess::analyze), or
+        // we'd give up on the response a moment before the worker sends
+        // it. Using the same formula the worker uses (via the shared
+        // static method) means this never drifts out of sync with it.
         $readTimeoutSeconds = PikafishProcess::analysisTimeoutSeconds($depth) + 3.0;
 
         $response = $this->request([
@@ -53,13 +58,25 @@ class XiangqiEngineClient
     }
 
     /**
+     * "Available" here means actually able to serve a request (ready),
+     * not merely "socket exists and answered a ping" — a worker that's
+     * still loading the engine answers ping with success=true but
+     * ready=false, and callers care whether it can play a move, not
+     * whether the socket happens to be up. Counting on `success` alone
+     * let a pool where every worker was stuck mid-boot report itself as
+     * "available" and skip triggering an ensure. This also keeps the
+     * trigger condition consistent with isAnyWorkerReady(): both now
+     * fire whenever zero workers are actually ready, not just when zero
+     * sockets respond at all.
+     *
      * @return array{available:int, total:int}
      */
     public function poolStatus(): array
     {
         $ready = 0;
         for ($i = 0; $i < $this->workerCount; $i++) {
-            if ($this->pingWorker($i, 1.0)) {
+            $resp = $this->pingWorkerRaw($i);
+            if (($resp['success'] ?? false) && ($resp['ready'] ?? false)) {
                 $ready++;
             }
         }
@@ -74,7 +91,8 @@ class XiangqiEngineClient
     public function isAnyWorkerReady(): bool
     {
         for ($i = 0; $i < $this->workerCount; $i++) {
-            if ($this->pingWorker($i, 1.0)) {
+            $resp = $this->pingWorkerRaw($i);
+            if (($resp['success'] ?? false) && ($resp['ready'] ?? false)) {
                 return true;
             }
         }
@@ -85,80 +103,62 @@ class XiangqiEngineClient
     }
 
     /**
-     * True if worker $id answered a ping with ready=true.
-     * $timeout is how long to wait for the answer; a busy worker only
-     * answers after its current search, so callers that must not
-     * misjudge a busy worker as dead should pass a longer value.
+     * True if worker $id responded ready to a ping. Used by
+     * XiangqiPoolEnsureCommand (the cron-driven Supervisor replacement)
+     * to decide whether a worker with a live PID is actually serving
+     * requests, not just running-but-stuck.
      */
-    public function pingWorker(int $id, float $timeout = 0.2): bool
+    public function pingWorker(int $id): bool
     {
-        $resp = $this->requestOnSocket($this->socketPath($id), ['action' => 'ping'], $timeout) ?? [];
+        $resp = $this->pingWorkerRaw($id);
         return ($resp['success'] ?? false) && ($resp['ready'] ?? false);
     }
 
+    private function pingWorkerRaw(int $id): array
+    {
+        return $this->requestOnSocket($this->socketPath($id), ['action' => 'ping'], 0.2) ?? [];
+    }
+
     /**
-     * Send $payload to the first FREE, healthy worker. Returns [] (never
-     * throws) if none could serve it, so callers can fall back gracefully.
+     * Try each worker socket in random order; use the first one that
+     * accepts a connection. Returns null (never throws) if none are
+     * available within budget, so callers can fall back gracefully.
      */
     private function request(array $payload, float $readTimeoutSeconds): array
     {
-        $deadline = microtime(true) + self::MAX_WAIT_FOR_FREE_WORKER;
+        $order = range(0, $this->workerCount - 1);
+        shuffle($order);
 
-        do {
-            $order = range(0, $this->workerCount - 1);
-            shuffle($order);
-            $anyBusy = false;
-
-            foreach ($order as $id) {
-                $lock = $this->tryLockWorker($id);
-                if ($lock === null) {
-                    $anyBusy = true; // serving another request right now
-                    continue;
-                }
-
-                try {
-                    $result = $this->requestOnSocket($this->socketPath($id), $payload, $readTimeoutSeconds);
-                } finally {
-                    flock($lock, LOCK_UN);
-                    fclose($lock);
-                }
-
-                // An "error" reply (e.g. "Engine not ready") means: try another worker.
-                if ($result !== null && !isset($result['error'])) {
-                    return $result;
-                }
+        foreach ($order as $id) {
+            $result = $this->requestOnSocket($this->socketPath($id), $payload, $readTimeoutSeconds);
+            if ($result !== null) {
+                return $result;
             }
+        }
 
-            if (!$anyBusy) {
-                break; // nobody is merely busy -> pool is down, don't wait
-            }
-            usleep(50_000);
-        } while (microtime(true) < $deadline);
-
+        // Every socket was missing/refused/timed out — from this request's
+        // point of view the pool is fully down. Kick off pool:ensure in the
+        // background so the *next* request has a chance, instead of every
+        // request failing silently until the next cron tick (up to 60s away).
         $this->triggerPoolEnsure();
 
         return [];
     }
 
-    /** @return resource|null exclusive lock on worker $id, or null if it's in use */
-    private function tryLockWorker(int $id)
-    {
-        if (!is_dir($this->socketDir)) {
-            return null;
-        }
-
-        $handle = @fopen(rtrim($this->socketDir, '/') . "/engine-{$id}.busy", 'c');
-        if (!$handle) {
-            return null;
-        }
-        if (!flock($handle, LOCK_EX | LOCK_NB)) {
-            fclose($handle);
-            return null;
-        }
-
-        return $handle;
-    }
-
+    /**
+     * Fire `php artisan xiangqi:pool:ensure` in the background (detached,
+     * non-blocking — same setsid/nohup pattern XiangqiPoolEnsureCommand
+     * itself uses to launch workers) the moment we notice zero workers
+     * responding, rather than waiting for the next scheduler tick.
+     *
+     * Debounced via a lock file: xiangqi:pool:ensure already takes its own
+     * flock, which prevents overlapping *runs*, but does nothing to stop a
+     * burst of concurrent web requests during an outage from each calling
+     * shell_exec() here and piling up processes in the table while one
+     * ensure run is still mid-flight (which, remember, can legitimately
+     * take BOOT_GRACE_SECONDS-ish per cold-started worker). This cooldown
+     * makes a storm of simultaneous callers trigger it once.
+     */
     private function triggerPoolEnsure(): void
     {
         if (!config('xiangqi.auto_ensure_on_empty', true)) {
@@ -174,13 +174,21 @@ class XiangqiEngineClient
 
         $lastTriggered = @filemtime($triggerPath);
         if ($lastTriggered !== false && (time() - $lastTriggered) < $cooldownSeconds) {
-            return;
+            return; // triggered recently — let that run finish before we try again
         }
 
+        // Touch the lock file before shelling out, so concurrent requests
+        // racing us here see a fresh mtime immediately rather than all
+        // passing the check together.
         @touch($triggerPath);
 
         $phpBinary = $this->resolvePhpBinary();
         if ($phpBinary === null) {
+            // Don't shell out a command we already know is broken — that
+            // used to silently build "setsid '' /path/artisan ..." (empty
+            // PHP_BINARY, common when this runs inside a PHP-FPM request)
+            // and fail invisibly, since this whole call is wrapped in
+            // "> /dev/null 2>&1". Log it instead so an outage is visible.
             \Illuminate\Support\Facades\Log::error(
                 'xiangqi: could not resolve a usable PHP CLI binary to trigger pool:ensure '
                 . '(PhpExecutableFinder and PHP_BINARY both empty/non-executable). '
@@ -193,9 +201,26 @@ class XiangqiEngineClient
         $php = escapeshellarg($phpBinary);
         $launcher = trim((string) shell_exec('command -v setsid')) !== '' ? 'setsid' : 'nohup';
 
+        // Detached and output-discarded: this runs on the request thread,
+        // so it must return immediately regardless of how long
+        // xiangqi:pool:ensure itself takes to finish.
         shell_exec("{$launcher} {$php} {$artisan} xiangqi:pool:ensure > /dev/null 2>&1 < /dev/null &");
     }
 
+    /**
+     * Resolve a real, executable CLI PHP binary.
+     *
+     * PHP_BINARY alone is not safe here: this class is constructed on the
+     * web request path (poolStatus()/isAnyWorkerReady() are called from
+     * controllers), so this code frequently runs under PHP-FPM, where
+     * PHP_BINARY commonly resolves to an empty string rather than a CLI
+     * php path. escapeshellarg('') used to build a silently-broken
+     * "setsid '' ..." command. Prefer Symfony's PhpExecutableFinder (more
+     * reliable across SAPIs), fall back to PHP_BINARY, then to an
+     * explicit config value — and return null (instead of a broken
+     * string) if nothing resolves, so callers can fail loudly/log rather
+     * than shell out garbage.
+     */
     private function resolvePhpBinary(): ?string
     {
         $candidate = (new \Symfony\Component\Process\PhpExecutableFinder())->find(false)
@@ -220,12 +245,10 @@ class XiangqiEngineClient
         );
 
         if (!$conn) {
-            return null;
+            return null; // worker down or refusing (busy) — try next
         }
 
-        $seconds = (int) floor($readTimeoutSeconds);
-        $micro = (int) (($readTimeoutSeconds - $seconds) * 1_000_000);
-        stream_set_timeout($conn, $seconds, $micro);
+        stream_set_timeout($conn, (int) ceil($readTimeoutSeconds));
         fwrite($conn, json_encode($payload) . "\n");
         fflush($conn);
 
