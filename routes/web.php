@@ -216,7 +216,7 @@ Route::get('/test-engine', function() {
 
     // Check if the underlying binary/network files are present at all —
     // still useful, since every worker needs these to boot.
-    $enginePath = storage_path('engines/pikafish');
+    $enginePath = storage_path('engines/pikafish_vps');
     $networkPath = storage_path('engines/pikafish.nnue');
 
     echo "<p>Engine binary exists: " . (file_exists($enginePath) ? 'YES' : 'NO') . "</p>";
