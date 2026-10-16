@@ -8,35 +8,16 @@ use Illuminate\Console\Command;
 /**
  * `php artisan xiangqi:pool:ensure`
  *
- * Replaces what Supervisor was doing: makes sure `worker_count` engine
- * workers are alive, and (re)spawns any that aren't — fully detached, so
- * they keep running after this command exits. Meant to be run:
+ * Makes sure `worker_count` engine workers are alive and (re)spawns any
+ * that aren't, fully detached. Run once after deploy and every minute via
+ * Laravel's scheduler.
  *
- *   1. Once manually after deploy, to bring the pool up.
- *   2. Every minute via Laravel's scheduler — in Laravel 9 that means
- *      registering it in app/Console/Kernel.php's schedule() method (see
- *      the Kernel.php in this bundle), so a crashed worker is back within
- *      ~60s without any manual intervention. That only needs the one
- *      standard Laravel cron entry (`php artisan schedule:run` every
- *      minute) most Laravel 9 apps already have — no bespoke crontab
- *      line required.
- *
- * Uses a flock so overlapping cron runs (or a slow run) can't spawn
- * duplicate workers for the same id.
- *
- * BOOT-GRACE WINDOW: a freshly launched worker writes its pid file
- * immediately (see XiangqiEngineWorkerCommand::handle()) but only binds
- * its socket once PikafishProcess::start() finishes, which can
- * legitimately take up to ~25s (10s uciok + 15s readyok) even without
- * contention, and longer under a cold-start where all N workers are
- * loading the same .nnue file at once. Without a grace period, a cron
- * tick landing in that window sees "pid running, socket not answering"
- * and concludes the worker is dead — then kills its own pid file/socket
- * and launches a SECOND process for the same id, which fights the first
- * for the socket path and can leave the pid file pointing at whichever
- * one lost. This class tracks a launch timestamp per worker and refuses
- * to declare a worker dead on ping failure alone until that grace window
- * has elapsed.
+ * LIVENESS: a worker that is busy searching cannot answer a ping until the
+ * search ends, so a failed ping alone does NOT mean it is dead. A worker is
+ * only declared dead if its process is gone, or if it fails MAX_PING_FAILURES
+ * consecutive checks (each with a generous ping timeout) after its boot-grace
+ * window. A stuck worker is killed (whole process group) before respawn so
+ * duplicates can never pile up.
  */
 class XiangqiPoolEnsureCommand extends Command
 {
@@ -44,23 +25,10 @@ class XiangqiPoolEnsureCommand extends Command
 
     protected $description = 'Start any Xiangqi engine workers that are not currently running';
 
-    /**
-     * Generous ceiling for a single worker's full boot: proc_open +
-     * uciok (up to 10s) + readyok (up to 15s) + a little slack for
-     * scheduling delay under a cold-start pool. Keep this at or above
-     * PikafishProcess's own uciok/readyok ceilings (10s + 15s) or you'll
-     * reintroduce the exact race this is meant to prevent.
-     */
     private const BOOT_GRACE_SECONDS = 30.0;
-
-    /**
-     * Delay between launching consecutive cold-start workers. Loading the
-     * same .nnue file 12x simultaneously is the single biggest cause of
-     * any one worker blowing past BOOT_GRACE_SECONDS in the first place —
-     * staggering launches keeps disk/CPU/RAM contention down so each
-     * worker's own boot stays close to its unloaded-machine time.
-     */
     private const LAUNCH_STAGGER_SECONDS = 2.0;
+    private const PING_TIMEOUT_SECONDS = 5.0;
+    private const MAX_PING_FAILURES = 3;
 
     public function handle(): int
     {
@@ -81,8 +49,6 @@ class XiangqiPoolEnsureCommand extends Command
         try {
             $launchedAny = false;
             for ($id = 0; $id < $workerCount; $id++) {
-                // Stagger only actual launches, not the (common, cheap)
-                // case where a worker is already alive and we just skip it.
                 if ($launchedAny) {
                     usleep((int) (self::LAUNCH_STAGGER_SECONDS * 1_000_000));
                 }
@@ -96,41 +62,32 @@ class XiangqiPoolEnsureCommand extends Command
         return self::SUCCESS;
     }
 
-    /**
-     * @return bool true if this call actually launched a new process for $id
-     */
     private function ensureWorker(int $id, string $socketDir): bool
     {
-        $pidPath = rtrim($socketDir, '/') . "/engine-{$id}.pid";
-        $startedPath = $this->startedPath($socketDir, $id);
+        $dir = rtrim($socketDir, '/');
+        $pidPath = "{$dir}/engine-{$id}.pid";
+        $startedPath = "{$dir}/engine-{$id}.started";
+        $failPath = "{$dir}/engine-{$id}.fails";
 
-        if ($this->isWorkerAlive($id, $pidPath, $startedPath)) {
+        if ($this->isWorkerAlive($id, $pidPath, $startedPath, $failPath)) {
             $this->line("[worker {$id}] alive, skipping");
             return false;
         }
 
         $this->warn("[worker {$id}] not running — starting it");
 
-        // Stale files from a crashed process (or a loser of a prior race).
         @unlink($pidPath);
         @unlink($startedPath);
-        @unlink(rtrim($socketDir, '/') . "/engine-{$id}.sock");
+        @unlink($failPath);
+        @unlink("{$dir}/engine-{$id}.sock");
 
-        $logPath = rtrim($socketDir, '/') . "/engine-{$id}.log";
+        $logPath = "{$dir}/engine-{$id}.log";
         $artisan = escapeshellarg(base_path('artisan'));
         $php = escapeshellarg($this->resolvePhpBinary());
         $log = escapeshellarg($logPath);
 
-        // setsid fully detaches the process from this command's session so
-        // it survives long after `php artisan xiangqi:pool:ensure` (and,
-        // if run from cron, cron's own short-lived shell) has exited.
-        // nohup additionally ignores SIGHUP as a fallback where setsid
-        // isn't available.
         $launcher = $this->hasSetsid() ? 'setsid' : 'nohup';
 
-        // Record the launch time BEFORE shelling out, so there is no
-        // window where a worker is running-but-unpingable with no
-        // corresponding grace-period record.
         file_put_contents($startedPath, microtime(true));
 
         $cmd = "{$launcher} {$php} {$artisan} xiangqi:engine-worker {$id} >> {$log} 2>&1 < /dev/null & echo \$!";
@@ -146,16 +103,7 @@ class XiangqiPoolEnsureCommand extends Command
         return true;
     }
 
-    /**
-     * A worker counts as "alive" if:
-     *   - its PID file points at a running process that is actually our
-     *     worker (guards against a stale PID having been reused by an
-     *     unrelated process), AND EITHER
-     *   - it responds to a ping on its socket, OR
-     *   - it's still within its boot-grace window, in which case a failed
-     *     ping just means "still loading," not "dead."
-     */
-    private function isWorkerAlive(int $id, string $pidPath, string $startedPath): bool
+    private function isWorkerAlive(int $id, string $pidPath, string $startedPath, string $failPath): bool
     {
         if (!file_exists($pidPath)) {
             return false;
@@ -166,10 +114,10 @@ class XiangqiPoolEnsureCommand extends Command
             return false;
         }
 
-        $client = new XiangqiEngineClient();
-        if ($client->pingWorker($id)) {
-            // Fully up — grace record no longer needed.
+        // Long timeout: a busy worker only answers after its current search.
+        if ((new XiangqiEngineClient())->pingWorker($id, self::PING_TIMEOUT_SECONDS)) {
             @unlink($startedPath);
+            @unlink($failPath);
             return true;
         }
 
@@ -178,15 +126,30 @@ class XiangqiPoolEnsureCommand extends Command
             return true;
         }
 
+        $fails = (int) trim((string) @file_get_contents($failPath)) + 1;
+        if ($fails < self::MAX_PING_FAILURES) {
+            file_put_contents($failPath, (string) $fails);
+            $this->line("[worker {$id}] ping failed ({$fails}/" . self::MAX_PING_FAILURES . ') — leaving it alone');
+            return true;
+        }
+
+        // Genuinely stuck: kill worker + its pikafish child (setsid made the
+        // worker its process-group leader) so no duplicate is left behind.
+        $this->warn("[worker {$id}] unresponsive for {$fails} checks — killing pid {$pid}");
+        if (function_exists('posix_kill')) {
+            @posix_kill(-$pid, 9);
+            @posix_kill($pid, 9);
+        } else {
+            @shell_exec('kill -9 -- -' . (int) $pid . ' ' . (int) $pid . ' 2>/dev/null');
+        }
+        usleep(300_000);
+
         return false;
     }
 
     private function withinBootGrace(string $startedPath): bool
     {
         if (!file_exists($startedPath)) {
-            // No record of when this one launched (e.g. it predates this
-            // fix, or the file was cleaned up some other way). Fail safe
-            // toward "no grace" rather than granting an indefinite pass.
             return false;
         }
 
@@ -198,11 +161,6 @@ class XiangqiPoolEnsureCommand extends Command
         return (microtime(true) - $startedAt) < self::BOOT_GRACE_SECONDS;
     }
 
-    private function startedPath(string $socketDir, int $id): string
-    {
-        return rtrim($socketDir, '/') . "/engine-{$id}.started";
-    }
-
     private function isPidRunning(int $pid, int $expectedId): bool
     {
         if (function_exists('posix_kill') && !posix_kill($pid, 0)) {
@@ -211,9 +169,6 @@ class XiangqiPoolEnsureCommand extends Command
             return false;
         }
 
-        // Best-effort sanity check on Linux: confirm the running process
-        // actually is this worker, not an unrelated process that reused
-        // the PID after a crash.
         $cmdlinePath = "/proc/{$pid}/cmdline";
         if (is_readable($cmdlinePath)) {
             $cmdline = str_replace("\0", ' ', (string) file_get_contents($cmdlinePath));
@@ -237,29 +192,6 @@ class XiangqiPoolEnsureCommand extends Command
         return $has;
     }
 
-    /**
-     * Resolve a real, executable CLI PHP binary to launch workers with.
-     *
-     * PHP_BINARY is NOT safe to use here on its own: it resolves correctly
-     * when this command runs under the CLI SAPI (e.g. from cron via
-     * `php artisan schedule:run`), but it resolves to an EMPTY STRING under
-     * most PHP-FPM setups. This command can legitimately run in-process
-     * under FPM too — e.g. the ops web page's "Run" button calls
-     * Artisan::call('xiangqi:pool:ensure', ...) directly inside the web
-     * request instead of shelling out to a fresh CLI process. When that
-     * happened, escapeshellarg(PHP_BINARY) produced escapeshellarg(''),
-     * which silently built a broken shell command
-     * ("setsid '' /path/artisan ...") — setsid then failed with
-     * "setsid: failed to execute : No such file or directory" and the
-     * worker never started, with no exception thrown anywhere.
-     *
-     * Symfony's PhpExecutableFinder is far more reliable across SAPIs
-     * (it checks PHP_BINARY, PHP_BINDIR, and common install locations),
-     * so try that first, then PHP_BINARY, then an explicit configured
-     * fallback (set XIANGQI_PHP_BINARY in .env for unusual environments).
-     * If none of those resolve to something actually executable, throw
-     * instead of quietly shelling out a command that can't possibly work.
-     */
     private function resolvePhpBinary(): string
     {
         $candidate = (new \Symfony\Component\Process\PhpExecutableFinder())->find(false)
