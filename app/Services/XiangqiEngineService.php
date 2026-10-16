@@ -16,7 +16,7 @@ class XiangqiEngineService
 
     public function __construct()
     {
-        $this->enginePath = storage_path('engines/pikafish_vps');
+        $this->enginePath = storage_path('engines/pikafish');
         $this->networkPath = storage_path('engines/pikafish.nnue');
 
         if (!file_exists($this->enginePath)) {

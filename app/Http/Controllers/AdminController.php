@@ -186,7 +186,7 @@ class AdminController extends Controller
 
         try {
             // --- 1. Filesystem checks -------------------------------------------------
-            $enginePath  = storage_path('engines/pikafish_vps');
+            $enginePath  = storage_path('engines/pikafish');
             $networkPath = storage_path('engines/pikafish.nnue');
 
             $binaryExists  = file_exists($enginePath);
@@ -201,7 +201,7 @@ class AdminController extends Controller
                     'title'    => 'Engine Binary',
                     'icon'     => '⚙️',
                     'ok'       => $binaryExists,
-                    'subtitle' => $binaryExists ? 'pikafish_vps found on disk' : 'Missing at ' . $enginePath,
+                    'subtitle' => $binaryExists ? 'pikafish found on disk' : 'Missing at ' . $enginePath,
                 ],
                 [
                     'title'    => 'Network File',
