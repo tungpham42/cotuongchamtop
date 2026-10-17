@@ -9,7 +9,6 @@
 .zalo-icon img {
     width: 50px; /* Adjust size as needed */
     height: 50px;
-    border-radius: 50%; /* Optional: makes it circular */
     transition: transform 0.3s ease; /* Optional: hover effect */
 }
 
@@ -25,6 +24,6 @@
 </style>
 <div class="zalo-icon">
     <a href="https://zalo.me/12163384073" target="_blank">
-        <img src="{{ asset('img/zalo.svg') }}" alt="Zalo Chat">
+        <img src="{{ asset('img/contact.png') }}" alt="Zalo Chat">
     </a>
 </div>
