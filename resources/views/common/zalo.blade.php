@@ -7,8 +7,8 @@
 }
 
 .zalo-icon img {
-    width: 50px; /* Adjust size as needed */
-    height: 50px;
+    width: 100px; /* Adjust size as needed */
+    height: 100px;
     transition: transform 0.3s ease; /* Optional: hover effect */
 }
 

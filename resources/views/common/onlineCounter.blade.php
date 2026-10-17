@@ -9,7 +9,7 @@
     .online-counter-badge {
         position: fixed;
         bottom: 20px;
-        right: 80px;
+        right: 140px;
 
         /* Liquid Glass Theme Integration */
         background: var(--glass-bg-dark, rgba(11, 12, 16, 0.85));
