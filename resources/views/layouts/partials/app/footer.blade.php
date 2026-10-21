@@ -46,6 +46,9 @@
           <li>
             <a target="_blank" class="hololab showPromotion" href="https://hololab.vn/"><i class="fal fa-cube"></i> Hologram</a>
           </li>
+          <li>
+            <a target="_blank" class="tanphat showPromotion" href="https://tanphatdigital.com/"><i class="fal fa-usd-circle"></i> Tấn Phát Digital</a>
+          </li>
         </ul>
       </div>
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
