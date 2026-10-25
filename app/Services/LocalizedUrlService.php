@@ -125,6 +125,10 @@ class LocalizedUrlService
             'bang' => 'ko',
             'fangjian' => 'zh',
             'phong' => 'vi',
+            'raum' => 'de',
+            'salon' => 'fr',
+            'sala' => 'es',
+            'komnata' => 'ru',
         ];
 
         return $legacyRoomLocales[$firstSegment] ?? $this->defaultLocale();

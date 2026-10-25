@@ -354,7 +354,7 @@ return array(
 	"cz" => array(
 		"whois.nic.cz",
 	),
-	"de" => array(
+	"de-dang" => array(
 		"whois.denic.de",
 	),
 	"dj" => array(

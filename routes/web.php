@@ -198,6 +198,15 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->name('admin.')->gr
 //     ->where('any', '.*');
 $cdnUrl = "https://cotuong.r.worldssl.net"; // url('')
 $fenRegex = "[a-zA-Z0-9\-\/\s|&nbsp;]+";
+
+// Pick the entry for $locale out of a per-locale map (titles, level labels, ...).
+// A locale that has no entry yet (e.g. a newly added one) falls back to English,
+// then to the default locale, so its routes still register and render instead of
+// silently 404-ing or throwing "undefined array key".
+$pickLocale = fn (array $map, string $locale) => $map[$locale]
+    ?? $map['en']
+    ?? $map[config('locales.default', 'vi')]
+    ?? reset($map);
 // Common function to get random room
 Route::get('/test-engine', function() {
   // The old version of this route instantiated \App\Services\XiangqiEngineService
@@ -261,10 +270,10 @@ Route::get('/test-engine', function() {
 Route::get('/sitemap_index.xml', [SitemapController::class, 'sitemapIndex'])->name('sitemap.sitemapIndex');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.index');
 Route::get('/sitemap-puzzles-{locale}.xml', [SitemapController::class, 'puzzles'])
-    ->whereIn('locale', ['vi', 'en', 'ja', 'ko', 'zh'])
+    ->whereIn('locale', config('locales.supported', []))
     ->name('sitemap.puzzles');
 Route::get('/sitemap-articles-{locale}.xml', [SitemapController::class, 'articles'])
-    ->whereIn('locale', ['vi', 'en', 'ja', 'ko', 'zh'])
+    ->whereIn('locale', config('locales.supported', []))
     ->name('sitemap.articles');
 
 // Custom route to bypass Laravel's strict auth requirement
@@ -591,7 +600,9 @@ $localizedRoomPages = [
 
 foreach ($localizedRoomPages as $pageKey => $roomPage) {
   foreach (config('locales.supported', []) as $locale) {
-    Route::match(['get', 'post'], localized_path($pageKey, ['code' => '{code}'], $locale), function($code) use ($pageKey, $roomPage, $locale) {
+    $titleFor = $pickLocale($roomPage['titles'], $locale);
+
+    Route::match(['get', 'post'], localized_path($pageKey, ['code' => '{code}'], $locale), function($code) use ($pageKey, $roomPage, $locale, $titleFor) {
       $room = Room::firstWhere('code', $code);
       if (!$room) {
         abort(404);
@@ -629,7 +640,7 @@ foreach ($localizedRoomPages as $pageKey => $roomPage) {
 
       $view = $roomPage['view'];
       $data = [
-        'headTitle' => $roomPage['titles'][$locale]($code),
+        'headTitle' => $titleFor($code),
         'bodyClass' => 'room',
         'randomRoom' => app(GetRandomRoomAction::class)->execute(),
         'roomCode' => $code,
@@ -649,7 +660,7 @@ foreach ($localizedRoomPages as $pageKey => $roomPage) {
 // });
 
 // Loop through supported locales to dynamically generate DataTables endpoints
-foreach (['vi', 'en', 'ja', 'ko', 'zh'] as $locale) {
+foreach (config('locales.supported', []) as $locale) {
     $ucLocale = ucfirst($locale);
 
     Route::get("/puzzles/{$locale}", [PuzzleController::class, 'getPuzzlesData'])
@@ -854,11 +865,13 @@ $localizedPlayerPages = [
 ];
 
 foreach (config('locales.supported', []) as $locale) {
-    Route::match(['get', 'post'], localized_path('app.player', ['id' => '{id}'], $locale), function ($id) use ($locale, $localizedPlayerPages) {
+    $titleFor = $pickLocale($localizedPlayerPages['app.player']['titles'], $locale);
+
+    Route::match(['get', 'post'], localized_path('app.player', ['id' => '{id}'], $locale), function ($id) use ($locale, $localizedPlayerPages, $titleFor) {
 
         $pageSettings = $localizedPlayerPages['app.player'];
         $data = [
-            'headTitle' => $pageSettings['titles'][$locale]($id),
+            'headTitle' => $titleFor($id),
             'bodyClass' => 'player',
             'player' => User::firstWhere('id', $id),
             'users' => app(GetUserQueriesAction::class)->getUsers(),
@@ -1043,7 +1056,9 @@ $localizedHumanPages = [
     ]
 ];
 
-foreach ($localizedHumanPages['human.play']['titles'] as $locale => $title) {
+foreach (config('locales.supported', []) as $locale) {
+    $title = $pickLocale($localizedHumanPages['human.play']['titles'], $locale);
+
     Route::match(['get', 'post'], localized_path('human.play', [], $locale), function () use ($locale, $title) {
         return view('human', localized_page_data('human.play', $locale, [
             'headTitle' => $title,
@@ -1056,7 +1071,7 @@ foreach ($localizedHumanPages['human.play']['titles'] as $locale => $title) {
 }
 
 Route::match(['get', 'post'], '/thach-dau/{board}', function ($board) {
-return view('puzzleCompete', ['headTitle' => 'Thách đấu', 'bodyClass' => 'puzzle', 'board' => $board, 'randomRoom' => app(GetRandomRoomAction::class)->execute(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'canonicalUrl' => '/thach-dau/'.$board]);
+return view('puzzleCompete', ['headTitle' => 'Thách đấu', 'bodyClass' => 'puzzle', 'board' => $board, 'randomRoom' => app(GetRandomRoomAction::class)->execute(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'langUrls' => localized_alternate_paths('home'), 'canonicalUrl' => '/thach-dau/'.$board]);
 })->where(['board' => $fenRegex]);
 
 // Define the titles for your puzzle rating routes
@@ -1072,7 +1087,9 @@ $localizedPuzzleRatingPages = [
     ]
 ];
 
-foreach ($localizedPuzzleRatingPages['puzzle.rating']['titles'] as $locale => $title) {
+foreach (config('locales.supported', []) as $locale) {
+    $title = $pickLocale($localizedPuzzleRatingPages['puzzle.rating']['titles'], $locale);
+
     Route::match(['get', 'post'], localized_path('puzzle.rating', ['slug' => '{slug}'], $locale), function ($slug) use ($locale, $title) {
         $puzzle = Puzzle::where('slug', $slug)->firstOrFail();
 
@@ -1131,7 +1148,9 @@ $localizedPuzzlePages = [
 ];
 
 // 1. Puzzle Setup (Empty Board)
-foreach ($localizedPuzzlePages['puzzle.setup']['titles'] as $locale => $title) {
+foreach (config('locales.supported', []) as $locale) {
+    $title = $pickLocale($localizedPuzzlePages['puzzle.setup']['titles'], $locale);
+
     Route::match(['get', 'post'], localized_path('puzzle.setup', [], $locale), function () use ($locale, $title) {
         return view('puzzle', localized_page_data('puzzle.setup', $locale, [
             'headTitle' => $title,
@@ -1145,7 +1164,9 @@ foreach ($localizedPuzzlePages['puzzle.setup']['titles'] as $locale => $title) {
 }
 
 // 2. Puzzle Board (With FEN/Board string)
-foreach ($localizedPuzzlePages['puzzle.board']['titles'] as $locale => $title) {
+foreach (config('locales.supported', []) as $locale) {
+    $title = $pickLocale($localizedPuzzlePages['puzzle.board']['titles'], $locale);
+
     Route::match(['get', 'post'], localized_path('puzzle.board', ['board' => '{board}'], $locale), function ($board) use ($locale, $title) {
         return view('puzzle', localized_page_data('puzzle.board', $locale, [
             'headTitle' => $title,
@@ -1252,7 +1273,9 @@ $localizedBoardPages = [
 ];
 
 foreach ($localizedBoardPages as $pageKey => $pageData) {
-    foreach ($pageData['titles'] as $locale => $localeData) {
+    foreach (config('locales.supported', []) as $locale) {
+        $localeData = $pickLocale($pageData['titles'], $locale);
+
         Route::match(['get', 'post'], localized_path($pageKey, ['fen' => '{fen}'], $locale), function ($fen) use ($pageKey, $pageData, $locale, $localeData) {
 
             // 1. Setup base view data
@@ -1347,7 +1370,9 @@ $localizedLevelPages = [
 ];
 
 foreach ($localizedLevelPages as $pageKey => $localizedPages) {
-    foreach ($localizedPages as $locale => $page) {
+    foreach (config('locales.supported', []) as $locale) {
+        $page = $pickLocale($localizedPages, $locale);
+
         Route::match(['get', 'post'], localized_path($pageKey, [], $locale), function () use ($pageKey, $locale, $page) {
 
             // 1. Generate the view response
@@ -1435,7 +1460,9 @@ $localizedStaticPages = [
 ];
 
 foreach ($localizedStaticPages as $pageKey => $localizedPages) {
-  foreach ($localizedPages as $locale => $page) {
+  foreach (config('locales.supported', []) as $locale) {
+    $page = $pickLocale($localizedPages, $locale);
+
     Route::match(['get', 'post'], localized_path($pageKey, [], $locale), function () use ($pageKey, $locale, $page) {
       return view($page['view'], localized_page_data($pageKey, $locale, [
         'headTitle' => $page['title'],
@@ -1456,7 +1483,9 @@ $localizedRoomListPages = [
   'zh' => ['view' => 'roomList', 'title' => '房间列表'],
 ];
 
-foreach ($localizedRoomListPages as $locale => $page) {
+foreach (config('locales.supported', []) as $locale) {
+  $page = $pickLocale($localizedRoomListPages, $locale);
+
   Route::match(['get', 'post'], localized_path('room.list', [], $locale), function () use ($locale, $page) {
     $data = [
       'headTitle' => $page['title'],

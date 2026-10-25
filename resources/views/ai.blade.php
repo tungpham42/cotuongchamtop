@@ -20,7 +20,7 @@
     @php
         $locale = app()->getLocale() ?: 'vi';
         $levelUrls = [
-            'vi' => ['moi-choi', 'de', 'binh-thuong', 'kho', 'kho-nhat', 'kien-tuong'],
+            'vi' => ['moi-choi', 'de-dang', 'binh-thuong', 'kho', 'kho-nhat', 'kien-tuong'],
             'en' => ['newbie', 'easy', 'normal', 'hard', 'hardest', 'master'],
             'ja' => ['shoshinsha', 'kantan', 'tsujo', 'hado', 'mottomo-muzukashi', 'masuta'],
             'ko' => ['nyubi', 'iji', 'nomol', 'hadeu', 'gajang-dandanhan', 'maseuteo'],

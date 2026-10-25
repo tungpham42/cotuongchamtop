@@ -2,6 +2,6 @@
 return array(
     "com"=>"domain ={Domain}",
     "net"=>"domain ={Domain}",
-    "de"=>"-T dn,ace {Domain}",
+    "de-dang"=>"-T dn,ace {Domain}",
     "jp"=>"DOM {Domain}/e",
 );
