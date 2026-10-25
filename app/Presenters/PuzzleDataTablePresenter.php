@@ -18,6 +18,10 @@ class PuzzleDataTablePresenter
         $texts = [
             'vi' => ['solve' => 'Giải cờ thế', 'preview' => 'Xem trước'],
             'en' => ['solve' => 'Solve puzzle', 'preview' => 'Preview'],
+            'es' => ['solve' => 'Resolver puzle', 'preview' => 'Vista previa'],
+            'fr' => ['solve' => 'Résoudre le problème', 'preview' => 'Aperçu'],
+            'de' => ['solve' => 'Rätsel lösen', 'preview' => 'Vorschau'],
+            'ru' => ['solve' => 'Решить задачу', 'preview' => 'Предпросмотр'],
             'ja' => ['solve' => 'パズルを解く', 'preview' => 'プレビュー'],
             'ko' => ['solve' => '퍼즐 풀기', 'preview' => '미리보기'],
             'zh' => ['solve' => '解谜', 'preview' => '预览'],
@@ -43,7 +47,7 @@ class PuzzleDataTablePresenter
 
     public function formatAction($row): string
     {
-        $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: 160px;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/giai-co-the/").$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> '.$this->t['solve'].'</a>';
+        $actionBtn = '<a class="btn btn-danger text-light mr-1 showPromotion" style="width: fit-content;" data-fen="'.$row->fen.'" data-slug="'.$row->slug.'" href="'.url('/').__("/giai-co-the/").$row->fen.' r - - 0 1"><i class="far fa-mouse"></i> '.$this->t['solve'].'</a>';
         $actionBtn .= '<a class="ml-1 btn btn-warning previewBtn"><i class="far fa-eye"></i> '.$this->t['preview'].'</a>';
         return $actionBtn;
     }
