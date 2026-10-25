@@ -78,7 +78,7 @@ return [
         'ai.easiest' => ['vi' => 'de-nhat', 'en' => 'easiest', 'ja' => 'mottomo-kantan', 'ko' => 'gajang-swiun', 'zh' => 'zuijiandan', 'de' => 'einfachste', 'fr' => 'tres-facile', 'es' => 'facilisimo', 'ru' => 'samyy-legkiy'],
         'ai.newbie'  => ['vi' => 'moi-choi', 'en' => 'newbie', 'ja' => 'shoshinsha', 'ko' => 'nyubi', 'zh' => 'xinshou', 'de' => 'anfaenger', 'fr' => 'debutant', 'es' => 'principiante', 'ru' => 'novichok'],
         'ai.easy'    => ['vi' => 'de-dang', 'en' => 'easy', 'ja' => 'kantan', 'ko' => 'iji', 'zh' => 'jianyiban', 'de' => 'leicht', 'fr' => 'facile', 'es' => 'facil', 'ru' => 'legkiy'],
-        'ai.normal'  => ['vi' => 'binh-thuong', 'en' => 'normal', 'ja' => 'tsujo', 'ko' => 'nomol', 'zh' => 'putong', 'de' => 'normal', 'fr' => 'normal', 'es' => 'normal', 'ru' => 'normalnyy'],
+        'ai.normal'  => ['vi' => 'binh-thuong', 'en' => 'normal', 'ja' => 'tsujo', 'ko' => 'nomol', 'zh' => 'putong', 'de' => 'normalerweise', 'fr' => 'normalement', 'es' => 'normalmente', 'ru' => 'normalnyy'],
         'ai.hard'    => ['vi' => 'kho', 'en' => 'hard', 'ja' => 'hado', 'ko' => 'hadeu', 'zh' => 'ying', 'de' => 'schwer', 'fr' => 'difficile', 'es' => 'dificil', 'ru' => 'slozhnyy'],
         'ai.hardest' => ['vi' => 'kho-nhat', 'en' => 'hardest', 'ja' => 'mottomo-muzukashi', 'ko' => 'gajang-dandanhan', 'zh' => 'zuiying', 'de' => 'schwerste', 'fr' => 'tres-difficile', 'es' => 'dificilisimo', 'ru' => 'samyy-slozhnyy'],
         'ai.master'  => ['vi' => 'kien-tuong', 'en' => 'grandmaster', 'ja' => 'masuta', 'ko' => 'maseuteo', 'zh' => 'dashi', 'de' => 'meister', 'fr' => 'maitre', 'es' => 'maestro', 'ru' => 'grossmeyster'],
