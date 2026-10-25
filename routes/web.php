@@ -1486,7 +1486,7 @@ $localizedLevelPages = [
     ],
     'ai.master' => [
         'vi' => ['title' => 'Kiện tướng', 'level' => '8', 'levelTxt' => 'Kiện tướng'],
-        'en' => ['title' => 'Master', 'level' => '8', 'levelTxt' => 'Master'],
+        'en' => ['title' => 'Grandmaster', 'level' => '8', 'levelTxt' => 'Grandmaster'],
         'ja' => ['title' => 'マスター', 'level' => '8', 'levelTxt' => 'マスター'],
         'ko' => ['title' => '마스터', 'level' => '8', 'levelTxt' => '마스터'],
         'zh' => ['title' => '大师级', 'level' => '8', 'levelTxt' => '大师级'],

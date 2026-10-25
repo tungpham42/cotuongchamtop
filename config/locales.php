@@ -81,7 +81,7 @@ return [
         'ai.normal'  => ['vi' => 'binh-thuong', 'en' => 'normal', 'ja' => 'tsujo', 'ko' => 'nomol', 'zh' => 'putong', 'de' => 'normal', 'fr' => 'normal', 'es' => 'normal', 'ru' => 'normalnyy'],
         'ai.hard'    => ['vi' => 'kho', 'en' => 'hard', 'ja' => 'hado', 'ko' => 'hadeu', 'zh' => 'ying', 'de' => 'schwer', 'fr' => 'difficile', 'es' => 'dificil', 'ru' => 'slozhnyy'],
         'ai.hardest' => ['vi' => 'kho-nhat', 'en' => 'hardest', 'ja' => 'mottomo-muzukashi', 'ko' => 'gajang-dandanhan', 'zh' => 'zuiying', 'de' => 'schwerste', 'fr' => 'tres-difficile', 'es' => 'dificilisimo', 'ru' => 'samyy-slozhnyy'],
-        'ai.master'  => ['vi' => 'kien-tuong', 'en' => 'master', 'ja' => 'masuta', 'ko' => 'maseuteo', 'zh' => 'dashi', 'de' => 'meister', 'fr' => 'maitre', 'es' => 'maestro', 'ru' => 'master'],
+        'ai.master'  => ['vi' => 'kien-tuong', 'en' => 'grandmaster', 'ja' => 'masuta', 'ko' => 'maseuteo', 'zh' => 'dashi', 'de' => 'meister', 'fr' => 'maitre', 'es' => 'maestro', 'ru' => 'master'],
 
         // Application (Dashboard, Profile, Settings)
         'app.dashboard' => ['vi' => 'thi-dau', 'en' => 'compete', 'ja' => 'kyogi', 'ko' => 'gyeong-gi', 'zh' => 'jingzheng', 'de' => 'wettkampf', 'fr' => 'competition', 'es' => 'competir', 'ru' => 'sorevnovanie'],
