@@ -18,15 +18,18 @@
 
 @section('aboveBoard')
     @php
-        $locale = app()->getLocale() ?: 'vi';
         $levelUrls = [
-            'vi' => ['moi-choi', 'de-dang', 'binh-thuong', 'kho', 'kho-nhat', 'kien-tuong'],
-            'en' => ['newbie', 'easy', 'normal', 'hard', 'hardest', 'master'],
-            'ja' => ['shoshinsha', 'kantan', 'tsujo', 'hado', 'mottomo-muzukashi', 'masuta'],
-            'ko' => ['nyubi', 'iji', 'nomol', 'hadeu', 'gajang-dandanhan', 'maseuteo'],
-            'zh' => ['xinshou', 'rongyide', 'dianxingde', 'jiangude', 'zuinande', 'dashi'],
+            localized_url('ai.newbie'),
+            localized_url('ai.easy'),
+            localized_url('ai.normal'),
+            localized_url('ai.hard'),
+            localized_url('ai.hardest'),
+            localized_url('ai.master'),
         ];
-        $urls = $levelUrls[$locale] ?? $levelUrls['vi'];
+        // localized_url() already returns the URL for the current locale, so no per-locale lookup is needed.
+        // Reduce each one to a path without a leading slash, so request()->is() and url('/' . $path) work
+        // whether localized_url() returns a full URL or a path.
+        $urls = array_map(fn ($u) => ltrim((string) parse_url($u, PHP_URL_PATH), '/'), $levelUrls);
         $actionMap = [
             '1' => 'tập chơi',
             '2' => 'thư giãn',

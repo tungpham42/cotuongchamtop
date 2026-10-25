@@ -18,15 +18,16 @@
 
 @section('aboveBoard')
     @php
-        $locale = app()->getLocale() ?: 'vi';
         $levelUrls = [
-            'vi' => ['ban-co-moi-choi', 'ban-co-de', 'ban-co-binh-thuong', 'ban-co-kho', 'ban-co-kho-nhat'],
-            'en' => ['newbie-board', 'easy-board', 'normal-board', 'hard-board', 'hardest-board'],
-            'ja' => ['shoshinsha-bodo', 'kantan-bodo', 'tsujo-bodo', 'hado-bodo', 'mottomo-muzukashi-bodo'],
-            'ko' => ['nyubi-bodeu', 'iji-bodeu', 'nomol-bodeu', 'hadeu-bodeu', 'gajang-dandanhan-bodeu'],
-            'zh' => ['xinshouban', 'jianyiban', 'putongban', 'yingban', 'zuiyingban'],
+            localized_url('board.ai.newbie'),
+            localized_url('board.ai.easy'),
+            localized_url('board.ai.normal'),
+            localized_url('board.ai.hard'),
+            localized_url('board.ai.hardest'),
         ];
-        $urls = $levelUrls[$locale] ?? $levelUrls['vi'];
+        // localized_url() already returns the URL for the current locale, so no per-locale lookup is needed.
+        // Reduce each one to a path without a leading slash so url('/' . $path) works for a full URL or a path.
+        $urls = array_map(fn ($u) => ltrim((string) parse_url($u, PHP_URL_PATH), '/'), $levelUrls);
     @endphp
     <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Cấp độ") }}: {{ $levelTxt }}">{{ __("Bạn đang giải") }}<span id="puzzle-title"></span> {{ __("với máy") }}</h5>
     <p class="w-100 text-center m-0">

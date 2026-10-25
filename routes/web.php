@@ -290,7 +290,7 @@ $localizedTournamentPages = [
         'methods' => ['get'],
         'middleware' => [],
         'titles' => [
-            'vi' => 'Danh sách Giải đấu', 'en' => 'Tournament List', 'ja' => 'トーナメント一覧', 'ko' => '토너먼트 목록', 'zh' => '锦标赛列表',
+            'vi' => 'Danh sách Giải đấu', 'en' => 'Tournament List', 'ja' => 'トーナメント一覧', 'ko' => '토너먼트 목록', 'zh' => '锦标赛列表', 'de' => 'Turnierliste', 'fr' => 'Liste des tournois', 'es' => 'Lista de torneos', 'ru' => 'Список турниров',
         ],
     ],
     'tournaments.show' => [
@@ -299,7 +299,7 @@ $localizedTournamentPages = [
         'methods' => ['get'],
         'middleware' => [],
         'titles' => [
-            'vi' => 'Chi tiết Giải đấu', 'en' => 'Tournament Details', 'ja' => 'トーナメントの詳細', 'ko' => '토너먼트 세부 정보', 'zh' => '锦标赛详情',
+            'vi' => 'Chi tiết Giải đấu', 'en' => 'Tournament Details', 'ja' => 'トーナメントの詳細', 'ko' => '토너먼트 세부 정보', 'zh' => '锦标赛详情', 'de' => 'Turnierdetails', 'fr' => 'Détails du tournoi', 'es' => 'Detalles del torneo', 'ru' => 'Информация о турнире',
         ],
     ],
 
@@ -324,7 +324,7 @@ $localizedTournamentPages = [
         'methods' => ['get'],
         'middleware' => ['auth'], // Any auth user can view create form
         'titles' => [
-            'vi' => 'Tạo Giải đấu', 'en' => 'Create Tournament', 'ja' => 'トーナメント作成', 'ko' => '토너먼트 만들기', 'zh' => '创建锦标赛',
+            'vi' => 'Tạo Giải đấu', 'en' => 'Create Tournament', 'ja' => 'トーナメント作成', 'ko' => '토너먼트 만들기', 'zh' => '创建锦标赛', 'de' => 'Turnier erstellen', 'fr' => 'Créer un tournoi', 'es' => 'Crear torneo', 'ru' => 'Создать турнир',
         ],
     ],
     'tournaments.store' => [
@@ -339,7 +339,7 @@ $localizedTournamentPages = [
         'methods' => ['get'],
         'middleware' => ['auth', 'tournament.creator'], // Protected
         'titles' => [
-            'vi' => 'Sửa Giải đấu', 'en' => 'Edit Tournament', 'ja' => 'トーナメント編集', 'ko' => '토너먼트 편집', 'zh' => '编辑锦标赛',
+            'vi' => 'Sửa Giải đấu', 'en' => 'Edit Tournament', 'ja' => 'トーナメント編集', 'ko' => '토너먼트 편집', 'zh' => '编辑锦标赛', 'de' => 'Turnier bearbeiten', 'fr' => 'Modifier le tournoi', 'es' => 'Editar torneo', 'ru' => 'Редактировать турнир',
         ],
     ],
     'tournaments.update' => [
@@ -544,6 +544,10 @@ $localizedRoomPages = [
       'ja' => fn($code) => 'ホスト - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
       'ko' => fn($code) => '주인 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
       'zh' => fn($code) => '主办 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'de' => fn($code) => 'Gastgeber - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'fr' => fn($code) => 'Hôte - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'es' => fn($code) => 'Anfitrión - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ru' => fn($code) => 'Хозяин - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
     ],
   ],
   'room.guest' => [
@@ -554,6 +558,10 @@ $localizedRoomPages = [
       'ja' => fn($code) => 'ゲスト - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
       'ko' => fn($code) => '손님 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
       'zh' => fn($code) => '客人 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'de' => fn($code) => 'Gast - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'fr' => fn($code) => 'Invité - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'es' => fn($code) => 'Invitado - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ru' => fn($code) => 'Гость - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
     ],
   ],
   'room.random' => [
@@ -564,6 +572,10 @@ $localizedRoomPages = [
       'ja' => fn($code) => 'ランダム - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
       'ko' => fn($code) => '무작위의 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
       'zh' => fn($code) => '随机的 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'de' => fn($code) => 'Zufällig - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'fr' => fn($code) => 'Aléatoire - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'es' => fn($code) => 'Aleatorio - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ru' => fn($code) => 'Случайный - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
     ],
   ],
   'room.watch' => [
@@ -574,6 +586,10 @@ $localizedRoomPages = [
       'ja' => fn($code) => '見る - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
       'ko' => fn($code) => '보다 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
       'zh' => fn($code) => '看 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'de' => fn($code) => 'Zuschauen - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'fr' => fn($code) => 'Observer - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'es' => fn($code) => 'Observar - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ru' => fn($code) => 'Наблюдать - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
     ],
   ],
   'room.red' => [
@@ -584,6 +600,10 @@ $localizedRoomPages = [
       'ja' => fn($code) => '赤 - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
       'ko' => fn($code) => '빨간 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
       'zh' => fn($code) => '红方 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'de' => fn($code) => 'Rote Seite - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'fr' => fn($code) => 'Camp rouge - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'es' => fn($code) => 'Lado rojo - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ru' => fn($code) => 'Красные - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
     ],
   ],
   'room.black' => [
@@ -594,6 +614,10 @@ $localizedRoomPages = [
       'ja' => fn($code) => '黒 - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
       'ko' => fn($code) => '검은색 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
       'zh' => fn($code) => '黑边 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'de' => fn($code) => 'Schwarze Seite - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'fr' => fn($code) => 'Camp noir - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'es' => fn($code) => 'Lado negro - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+      'ru' => fn($code) => 'Чёрные - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
     ],
   ],
 ];
@@ -690,7 +714,7 @@ $localizedAppPages = [
     'app.dashboard' => [
         'view' => 'app/home',
         'middleware' => [],
-        'titles' => ['vi' => 'Thi đấu', 'en' => 'Compete', 'ja' => '競技', 'ko' => '경쟁', 'zh' => '竞争'],
+        'titles' => ['vi' => 'Thi đấu', 'en' => 'Compete', 'ja' => '競技', 'ko' => '경쟁', 'zh' => '竞争', 'de' => 'Wettkampf', 'fr' => 'Compétition', 'es' => 'Competir', 'ru' => 'Соревнование'],
         // We use closures for data so DB queries don't run on route registration
         'data' => fn() => [
             'bodyClass' => 'dashboard',
@@ -705,7 +729,7 @@ $localizedAppPages = [
     'app.history' => [
         'view' => 'app/history',
         'middleware' => [],
-        'titles' => ['vi' => 'Lịch sử thi đấu', 'en' => 'Match History', 'ja' => '対戦履歴', 'ko' => '경기 기록', 'zh' => '比赛历史'],
+        'titles' => ['vi' => 'Lịch sử thi đấu', 'en' => 'Match History', 'ja' => '対戦履歴', 'ko' => '경기 기록', 'zh' => '比赛历史', 'de' => 'Spielverlauf', 'fr' => 'Historique des parties', 'es' => 'Historial de partidas', 'ru' => 'История матчей'],
         'data' => fn() => [
             'bodyClass' => 'dashboard',
             'matchUsers' => app(GetUserQueriesAction::class)->getMatchUsers(),
@@ -718,7 +742,7 @@ $localizedAppPages = [
     'app.ranking' => [
         'view' => 'app/ranking',
         'middleware' => [],
-        'titles' => ['vi' => 'Bảng xếp hạng', 'en' => 'Ranking', 'ja' => 'ランキング', 'ko' => '순위표', 'zh' => '排行榜'],
+        'titles' => ['vi' => 'Bảng xếp hạng', 'en' => 'Ranking', 'ja' => 'ランキング', 'ko' => '순위표', 'zh' => '排行榜', 'de' => 'Rangliste', 'fr' => 'Classement', 'es' => 'Clasificación', 'ru' => 'Рейтинг'],
         'data' => fn() => [
             'bodyClass' => 'trophy',
             'users' => app(GetUserQueriesAction::class)->getUsers(),
@@ -729,7 +753,7 @@ $localizedAppPages = [
     'app.password' => [
         'view' => 'app/changePassword',
         'middleware' => ['auth'],
-        'titles' => ['vi' => 'Đổi mật khẩu', 'en' => 'Change Password', 'ja' => 'パスワード変更', 'ko' => '비밀번호 변경', 'zh' => '更改密码'],
+        'titles' => ['vi' => 'Đổi mật khẩu', 'en' => 'Change Password', 'ja' => 'パスワード変更', 'ko' => '비밀번호 변경', 'zh' => '更改密码', 'de' => 'Passwort ändern', 'fr' => 'Changer le mot de passe', 'es' => 'Cambiar contraseña', 'ru' => 'Изменить пароль'],
         'data' => fn() => [
             'bodyClass' => 'player profile',
             'player' => Auth::user(),
@@ -742,7 +766,7 @@ $localizedAppPages = [
     'app.name' => [
         'view' => 'app/changeName',
         'middleware' => ['auth'],
-        'titles' => ['vi' => 'Đổi tên', 'en' => 'Change Name', 'ja' => '名前変更', 'ko' => '이름 변경', 'zh' => '更改名称'],
+        'titles' => ['vi' => 'Đổi tên', 'en' => 'Change Name', 'ja' => '名前変更', 'ko' => '이름 변경', 'zh' => '更改名称', 'de' => 'Namen ändern', 'fr' => 'Changer le nom', 'es' => 'Cambiar nombre', 'ru' => 'Изменить имя'],
         'data' => fn() => [
             'bodyClass' => 'player profile',
             'player' => Auth::user(),
@@ -755,7 +779,7 @@ $localizedAppPages = [
     'app.ui' => [
         'view' => 'app/changeUi',
         'middleware' => ['auth'],
-        'titles' => ['vi' => 'Đổi giao diện', 'en' => 'Change UI', 'ja' => 'UI変更', 'ko' => 'UI 변경', 'zh' => '更改界面'],
+        'titles' => ['vi' => 'Đổi giao diện', 'en' => 'Change UI', 'ja' => 'UI変更', 'ko' => 'UI 변경', 'zh' => '更改界面', 'de' => 'Oberfläche ändern', 'fr' => 'Changer l\'interface', 'es' => 'Cambiar interfaz', 'ru' => 'Изменить интерфейс'],
         'data' => fn() => [
             'bodyClass' => 'player profile',
             'player' => Auth::user(),
@@ -768,7 +792,7 @@ $localizedAppPages = [
     'app.profile' => [
         'view' => 'app/player',
         'middleware' => ['auth'],
-        'titles' => ['vi' => 'Hồ sơ của tôi', 'en' => 'My Profile', 'ja' => 'マイプロフィール', 'ko' => '내 프로필', 'zh' => '我的资料'],
+        'titles' => ['vi' => 'Hồ sơ của tôi', 'en' => 'My Profile', 'ja' => 'マイプロフィール', 'ko' => '내 프로필', 'zh' => '我的资料', 'de' => 'Mein Profil', 'fr' => 'Mon profil', 'es' => 'Mi perfil', 'ru' => 'Мой профиль'],
         'data' => fn() => [
             'bodyClass' => 'player profile',
             'player' => Auth::user(),
@@ -781,7 +805,7 @@ $localizedAppPages = [
     'search' => [
         'view' => 'app/search',
         'middleware' => [],
-        'titles' => ['vi' => 'Tìm kiếm', 'en' => 'Search', 'ja' => '検索', 'ko' => '검색', 'zh' => '搜索'],
+        'titles' => ['vi' => 'Tìm kiếm', 'en' => 'Search', 'ja' => '検索', 'ko' => '검색', 'zh' => '搜索', 'de' => 'Suche', 'fr' => 'Recherche', 'es' => 'Buscar', 'ru' => 'Поиск'],
         'data' => fn() => [
             'bodyClass' => 'search',
             'matchRooms' => app(GetRoomQueriesAction::class)->getMatchRooms(),
@@ -860,6 +884,10 @@ $localizedPlayerPages = [
             'ja' => fn($id) => 'プレイヤープロフィール "' . app(GetUserQueriesAction::class)->getUserName($id) . '"',
             'ko' => fn($id) => '플레이어 프로필 "' . app(GetUserQueriesAction::class)->getUserName($id) . '"',
             'zh' => fn($id) => '玩家资料 "' . app(GetUserQueriesAction::class)->getUserName($id) . '"',
+            'de' => fn($id) => 'Spielerprofil "' . app(GetUserQueriesAction::class)->getUserName($id) . '"',
+            'fr' => fn($id) => 'Profil du joueur "' . app(GetUserQueriesAction::class)->getUserName($id) . '"',
+            'es' => fn($id) => 'Perfil del jugador "' . app(GetUserQueriesAction::class)->getUserName($id) . '"',
+            'ru' => fn($id) => 'Профиль игрока "' . app(GetUserQueriesAction::class)->getUserName($id) . '"',
         ],
     ]
 ];
@@ -906,6 +934,10 @@ $localizedAuthPages = [
             'ja' => 'ログイン',
             'ko' => '로그인',
             'zh' => '登录',
+            'de' => 'Anmelden',
+            'fr' => 'Connexion',
+            'es' => 'Iniciar sesión',
+            'ru' => 'Вход',
         ],
     ],
     'register' => [
@@ -917,6 +949,10 @@ $localizedAuthPages = [
             'ja' => '登録',
             'ko' => '회원가입',
             'zh' => '注册',
+            'de' => 'Registrieren',
+            'fr' => 'Inscription',
+            'es' => 'Registrarse',
+            'ru' => 'Регистрация',
         ],
     ],
     'password.request' => [
@@ -928,6 +964,10 @@ $localizedAuthPages = [
             'ja' => 'パスワードを忘れた場合',
             'ko' => '비밀번호 찾기',
             'zh' => '忘记密码',
+            'de' => 'Passwort vergessen',
+            'fr' => 'Mot de passe oublié',
+            'es' => 'Contraseña olvidada',
+            'ru' => 'Забыли пароль',
         ],
     ],
     'password.create' => [
@@ -939,6 +979,10 @@ $localizedAuthPages = [
             'ja' => 'パスワード作成',
             'ko' => '비밀번호 생성',
             'zh' => '创建密码',
+            'de' => 'Passwort erstellen',
+            'fr' => 'Créer un mot de passe',
+            'es' => 'Crear contraseña',
+            'ru' => 'Создать пароль',
         ],
     ],
     'password.reset' => [
@@ -950,6 +994,10 @@ $localizedAuthPages = [
             'ja' => 'パスワードリセット',
             'ko' => '비밀번호 재설정',
             'zh' => '重置密码',
+            'de' => 'Passwort zurücksetzen',
+            'fr' => 'Réinitialiser le mot de passe',
+            'es' => 'Restablecer contraseña',
+            'ru' => 'Сбросить пароль',
         ],
     ],
 ];
@@ -1052,6 +1100,10 @@ $localizedHumanPages = [
             'ja' => '一人で遊ぶ',
             'ko' => '혼자 놀다',
             'zh' => '独处',
+            'de' => 'Alleine spielen',
+            'fr' => 'Jouer seul',
+            'es' => 'Jugar solo',
+            'ru' => 'Играть одному',
         ]
     ]
 ];
@@ -1083,6 +1135,10 @@ $localizedPuzzleRatingPages = [
             'ja' => 'パズル',
             'ko' => '퍼즐',
             'zh' => '谜',
+            'de' => 'Rätsel',
+            'fr' => 'Problème',
+            'es' => 'Problema',
+            'ru' => 'Задача',
         ]
     ]
 ];
@@ -1133,6 +1189,10 @@ $localizedPuzzlePages = [
             'ja' => 'パズルを組み立てる',
             'ko' => '퍼즐',
             'zh' => '谜',
+            'de' => 'Rätsel aufstellen',
+            'fr' => 'Composer le problème',
+            'es' => 'Preparar el problema',
+            'ru' => 'Расставить задачу',
         ]
     ],
     'puzzle.board' => [
@@ -1143,6 +1203,10 @@ $localizedPuzzlePages = [
             'ja' => 'パズル',
             'ko' => '퍼즐',
             'zh' => '谜',
+            'de' => 'Rätsel',
+            'fr' => 'Problème',
+            'es' => 'Problema',
+            'ru' => 'Задача',
         ]
     ]
 ];
@@ -1191,6 +1255,10 @@ $localizedBoardPages = [
             'ja' => 'ボード',
             'ko' => '보드',
             'zh' => '板',
+            'de' => 'Brett',
+            'fr' => 'Plateau',
+            'es' => 'Tablero',
+            'ru' => 'Доска',
         ],
     ],
     'board.ai.easiest' => [
@@ -1202,6 +1270,10 @@ $localizedBoardPages = [
             'ja' => ['title' => '最も簡単なボード', 'levelTxt' => '最も簡単'],
             'ko' => ['title' => '가장 쉬운 보드', 'levelTxt' => '가장 쉬운'],
             'zh' => ['title' => '最简单的板', 'levelTxt' => '最容易的'],
+            'de' => ['title' => 'Einfachstes Brett', 'levelTxt' => 'Am einfachsten'],
+            'fr' => ['title' => 'Plateau le plus facile', 'levelTxt' => 'Le plus facile'],
+            'es' => ['title' => 'Tablero más fácil', 'levelTxt' => 'Más fácil'],
+            'ru' => ['title' => 'Самая лёгкая доска', 'levelTxt' => 'Самый лёгкий'],
         ],
     ],
     'board.ai.newbie' => [
@@ -1213,6 +1285,10 @@ $localizedBoardPages = [
             'ja' => ['title' => '初心者ボード', 'levelTxt' => '初心者'],
             'ko' => ['title' => '뉴비 보드', 'levelTxt' => '뉴비'],
             'zh' => ['title' => '新手板', 'levelTxt' => '新手'],
+            'de' => ['title' => 'Anfängerbrett', 'levelTxt' => 'Anfänger'],
+            'fr' => ['title' => 'Plateau débutant', 'levelTxt' => 'Débutant'],
+            'es' => ['title' => 'Tablero para novatos', 'levelTxt' => 'Novato'],
+            'ru' => ['title' => 'Доска для новичков', 'levelTxt' => 'Новичок'],
         ],
     ],
     'board.ai.easy' => [
@@ -1224,6 +1300,10 @@ $localizedBoardPages = [
             'ja' => ['title' => 'イージーボード', 'levelTxt' => '簡単'],
             'ko' => ['title' => '이지보드', 'levelTxt' => '쉬운'],
             'zh' => ['title' => '简易板', 'levelTxt' => '容易的'],
+            'de' => ['title' => 'Einfaches Brett', 'levelTxt' => 'Einfach'],
+            'fr' => ['title' => 'Plateau facile', 'levelTxt' => 'Facile'],
+            'es' => ['title' => 'Tablero fácil', 'levelTxt' => 'Fácil'],
+            'ru' => ['title' => 'Лёгкая доска', 'levelTxt' => 'Лёгкий'],
         ],
     ],
     'board.ai.normal' => [
@@ -1235,6 +1315,10 @@ $localizedBoardPages = [
             'ja' => ['title' => '通常ボード', 'levelTxt' => 'ツジョ'],
             'ko' => ['title' => '노멀 보드', 'levelTxt' => '노멀'],
             'zh' => ['title' => '普通板', 'levelTxt' => '典型的'],
+            'de' => ['title' => 'Normales Brett', 'levelTxt' => 'Normal'],
+            'fr' => ['title' => 'Plateau normal', 'levelTxt' => 'Normal'],
+            'es' => ['title' => 'Tablero normal', 'levelTxt' => 'Normal'],
+            'ru' => ['title' => 'Обычная доска', 'levelTxt' => 'Обычный'],
         ],
     ],
     'board.ai.hard' => [
@@ -1246,6 +1330,10 @@ $localizedBoardPages = [
             'ja' => ['title' => 'ハードボード', 'levelTxt' => 'ハード'],
             'ko' => ['title' => '하드보드', 'levelTxt' => '하드'],
             'zh' => ['title' => '硬板', 'levelTxt' => '坚固的'],
+            'de' => ['title' => 'Schweres Brett', 'levelTxt' => 'Schwer'],
+            'fr' => ['title' => 'Plateau difficile', 'levelTxt' => 'Difficile'],
+            'es' => ['title' => 'Tablero difícil', 'levelTxt' => 'Difícil'],
+            'ru' => ['title' => 'Сложная доска', 'levelTxt' => 'Сложный'],
         ],
     ],
     'board.ai.hardest' => [
@@ -1257,6 +1345,10 @@ $localizedBoardPages = [
             'ja' => ['title' => '最も難しいボード', 'levelTxt' => '最も難しい'],
             'ko' => ['title' => '가장 단단한 보드', 'levelTxt' => '가장 단단한'],
             'zh' => ['title' => '最难的', 'levelTxt' => '最难的'],
+            'de' => ['title' => 'Schwerstes Brett', 'levelTxt' => 'Am schwersten'],
+            'fr' => ['title' => 'Plateau le plus difficile', 'levelTxt' => 'Le plus difficile'],
+            'es' => ['title' => 'Tablero más difícil', 'levelTxt' => 'Más difícil'],
+            'ru' => ['title' => 'Самая сложная доска', 'levelTxt' => 'Самый сложный'],
         ],
     ],
     'puzzle.ai.solve' => [
@@ -1268,6 +1360,10 @@ $localizedBoardPages = [
             'ja' => ['title' => 'パズルを解く', 'levelTxt' => '最も難しい'],
             'ko' => ['title' => '퍼즐을 풀다', 'levelTxt' => '가장 단단한'],
             'zh' => ['title' => '解决难题', 'levelTxt' => '最难的'],
+            'de' => ['title' => 'Rätsel lösen', 'levelTxt' => 'Am schwersten'],
+            'fr' => ['title' => 'Résoudre le problème', 'levelTxt' => 'Le plus difficile'],
+            'es' => ['title' => 'Resolver el problema', 'levelTxt' => 'Más difícil'],
+            'ru' => ['title' => 'Решить задачу', 'levelTxt' => 'Самый сложный'],
         ],
     ]
 ];
@@ -1317,6 +1413,10 @@ $localizedLevelPages = [
         'ja' => ['title' => 'ホームページ', 'level' => '3', 'levelTxt' => 'ツジョ'],
         'ko' => ['title' => '홈페이지', 'level' => '3', 'levelTxt' => '노멀'],
         'zh' => ['title' => '主页', 'level' => '3', 'levelTxt' => '典型的'],
+        'de' => ['title' => 'Startseite', 'level' => '3', 'levelTxt' => 'Normal'],
+        'fr' => ['title' => 'Accueil', 'level' => '3', 'levelTxt' => 'Normal'],
+        'es' => ['title' => 'Inicio', 'level' => '3', 'levelTxt' => 'Normal'],
+        'ru' => ['title' => 'Главная', 'level' => '3', 'levelTxt' => 'Обычный'],
     ],
     'ai.easiest' => [
         'vi' => ['title' => 'Dễ nhất', 'level' => '1', 'levelTxt' => 'Dễ nhất'],
@@ -1324,6 +1424,10 @@ $localizedLevelPages = [
         'ja' => ['title' => '最も簡単', 'level' => '1', 'levelTxt' => '最も簡単'],
         'ko' => ['title' => '가장 쉬운', 'level' => '1', 'levelTxt' => '가장 쉬운'],
         'zh' => ['title' => '最容易的', 'level' => '1', 'levelTxt' => '最容易的'],
+        'de' => ['title' => 'Am einfachsten', 'level' => '1', 'levelTxt' => 'Am einfachsten'],
+        'fr' => ['title' => 'Le plus facile', 'level' => '1', 'levelTxt' => 'Le plus facile'],
+        'es' => ['title' => 'Más fácil', 'level' => '1', 'levelTxt' => 'Más fácil'],
+        'ru' => ['title' => 'Самый лёгкий', 'level' => '1', 'levelTxt' => 'Самый лёгкий'],
     ],
     'ai.newbie' => [
         'vi' => ['title' => 'Mới chơi', 'level' => '1', 'levelTxt' => 'Mới chơi'],
@@ -1331,6 +1435,10 @@ $localizedLevelPages = [
         'ja' => ['title' => '初心者', 'level' => '1', 'levelTxt' => '初心者'],
         'ko' => ['title' => '뉴비', 'level' => '1', 'levelTxt' => '뉴비'],
         'zh' => ['title' => '新手', 'level' => '1', 'levelTxt' => '新手'],
+        'de' => ['title' => 'Anfänger', 'level' => '1', 'levelTxt' => 'Anfänger'],
+        'fr' => ['title' => 'Débutant', 'level' => '1', 'levelTxt' => 'Débutant'],
+        'es' => ['title' => 'Novato', 'level' => '1', 'levelTxt' => 'Novato'],
+        'ru' => ['title' => 'Новичок', 'level' => '1', 'levelTxt' => 'Новичок'],
     ],
     'ai.easy' => [
         'vi' => ['title' => 'Dễ', 'level' => '2', 'levelTxt' => 'Dễ'],
@@ -1338,6 +1446,10 @@ $localizedLevelPages = [
         'ja' => ['title' => '簡単', 'level' => '2', 'levelTxt' => '簡単'],
         'ko' => ['title' => '쉬운', 'level' => '2', 'levelTxt' => '쉬운'],
         'zh' => ['title' => '容易的', 'level' => '2', 'levelTxt' => '容易的'],
+        'de' => ['title' => 'Einfach', 'level' => '2', 'levelTxt' => 'Einfach'],
+        'fr' => ['title' => 'Facile', 'level' => '2', 'levelTxt' => 'Facile'],
+        'es' => ['title' => 'Fácil', 'level' => '2', 'levelTxt' => 'Fácil'],
+        'ru' => ['title' => 'Лёгкий', 'level' => '2', 'levelTxt' => 'Лёгкий'],
     ],
     'ai.normal' => [
         'vi' => ['title' => 'Bình thường', 'level' => '3', 'levelTxt' => 'Bình thường'],
@@ -1345,6 +1457,10 @@ $localizedLevelPages = [
         'ja' => ['title' => 'ツジョ', 'level' => '3', 'levelTxt' => 'ツジョ'],
         'ko' => ['title' => '노멀', 'level' => '3', 'levelTxt' => '노멀'],
         'zh' => ['title' => '典型的', 'level' => '3', 'levelTxt' => '典型的'],
+        'de' => ['title' => 'Normal', 'level' => '3', 'levelTxt' => 'Normal'],
+        'fr' => ['title' => 'Normal', 'level' => '3', 'levelTxt' => 'Normal'],
+        'es' => ['title' => 'Normal', 'level' => '3', 'levelTxt' => 'Normal'],
+        'ru' => ['title' => 'Обычный', 'level' => '3', 'levelTxt' => 'Обычный'],
     ],
     'ai.hard' => [
         'vi' => ['title' => 'Khó', 'level' => '4', 'levelTxt' => 'Khó'],
@@ -1352,6 +1468,10 @@ $localizedLevelPages = [
         'ja' => ['title' => 'ハード', 'level' => '4', 'levelTxt' => 'ハード'],
         'ko' => ['title' => '하드', 'level' => '4', 'levelTxt' => '하드'],
         'zh' => ['title' => '坚固的', 'level' => '4', 'levelTxt' => '坚固的'],
+        'de' => ['title' => 'Schwer', 'level' => '4', 'levelTxt' => 'Schwer'],
+        'fr' => ['title' => 'Difficile', 'level' => '4', 'levelTxt' => 'Difficile'],
+        'es' => ['title' => 'Difícil', 'level' => '4', 'levelTxt' => 'Difícil'],
+        'ru' => ['title' => 'Сложный', 'level' => '4', 'levelTxt' => 'Сложный'],
     ],
     'ai.hardest' => [
         'vi' => ['title' => 'Khó nhất', 'level' => '5', 'levelTxt' => 'Khó nhất'],
@@ -1359,6 +1479,10 @@ $localizedLevelPages = [
         'ja' => ['title' => '最も難しい', 'level' => '5', 'levelTxt' => '最も難しい'],
         'ko' => ['title' => '가장 단단한', 'level' => '5', 'levelTxt' => '가장 단단한'],
         'zh' => ['title' => '最难的', 'level' => '5', 'levelTxt' => '最难的'],
+        'de' => ['title' => 'Am schwersten', 'level' => '5', 'levelTxt' => 'Am schwersten'],
+        'fr' => ['title' => 'Le plus difficile', 'level' => '5', 'levelTxt' => 'Le plus difficile'],
+        'es' => ['title' => 'Más difícil', 'level' => '5', 'levelTxt' => 'Más difícil'],
+        'ru' => ['title' => 'Самый сложный', 'level' => '5', 'levelTxt' => 'Самый сложный'],
     ],
     'ai.master' => [
         'vi' => ['title' => 'Kiện tướng', 'level' => '8', 'levelTxt' => 'Kiện tướng'],
@@ -1366,6 +1490,10 @@ $localizedLevelPages = [
         'ja' => ['title' => 'マスター', 'level' => '8', 'levelTxt' => 'マスター'],
         'ko' => ['title' => '마스터', 'level' => '8', 'levelTxt' => '마스터'],
         'zh' => ['title' => '大师级', 'level' => '8', 'levelTxt' => '大师级'],
+        'de' => ['title' => 'Meister', 'level' => '8', 'levelTxt' => 'Meister'],
+        'fr' => ['title' => 'Maître', 'level' => '8', 'levelTxt' => 'Maître'],
+        'es' => ['title' => 'Maestro', 'level' => '8', 'levelTxt' => 'Maestro'],
+        'ru' => ['title' => 'Мастер', 'level' => '8', 'levelTxt' => 'Мастер'],
     ],
 ];
 
@@ -1421,6 +1549,10 @@ $localizedStaticPages = [
     'ja' => ['view' => 'about', 'title' => '約'],
     'ko' => ['view' => 'about', 'title' => '우리에 대해'],
     'zh' => ['view' => 'about', 'title' => '关于我们'],
+    'de' => ['view' => 'about', 'title' => 'Über uns'],
+    'fr' => ['view' => 'about', 'title' => 'À propos'],
+    'es' => ['view' => 'about', 'title' => 'Sobre nosotros'],
+    'ru' => ['view' => 'about', 'title' => 'О нас'],
   ],
   'contact' => [
     'vi' => ['view' => 'contact', 'title' => 'Liên hệ'],
@@ -1428,6 +1560,10 @@ $localizedStaticPages = [
     'ja' => ['view' => 'contact', 'title' => 'コンタクト'],
     'ko' => ['view' => 'contact', 'title' => '문의하기'],
     'zh' => ['view' => 'contact', 'title' => '联系我们'],
+    'de' => ['view' => 'contact', 'title' => 'Kontakt'],
+    'fr' => ['view' => 'contact', 'title' => 'Contactez-nous'],
+    'es' => ['view' => 'contact', 'title' => 'Contacto'],
+    'ru' => ['view' => 'contact', 'title' => 'Контакты'],
   ],
   'puzzle.list' => [
     'vi' => ['view' => 'puzzleList', 'title' => 'Tất cả thế cờ'],
@@ -1435,6 +1571,10 @@ $localizedStaticPages = [
     'ja' => ['view' => 'puzzleList', 'title' => 'すべてのパズル'],
     'ko' => ['view' => 'puzzleList', 'title' => '모든 퍼즐'],
     'zh' => ['view' => 'puzzleList', 'title' => '所有谜题'],
+    'de' => ['view' => 'puzzleList', 'title' => 'Alle Rätsel'],
+    'fr' => ['view' => 'puzzleList', 'title' => 'Tous les problèmes'],
+    'es' => ['view' => 'puzzleList', 'title' => 'Todos los problemas'],
+    'ru' => ['view' => 'puzzleList', 'title' => 'Все задачи'],
   ],
   'user.list' => [
     'vi' => ['view' => 'userList', 'title' => 'Tất cả kỳ thủ'],
@@ -1442,20 +1582,32 @@ $localizedStaticPages = [
     'ja' => ['view' => 'userList', 'title' => 'すべてのプレイヤー'],
     'ko' => ['view' => 'userList', 'title' => '모든 플레이어'],
     'zh' => ['view' => 'userList', 'title' => '所有玩家'],
+    'de' => ['view' => 'userList', 'title' => 'Alle Spieler'],
+    'fr' => ['view' => 'userList', 'title' => 'Tous les joueurs'],
+    'es' => ['view' => 'userList', 'title' => 'Todos los jugadores'],
+    'ru' => ['view' => 'userList', 'title' => 'Все игроки'],
   ],
   'terms' => [
     'vi' => ['view' => 'terms', 'title' => 'Điều khoản và Điều kiện'],
     'en' => ['view' => 'terms', 'title' => 'Terms and Conditions'],
     'ja' => ['view' => 'terms', 'title' => '利用規約'],
     'ko' => ['view' => 'terms', 'title' => '이용약관'],
-    'zh' => ['view' => 'terms', 'title' => '条款和条件']
+    'zh' => ['view' => 'terms', 'title' => '条款和条件'],
+    'de' => ['view' => 'terms', 'title' => 'Allgemeine Geschäftsbedingungen'],
+    'fr' => ['view' => 'terms', 'title' => 'Conditions générales'],
+    'es' => ['view' => 'terms', 'title' => 'Términos y condiciones'],
+    'ru' => ['view' => 'terms', 'title' => 'Условия использования'],
   ],
   'privacy' => [
     'vi' => ['view' => 'privacy', 'title' => 'Chính sách bảo mật'],
     'en' => ['view' => 'privacy', 'title' => 'Privacy Policy'],
     'ja' => ['view' => 'privacy', 'title' => 'プライバシーポリシー'],
     'ko' => ['view' => 'privacy', 'title' => '개인정보 처리방침'],
-    'zh' => ['view' => 'privacy', 'title' => '隐私政策']
+    'zh' => ['view' => 'privacy', 'title' => '隐私政策'],
+    'de' => ['view' => 'privacy', 'title' => 'Datenschutzerklärung'],
+    'fr' => ['view' => 'privacy', 'title' => 'Politique de confidentialité'],
+    'es' => ['view' => 'privacy', 'title' => 'Política de privacidad'],
+    'ru' => ['view' => 'privacy', 'title' => 'Политика конфиденциальности'],
   ],
 ];
 
@@ -1481,6 +1633,10 @@ $localizedRoomListPages = [
   'ja' => ['view' => 'roomList', 'title' => '部屋一覧'],
   'ko' => ['view' => 'roomList', 'title' => '방 목록'],
   'zh' => ['view' => 'roomList', 'title' => '房间列表'],
+  'de' => ['view' => 'roomList', 'title' => 'Lobby'],
+  'fr' => ['view' => 'roomList', 'title' => 'Salons'],
+  'es' => ['view' => 'roomList', 'title' => 'Salas'],
+  'ru' => ['view' => 'roomList', 'title' => 'Лобби'],
 ];
 
 foreach (config('locales.supported', []) as $locale) {
