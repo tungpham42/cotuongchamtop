@@ -12,11 +12,17 @@ use Illuminate\Support\Str;
 class AdminArticleController extends Controller
 {
     // Cấu hình các ngôn ngữ hỗ trợ
-    protected $supportedLocales = ['vi', 'en', 'ja', 'ko', 'zh'];
+    protected $supportedLocales;
 
     // Ngôn ngữ mặc định — bắt buộc phải có tiêu đề. Đổi giá trị này ở một
     // chỗ duy nhất thay vì sửa chuỗi 'vi' rải rác trong các rule validate.
-    protected $defaultLocale = 'vi';
+    protected $defaultLocale;
+
+    public function __construct()
+    {
+        $this->supportedLocales = config('locales.supported');
+        $this->defaultLocale = config('locales.default');
+    }
 
     /**
      * Danh sách bài viết
