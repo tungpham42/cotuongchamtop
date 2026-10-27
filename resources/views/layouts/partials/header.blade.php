@@ -6,21 +6,21 @@
 
     // [route key, icon, label, extra css classes]
     $competeMenu = [
-        ['room.list',         'far fa-list-alt',     'Sảnh chờ',        'rooms-list'],
-        ['tournaments.index', 'far fa-swords',       'Giải đấu',        ''],
-        ['user.list',         'far fa-users',        'Thành viên',      ''],
-        ['puzzle.list',       'far fa-puzzle-piece', 'Cờ thế',          'setup puzzle'],
-        ['app.dashboard',     'far fa-list',         'Đang thi đấu',    ''],
-        ['app.ranking',       'far fa-star',         'Bảng xếp hạng',   ''],
-        ['search',            'far fa-search',       'Tìm kiếm kỳ thủ', ''],
-        ['app.history',       'far fa-archive',      'Lịch sử thi đấu', ''],
+        ['room.list',         'far fa-list-alt',     'Sảnh chờ',        'dashboard'],
+        ['tournaments.index', 'far fa-swords',       'Giải đấu',        'dashboard'],
+        ['user.list',         'far fa-users',        'Thành viên',      'dashboard'],
+        ['puzzle.list',       'far fa-puzzle-piece', 'Cờ thế',          'dashboard'],
+        ['app.dashboard',     'far fa-list',         'Đang thi đấu',    'dashboard'],
+        ['app.ranking',       'far fa-star',         'Bảng xếp hạng',   'dashboard'],
+        ['search',            'far fa-search',       'Tìm kiếm kỳ thủ', 'dashboard'],
+        ['app.history',       'far fa-archive',      'Lịch sử thi đấu', 'dashboard'],
     ];
 
     $accountMenu = [
-        ['app.profile',  'far fa-id-card',   'Hồ sơ của tôi'],
-        ['app.name',     'far fa-user-edit', 'Đổi tên'],
-        ['app.password', 'far fa-lock-alt',  'Đổi mật khẩu'],
-        ['app.ui',       'far fa-palette',   'Đổi giao diện'],
+        ['app.profile',  'far fa-id-card',   'Hồ sơ của tôi',   'profile'],
+        ['app.name',     'far fa-user-edit', 'Đổi tên',         'profile'],
+        ['app.password', 'far fa-lock-alt',  'Đổi mật khẩu',    'profile'],
+        ['app.ui',       'far fa-palette',   'Đổi giao diện',   'profile'],
     ];
 
     $supportedLocales = config('locales.supported', []);
@@ -78,7 +78,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         @endif
                     @else
                         <li class="dropdown ml-2">
-                            <a id="navbarDropdown" class="dropdown-toggle p-0" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false">
+                            <a id="navbarDropdown" class="profile dropdown-toggle p-0" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false">
                                 <img src="{{ Auth::user()->getAvatarUrl(24, 12) }}" class="shadow-sm pulse-gold" style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%; border: 2px solid var(--royal-gold);" />
                             </a>
 
@@ -91,9 +91,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                     </a>
                                 @endif
                                 <div class="dropdown-divider"></div>
-                                @foreach ($accountMenu as [$key, $icon, $label])
+                                @foreach ($accountMenu as [$key, $icon, $label, $extraClass])
                                     @php $itemUrl = localized_url($key); @endphp
-                                    <a href="{{ $itemUrl }}" class="showPromotion dropdown-item{{ $activeClass($itemUrl) }}"><i class="{{ $icon }}"></i> {{ __($label) }}</a>
+                                    <a href="{{ $itemUrl }}" class="{{ $extraClass ? $extraClass . ' ' : '' }}showPromotion dropdown-item{{ $activeClass($itemUrl) }}"><i class="{{ $icon }}"></i> {{ __($label) }}</a>
                                 @endforeach
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ localized_url('logout') }}"

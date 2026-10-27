@@ -209,63 +209,63 @@ $pickLocale = fn (array $map, string $locale) => $map[$locale]
     ?? reset($map);
 // Common function to get random room
 Route::get('/test-engine', function() {
-  // The old version of this route instantiated \App\Services\XiangqiEngineService
-  // directly, which spawned a brand-new Pikafish process (with its ~2s+ boot
-  // cost) on every single hit — the exact per-request pattern the engine-pool
-  // refactor got rid of. That class no longer exists. This route now exercises
-  // the actual warm worker pool through XiangqiEngineClient instead, the same
-  // path XiangqiController uses, so what you see here matches production
-  // behavior rather than bypassing it.
-  if (app()->environment('production')) {
-    abort(404);
-  }
-
-  try {
-    echo "<h1>Pikafish Engine Pool Test</h1>";
-
-    // Check if the underlying binary/network files are present at all —
-    // still useful, since every worker needs these to boot.
-    $enginePath = storage_path('engines/pikafish_vps');
-    $networkPath = storage_path('engines/pikafish.nnue');
-
-    echo "<p>Engine binary exists: " . (file_exists($enginePath) ? 'YES' : 'NO') . "</p>";
-    echo "<p>Network file exists: " . (file_exists($networkPath) ? 'YES' : 'NO') . "</p>";
-
-    if (file_exists($enginePath)) {
-      echo "<p>Engine executable: " . (is_executable($enginePath) ? 'YES' : 'NO') . "</p>";
-    }
-    if (file_exists($networkPath)) {
-      echo "<p>Network size: " . filesize($networkPath) . " bytes</p>";
+    // The old version of this route instantiated \App\Services\XiangqiEngineService
+    // directly, which spawned a brand-new Pikafish process (with its ~2s+ boot
+    // cost) on every single hit — the exact per-request pattern the engine-pool
+    // refactor got rid of. That class no longer exists. This route now exercises
+    // the actual warm worker pool through XiangqiEngineClient instead, the same
+    // path XiangqiController uses, so what you see here matches production
+    // behavior rather than bypassing it.
+    if (app()->environment('production')) {
+        abort(404);
     }
 
-    $client = new \App\Services\XiangqiEngineClient();
-    $status = $client->poolStatus();
+    try {
+        echo "<h1>Pikafish Engine Pool Test</h1>";
 
-    echo "<h2>Worker pool status</h2>";
-    echo "<p>Workers available: <strong>{$status['available']} / {$status['total']}</strong></p>";
+        // Check if the underlying binary/network files are present at all —
+        // still useful, since every worker needs these to boot.
+        $enginePath = storage_path('engines/pikafish_vps');
+        $networkPath = storage_path('engines/pikafish.nnue');
 
-    if ($status['available'] === 0) {
-      echo "<p style='color: red;'>No workers responding. Run <code>php artisan xiangqi:pool:ensure</code> "
-         . "and check <code>storage/app/xiangqi/engine-*.log</code> for boot errors.</p>";
-    } else {
-      $fen = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1';
-      $start = microtime(true);
-      $bestMove = $client->getBestMove($fen, 3000);
-      $elapsedMs = round((microtime(true) - $start) * 1000);
+        echo "<p>Engine binary exists: " . (file_exists($enginePath) ? 'YES' : 'NO') . "</p>";
+        echo "<p>Network file exists: " . (file_exists($networkPath) ? 'YES' : 'NO') . "</p>";
 
-      echo "<p>Best move: <strong>" . ($bestMove ?? 'NOT FOUND (fell through to fallback logic)') . "</strong></p>";
-      echo "<p>FEN: " . htmlspecialchars($fen) . "</p>";
-      echo "<p>Round-trip time: {$elapsedMs}ms (a cold-spawn engine would be seconds; this should be well under a second from a warm worker)</p>";
+        if (file_exists($enginePath)) {
+            echo "<p>Engine executable: " . (is_executable($enginePath) ? 'YES' : 'NO') . "</p>";
+        }
+        if (file_exists($networkPath)) {
+            echo "<p>Network size: " . filesize($networkPath) . " bytes</p>";
+        }
+
+        $client = new \App\Services\XiangqiEngineClient();
+        $status = $client->poolStatus();
+
+        echo "<h2>Worker pool status</h2>";
+        echo "<p>Workers available: <strong>{$status['available']} / {$status['total']}</strong></p>";
+
+        if ($status['available'] === 0) {
+            echo "<p style='color: red;'>No workers responding. Run <code>php artisan xiangqi:pool:ensure</code> "
+                . "and check <code>storage/app/xiangqi/engine-*.log</code> for boot errors.</p>";
+        } else {
+            $fen = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1';
+            $start = microtime(true);
+            $bestMove = $client->getBestMove($fen, 3000);
+            $elapsedMs = round((microtime(true) - $start) * 1000);
+
+            echo "<p>Best move: <strong>" . ($bestMove ?? 'NOT FOUND (fell through to fallback logic)') . "</strong></p>";
+            echo "<p>FEN: " . htmlspecialchars($fen) . "</p>";
+            echo "<p>Round-trip time: {$elapsedMs}ms (a cold-spawn engine would be seconds; this should be well under a second from a warm worker)</p>";
+        }
+
+        // Hitting our own HTTP API from within a route on the same request adds
+        // an extra network round trip for no benefit now that the client above
+        // already exercises the same code path the API route calls — dropped
+        // rather than kept as dead weight.
+    } catch (\Throwable $e) {
+        echo "<p style='color: red;'>Error: " . htmlspecialchars($e->getMessage()) . "</p>";
+        echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
     }
-
-    // Hitting our own HTTP API from within a route on the same request adds
-    // an extra network round trip for no benefit now that the client above
-    // already exercises the same code path the API route calls — dropped
-    // rather than kept as dead weight.
-  } catch (\Throwable $e) {
-    echo "<p style='color: red;'>Error: " . htmlspecialchars($e->getMessage()) . "</p>";
-    echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
-  }
 });
 Route::get('/sitemap_index.xml', [SitemapController::class, 'sitemapIndex'])->name('sitemap.sitemapIndex');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.index');
@@ -449,232 +449,232 @@ Route::post('/match/find', [RoomController::class, 'findMatch'])->name('match.fi
 Route::get('/match/status', [RoomController::class, 'checkMatchStatus'])->name('match.status');
 
 Route::get('/getUserPuzzlesTemplate', function(){
-  return view('layouts.partials.userPuzzles')->render();
+    return view('layouts.partials.userPuzzles')->render();
 });
 
 Route::get('/rooms', function () {
-  return redirect('/lobby', 301);
+    return redirect('/lobby', 301);
 });
 Route::get('/forum', function () {
-  return redirect('/sanh-cho', 301);
+    return redirect('/sanh-cho', 301);
 });
 Route::get('/forum/', function () {
-  return redirect('/sanh-cho', 301);
+    return redirect('/sanh-cho', 301);
 });
 Route::get('/forum/{wildcard}', function ($wildcard) {
-  return redirect('/sanh-cho', 301);
+    return redirect('/sanh-cho', 301);
 })->where(['wildcard' => ".*"]);
 
 Route::get('/choi-co-tuong', function () {
-  return redirect('', 301);
+    return redirect('', 301);
 });
 Route::get('/wp-admin', function () {
-  return redirect('', 301);
+    return redirect('', 301);
 });
 Route::get('/wp-json', function () {
-  return redirect('', 301);
+    return redirect('', 301);
 });
 Route::get('/cothe', function () {
-  return redirect('/co-the', 301);
+    return redirect('/co-the', 301);
 });
 Route::get('/danh-sach-phong', function () {
-  return redirect('/sanh-cho', 301);
+    return redirect('/sanh-cho', 301);
 });
 Route::get('/phong', function () {
-  return redirect('/sanh-cho', 301);
+    return redirect('/sanh-cho', 301);
 });
 Route::get('/danh-sach', function () {
-  return redirect('/sanh-cho', 301);
+    return redirect('/sanh-cho', 301);
 });
 Route::get('/danhsach', function () {
-  return redirect('/sanh-cho', 301);
+    return redirect('/sanh-cho', 301);
 });
 Route::get('/setup', function () {
-  return redirect('/puzzle', 301);
+    return redirect('/puzzle', 301);
 });
 Route::get('/set-up', function () {
-  return redirect('/puzzle', 301);
+    return redirect('/puzzle', 301);
 });
 Route::get('/choi-voi-may/de-nhat', function () {
-  return redirect('/de-nhat', 301);
+    return redirect('/de-nhat', 301);
 });
 Route::get('/choi-voi-may/moi-choi', function () {
-  return redirect('/moi-choi', 301);
+    return redirect('/moi-choi', 301);
 });
 Route::get('/choi-voi-may/de', function () {
-  return redirect('/de', 301);
+    return redirect('/de', 301);
 });
 Route::get('/choi-voi-may/binh-thuong', function () {
-  return redirect('/binh-thuong', 301);
+    return redirect('/binh-thuong', 301);
 });
 Route::get('/choi-voi-may/kho', function () {
-  return redirect('/kho', 301);
+    return redirect('/kho', 301);
 });
 Route::get('/choi-voi-may/kho-nhat', function () {
-  return redirect('/kho-nhat', 301);
+    return redirect('/kho-nhat', 301);
 });
 Route::get('/play-with-ai', function () {
-  return redirect('/en', 301);
+    return redirect('/en', 301);
 });
 Route::get('/play-with-ai/easiest', function () {
-  return redirect('/easiest', 301);
+    return redirect('/easiest', 301);
 });
 Route::get('/play-with-ai/newbie', function () {
-  return redirect('/newbie', 301);
+    return redirect('/newbie', 301);
 });
 Route::get('/play-with-ai/easy', function () {
-  return redirect('/easy', 301);
+    return redirect('/easy', 301);
 });
 Route::get('/play-with-ai/normal', function () {
-  return redirect('/normal', 301);
+    return redirect('/normal', 301);
 });
 Route::get('/play-with-ai/hard', function () {
-  return redirect('/hard', 301);
+    return redirect('/hard', 301);
 });
 Route::get('/play-with-ai/hardest', function () {
-  return redirect('/hardest', 301);
+    return redirect('/hardest', 301);
 });
 
 $localizedRoomPages = [
-  'room.host' => [
-    'view' => 'roomHost',
-    'titles' => [
-      'vi' => fn($code) => 'Chủ phòng - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'en' => fn($code) => 'Host - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ja' => fn($code) => 'ホスト - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ko' => fn($code) => '주인 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'zh' => fn($code) => '主办 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'de' => fn($code) => 'Gastgeber - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'fr' => fn($code) => 'Hôte - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'es' => fn($code) => 'Anfitrión - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ru' => fn($code) => 'Хозяин - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+    'room.host' => [
+        'view' => 'roomHost',
+        'titles' => [
+            'vi' => fn($code) => 'Chủ phòng - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'en' => fn($code) => 'Host - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ja' => fn($code) => 'ホスト - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ko' => fn($code) => '주인 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'zh' => fn($code) => '主办 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'de' => fn($code) => 'Gastgeber - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'fr' => fn($code) => 'Hôte - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'es' => fn($code) => 'Anfitrión - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ru' => fn($code) => 'Хозяин - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+        ],
     ],
-  ],
-  'room.guest' => [
-    'view' => 'roomGuest',
-    'titles' => [
-      'vi' => fn($code) => 'Khách - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'en' => fn($code) => 'Guest - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ja' => fn($code) => 'ゲスト - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ko' => fn($code) => '손님 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'zh' => fn($code) => '客人 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'de' => fn($code) => 'Gast - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'fr' => fn($code) => 'Invité - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'es' => fn($code) => 'Invitado - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ru' => fn($code) => 'Гость - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+    'room.guest' => [
+        'view' => 'roomGuest',
+        'titles' => [
+            'vi' => fn($code) => 'Khách - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'en' => fn($code) => 'Guest - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ja' => fn($code) => 'ゲスト - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ko' => fn($code) => '손님 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'zh' => fn($code) => '客人 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'de' => fn($code) => 'Gast - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'fr' => fn($code) => 'Invité - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'es' => fn($code) => 'Invitado - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ru' => fn($code) => 'Гость - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+        ],
     ],
-  ],
-  'room.random' => [
-    'view' => 'roomRandom',
-    'titles' => [
-      'vi' => fn($code) => 'Ngẫu nhiên - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'en' => fn($code) => 'Random - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ja' => fn($code) => 'ランダム - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ko' => fn($code) => '무작위의 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'zh' => fn($code) => '随机的 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'de' => fn($code) => 'Zufällig - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'fr' => fn($code) => 'Aléatoire - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'es' => fn($code) => 'Aleatorio - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ru' => fn($code) => 'Случайный - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+    'room.random' => [
+        'view' => 'roomRandom',
+        'titles' => [
+            'vi' => fn($code) => 'Ngẫu nhiên - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'en' => fn($code) => 'Random - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ja' => fn($code) => 'ランダム - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ko' => fn($code) => '무작위의 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'zh' => fn($code) => '随机的 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'de' => fn($code) => 'Zufällig - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'fr' => fn($code) => 'Aléatoire - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'es' => fn($code) => 'Aleatorio - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ru' => fn($code) => 'Случайный - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+        ],
     ],
-  ],
-  'room.watch' => [
-    'view' => 'roomWatch',
-    'titles' => [
-      'vi' => fn($code) => 'Theo dõi - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'en' => fn($code) => 'Watch - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ja' => fn($code) => '見る - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ko' => fn($code) => '보다 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'zh' => fn($code) => '看 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'de' => fn($code) => 'Zuschauen - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'fr' => fn($code) => 'Observer - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'es' => fn($code) => 'Observar - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ru' => fn($code) => 'Наблюдать - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+    'room.watch' => [
+        'view' => 'roomWatch',
+        'titles' => [
+            'vi' => fn($code) => 'Theo dõi - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'en' => fn($code) => 'Watch - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ja' => fn($code) => '見る - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ko' => fn($code) => '보다 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'zh' => fn($code) => '看 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'de' => fn($code) => 'Zuschauen - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'fr' => fn($code) => 'Observer - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'es' => fn($code) => 'Observar - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ru' => fn($code) => 'Наблюдать - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+        ],
     ],
-  ],
-  'room.red' => [
-    'view' => 'roomRed',
-    'titles' => [
-      'vi' => fn($code) => 'Bên đỏ - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'en' => fn($code) => 'Red side - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ja' => fn($code) => '赤 - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ko' => fn($code) => '빨간 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'zh' => fn($code) => '红方 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'de' => fn($code) => 'Rote Seite - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'fr' => fn($code) => 'Camp rouge - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'es' => fn($code) => 'Lado rojo - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ru' => fn($code) => 'Красные - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+    'room.red' => [
+        'view' => 'roomRed',
+        'titles' => [
+            'vi' => fn($code) => 'Bên đỏ - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'en' => fn($code) => 'Red side - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ja' => fn($code) => '赤 - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ko' => fn($code) => '빨간 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'zh' => fn($code) => '红方 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'de' => fn($code) => 'Rote Seite - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'fr' => fn($code) => 'Camp rouge - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'es' => fn($code) => 'Lado rojo - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ru' => fn($code) => 'Красные - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+        ],
     ],
-  ],
-  'room.black' => [
-    'view' => 'roomBlack',
-    'titles' => [
-      'vi' => fn($code) => 'Bên đen - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'en' => fn($code) => 'Black side - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ja' => fn($code) => '黒 - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ko' => fn($code) => '검은색 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'zh' => fn($code) => '黑边 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'de' => fn($code) => 'Schwarze Seite - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'fr' => fn($code) => 'Camp noir - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'es' => fn($code) => 'Lado negro - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
-      'ru' => fn($code) => 'Чёрные - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+    'room.black' => [
+        'view' => 'roomBlack',
+        'titles' => [
+            'vi' => fn($code) => 'Bên đen - Phòng: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'en' => fn($code) => 'Black side - Room: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ja' => fn($code) => '黒 - ルーム: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ko' => fn($code) => '검은색 - 방: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'zh' => fn($code) => '黑边 - 房间：'.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'de' => fn($code) => 'Schwarze Seite - Raum: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'fr' => fn($code) => 'Camp noir - Salon : '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'es' => fn($code) => 'Lado negro - Sala: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+            'ru' => fn($code) => 'Чёрные - Комната: '.app(GetRoomQueriesAction::class)->getRoomName($code),
+        ],
     ],
-  ],
 ];
 
 foreach ($localizedRoomPages as $pageKey => $roomPage) {
-  foreach (config('locales.supported', []) as $locale) {
-    $titleFor = $pickLocale($roomPage['titles'], $locale);
+    foreach (config('locales.supported', []) as $locale) {
+        $titleFor = $pickLocale($roomPage['titles'], $locale);
 
-    Route::match(['get', 'post'], localized_path($pageKey, ['code' => '{code}'], $locale), function($code) use ($pageKey, $roomPage, $locale, $titleFor) {
-      $room = Room::firstWhere('code', $code);
-      if (!$room) {
-        abort(404);
-      }
+        Route::match(['get', 'post'], localized_path($pageKey, ['code' => '{code}'], $locale), function($code) use ($pageKey, $roomPage, $locale, $titleFor) {
+            $room = Room::firstWhere('code', $code);
+            if (!$room) {
+                abort(404);
+            }
 
-      // --- ANTI-CHEAT: Prevent re-entering finished rooms as a player ---
-      if (!is_null($room->result)) {
-        if (in_array($pageKey, ['room.host', 'room.guest', 'room.red', 'room.black', 'room.random'])) {
-          return redirect()->to(localized_path('room.watch', ['code' => $code], $locale));
-        }
-      }
+            // --- ANTI-CHEAT: Prevent re-entering finished rooms as a player ---
+            if (!is_null($room->result)) {
+                if (in_array($pageKey, ['room.host', 'room.guest', 'room.red', 'room.black', 'room.random'])) {
+                    return redirect()->to(localized_path('room.watch', ['code' => $code], $locale));
+                }
+            }
 
-      // --- ANTI-CHEAT: Prevent re-entering finished tournament rooms as a player ---
-      if (!is_null($room->tournament_id) && !is_null($room->result)) {
-        if (in_array($pageKey, ['room.host', 'room.guest', 'room.red', 'room.black', 'room.random'])) {
-          abort(403, __('Trận đấu giải này đã kết thúc. Bạn chỉ có thể xem lại ở chế độ theo dõi.'));
-        }
-      }
+            // --- ANTI-CHEAT: Prevent re-entering finished tournament rooms as a player ---
+            if (!is_null($room->tournament_id) && !is_null($room->result)) {
+                if (in_array($pageKey, ['room.host', 'room.guest', 'room.red', 'room.black', 'room.random'])) {
+                    abort(403, __('Trận đấu giải này đã kết thúc. Bạn chỉ có thể xem lại ở chế độ theo dõi.'));
+                }
+            }
 
-      // --- ANTI-CHEAT: Prevent URL manipulation to join specific sides ---
-      if (isset($room->host_id)) {
-        // Block unauthorized access to the Red/Host side
-        if (in_array($pageKey, ['room.host', 'room.red'])) {
-          if (!auth()->check() || auth()->id() != $room->host_id) {
-            abort(403, __('Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.'));
-          }
-        }
-        // Block unauthorized access to the Black/Guest side
-        elseif (in_array($pageKey, ['room.guest', 'room.black'])) {
-          if (!auth()->check() || auth()->id() != $room->guest_id) {
-            abort(403, __('Bạn không có quyền truy cập vào phe Đen / Khách.'));
-          }
-        }
-      }
+            // --- ANTI-CHEAT: Prevent URL manipulation to join specific sides ---
+            if (isset($room->host_id)) {
+                // Block unauthorized access to the Red/Host side
+                if (in_array($pageKey, ['room.host', 'room.red'])) {
+                    if (!auth()->check() || auth()->id() != $room->host_id) {
+                        abort(403, __('Bạn không có quyền truy cập vào phe Đỏ / Chủ phòng.'));
+                    }
+                }
+                // Block unauthorized access to the Black/Guest side
+                elseif (in_array($pageKey, ['room.guest', 'room.black'])) {
+                    if (!auth()->check() || auth()->id() != $room->guest_id) {
+                        abort(403, __('Bạn không có quyền truy cập vào phe Đen / Khách.'));
+                    }
+                }
+            }
 
-      $view = $roomPage['view'];
-      $data = [
-        'headTitle' => $titleFor($code),
-        'bodyClass' => 'room',
-        'randomRoom' => app(GetRandomRoomAction::class)->execute(),
-        'roomCode' => $code,
-        'room' => $room,
-        'cdnUrl' => url(''),
-      ];
+            $view = $roomPage['view'];
+            $data = [
+                'headTitle' => $titleFor($code),
+                'bodyClass' => 'room',
+                'randomRoom' => app(GetRandomRoomAction::class)->execute(),
+                'roomCode' => $code,
+                'room' => $room,
+                'cdnUrl' => url(''),
+            ];
 
-      return view($view, localized_page_data($pageKey, $locale, $data, ['code' => $code]));
-    })->middleware("locale:{$locale}");
-  }
+            return view($view, localized_page_data($pageKey, $locale, $data, ['code' => $code]));
+        })->middleware("locale:{$locale}");
+    }
 }
 
 
@@ -704,7 +704,7 @@ foreach (config('locales.supported', []) as $locale) {
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/home', function () {
-  return redirect('/thi-dau', 301);
+    return redirect('/thi-dau', 301);
 });
 
 // ==========================================
@@ -744,7 +744,7 @@ $localizedAppPages = [
         'middleware' => [],
         'titles' => ['vi' => 'Bảng xếp hạng', 'en' => 'Ranking', 'ja' => 'ランキング', 'ko' => '순위표', 'zh' => '排行榜', 'de' => 'Rangliste', 'fr' => 'Classement', 'es' => 'Clasificación', 'ru' => 'Рейтинг'],
         'data' => fn() => [
-            'bodyClass' => 'trophy',
+            'bodyClass' => 'trophy dashboard',
             'users' => app(GetUserQueriesAction::class)->getUsers(),
             'matchRooms' => app(GetRoomQueriesAction::class)->getMatchRooms(),
             'rankUsers' => app(GetUserQueriesAction::class)->getRankUsers()
@@ -807,14 +807,14 @@ $localizedAppPages = [
         'middleware' => [],
         'titles' => ['vi' => 'Tìm kiếm', 'en' => 'Search', 'ja' => '検索', 'ko' => '검색', 'zh' => '搜索', 'de' => 'Suche', 'fr' => 'Recherche', 'es' => 'Buscar', 'ru' => 'Поиск'],
         'data' => fn() => [
-            'bodyClass' => 'search',
+            'bodyClass' => 'search dashboard',
             'matchRooms' => app(GetRoomQueriesAction::class)->getMatchRooms(),
             'rankUsers' => app(GetUserQueriesAction::class)->getRankUsers(),
             'results' => request('query')
                 ? User::where('name', 'LIKE', '%'.request('query').'%')
-                    ->orWhere('email', 'LIKE', '%'.request('query').'%')
-                    ->paginate(10)
-                    ->appends(['query' => request('query')])
+                ->orWhere('email', 'LIKE', '%'.request('query').'%')
+                ->paginate(10)
+                ->appends(['query' => request('query')])
                 : null
         ]
     ],
@@ -1123,7 +1123,7 @@ foreach (config('locales.supported', []) as $locale) {
 }
 
 Route::match(['get', 'post'], '/thach-dau/{board}', function ($board) {
-return view('puzzleCompete', ['headTitle' => 'Thách đấu', 'bodyClass' => 'puzzle', 'board' => $board, 'randomRoom' => app(GetRandomRoomAction::class)->execute(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'langUrls' => localized_alternate_paths('home'), 'canonicalUrl' => '/thach-dau/'.$board]);
+    return view('puzzleCompete', ['headTitle' => 'Thách đấu', 'bodyClass' => 'puzzle', 'board' => $board, 'randomRoom' => app(GetRandomRoomAction::class)->execute(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'langUrls' => localized_alternate_paths('home'), 'canonicalUrl' => '/thach-dau/'.$board]);
 })->where(['board' => $fenRegex]);
 
 // Define the titles for your puzzle rating routes
@@ -1174,7 +1174,7 @@ foreach (config('locales.supported', []) as $locale) {
 }
 
 Route::match(['get', 'post'], '/getUserPuzzlesTemplate', function(){
-return view('layouts.partials.userPuzzles')->render();
+    return view('layouts.partials.userPuzzles')->render();
 });
 
 // ==========================================
@@ -1521,51 +1521,91 @@ foreach ($localizedLevelPages as $pageKey => $localizedPages) {
 }
 
 Route::match(['get', 'post'], '/play-with-ai', function () {
-return redirect('/en', 301);
+    return redirect('/en', 301);
 });
 Route::match(['get', 'post'], '/play-with-ai/easiest', function () {
-return redirect('/easiest', 301);
+    return redirect('/easiest', 301);
 });
 Route::match(['get', 'post'], '/play-with-ai/newbie', function () {
-return redirect('/newbie', 301);
+    return redirect('/newbie', 301);
 });
 Route::match(['get', 'post'], '/play-with-ai/easy', function () {
-return redirect('/easy', 301);
+    return redirect('/easy', 301);
 });
 Route::match(['get', 'post'], '/play-with-ai/normal', function () {
-return redirect('/normal', 301);
+    return redirect('/normal', 301);
 });
 Route::match(['get', 'post'], '/play-with-ai/hard', function () {
-return redirect('/hard', 301);
+    return redirect('/hard', 301);
 });
 Route::match(['get', 'post'], '/play-with-ai/hardest', function () {
-return redirect('/hardest', 301);
+    return redirect('/hardest', 301);
 });
 
 $localizedStaticPages = [
-  'about' => [
-    'vi' => ['view' => 'about', 'title' => 'Giới thiệu'],
-    'en' => ['view' => 'about', 'title' => 'About us'],
-    'ja' => ['view' => 'about', 'title' => '約'],
-    'ko' => ['view' => 'about', 'title' => '우리에 대해'],
-    'zh' => ['view' => 'about', 'title' => '关于我们'],
-    'de' => ['view' => 'about', 'title' => 'Über uns'],
-    'fr' => ['view' => 'about', 'title' => 'À propos'],
-    'es' => ['view' => 'about', 'title' => 'Sobre nosotros'],
-    'ru' => ['view' => 'about', 'title' => 'О нас'],
-  ],
-  'contact' => [
-    'vi' => ['view' => 'contact', 'title' => 'Liên hệ'],
-    'en' => ['view' => 'contact', 'title' => 'Contact us'],
-    'ja' => ['view' => 'contact', 'title' => 'コンタクト'],
-    'ko' => ['view' => 'contact', 'title' => '문의하기'],
-    'zh' => ['view' => 'contact', 'title' => '联系我们'],
-    'de' => ['view' => 'contact', 'title' => 'Kontakt'],
-    'fr' => ['view' => 'contact', 'title' => 'Contactez-nous'],
-    'es' => ['view' => 'contact', 'title' => 'Contacto'],
-    'ru' => ['view' => 'contact', 'title' => 'Контакты'],
-  ],
-  'puzzle.list' => [
+    'about' => [
+        'vi' => ['view' => 'about', 'title' => 'Giới thiệu'],
+        'en' => ['view' => 'about', 'title' => 'About us'],
+        'ja' => ['view' => 'about', 'title' => '約'],
+        'ko' => ['view' => 'about', 'title' => '우리에 대해'],
+        'zh' => ['view' => 'about', 'title' => '关于我们'],
+        'de' => ['view' => 'about', 'title' => 'Über uns'],
+        'fr' => ['view' => 'about', 'title' => 'À propos'],
+        'es' => ['view' => 'about', 'title' => 'Sobre nosotros'],
+        'ru' => ['view' => 'about', 'title' => 'О нас'],
+    ],
+    'contact' => [
+        'vi' => ['view' => 'contact', 'title' => 'Liên hệ'],
+        'en' => ['view' => 'contact', 'title' => 'Contact us'],
+        'ja' => ['view' => 'contact', 'title' => 'コンタクト'],
+        'ko' => ['view' => 'contact', 'title' => '문의하기'],
+        'zh' => ['view' => 'contact', 'title' => '联系我们'],
+        'de' => ['view' => 'contact', 'title' => 'Kontakt'],
+        'fr' => ['view' => 'contact', 'title' => 'Contactez-nous'],
+        'es' => ['view' => 'contact', 'title' => 'Contacto'],
+        'ru' => ['view' => 'contact', 'title' => 'Контакты'],
+    ],
+    'terms' => [
+        'vi' => ['view' => 'terms', 'title' => 'Điều khoản và Điều kiện'],
+        'en' => ['view' => 'terms', 'title' => 'Terms and Conditions'],
+        'ja' => ['view' => 'terms', 'title' => '利用規約'],
+        'ko' => ['view' => 'terms', 'title' => '이용약관'],
+        'zh' => ['view' => 'terms', 'title' => '条款和条件'],
+        'de' => ['view' => 'terms', 'title' => 'Allgemeine Geschäftsbedingungen'],
+        'fr' => ['view' => 'terms', 'title' => 'Conditions générales'],
+        'es' => ['view' => 'terms', 'title' => 'Términos y condiciones'],
+        'ru' => ['view' => 'terms', 'title' => 'Условия использования'],
+    ],
+    'privacy' => [
+        'vi' => ['view' => 'privacy', 'title' => 'Chính sách bảo mật'],
+        'en' => ['view' => 'privacy', 'title' => 'Privacy Policy'],
+        'ja' => ['view' => 'privacy', 'title' => 'プライバシーポリシー'],
+        'ko' => ['view' => 'privacy', 'title' => '개인정보 처리방침'],
+        'zh' => ['view' => 'privacy', 'title' => '隐私政策'],
+        'de' => ['view' => 'privacy', 'title' => 'Datenschutzerklärung'],
+        'fr' => ['view' => 'privacy', 'title' => 'Politique de confidentialité'],
+        'es' => ['view' => 'privacy', 'title' => 'Política de privacidad'],
+        'ru' => ['view' => 'privacy', 'title' => 'Политика конфиденциальности'],
+    ],
+];
+
+foreach ($localizedStaticPages as $pageKey => $localizedPages) {
+    foreach (config('locales.supported', []) as $locale) {
+        $page = $pickLocale($localizedPages, $locale);
+
+        Route::match(['get', 'post'], localized_path($pageKey, [], $locale), function () use ($pageKey, $locale, $page) {
+            return view($page['view'], localized_page_data($pageKey, $locale, [
+                'headTitle' => $page['title'],
+                'bodyClass' => $pageKey,
+                'randomRoom' => app(GetRandomRoomAction::class)->execute(),
+                'roomCode' => '',
+                'cdnUrl' => url(''),
+            ]));
+        })->middleware("locale:{$locale}");
+    }
+}
+
+$localizedPuzzleListPages = [
     'vi' => ['view' => 'puzzleList', 'title' => 'Tất cả thế cờ'],
     'en' => ['view' => 'puzzleList', 'title' => 'All puzzles'],
     'ja' => ['view' => 'puzzleList', 'title' => 'すべてのパズル'],
@@ -1575,8 +1615,25 @@ $localizedStaticPages = [
     'fr' => ['view' => 'puzzleList', 'title' => 'Tous les problèmes'],
     'es' => ['view' => 'puzzleList', 'title' => 'Todos los problemas'],
     'ru' => ['view' => 'puzzleList', 'title' => 'Все задачи'],
-  ],
-  'user.list' => [
+];
+
+foreach (config('locales.supported', []) as $locale) {
+    $page = $pickLocale($localizedPuzzleListPages, $locale);
+
+    Route::match(['get', 'post'], localized_path('puzzle.list', [], $locale), function () use ($locale, $page) {
+        $data = [
+            'headTitle' => $page['title'],
+            'bodyClass' => 'puzzle dashboard',
+            'randomRoom' => app(GetRandomRoomAction::class)->execute(),
+            'roomCode' => '',
+            'cdnUrl' => url(''),
+        ];
+
+        return view($page['view'], localized_page_data('room.list', $locale, $data));
+    })->middleware("locale:{$locale}");
+}
+
+$localizedUserListPages = [
     'vi' => ['view' => 'userList', 'title' => 'Tất cả kỳ thủ'],
     'en' => ['view' => 'userList', 'title' => 'All players'],
     'ja' => ['view' => 'userList', 'title' => 'すべてのプレイヤー'],
@@ -1586,72 +1643,49 @@ $localizedStaticPages = [
     'fr' => ['view' => 'userList', 'title' => 'Tous les joueurs'],
     'es' => ['view' => 'userList', 'title' => 'Todos los jugadores'],
     'ru' => ['view' => 'userList', 'title' => 'Все игроки'],
-  ],
-  'terms' => [
-    'vi' => ['view' => 'terms', 'title' => 'Điều khoản và Điều kiện'],
-    'en' => ['view' => 'terms', 'title' => 'Terms and Conditions'],
-    'ja' => ['view' => 'terms', 'title' => '利用規約'],
-    'ko' => ['view' => 'terms', 'title' => '이용약관'],
-    'zh' => ['view' => 'terms', 'title' => '条款和条件'],
-    'de' => ['view' => 'terms', 'title' => 'Allgemeine Geschäftsbedingungen'],
-    'fr' => ['view' => 'terms', 'title' => 'Conditions générales'],
-    'es' => ['view' => 'terms', 'title' => 'Términos y condiciones'],
-    'ru' => ['view' => 'terms', 'title' => 'Условия использования'],
-  ],
-  'privacy' => [
-    'vi' => ['view' => 'privacy', 'title' => 'Chính sách bảo mật'],
-    'en' => ['view' => 'privacy', 'title' => 'Privacy Policy'],
-    'ja' => ['view' => 'privacy', 'title' => 'プライバシーポリシー'],
-    'ko' => ['view' => 'privacy', 'title' => '개인정보 처리방침'],
-    'zh' => ['view' => 'privacy', 'title' => '隐私政策'],
-    'de' => ['view' => 'privacy', 'title' => 'Datenschutzerklärung'],
-    'fr' => ['view' => 'privacy', 'title' => 'Politique de confidentialité'],
-    'es' => ['view' => 'privacy', 'title' => 'Política de privacidad'],
-    'ru' => ['view' => 'privacy', 'title' => 'Политика конфиденциальности'],
-  ],
-];
-
-foreach ($localizedStaticPages as $pageKey => $localizedPages) {
-  foreach (config('locales.supported', []) as $locale) {
-    $page = $pickLocale($localizedPages, $locale);
-
-    Route::match(['get', 'post'], localized_path($pageKey, [], $locale), function () use ($pageKey, $locale, $page) {
-      return view($page['view'], localized_page_data($pageKey, $locale, [
-        'headTitle' => $page['title'],
-        'bodyClass' => $pageKey,
-        'randomRoom' => app(GetRandomRoomAction::class)->execute(),
-        'roomCode' => '',
-        'cdnUrl' => url(''),
-      ]));
-    })->middleware("locale:{$locale}");
-  }
-}
-
-$localizedRoomListPages = [
-  'vi' => ['view' => 'roomList', 'title' => 'Sảnh chờ'],
-  'en' => ['view' => 'roomList', 'title' => "Lobby"],
-  'ja' => ['view' => 'roomList', 'title' => '部屋一覧'],
-  'ko' => ['view' => 'roomList', 'title' => '방 목록'],
-  'zh' => ['view' => 'roomList', 'title' => '房间列表'],
-  'de' => ['view' => 'roomList', 'title' => 'Lobby'],
-  'fr' => ['view' => 'roomList', 'title' => 'Salons'],
-  'es' => ['view' => 'roomList', 'title' => 'Salas'],
-  'ru' => ['view' => 'roomList', 'title' => 'Лобби'],
 ];
 
 foreach (config('locales.supported', []) as $locale) {
-  $page = $pickLocale($localizedRoomListPages, $locale);
+    $page = $pickLocale($localizedUserListPages, $locale);
 
-  Route::match(['get', 'post'], localized_path('room.list', [], $locale), function () use ($locale, $page) {
-    $data = [
-      'headTitle' => $page['title'],
-      'bodyClass' => 'room',
-      'rooms' => Room::all(),
-      'roomCode' => '',
-      'randomRoom' => app(GetRandomRoomAction::class)->execute(),
-      'cdnUrl' => url(''),
-    ];
+    Route::match(['get', 'post'], localized_path('user.list', [], $locale), function () use ($locale, $page) {
+        $data = [
+            'headTitle' => $page['title'],
+            'bodyClass' => 'user dashboard',
+            'randomRoom' => app(GetRandomRoomAction::class)->execute(),
+            'roomCode' => '',
+            'cdnUrl' => url(''),
+        ];
 
-    return view($page['view'], localized_page_data('room.list', $locale, $data));
-  })->middleware("locale:{$locale}");
+        return view($page['view'], localized_page_data('room.list', $locale, $data));
+    })->middleware("locale:{$locale}");
+}
+
+$localizedRoomListPages = [
+    'vi' => ['view' => 'roomList', 'title' => 'Sảnh chờ'],
+    'en' => ['view' => 'roomList', 'title' => "Lobby"],
+    'ja' => ['view' => 'roomList', 'title' => '部屋一覧'],
+    'ko' => ['view' => 'roomList', 'title' => '방 목록'],
+    'zh' => ['view' => 'roomList', 'title' => '房间列表'],
+    'de' => ['view' => 'roomList', 'title' => 'Lobby'],
+    'fr' => ['view' => 'roomList', 'title' => 'Salons'],
+    'es' => ['view' => 'roomList', 'title' => 'Salas'],
+    'ru' => ['view' => 'roomList', 'title' => 'Лобби'],
+];
+
+foreach (config('locales.supported', []) as $locale) {
+    $page = $pickLocale($localizedRoomListPages, $locale);
+
+    Route::match(['get', 'post'], localized_path('room.list', [], $locale), function () use ($locale, $page) {
+        $data = [
+            'headTitle' => $page['title'],
+            'bodyClass' => 'room dashboard',
+            'rooms' => Room::all(),
+            'roomCode' => '',
+            'randomRoom' => app(GetRandomRoomAction::class)->execute(),
+            'cdnUrl' => url(''),
+        ];
+
+        return view($page['view'], localized_page_data('room.list', $locale, $data));
+    })->middleware("locale:{$locale}");
 }

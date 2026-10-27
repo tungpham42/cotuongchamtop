@@ -393,7 +393,13 @@ body.room header.site-header a.room,
 body.dashboard header.site-header a.dashboard,
 body.login header.site-header a.login,
 body.news header.site-header a.news,
-body.contact header.site-header a.contact {
+body.contact header.site-header a.contact,
+body.dashboard
+    header.site-header
+    a:has(+ div.dropdown-menu > a.dashboard.dropdown-item.active.disabled),
+body.profile
+    header.site-header
+    a:has(+ div.dropdown-menu > a.profile.dropdown-item.active.disabled) {
     font-weight: 600;
     color: var(--royal-gold);
 }
@@ -409,7 +415,17 @@ body.room header.site-header a.room:before,
 body.dashboard header.site-header a.dashboard:before,
 body.login header.site-header a.login:before,
 body.news header.site-header a.news:before,
-body.contact header.site-header a.contact:before {
+body.contact header.site-header a.contact:before,
+body.dashboard
+    header.site-header
+    a:has(
+        + div.dropdown-menu > a.dashboard.dropdown-item.active.disabled
+    ):before,
+body.profile
+    header.site-header
+    a:has(
+        + div.dropdown-menu > a.profile.dropdown-item.active.disabled
+    ):before {
     width: 100%;
 }
 
