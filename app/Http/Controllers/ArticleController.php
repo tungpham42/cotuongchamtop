@@ -37,7 +37,7 @@ class ArticleController extends Controller
 
         $data = [
             'headTitle' => __('Danh sách bài viết'),
-            'bodyClass' => 'article-list news',
+            'bodyClass' => 'article-list news resource',
             'articles' => $articles,
             'search' => $search,
 
@@ -90,7 +90,7 @@ class ArticleController extends Controller
 
         $data = [
             'headTitle' => $article->title ?? __('Chi tiết bài viết'),
-            'bodyClass' => 'article-detail news',
+            'bodyClass' => 'article-detail news resource',
             'article' => $article,
 
             // Bắt buộc phải có để main layout không bị lỗi undefined variable

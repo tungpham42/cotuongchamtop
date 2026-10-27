@@ -16,6 +16,11 @@
         ['app.history',       'far fa-archive',      'Lịch sử thi đấu', 'dashboard'],
     ];
 
+    $resourceMenu = [
+        ['article.index',   'far fa-file',         'Bài viết',     'resource'],
+        ['games.library',   'far fa-database',     'Thư viện',     'resource'],
+    ];
+
     $accountMenu = [
         ['app.profile',  'far fa-id-card',   'Hồ sơ của tôi',   'profile'],
         ['app.name',     'far fa-user-edit', 'Đổi tên',         'profile'],
@@ -67,9 +72,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             @endforeach
                         </div>
                     </li>
-                    <li class="nav-item">
-                        <a class="library showPromotion" href="{{ localized_url('games.library') }}"><i class="far fa-database"></i> {{ __("Thư viện") }}</a>
+
+                    <li class="dropdown">
+                        <a id="resourceDropdown" class="resource dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false">
+                            <i class="far fa-books"></i> {{ __("Tài nguyên") }}
+                        </a>
+                        <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow" aria-labelledby="resourceDropdown">
+                            @foreach ($resourceMenu as [$key, $icon, $label, $extraClass])
+                                @php $itemUrl = localized_url($key); @endphp
+                                <a class="{{ $extraClass ? $extraClass . ' ' : '' }}showPromotion dropdown-item{{ $activeClass($itemUrl) }}" href="{{ $itemUrl }}"><i class="{{ $icon }}"></i> {{ __($label) }}</a>
+                            @endforeach
+                        </div>
                     </li>
+
                     <li class="nav-item">
                         <a class="showPromotion" target="_blank" href="https://blog.cotuong.top"><i class="far fa-blog"></i> {{ __("Blog") }}</a>
                     </li>
