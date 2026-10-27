@@ -397,9 +397,9 @@ body.contact header.site-header a.contact,
 body.dashboard
     header.site-header
     a:has(+ div.dropdown-menu > a.dashboard.dropdown-item.active.disabled),
-body.profile
+body.resource
     header.site-header
-    a:has(+ div.dropdown-menu > a.profile.dropdown-item.active.disabled) {
+    a:has(+ div.dropdown-menu > a.resource.dropdown-item.active.disabled) {
     font-weight: 600;
     color: var(--royal-gold);
 }
@@ -421,12 +421,101 @@ body.dashboard
     a:has(
         + div.dropdown-menu > a.dashboard.dropdown-item.active.disabled
     ):before,
-body.profile
+body.resource
     header.site-header
     a:has(
-        + div.dropdown-menu > a.profile.dropdown-item.active.disabled
+        + div.dropdown-menu > a.resource.dropdown-item.active.disabled
     ):before {
     width: 100%;
+}
+
+/* ==========================================================================
+   PROFILE AVATAR (NAV) — its own "current page" state
+   Text links mark the current page with a gold colour + glowing underline.
+   A round photo can't show that, so the avatar gets a double ring instead:
+   a dark-red gap (separates it from the glass header) and a solid gold halo.
+   ========================================================================== */
+header.site-header a.nav-avatar-link {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 50%;
+    text-transform: none;
+}
+
+/* The avatar never uses the text-link underline, hovered or current. */
+header.site-header a.nav-avatar-link::before,
+header.site-header a.nav-avatar-link:hover::before,
+header.site-header a.nav-avatar-link.is-current::before {
+    display: none !important;
+}
+
+header.site-header .nav-avatar {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    border-radius: 50% !important;
+    border: 2px solid var(--royal-gold);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3);
+    transition:
+        transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        box-shadow 0.35s ease,
+        border-color 0.35s ease;
+}
+
+/* Hover: lift and glow (instead of the underline) */
+header.site-header a.nav-avatar-link:hover .nav-avatar {
+    transform: translateY(-1px) scale(1.08);
+    box-shadow:
+        0 0 0 2px var(--royal-red),
+        0 0 14px 2px rgba(255, 215, 0, 0.55);
+}
+
+/* Current account page: steady ring, no pulse */
+header.site-header a.nav-avatar-link.is-current .nav-avatar,
+body.profile
+    header.site-header
+    a.nav-avatar-link:has(
+        + div.dropdown-menu > a.profile.dropdown-item.active.disabled
+    )
+    .nav-avatar {
+    animation: none;
+    border-color: #fff;
+    box-shadow:
+        0 0 0 2px var(--royal-red),
+        0 0 0 4.5px var(--royal-gold),
+        0 0 16px 4px rgba(255, 215, 0, 0.5);
+}
+
+/* Current + hover: keep the ring, just brighten the glow */
+header.site-header a.nav-avatar-link.is-current:hover .nav-avatar {
+    box-shadow:
+        0 0 0 2px var(--royal-red),
+        0 0 0 4.5px var(--royal-gold),
+        0 0 22px 6px rgba(255, 215, 0, 0.75);
+}
+
+/* Keyboard focus gets the same halo as the current state */
+header.site-header a.nav-avatar-link:focus-visible {
+    outline: none;
+}
+header.site-header a.nav-avatar-link:focus-visible .nav-avatar {
+    box-shadow:
+        0 0 0 2px var(--royal-red),
+        0 0 0 4.5px var(--royal-gold);
+}
+
+/* Keep the old text-link colour rule from tinting the avatar's caret */
+body.profile header.site-header a.nav-avatar-link.is-current {
+    color: var(--royal-gold);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    header.site-header .nav-avatar {
+        transition: none;
+    }
+    header.site-header a.nav-avatar-link:hover .nav-avatar {
+        transform: none;
+    }
 }
 
 /* ==========================================================================

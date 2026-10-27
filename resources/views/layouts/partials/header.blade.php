@@ -23,6 +23,10 @@
         ['app.ui',       'far fa-palette',   'Đổi giao diện',   'profile'],
     ];
 
+    // True on any account page (profile, name, password, UI). The avatar toggle uses it for its own
+    // "current page" ring, because the underline that text links get makes no sense on a round image.
+    $onAccountPage = collect($accountMenu)->contains(fn (array $item): bool => url()->current() === localized_url($item[0]));
+
     $supportedLocales = config('locales.supported', []);
     $labels = config('locales.labels', []);
     $flags = config('locales.flags', []);
@@ -78,8 +82,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         @endif
                     @else
                         <li class="dropdown ml-2">
-                            <a id="navbarDropdown" class="profile dropdown-toggle p-0" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false">
-                                <img src="{{ Auth::user()->getAvatarUrl(24, 12) }}" class="shadow-sm pulse-gold" style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%; border: 2px solid var(--royal-gold);" />
+                            <a id="navbarDropdown" class="profile nav-avatar-link dropdown-toggle p-0{{ $onAccountPage ? ' is-current' : '' }}" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false" @if ($onAccountPage) aria-current="page" @endif>
+                                <img src="{{ Auth::user()->getAvatarUrl(24, 12) }}" class="nav-avatar{{ $onAccountPage ? '' : ' pulse-gold' }}" alt="{{ __('Hồ sơ của tôi') }}" />
                             </a>
 
                             <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow" aria-labelledby="navbarDropdown">
