@@ -1153,7 +1153,7 @@ foreach (config('locales.supported', []) as $locale) {
 
         return view('puzzleRating', localized_page_data('puzzle.rating', $locale, [
             'headTitle' => $headTitle,
-            'bodyClass' => 'puzzle dashboard',
+            'bodyClass' => 'puzzle',
             'puzzle' => $puzzle,
             'name' => $puzzle->name,
             'slug' => $puzzle->slug,
@@ -1182,7 +1182,7 @@ return view('layouts.partials.userPuzzles')->render();
 // ==========================================
 $localizedPuzzlePages = [
     'puzzle.setup' => [
-        'bodyClass' => 'puzzle setup dashboard',
+        'bodyClass' => 'puzzle setup',
         'titles' => [
             'vi' => 'Xếp bàn cờ thế',
             'en' => 'Set up the puzzle',
@@ -1196,7 +1196,7 @@ $localizedPuzzlePages = [
         ]
     ],
     'puzzle.board' => [
-        'bodyClass' => 'puzzle dashboard',
+        'bodyClass' => 'puzzle',
         'titles' => [
             'vi' => 'Bàn cờ thế',
             'en' => 'Puzzle',
@@ -1218,7 +1218,7 @@ foreach (config('locales.supported', []) as $locale) {
     Route::match(['get', 'post'], localized_path('puzzle.setup', [], $locale), function () use ($locale, $title) {
         return view('puzzle', localized_page_data('puzzle.setup', $locale, [
             'headTitle' => $title,
-            'bodyClass' => 'puzzle setup dashboard',
+            'bodyClass' => 'puzzle setup',
             'board' => '',
             'randomRoom' => app(GetRandomRoomAction::class)->execute(),
             'roomCode' => '',
@@ -1234,7 +1234,7 @@ foreach (config('locales.supported', []) as $locale) {
     Route::match(['get', 'post'], localized_path('puzzle.board', ['board' => '{board}'], $locale), function ($board) use ($locale, $title) {
         return view('puzzle', localized_page_data('puzzle.board', $locale, [
             'headTitle' => $title,
-            'bodyClass' => 'puzzle dashboard',
+            'bodyClass' => 'puzzle',
             'board' => $board,
             'randomRoom' => app(GetRandomRoomAction::class)->execute(),
             'roomCode' => '',
@@ -1645,7 +1645,7 @@ foreach (config('locales.supported', []) as $locale) {
   Route::match(['get', 'post'], localized_path('room.list', [], $locale), function () use ($locale, $page) {
     $data = [
       'headTitle' => $page['title'],
-      'bodyClass' => 'room dashboard',
+      'bodyClass' => 'room',
       'rooms' => Room::all(),
       'roomCode' => '',
       'randomRoom' => app(GetRandomRoomAction::class)->execute(),
