@@ -129,8 +129,8 @@ return [
         'profile.picture.upload' => ['vi' => 'doi-anh-dai-dien', 'en' => 'upload-profile-picture', 'ja' => 'purofiru-gazo-appurodo', 'ko' => 'peulopil-sajin-eoblodeu', 'zh' => 'shangchuan-touxiang', 'de' => 'profilbild-hochladen', 'fr' => 'telecharger-photo-de-profil', 'es' => 'subir-foto-de-perfil', 'ru' => 'zagruzit-foto-profilya'],
         'profile.picture.remove' => ['vi' => 'xoa-anh-dai-dien', 'en' => 'remove-profile-picture', 'ja' => 'purofiru-gazo-sakujo', 'ko' => 'peulopil-sajin-sakje', 'zh' => 'shanchu-touxiang', 'de' => 'profilbild-entfernen', 'fr' => 'supprimer-photo-de-profil', 'es' => 'eliminar-foto-de-perfil', 'ru' => 'udalit-foto-profilya'],
 
-        'article.index' => ['vi' => 'bai-viet', 'en' => 'articles', 'ja' => 'kiji', 'ko' => 'gisa', 'zh' => 'wenzhang', 'de' => 'artikel', 'fr' => 'publications', 'es' => 'articulos', 'ru' => 'stati'],
-        'article.show'  => ['vi' => 'bai-viet/{slug}', 'en' => 'articles/{slug}', 'ja' => 'kiji/{slug}', 'ko' => 'gisa/{slug}', 'zh' => 'wenzhang/{slug}', 'de' => 'artikel/{slug}', 'fr' => 'publications/{slug}', 'es' => 'articulos/{slug}', 'ru' => 'stati/{slug}'],
+        'article.index' => ['vi' => 'bai-viet', 'en' => 'article', 'ja' => 'kiji', 'ko' => 'gisa', 'zh' => 'wenzhang', 'de' => 'artikel', 'fr' => 'articles', 'es' => 'articulos', 'ru' => 'stati'],
+        'article.show'  => ['vi' => 'bai-viet/{slug}', 'en' => 'article/{slug}', 'ja' => 'kiji/{slug}', 'ko' => 'gisa/{slug}', 'zh' => 'wenzhang/{slug}', 'de' => 'artikel/{slug}', 'fr' => 'articles/{slug}', 'es' => 'articulos/{slug}', 'ru' => 'stati/{slug}'],
 
         // Games (shared game library — CRUD is admin-only, these two are the
         // only public-facing pages for the games feature)
