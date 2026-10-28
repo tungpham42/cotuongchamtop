@@ -1,0 +1,369 @@
+diff --git a/resources/lang/de.json b/resources/lang/de.json
+index f90732771..87ef28c37 100644
+--- a/resources/lang/de.json
++++ b/resources/lang/de.json
+@@ -864,5 +864,12 @@
+     "Không có gợi ý cho thế cờ hiện tại.": "Für die aktuelle Stellung gibt es keinen Hinweis.",
+     "Nước đi gợi ý": "Vorgeschlagene Züge",
+     "Đang tính toán": "Wird berechnet",
+-    "Đăng nhập để xem gợi ý": "Melde dich an, um den Hinweis zu sehen"
++    "Đăng nhập để xem gợi ý": "Melde dich an, um den Hinweis zu sehen",
++    "notation_level": "quer",
++    "notation_advance": "vor",
++    "notation_retreat": "zurück",
++    "notation_invalid_move": "Ungültiger Zug",
++    "notation_data_error": "Datenfehler",
++    "notation_no_moves": "Noch keine gültigen Züge.",
++    "notation_audio_unsupported": "Dein Browser unterstützt das Audio-Element nicht."
+ }
+diff --git a/resources/lang/en.json b/resources/lang/en.json
+index 58550d33c..25a5a47f6 100644
+--- a/resources/lang/en.json
++++ b/resources/lang/en.json
+@@ -864,5 +864,12 @@
+     "Không có gợi ý cho thế cờ hiện tại.": "No hint is available for the current position.",
+     "Nước đi gợi ý": "Suggested Moves",
+     "Đang tính toán": "Calculating",
+-    "Đăng nhập để xem gợi ý": "Login to show hint"
++    "Đăng nhập để xem gợi ý": "Login to show hint",
++    "notation_level": "level",
++    "notation_advance": "advances",
++    "notation_retreat": "retreats",
++    "notation_invalid_move": "Invalid move",
++    "notation_data_error": "Data error",
++    "notation_no_moves": "No valid moves yet.",
++    "notation_audio_unsupported": "Your browser does not support the audio element."
+ }
+diff --git a/resources/lang/es.json b/resources/lang/es.json
+index 420ea8484..53a9df697 100644
+--- a/resources/lang/es.json
++++ b/resources/lang/es.json
+@@ -864,5 +864,12 @@
+     "Không có gợi ý cho thế cờ hiện tại.": "No hay pistas disponibles para la posición actual.",
+     "Nước đi gợi ý": "Jugadas sugeridas",
+     "Đang tính toán": "Calculando",
+-    "Đăng nhập để xem gợi ý": "Inicia sesión para ver la pista"
++    "Đăng nhập để xem gợi ý": "Inicia sesión para ver la pista",
++    "notation_level": "lateral",
++    "notation_advance": "avanza",
++    "notation_retreat": "retrocede",
++    "notation_invalid_move": "Jugada no válida",
++    "notation_data_error": "Error de datos",
++    "notation_no_moves": "Aún no hay jugadas válidas.",
++    "notation_audio_unsupported": "Tu navegador no admite el elemento de audio."
+ }
+diff --git a/resources/lang/fr.json b/resources/lang/fr.json
+index ffbbdbc7e..0162a2cbc 100644
+--- a/resources/lang/fr.json
++++ b/resources/lang/fr.json
+@@ -864,5 +864,12 @@
+     "Không có gợi ý cho thế cờ hiện tại.": "Aucun indice n'est disponible pour la position actuelle.",
+     "Nước đi gợi ý": "Coups suggérés",
+     "Đang tính toán": "Calcul en cours",
+-    "Đăng nhập để xem gợi ý": "Connecte-toi pour afficher l'indice"
++    "Đăng nhập để xem gợi ý": "Connecte-toi pour afficher l'indice",
++    "notation_level": "latéral",
++    "notation_advance": "avance",
++    "notation_retreat": "recule",
++    "notation_invalid_move": "Coup invalide",
++    "notation_data_error": "Erreur de données",
++    "notation_no_moves": "Aucun coup valide pour le moment.",
++    "notation_audio_unsupported": "Ton navigateur ne prend pas en charge la balise audio."
+ }
+diff --git a/resources/lang/ja.json b/resources/lang/ja.json
+index e748d5d1a..d01c772cf 100644
+--- a/resources/lang/ja.json
++++ b/resources/lang/ja.json
+@@ -866,5 +866,12 @@
+     "Không có gợi ý cho thế cờ hiện tại.": "現在の局面に対するヒントはありません。",
+     "Nước đi gợi ý": "おすすめの手",
+     "Đang tính toán": "計算中",
+-    "Đăng nhập để xem gợi ý": "ログインしてヒントを表示"
++    "Đăng nhập để xem gợi ý": "ログインしてヒントを表示",
++    "notation_level": "平",
++    "notation_advance": "進",
++    "notation_retreat": "退",
++    "notation_invalid_move": "不正な手",
++    "notation_data_error": "データエラー",
++    "notation_no_moves": "まだ有効な手がありません。",
++    "notation_audio_unsupported": "お使いのブラウザは音声要素に対応していません。"
+ }
+diff --git a/resources/lang/ko.json b/resources/lang/ko.json
+index afad20595..3c356ac4e 100644
+--- a/resources/lang/ko.json
++++ b/resources/lang/ko.json
+@@ -865,5 +865,12 @@
+     "Không có gợi ý cho thế cờ hiện tại.": "현재 국면에 대한 힌트가 없습니다.",
+     "Nước đi gợi ý": "추천 수",
+     "Đang tính toán": "계산 중",
+-    "Đăng nhập để xem gợi ý": "로그인하여 힌트 보기"
++    "Đăng nhập để xem gợi ý": "로그인하여 힌트 보기",
++    "notation_level": "평",
++    "notation_advance": "진",
++    "notation_retreat": "퇴",
++    "notation_invalid_move": "잘못된 수",
++    "notation_data_error": "데이터 오류",
++    "notation_no_moves": "아직 유효한 수가 없습니다.",
++    "notation_audio_unsupported": "사용 중인 브라우저는 오디오 요소를 지원하지 않습니다."
+ }
+diff --git a/resources/lang/ru.json b/resources/lang/ru.json
+index edbbcbf66..db7965b9a 100644
+--- a/resources/lang/ru.json
++++ b/resources/lang/ru.json
+@@ -864,5 +864,12 @@
+     "Không có gợi ý cho thế cờ hiện tại.": "Для текущей позиции подсказок нет.",
+     "Nước đi gợi ý": "Предлагаемые ходы",
+     "Đang tính toán": "Вычисление",
+-    "Đăng nhập để xem gợi ý": "Войдите, чтобы увидеть подсказку"
++    "Đăng nhập để xem gợi ý": "Войдите, чтобы увидеть подсказку",
++    "notation_level": "по горизонтали",
++    "notation_advance": "вперёд",
++    "notation_retreat": "назад",
++    "notation_invalid_move": "Недопустимый ход",
++    "notation_data_error": "Ошибка данных",
++    "notation_no_moves": "Допустимых ходов пока нет.",
++    "notation_audio_unsupported": "Ваш браузер не поддерживает элемент audio."
+ }
+diff --git a/resources/lang/vi.json b/resources/lang/vi.json
+index e938a63de..70d4bb1bb 100644
+--- a/resources/lang/vi.json
++++ b/resources/lang/vi.json
+@@ -1812,5 +1812,12 @@
+     "Không có gợi ý cho thế cờ hiện tại.": "Không có gợi ý cho thế cờ hiện tại.",
+     "Nước đi gợi ý": "Nước đi gợi ý",
+     "Đang tính toán": "Đang tính toán",
+-    "Đăng nhập để xem gợi ý": "Đăng nhập để xem gợi ý"
++    "Đăng nhập để xem gợi ý": "Đăng nhập để xem gợi ý",
++    "notation_level": "bình",
++    "notation_advance": "tấn",
++    "notation_retreat": "thoái",
++    "notation_invalid_move": "Lỗi nước đi",
++    "notation_data_error": "Lỗi dữ liệu",
++    "notation_no_moves": "Chưa có nước đi hợp lệ nào.",
++    "notation_audio_unsupported": "Trình duyệt của bạn không hỗ trợ thẻ audio."
+ }
+diff --git a/resources/lang/zh.json b/resources/lang/zh.json
+index 88559e214..4f5b1b569 100644
+--- a/resources/lang/zh.json
++++ b/resources/lang/zh.json
+@@ -868,5 +868,12 @@
+     "Không có gợi ý cho thế cờ hiện tại.": "当前局面暂无提示。",
+     "Nước đi gợi ý": "推荐走法",
+     "Đang tính toán": "计算中",
+-    "Đăng nhập để xem gợi ý": "登录以显示提示"
++    "Đăng nhập để xem gợi ý": "登录以显示提示",
++    "notation_level": "平",
++    "notation_advance": "进",
++    "notation_retreat": "退",
++    "notation_invalid_move": "无效着法",
++    "notation_data_error": "数据错误",
++    "notation_no_moves": "暂无有效着法。",
++    "notation_audio_unsupported": "您的浏览器不支持音频元素。"
+ }
+diff --git a/resources/views/games/show.blade.php b/resources/views/games/show.blade.php
+index 8ef9fd100..eacba53a6 100644
+--- a/resources/views/games/show.blade.php
++++ b/resources/views/games/show.blade.php
+@@ -6,6 +6,38 @@
+ 
+ @section('content')
+ 
++@php
++    $notationLocales = config('locales.supported', ['vi', 'en', 'ja', 'ko', 'zh', 'de', 'fr', 'es', 'ru']);
++    $notationLabels = config('locales.labels', []);
++    $notationDefault = config('locales.default', 'vi');
++    $notationLang = in_array(app()->getLocale(), $notationLocales, true)
++        ? app()->getLocale()
++        : $notationDefault;
++
++    // Notation text for every supported language, resolved server-side so the
++    // selector can switch language client-side without a reload.
++    $notationI18n = [];
++    foreach ($notationLocales as $loc) {
++        $notationI18n[$loc] = [
++            'pieces' => [
++                'k' => __('piece_k', [], $loc),
++                'a' => __('piece_a', [], $loc),
++                'b' => __('piece_b', [], $loc),
++                'n' => __('piece_n', [], $loc),
++                'r' => __('piece_r', [], $loc),
++                'c' => __('piece_c', [], $loc),
++                'p' => __('piece_p', [], $loc),
++            ],
++            'level' => __('notation_level', [], $loc),
++            'advance' => __('notation_advance', [], $loc),
++            'retreat' => __('notation_retreat', [], $loc),
++            'invalidMove' => __('notation_invalid_move', [], $loc),
++            'dataError' => __('notation_data_error', [], $loc),
++            'noMoves' => __('notation_no_moves', [], $loc),
++        ];
++    }
++@endphp
++
+ <style>
+     /* Royal Liquid Glass Theme Enhancements for Bootstrap */
+     .royal-glass-card {
+@@ -193,7 +225,7 @@
+     <audio id="nuoc-co">
+         <source src="{{ asset('sound/nuocCo.mp3') }}" type="audio/mpeg">
+         <source src="{{ asset('sound/nuocCo.wav') }}" type="audio/wav">
+-        Your browser does not support the audio element.
++        {{ __('notation_audio_unsupported') }}
+     </audio>
+     {{-- Kicker Badge --}}
+     <div class="d-flex justify-content-center mb-4">
+@@ -329,7 +361,7 @@
+                     </span>
+                     <span class="chip-stat d-inline-flex align-items-center" style="gap: 0.25rem;">
+                         <svg style="width: 14px; height: 14px;" class="text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+-                        {{ $game->created_at->format('d/m/Y') }}
++                        {{ $game->created_at->locale(app()->getLocale())->isoFormat('L') }}
+                     </span>
+                     <span class="chip-stat d-inline-flex align-items-center" style="gap: 0.25rem;">
+                         <svg style="width: 14px; height: 14px;" class="text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+@@ -396,17 +428,10 @@
+                         {{ __('Biên Bản Ván Cờ') }}
+                     </h2>
+ 
+-                    @php
+-                        $notationLang = in_array(app()->getLocale(), ['vi', 'en', 'ja', 'ko', 'zh'])
+-                            ? app()->getLocale()
+-                            : 'vi';
+-                    @endphp
+                     <select id="notation-lang" class="custom-select custom-select-sm bg-dark text-warning border rounded-pill" style="width: auto; font-size: 0.75rem; border-color: rgba(212, 175, 55, 0.4) !important;">
+-                        <option value="vi" @selected($notationLang === 'vi')>{{ __('Tiếng Việt') }}</option>
+-                        <option value="en" @selected($notationLang === 'en')>{{ __('English') }}</option>
+-                        <option value="ja" @selected($notationLang === 'ja')>{{ __('日本語') }}</option>
+-                        <option value="ko" @selected($notationLang === 'ko')>{{ __('한국어') }}</option>
+-                        <option value="zh" @selected($notationLang === 'zh')>{{ __('中文') }}</option>
++                        @foreach($notationLocales as $loc)
++                            <option value="{{ $loc }}" @selected($notationLang === $loc)>{{ $notationLabels[$loc] ?? $loc }}</option>
++                        @endforeach
+                     </select>
+                 </div>
+ 
+@@ -442,39 +467,17 @@
+         // ==========================================
+         // NOTATION: shared move parsing + per-language formatting
+         // ==========================================
+-        const NOTATION_LANGS = ['vi', 'en', 'ja', 'ko', 'zh'];
+-
+-        const pieceNameMaps = {
+-            vi: { k: 'Tướng', a: 'Sĩ', b: 'Tượng', e: 'Tượng', v: 'Tượng', n: 'Mã', h: 'Mã', r: 'Xe', c: 'Pháo', p: 'Chốt' },
+-            en: { k: 'General', a: 'Advisor', b: 'Elephant', e: 'Elephant', v: 'Elephant', n: 'Horse', h: 'Horse', r: 'Chariot', c: 'Cannon', p: 'Soldier' },
+-            ja: { k: '将', a: '士', b: '象', e: '象', v: '象', n: '馬', h: '馬', r: '車', c: '砲', p: '兵' },
+-            ko: { k: '장', a: '사', b: '상', e: '상', v: '상', n: '마', h: '마', r: '차', c: '포', p: '병' },
+-            zh: { k: '將', a: '士', b: '象', e: '象', v: '象', n: '馬', h: '馬', r: '車', c: '炮', p: '兵' }
+-        };
+-
+-        const actionWordMaps = {
+-            vi: { level: ' bình ', advance: ' tấn ', retreat: ' thoái ' },
+-            en: { level: ' level ', advance: ' advances ', retreat: ' retreats ' },
+-            ja: { level: '平', advance: '進', retreat: '退' },
+-            ko: { level: '평', advance: '진', retreat: '퇴' },
+-            zh: { level: '平', advance: '進', retreat: '退' }
+-        };
+-
+-        const errorMessages = {
+-            vi: { invalidMove: 'Lỗi nước đi', dataError: 'Lỗi dữ liệu' },
+-            en: { invalidMove: 'Invalid move', dataError: 'Data error' },
+-            ja: { invalidMove: '不正な手', dataError: 'データエラー' },
+-            ko: { invalidMove: '잘못된 수', dataError: '데이터 오류' },
+-            zh: { invalidMove: '无效着法', dataError: '数据错误' }
+-        };
+-
+-        const noMovesText = {
+-            vi: 'Chưa có nước đi hợp lệ nào.',
+-            en: 'No valid moves yet.',
+-            ja: 'まだ有効な手がありません。',
+-            ko: '아직 유효한 수가 없습니다.',
+-            zh: '暂无有效着法。'
+-        };
++        // Piece names, action words and messages for every supported language.
++        // Built server-side from resources/lang/*.json (see the @php block at the top).
++        const notationI18n = @json($notationI18n);
++        const NOTATION_LANGS = Object.keys(notationI18n);
++        const DEFAULT_NOTATION_LANG = @json($notationDefault);
++
++        // CJK notation is written without spaces around the action word (e.g. 車2平5).
++        const COMPACT_NOTATION_LANGS = ['ja', 'ko', 'zh'];
++
++        // Maps the piece letters the engine may emit onto the 7 translated piece types.
++        const pieceTypeAliases = { k: 'k', a: 'a', b: 'b', e: 'b', v: 'b', n: 'n', h: 'n', r: 'r', c: 'c', p: 'p' };
+ 
+         // Parses a chess move into language-agnostic components (piece, files, action, target).
+         function parseMoveComponents(move, color) {
+@@ -504,33 +507,23 @@
+             return { pieceKey, fFile, target, actionType };
+         }
+ 
+-        // Formats a move as notation text in the given language ('vi', 'en', 'ja', 'ko', 'zh').
++        // Formats a move as notation text in any language listed in notationI18n.
+         function formatNotation(move, color, lang) {
+             if (!move) return '...';
+ 
++            const t = notationI18n[lang] || notationI18n[DEFAULT_NOTATION_LANG];
+             const { pieceKey, fFile, target, actionType } = parseMoveComponents(move, color);
+-            const pieceName = pieceNameMaps[lang][pieceKey] || move.piece.toUpperCase();
+-            const action = actionWordMaps[lang][actionType];
++            const pieceName = t.pieces[pieceTypeAliases[pieceKey]] || move.piece.toUpperCase();
++            const action = t[actionType];
+ 
+-            return `${pieceName} ${fFile}${action}${target}`;
++            if (COMPACT_NOTATION_LANGS.includes(lang)) {
++                return `${pieceName} ${fFile}${action}${target}`;
++            }
++            return `${pieceName} ${fFile} ${action} ${target}`;
+         }
+ 
+-        function toVietnameseNotation(move, color) { return formatNotation(move, color, 'vi'); }
+-        function toEnglishNotation(move, color) { return formatNotation(move, color, 'en'); }
+-        function toJapaneseNotation(move, color) { return formatNotation(move, color, 'ja'); }
+-        function toKoreanNotation(move, color) { return formatNotation(move, color, 'ko'); }
+-        function toChineseNotation(move, color) { return formatNotation(move, color, 'zh'); }
+-
+-        const notationFormatters = {
+-            vi: toVietnameseNotation,
+-            en: toEnglishNotation,
+-            ja: toJapaneseNotation,
+-            ko: toKoreanNotation,
+-            zh: toChineseNotation
+-        };
+-
+         let currentLang = @json($notationLang);
+-        const notationHistories = { vi: [], en: [], ja: [], ko: [], zh: [] };
++        const notationHistories = Object.fromEntries(NOTATION_LANGS.map(lang => [lang, []]));
+ 
+         if (Array.isArray(movesData)) {
+             movesData.forEach(move => {
+@@ -542,18 +535,18 @@
+                     if (result) {
+                         fenHistory.push(gameLogic.fen());
+                         NOTATION_LANGS.forEach(lang => {
+-                            notationHistories[lang].push(notationFormatters[lang](result, color));
++                            notationHistories[lang].push(formatNotation(result, color, lang));
+                         });
+                     } else {
+                         fenHistory.push(gameLogic.fen());
+                         NOTATION_LANGS.forEach(lang => {
+-                            notationHistories[lang].push(errorMessages[lang].invalidMove);
++                            notationHistories[lang].push(notationI18n[lang].invalidMove);
+                         });
+                     }
+                 } catch (e) {
+                     fenHistory.push(gameLogic.fen());
+                     NOTATION_LANGS.forEach(lang => {
+-                        notationHistories[lang].push(errorMessages[lang].dataError);
++                        notationHistories[lang].push(notationI18n[lang].dataError);
+                     });
+                 }
+             });
+@@ -588,7 +581,7 @@
+             $('#stat-total-moves').text(totalSteps);
+ 
+             if (totalSteps === 0) {
+-                listContainer.html(`<div class="text-center text-muted font-italic mt-4" style="grid-column: span 2;">${noMovesText[currentLang]}</div>`);
++                listContainer.html(`<div class="text-center text-muted font-italic mt-4" style="grid-column: span 2;">${notationI18n[currentLang].noMoves}</div>`);
+                 $('#total-steps').text(0);
+                 return;
+             }
