@@ -58,14 +58,15 @@ class Kernel extends ConsoleKernel
         $schedule->command(CreateNewRoom::class)->everySixHours($minutes = 0);
         // $schedule->command(UpdateSitemapCommand::class)->daily();
 
-        // Keeps the warm Pikafish worker pool alive without Supervisor:
-        // checks each worker's pid + socket every minute and respawns any
-        // that died. See deploy/README.md in the xiangqi refactor bundle.
-        $schedule->command(XiangqiPoolEnsureCommand::class)
-            ->everyMinute()
-            ->withoutOverlapping(1)
-            ->runInBackground()
-            ->appendOutputTo(storage_path('logs/xiangqi-pool-ensure.log'));
+        // Supervisor (/etc/supervisord.d/xiangqi-workers.ini) manages the Xiangqi
+        // worker pool directly on production. XiangqiPoolEnsureCommand was intended
+        // only as a fallback when Supervisor is not available, and running it in
+        // cron caused duplicate process leaks and memory exhaustion.
+        // $schedule->command(XiangqiPoolEnsureCommand::class)
+        //     ->everyMinute()
+        //     ->withoutOverlapping(1)
+        //     ->runInBackground()
+        //     ->appendOutputTo(storage_path('logs/xiangqi-pool-ensure.log'));
     }
 
     /**

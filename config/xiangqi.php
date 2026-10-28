@@ -8,8 +8,8 @@ return [
     // put them in the same group — see deploy/README.md).
     'socket_dir' => env('XIANGQI_SOCKET_DIR', storage_path('app/xiangqi')),
 
-    // Must match the numprocs value in the supervisor config.
-    'worker_count' => env('XIANGQI_WORKER_COUNT', 5),
+    // Must match the numprocs value in the supervisor config (set to 2 for VPS memory stability).
+    'worker_count' => env('XIANGQI_WORKER_COUNT', 2),
 
     'php_binary' => env('XIANGQI_PHP_BINARY'),
 ];
