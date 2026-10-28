@@ -864,5 +864,12 @@
     "Không có gợi ý cho thế cờ hiện tại.": "No hint is available for the current position.",
     "Nước đi gợi ý": "Suggested Moves",
     "Đang tính toán": "Calculating",
-    "Đăng nhập để xem gợi ý": "Login to show hint"
+    "Đăng nhập để xem gợi ý": "Login to show hint",
+    "notation_level": "level",
+    "notation_advance": "advances",
+    "notation_retreat": "retreats",
+    "notation_invalid_move": "Invalid move",
+    "notation_data_error": "Data error",
+    "notation_no_moves": "No valid moves yet.",
+    "notation_audio_unsupported": "Your browser does not support the audio element."
 }

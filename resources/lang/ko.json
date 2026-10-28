@@ -865,5 +865,12 @@
     "Không có gợi ý cho thế cờ hiện tại.": "현재 국면에 대한 힌트가 없습니다.",
     "Nước đi gợi ý": "추천 수",
     "Đang tính toán": "계산 중",
-    "Đăng nhập để xem gợi ý": "로그인하여 힌트 보기"
+    "Đăng nhập để xem gợi ý": "로그인하여 힌트 보기",
+    "notation_level": "평",
+    "notation_advance": "진",
+    "notation_retreat": "퇴",
+    "notation_invalid_move": "잘못된 수",
+    "notation_data_error": "데이터 오류",
+    "notation_no_moves": "아직 유효한 수가 없습니다.",
+    "notation_audio_unsupported": "사용 중인 브라우저는 오디오 요소를 지원하지 않습니다."
 }

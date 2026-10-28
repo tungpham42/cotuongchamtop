@@ -864,5 +864,12 @@
     "Không có gợi ý cho thế cờ hiện tại.": "Aucun indice n'est disponible pour la position actuelle.",
     "Nước đi gợi ý": "Coups suggérés",
     "Đang tính toán": "Calcul en cours",
-    "Đăng nhập để xem gợi ý": "Connecte-toi pour afficher l'indice"
+    "Đăng nhập để xem gợi ý": "Connecte-toi pour afficher l'indice",
+    "notation_level": "latéral",
+    "notation_advance": "avance",
+    "notation_retreat": "recule",
+    "notation_invalid_move": "Coup invalide",
+    "notation_data_error": "Erreur de données",
+    "notation_no_moves": "Aucun coup valide pour le moment.",
+    "notation_audio_unsupported": "Ton navigateur ne prend pas en charge la balise audio."
 }

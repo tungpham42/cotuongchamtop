@@ -866,5 +866,12 @@
     "Không có gợi ý cho thế cờ hiện tại.": "現在の局面に対するヒントはありません。",
     "Nước đi gợi ý": "おすすめの手",
     "Đang tính toán": "計算中",
-    "Đăng nhập để xem gợi ý": "ログインしてヒントを表示"
+    "Đăng nhập để xem gợi ý": "ログインしてヒントを表示",
+    "notation_level": "平",
+    "notation_advance": "進",
+    "notation_retreat": "退",
+    "notation_invalid_move": "不正な手",
+    "notation_data_error": "データエラー",
+    "notation_no_moves": "まだ有効な手がありません。",
+    "notation_audio_unsupported": "お使いのブラウザは音声要素に対応していません。"
 }

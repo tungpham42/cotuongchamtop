@@ -864,5 +864,12 @@
     "Không có gợi ý cho thế cờ hiện tại.": "Для текущей позиции подсказок нет.",
     "Nước đi gợi ý": "Предлагаемые ходы",
     "Đang tính toán": "Вычисление",
-    "Đăng nhập để xem gợi ý": "Войдите, чтобы увидеть подсказку"
+    "Đăng nhập để xem gợi ý": "Войдите, чтобы увидеть подсказку",
+    "notation_level": "по горизонтали",
+    "notation_advance": "вперёд",
+    "notation_retreat": "назад",
+    "notation_invalid_move": "Недопустимый ход",
+    "notation_data_error": "Ошибка данных",
+    "notation_no_moves": "Допустимых ходов пока нет.",
+    "notation_audio_unsupported": "Ваш браузер не поддерживает элемент audio."
 }

@@ -864,5 +864,12 @@
     "Không có gợi ý cho thế cờ hiện tại.": "Für die aktuelle Stellung gibt es keinen Hinweis.",
     "Nước đi gợi ý": "Vorgeschlagene Züge",
     "Đang tính toán": "Wird berechnet",
-    "Đăng nhập để xem gợi ý": "Melde dich an, um den Hinweis zu sehen"
+    "Đăng nhập để xem gợi ý": "Melde dich an, um den Hinweis zu sehen",
+    "notation_level": "quer",
+    "notation_advance": "vor",
+    "notation_retreat": "zurück",
+    "notation_invalid_move": "Ungültiger Zug",
+    "notation_data_error": "Datenfehler",
+    "notation_no_moves": "Noch keine gültigen Züge.",
+    "notation_audio_unsupported": "Dein Browser unterstützt das Audio-Element nicht."
 }

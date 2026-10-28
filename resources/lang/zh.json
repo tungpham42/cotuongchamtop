@@ -868,5 +868,12 @@
     "Không có gợi ý cho thế cờ hiện tại.": "当前局面暂无提示。",
     "Nước đi gợi ý": "推荐走法",
     "Đang tính toán": "计算中",
-    "Đăng nhập để xem gợi ý": "登录以显示提示"
+    "Đăng nhập để xem gợi ý": "登录以显示提示",
+    "notation_level": "平",
+    "notation_advance": "进",
+    "notation_retreat": "退",
+    "notation_invalid_move": "无效着法",
+    "notation_data_error": "数据错误",
+    "notation_no_moves": "暂无有效着法。",
+    "notation_audio_unsupported": "您的浏览器不支持音频元素。"
 }

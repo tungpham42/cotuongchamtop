@@ -1812,5 +1812,12 @@
     "Không có gợi ý cho thế cờ hiện tại.": "Không có gợi ý cho thế cờ hiện tại.",
     "Nước đi gợi ý": "Nước đi gợi ý",
     "Đang tính toán": "Đang tính toán",
-    "Đăng nhập để xem gợi ý": "Đăng nhập để xem gợi ý"
+    "Đăng nhập để xem gợi ý": "Đăng nhập để xem gợi ý",
+    "notation_level": "bình",
+    "notation_advance": "tấn",
+    "notation_retreat": "thoái",
+    "notation_invalid_move": "Lỗi nước đi",
+    "notation_data_error": "Lỗi dữ liệu",
+    "notation_no_moves": "Chưa có nước đi hợp lệ nào.",
+    "notation_audio_unsupported": "Trình duyệt của bạn không hỗ trợ thẻ audio."
 }

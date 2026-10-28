@@ -6,6 +6,38 @@
 
 @section('content')
 
+@php
+    $notationLocales = config('locales.supported', ['vi', 'en', 'ja', 'ko', 'zh', 'de', 'fr', 'es', 'ru']);
+    $notationLabels = config('locales.labels', []);
+    $notationDefault = config('locales.default', 'vi');
+    $notationLang = in_array(app()->getLocale(), $notationLocales, true)
+        ? app()->getLocale()
+        : $notationDefault;
+
+    // Notation text for every supported language, resolved server-side so the
+    // selector can switch language client-side without a reload.
+    $notationI18n = [];
+    foreach ($notationLocales as $loc) {
+        $notationI18n[$loc] = [
+            'pieces' => [
+                'k' => __('piece_k', [], $loc),
+                'a' => __('piece_a', [], $loc),
+                'b' => __('piece_b', [], $loc),
+                'n' => __('piece_n', [], $loc),
+                'r' => __('piece_r', [], $loc),
+                'c' => __('piece_c', [], $loc),
+                'p' => __('piece_p', [], $loc),
+            ],
+            'level' => __('notation_level', [], $loc),
+            'advance' => __('notation_advance', [], $loc),
+            'retreat' => __('notation_retreat', [], $loc),
+            'invalidMove' => __('notation_invalid_move', [], $loc),
+            'dataError' => __('notation_data_error', [], $loc),
+            'noMoves' => __('notation_no_moves', [], $loc),
+        ];
+    }
+@endphp
+
 <style>
     /* Royal Liquid Glass Theme Enhancements for Bootstrap */
     .royal-glass-card {
@@ -193,7 +225,7 @@
     <audio id="nuoc-co">
         <source src="{{ asset('sound/nuocCo.mp3') }}" type="audio/mpeg">
         <source src="{{ asset('sound/nuocCo.wav') }}" type="audio/wav">
-        Your browser does not support the audio element.
+        {{ __('notation_audio_unsupported') }}
     </audio>
     {{-- Kicker Badge --}}
     <div class="d-flex justify-content-center mb-4">
@@ -329,7 +361,7 @@
                     </span>
                     <span class="chip-stat d-inline-flex align-items-center" style="gap: 0.25rem;">
                         <svg style="width: 14px; height: 14px;" class="text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        {{ $game->created_at->format('d/m/Y') }}
+                        {{ $game->created_at->locale(app()->getLocale())->isoFormat('L') }}
                     </span>
                     <span class="chip-stat d-inline-flex align-items-center" style="gap: 0.25rem;">
                         <svg style="width: 14px; height: 14px;" class="text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
@@ -396,17 +428,10 @@
                         {{ __('Biên Bản Ván Cờ') }}
                     </h2>
 
-                    @php
-                        $notationLang = in_array(app()->getLocale(), ['vi', 'en', 'ja', 'ko', 'zh'])
-                            ? app()->getLocale()
-                            : 'vi';
-                    @endphp
                     <select id="notation-lang" class="custom-select custom-select-sm bg-dark text-warning border rounded-pill" style="width: auto; font-size: 0.75rem; border-color: rgba(212, 175, 55, 0.4) !important;">
-                        <option value="vi" @selected($notationLang === 'vi')>{{ __('Tiếng Việt') }}</option>
-                        <option value="en" @selected($notationLang === 'en')>{{ __('English') }}</option>
-                        <option value="ja" @selected($notationLang === 'ja')>{{ __('日本語') }}</option>
-                        <option value="ko" @selected($notationLang === 'ko')>{{ __('한국어') }}</option>
-                        <option value="zh" @selected($notationLang === 'zh')>{{ __('中文') }}</option>
+                        @foreach($notationLocales as $loc)
+                            <option value="{{ $loc }}" @selected($notationLang === $loc)>{{ $notationLabels[$loc] ?? $loc }}</option>
+                        @endforeach
                     </select>
                 </div>
 
@@ -442,39 +467,17 @@
         // ==========================================
         // NOTATION: shared move parsing + per-language formatting
         // ==========================================
-        const NOTATION_LANGS = ['vi', 'en', 'ja', 'ko', 'zh'];
+        // Piece names, action words and messages for every supported language.
+        // Built server-side from resources/lang/*.json (see the @php block at the top).
+        const notationI18n = @json($notationI18n);
+        const NOTATION_LANGS = Object.keys(notationI18n);
+        const DEFAULT_NOTATION_LANG = @json($notationDefault);
 
-        const pieceNameMaps = {
-            vi: { k: 'Tướng', a: 'Sĩ', b: 'Tượng', e: 'Tượng', v: 'Tượng', n: 'Mã', h: 'Mã', r: 'Xe', c: 'Pháo', p: 'Chốt' },
-            en: { k: 'General', a: 'Advisor', b: 'Elephant', e: 'Elephant', v: 'Elephant', n: 'Horse', h: 'Horse', r: 'Chariot', c: 'Cannon', p: 'Soldier' },
-            ja: { k: '将', a: '士', b: '象', e: '象', v: '象', n: '馬', h: '馬', r: '車', c: '砲', p: '兵' },
-            ko: { k: '장', a: '사', b: '상', e: '상', v: '상', n: '마', h: '마', r: '차', c: '포', p: '병' },
-            zh: { k: '將', a: '士', b: '象', e: '象', v: '象', n: '馬', h: '馬', r: '車', c: '炮', p: '兵' }
-        };
+        // CJK notation is written without spaces around the action word (e.g. 車2平5).
+        const COMPACT_NOTATION_LANGS = ['ja', 'ko', 'zh'];
 
-        const actionWordMaps = {
-            vi: { level: ' bình ', advance: ' tấn ', retreat: ' thoái ' },
-            en: { level: ' level ', advance: ' advances ', retreat: ' retreats ' },
-            ja: { level: '平', advance: '進', retreat: '退' },
-            ko: { level: '평', advance: '진', retreat: '퇴' },
-            zh: { level: '平', advance: '進', retreat: '退' }
-        };
-
-        const errorMessages = {
-            vi: { invalidMove: 'Lỗi nước đi', dataError: 'Lỗi dữ liệu' },
-            en: { invalidMove: 'Invalid move', dataError: 'Data error' },
-            ja: { invalidMove: '不正な手', dataError: 'データエラー' },
-            ko: { invalidMove: '잘못된 수', dataError: '데이터 오류' },
-            zh: { invalidMove: '无效着法', dataError: '数据错误' }
-        };
-
-        const noMovesText = {
-            vi: 'Chưa có nước đi hợp lệ nào.',
-            en: 'No valid moves yet.',
-            ja: 'まだ有効な手がありません。',
-            ko: '아직 유효한 수가 없습니다.',
-            zh: '暂无有效着法。'
-        };
+        // Maps the piece letters the engine may emit onto the 7 translated piece types.
+        const pieceTypeAliases = { k: 'k', a: 'a', b: 'b', e: 'b', v: 'b', n: 'n', h: 'n', r: 'r', c: 'c', p: 'p' };
 
         // Parses a chess move into language-agnostic components (piece, files, action, target).
         function parseMoveComponents(move, color) {
@@ -504,33 +507,23 @@
             return { pieceKey, fFile, target, actionType };
         }
 
-        // Formats a move as notation text in the given language ('vi', 'en', 'ja', 'ko', 'zh').
+        // Formats a move as notation text in any language listed in notationI18n.
         function formatNotation(move, color, lang) {
             if (!move) return '...';
 
+            const t = notationI18n[lang] || notationI18n[DEFAULT_NOTATION_LANG];
             const { pieceKey, fFile, target, actionType } = parseMoveComponents(move, color);
-            const pieceName = pieceNameMaps[lang][pieceKey] || move.piece.toUpperCase();
-            const action = actionWordMaps[lang][actionType];
+            const pieceName = t.pieces[pieceTypeAliases[pieceKey]] || move.piece.toUpperCase();
+            const action = t[actionType];
 
-            return `${pieceName} ${fFile}${action}${target}`;
+            if (COMPACT_NOTATION_LANGS.includes(lang)) {
+                return `${pieceName} ${fFile}${action}${target}`;
+            }
+            return `${pieceName} ${fFile} ${action} ${target}`;
         }
 
-        function toVietnameseNotation(move, color) { return formatNotation(move, color, 'vi'); }
-        function toEnglishNotation(move, color) { return formatNotation(move, color, 'en'); }
-        function toJapaneseNotation(move, color) { return formatNotation(move, color, 'ja'); }
-        function toKoreanNotation(move, color) { return formatNotation(move, color, 'ko'); }
-        function toChineseNotation(move, color) { return formatNotation(move, color, 'zh'); }
-
-        const notationFormatters = {
-            vi: toVietnameseNotation,
-            en: toEnglishNotation,
-            ja: toJapaneseNotation,
-            ko: toKoreanNotation,
-            zh: toChineseNotation
-        };
-
         let currentLang = @json($notationLang);
-        const notationHistories = { vi: [], en: [], ja: [], ko: [], zh: [] };
+        const notationHistories = Object.fromEntries(NOTATION_LANGS.map(lang => [lang, []]));
 
         if (Array.isArray(movesData)) {
             movesData.forEach(move => {
@@ -542,18 +535,18 @@
                     if (result) {
                         fenHistory.push(gameLogic.fen());
                         NOTATION_LANGS.forEach(lang => {
-                            notationHistories[lang].push(notationFormatters[lang](result, color));
+                            notationHistories[lang].push(formatNotation(result, color, lang));
                         });
                     } else {
                         fenHistory.push(gameLogic.fen());
                         NOTATION_LANGS.forEach(lang => {
-                            notationHistories[lang].push(errorMessages[lang].invalidMove);
+                            notationHistories[lang].push(notationI18n[lang].invalidMove);
                         });
                     }
                 } catch (e) {
                     fenHistory.push(gameLogic.fen());
                     NOTATION_LANGS.forEach(lang => {
-                        notationHistories[lang].push(errorMessages[lang].dataError);
+                        notationHistories[lang].push(notationI18n[lang].dataError);
                     });
                 }
             });
@@ -588,7 +581,7 @@
             $('#stat-total-moves').text(totalSteps);
 
             if (totalSteps === 0) {
-                listContainer.html(`<div class="text-center text-muted font-italic mt-4" style="grid-column: span 2;">${noMovesText[currentLang]}</div>`);
+                listContainer.html(`<div class="text-center text-muted font-italic mt-4" style="grid-column: span 2;">${notationI18n[currentLang].noMoves}</div>`);
                 $('#total-steps').text(0);
                 return;
             }

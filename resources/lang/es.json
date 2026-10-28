@@ -864,5 +864,12 @@
     "Không có gợi ý cho thế cờ hiện tại.": "No hay pistas disponibles para la posición actual.",
     "Nước đi gợi ý": "Jugadas sugeridas",
     "Đang tính toán": "Calculando",
-    "Đăng nhập để xem gợi ý": "Inicia sesión para ver la pista"
+    "Đăng nhập để xem gợi ý": "Inicia sesión para ver la pista",
+    "notation_level": "lateral",
+    "notation_advance": "avanza",
+    "notation_retreat": "retrocede",
+    "notation_invalid_move": "Jugada no válida",
+    "notation_data_error": "Error de datos",
+    "notation_no_moves": "Aún no hay jugadas válidas.",
+    "notation_audio_unsupported": "Tu navegador no admite el elemento de audio."
 }
