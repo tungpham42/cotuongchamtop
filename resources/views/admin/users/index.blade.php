@@ -13,9 +13,14 @@
             </span>
         </div>
 
-        <a href="{{ route('admin.users.create') }}" class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2">
-            <i class="fa-solid fa-user-plus"></i> Add User
-        </a>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('admin.users.export', request()->only(['search', 'role'])) }}" class="px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border border-gray-200 hover:bg-gray-50 transition flex items-center justify-center gap-2" title="Export name &amp; email of the current filtered list">
+                <i class="fa-solid fa-file-csv"></i> Export CSV
+            </a>
+            <a href="{{ route('admin.users.create') }}" class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-user-plus"></i> Add User
+            </a>
+        </div>
     </div>
 
     <!-- Header Controls -->

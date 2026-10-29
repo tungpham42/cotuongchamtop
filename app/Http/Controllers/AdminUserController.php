@@ -5,30 +5,91 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminUserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::query()->withSum('karmaLogs as gems_sum', 'amount');
+        $query = $this->filteredQuery($request)
+            ->withSum('karmaLogs as gems_sum', 'amount');
 
-        // Search Filter
+        $users = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+
+        return view('admin.users.index', compact('users'));
+    }
+
+    /**
+     * Export name + email of users as CSV.
+     * Respects the same search / role filters as the index page.
+     */
+    public function export(Request $request): StreamedResponse
+    {
+        $query = $this->filteredQuery($request)
+            ->select(['id', 'name', 'email'])
+            ->orderBy('id');
+
+        $filename = 'users-' . now()->format('Y-m-d_His') . '.csv';
+
+        return response()->streamDownload(function () use ($query) {
+            $out = fopen('php://output', 'w');
+
+            // UTF-8 BOM so Excel displays Vietnamese characters correctly
+            fwrite($out, "\xEF\xBB\xBF");
+
+            fputcsv($out, ['Name', 'Email']);
+
+            // chunkById keeps memory flat for large user tables
+            $query->chunkById(1000, function ($users) use ($out) {
+                foreach ($users as $user) {
+                    fputcsv($out, [
+                        $this->csvSafe($user->name),
+                        $this->csvSafe($user->email),
+                    ]);
+                }
+            });
+
+            fclose($out);
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
+
+    /**
+     * Shared search / role filters used by index() and export().
+     */
+    private function filteredQuery(Request $request)
+    {
+        $query = User::query();
+
         if ($request->filled('search')) {
             $search = $request->input('search');
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
-        // Admin Filter
         if ($request->filled('role')) {
             $query->where('is_admin', $request->role === 'admin');
         }
 
-        $users = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        return $query;
+    }
 
-        return view('admin.users.index', compact('users'));
+    /**
+     * Prevent CSV/formula injection: a name like "=HYPERLINK(...)" would be
+     * executed by Excel/Sheets. Prefix risky leading characters with a quote.
+     */
+    private function csvSafe(?string $value): string
+    {
+        $value = (string) $value;
+
+        if ($value !== '' && in_array($value[0], ['=', '+', '-', '@', "\t", "\r"], true)) {
+            return "'" . $value;
+        }
+
+        return $value;
     }
 
     public function create()

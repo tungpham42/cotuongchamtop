@@ -173,6 +173,8 @@ Route::middleware(['auth', IsAdmin::class])->prefix('admin')->name('admin.')->gr
     Route::get('/marketing', [AdminMarketingController::class, 'index'])->name('marketing');
     Route::get('/marketing/data', [AdminMarketingController::class, 'data'])->name('marketing.data');
     // Future routes can go here (e.g., users management, tournaments approval, etc.)
+    // Must be declared BEFORE the resource, otherwise "export" is treated as {user}
+    Route::get('users/export', [AdminUserController::class, 'export'])->name('users.export');
     Route::resource('users', AdminUserController::class);
     Route::resource('puzzles', AdminPuzzleController::class);
     Route::resource('rooms', AdminRoomController::class);
