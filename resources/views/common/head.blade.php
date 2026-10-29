@@ -78,6 +78,7 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-WM9GZXN');</script>
+<script type="text/javascript">(function(i,m,p,a,c,t){c.ire_o=p;c[p]=c[p]||function(){(c[p].a=c[p].a||[]).push(arguments)};t=a.createElement(m);var z=a.getElementsByTagName(m)[0];t.async=1;t.src=i;z.parentNode.insertBefore(t,z)})('https://utt.impactcdn.com/P-A8067833-513e-461f-bf86-303fadbc24861.js','script','impactStat',document,window);impactStat('transformLinks');impactStat('trackImpression');</script>
 @include('common.schemaOrg')
 <script type="text/javascript" src="{{ asset('js/theme-manager.js?v=1') }}"></script>
 
