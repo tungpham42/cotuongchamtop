@@ -1,9 +1,28 @@
 <style>
 .zalo-icon {
     position: fixed;
-    bottom: 80px;
+    bottom: 20px; /* to-top button hidden: sit at the corner */
     right: 20px;
     z-index: 1000; /* Ensures it stays on top of other content */
+    transition: bottom 0.3s ease;
+}
+
+/* to-top button visible (scroll > offset): lift above it */
+.zalo-icon.zalo-icon--raised {
+    bottom: 80px;
+}
+
+@media (max-width: 1024px) {
+    .zalo-icon.zalo-icon--raised {
+        bottom: 70px;
+    }
+}
+
+@media (max-height: 300px) {
+    .zalo-icon,
+    .zalo-icon.zalo-icon--raised {
+        bottom: 20px !important;
+    }
 }
 
 .zalo-icon img {
@@ -15,12 +34,6 @@
 
 .zalo-icon img:hover {
     transform: scale(1.1); /* Optional: slight zoom on hover */
-}
-@media (max-width: 1024px) {
-    .zalo-icon {
-        bottom: 70px;
-        right: 20px;
-    }
 }
 </style>
 <div class="zalo-icon">
