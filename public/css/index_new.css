@@ -1883,8 +1883,9 @@ a.animate:hover {
     height: 48px; /* Slightly larger for easier tapping */
     width: 48px;
     position: fixed;
-    bottom: 30px;
-    left: 30px; /* Moved slightly off the exact edge for better breathing room */
+    bottom: 20px;
+    right: 20px;
+    left: auto; /* Moved slightly off the exact edge for better breathing room */
     z-index: 9999;
     overflow: hidden;
     text-indent: 100%;
