@@ -165,5 +165,5 @@ $(document).ready(function() {
 });
 </script>
 <a href="#0" class="cd-top js-cd-top rounded" style="background-image: url('{{ asset('img/cd-top-arrow.svg') }}');">Top</a>
-<script src="{{ asset('js/to-top.js') }}"></script>
+<script src="{{ asset('js/to-top.js?v=1') }}"></script>
 @include('cookie-consent::index')

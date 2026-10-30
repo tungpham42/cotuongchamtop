@@ -175,4 +175,4 @@ $(document).ready(function() {
 </script>
 <script src='https://platform-api.sharethis.com/js/sharethis.js#property=646aee4bd8c6d2001a06c2f8&product=sticky-share-buttons' async='async'></script>
 <a href="#0" class="cd-top js-cd-top rounded" style="background-image: url('{{ asset('img/cd-top-arrow.svg') }}');">{{ __("Top") }}</a>
-<script src="{{ asset('js/to-top.js') }}"></script>
+<script src="{{ asset('js/to-top.js?v=1') }}"></script>
