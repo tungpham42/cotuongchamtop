@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Services\Xiangqi\PikafishProcess;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\Process\PhpExecutableFinder;
 
 /**
  * Replaces the old XiangqiEngineService for the web request path.
@@ -42,10 +44,7 @@ class XiangqiEngineClient
     {
         // Same +3.0s IPC/queueing grace getBestMove() adds on top of the
         // engine's own budget — the socket timeout must stay a bit looser
-        // than the worker's internal wait (PikafishProcess::analyze), or
-        // we'd give up on the response a moment before the worker sends
-        // it. Using the same formula the worker uses (via the shared
-        // static method) means this never drifts out of sync with it.
+        // than the worker's internal wait (PikafishProcess::analyze).
         $readTimeoutSeconds = PikafishProcess::analysisTimeoutSeconds($depth) + 3.0;
 
         $response = $this->request([
@@ -58,16 +57,8 @@ class XiangqiEngineClient
     }
 
     /**
-     * "Available" here means actually able to serve a request (ready),
-     * not merely "socket exists and answered a ping" — a worker that's
-     * still loading the engine answers ping with success=true but
-     * ready=false, and callers care whether it can play a move, not
-     * whether the socket happens to be up. Counting on `success` alone
-     * let a pool where every worker was stuck mid-boot report itself as
-     * "available" and skip triggering an ensure. This also keeps the
-     * trigger condition consistent with isAnyWorkerReady(): both now
-     * fire whenever zero workers are actually ready, not just when zero
-     * sockets respond at all.
+     * "Available" means actually able to serve a request (ready), not
+     * merely "socket exists and answered a ping".
      *
      * @return array{available:int, total:int}
      */
@@ -104,9 +95,8 @@ class XiangqiEngineClient
 
     /**
      * True if worker $id responded ready to a ping. Used by
-     * XiangqiPoolEnsureCommand (the cron-driven Supervisor replacement)
-     * to decide whether a worker with a live PID is actually serving
-     * requests, not just running-but-stuck.
+     * XiangqiPoolEnsureCommand to decide whether a worker with a live PID
+     * is actually serving requests, not just running-but-stuck.
      */
     public function pingWorker(int $id): bool
     {
@@ -121,8 +111,8 @@ class XiangqiEngineClient
 
     /**
      * Try each worker socket in random order; use the first one that
-     * accepts a connection. Returns null (never throws) if none are
-     * available within budget, so callers can fall back gracefully.
+     * accepts a connection. Returns an empty array (never throws) if none
+     * are available within budget, so callers can fall back gracefully.
      */
     private function request(array $payload, float $readTimeoutSeconds): array
     {
@@ -136,10 +126,8 @@ class XiangqiEngineClient
             }
         }
 
-        // Every socket was missing/refused/timed out — from this request's
-        // point of view the pool is fully down. Kick off pool:ensure in the
-        // background so the *next* request has a chance, instead of every
-        // request failing silently until the next cron tick (up to 60s away).
+        // Every socket was missing/refused/timed out. Kick off pool:ensure
+        // in the background so the *next* request has a chance.
         $this->triggerPoolEnsure();
 
         return [];
@@ -147,17 +135,22 @@ class XiangqiEngineClient
 
     /**
      * Fire `php artisan xiangqi:pool:ensure` in the background (detached,
-     * non-blocking — same setsid/nohup pattern XiangqiPoolEnsureCommand
-     * itself uses to launch workers) the moment we notice zero workers
-     * responding, rather than waiting for the next scheduler tick.
+     * non-blocking) the moment we notice zero workers responding.
      *
-     * Debounced via a lock file: xiangqi:pool:ensure already takes its own
-     * flock, which prevents overlapping *runs*, but does nothing to stop a
-     * burst of concurrent web requests during an outage from each calling
-     * shell_exec() here and piling up processes in the table while one
-     * ensure run is still mid-flight (which, remember, can legitimately
-     * take BOOT_GRACE_SECONDS-ish per cold-started worker). This cooldown
-     * makes a storm of simultaneous callers trigger it once.
+     * Hardening vs. the previous version:
+     *  - Debounce is now atomic (flock + timestamp stored in the file),
+     *    so a burst of concurrent requests triggers it exactly once.
+     *  - The launcher (setsid/nohup) is resolved to an absolute path from
+     *    fixed system directories and shell-quoted, instead of being
+     *    looked up through PATH.
+     *  - The PHP binary must look like a PHP CLI binary (php, php8.3, ...),
+     *    not just be "some executable".
+     *  - Every interpolated value is escapeshellarg()'d; the rest of the
+     *    command string is a fixed literal, so no request data can reach it.
+     *
+     * shell_exec is kept (rather than proc_open) because backgrounding with
+     * `&` needs a shell, and proc_open's resource destructor would wait on
+     * the child and block the HTTP request.
      */
     private function triggerPoolEnsure(): void
     {
@@ -172,62 +165,105 @@ class XiangqiEngineClient
         $triggerPath = rtrim($this->socketDir, '/') . '/pool-ensure-trigger.lock';
         $cooldownSeconds = (float) config('xiangqi.auto_ensure_cooldown_seconds', 10.0);
 
-        $lastTriggered = @filemtime($triggerPath);
-        if ($lastTriggered !== false && (time() - $lastTriggered) < $cooldownSeconds) {
-            return; // triggered recently — let that run finish before we try again
-        }
-
-        // Touch the lock file before shelling out, so concurrent requests
-        // racing us here see a fresh mtime immediately rather than all
-        // passing the check together.
-        @touch($triggerPath);
-
-        $phpBinary = $this->resolvePhpBinary();
-        if ($phpBinary === null) {
-            // Don't shell out a command we already know is broken — that
-            // used to silently build "setsid '' /path/artisan ..." (empty
-            // PHP_BINARY, common when this runs inside a PHP-FPM request)
-            // and fail invisibly, since this whole call is wrapped in
-            // "> /dev/null 2>&1". Log it instead so an outage is visible.
-            \Illuminate\Support\Facades\Log::error(
-                'xiangqi: could not resolve a usable PHP CLI binary to trigger pool:ensure '
-                . '(PhpExecutableFinder and PHP_BINARY both empty/non-executable). '
-                . 'Set XIANGQI_PHP_BINARY in .env and wire it into config/xiangqi.php as php_binary.'
-            );
+        $fh = @fopen($triggerPath, 'c+');
+        if ($fh === false) {
+            Log::error('xiangqi: could not open pool-ensure trigger lock file: ' . $triggerPath);
             return;
         }
 
-        $artisan = escapeshellarg(base_path('artisan'));
-        $php = escapeshellarg($phpBinary);
-        $launcher = trim((string) shell_exec('command -v setsid')) !== '' ? 'setsid' : 'nohup';
+        try {
+            // Non-blocking exclusive lock: if another request holds it, that
+            // request is already doing the trigger — nothing for us to do.
+            if (!flock($fh, LOCK_EX | LOCK_NB)) {
+                return;
+            }
 
-        // Detached and output-discarded: this runs on the request thread,
-        // so it must return immediately regardless of how long
-        // xiangqi:pool:ensure itself takes to finish.
-        shell_exec("{$launcher} {$php} {$artisan} xiangqi:pool:ensure > /dev/null 2>&1 < /dev/null &");
+            // Cooldown check happens *inside* the lock, so it is race-free.
+            $lastTriggered = (float) trim((string) stream_get_contents($fh));
+            $now = microtime(true);
+            if ($lastTriggered > 0 && ($now - $lastTriggered) < $cooldownSeconds) {
+                return;
+            }
+
+            ftruncate($fh, 0);
+            rewind($fh);
+            fwrite($fh, (string) $now);
+            fflush($fh);
+
+            $phpBinary = $this->resolvePhpBinary();
+            if ($phpBinary === null) {
+                Log::error(
+                    'xiangqi: could not resolve a usable PHP CLI binary to trigger pool:ensure '
+                    . '(PhpExecutableFinder and PHP_BINARY both empty/non-executable/not a php binary). '
+                    . 'Set XIANGQI_PHP_BINARY in .env and wire it into config/xiangqi.php as php_binary.'
+                );
+                return;
+            }
+
+            $artisan = escapeshellarg(base_path('artisan'));
+            $php = escapeshellarg($phpBinary);
+
+            // Absolute path to setsid, else nohup, else none (plain `&`).
+            $launcherPath = $this->findSystemBinary(['setsid', 'nohup']);
+            $launcher = $launcherPath !== null ? escapeshellarg($launcherPath) . ' ' : '';
+
+            // Detached and output-discarded: this runs on the request thread,
+            // so it must return immediately regardless of how long
+            // xiangqi:pool:ensure itself takes to finish.
+            shell_exec("{$launcher}{$php} {$artisan} xiangqi:pool:ensure > /dev/null 2>&1 < /dev/null &");
+        } finally {
+            flock($fh, LOCK_UN);
+            fclose($fh);
+        }
     }
 
     /**
      * Resolve a real, executable CLI PHP binary.
      *
-     * PHP_BINARY alone is not safe here: this class is constructed on the
-     * web request path (poolStatus()/isAnyWorkerReady() are called from
-     * controllers), so this code frequently runs under PHP-FPM, where
-     * PHP_BINARY commonly resolves to an empty string rather than a CLI
-     * php path. escapeshellarg('') used to build a silently-broken
-     * "setsid '' ..." command. Prefer Symfony's PhpExecutableFinder (more
-     * reliable across SAPIs), fall back to PHP_BINARY, then to an
-     * explicit config value — and return null (instead of a broken
-     * string) if nothing resolves, so callers can fail loudly/log rather
-     * than shell out garbage.
+     * Prefers Symfony's PhpExecutableFinder (reliable across SAPIs), falls
+     * back to PHP_BINARY, then to config('xiangqi.php_binary'). The result
+     * must be executable AND its basename must look like a PHP CLI binary
+     * (php, php8, php8.3), so a bad/overridden config value can't point this
+     * at an arbitrary program. Returns null if nothing valid resolves.
      */
     private function resolvePhpBinary(): ?string
     {
-        $candidate = (new \Symfony\Component\Process\PhpExecutableFinder())->find(false)
+        $candidate = (new PhpExecutableFinder())->find(false)
             ?: (PHP_BINARY !== '' ? PHP_BINARY : null)
             ?: config('xiangqi.php_binary');
 
-        return ($candidate && is_executable($candidate)) ? $candidate : null;
+        if (!$candidate || !is_string($candidate) || !is_executable($candidate)) {
+            return null;
+        }
+
+        if (!preg_match('/^php(\d+(\.\d+)*)?$/', basename($candidate))) {
+            return null;
+        }
+
+        return $candidate;
+    }
+
+    /**
+     * Find an executable by name in a fixed set of system directories
+     * (no PATH lookup, no shell). Returns the first match in the order of
+     * $names, or null.
+     *
+     * @param string[] $names
+     */
+    private function findSystemBinary(array $names): ?string
+    {
+        $dirs = ['/usr/bin', '/bin', '/usr/local/bin', '/usr/sbin', '/sbin'];
+
+        foreach ($names as $name) {
+            foreach ($dirs as $dir) {
+                $path = $dir . '/' . $name;
+                if (is_file($path) && is_executable($path)) {
+                    return $path;
+                }
+            }
+        }
+
+        return null;
     }
 
     private function requestOnSocket(string $socketPath, array $payload, float $readTimeoutSeconds): ?array
