@@ -66,6 +66,8 @@
     </div>
     <script>
         $(document).ready(function () {
+            // Re-parent the modal to <body> so no ancestor stacking context can trap it below the backdrop
+            $('#HoveredBoardModal').appendTo('body');
             console.log('List URL: ' + '{{ route(__('rooms_list_route')) }}');
             var table = $('#danh-sach-phong').DataTable({
                 processing: true,
@@ -148,8 +150,8 @@
                     $('#danh-sach-phong > tbody > tr').each(function(index){
                         var fenCode = $(this).attr('data-fen');
                         var roomName = $(this).attr('data-name');
-                        $(this).children('td.room-action').find('.previewBtn').on('click', function(){
-                            $('#HoveredBoardModal').on('shown.bs.modal', function() {
+                        $(this).children('td.room-action').find('.previewBtn').off('click').on('click', function(){
+                            $('#HoveredBoardModal').off('shown.bs.modal').one('shown.bs.modal', function() {
                                 var container = $('#HoveredBoardBody');
                                 container.empty();
                                 var boardId = 'hoveredBoardId_' + index;

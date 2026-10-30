@@ -17,20 +17,30 @@
 <link rel="canonical" href="{{ url($canonicalUrl) }}" >
 @endisset
 
-@isset($alternateUrls)
-    @foreach($alternateUrls as $locale => $url)
-<link rel="alternate" hreflang="{{ $locale }}" href="{{ $url }}" />
-    @endforeach
-<link rel="alternate" hreflang="x-default" href="{{ $alternateUrls[config('locales.default', 'vi')] ?? url('/') }}" />
-@else
-    {{-- Fallback using localized path variables --}}
-    @isset($langViUrl)<link rel="alternate" hreflang="vi" href="{{ url($langViUrl) }}" />@endisset
-    @isset($langEnUrl)<link rel="alternate" hreflang="en" href="{{ url($langEnUrl) }}" />@endisset
-    @isset($langJaUrl)<link rel="alternate" hreflang="ja" href="{{ url($langJaUrl) }}" />@endisset
-    @isset($langKoUrl)<link rel="alternate" hreflang="ko" href="{{ url($langKoUrl) }}" />@endisset
-    @isset($langZhUrl)<link rel="alternate" hreflang="zh" href="{{ url($langZhUrl) }}" />@endisset
-    @isset($langViUrl)<link rel="alternate" hreflang="x-default" href="{{ url($langViUrl) }}" />@endisset
-@endisset
+@php
+    // One hreflang per supported locale (vi, en, ja, ko, zh, de, fr, es, ru).
+    // Priority: full URLs ($alternateUrls) -> paths ($langUrls) -> legacy $langXxUrl vars.
+    $hreflangLocales = config('locales.supported', ['vi', 'en', 'ja', 'ko', 'zh', 'de', 'fr', 'es', 'ru']);
+    $hreflangDefault = config('locales.default', 'vi');
+    $hreflangVars = get_defined_vars();
+    $hreflangUrls = [];
+    foreach ($hreflangLocales as $hreflangCode) {
+        $legacyKey = 'lang' . ucfirst($hreflangCode) . 'Url';
+        if (!empty($alternateUrls[$hreflangCode])) {
+            $hreflangUrls[$hreflangCode] = $alternateUrls[$hreflangCode];
+        } elseif (!empty($langUrls[$hreflangCode])) {
+            $hreflangUrls[$hreflangCode] = url($langUrls[$hreflangCode]);
+        } elseif (!empty($hreflangVars[$legacyKey])) {
+            $hreflangUrls[$hreflangCode] = url($hreflangVars[$legacyKey]);
+        }
+    }
+@endphp
+@foreach($hreflangUrls as $hreflangCode => $hreflangHref)
+<link rel="alternate" hreflang="{{ $hreflangCode }}" href="{{ $hreflangHref }}" />
+@endforeach
+@if(!empty($hreflangUrls))
+<link rel="alternate" hreflang="x-default" href="{{ $hreflangUrls[$hreflangDefault] ?? reset($hreflangUrls) }}" />
+@endif
 
 <link rel="apple-touch-icon" href="{{ asset('img/app-icons/apple-touch-icon-iphone-game.png') }}">
 <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('img/app-icons/apple-touch-icon-ipad-game.png') }}">
@@ -49,7 +59,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&family=Pacifico&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Roboto:ital,wght@0,100..900;1,100..900&family=Texturina:ital,opsz,wght@0,12..72,100..900;1,12..72,100..900&display=swap" rel="stylesheet">
 {{-- <link href="{{ asset('css/index.css?v=321') }}" rel="stylesheet"> --}}
-<link href="{{ asset('css/index_new.css?v=69') }}" rel="stylesheet">
+<link href="{{ asset('css/index_new.css?v=70') }}" rel="stylesheet">
 @if (!($showAds ?? true))
 <style>
   .adsense,

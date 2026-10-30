@@ -801,7 +801,7 @@ footer {
     background-color: #0f0805;
     border-top: 3px solid var(--royal-gold);
     color: var(--royal-gold-light);
-    z-index: 123456789;
+    z-index: 1;
     /* user-select: none; */
 }
 footer a {
@@ -1886,7 +1886,7 @@ a.animate:hover {
     bottom: 20px;
     right: 20px;
     left: auto; /* Moved slightly off the exact edge for better breathing room */
-    z-index: 9999;
+    z-index: 1040;
     overflow: hidden;
     text-indent: 100%;
     white-space: nowrap;
@@ -3813,4 +3813,22 @@ table.dataTable.dtr-inline.collapsed
     .avatar-frame--legendary {
         animation: none;
     }
+}
+
+
+/* ==========================================================================
+   MODAL LAYERING FIX
+   Stack order: header (1050) < backdrop (1060) < modal (1070) < tooltips (1080).
+   Previously the footer (z-index 123456789) and .cd-top (9999) outranked the
+   modal, and ancestor stacking contexts (isolation: isolate on
+   .container-fluid.game etc.) could trap it beneath the backdrop.
+   ========================================================================== */
+.modal-backdrop {
+    z-index: 1060 !important;
+}
+.modal {
+    z-index: 1070 !important;
+}
+.tooltip {
+    z-index: 1080;
 }
