@@ -172,3 +172,6 @@ blob-report/
 composer.lock
 storage/app/analytics/service-account.json
 storage/app/google/ga4-service-account.json
+storage/oauth-private.key
+storage/oauth-public.key
+storage/*.key
