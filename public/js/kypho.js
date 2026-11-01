@@ -70,6 +70,101 @@
         return piece + " " + fromCol + " " + actionStr + " " + last;
     }
 
+    // ---- WXF notation ----
+    var WXF_LETTERS = {
+        k: "K",
+        a: "A",
+        b: "E",
+        n: "H",
+        r: "R",
+        c: "C",
+        p: "P",
+    };
+
+    // Lấy các quân cùng loại/cùng màu trên một cột từ FEN trước nước đi
+    function piecesOnFile(fen, pieceType, color, fileIndex) {
+        var rows = String(fen).split(" ")[0].split("/");
+        var found = [];
+        for (var r = 0; r < rows.length; r++) {
+            var rank = rows.length - 1 - r;
+            var col = 0;
+            for (var k = 0; k < rows[r].length; k++) {
+                var ch = rows[r].charAt(k);
+                if (/\d/.test(ch)) {
+                    col += parseInt(ch, 10);
+                    continue;
+                }
+                var isRed = ch === ch.toUpperCase();
+                if (
+                    col === fileIndex &&
+                    ch.toLowerCase() === pieceType &&
+                    isRed === (color === "r")
+                ) {
+                    found.push(rank);
+                }
+                col++;
+            }
+        }
+        return found;
+    }
+
+    function formatWXF(move, fenBefore) {
+        var from = parseSquare(move.from);
+        var to = parseSquare(move.to);
+        var letter = WXF_LETTERS[move.piece];
+        if (!from || !to || !letter) {
+            return "";
+        }
+        var color = move.color || "r";
+        var fromCol = columnFromFile(from.fileIndex, color);
+        var toCol = columnFromFile(to.fileIndex, color);
+
+        var action;
+        if (from.rank === to.rank) {
+            action = ".";
+        } else {
+            var forward =
+                color === "r" ? to.rank > from.rank : to.rank < from.rank;
+            action = forward ? "+" : "-";
+        }
+
+        var target;
+        if (action === ".") {
+            target = toCol;
+        } else {
+            var usesTargetColumn =
+                move.piece === "n" || move.piece === "b" || move.piece === "a";
+            target = usesTargetColumn ? toCol : Math.abs(to.rank - from.rank);
+        }
+
+        // Nhiều quân cùng loại trên một cột -> dùng + (trước) / - (sau)
+        var origin = String(fromCol);
+        if (fenBefore && move.piece !== "k") {
+            var ranks = piecesOnFile(
+                fenBefore,
+                move.piece,
+                color,
+                from.fileIndex,
+            );
+            if (ranks.length > 1) {
+                // Sắp xếp từ quân đứng trước (gần phía đối phương) đến quân sau
+                ranks.sort(function (a, b) {
+                    return color === "r" ? b - a : a - b;
+                });
+                var idx = ranks.indexOf(from.rank);
+                if (idx === 0) {
+                    origin = "+";
+                } else if (idx === ranks.length - 1) {
+                    origin = "-";
+                } else if (idx > 0) {
+                    origin = String(idx + 1);
+                }
+            }
+        }
+
+        return letter + origin + action + target;
+    }
+
     function parseSquare(square) {
         if (!square || square.length < 2) {
             return null;
@@ -126,6 +221,17 @@
         var pauseBtn = document.getElementById("kypho-pause");
         var copyBtn = document.getElementById("kypho-copy");
         var videoBtn = document.getElementById("kypho-video"); // Nút Video mới
+        var wxfBtn = document.getElementById("kypho-wxf"); // Nút tải WXF
+
+        // Nếu HTML chưa có nút WXF thì tự tạo, đặt cạnh nút Copy
+        if (!wxfBtn && copyBtn && copyBtn.parentNode) {
+            wxfBtn = document.createElement("button");
+            wxfBtn.id = "kypho-wxf";
+            wxfBtn.type = "button";
+            wxfBtn.className = copyBtn.className;
+            wxfBtn.textContent = "WXF";
+            copyBtn.parentNode.insertBefore(wxfBtn, copyBtn.nextSibling);
+        }
         var panelEl = document.getElementById("kypho-panel");
 
         if (
@@ -294,6 +400,58 @@
             });
         }
 
+        // Tạo nội dung WXF: "1. C2.5 H8+7"
+        function generateWXFText() {
+            var d = new Date();
+            var pad = function (n) {
+                return (n < 10 ? "0" : "") + n;
+            };
+            var lines = [
+                '[Game "Chinese Chess"]',
+                '[Date "' +
+                    d.getFullYear() +
+                    "." +
+                    pad(d.getMonth() + 1) +
+                    "." +
+                    pad(d.getDate()) +
+                    '"]',
+                '[Site "COTUONG.TOP"]',
+                '[FEN "' + state.startFen + '"]',
+                "",
+            ];
+            for (var i = 0; i < state.prettyMoves.length; i += 2) {
+                var line = Math.floor(i / 2) + 1 + ". ";
+                line += formatWXF(state.prettyMoves[i], state.fens[i]);
+                if (state.prettyMoves[i + 1]) {
+                    line +=
+                        " " +
+                        formatWXF(state.prettyMoves[i + 1], state.fens[i + 1]);
+                }
+                lines.push(line);
+            }
+            return lines.join("\n");
+        }
+
+        if (wxfBtn) {
+            wxfBtn.addEventListener("click", function () {
+                if (wxfBtn.disabled || !state.prettyMoves.length) return;
+                var blob = new Blob([generateWXFText()], {
+                    type: "text/plain;charset=utf-8",
+                });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement("a");
+                a.style.display = "none";
+                a.href = url;
+                a.download = "WXF_" + Date.now() + ".txt";
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(function () {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 500);
+            });
+        }
+
         function updateControls() {
             var live =
                 typeof state.isLive === "function" ? state.isLive() : false;
@@ -306,6 +464,7 @@
             if (pauseBtn) pauseBtn.disabled = !enabled || !state.isPlaying;
 
             if (copyBtn) copyBtn.disabled = !hasMoves;
+            if (wxfBtn) wxfBtn.disabled = !hasMoves;
             if (videoBtn) videoBtn.disabled = !hasMoves; // Cập nhật trạng thái nút video
 
             if (live && state.isPlaying) {
