@@ -141,16 +141,43 @@
         // ========================================================
         function parseWXFToMove(userStr, game) {
             const str = userStr.trim().toLowerCase();
-            const regex = /^([+-]?)([a-z])(\d)([=+\-.])(\d)$/;
-            const match = str.match(regex);
+            // Hỗ trợ: C2=5 | C2.5 | P++1 (trước/sau, WXF) | +C=5 (kiểu tiền tố)
+            const m1 = str.match(/^([a-z])(\d)([=+\-.])(\d)$/);
+            const m2 = str.match(/^([a-z])([+-])([=+\-.])(\d)$/);
+            const m3 = str.match(/^([+-])([a-z])([=+\-.])(\d)$/);
 
-            if (!match) return null;
-
-            let uPiece = match[2];
-            const fFile = parseInt(match[3]);
-            let action = match[4];
+            let uPiece, fFile = null, frontRear = '', action, target;
+            if (m1) {
+                uPiece = m1[1]; fFile = parseInt(m1[2]); action = m1[3]; target = parseInt(m1[4]);
+            } else if (m2) {
+                uPiece = m2[1]; frontRear = m2[2]; action = m2[3]; target = parseInt(m2[4]);
+            } else if (m3) {
+                frontRear = m3[1]; uPiece = m3[2]; action = m3[3]; target = parseInt(m3[4]);
+            } else {
+                return null;
+            }
             if (action === '.') action = '=';
-            const target = parseInt(match[5]);
+
+            // Đếm các quân cùng loại/cùng màu trên một cột (đọc từ FEN hiện tại)
+            const countOnFile = (pieceType, isRedSide, fileIdx) => {
+                const rows = game.fen().split(' ')[0].split('/');
+                const ranks = [];
+                rows.forEach((row, r) => {
+                    const rank = rows.length - 1 - r;
+                    let col = 0;
+                    for (const ch of row) {
+                        if (/\d/.test(ch)) { col += parseInt(ch); continue; }
+                        const chRed = ch === ch.toUpperCase();
+                        let t = ch.toLowerCase();
+                        if (t === 'e' || t === 'v') t = 'b';
+                        if (t === 'h') t = 'n';
+                        if (col === fileIdx && t === pieceType && chRed === isRedSide) ranks.push(rank);
+                        col++;
+                    }
+                });
+                // Quân đứng trước (gần phía đối phương) xếp đầu
+                return ranks.sort((a, b) => isRedSide ? b - a : a - b);
+            };
 
             if (uPiece === 'e' || uPiece === 'v' || uPiece === 't') uPiece = 'b';
             if (uPiece === 'h') uPiece = 'n';
@@ -168,7 +195,15 @@
                 const mc = move.from.charCodeAt(0);
                 const mr = parseInt(move.from.charAt(1));
                 const mFromFile = isRed ? (10 - (mc - 96)) : (mc - 96);
-                if (mFromFile !== fFile) continue;
+                if (frontRear) {
+                    const ranksOnFile = countOnFile(mPiece, isRed, mc - 97);
+                    if (ranksOnFile.length < 2) continue;
+                    const idx = ranksOnFile.indexOf(mr);
+                    if (frontRear === '+' && idx !== 0) continue;
+                    if (frontRear === '-' && idx !== ranksOnFile.length - 1) continue;
+                } else if (mFromFile !== fFile) {
+                    continue;
+                }
 
                 const tc = move.to.charCodeAt(0);
                 const tr = parseInt(move.to.charAt(1));
@@ -272,9 +307,16 @@
             let movesArray = [];
 
             if (rawInput) {
-                const rawMoves = rawInput.split(/[\s,\n]+/).filter(m => m.length > 0);
+                // Bỏ các dòng tag của file WXF như [Game "..."], [FEN "..."]
+                const fenTag = rawInput.match(/^\[FEN\s+"([^"]+)"\]/mi);
+                if (fenTag) {
+                    initialFenInput.value = fenTag[1];
+                }
+                const movesOnly = rawInput.split('\n').filter(l => !/^\s*\[.*\]\s*$/.test(l)).join(' ');
+                const rawMoves = movesOnly.split(/[\s,]+/).filter(m => m.length > 0);
                 try {
-                    const game = new Xiangqi(initialFen === 'start' ? undefined : initialFen);
+                    const currentFen = initialFenInput.value || 'start';
+                    const game = new Xiangqi(currentFen === 'start' ? undefined : currentFen);
 
                     for (let i = 0; i < rawMoves.length; i++) {
                         const token = rawMoves[i];
