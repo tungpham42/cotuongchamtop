@@ -1125,7 +1125,7 @@ foreach (config('locales.supported', []) as $locale) {
 }
 
 Route::match(['get', 'post'], '/thach-dau/{board}', function ($board) {
-    return view('puzzleCompete', ['headTitle' => 'Thách đấu', 'bodyClass' => 'puzzle', 'board' => $board, 'randomRoom' => app(GetRandomRoomAction::class)->execute(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'langUrls' => localized_alternate_paths('home'), 'canonicalUrl' => '/thach-dau/'.$board]);
+    return view('puzzleCompete', ['headTitle' => 'Thách đấu', 'bodyClass' => 'puzzle dashboard', 'board' => $board, 'randomRoom' => app(GetRandomRoomAction::class)->execute(), 'roomCode' => '', 'cdnUrl' => url(''), 'langViUrl' => '/', 'langEnUrl' => '/en', 'langJaUrl' => '/ja', 'langKoUrl' => '/ko', 'langZhUrl' => '/zh', 'langUrls' => localized_alternate_paths('home'), 'canonicalUrl' => '/thach-dau/'.$board]);
 })->where(['board' => $fenRegex]);
 
 // Define the titles for your puzzle rating routes
@@ -1155,7 +1155,7 @@ foreach (config('locales.supported', []) as $locale) {
 
         return view('puzzleRating', localized_page_data('puzzle.rating', $locale, [
             'headTitle' => $headTitle,
-            'bodyClass' => 'puzzle',
+            'bodyClass' => 'puzzle dashboard',
             'puzzle' => $puzzle,
             'name' => $puzzle->name,
             'slug' => $puzzle->slug,
@@ -1198,7 +1198,7 @@ $localizedPuzzlePages = [
         ]
     ],
     'puzzle.board' => [
-        'bodyClass' => 'puzzle',
+        'bodyClass' => 'puzzle dashboard',
         'titles' => [
             'vi' => 'Bàn cờ thế',
             'en' => 'Puzzle',
@@ -1236,7 +1236,7 @@ foreach (config('locales.supported', []) as $locale) {
     Route::match(['get', 'post'], localized_path('puzzle.board', ['board' => '{board}'], $locale), function ($board) use ($locale, $title) {
         return view('puzzle', localized_page_data('puzzle.board', $locale, [
             'headTitle' => $title,
-            'bodyClass' => 'puzzle',
+            'bodyClass' => 'puzzle dashboard',
             'board' => $board,
             'randomRoom' => app(GetRandomRoomAction::class)->execute(),
             'roomCode' => '',
