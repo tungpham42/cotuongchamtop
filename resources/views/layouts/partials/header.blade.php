@@ -72,7 +72,7 @@
 
     $matchedMenuUrl = $bestMatcher['menu'] ?? null;
 
-    // The matched menu item (the exact page or any of its child pages) always gets "active disabled".
+    // The matched menu item (the exact page or any of its child pages) always gets "active".
     $activeClass = fn (string $target): string => $normalize($target) === $matchedMenuUrl ? ' active' : '';
 
     // True on any account page or its children. The avatar toggle uses it for its own "current page" ring,
@@ -183,7 +183,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow">
                             @foreach ($supportedLocales as $code)
                                 @php $langPath = $langPaths[$code] ?? localized_path('home', [], $code); @endphp
-                                <a class="dropdown-item showPromotion{{ $currentPath === $langPath ? ' active disabled' : '' }}" href="{{ url($langPath) }}">
+                                <a class="dropdown-item showPromotion{{ $currentPath === $langPath ? ' active' : '' }}" href="{{ url($langPath) }}">
                                     <span class="shadow-sm fi fi-{{ $flags[$code] ?? $code }} mr-2"></span> {{ $labels[$code] ?? $code }}
                                 </a>
                             @endforeach
