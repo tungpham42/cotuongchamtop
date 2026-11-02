@@ -1,9 +1,6 @@
 @php
     $homeUrl = localized_url('home');
 
-    // localized_url() already returns absolute URLs, so it compares directly with url()->current().
-    $activeClass = fn (string $target): string => url()->current() === $target ? ' active disabled' : '';
-
     // [route key, icon, label, extra css classes]
     $competeMenu = [
         ['room.list',         'far fa-list-alt',     'Sảnh chờ',        'dashboard'],
@@ -28,9 +25,60 @@
         ['app.ui',       'far fa-palette',   'Đổi giao diện',   'profile'],
     ];
 
-    // True on any account page (profile, name, password, UI). The avatar toggle uses it for its own
-    // "current page" ring, because the underline that text links get makes no sense on a round image.
-    $onAccountPage = collect($accountMenu)->contains(fn (array $item): bool => url()->current() === localized_url($item[0]));
+    // Strip trailing slashes so "/vi/puzzles/" and "/vi/puzzles" compare equal.
+    $normalize = fn (string $url): string => rtrim($url, '/');
+    $currentUrl = $normalize(url()->current());
+
+    // Detail pages whose URL does NOT sit under their menu item's URL, keyed by the menu item's route key.
+    // Each value is a list of route keys from config('locales.paths'). The part of the child path before
+    // its first "{placeholder}" is used as the match prefix, e.g. "the-co/{slug}" -> "/the-co".
+    $childRoutes = [
+        'room.list'         => ['room.host', 'room.guest', 'room.random', 'room.watch', 'room.red', 'room.black'],
+        'puzzle.list'       => ['puzzle.setup', 'puzzle.board', 'puzzle.rating'],
+        'user.list'         => ['app.player'],
+        'tournaments.index' => ['tournaments.show'],
+        'article.index'     => ['article.show'],
+        'games.library'     => ['games.show'],
+    ];
+    $configuredPaths = config('locales.paths', []);
+
+    // Every way a menu item can match: its own URL, plus the URL prefix of each of its child routes.
+    $menuMatchers = [];
+    foreach (collect([$competeMenu, $resourceMenu, $accountMenu])->flatten(1) as $item) {
+        $menuUrl = $normalize(localized_url($item[0]));
+        $menuMatchers[] = ['menu' => $menuUrl, 'match' => $menuUrl];
+
+        foreach ($childRoutes[$item[0]] ?? [] as $childKey) {
+            if (! isset($configuredPaths[$childKey])) {
+                continue;
+            }
+
+            $prefix = rtrim(\Illuminate\Support\Str::before(localized_path($childKey), '{'), '/');
+
+            if ($prefix !== '') {
+                $menuMatchers[] = ['menu' => $menuUrl, 'match' => $normalize(url($prefix))];
+            }
+        }
+    }
+
+    // The single best-matching menu item for the current page. A matcher hits when it equals the current
+    // URL or is a parent path of it ("/the-co" hits "/the-co/123"). The trailing "/" in the check stops
+    // "/user" from hitting "/users". If several hit, the longest, most specific one wins, so only one
+    // item is ever highlighted.
+    $bestMatcher = collect($menuMatchers)
+        ->filter(fn (array $m): bool => $currentUrl === $m['match'] || str_starts_with($currentUrl, $m['match'] . '/'))
+        ->sortByDesc(fn (array $m): int => strlen($m['match']))
+        ->first();
+
+    $matchedMenuUrl = $bestMatcher['menu'] ?? null;
+
+    // The matched menu item (the exact page or any of its child pages) always gets "active disabled".
+    $activeClass = fn (string $target): string => $normalize($target) === $matchedMenuUrl ? ' active disabled' : '';
+
+    // True on any account page or its children. The avatar toggle uses it for its own "current page" ring,
+    // because the underline that text links get makes no sense on a round image.
+    $onAccountPage = $matchedMenuUrl !== null
+        && collect($accountMenu)->contains(fn (array $item): bool => $normalize(localized_url($item[0])) === $matchedMenuUrl);
 
     $supportedLocales = config('locales.supported', []);
     $labels = config('locales.labels', []);
