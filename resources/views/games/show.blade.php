@@ -221,7 +221,7 @@
     }
 </style>
 
-<div class="container py-3">
+<div class="container py-3 resource">
     <audio id="nuoc-co">
         <source src="{{ asset('sound/nuocCo.mp3') }}" type="audio/mpeg">
         <source src="{{ asset('sound/nuocCo.wav') }}" type="audio/wav">

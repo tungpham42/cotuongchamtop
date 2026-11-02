@@ -3,7 +3,7 @@
 @section('og_image', $article->featured_image_url ?? asset('img/news.jpg'))
 
 @section('aboveContent')
-<div class="container my-5">
+<div class="container my-5 resource">
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <div class="card article-detail-card border-0">

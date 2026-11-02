@@ -399,7 +399,8 @@ body.dashboard
     a:has(+ div.dropdown-menu > a.dashboard.dropdown-item.active.disabled),
 body.resource
     header.site-header
-    a:has(+ div.dropdown-menu > a.resource.dropdown-item.active.disabled) {
+    a:has(+ div.dropdown-menu > a.resource.dropdown-item.active.disabled),
+body.resource:has(div.container.resource) header.site-header a.resource {
     font-weight: 600;
     color: var(--royal-gold);
 }
@@ -425,7 +426,8 @@ body.resource
     header.site-header
     a:has(
         + div.dropdown-menu > a.resource.dropdown-item.active.disabled
-    ):before {
+    ):before,
+body.resource:has(div.container.resource) header.site-header a.resource:before {
     width: 100%;
 }
 
@@ -3814,7 +3816,6 @@ table.dataTable.dtr-inline.collapsed
         animation: none;
     }
 }
-
 
 /* ==========================================================================
    MODAL LAYERING FIX
