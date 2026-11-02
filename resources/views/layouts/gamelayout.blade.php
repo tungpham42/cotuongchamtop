@@ -88,7 +88,7 @@
     <main>
         {{-- @include('common.xiangqiBanner') --}}
         <span id="checkmateText">{{ __('Chiếu!') }}</span>
-        <div class="container-fluid game px-0" itemscope itemtype="http://schema.org/Game">
+        <div class="container-fluid game dashboard px-0" itemscope itemtype="http://schema.org/Game">
             <div class="container {{ isset($board) ? 'px-3 pb-0 pt-3' : 'p-3' }}">
                 {{-- Kept as empty, muteable elements only so the existing volume
                      toggle (which targets <audio> tags) still has something to

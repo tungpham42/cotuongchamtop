@@ -902,7 +902,7 @@ foreach (config('locales.supported', []) as $locale) {
         $pageSettings = $localizedPlayerPages['app.player'];
         $data = [
             'headTitle' => $titleFor($id),
-            'bodyClass' => 'player',
+            'bodyClass' => 'player dashboard',
             'player' => User::firstWhere('id', $id),
             'users' => app(GetUserQueriesAction::class)->getUsers(),
             'matchRooms' => app(GetRoomQueriesAction::class)->getMatchRooms(),

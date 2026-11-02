@@ -400,7 +400,8 @@ body.dashboard
 body.resource
     header.site-header
     a:has(+ div.dropdown-menu > a.resource.dropdown-item.active.disabled),
-body.resource:has(div.container.resource) header.site-header a.resource {
+body.resource:has(div.container.resource) header.site-header a.resource,
+body.dashboard:has(div.game.dashboard) header.site-header a.dashboard {
     font-weight: 600;
     color: var(--royal-gold);
 }
@@ -427,7 +428,8 @@ body.resource
     a:has(
         + div.dropdown-menu > a.resource.dropdown-item.active.disabled
     ):before,
-body.resource:has(div.container.resource) header.site-header a.resource:before {
+body.resource:has(div.container.resource) header.site-header a.resource:before,
+body.dashboard:has(div.game.dashboard) header.site-header a.dashboard:before {
     width: 100%;
 }
 
