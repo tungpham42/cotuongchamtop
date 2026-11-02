@@ -1,9 +1,6 @@
 @php
     $homeUrl = localized_url('home');
 
-    // localized_url() already returns absolute URLs, so it compares directly with url()->current().
-    $activeClass = fn (string $target): string => url()->current() === $target ? ' active disabled' : '';
-
     // [route key, icon, label, extra css classes]
     $competeMenu = [
         ['room.list',         'far fa-list-alt',     'Sảnh chờ',        'dashboard'],
@@ -28,9 +25,41 @@
         ['app.ui',       'far fa-palette',   'Đổi giao diện',   'profile'],
     ];
 
-    // True on any account page (profile, name, password, UI). The avatar toggle uses it for its own
-    // "current page" ring, because the underline that text links get makes no sense on a round image.
-    $onAccountPage = collect($accountMenu)->contains(fn (array $item): bool => url()->current() === localized_url($item[0]));
+    // Strip trailing slashes so "/vi/puzzles/" and "/vi/puzzles" compare equal.
+    $normalize = fn (string $url): string => rtrim($url, '/');
+    $currentUrl = $normalize(url()->current());
+
+    // Every menu target, normalized.
+    $menuUrls = collect([$competeMenu, $resourceMenu, $accountMenu])
+        ->flatten(1)
+        ->map(fn (array $item): string => $normalize(localized_url($item[0])))
+        ->unique();
+
+    // The single best-matching menu item for the current page. A target matches when it equals the
+    // current URL or is a parent path of it ("/puzzles" matches "/puzzles/123"). The trailing "/"
+    // in the check stops "/user" from matching "/users". If several match (e.g. "/profile" and
+    // "/profile/name"), the longest, most specific one wins, so only one item is ever highlighted.
+    $matchedMenuUrl = $menuUrls
+        ->filter(fn (string $target): bool => $currentUrl === $target || str_starts_with($currentUrl, $target . '/'))
+        ->sortByDesc(fn (string $target): int => strlen($target))
+        ->first();
+
+    // Exact page: active + disabled (no point clicking). Child page: active but still clickable,
+    // so the user can go back to the list.
+    $activeClass = function (string $target) use ($normalize, $currentUrl, $matchedMenuUrl): string {
+        $target = $normalize($target);
+
+        if ($target !== $matchedMenuUrl) {
+            return '';
+        }
+
+        return $currentUrl === $target ? ' active disabled' : ' active';
+    };
+
+    // True on any account page or its children. The avatar toggle uses it for its own "current page" ring,
+    // because the underline that text links get makes no sense on a round image.
+    $onAccountPage = $matchedMenuUrl !== null
+        && collect($accountMenu)->contains(fn (array $item): bool => $normalize(localized_url($item[0])) === $matchedMenuUrl);
 
     $supportedLocales = config('locales.supported', []);
     $labels = config('locales.labels', []);
