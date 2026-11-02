@@ -73,7 +73,7 @@
     $matchedMenuUrl = $bestMatcher['menu'] ?? null;
 
     // The matched menu item (the exact page or any of its child pages) always gets "active disabled".
-    $activeClass = fn (string $target): string => $normalize($target) === $matchedMenuUrl ? ' active disabled' : '';
+    $activeClass = fn (string $target): string => $normalize($target) === $matchedMenuUrl ? ' active' : '';
 
     // True on any account page or its children. The avatar toggle uses it for its own "current page" ring,
     // because the underline that text links get makes no sense on a round image.
