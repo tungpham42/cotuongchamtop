@@ -1631,7 +1631,7 @@ foreach (config('locales.supported', []) as $locale) {
             'cdnUrl' => url(''),
         ];
 
-        return view($page['view'], localized_page_data('room.list', $locale, $data));
+        return view($page['view'], localized_page_data('puzzle.list', $locale, $data));
     })->middleware("locale:{$locale}");
 }
 
@@ -1659,7 +1659,7 @@ foreach (config('locales.supported', []) as $locale) {
             'cdnUrl' => url(''),
         ];
 
-        return view($page['view'], localized_page_data('room.list', $locale, $data));
+        return view($page['view'], localized_page_data('user.list', $locale, $data));
     })->middleware("locale:{$locale}");
 }
 

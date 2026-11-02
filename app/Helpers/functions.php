@@ -52,6 +52,10 @@ if (!function_exists('localized_page_data')) {
             'langJaUrl' => $paths['ja'] ?? '/ja',
             'langKoUrl' => $paths['ko'] ?? '/ko',
             'langZhUrl' => $paths['zh'] ?? '/zh',
+            'langDeUrl' => $paths['de'] ?? '/de',
+            'langFrUrl' => $paths['fr'] ?? '/fr',
+            'langEsUrl' => $paths['es'] ?? '/es',
+            'langRuUrl' => $paths['ru'] ?? '/ru',
             // Paths for every locale in config('locales.supported') (incl. de, fr, es, ru).
             // The legacy lang*Url keys above are kept for views that still read them.
             'langUrls' => $paths,
