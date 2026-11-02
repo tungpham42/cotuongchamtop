@@ -396,10 +396,10 @@ body.news header.site-header a.news,
 body.contact header.site-header a.contact,
 body.dashboard
     header.site-header
-    a:has(+ div.dropdown-menu > a.dashboard.dropdown-item.active.disabled),
+    a:has(+ div.dropdown-menu > a.dashboard.dropdown-item.active),
 body.resource
     header.site-header
-    a:has(+ div.dropdown-menu > a.resource.dropdown-item.active.disabled),
+    a:has(+ div.dropdown-menu > a.resource.dropdown-item.active),
 body.resource:has(div.container.resource) header.site-header a.resource,
 body.dashboard:has(div.game.dashboard) header.site-header a.dashboard {
     font-weight: 600;
@@ -420,14 +420,10 @@ body.news header.site-header a.news:before,
 body.contact header.site-header a.contact:before,
 body.dashboard
     header.site-header
-    a:has(
-        + div.dropdown-menu > a.dashboard.dropdown-item.active.disabled
-    ):before,
+    a:has(+ div.dropdown-menu > a.dashboard.dropdown-item.active):before,
 body.resource
     header.site-header
-    a:has(
-        + div.dropdown-menu > a.resource.dropdown-item.active.disabled
-    ):before,
+    a:has(+ div.dropdown-menu > a.resource.dropdown-item.active):before,
 body.resource:has(div.container.resource) header.site-header a.resource:before,
 body.dashboard:has(div.game.dashboard) header.site-header a.dashboard:before {
     width: 100%;
@@ -478,9 +474,7 @@ header.site-header a.nav-avatar-link:hover .nav-avatar {
 header.site-header a.nav-avatar-link.is-current .nav-avatar,
 body.profile
     header.site-header
-    a.nav-avatar-link:has(
-        + div.dropdown-menu > a.profile.dropdown-item.active.disabled
-    )
+    a.nav-avatar-link:has(+ div.dropdown-menu > a.profile.dropdown-item.active)
     .nav-avatar {
     animation: none;
     border-color: #fff;
