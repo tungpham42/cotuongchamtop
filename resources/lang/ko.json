@@ -872,5 +872,6 @@
     "notation_invalid_move": "잘못된 수",
     "notation_data_error": "데이터 오류",
     "notation_no_moves": "아직 유효한 수가 없습니다.",
-    "notation_audio_unsupported": "사용 중인 브라우저는 오디오 요소를 지원하지 않습니다."
+    "notation_audio_unsupported": "사용 중인 브라우저는 오디오 요소를 지원하지 않습니다.",
+    "Export as WXF": "WXF로 내보내기"
 }

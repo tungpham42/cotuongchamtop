@@ -871,5 +871,6 @@
     "notation_invalid_move": "Invalid move",
     "notation_data_error": "Data error",
     "notation_no_moves": "No valid moves yet.",
-    "notation_audio_unsupported": "Your browser does not support the audio element."
+    "notation_audio_unsupported": "Your browser does not support the audio element.",
+    "Export as WXF": "Export as WXF"
 }

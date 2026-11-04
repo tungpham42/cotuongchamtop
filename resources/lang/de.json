@@ -871,5 +871,6 @@
     "notation_invalid_move": "Ungültiger Zug",
     "notation_data_error": "Datenfehler",
     "notation_no_moves": "Noch keine gültigen Züge.",
-    "notation_audio_unsupported": "Dein Browser unterstützt das Audio-Element nicht."
+    "notation_audio_unsupported": "Dein Browser unterstützt das Audio-Element nicht.",
+    "Export as WXF": "Als WXF exportieren"
 }

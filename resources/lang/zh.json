@@ -875,5 +875,6 @@
     "notation_invalid_move": "无效着法",
     "notation_data_error": "数据错误",
     "notation_no_moves": "暂无有效着法。",
-    "notation_audio_unsupported": "您的浏览器不支持音频元素。"
+    "notation_audio_unsupported": "您的浏览器不支持音频元素。",
+    "Export as WXF": "导出为 WXF"
 }

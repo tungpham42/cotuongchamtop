@@ -871,5 +871,6 @@
     "notation_invalid_move": "Недопустимый ход",
     "notation_data_error": "Ошибка данных",
     "notation_no_moves": "Допустимых ходов пока нет.",
-    "notation_audio_unsupported": "Ваш браузер не поддерживает элемент audio."
+    "notation_audio_unsupported": "Ваш браузер не поддерживает элемент audio.",
+    "Export as WXF": "Экспортировать в WXF"
 }

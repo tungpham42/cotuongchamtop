@@ -873,5 +873,6 @@
     "notation_invalid_move": "不正な手",
     "notation_data_error": "データエラー",
     "notation_no_moves": "まだ有効な手がありません。",
-    "notation_audio_unsupported": "お使いのブラウザは音声要素に対応していません。"
+    "notation_audio_unsupported": "お使いのブラウザは音声要素に対応していません。",
+    "Export as WXF": "WXFとしてエクスポート"
 }

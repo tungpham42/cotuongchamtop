@@ -871,5 +871,6 @@
     "notation_invalid_move": "Jugada no válida",
     "notation_data_error": "Error de datos",
     "notation_no_moves": "Aún no hay jugadas válidas.",
-    "notation_audio_unsupported": "Tu navegador no admite el elemento de audio."
+    "notation_audio_unsupported": "Tu navegador no admite el elemento de audio.",
+    "Export as WXF": "Exportar como WXF"
 }

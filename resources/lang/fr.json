@@ -871,5 +871,6 @@
     "notation_invalid_move": "Coup invalide",
     "notation_data_error": "Erreur de données",
     "notation_no_moves": "Aucun coup valide pour le moment.",
-    "notation_audio_unsupported": "Ton navigateur ne prend pas en charge la balise audio."
+    "notation_audio_unsupported": "Ton navigateur ne prend pas en charge la balise audio.",
+    "Export as WXF": "Exporter en WXF"
 }

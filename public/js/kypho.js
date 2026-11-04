@@ -225,11 +225,12 @@
 
         // Nếu HTML chưa có nút WXF thì tự tạo, đặt cạnh nút Copy
         if (!wxfBtn && copyBtn && copyBtn.parentNode) {
+            var Lw = window.locale || {};
             wxfBtn = document.createElement("button");
             wxfBtn.id = "kypho-wxf";
             wxfBtn.type = "button";
             wxfBtn.className = copyBtn.className;
-            wxfBtn.textContent = "WXF";
+            wxfBtn.textContent = Lw.wxf_export || "Export as WXF";
             copyBtn.parentNode.insertBefore(wxfBtn, copyBtn.nextSibling);
         }
         var panelEl = document.getElementById("kypho-panel");

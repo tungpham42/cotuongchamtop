@@ -4,7 +4,7 @@
 @elsedesktop
 <script src="{{ asset('js/xiangqiboard_mobile.js?v=5') }}"></script>
 @enddesktop
-<script src="{{ asset('js/kypho.js?v=12') }}"></script>
+<script src="{{ asset('js/kypho.js?v=14') }}"></script>
 <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap4.min.js"></script>
 
@@ -30,6 +30,7 @@
         move_retreat: '{{ __('move_retreat') }}',
         move_traverse: '{{ __('move_traverse') }}',
         kypho_copied: '{{ __('Đã sao chép kỳ phổ thành công!') }}',
+        wxf_export: '{{ __('Export as WXF') }}',
         video_loading_lib: '{{ __('Đang tải thư viện tạo ảnh, vui lòng thử lại sau giây lát.') }}',
         video_processing: '{{ __('Đang xử lý...') }}',
         video_error: '{{ __('Có lỗi xảy ra khi tạo video.') }}',
