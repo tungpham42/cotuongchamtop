@@ -31,7 +31,9 @@ class UserController extends Controller
     public function getUsersData(Request $request): JsonResponse
     {
         if ($request->ajax()) {
-            $users = User::select(['id', 'name', 'email', 'profile_picture', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at']);
+            $users = User::select(['id', 'name', 'email', 'profile_picture', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at'])
+                ->selectRaw("(SELECT COUNT(*) FROM rooms WHERE (rooms.host_id = users.id AND rooms.result = 1) OR (rooms.guest_id = users.id AND rooms.result = -1)) AS wins")
+                ->selectRaw("(SELECT COUNT(*) FROM rooms WHERE (rooms.host_id = users.id OR rooms.guest_id = users.id) AND rooms.result IN (1, -1, 0)) AS total_matches");
 
             $presenter = new UserDataTablePresenter(app()->getLocale(), $this->userPresenter);
 
@@ -39,11 +41,13 @@ class UserController extends Controller
                 ->addColumn('rank', fn($row) => $presenter->formatRank($row))
                 ->addColumn('name', fn($row) =>$presenter->formatName($row))
                 ->addColumn('elo', fn($row) => $presenter->formatElo($row))
+                ->addColumn('win_rate', fn($row) => $presenter->formatWinRate($row))
                 ->addColumn('action', fn($row) => $presenter->formatAction($row))
                 ->addColumn('time', fn($row) => $presenter->formatTime($row))
                 ->escapeColumns([])
                 ->orderColumn('name', 'name $1')
                 ->orderColumn('elo', 'elo $1')
+                ->orderColumn('win_rate', '(CASE WHEN total_matches = 0 THEN 0 ELSE wins / total_matches END) $1, total_matches $1')
                 ->orderColumn('time', 'created_at $1')
                 ->filterColumn('name', function($query, $keyword) {
                     $query->where(function($query) use ($keyword) {
@@ -54,7 +58,7 @@ class UserController extends Controller
                     $sql = "created_at like ?";
                     $query->whereRaw($sql, ["%{$keyword}%"]);
                 })
-                ->rawColumns(['rank', 'name', 'elo', 'action', 'time'])
+                ->rawColumns(['rank', 'name', 'elo', 'win_rate', 'action', 'time'])
                 ->make(true);
         }
 

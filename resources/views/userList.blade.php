@@ -17,6 +17,7 @@
                                 <th class="text-center" scope="col">{{ __('Xếp hạng') }}</th>
                                 <th class="text-center" scope="col">{{ __('Kỳ thủ') }}</th>
                                 <th class="text-center" scope="col">{{ __('Elo') }}</th>
+                                <th class="text-center" scope="col">{{ __('Tỉ lệ thắng') }}</th>
                                 <th class="text-center" scope="col">{{ __('Hành động') }}</th>
                                 <th class="text-center" scope="col">{{ __('Thời điểm tham gia') }}</th>
                             </tr>
@@ -47,10 +48,11 @@
                 deferRender: true,
                 columnDefs: [
                     { responsivePriority: 1, targets: 1 },
-                    { responsivePriority: 2, targets: 3 },
+                    { responsivePriority: 2, targets: 4 },
                     { responsivePriority: 3, targets: 2 },
-                    { responsivePriority: 4, targets: 0 },
-                    { responsivePriority: 5, targets: 4 }
+                    { responsivePriority: 4, targets: 3 },
+                    { responsivePriority: 5, targets: 0 },
+                    { responsivePriority: 6, targets: 5 }
                 ],
                 columns: [
                     {
@@ -65,13 +67,20 @@
                         name: 'name',
                         orderable: true,
                         searchable: true,
-                        className: 'text-center room-code'
+                        className: 'text-left room-code'
                     },
                     {
                         data: 'elo',
                         name: 'elo',
                         orderable: true,
                         searchable: true,
+                        className: 'text-center'
+                    },
+                    {
+                        data: 'win_rate',
+                        name: 'win_rate',
+                        orderable: true,
+                        searchable: false,
                         className: 'text-center'
                     },
                     {

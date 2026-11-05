@@ -269,10 +269,10 @@
                                     <td class="text-center room-code">
                                         <span><a class="animate text-gold" href="{{ localized_url('room.watch', ['code' => $room->code]) }}">{{ ((isset($room->name) && $room->name != '') ? $room->name: $room->code) }}</a></span>
                                     </td>
-                                    <td class="text-center host-name">
+                                    <td class="text-left host-name">
                                         {!! $userPresenter->renderPlayerName($room->host_id) !!}
                                     </td>
-                                    <td class="text-center guest-name">
+                                    <td class="text-left guest-name">
                                         {!! $userPresenter->renderPlayerName($room->guest_id) !!}
                                     </td>
                                     <td class="text-center">

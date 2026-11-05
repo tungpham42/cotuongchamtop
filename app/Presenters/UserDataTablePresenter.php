@@ -45,6 +45,21 @@ class UserDataTablePresenter
         return '<strong style="color: var(--royal-gold);">' . $this->userPresenter->renderElo($row->id) . '</strong>';
     }
 
+    public function formatWinRate($row): string
+    {
+        $wins = (int) ($row->wins ?? 0);
+        $total = (int) ($row->total_matches ?? 0);
+
+        if ($total === 0) {
+            return '<span class="text-muted">&mdash;</span>';
+        }
+
+        $rate = round($wins / $total * 100, 1);
+
+        return '<strong>' . rtrim(rtrim(number_format($rate, 1, '.', ''), '0'), '.') . '%</strong>'
+            . ' <small class="text-muted">(' . $wins . '/' . $total . ')</small>';
+    }
+
     public function formatTime($row): string
     {
         return date('Y-m-d | H:i:s', strtotime($row->created_at));

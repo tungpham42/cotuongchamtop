@@ -1,0 +1,213 @@
+diff --git a/app/Http/Controllers/UserController.php b/app/Http/Controllers/UserController.php
+index 092c339a2..ae855c6a3 100644
+--- a/app/Http/Controllers/UserController.php
++++ b/app/Http/Controllers/UserController.php
+@@ -31,7 +31,9 @@ class UserController extends Controller
+     public function getUsersData(Request $request): JsonResponse
+     {
+         if ($request->ajax()) {
+-            $users = User::select(['id', 'name', 'email', 'profile_picture', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at']);
++            $users = User::select(['id', 'name', 'email', 'profile_picture', 'elo', 'points', 'last_seen_at', 'created_at', 'updated_at'])
++                ->selectRaw("(SELECT COUNT(*) FROM rooms WHERE (rooms.host_id = users.id AND rooms.result = 1) OR (rooms.guest_id = users.id AND rooms.result = -1)) AS wins")
++                ->selectRaw("(SELECT COUNT(*) FROM rooms WHERE (rooms.host_id = users.id OR rooms.guest_id = users.id) AND rooms.result IN (1, -1, 0)) AS total_matches");
+ 
+             $presenter = new UserDataTablePresenter(app()->getLocale(), $this->userPresenter);
+ 
+@@ -39,11 +41,13 @@ class UserController extends Controller
+                 ->addColumn('rank', fn($row) => $presenter->formatRank($row))
+                 ->addColumn('name', fn($row) =>$presenter->formatName($row))
+                 ->addColumn('elo', fn($row) => $presenter->formatElo($row))
++                ->addColumn('win_rate', fn($row) => $presenter->formatWinRate($row))
+                 ->addColumn('action', fn($row) => $presenter->formatAction($row))
+                 ->addColumn('time', fn($row) => $presenter->formatTime($row))
+                 ->escapeColumns([])
+                 ->orderColumn('name', 'name $1')
+                 ->orderColumn('elo', 'elo $1')
++                ->orderColumn('win_rate', '(CASE WHEN total_matches = 0 THEN 0 ELSE wins / total_matches END) $1, total_matches $1')
+                 ->orderColumn('time', 'created_at $1')
+                 ->filterColumn('name', function($query, $keyword) {
+                     $query->where(function($query) use ($keyword) {
+@@ -54,7 +58,7 @@ class UserController extends Controller
+                     $sql = "created_at like ?";
+                     $query->whereRaw($sql, ["%{$keyword}%"]);
+                 })
+-                ->rawColumns(['rank', 'name', 'elo', 'action', 'time'])
++                ->rawColumns(['rank', 'name', 'elo', 'win_rate', 'action', 'time'])
+                 ->make(true);
+         }
+ 
+diff --git a/app/Presenters/UserDataTablePresenter.php b/app/Presenters/UserDataTablePresenter.php
+index 4a9ad4a99..2f8c4ca87 100644
+--- a/app/Presenters/UserDataTablePresenter.php
++++ b/app/Presenters/UserDataTablePresenter.php
+@@ -45,6 +45,21 @@ class UserDataTablePresenter
+         return '<strong style="color: var(--royal-gold);">' . $this->userPresenter->renderElo($row->id) . '</strong>';
+     }
+ 
++    public function formatWinRate($row): string
++    {
++        $wins = (int) ($row->wins ?? 0);
++        $total = (int) ($row->total_matches ?? 0);
++
++        if ($total === 0) {
++            return '<span class="text-muted">&mdash;</span>';
++        }
++
++        $rate = round($wins / $total * 100, 1);
++
++        return '<strong>' . rtrim(rtrim(number_format($rate, 1, '.', ''), '0'), '.') . '%</strong>'
++            . ' <small class="text-muted">(' . $wins . '/' . $total . ')</small>';
++    }
++
+     public function formatTime($row): string
+     {
+         return date('Y-m-d | H:i:s', strtotime($row->created_at));
+diff --git a/resources/lang/de.json b/resources/lang/de.json
+index 56b661092..0aae9ce68 100644
+--- a/resources/lang/de.json
++++ b/resources/lang/de.json
+@@ -584,6 +584,7 @@
+     "Kỳ thủ": "Spieler",
+     "Elo": "Elo",
+     "Thời điểm tham gia": "Beitrittszeitpunkt",
++    "Tỉ lệ thắng": "Siegquote",
+     "Tất cả thế cờ": "Alle Rätsel",
+     "Đã tham gia": "Beigetreten",
+     "Đã đầy": "Voll",
+diff --git a/resources/lang/en.json b/resources/lang/en.json
+index 424b7a114..818e1a625 100644
+--- a/resources/lang/en.json
++++ b/resources/lang/en.json
+@@ -584,6 +584,7 @@
+     "Kỳ thủ": "Player",
+     "Elo": "Elo",
+     "Thời điểm tham gia": "Join Date",
++    "Tỉ lệ thắng": "Win rate",
+     "Tất cả thế cờ": "All puzzles",
+     "Đã tham gia": "Joined",
+     "Đã đầy": "Full",
+diff --git a/resources/lang/es.json b/resources/lang/es.json
+index 311b2fc0b..3bad32573 100644
+--- a/resources/lang/es.json
++++ b/resources/lang/es.json
+@@ -584,6 +584,7 @@
+     "Kỳ thủ": "Jugador",
+     "Elo": "Elo",
+     "Thời điểm tham gia": "Fecha de registro",
++    "Tỉ lệ thắng": "Tasa de victorias",
+     "Tất cả thế cờ": "Todos los puzles",
+     "Đã tham gia": "Inscrito",
+     "Đã đầy": "Completo",
+diff --git a/resources/lang/fr.json b/resources/lang/fr.json
+index 9998dba42..0f81f2be8 100644
+--- a/resources/lang/fr.json
++++ b/resources/lang/fr.json
+@@ -584,6 +584,7 @@
+     "Kỳ thủ": "Joueur",
+     "Elo": "Elo",
+     "Thời điểm tham gia": "Date d'inscription",
++    "Tỉ lệ thắng": "Taux de victoire",
+     "Tất cả thế cờ": "Tous les problèmes",
+     "Đã tham gia": "Inscrit",
+     "Đã đầy": "Complet",
+diff --git a/resources/lang/ja.json b/resources/lang/ja.json
+index 933ef4521..60a2628cc 100644
+--- a/resources/lang/ja.json
++++ b/resources/lang/ja.json
+@@ -586,6 +586,7 @@
+     "Kỳ thủ": "プレイヤー",
+     "Elo": "イロレーティング",
+     "Thời điểm tham gia": "参加日時",
++    "Tỉ lệ thắng": "勝率",
+     "Tất cả thế cờ": "すべてのパズル",
+     "Đã tham gia": "参加済み",
+     "Đã đầy": "満員",
+diff --git a/resources/lang/ko.json b/resources/lang/ko.json
+index 31bce83fa..5a3672a1b 100644
+--- a/resources/lang/ko.json
++++ b/resources/lang/ko.json
+@@ -584,6 +584,7 @@
+     "Kỳ thủ": "플레이어",
+     "Elo": "엘로",
+     "Thời điểm tham gia": "가입일",
++    "Tỉ lệ thắng": "승률",
+     "Tất cả thế cờ": "모든 퍼즐",
+     "Đã tham gia": "참가함",
+     "Đã đầy": "가득 참",
+diff --git a/resources/lang/ru.json b/resources/lang/ru.json
+index e26124c64..3e3e3fb1b 100644
+--- a/resources/lang/ru.json
++++ b/resources/lang/ru.json
+@@ -584,6 +584,7 @@
+     "Kỳ thủ": "Игрок",
+     "Elo": "Эло",
+     "Thời điểm tham gia": "Дата присоединения",
++    "Tỉ lệ thắng": "Процент побед",
+     "Tất cả thế cờ": "Все задачи",
+     "Đã tham gia": "Вы участвуете",
+     "Đã đầy": "Мест нет",
+diff --git a/resources/lang/vi.json b/resources/lang/vi.json
+index b92f1fc2f..1e1bda31e 100644
+--- a/resources/lang/vi.json
++++ b/resources/lang/vi.json
+@@ -1532,6 +1532,7 @@
+     "Kỳ thủ": "Kỳ thủ",
+     "Elo": "Elo",
+     "Thời điểm tham gia": "Thời điểm tham gia",
++    "Tỉ lệ thắng": "Tỉ lệ thắng",
+     "Tất cả thế cờ": "Tất cả thế cờ",
+     "Đã tham gia": "Đã tham gia",
+     "Đã đầy": "Đã đầy",
+diff --git a/resources/lang/zh.json b/resources/lang/zh.json
+index 177f3ea8c..85fb6a0a2 100644
+--- a/resources/lang/zh.json
++++ b/resources/lang/zh.json
+@@ -588,6 +588,7 @@
+     "Kỳ thủ": "玩家",
+     "Elo": "等级分 (Elo)",
+     "Thời điểm tham gia": "加入时间",
++    "Tỉ lệ thắng": "胜率",
+     "Tất cả thế cờ": "所有残局",
+     "Đã tham gia": "已参加",
+     "Đã đầy": "已满",
+diff --git a/resources/views/userList.blade.php b/resources/views/userList.blade.php
+index 69052c3c4..4b3822e92 100644
+--- a/resources/views/userList.blade.php
++++ b/resources/views/userList.blade.php
+@@ -17,6 +17,7 @@
+                                 <th class="text-center" scope="col">{{ __('Xếp hạng') }}</th>
+                                 <th class="text-center" scope="col">{{ __('Kỳ thủ') }}</th>
+                                 <th class="text-center" scope="col">{{ __('Elo') }}</th>
++                                <th class="text-center" scope="col">{{ __('Tỉ lệ thắng') }}</th>
+                                 <th class="text-center" scope="col">{{ __('Hành động') }}</th>
+                                 <th class="text-center" scope="col">{{ __('Thời điểm tham gia') }}</th>
+                             </tr>
+@@ -47,10 +48,11 @@
+                 deferRender: true,
+                 columnDefs: [
+                     { responsivePriority: 1, targets: 1 },
+-                    { responsivePriority: 2, targets: 3 },
++                    { responsivePriority: 2, targets: 4 },
+                     { responsivePriority: 3, targets: 2 },
+-                    { responsivePriority: 4, targets: 0 },
+-                    { responsivePriority: 5, targets: 4 }
++                    { responsivePriority: 4, targets: 3 },
++                    { responsivePriority: 5, targets: 0 },
++                    { responsivePriority: 6, targets: 5 }
+                 ],
+                 columns: [
+                     {
+@@ -74,6 +76,13 @@
+                         searchable: true,
+                         className: 'text-center'
+                     },
++                    {
++                        data: 'win_rate',
++                        name: 'win_rate',
++                        orderable: true,
++                        searchable: false,
++                        className: 'text-center'
++                    },
+                     {
+                         data: 'action',
+                         name: 'action',
