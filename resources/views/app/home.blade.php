@@ -37,7 +37,7 @@
                                         <td class="text-center font-weight-bold">
                                             <span class="badge badge-status" style="background: linear-gradient(to bottom, #d4af37, #b89020); color: #0b0c10; box-shadow: 0 0 5px rgba(212, 175, 55, 0.6);"><i class="fas fa-trophy"></i> {!! $userPresenter->renderUserRank($user->id) !!}</span>
                                         </td>
-                                        <td class="text-center name">{!! $userPresenter->renderPlayerName($user->id) !!}</td>
+                                        <td class="text-left name">{!! $userPresenter->renderPlayerName($user->id) !!}</td>
                                         <td class="text-center elo text-gold font-weight-bold">{!! $userPresenter->renderElo($user->id) !!}</td>
                                         <td class="text-center karma text-info font-weight-bold"><i class="fas fa-gem"></i> {{ $user->karma ?? 0 }}</td>
                                         <td class="text-center room-time">{{ $user->created_at }}</td>

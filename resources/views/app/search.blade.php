@@ -65,7 +65,7 @@
                             <tbody>
                                 @foreach ($results as $result)
                                 <tr data-user="{{ $result->id }}">
-                                    <td class="text-center name font-weight-bold">{!! $userPresenter->renderPlayerName($result->id) !!}</td>
+                                    <td class="text-left name font-weight-bold">{!! $userPresenter->renderPlayerName($result->id) !!}</td>
                                     <td class="text-center elo text-gold">{!! $userPresenter->renderElo($result->id) !!}</td>
                                     <td class="text-center karma text-info">{{ $result->karma ?? 0 }}</td>
                                     <td class="text-center room-time">{{ $result->created_at }}</td>
