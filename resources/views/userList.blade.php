@@ -79,7 +79,7 @@
                     {
                         data: 'win_rate',
                         name: 'win_rate',
-                        orderable: true,
+                        orderable: false,
                         searchable: false,
                         className: 'text-center'
                     },
