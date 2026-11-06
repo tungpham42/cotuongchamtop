@@ -17,8 +17,7 @@
 }
 @media (max-width: 1024px) {
     .zalo-icon {
-        bottom: 70px;
-        right: 20px;
+        display: none; /* Hide on smaller screens */
     }
 }
 </style>

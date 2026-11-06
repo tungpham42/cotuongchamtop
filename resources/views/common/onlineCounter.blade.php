@@ -41,6 +41,12 @@
         text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
     }
 
+    @media (max-width: 1024px) {
+        .online-counter-badge {
+            right: 20px; /* Adjust position for smaller screens */
+        }
+    }
+
     .counter-text {
         display: flex;
         align-items: center;
