@@ -428,11 +428,18 @@
                         {{ __('Biên Bản Ván Cờ') }}
                     </h2>
 
-                    <select id="notation-lang" class="custom-select custom-select-sm bg-dark text-warning border rounded-pill" style="width: auto; font-size: 0.75rem; border-color: rgba(212, 175, 55, 0.4) !important;">
-                        @foreach($notationLocales as $loc)
-                            <option value="{{ $loc }}" @selected($notationLang === $loc)>{{ $notationLabels[$loc] ?? $loc }}</option>
-                        @endforeach
-                    </select>
+                    <div class="d-flex align-items-center" style="gap: 0.5rem;">
+                        <button id="export-wxf" type="button" class="btn btn-sm btn-dark text-warning border rounded-pill d-inline-flex align-items-center" style="font-size: 0.75rem; border-color: rgba(212, 175, 55, 0.4) !important; gap: 0.35rem;" disabled>
+                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            {{ __('Export as WXF') }}
+                        </button>
+
+                        <select id="notation-lang" class="custom-select custom-select-sm bg-dark text-warning border rounded-pill" style="width: auto; font-size: 0.75rem; border-color: rgba(212, 175, 55, 0.4) !important;">
+                            @foreach($notationLocales as $loc)
+                                <option value="{{ $loc }}" @selected($notationLang === $loc)>{{ $notationLabels[$loc] ?? $loc }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
 
                 <div id="moves-list" class="moves-container flex-grow-1 overflow-auto pr-2 align-content-start" style="display: grid; grid-template-columns: auto 1fr 1fr; gap: 0.25rem;">
@@ -522,6 +529,108 @@
             return `${pieceName} ${fFile} ${action} ${target}`;
         }
 
+        // ==========================================
+        // WXF NOTATION (same logic as kypho.js)
+        // ==========================================
+        const WXF_LETTERS = { k: 'K', a: 'A', b: 'E', n: 'H', r: 'R', c: 'C', p: 'P' };
+
+        function wxfParseSquare(square) {
+            if (!square || square.length < 2) return null;
+            const fileIndex = 'abcdefghi'.indexOf(square.charAt(0));
+            const rank = parseInt(square.charAt(1), 10);
+            if (fileIndex === -1 || isNaN(rank)) return null;
+            return { fileIndex, rank };
+        }
+
+        function wxfColumnFromFile(fileIndex, color) {
+            return color === 'r' ? 9 - fileIndex : fileIndex + 1;
+        }
+
+        // Ranks of same-type/same-colour pieces standing on one file, read from the FEN before the move.
+        function wxfPiecesOnFile(fen, pieceType, color, fileIndex) {
+            const rows = String(fen).split(' ')[0].split('/');
+            const found = [];
+            for (let r = 0; r < rows.length; r++) {
+                const rank = rows.length - 1 - r;
+                let col = 0;
+                for (let k = 0; k < rows[r].length; k++) {
+                    const ch = rows[r].charAt(k);
+                    if (/\d/.test(ch)) { col += parseInt(ch, 10); continue; }
+                    const isRed = ch === ch.toUpperCase();
+                    if (col === fileIndex && ch.toLowerCase() === pieceType && isRed === (color === 'r')) {
+                        found.push(rank);
+                    }
+                    col++;
+                }
+            }
+            return found;
+        }
+
+        function formatWXF(move, fenBefore) {
+            const from = wxfParseSquare(move.from);
+            const to = wxfParseSquare(move.to);
+            const pieceKey = pieceTypeAliases[String(move.piece).toLowerCase()];
+            const letter = WXF_LETTERS[pieceKey];
+            if (!from || !to || !letter) return '';
+
+            const color = move.color === 'r' ? 'r' : 'b';
+            const fromCol = wxfColumnFromFile(from.fileIndex, color);
+            const toCol = wxfColumnFromFile(to.fileIndex, color);
+
+            let action;
+            if (from.rank === to.rank) {
+                action = '.';
+            } else {
+                const forward = color === 'r' ? to.rank > from.rank : to.rank < from.rank;
+                action = forward ? '+' : '-';
+            }
+
+            let target;
+            if (action === '.') {
+                target = toCol;
+            } else {
+                const usesTargetColumn = pieceKey === 'n' || pieceKey === 'b' || pieceKey === 'a';
+                target = usesTargetColumn ? toCol : Math.abs(to.rank - from.rank);
+            }
+
+            // Several identical pieces on one file -> + (front) / - (back)
+            let origin = String(fromCol);
+            if (fenBefore && pieceKey !== 'k') {
+                const ranks = wxfPiecesOnFile(fenBefore, pieceKey, color, from.fileIndex);
+                if (ranks.length > 1) {
+                    ranks.sort((a, b) => color === 'r' ? b - a : a - b);
+                    const idx = ranks.indexOf(from.rank);
+                    if (idx === 0) origin = '+';
+                    else if (idx === ranks.length - 1) origin = '-';
+                    else if (idx > 0) origin = String(idx + 1);
+                }
+            }
+
+            return letter + origin + action + target;
+        }
+
+        // Valid moves only, each with the FEN before it was played.
+        const wxfMoves = [];
+
+        function generateWXFText() {
+            const gameDate = @json($game->created_at->format('Y.m.d'));
+            const lines = [
+                '[Game "Chinese Chess"]',
+                '[Date "' + gameDate + '"]',
+                '[Site "COTUONG.TOP"]',
+                '[FEN "' + startFen + '"]',
+                ''
+            ];
+            for (let i = 0; i < wxfMoves.length; i += 2) {
+                let line = (Math.floor(i / 2) + 1) + '. ' + formatWXF(wxfMoves[i].move, wxfMoves[i].fenBefore);
+                if (wxfMoves[i + 1]) {
+                    line += ' ' + formatWXF(wxfMoves[i + 1].move, wxfMoves[i + 1].fenBefore);
+                }
+                lines.push(line);
+            }
+            return lines.join('\n');
+        }
+
         let currentLang = @json($notationLang);
         const notationHistories = Object.fromEntries(NOTATION_LANGS.map(lang => [lang, []]));
 
@@ -530,9 +639,19 @@
                 if (!move) return;
                 try {
                     const color = gameLogic.turn();
+                    const fenBefore = gameLogic.fen();
                     const result = gameLogic.move({ from: move.from, to: move.to });
 
                     if (result) {
+                        wxfMoves.push({
+                            move: {
+                                piece: result.piece,
+                                from: result.from,
+                                to: result.to,
+                                color: (result.color || color) === 'w' || (result.color || color) === 'r' ? 'r' : 'b'
+                            },
+                            fenBefore: fenBefore
+                        });
                         fenHistory.push(gameLogic.fen());
                         NOTATION_LANGS.forEach(lang => {
                             notationHistories[lang].push(formatNotation(result, color, lang));
@@ -712,6 +831,22 @@
         $('#moves-list').on('click', '.move-btn', function() {
             stopAutoplay();
             goToStep(parseInt($(this).data('step')));
+        });
+
+        $('#export-wxf').prop('disabled', wxfMoves.length === 0).on('click', function() {
+            if (!wxfMoves.length) return;
+            const blob = new Blob([generateWXFText()], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'WXF_' + @json($game->slug) + '.txt';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function() {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 500);
         });
 
         $('#notation-lang').change(function() {
