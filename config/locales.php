@@ -91,6 +91,7 @@ return [
         'app.name'      => ['vi' => 'doi-ten', 'en' => 'change-name', 'ja' => 'namae-henko', 'ko' => 'ileum-byeongyeong', 'zh' => 'genggaimingcheng', 'de' => 'name-aendern', 'fr' => 'changer-nom', 'es' => 'cambiar-nombre', 'ru' => 'smenit-imya'],
         'app.ui'        => ['vi' => 'doi-giao-dien', 'en' => 'change-ui', 'ja' => 'ui-henko', 'ko' => 'ui-byeongyeong', 'zh' => 'genggai-ui', 'de' => 'oberflaeche-aendern', 'fr' => 'changer-interface', 'es' => 'cambiar-interfaz', 'ru' => 'smenit-oformlenie'],
         'app.profile'   => ['vi' => 'ho-so-cua-toi', 'en' => 'my-profile', 'ja' => 'watashi-no-purofiru', 'ko' => 'nae-peulopil', 'zh' => 'wodeziliao', 'de' => 'mein-profil', 'fr' => 'mon-profil', 'es' => 'mi-perfil', 'ru' => 'moy-profil'],
+        'app.vip'       => ['vi' => 'vip', 'en' => 'en/vip', 'ja' => 'ja/vip', 'ko' => 'ko/vip', 'zh' => 'zh/vip', 'de' => 'de/vip', 'fr' => 'fr/vip', 'es' => 'es/vip', 'ru' => 'ru/vip'],
         'app.player'    => ['vi' => 'ky-thu/{id}', 'en' => 'player/{id}', 'ja' => 'pureya/{id}', 'ko' => 'peulleieo/{id}', 'zh' => 'wanjia/{id}', 'de' => 'spieler/{id}', 'fr' => 'joueur/{id}', 'es' => 'jugador/{id}', 'ru' => 'igrok/{id}'],
 
         // Auth
@@ -123,7 +124,6 @@ return [
         'tournaments.destroy'  => ['vi' => 'admin/giai-dau/{slug}', 'en' => 'admin/tournaments/{slug}', 'ja' => 'admin/tonamento/{slug}', 'ko' => 'admin/toneomeonteu/{slug}', 'zh' => 'admin/jinbiaosai/{slug}', 'de' => 'admin/turniere/{slug}', 'fr' => 'admin/tournois/{slug}', 'es' => 'admin/torneos/{slug}', 'ru' => 'admin/turniry/{slug}'],
 
         // Profile Actions
-        'app.vip'                => ['vi' => 'vip', 'en' => 'vip', 'ja' => 'vip', 'ko' => 'vip', 'zh' => 'vip', 'de' => 'vip', 'fr' => 'vip', 'es' => 'vip', 'ru' => 'vip'],
         'change.password'        => ['vi' => 'doi-mat-khau', 'en' => 'change-password', 'ja' => 'pasuwado-henko', 'ko' => 'bimilbeonho-byeongyeong', 'zh' => 'genggaimima', 'de' => 'passwort-aendern', 'fr' => 'changer-mot-de-passe', 'es' => 'cambiar-contrasena', 'ru' => 'smenit-parol'],
         'change.name'            => ['vi' => 'doi-ten', 'en' => 'change-name', 'ja' => 'namae-henko', 'ko' => 'ileum-byeongyeong', 'zh' => 'genggaimingcheng', 'de' => 'name-aendern', 'fr' => 'changer-nom', 'es' => 'cambiar-nombre', 'ru' => 'smenit-imya'],
         'change.ui'              => ['vi' => 'doi-giao-dien', 'en' => 'change-ui', 'ja' => 'ui-henko', 'ko' => 'ui-byeongyeong', 'zh' => 'genggai-ui', 'de' => 'oberflaeche-aendern', 'fr' => 'changer-interface', 'es' => 'cambiar-interfaz', 'ru' => 'smenit-oformlenie'],
