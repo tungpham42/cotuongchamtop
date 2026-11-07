@@ -7,11 +7,11 @@
         --xq-text-on-red: #fff;
     }
 
-    /* Widget Container - Đặt ở góc phải bên trên nút Zalo (bottom: 90px; right: 20px), z-index: 1060 để không bị badge online đè */
+    /* Widget Container - Đặt ở GÓC DƯỚI BÊN TRÁI để tách biệt hoàn toàn khỏi cụm Zalo / Online Counter / To-top ở góc phải */
     #ai-coach-widget {
         position: fixed;
-        bottom: 90px;
-        right: 20px;
+        bottom: 25px;
+        left: 25px;
         z-index: 1060;
         font-family: "Roboto", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
@@ -24,7 +24,7 @@
         background: linear-gradient(135deg, #b71c1c 0%, #880e4f 100%);
         color: white;
         border: 2px solid #ffd700;
-        box-shadow: 0 4px 18px rgba(183, 28, 28, 0.5), 0 0 10px rgba(255, 215, 0, 0.35);
+        box-shadow: 0 4px 18px rgba(183, 28, 28, 0.5), 0 0 10px rgba(255, 215, 0, 0.4);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -34,8 +34,8 @@
         position: relative;
     }
     #ai-chat-btn:hover {
-        transform: scale(1.1);
-        box-shadow: 0 6px 22px rgba(183, 28, 28, 0.7), 0 0 15px rgba(255, 215, 0, 0.5);
+        transform: scale(1.12);
+        box-shadow: 0 6px 25px rgba(183, 28, 28, 0.7), 0 0 16px rgba(255, 215, 0, 0.6);
     }
     .ai-btn-badge {
         position: absolute;
@@ -51,26 +51,26 @@
         letter-spacing: 0.5px;
     }
 
-    /* Main Chat Box */
+    /* Main Chat Box - Mở từ góc trái lên */
     #ai-chat-box {
         position: absolute;
         bottom: 75px;
-        right: 0;
+        left: 0;
         width: 360px;
-        height: 500px;
+        height: 520px;
         background: white;
         border-radius: 14px;
-        box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+        box-shadow: 0 12px 35px rgba(0,0,0,0.45);
         display: none; /* Default hidden */
         flex-direction: column;
         overflow: hidden;
         border: 1px solid #d4af37;
-        animation: slideIn 0.3s ease-out;
+        animation: slideInLeft 0.3s ease-out;
     }
 
-    @keyframes slideIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
+    @keyframes slideInLeft {
+        from { opacity: 0; transform: translateY(20px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     /* Header: Black to Red Gradient */
@@ -83,6 +83,36 @@
         justify-content: space-between;
         align-items: center;
         border-bottom: 2px solid #880e4f;
+    }
+
+    /* Banner thông báo dùng thử / Nâng cấp VIP */
+    .ai-trial-bar {
+        background: #fff8e1;
+        border-bottom: 1px solid #ffe082;
+        padding: 6px 12px;
+        font-size: 11.5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #6d4c41;
+        font-weight: 500;
+    }
+    .btn-upgrade-pill {
+        background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+        color: #0b0c10 !important;
+        font-size: 10.5px;
+        font-weight: 800;
+        padding: 2px 8px;
+        border-radius: 12px;
+        text-decoration: none !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        transition: transform 0.2s;
+    }
+    .btn-upgrade-pill:hover {
+        transform: scale(1.05);
     }
 
     .chat-body {
@@ -184,13 +214,13 @@
 
     @media (max-width: 576px) {
         #ai-coach-widget {
-            bottom: 80px;
-            right: 15px;
+            bottom: 20px;
+            left: 15px;
         }
         #ai-chat-box {
             width: calc(100vw - 30px);
-            right: -5px;
-            height: 460px;
+            left: -5px;
+            height: 480px;
         }
     }
 </style>
@@ -210,6 +240,17 @@
             <button type="button" class="btn-close btn-close-white shadow-none text-white border-0 bg-transparent font-weight-bold" id="close-chat" style="font-size: 18px; line-height: 1;">&times;</button>
         </div>
 
+        @auth
+            @if(!auth()->user()->isVip())
+                <div class="ai-trial-bar">
+                    <span><i class="fas fa-gift text-danger"></i> {{ __('Dùng thử miễn phí: 2 lượt/ngày') }}</span>
+                    <a href="{{ localized_url('app.vip') ?? '/vip' }}" class="btn-upgrade-pill">
+                        <i class="fas fa-crown"></i> {{ __('Nâng cấp VIP') }}
+                    </a>
+                </div>
+            @endif
+        @endauth
+
         <div class="chat-body" id="chat-messages">
             @guest
                 <div class="msg msg-ai text-center p-3">
@@ -218,8 +259,11 @@
                     <p class="small text-muted mt-1 mb-3">
                         {{ __('Vui lòng đăng nhập để sử dụng Trợ lý AI Coach phân tích thế trận và gợi ý nước đi.') }}
                     </p>
-                    <a href="{{ localized_url('login') }}?redirect={{ urlencode(url()->current()) }}" class="btn btn-danger btn-sm btn-block text-white font-weight-bold" style="border-radius: 20px;">
+                    <a href="{{ localized_url('login') }}?redirect={{ urlencode(url()->current()) }}" class="btn btn-danger btn-sm btn-block text-white font-weight-bold mb-2" style="border-radius: 20px;">
                         <i class="fas fa-sign-in-alt"></i> {{ __('Đăng nhập ngay') }}
+                    </a>
+                    <a href="{{ localized_url('app.vip') ?? '/vip' }}" class="btn btn-outline-warning btn-sm btn-block font-weight-bold text-dark" style="border-radius: 20px; background: #fffdf0;">
+                        <i class="fas fa-crown text-warning"></i> {{ __('Xem quyền lợi VIP') }}
                     </a>
                 </div>
             @else
@@ -314,7 +358,7 @@
         window.askAI = async function(message) {
             if (!isUserAuth) {
                 appendMessage(
-                    '⚠️ {{ __("Vui lòng đăng nhập để tiếp tục trò chuyện.") }} <br><a href="' + loginRedirectUrl + '" class="btn btn-sm btn-danger mt-2 font-weight-bold"><i class="fas fa-sign-in-alt"></i> {{ __("Đăng nhập ngay") }}</a>',
+                    '⚠️ {{ __("Vui lòng đăng nhập để tiếp tục trò chuyện.") }} <br><a href="' + loginRedirectUrl + '" class="btn btn-sm btn-danger mt-2 font-weight-bold"><i class="fas fa-sign-in-alt"></i> {{ __("Đăng nhập ngay") }}</a> <a href="' + vipUpgradeUrl + '" class="btn btn-sm btn-outline-warning mt-2 font-weight-bold ml-1"><i class="fas fa-crown"></i> {{ __("Gói VIP") }}</a>',
                     'ai'
                 );
                 return;
@@ -346,7 +390,11 @@
                 removeMessage(loadingId);
 
                 if (data.success) {
-                    appendMessage(data.reply, 'ai');
+                    let replyHtml = data.reply;
+                    if (!isUserVip) {
+                        replyHtml += '<div class="mt-2 pt-2 border-top small text-muted"><i class="fas fa-bolt text-warning"></i> <a href="' + vipUpgradeUrl + '" class="text-danger font-weight-bold">{{ __("Nâng cấp VIP (Chỉ 19k)") }}</a> {{ __("để hỏi AI không giới hạn!") }}</div>';
+                    }
+                    appendMessage(replyHtml, 'ai');
                 } else if (data.require_vip) {
                     appendMessage(
                         '<div class="text-center p-2"><i class="fas fa-crown text-warning fa-2x mb-2 d-block"></i><strong>' + data.reply + '</strong><br><a href="' + vipUpgradeUrl + '" class="btn btn-warning btn-sm font-weight-bold text-dark mt-2 shadow" style="border-radius: 20px;"><i class="fas fa-bolt"></i> {{ __("Nâng cấp VIP (Chỉ 19k)") }}</a></div>',

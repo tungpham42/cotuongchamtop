@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 70" width="240" height="70">
+  <rect width="240" height="70" rx="10" fill="#ffffff"/>
+  <path d="M22 15h16l-10 38h-16z" fill="#005aab"/>
+  <path d="M38 15h16l-10 38h-16z" fill="#ed1c24"/>
+  <text x="62" y="47" font-family="'Segoe UI', Roboto, sans-serif" font-size="34" font-weight="900" fill="#005aab" letter-spacing="-1">Viet<tspan fill="#ed1c24">QR</tspan></text>
+</svg>

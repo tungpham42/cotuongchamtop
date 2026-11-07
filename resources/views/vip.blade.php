@@ -140,10 +140,10 @@
 
     {{-- Trust & Payment Info --}}
     <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card bg-dark text-white border-secondary p-4 shadow-sm" style="border-radius: 12px;">
+        <div class="col-md-11">
+            <div class="card bg-dark text-white border-secondary p-4 shadow-sm" style="border-radius: 14px; background: #14141d !important;">
                 <div class="row align-items-center">
-                    <div class="col-md-7 text-left">
+                    <div class="col-lg-5 text-left mb-3 mb-lg-0">
                         <h5 class="text-gold font-weight-bold mb-2">
                             <i class="fas fa-shield-check text-success"></i> {{ __('Thanh toán an toàn qua VietQR / PayOS') }}
                         </h5>
@@ -151,11 +151,47 @@
                             {{ __('Hệ thống hỗ trợ quét mã VietQR tự động qua mọi ứng dụng ngân hàng và ví điện tử tại Việt Nam. Kích hoạt VIP ngay lập tức sau 5 giây thanh toán thành công.') }}
                         </p>
                     </div>
-                    <div class="col-md-5 text-md-right text-center mt-3 mt-md-0">
-                        <span class="badge badge-light p-2 mr-1">Vietcombank</span>
-                        <span class="badge badge-light p-2 mr-1">MBBank</span>
-                        <span class="badge badge-light p-2 mr-1">Techcombank</span>
-                        <span class="badge badge-light p-2">MoMo/ZaloPay</span>
+                    <div class="col-lg-7 text-lg-right text-center">
+                        <style>
+                            .bank-logo-wrap {
+                                display: inline-flex;
+                                flex-wrap: wrap;
+                                gap: 8px;
+                                justify-content: center;
+                                align-items: center;
+                            }
+                            .bank-logo-item {
+                                background: #ffffff;
+                                padding: 6px 10px;
+                                border-radius: 8px;
+                                display: inline-flex;
+                                align-items: center;
+                                justify-content: center;
+                                box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+                                transition: transform 0.2s ease;
+                                height: 38px;
+                            }
+                            .bank-logo-item:hover {
+                                transform: translateY(-2px);
+                                box-shadow: 0 4px 10px rgba(255,215,0,0.35);
+                            }
+                            .bank-logo-item img {
+                                max-height: 26px;
+                                width: auto;
+                                display: block;
+                            }
+                        </style>
+                        <div class="bank-logo-wrap justify-content-lg-end">
+                            <div class="bank-logo-item" title="VietQR"><img src="{{ asset('img/banks/vietqr.svg') }}" alt="VietQR"></div>
+                            <div class="bank-logo-item" title="Napas 247"><img src="{{ asset('img/banks/napas247.svg') }}" alt="Napas 247"></div>
+                            <div class="bank-logo-item" title="Vietcombank"><img src="{{ asset('img/banks/vcb.png') }}" alt="Vietcombank"></div>
+                            <div class="bank-logo-item" title="MBBank"><img src="{{ asset('img/banks/mb.png') }}" alt="MBBank"></div>
+                            <div class="bank-logo-item" title="Techcombank"><img src="{{ asset('img/banks/tcb.png') }}" alt="Techcombank"></div>
+                            <div class="bank-logo-item" title="BIDV"><img src="{{ asset('img/banks/bidv.png') }}" alt="BIDV"></div>
+                            <div class="bank-logo-item" title="VietinBank"><img src="{{ asset('img/banks/icb.png') }}" alt="VietinBank"></div>
+                            <div class="bank-logo-item" title="ACB"><img src="{{ asset('img/banks/acb.png') }}" alt="ACB"></div>
+                            <div class="bank-logo-item" title="MoMo"><img src="{{ asset('img/banks/momo.svg') }}" alt="MoMo"></div>
+                        </div>
                     </div>
                 </div>
             </div>
