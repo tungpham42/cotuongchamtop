@@ -106,7 +106,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <nav class="navbar py-0">
                 <ul class="nav navbar-nav align-items-center">
                     <li class="nav-item">
-                        <a class="home showPromotion" href="{{ $homeUrl }}"><i class="far fa-home-lg-alt"></i></a>
+                        <a class="home showPromotion" href="{{ $homeUrl }}"><i class="far fa-home-lg-alt"></i> {{ __("Trang chủ") }}</a>
                     </li>
 
                     <li class="dropdown">
@@ -134,16 +134,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </div>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link showPromotion px-2 py-1 text-danger font-weight-bold" href="javascript:void(0);" onclick="var btn = document.getElementById('ai-chat-btn'); if(btn) { btn.click(); } else { window.location.href='{{ localized_url('ai.normal') }}'; }" style="color: #ff5252 !important;" title="{{ __('Trợ lý Cờ Tướng AI') }}">
-                            <i class="fas fa-robot text-danger"></i> AI Coach
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link showPromotion px-2 py-1 text-gold font-weight-bold" href="{{ localized_url('app.vip') }}" style="color: #d4af37 !important;">
+                    <li class="dropdown">
+                        <a id="vipDropdown" class="vip dropdown-toggle font-weight-bold" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false" style="color: #d4af37 !important;">
                             <i class="fas fa-crown text-warning"></i> VIP
                         </a>
+                        <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow" aria-labelledby="vipDropdown">
+                            <a class="showPromotion dropdown-item{{ $activeClass(localized_url('app.vip')) }}" href="{{ localized_url('app.vip') }}">
+                                <i class="fas fa-crown text-warning"></i> {{ __("VIP") }}
+                            </a>
+                            <a class="showPromotion dropdown-item text-danger font-weight-bold" href="javascript:void(0);" onclick="var btn = document.getElementById('ai-chat-btn'); if(btn) { btn.click(); } else { window.location.href='{{ localized_url('ai.normal') }}'; }" title="{{ __('Trợ lý Cờ Tướng AI') }}">
+                                <i class="fas fa-robot text-danger"></i> AI Coach
+                            </a>
+                        </div>
                     </li>
 
                     @guest
