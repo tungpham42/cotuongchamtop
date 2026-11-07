@@ -18,34 +18,29 @@ class GroqChessService
         "openai/gpt-oss-safeguard-20b",
     ];
 
-    protected $commonRules = <<<EOT
-COMMON RULES
-### ROLE & CONTEXT
-Bạn là Huấn luyện viên Cờ Tướng Việt Nam: Thông thái, Vui tính, Ngắn gọn.
-- Ngôn ngữ: 100% TIẾNG VIỆT, văn phong trực diện, thân thiện.
-- Giới hạn: Tối đa 100 từ/câu trả lời.
-- Nhiệm vụ: Phân tích và gợi ý nước đi dựa trên thế cờ (Đỏ đi trước).
+    /**
+     * Lấy chuỗi dịch theo locale hiện tại (resources/lang/{locale}.json, khóa "chess_coach.*").
+     * Dùng strtr() để thay placeholder một lượt, tránh việc nội dung người dùng bị thay thế lần hai.
+     */
+    protected function t(string $key, array $vars = []): string
+    {
+        $text = __('chess_coach.' . $key);
 
-### QUY TẮC KÝ HIỆU (BẮT BUỘC TUÂN THỦ)
-1. ĐÁNH SỐ CỘT: Luôn đếm từ 1 đến 9, hướng từ PHẢI sang TRÁI theo góc nhìn của từng bên (Đỏ/Đen riêng biệt).
-2. CẤU TRÚC LỆNH: [Tên Quân] [Cột Đứng] [Hành Động] [Tham Số]
-   - Tên Quân: Tướng, Sỹ, Tượng, Mã, Xe, Pháo, Chốt.
-   - Cột Đứng: Vị trí hiện tại (1-9).
-   - Hành động: Tấn (Tiến), Thoái (Lùi), Bình (Ngang).
+        if ($vars) {
+            $pairs = [];
+            foreach ($vars as $name => $value) {
+                $pairs[':' . $name] = (string) $value;
+            }
+            $text = strtr($text, $pairs);
+        }
 
-3. LOGIC XÁC ĐỊNH [THAM SỐ] (QUAN TRỌNG):
-   * NHÓM A (Xe, Pháo, Chốt, Tướng) - Quân đi thẳng:
-     - Khi TẤN/THOÁI: Ghi SỐ BƯỚC thực hiện (Distance). VD: "Xe 1 tấn 2" (lên 2 bước).
-     - Khi BÌNH: Ghi SỐ CỘT ĐÍCH (Target Column). VD: "Pháo 2 bình 5" (sang cột 5).
-   * NHÓM B (Mã, Tượng, Sỹ) - Quân đi chéo:
-     - LUÔN Ghi SỐ CỘT ĐÍCH (Target Column) cho mọi hành động. VD: "Mã 8 tấn 7" (nhảy về cột 7).
+        return $text;
+    }
 
-### CÁC LỖI CẤM (NEGATIVE CONSTRAINTS)
-- CẤM dùng: Tiếng Anh (Move, Rook...), Ký hiệu quốc tế/viết tắt (UCI, PGN, e2e4, N, B, R, K...), Số La Mã, Số Ả Rập chỉ quân.
-- CẤM dùng các từ chỉ hướng tiếng Anh (Forward, Rank, File...).
-- CẤM dùng dấu câu thừa (gạch ngang, dấu chấm, ngoặc) hoặc từ đệm ("nước đi", "play") trong lệnh.
-- TUYỆT ĐỐI KHÔNG nhầm lẫn logic: Không dùng số bước cho Mã/Tượng; Không dùng số cột khi Xe/Pháo Tấn/Thoái.
-EOT;
+    protected function commonRules(): string
+    {
+        return $this->t('common_rules');
+    }
 
     public function __construct()
     {
@@ -66,9 +61,7 @@ EOT;
         $parts = explode(' ', $fen);
         $rows = explode('/', $parts[0]);
 
-        $visual = "\n--- VISUAL BOARD (Góc nhìn bên Đỏ) ---\n";
-        $visual .= "Cột: 1 2 3 4 5 6 7 8 9 (Của Đen)\n";
-        $visual .= "    9 8 7 6 5 4 3 2 1 (Của Đỏ)\n";
+        $visual = "\n" . $this->t('board_header') . "\n";
         $visual .= "   -------------------\n";
 
         foreach ($rows as $index => $row) {
@@ -84,7 +77,7 @@ EOT;
             $visual .= sprintf("%2d |%s |\n", $index, $line);
         }
         $visual .= "   -------------------\n";
-        $visual .= "Ghi chú: Chữ Hoa (R,N,C...) = Đỏ (Dưới); Chữ thường (r,n,c...) = Đen (Trên).\n";
+        $visual .= $this->t('board_legend') . "\n";
 
         return $visual;
     }
@@ -179,47 +172,21 @@ EOT;
 
         $engineContext = "";
         if ($engineBestMove) {
-            $engineContext = "\n### THAM KHẢO TỪ ENGINE (PIKAFISH)\n- Engine đã tính toán và đề xuất nước đi tối ưu (UCI Code): **$engineBestMove**.\n- Nhiệm vụ của bạn: Hãy ưu tiên phân tích nước đi này, chuyển đổi nó sang ký hiệu Tiếng Việt chuẩn (Tấn/Thoái/Bình) và giải thích tại sao nó hay. Dùng ký hiệu chuẩn đã nêu ở phần Common Rules.";
+            $engineContext = "\n" . $this->t('engine_analyze', ['move' => $engineBestMove]);
         }
-        // [FIX] Đưa FEN vào System Prompt để AI nhận diện đây là bối cảnh bắt buộc
-// Kết hợp Common Rules với nhiệm vụ cụ thể của hàm Analyze
-        $systemPrompt = $this->commonRules . <<<EOT
 
-### DỮ LIỆU ĐẦU VÀO
-- FEN: $fen
-$visualBoard
-$engineContext
-### NHIỆM VỤ CỤ THỂ
-1. Nhìn vào "VISUAL BOARD" để xác định chính xác vị trí quân cờ.
-2. Phân tích: Xác định bên đi (dựa trên FEN) và thế trận (Ưu thế/Cân bằng/Kém thế).
-3. Đề xuất: Đưa ra 3 nước đi tối ưu (Best Moves) tuân thủ CHÍNH XÁC quy tắc ký hiệu đã nêu ở trên.
-4. Giải thích: Lý do ngắn gọn cho các nước đi này (dùng thuật ngữ như: tranh tiên, đổi quân, phế quân...).
-
-### ĐỊNH DẠNG ĐẦU RA (JSON ONLY)
-- Yêu cầu: Trả về duy nhất chuỗi JSON thuần (Raw JSON).
-- Cấm: KHÔNG bọc trong markdown (```json ... ```). KHÔNG có lời dẫn đầu hoặc kết thúc.
-- Mẫu JSON chuẩn:
-{
-    "evaluation": "Đỏ ưu thế nhỏ, kiểm soát trung lộ",
-    "best_moves": [
-        "Pháo 2 bình 5",
-        "Mã 8 tấn 7",
-        "Xe 9 bình 8"
-    ],
-    "analysis": "Nước Pháo 2 bình 5 giúp Đỏ chiếm trung lộ (Pháo đầu), gây áp lực lên tốt đầu của Đen ngay từ khai cuộc."
-}
-EOT;
+        // FEN nằm trong System Prompt để AI coi đây là bối cảnh bắt buộc
+        $systemPrompt = $this->commonRules() . "\n\n" . $this->t('analyze_system', [
+            'fen' => $fen,
+            'visual_board' => $visualBoard,
+            'engine_context' => $engineContext,
+        ]);
 
         // User prompt chỉ cần kích hoạt nhiệm vụ
-        $userPrompt = $this->commonRules . <<<EOT
-Dữ liệu FEN đầu vào:
-$fen
-Engine Suggestion: $engineBestMove
-YÊU CẦU THỰC HIỆN:
-1. Phân tích thế cờ trên theo đúng vai trò Đại kiện tướng.
-2. Trả về kết quả dạng JSON (như mẫu đã cung cấp).
-3. KIỂM TRA LẠI KÝ HIỆU: Đảm bảo Xe/Pháo/Chốt/Tướng dùng "Số Bước" khi tấn/thoái; Mã/Tượng/Sỹ dùng "Cột Đích".
-EOT;
+        $userPrompt = $this->commonRules() . "\n\n" . $this->t('analyze_user', [
+            'fen' => $fen,
+            'engine_move' => $engineBestMove,
+        ]);
 
         $messages = [
             ['role' => 'system', 'content' => $systemPrompt],
@@ -241,40 +208,20 @@ EOT;
 
         $engineContext = "";
         if ($engineBestMove) {
-            $engineContext = "\n### DỮ LIỆU TỪ ENGINE (PIKAFISH)\n- Engine đã tính toán chính xác nước đi tốt nhất là: **$engineBestMove** (UCI Code).\n- YÊU CẦU BẮT BUỘC: Bạn phải khuyên người chơi đi nước này. Hãy dịch nó sang ký hiệu Tiếng Việt (Tấn/Thoái/Bình) và giải thích ngắn gọn tại sao nó hay. Dùng ký hiệu chuẩn đã nêu ở phần Common Rules.";
+            $engineContext = "\n" . $this->t('engine_chat', ['move' => $engineBestMove]);
         }
-        // [FIX] Cập nhật System Prompt chứa FEN để đảm bảo ngữ cảnh đúng
-        // Kết hợp Common Rules với ngữ cảnh chat cụ thể
-        $systemPrompt = $this->commonRules . <<<EOT
-### DỮ LIỆU ĐẦU VÀO
-- FEN: $fen
-$visualBoard
-$engineContext
 
-### HƯỚNG DẪN TRẢ LỜI
-1. Nhìn vào "VISUAL BOARD" để xác định chính xác vị trí quân cờ.
-2. Nguyên tắc cốt lõi: Mọi câu trả lời phải DỰA TRÊN thế cờ FEN được cung cấp ở trên.
-3. Xử lý yêu cầu gợi ý:
-    - Nếu người chơi hỏi "Đi đâu?", "Gợi ý", hoặc "Nước nào tốt?": Hãy chỉ ra DUY NHẤT 1 nước đi tốt nhất và giải thích ngắn gọn lý do chiến thuật.
-4. Định dạng văn bản:
-    - Trả lời trực diện vào câu hỏi, bỏ qua các câu chào hỏi rườm rà.
-    - Giới hạn độ dài: Tối đa 100 từ.
-    - Luôn tuân thủ quy tắc ký hiệu (Nhóm A tính bước, Nhóm B tính cột) đã nêu ở phần Common Rules.
-EOT;
+        $systemPrompt = $this->commonRules() . "\n\n" . $this->t('chat_system', [
+            'fen' => $fen,
+            'visual_board' => $visualBoard,
+            'engine_context' => $engineContext,
+        ]);
 
         // User Prompt chỉ chứa câu hỏi, tránh lặp lại FEN gây nhiễu
-        $userPrompt = $this->commonRules . <<<EOT
-Bối cảnh thế cờ (FEN):
-$fen
-
-Câu hỏi từ người chơi:
-"$userQuestion"
-
-YÊU CẦU PHẢN HỒI:
-1. Trả lời đúng trọng tâm câu hỏi của người chơi.
-2. TUÂN THỦ KÝ HIỆU: Nhớ kỹ Xe/Pháo/Chốt/Tướng đi dọc tính SỐ BƯỚC; Mã/Tượng/Sỹ tính CỘT ĐÍCH.
-3. Nếu là gợi ý nước đi, hãy dùng dữ liệu Engine (nếu có).
-EOT;
+        $userPrompt = $this->commonRules() . "\n\n" . $this->t('chat_user', [
+            'fen' => $fen,
+            'question' => $userQuestion,
+        ]);
 
         $messages = [
             ['role' => 'system', 'content' => $systemPrompt],
@@ -284,6 +231,6 @@ EOT;
         // Gọi hàm đệ quy
         $result = $this->callWithFallback($messages, 0, false, 1);
 
-        return $result ?? "Xin lỗi, hiện tại tất cả các AI đều đang bận (Lỗi kết nối).";
+        return $result ?? $this->t('busy_error');
     }
 }

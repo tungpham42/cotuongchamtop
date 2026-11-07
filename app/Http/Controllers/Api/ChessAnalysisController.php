@@ -88,12 +88,16 @@ class ChessAnalysisController extends Controller
             $score = $engineData['score'] ?? 0;
             $depth = $engineData['depth'] ?? 15;
             $bestMove = $engineBestMove ?: 'N/A';
-            $evalText = $score > 50 ? 'Bên Đỏ đang có ưu thế tấn công chủ động (+'.number_format($score/100, 1).').' : ($score < -50 ? 'Bên Đen đang có thế trận tốt hơn ('.number_format($score/100, 1).').' : 'Thế trận hai bên đang tương đối giằng co và cân bằng.');
+            $evalText = $score > 50
+                ? __('chess_coach.eval_red', ['score' => number_format($score / 100, 1)])
+                : ($score < -50
+                    ? __('chess_coach.eval_black', ['score' => number_format($score / 100, 1)])
+                    : __('chess_coach.eval_balanced'));
 
             $data = [
                 'best_move' => $bestMove,
                 'overview' => $evalText,
-                'tactics' => "Nước đi tối ưu tính toán bởi Pikafish Engine (độ sâu {$depth}): {$bestMove}.",
+                'tactics' => __('chess_coach.fallback_tactics', ['depth' => $depth, 'move' => $bestMove]),
             ];
         }
 
@@ -146,7 +150,10 @@ class ChessAnalysisController extends Controller
 
         // [NEW] 1. Phát hiện ý định "Xin gợi ý"
         $engineBestMove = null;
-        $suggestionKeywords = ['gợi ý', 'nước đi', 'đi đâu', 'tốt nhất', 'tiếp theo', 'nước nào', 'hint', 'move'];
+        $suggestionKeywords = array_values(array_filter(array_map('trim', array_merge(
+            explode(',', __('chess_coach.hint_keywords')),
+            ['hint', 'move']
+        ))));
 
         // Kiểm tra xem message có chứa từ khóa gợi ý không
         if (Str::contains(Str::lower($message), $suggestionKeywords)) {
@@ -172,9 +179,9 @@ class ChessAnalysisController extends Controller
 
         if (empty($reply)) {
             if ($engineBestMove) {
-                $reply = "Nước đi gợi ý tối ưu nhất cho thế trận này là: **{$engineBestMove}** (Được tính toán bởi Engine Pikafish). Hãy kiểm soát các lộ quan trọng và duy trì thế công!";
+                $reply = __('chess_coach.fallback_hint', ['move' => $engineBestMove]);
             } else {
-                $reply = "Thế cờ hiện tại đang diễn ra rất kịch tính. Bạn hãy tập trung phát triển các quân Xe, Pháo, Mã để chiếm các lộ trọng yếu!";
+                $reply = __('chess_coach.fallback_generic');
             }
         }
 
