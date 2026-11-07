@@ -29,7 +29,7 @@ class XiangqiController extends Controller
         $request->validate([
             'fen' => 'required|string',
             'timeout' => 'sometimes|integer|min:100|max:30000',
-            'level' => 'sometimes|integer|min:1|max:5',
+            'level' => 'sometimes|integer|min:1|max:8',
         ]);
 
         $fen = $request->input('fen');
@@ -81,6 +81,7 @@ class XiangqiController extends Controller
             3 => 1.0,  // Bình thường
             4 => 1.5,  // Khó
             5 => 2.0,  // Khó nhất: slower
+            8 => 2.5,  // Kiện tướng: deepest
         ];
 
         $multiplier = $multipliers[$level] ?? 1.0;

@@ -242,7 +242,8 @@
                     },
                     body: JSON.stringify({
                         fen: game.fen(),
-                        timeout: getTimeoutByLevel({{ $level ?? 3 }})
+                        timeout: getTimeoutByLevel({{ $level ?? 3 }}),
+                        level: {{ $level ?? 3 }}
                     })
                 });
 
