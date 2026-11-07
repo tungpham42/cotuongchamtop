@@ -123,6 +123,7 @@ return [
         'tournaments.destroy'  => ['vi' => 'admin/giai-dau/{slug}', 'en' => 'admin/tournaments/{slug}', 'ja' => 'admin/tonamento/{slug}', 'ko' => 'admin/toneomeonteu/{slug}', 'zh' => 'admin/jinbiaosai/{slug}', 'de' => 'admin/turniere/{slug}', 'fr' => 'admin/tournois/{slug}', 'es' => 'admin/torneos/{slug}', 'ru' => 'admin/turniry/{slug}'],
 
         // Profile Actions
+        'app.vip'                => ['vi' => 'vip', 'en' => 'vip', 'ja' => 'vip', 'ko' => 'vip', 'zh' => 'vip', 'de' => 'vip', 'fr' => 'vip', 'es' => 'vip', 'ru' => 'vip'],
         'change.password'        => ['vi' => 'doi-mat-khau', 'en' => 'change-password', 'ja' => 'pasuwado-henko', 'ko' => 'bimilbeonho-byeongyeong', 'zh' => 'genggaimima', 'de' => 'passwort-aendern', 'fr' => 'changer-mot-de-passe', 'es' => 'cambiar-contrasena', 'ru' => 'smenit-parol'],
         'change.name'            => ['vi' => 'doi-ten', 'en' => 'change-name', 'ja' => 'namae-henko', 'ko' => 'ileum-byeongyeong', 'zh' => 'genggaimingcheng', 'de' => 'name-aendern', 'fr' => 'changer-nom', 'es' => 'cambiar-nombre', 'ru' => 'smenit-imya'],
         'change.ui'              => ['vi' => 'doi-giao-dien', 'en' => 'change-ui', 'ja' => 'ui-henko', 'ko' => 'ui-byeongyeong', 'zh' => 'genggai-ui', 'de' => 'oberflaeche-aendern', 'fr' => 'changer-interface', 'es' => 'cambiar-interfaz', 'ru' => 'smenit-oformlenie'],

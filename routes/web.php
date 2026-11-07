@@ -791,6 +791,26 @@ $localizedAppPages = [
             'playerRooms' => app(GetRoomQueriesAction::class)->getPlayerRooms(Auth::user()->id)
         ]
     ],
+    'app.vip' => [
+        'view' => 'vip',
+        'middleware' => [],
+        'titles' => [
+            'vi' => 'Nâng cấp VIP - Kỳ Thủ Hoàng Gia',
+            'en' => 'Upgrade VIP - Royal Xiangqi Master',
+            'ja' => 'VIPアップグレード - ロイヤルマスター',
+            'ko' => 'VIP 업그레이드 - 로열 마스터',
+            'zh' => 'VIP升级 - 皇家棋手',
+            'de' => 'VIP-Upgrade - Königlicher Meister',
+            'fr' => 'Mise à niveau VIP - Maître Royal',
+            'es' => 'Actualización VIP - Maestro Real',
+            'ru' => 'VIP Обновление - Королевский Мастер',
+        ],
+        'data' => fn() => [
+            'bodyClass' => 'vip-pricing dashboard',
+            'plans' => config('payos.plans', []),
+            'user' => Auth::user(),
+        ]
+    ],
     'app.profile' => [
         'view' => 'app/player',
         'middleware' => ['auth'],

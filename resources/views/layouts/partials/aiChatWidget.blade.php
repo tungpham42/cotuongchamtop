@@ -173,38 +173,38 @@
 <div id="ai-coach-widget">
     <div id="ai-chat-box">
         <div class="chat-header">
-            <span><i class="fas fa-chess-knight me-2"></i>Trợ lý Cờ Tướng</span>
+            <span><i class="fas fa-chess-knight me-2"></i>{{ __('Trợ lý Cờ Tướng AI') }}</span>
             <button type="button" class="btn-close btn-close-white shadow-none" id="close-chat" style="opacity: 0.8;"></button>
         </div>
 
         <div class="chat-body" id="chat-messages">
             <div class="msg msg-ai">
-                <i class="fas fa-robot text-danger me-1"></i> Xin chào! Tôi là AI Coach. Bạn cần gợi ý nước đi hay phân tích {{ __("thế cờ") }}?
+                <i class="fas fa-robot text-danger me-1"></i> {{ __('Xin chào! Tôi là Trợ lý AI. Bạn cần gợi ý nước đi hay đánh giá thế cờ?') }}
             </div>
         </div>
 
         <div class="quick-actions-area">
             <div class="d-flex flex-wrap">
-                <button class="btn btn-sm quick-btn" onclick="askAI('Gợi ý nước đi tiếp theo')">
-                    <i class="fas fa-lightbulb text-warning"></i> Gợi ý nước đi
+                <button class="btn btn-sm quick-btn" onclick="askAI('{{ __('Gợi ý nước đi') }}')">
+                    <i class="fas fa-lightbulb text-warning"></i> {{ __('Gợi ý nước đi') }}
                 </button>
-                <button class="btn btn-sm quick-btn" onclick="askAI('Đánh giá {{ __("thế cờ") }} này')">
-                    <i class="fas fa-balance-scale text-primary"></i> Đánh giá
+                <button class="btn btn-sm quick-btn" onclick="askAI('{{ __('Đánh giá thế cờ') }}')">
+                    <i class="fas fa-balance-scale text-primary"></i> {{ __('Đánh giá thế cờ') }}
                 </button>
-                <button class="btn btn-sm quick-btn" onclick="askAI('Bên nào đang ưu thế?')">
-                    <i class="fas fa-flag text-danger"></i> Ai đang thắng?
+                <button class="btn btn-sm quick-btn" onclick="askAI('{{ __('Bên nào đang ưu thế?') }}')">
+                    <i class="fas fa-flag text-danger"></i> {{ __('Bên nào đang ưu thế?') }}
                 </button>
             </div>
         </div>
 
         <div class="chat-footer">
-            <input type="text" id="chat-input" class="form-control" placeholder="Nhập câu hỏi..." autocomplete="off">
+            <input type="text" id="chat-input" class="form-control" placeholder="{{ __('Nhập câu hỏi...') }}" autocomplete="off">
             <button id="send-chat" class="shadow-sm"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <div id="ai-chat-btn" title="Chat với AI">
-        <i class="fas fa-comments"></i>
+    <div id="ai-chat-btn" title="{{ __('Chat với AI') }}">
+        <i class="fas fa-robot"></i>
     </div>
 </div>
 

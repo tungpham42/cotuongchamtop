@@ -18,28 +18,37 @@ class PayOSController extends Controller
     {
         $user = $request->user();
 
-        if ($user->isStandard()) {
-            return redirect('/ho-so-cua-toi')->with('success', 'Bạn đã ở gói Standard (ẩn quảng cáo).');
-        }
+        $planKey = $request->input('plan', 'vip_month');
+        $plans = config('payos.plans', []);
+        $planConfig = $plans[$planKey] ?? $plans['standard'] ?? [
+            'amount' => config('payos.standard_amount', 100000),
+            'days' => null,
+            'name' => 'Kỳ Thủ Standard',
+            'description' => 'VIP',
+        ];
+
+        $amount = (int) ($planConfig['amount'] ?? config('payos.standard_amount', 100000));
+        $planDesc = $planConfig['description'] ?? 'VIP';
 
         try {
             $client = $this->makeClient();
         } catch (\Throwable $e) {
             Log::error('PayOS configuration error', ['message' => $e->getMessage()]);
 
-            return redirect('/ho-so-cua-toi')->withErrors([
-                'message' => 'Không thể kết nối PayOS. Vui lòng kiểm tra PAYOS_CLIENT_ID/API_KEY/CHECKSUM_KEY.',
+            return redirect()->back()->withErrors([
+                'message' => 'Không thể kết nối PayOS. Vui lòng thử lại sau ít phút.',
             ]);
         }
 
         $orderCode = $this->generateOrderCode();
-        $baseDescription = 'Standard-' . ($user->email ?: $user->name);
-        $description = Str::limit($baseDescription, 25, ''); // PayOS giới hạn 25 ký tự
+        $safeName = preg_replace('/[^a-zA-Z0-9]/', '', $user->name ?: 'user');
+        $baseDescription = $planDesc . '-' . substr($safeName, 0, 10);
+        $description = Str::limit($baseDescription, 25, '');
 
         try {
             $paymentRequest = new CreatePaymentLinkRequest(
                 orderCode: $orderCode,
-                amount: config('payos.standard_amount'),
+                amount: $amount,
                 description: $description,
                 returnUrl: config('payos.return_url'),
                 cancelUrl: config('payos.cancel_url')
@@ -52,7 +61,7 @@ class PayOSController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return redirect('/ho-so-cua-toi')->withErrors([
+            return redirect()->back()->withErrors([
                 'message' => 'Không tạo được liên kết thanh toán, vui lòng thử lại sau.',
             ]);
         }
@@ -60,12 +69,13 @@ class PayOSController extends Controller
         PayosPayment::create([
             'user_id' => $user->id,
             'order_code' => $orderCode,
-            'amount' => config('payos.standard_amount'),
+            'amount' => $amount,
             'status' => PayosPayment::STATUS_PENDING,
             'description' => $description,
             'payment_link_id' => $link->paymentLinkId ?? null,
             'checkout_url' => $link->checkoutUrl ?? null,
             'meta' => [
+                'plan' => $planKey,
                 'status' => $link->status->value ?? null,
                 'qr_code' => $link->qrCode ?? null,
             ],
@@ -90,25 +100,25 @@ class PayOSController extends Controller
             $payment = $this->syncPaymentStatus($payment);
 
             if ($payment->status === PayosPayment::STATUS_PAID) {
-                return redirect('/ho-so-cua-toi')->with('success', 'Thanh toán thành công, gói Standard đã được kích hoạt.');
+                return redirect(localized_url('app.vip') ?? '/vip')->with('success', 'Thanh toán thành công! Gói VIP đã được kích hoạt.');
             }
 
             if ($payment->status === PayosPayment::STATUS_CANCELLED) {
-                return redirect('/ho-so-cua-toi')->withErrors([
+                return redirect(localized_url('app.vip') ?? '/vip')->withErrors([
                     'message' => 'Giao dịch đã bị huỷ.',
                 ]);
             }
 
             if ($payment->status === PayosPayment::STATUS_FAILED) {
-                return redirect('/ho-so-cua-toi')->withErrors([
+                return redirect(localized_url('app.vip') ?? '/vip')->withErrors([
                     'message' => 'Thanh toán chưa thành công. Vui lòng thử lại.',
                 ]);
             }
 
-            return redirect('/ho-so-cua-toi')->with('status', 'Thanh toán đang được xác nhận. Vui lòng chờ trong giây lát.');
+            return redirect(localized_url('app.vip') ?? '/vip')->with('status', 'Thanh toán đang được xác nhận. Vui lòng chờ trong giây lát.');
         }
 
-        return redirect('/ho-so-cua-toi')->withErrors([
+        return redirect(localized_url('app.vip') ?? '/vip')->withErrors([
             'message' => 'Không tìm thấy giao dịch tương ứng.',
         ]);
     }
@@ -123,8 +133,8 @@ class PayOSController extends Controller
             ]);
         }
 
-        return redirect('/ho-so-cua-toi')->withErrors([
-            'message' => 'Bạn đã huỷ thanh toán Standard.',
+        return redirect(localized_url('app.vip') ?? '/vip')->withErrors([
+            'message' => 'Bạn đã huỷ giao dịch thanh toán.',
         ]);
     }
 
@@ -248,7 +258,12 @@ class PayOSController extends Controller
             'meta' => $this->mergeMeta($payment, $meta),
         ]);
 
-        $payment->user?->activateStandard();
+        $payment->user?->activateStandard(
+            isset($payment->meta['plan']) && isset(config('payos.plans')[$payment->meta['plan']]['days']) && config('payos.plans')[$payment->meta['plan']]['days']
+                ? Carbon::now()->addDays(config('payos.plans')[$payment->meta['plan']]['days'])
+                : null,
+            $payment->meta['plan'] ?? 'standard'
+        );
     }
 
     private function mergeMeta(PayosPayment $payment, array $newMeta): array

@@ -1,0 +1,126 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container py-4">
+    {{-- Hero Section --}}
+    <div class="text-center text-white mb-5">
+        <span class="badge badge-warning text-dark px-3 py-2 text-uppercase font-weight-bold mb-3" style="letter-spacing: 2px;">
+            <i class="fas fa-crown"></i> {{ __('Kỳ Thủ VIP') }}
+        </span>
+        <h1 class="display-4 font-weight-bold text-gold" style="text-shadow: 0 2px 10px rgba(212,175,55,0.4);">
+            {{ __('Nâng cấp VIP - Kỳ Thủ Hoàng Gia') }}
+        </h1>
+        <p class="lead text-light mx-auto" style="max-width: 720px; font-size: 1.15rem;">
+            {{ __('Mở khóa Huấn luyện viên AI Pikafish phân tích chuyên sâu từng nước đi, không giới hạn gợi ý thế cờ, trải nghiệm mượt mà 100% không quảng cáo và khẳng định đẳng cấp với huy hiệu Vương Miện Hoàng Gia.') }}
+        </p>
+
+        @auth
+            @if(auth()->user()->isStandard())
+                <div class="alert alert-success d-inline-block px-4 py-2 mt-2 shadow">
+                    <i class="fas fa-check-circle"></i> {{ __('Gói hiện tại của bạn') }}: <strong>{{ auth()->user()->getVipLabel() }}</strong>
+                    @if(auth()->user()->subscription_ends_at)
+                        <span class="small ml-1">({{ __('hết hạn') }} {{ auth()->user()->subscription_ends_at->format('d/m/Y') }})</span>
+                    @else
+                        <span class="badge badge-warning ml-1 text-dark">{{ __('Vĩnh viễn') }}</span>
+                    @endif
+                </div>
+            @endif
+        @endauth
+    </div>
+
+    {{-- Pricing Cards --}}
+    <div class="row justify-content-center align-items-stretch mb-5">
+        @php
+            $plansList = config('payos.plans', [
+                'vip_week' => ['name' => 'Kỳ Thủ VIP (1 Tuần)', 'amount' => 19000, 'badge' => 'Trải nghiệm', 'popular' => false],
+                'vip_month' => ['name' => 'Kỳ Thủ VIP (1 Tháng)', 'amount' => 49000, 'badge' => 'Phổ biến nhất', 'popular' => true],
+                'standard' => ['name' => 'Kỳ Thủ Hoàng Gia (Vĩnh Viễn)', 'amount' => 199000, 'badge' => 'Tiết kiệm nhất', 'popular' => false],
+            ]);
+        @endphp
+
+        @foreach($plansList as $key => $plan)
+            @php $isPopular = !empty($plan['popular']); @endphp
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 shadow-lg text-white border-{{ $isPopular ? 'warning' : 'secondary' }}" style="background: {{ $isPopular ? 'linear-gradient(180deg, #1f1f2e 0%, #151522 100%)' : '#1a1a24' }}; border-width: {{ $isPopular ? '2px' : '1px' }}; border-radius: 16px; position: relative; overflow: hidden;">
+                    @if(!empty($plan['badge']))
+                        <div class="position-absolute" style="top: 15px; right: 15px;">
+                            <span class="badge badge-{{ $isPopular ? 'warning text-dark' : 'danger' }} px-3 py-1 font-weight-bold">
+                                {{ __($plan['badge']) }}
+                            </span>
+                        </div>
+                    @endif
+
+                    <div class="card-body d-flex flex-column p-4 text-center">
+                        <div class="my-3">
+                            <i class="fas {{ $key === 'standard' ? 'fa-gem' : ($isPopular ? 'fa-crown' : 'fa-chess-knight') }} fa-3x {{ $isPopular ? 'text-warning' : 'text-danger' }}"></i>
+                        </div>
+                        <h4 class="card-title font-weight-bold mb-3 text-white">
+                            {{ __($plan['name']) }}
+                        </h4>
+
+                        <div class="mb-4">
+                            <span class="display-4 font-weight-bold text-gold">{{ number_format($plan['amount'], 0, ',', '.') }}</span>
+                            <span class="h5 text-muted">đ</span>
+                            <div class="small text-muted mt-1">
+                                @if($key === 'vip_week')
+                                    {{ __('thanh toán 1 lần / 7 ngày') }}
+                                @elseif($key === 'vip_month')
+                                    {{ __('thanh toán 1 lần / 30 ngày') }}
+                                @else
+                                    {{ __('thanh toán 1 lần duy nhất, dùng mãi mãi') }}
+                                @endif
+                            </div>
+                        </div>
+
+                        <ul class="list-unstyled text-left mb-4 flex-grow-1" style="font-size: 0.95rem; line-height: 2;">
+                            <li><i class="fas fa-check-circle text-success mr-2"></i> {{ __('Phân tích nước đi bằng AI Engine Pikafish không giới hạn') }}</li>
+                            <li><i class="fas fa-check-circle text-success mr-2"></i> {{ __('Trợ lý & Huấn luyện viên AI phân tích thế cờ') }}</li>
+                            <li><i class="fas fa-check-circle text-success mr-2"></i> {{ __('Ẩn 100% quảng cáo') }}</li>
+                            <li><i class="fas fa-check-circle text-success mr-2"></i> {{ __('Huy hiệu vương miện VIP danh giá') }}</li>
+                            <li><i class="fas fa-check-circle text-success mr-2"></i> {{ __('Ưu tiên kết nối máy chủ tốc độ cao') }}</li>
+                        </ul>
+
+                        @auth
+                            <form method="POST" action="{{ route('payos.standard') }}" class="mb-0">
+                                @csrf
+                                <input type="hidden" name="plan" value="{{ $key }}">
+                                <button type="submit" class="btn btn-block btn-lg font-weight-bold shadow {{ $isPopular ? 'btn-warning text-dark pulse-gold' : 'btn-danger' }}" style="border-radius: 30px;">
+                                    <i class="fas fa-bolt"></i> {{ __('Nâng cấp ngay') }}
+                                </button>
+                            </form>
+                        @else
+                            <a href="{{ localized_url('login') }}?redirect={{ urlencode(url()->current()) }}" class="btn btn-block btn-lg btn-outline-warning font-weight-bold" style="border-radius: 30px;">
+                                <i class="fas fa-sign-in"></i> {{ __('Đăng nhập để nâng cấp') }}
+                            </a>
+                        @endauth
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+
+    {{-- Trust & Payment Info --}}
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card bg-dark text-white border-secondary p-4 shadow-sm" style="border-radius: 12px;">
+                <div class="row align-items-center">
+                    <div class="col-md-7 text-left">
+                        <h5 class="text-gold font-weight-bold mb-2">
+                            <i class="fas fa-shield-check text-success"></i> {{ __('Thanh toán an toàn qua VietQR / PayOS') }}
+                        </h5>
+                        <p class="text-muted small mb-0">
+                            {{ __('Hệ thống hỗ trợ quét mã VietQR tự động qua mọi ứng dụng ngân hàng và ví điện tử tại Việt Nam. Kích hoạt VIP ngay lập tức sau 5 giây thanh toán thành công.') }}
+                        </p>
+                    </div>
+                    <div class="col-md-5 text-md-right text-center mt-3 mt-md-0">
+                        <span class="badge badge-light p-2 mr-1">Vietcombank</span>
+                        <span class="badge badge-light p-2 mr-1">MBBank</span>
+                        <span class="badge badge-light p-2 mr-1">Techcombank</span>
+                        <span class="badge badge-light p-2">MoMo/ZaloPay</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

@@ -130,9 +130,14 @@ class User extends Authenticatable
         return $this->last_seen_at->diffInMinutes(now()) < 5;
     }
 
+    public function isVip(): bool
+    {
+        return $this->isStandard();
+    }
+
     public function isStandard(): bool
     {
-        if ($this->subscription_plan !== 'standard') {
+        if (empty($this->subscription_plan) || $this->subscription_plan === 'free') {
             return false;
         }
 
@@ -143,15 +148,29 @@ class User extends Authenticatable
         return true;
     }
 
+    public function getVipLabel(): string
+    {
+        if (!$this->isStandard()) {
+            return 'Miễn phí';
+        }
+
+        return match ($this->subscription_plan) {
+            'vip_week' => 'Kỳ Thủ VIP (Tuần)',
+            'vip_month' => 'Kỳ Thủ VIP (Tháng)',
+            'standard' => 'Kỳ Thủ Hoàng Gia',
+            default => 'Kỳ Thủ VIP',
+        };
+    }
+
     public function hasAdsRemoved(): bool
     {
         return $this->ads_removed || $this->isStandard();
     }
 
-    public function activateStandard(?Carbon $endsAt = null): void
+    public function activateStandard(?Carbon $endsAt = null, string $plan = 'standard'): void
     {
         $this->forceFill([
-            'subscription_plan' => 'standard',
+            'subscription_plan' => $plan,
             'subscription_started_at' => now(),
             'subscription_ends_at' => $endsAt,
             'ads_removed' => true,

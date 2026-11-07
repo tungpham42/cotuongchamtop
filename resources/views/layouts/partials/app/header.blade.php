@@ -74,6 +74,12 @@
             <a class="showPromotion" target="_blank" href="https://blog.cotuong.top"><i class="far fa-blog"></i> {{ __("Blog") }}</a>
           </li>
 
+          <li class="nav-item">
+            <a class="nav-link showPromotion px-2 py-1 text-gold font-weight-bold" href="{{ localized_url('app.vip') }}" style="color: #d4af37 !important;">
+              <i class="fas fa-crown text-warning"></i> VIP
+            </a>
+          </li>
+
           @guest
             @if (Route::has('login'))
               <li class="nav-item ml-2">
@@ -88,10 +94,10 @@
 
               <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow" aria-labelledby="navbarDropdown">
                 @if (Auth::user()->isStandard())
-                  <span class="dropdown-item text-success"><i class="far fa-crown"></i> {{ __("Standard (ẩn quảng cáo)") }}</span>
+                  <span class="dropdown-item text-success"><i class="fas fa-crown text-warning"></i> {{ Auth::user()->getVipLabel() }}</span>
                 @else
-                  <a href="{{ localized_url('app.profile') }}#standard-plan" class="showPromotion dropdown-item">
-                    <i class="far fa-crown"></i> {{ __("Nâng cấp Standard") }}
+                  <a href="{{ localized_url('app.vip') }}" class="showPromotion dropdown-item text-warning font-weight-bold">
+                    <i class="fas fa-crown text-warning"></i> {{ __("Nâng cấp VIP") }}
                   </a>
                 @endif
                 <div class="dropdown-divider"></div>
