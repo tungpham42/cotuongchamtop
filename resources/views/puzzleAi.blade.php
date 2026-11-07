@@ -156,13 +156,23 @@
                     body: JSON.stringify({
                         fen: game.fen(),
                         timeout: 700,
-                        level: {{ $level }}
+                        level: {{ $level ?? 3 }}
                     })
                 });
 
                 const data = await response.json();
                 if (!response.ok || !data.success || !data.hint_move) {
-                    throw new Error(data.error || 'Hint unavailable');
+                    if (data.error === 'free_limit_reached' && typeof bootbox !== 'undefined') {
+                        bootbox.dialog({
+                            title: '<i class="fas fa-crown text-warning"></i> {{ __("Nâng cấp Kỳ Thủ VIP") }}',
+                            message: '<div class="text-center py-2"><p>' + (data.message || '{{ __("Bạn đã dùng hết lượt gợi ý miễn phí hôm nay.") }}') + '</p><a href="{{ localized_url("app.vip") ?? "/vip" }}" class="btn btn-warning font-weight-bold text-dark mt-2 shadow" style="border-radius: 20px;"><i class="fas fa-bolt"></i> {{ __("Nâng cấp VIP (Chỉ từ 19k)") }}</a></div>',
+                            size: 'small',
+                            backdrop: true,
+                            centerVertical: true,
+                        });
+                        return;
+                    }
+                    throw new Error(data.message || data.error || 'Hint unavailable');
                 }
 
                 // Do not apply a response belonging to an older board position.
@@ -202,7 +212,6 @@
         async function makeBestMove() {
             if (isComputerThinking || game.game_over()) return;
 
-            clearHint();
             isComputerThinking = true;
             $('#game-status').html('{{ __("Đang suy nghĩ") }}... <i class="fas fa-spinner fa-spin"></i>');
 
@@ -222,6 +231,7 @@
                 const data = await response.json();
 
                 if (data.success && data.best_move) {
+                    clearHint();
                     const move = convertEngineMoveToXiangqiJS(data.best_move);
 
                     if (move) {
@@ -334,7 +344,6 @@
         }
 
         function onSnapEnd () {
-            clearHint();
             board.position(game.fen());
             playMoveResultSound();
             updateStatus();
@@ -373,7 +382,10 @@
                 $('#game-status').removeClass('red').addClass('black');
             }
 
-            // Hint only suggests the player's (Red's) next move.
+            // Hint only ever suggests the player's (Red's) own next move —
+            // disable it whenever it isn't Red's turn (i.e. while the AI
+            // is about to move or thinking), so the button never invites
+            // a click that fetchHint() would just refuse anyway.
             if ($('#hint-btn').length) {
                 if (game.turn() === 'r' && !game.game_over()) {
                     $('#hint-btn').removeClass('disabled').attr('aria-disabled', false);
@@ -466,13 +478,14 @@
 
         $('#resign').on('click', function() {
             clearHint();
-            if (isComputerThinking || isHintPending) return;
+            if (isComputerThinking || (typeof isHintPending !== 'undefined' && isHintPending)) return;
             game.load(game.fen() + ' resign');
             updateStatus();
         });
 
         $('#undo').on('click', function(){
-            if (isComputerThinking) return;
+            clearHint();
+            if (isComputerThinking || (typeof isHintPending !== 'undefined' && isHintPending)) return;
 
             if (game.history().length >= 2) {
                 game.undo();
@@ -489,13 +502,14 @@
         });
 
         $('#switch').on('click', function() {
-            if (isComputerThinking) return;
+            clearHint();
+            if (isComputerThinking || (typeof isHintPending !== 'undefined' && isHintPending)) return;
             board.flip();
         });
 
         $('#reset').on('click', function() {
             clearHint();
-            if (isHintPending) return;
+            if (typeof isHintPending !== 'undefined' && isHintPending) return;
             isComputerThinking = false;
             resignAlertShown = false;
             hasMoved = false;
@@ -544,16 +558,6 @@
                 background-color: #ffeb3b !important;
                 opacity: 0.6;
             }
-        `;
-        document.head.appendChild(style);
-
-        @if(isset($computerStarts) && $computerStarts)
-            $(document).ready(function() {
-                setTimeout(makeBestMove, 1000);
-            });
-        @endif
-        const hintStyle = document.createElement('style');
-        hintStyle.textContent = `
             #ban-co .hint-from {
                 background: radial-gradient(circle, rgba(52, 211, 153, 0.65) 0%, rgba(16, 185, 129, 0.4) 100%) !important;
                 box-shadow: inset 0 0 0 3px #059669, 0 4px 10px rgba(16, 185, 129, 0.35) !important;
@@ -565,8 +569,13 @@
                 border-radius: 8px;
             }
         `;
-        document.head.appendChild(hintStyle);
+        document.head.appendChild(style);
 
+        @if(isset($computerStarts) && $computerStarts)
+            $(document).ready(function() {
+                setTimeout(makeBestMove, 1000);
+            });
+        @endif
     </script>
     @include('layouts.partials.players')
     @include('layouts.partials.userPuzzles')

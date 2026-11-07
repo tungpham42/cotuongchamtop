@@ -187,7 +187,8 @@
                             title: '<i class="fas fa-crown text-warning"></i> {{ __("Nâng cấp Kỳ Thủ VIP") }}',
                             message: '<div class="text-center py-2"><p>' + (data.message || '{{ __("Bạn đã dùng hết lượt gợi ý miễn phí hôm nay.") }}') + '</p><a href="{{ localized_url("app.vip") ?? "/vip" }}" class="btn btn-warning font-weight-bold text-dark mt-2 shadow" style="border-radius: 20px;"><i class="fas fa-bolt"></i> {{ __("Nâng cấp VIP (Chỉ từ 19k)") }}</a></div>',
                             size: 'small',
-                            backdrop: true
+                            backdrop: true,
+                            centerVertical: true,
                         });
                         return;
                     }
