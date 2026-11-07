@@ -106,7 +106,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <nav class="navbar py-0">
                 <ul class="nav navbar-nav align-items-center">
                     <li class="nav-item">
-                        <a class="home showPromotion" href="{{ $homeUrl }}"><i class="far fa-home-lg-alt"></i> {{ __("Trang chủ") }}</a>
+                        <a class="home showPromotion" href="{{ $homeUrl }}"><i class="far fa-home-lg-alt"></i></a>
                     </li>
 
                     <li class="dropdown">
@@ -130,11 +130,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                 @php $itemUrl = localized_url($key); @endphp
                                 <a class="{{ $extraClass ? $extraClass . ' ' : '' }}showPromotion dropdown-item{{ $activeClass($itemUrl) }}" href="{{ $itemUrl }}"><i class="{{ $icon }}"></i> {{ __($label) }}</a>
                             @endforeach
+                            <a class="showPromotion dropdown-item" target="_blank" href="https://blog.cotuong.top"><i class="far fa-blog"></i> {{ __("Blog") }}</a>
                         </div>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="showPromotion" target="_blank" href="https://blog.cotuong.top"><i class="far fa-blog"></i> {{ __("Blog") }}</a>
                     </li>
 
                     <li class="nav-item">
