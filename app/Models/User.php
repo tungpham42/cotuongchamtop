@@ -169,10 +169,31 @@ class User extends Authenticatable
 
     public function activateStandard(?Carbon $endsAt = null, string $plan = 'standard'): void
     {
+        // Gói vĩnh viễn (Hoàng Gia)
+        if ($plan === 'standard' || $endsAt === null) {
+            $this->forceFill([
+                'subscription_plan' => 'standard',
+                'subscription_started_at' => $this->subscription_started_at ?: now(),
+                'subscription_ends_at' => null,
+                'ads_removed' => true,
+            ])->save();
+            return;
+        }
+
+        // Gia hạn gói có thời hạn (cộng dồn ngày nếu còn hạn)
+        $plansConfig = config('payos.plans', []);
+        $daysToAdd = $plansConfig[$plan]['days'] ?? 30;
+
+        if ($this->subscription_ends_at instanceof Carbon && $this->subscription_ends_at->isFuture()) {
+            $newEndsAt = $this->subscription_ends_at->copy()->addDays($daysToAdd);
+        } else {
+            $newEndsAt = Carbon::now()->addDays($daysToAdd);
+        }
+
         $this->forceFill([
             'subscription_plan' => $plan,
-            'subscription_started_at' => now(),
-            'subscription_ends_at' => $endsAt,
+            'subscription_started_at' => $this->subscription_started_at ?: now(),
+            'subscription_ends_at' => $newEndsAt,
             'ads_removed' => true,
         ])->save();
     }

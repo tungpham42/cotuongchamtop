@@ -118,6 +118,28 @@ class XiangqiController extends Controller
      */
     public function getHintMove(Request $request): JsonResponse
     {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'error' => 'require_login',
+                'message' => __('Vui lòng đăng nhập để xem gợi ý nước đi.'),
+            ], 401);
+        }
+
+        if (!$user->isVip()) {
+            $usageKey = 'hint_usage_' . $user->id . '_' . date('Ymd');
+            $usedCount = (int) \Illuminate\Support\Facades\Cache::get($usageKey, 0);
+            if ($usedCount >= 3) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'free_limit_reached',
+                    'message' => __('Bạn đã dùng hết 3 lượt gợi ý miễn phí hôm nay. Vui lòng nâng cấp VIP để sử dụng không giới hạn!'),
+                ], 403);
+            }
+            \Illuminate\Support\Facades\Cache::put($usageKey, $usedCount + 1, now()->endOfDay());
+        }
+
         $request->validate([
             'fen' => 'required|string',
             'timeout' => 'sometimes|integer|min:100|max:10000',

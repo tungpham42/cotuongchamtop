@@ -75,6 +75,12 @@
           </li>
 
           <li class="nav-item">
+            <a class="nav-link showPromotion px-2 py-1 text-danger font-weight-bold" href="javascript:void(0);" onclick="var btn = document.getElementById('ai-chat-btn'); if(btn) { btn.click(); } else { window.location.href='{{ localized_url('ai.normal') }}'; }" style="color: #ff5252 !important;" title="{{ __('Trợ lý Cờ Tướng AI') }}">
+              <i class="fas fa-robot text-danger"></i> AI Coach
+            </a>
+          </li>
+
+          <li class="nav-item">
             <a class="nav-link showPromotion px-2 py-1 text-gold font-weight-bold" href="{{ localized_url('app.vip') }}" style="color: #d4af37 !important;">
               <i class="fas fa-crown text-warning"></i> VIP
             </a>

@@ -21,12 +21,12 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     ]);
 });
 
-Route::controller(ChessAnalysisController::class)->prefix('chess')->group(function () {
+Route::middleware('web')->controller(ChessAnalysisController::class)->prefix('chess')->group(function () {
     Route::post('/analyze', 'analyze');
     Route::post('/chat', 'chat');
 });
 
-Route::controller(XiangqiController::class)->prefix('xiangqi')->group(function () {
+Route::middleware('web')->controller(XiangqiController::class)->prefix('xiangqi')->group(function () {
     Route::post('/best-move', 'getBestMove');
     Route::post('/hint', 'getHintMove');
     Route::post('/analyze', 'analyzePosition');

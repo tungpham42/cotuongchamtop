@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Services\GroqChessService;
 use App\Services\XiangqiEngineService; // [NEW] Import Engine Service
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -23,6 +25,28 @@ class ChessAnalysisController extends Controller
 
     public function analyze(Request $request)
     {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'require_login' => true,
+                'reply' => __('Vui lòng đăng nhập để sử dụng tính năng phân tích thế cờ.'),
+            ], 401);
+        }
+
+        if (!$user->isVip()) {
+            $usageKey = 'ai_coach_usage_' . $user->id . '_' . date('Ymd');
+            $usedCount = (int) Cache::get($usageKey, 0);
+            if ($usedCount >= 2) {
+                return response()->json([
+                    'success' => false,
+                    'require_vip' => true,
+                    'reply' => __('Bạn đã dùng hết lượt trải nghiệm phân tích AI miễn phí hôm nay. Vui lòng nâng cấp VIP để tiếp tục không giới hạn!'),
+                ], 403);
+            }
+            Cache::put($usageKey, $usedCount + 1, now()->endOfDay());
+        }
+
         $request->validate([
             'fen' => 'required|string',
         ]);
@@ -90,6 +114,28 @@ class ChessAnalysisController extends Controller
 
     public function chat(Request $request)
     {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'require_login' => true,
+                'reply' => __('Vui lòng đăng nhập để sử dụng Trợ lý AI Coach.'),
+            ], 401);
+        }
+
+        if (!$user->isVip()) {
+            $usageKey = 'ai_coach_usage_' . $user->id . '_' . date('Ymd');
+            $usedCount = (int) Cache::get($usageKey, 0);
+            if ($usedCount >= 2) {
+                return response()->json([
+                    'success' => false,
+                    'require_vip' => true,
+                    'reply' => __('Bạn đã dùng hết 2 lượt trải nghiệm AI Coach miễn phí hôm nay. Vui lòng nâng cấp VIP để tiếp tục sử dụng không giới hạn!'),
+                ], 403);
+            }
+            Cache::put($usageKey, $usedCount + 1, now()->endOfDay());
+        }
+
         $request->validate([
             'fen' => 'required|string',
             'message' => 'required|string',

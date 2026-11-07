@@ -19,6 +19,20 @@ class PayOSController extends Controller
         $user = $request->user();
 
         $planKey = $request->input('plan', 'vip_month');
+
+        // Chặn nếu người dùng đang có gói cao hơn
+        if ($user && $user->isStandard()) {
+            $tierWeight = ['vip_week' => 1, 'vip_month' => 2, 'standard' => 3];
+            $currentWeight = $tierWeight[$user->subscription_plan] ?? 0;
+            $targetWeight = $tierWeight[$planKey] ?? 1;
+
+            if ($targetWeight < $currentWeight) {
+                return redirect()->back()->withErrors([
+                    'message' => 'Bạn đang sử dụng gói cao hơn, không thể mua gói này.',
+                ]);
+            }
+        }
+
         $plans = config('payos.plans', []);
         $planConfig = $plans[$planKey] ?? $plans['standard'] ?? [
             'amount' => config('payos.standard_amount', 100000),

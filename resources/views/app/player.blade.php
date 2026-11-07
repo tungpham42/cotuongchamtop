@@ -88,13 +88,10 @@
                             @endif
                         </div>
                         @if (!auth()->user()->isStandard())
-                        <form method="POST" action="{{ route('payos.standard') }}" class="mb-0">
-                            @csrf
-                            <button type="submit" class="btn btn-danger pulse-red">
-                                <i class="far fa-crown"></i>
-                                {{ __("Nâng cấp Standard -") }} {{ number_format(config('payos.standard_amount', 100000), 0, ',', '.') }}đ
-                            </button>
-                        </form>
+                        <a href="{{ localized_url('app.vip') ?? '/vip' }}" class="btn btn-warning font-weight-bold text-dark shadow pulse-gold" style="border-radius: 20px;">
+                            <i class="fas fa-crown"></i>
+                            {{ __("Nâng cấp VIP (Chỉ từ 19k)") }}
+                        </a>
                         @else
                         <span class="badge badge-success p-2" style="background: linear-gradient(to bottom, #d4af37, #b89020); color: #0b0c10;">Ads Free</span>
                         @endif

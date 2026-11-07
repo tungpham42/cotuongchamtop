@@ -81,13 +81,52 @@
                         </ul>
 
                         @auth
-                            <form method="POST" action="{{ route('payos.standard') }}" class="mb-0">
-                                @csrf
-                                <input type="hidden" name="plan" value="{{ $key }}">
-                                <button type="submit" class="btn btn-block btn-lg font-weight-bold shadow {{ $isPopular ? 'btn-warning text-dark pulse-gold' : 'btn-danger' }}" style="border-radius: 30px;">
-                                    <i class="fas fa-bolt"></i> {{ __('Nâng cấp ngay') }}
+                            @php
+                                $user = auth()->user();
+                                $userPlan = $user->subscription_plan;
+                                $isUserVip = $user->isStandard();
+
+                                $tierWeight = [
+                                    'free' => 0,
+                                    'vip_week' => 1,
+                                    'vip_month' => 2,
+                                    'standard' => 3,
+                                ];
+
+                                $currentWeight = ($isUserVip && isset($tierWeight[$userPlan])) ? $tierWeight[$userPlan] : 0;
+                                $planWeight = $tierWeight[$key] ?? 1;
+
+                                $isCurrentPlan = ($isUserVip && $userPlan === $key);
+                                $isLowerPlan = ($isUserVip && $planWeight < $currentWeight);
+                            @endphp
+
+                            @if($isCurrentPlan)
+                                @if($key === 'standard')
+                                    <button class="btn btn-block btn-lg btn-success font-weight-bold shadow disabled" disabled style="border-radius: 30px;">
+                                        <i class="fas fa-check-circle"></i> {{ __('Gói của bạn (Vĩnh viễn)') }}
+                                    </button>
+                                @else
+                                    <form method="POST" action="{{ route('payos.standard') }}" class="mb-0">
+                                        @csrf
+                                        <input type="hidden" name="plan" value="{{ $key }}">
+                                        <button type="submit" class="btn btn-block btn-lg btn-success font-weight-bold shadow" style="border-radius: 30px;">
+                                            <i class="fas fa-sync-alt"></i> {{ __('Gia hạn thêm') }} {{ $key === 'vip_week' ? '7 ' . __('ngày') : '30 ' . __('ngày') }}
+                                        </button>
+                                    </form>
+                                @endif
+                            @elseif($isLowerPlan)
+                                <button class="btn btn-block btn-lg btn-secondary font-weight-bold disabled" disabled style="border-radius: 30px; opacity: 0.6;">
+                                    <i class="fas fa-lock"></i> {{ __('Đang dùng gói cao hơn') }}
                                 </button>
-                            </form>
+                            @else
+                                <form method="POST" action="{{ route('payos.standard') }}" class="mb-0">
+                                    @csrf
+                                    <input type="hidden" name="plan" value="{{ $key }}">
+                                    <button type="submit" class="btn btn-block btn-lg font-weight-bold shadow {{ $isPopular ? 'btn-warning text-dark pulse-gold' : 'btn-danger' }}" style="border-radius: 30px;">
+                                        <i class="fas fa-bolt"></i> {{ $isUserVip ? __('Nâng cấp lên gói này') : __('Nâng cấp ngay') }}
+                                    </button>
+                                </form>
+                            @endif
                         @else
                             <a href="{{ localized_url('login') }}?redirect={{ urlencode(url()->current()) }}" class="btn btn-block btn-lg btn-outline-warning font-weight-bold" style="border-radius: 30px;">
                                 <i class="fas fa-sign-in"></i> {{ __('Đăng nhập để nâng cấp') }}
