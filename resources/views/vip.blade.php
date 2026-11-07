@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('og_image', asset('img/xiangqi_vip.jpg'))
+
 @section('content')
 <div class="container py-4">
     {{-- Hero Section --}}
