@@ -394,9 +394,13 @@ body.dashboard header.site-header a.dashboard,
 body.login header.site-header a.login,
 body.news header.site-header a.news,
 body.contact header.site-header a.contact,
+body.vip header.site-header a.vip,
 body.dashboard
     header.site-header
     a:has(+ div.dropdown-menu > a.dashboard.dropdown-item.active),
+body.vip
+    header.site-header
+    a:has(+ div.dropdown-menu > a.vip.dropdown-item.active),
 body.resource
     header.site-header
     a:has(+ div.dropdown-menu > a.resource.dropdown-item.active),
@@ -418,6 +422,10 @@ body.dashboard header.site-header a.dashboard:before,
 body.login header.site-header a.login:before,
 body.news header.site-header a.news:before,
 body.contact header.site-header a.contact:before,
+body.vip header.site-header a.vip:before,
+body.vip
+    header.site-header
+    a:has(+ div.dropdown-menu > a.vip.dropdown-item.active):before,
 body.dashboard
     header.site-header
     a:has(+ div.dropdown-menu > a.dashboard.dropdown-item.active):before,

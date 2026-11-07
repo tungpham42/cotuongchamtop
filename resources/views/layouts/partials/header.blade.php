@@ -139,7 +139,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             <i class="fas fa-crown text-warning"></i> VIP
                         </a>
                         <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow" aria-labelledby="vipDropdown">
-                            <a class="showPromotion dropdown-item{{ $activeClass(localized_url('app.vip')) }}" href="{{ localized_url('app.vip') }}">
+                            <a class="showPromotion vip dropdown-item{{ $activeClass(localized_url('app.vip')) }}" href="{{ localized_url('app.vip') }}">
                                 <i class="fas fa-crown text-warning"></i> {{ __("VIP") }}
                             </a>
                             <a class="showPromotion dropdown-item text-danger font-weight-bold" href="javascript:void(0);" onclick="var btn = document.getElementById('ai-chat-btn'); if(btn) { btn.click(); } else { window.location.href='{{ localized_url('ai.normal') }}'; }" title="{{ __('Trợ lý Cờ Tướng AI') }}">

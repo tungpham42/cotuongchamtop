@@ -806,7 +806,7 @@ $localizedAppPages = [
             'ru' => 'VIP Обновление - Королевский Мастер',
         ],
         'data' => fn() => [
-            'bodyClass' => 'vip-pricing dashboard',
+            'bodyClass' => 'vip-pricing vip',
             'plans' => config('payos.plans', []),
             'user' => Auth::user(),
         ]
