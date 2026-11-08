@@ -175,3 +175,5 @@ storage/app/google/ga4-service-account.json
 storage/oauth-private.key
 storage/oauth-public.key
 storage/*.key
+.phpunit.result.cache
+select_testers_save.js

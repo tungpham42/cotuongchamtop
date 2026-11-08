@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PayosPayment;
+use App\Services\PayosNotificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -80,7 +81,7 @@ class PayOSController extends Controller
             ]);
         }
 
-        PayosPayment::create([
+        $payment = PayosPayment::create([
             'user_id' => $user->id,
             'order_code' => $orderCode,
             'amount' => $amount,
@@ -94,6 +95,8 @@ class PayOSController extends Controller
                 'qr_code' => $link->qrCode ?? null,
             ],
         ]);
+
+        app(PayosNotificationService::class)->notify($payment, PayosPayment::STATUS_PENDING);
 
         return redirect()->away($link->checkoutUrl);
     }
@@ -142,9 +145,15 @@ class PayOSController extends Controller
         $orderCode = $request->get('orderCode');
 
         if ($orderCode) {
-            PayosPayment::where('order_code', $orderCode)->update([
-                'status' => PayosPayment::STATUS_CANCELLED,
-            ]);
+            $payment = PayosPayment::where('order_code', $orderCode)->first();
+            if ($payment) {
+                if ($payment->status !== PayosPayment::STATUS_CANCELLED) {
+                    $payment->update([
+                        'status' => PayosPayment::STATUS_CANCELLED,
+                    ]);
+                }
+                app(PayosNotificationService::class)->notify($payment, PayosPayment::STATUS_CANCELLED);
+            }
         }
 
         return redirect(localized_url('app.vip') ?? '/vip')->withErrors([
@@ -190,6 +199,8 @@ class PayOSController extends Controller
                     'reason' => 'underpaid',
                 ]),
             ]);
+
+            app(PayosNotificationService::class)->notify($payment, PayosPayment::STATUS_FAILED);
 
             return response()->json(['message' => 'Amount mismatch'], 400);
         }
@@ -244,10 +255,14 @@ class PayOSController extends Controller
                     ['sync' => $paymentLink]
                 );
             } elseif (in_array($paymentLink->status, [PaymentLinkStatus::CANCELLED, PaymentLinkStatus::EXPIRED, PaymentLinkStatus::FAILED], true)) {
+                $isNewCancellation = ($payment->status !== PayosPayment::STATUS_CANCELLED);
                 $payment->update([
                     'status' => PayosPayment::STATUS_CANCELLED,
                     'meta' => $this->mergeMeta($payment, ['sync' => $paymentLink]),
                 ]);
+                if ($isNewCancellation) {
+                    app(PayosNotificationService::class)->notify($payment, PayosPayment::STATUS_CANCELLED);
+                }
             }
         } catch (\Throwable $e) {
             Log::error('PayOS sync payment failed', [
@@ -278,6 +293,8 @@ class PayOSController extends Controller
                 : null,
             $payment->meta['plan'] ?? 'standard'
         );
+
+        app(PayosNotificationService::class)->notify($payment, PayosPayment::STATUS_PAID);
     }
 
     private function mergeMeta(PayosPayment $payment, array $newMeta): array

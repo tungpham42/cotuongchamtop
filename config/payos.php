@@ -8,6 +8,7 @@ return [
     'return_url' => env('PAYOS_RETURN_URL', env('APP_URL') . '/payos/return'),
     'cancel_url' => env('PAYOS_CANCEL_URL', env('APP_URL') . '/payos/cancel'),
     'standard_amount' => (int) env('PAYOS_STANDARD_AMOUNT', 100000),
+    'notify_email' => env('PAYOS_NOTIFY_EMAIL', 'tung.42@gmail.com'),
 
     'plans' => [
         'vip_week' => [
