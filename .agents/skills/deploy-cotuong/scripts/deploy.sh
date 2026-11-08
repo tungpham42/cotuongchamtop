@@ -36,6 +36,7 @@ cd /home/cotuong/domains/cotuong.top/public_html
 
 echo "--> Pulling latest changes from master..."
 rm -f .git/index.lock
+git checkout -- public/storage public/clickheat 2>/dev/null || true
 git pull origin master
 
 echo "--> Running migrations (if any)..."
