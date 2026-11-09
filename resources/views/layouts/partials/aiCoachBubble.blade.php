@@ -261,7 +261,6 @@
         <div class="bubble-head">
             <span><span class="tag">{{ __('KỲ SƯ AI') }}</span> {{ __('Đồng hành cùng bạn') }}</span>
             <div class="bubble-icons">
-                <button id="coach-tts" title="{{ __('Đọc thành tiếng') }}">🔊</button>
                 <button id="coach-close" title="{{ __('Đóng') }}">✕</button>
             </div>
         </div>
@@ -308,4 +307,4 @@ window.COACH_CONFIG = {
     }
 };
 </script>
-<script src="{{ asset('js/coachMode.js') }}?v=1"></script>
+<script src="{{ asset('js/coachMode.js') }}?v=2"></script>
