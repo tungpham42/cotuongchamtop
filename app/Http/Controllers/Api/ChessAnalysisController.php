@@ -191,4 +191,92 @@ class ChessAnalysisController extends Controller
             'debug_move' => $engineBestMove // (Optional) Để debug xem có lấy được move không
         ]);
     }
+
+    /**
+     * [NEW] Endpoint chính cho "Kỳ Sư Đồng Hành" — trả về tip ngắn, kèm nước đi.
+     */
+    public function coach(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'require_login' => true,
+                'reply' => __('Vui lòng đăng nhập để gọi Kỳ Sư AI.'),
+            ], 401);
+        }
+
+        $isVip = $user->isVip();
+        $usageKey = 'ai_coach_usage_' . $user->id . '_' . date('Ymd');
+        $usedCount = (int) Cache::get($usageKey, 0);
+
+        if (!$isVip && $usedCount >= 2) {
+            return response()->json([
+                'success' => false,
+                'require_vip' => true,
+                'reply' => __('Bạn đã dùng hết 2 lượt miễn phí hôm nay. Nâng cấp VIP để Kỳ Sư đồng hành không giới hạn!'),
+            ], 403);
+        }
+
+        $request->validate([
+            'fen' => 'required|string',
+            'intent' => 'required|in:hint,threats,eval',
+        ]);
+
+        $fen    = $request->input('fen');
+        $intent = $request->input('intent');
+
+        // 1) Với "hint" và "threats" → lấy nước đi từ engine
+        $engineBestMove = null;
+        $engineData = null;
+        if (in_array($intent, ['hint', 'threats'])) {
+            try {
+                if ($this->xiangqiService->isReady()) {
+                    $engineData = $this->xiangqiService->analyzePosition($fen, 15);
+                    $engineBestMove = $engineData['best_move'] ?? null;
+                }
+            } catch (\Throwable $e) {
+                Log::warning('Coach engine error: ' . $e->getMessage());
+            }
+        }
+
+        // 2) Gọi Groq với prompt ngắn, dành riêng cho intent
+        $reply = null;
+        try {
+            $reply = $this->groqService->quickCoach($fen, $intent, $engineBestMove);
+        } catch (\Throwable $e) {
+            Log::warning('Coach AI error: ' . $e->getMessage());
+        }
+
+        // 3) Fallback nếu AI fail
+        if (empty($reply)) {
+            if ($intent === 'hint' && $engineBestMove) {
+                $reply = __('<strong>Nước hay:</strong> :move. Đây là nước được engine đánh giá cao nhất ở độ sâu 15.', ['move' => $engineBestMove]);
+            } elseif ($intent === 'threats') {
+                $reply = __('Hiện tại tôi chưa thấy đe dọa trực tiếp nào đáng kể. Bạn có thể yên tâm triển khai quân.');
+            } else {
+                $score = $engineData['score'] ?? 0;
+                $reply = $score > 50
+                    ? __('<strong>Đỏ đang ưu thế</strong> khoảng :s điểm.', ['s' => number_format($score / 100, 1)])
+                    : ($score < -50
+                        ? __('<strong>Đen đang ưu thế</strong> khoảng :s điểm.', ['s' => number_format(abs($score) / 100, 1)])
+                        : __('<strong>Thế cờ cân bằng</strong> — cả hai bên đều có cơ hội.'));
+            }
+        }
+
+        // 4) Trừ lượt (sau khi đã trả lời thành công)
+        $remaining = -1;
+        if (!$isVip) {
+            $usedCount++;
+            Cache::put($usageKey, $usedCount, now()->endOfDay());
+            $remaining = max(0, 2 - $usedCount);
+        }
+
+        return response()->json([
+            'success'   => true,
+            'reply'     => $reply,
+            'move'      => $engineBestMove, // để JS vẽ mũi tên
+            'remaining' => $remaining,
+        ]);
+    }
 }

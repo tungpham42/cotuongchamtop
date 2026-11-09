@@ -233,4 +233,40 @@ class GroqChessService
 
         return $result ?? $this->t('busy_error');
     }
+
+    /**
+     * [NEW] Coach nhanh: trả về tip ngắn 1-3 câu, cá nhân hoá theo intent.
+     * Không dùng JSON mode — trả plain text để hiển thị trực tiếp trong bubble.
+     */
+    public function quickCoach(string $fen, string $intent, ?string $engineBestMove = null): ?string
+    {
+        $visualBoard = $this->fenToVisualBoard($fen);
+
+        $engineContext = $engineBestMove
+            ? "\n" . $this->t('engine_chat', ['move' => $engineBestMove])
+            : '';
+
+        $intentInstruction = match ($intent) {
+            'hint'    => $this->t('coach_intent_hint'),
+            'threats' => $this->t('coach_intent_threats'),
+            'eval'    => $this->t('coach_intent_eval'),
+            default   => $this->t('coach_intent_eval'),
+        };
+
+        $systemPrompt = $this->commonRules() . "\n\n" . $this->t('coach_system', [
+            'fen'          => $fen,
+            'visual_board' => $visualBoard,
+            'engine_context' => $engineContext,
+            'intent'       => $intentInstruction,
+        ]);
+
+        $userPrompt = $this->t('coach_user', ['intent' => $intent]);
+
+        $messages = [
+            ['role' => 'system', 'content' => $systemPrompt],
+            ['role' => 'user',   'content' => $userPrompt],
+        ];
+
+        return $this->callWithFallback($messages, 0, false, 0.85);
+    }
 }
