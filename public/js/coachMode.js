@@ -1,7 +1,6 @@
 /* Kỳ Sư Đồng Hành — Live Coach Mode
  * Thay thế hoàn toàn aiChatWidget.
  * Tương tác: mascot → vòng nút → speech bubble + SVG arrow trên bàn cờ.
- * Bubble chỉ đóng khi bấm nút đóng (#coach-close).
  */
 (function () {
     "use strict";
@@ -17,16 +16,22 @@
     if (!mascot || !bubble) return;
 
     let ttsEnabled = false;
+    let bubbleTimer = null;
     let lastIntent = null;
 
     /* ============ 1. Mở / đóng vòng nút ============ */
     mascot.addEventListener("click", () => {
-        // Bubble đang mở → chỉ đóng bằng nút ✕, bỏ qua click mascot
-        if (bubble.classList.contains("show")) return;
-
-        actions.classList.toggle("open");
-        if (!actions.classList.contains("open")) {
-            openBubble(CFG.i18n.greeting, "info");
+        if (bubble.classList.contains("show")) {
+            hideBubble();
+        } else {
+            actions.classList.toggle("open");
+            if (
+                !actions.classList.contains("open") &&
+                !bubble.classList.contains("show")
+            ) {
+                openBubble(CFG.i18n.greeting, "info");
+                autoHide(5000);
+            }
         }
     });
 
@@ -131,8 +136,9 @@
             if (data.move) drawArrow(data.move);
             else clearArrow();
 
-            // Hiện nội dung (không tự ẩn)
+            // Hiện nội dung
             openBubble(data.reply, intent, buildFollowups(intent));
+            autoHide(intent === "eval" ? 9000 : 11000);
             speak(stripHtml(data.reply));
         } catch (err) {
             console.error(err);
@@ -164,6 +170,11 @@
 
     /* ============ 6. Bubble UI ============ */
     function openBubble(html, type = "info", actionsList = []) {
+        if (bubbleTimer) {
+            clearTimeout(bubbleTimer);
+            bubbleTimer = null;
+        }
+
         const icon =
             {
                 hint: "💡",
@@ -190,6 +201,14 @@
 
     function hideBubble() {
         bubble.classList.remove("show");
+        if (bubbleTimer) {
+            clearTimeout(bubbleTimer);
+            bubbleTimer = null;
+        }
+    }
+
+    function autoHide(ms) {
+        bubbleTimer = setTimeout(hideBubble, ms);
     }
 
     /* ============ 7. SVG arrow overlay ============ */
@@ -256,11 +275,10 @@
         const [x1, y1] = fileRankToXY(from.file, from.rank);
         const [x2, y2] = fileRankToXY(to.file, to.rank);
 
-        // Đường mũi tên (rút gọn mỗi đầu để không đè lên quân)
+        // Đường mũi tên (rút gọn 15% mỗi đầu để không đè lên quân)
         const dx = x2 - x1,
             dy = y2 - y1;
         const len = Math.hypot(dx, dy);
-        if (!len) return;
         const ux = dx / len,
             uy = dy / len;
         const sx = x1 + ux * 30,
@@ -297,7 +315,7 @@
         circle.setAttribute("stroke-dasharray", "8 6");
         g.appendChild(circle);
 
-        // Auto-xóa mũi tên sau 15s (chỉ mũi tên, không ảnh hưởng bubble)
+        // Auto-xóa sau 15s
         clearTimeout(drawArrow._t);
         drawArrow._t = setTimeout(clearArrow, 15000);
     }
@@ -318,15 +336,8 @@
 
     /* ============ 8. TTS ============ */
     const TTS_LANGS = {
-        vi: "vi-VN",
-        en: "en-US",
-        de: "de-DE",
-        es: "es-ES",
-        fr: "fr-FR",
-        ja: "ja-JP",
-        ko: "ko-KR",
-        ru: "ru-RU",
-        zh: "zh-CN",
+        vi: "vi-VN", en: "en-US", de: "de-DE", es: "es-ES", fr: "fr-FR",
+        ja: "ja-JP", ko: "ko-KR", ru: "ru-RU", zh: "zh-CN",
     };
     function speak(text) {
         if (!ttsEnabled || !("speechSynthesis" in window) || !text) return;
@@ -347,6 +358,7 @@
     if (CFG.isAuth) {
         setTimeout(() => {
             openBubble(CFG.i18n.greeting, "info");
+            autoHide(5000);
         }, 1200);
     }
 })();
