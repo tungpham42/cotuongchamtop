@@ -385,7 +385,7 @@
         </div>
         {{-- @include('layouts.partials.fb') --}}
     </main>
-    @include('layouts.partials.aiCoachBubble')
+    @include('layouts.partials.aiChatWidget')
     @include('layouts.partials.footer')
     @include('common.contactBtn')
     @include('common.onlineCounter')
