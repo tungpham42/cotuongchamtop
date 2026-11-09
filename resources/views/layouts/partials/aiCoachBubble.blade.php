@@ -259,8 +259,9 @@
     {{-- Speech bubble --}}
     <div id="coach-bubble" role="status" aria-live="polite">
         <div class="bubble-head">
-            <span></span>
+            <span><span class="tag">{{ __('KỲ SƯ AI') }}</span> {{ __('Đồng hành cùng bạn') }}</span>
             <div class="bubble-icons">
+                <button id="coach-tts" title="{{ __('Đọc thành tiếng') }}">🔊</button>
                 <button id="coach-close" title="{{ __('Đóng') }}">✕</button>
             </div>
         </div>
@@ -290,12 +291,20 @@ window.COACH_CONFIG = {
     vipUrl: '{{ localized_url("app.vip") ?? "/vip" }}',
     remaining: {{ auth()->check() && !auth()->user()->isVip() ? max(0, 2 - (int) \Illuminate\Support\Facades\Cache::get('ai_coach_usage_' . auth()->id() . '_' . date('Ymd'), 0)) : -1 }},
     i18n: {
+        greeting:  @json(__('Chào bạn! Bấm vào các nút bên cạnh để tôi phân tích thế cờ nhé.')),
+        thinking:  @json(__('Để tôi xem...')),
         loginFirst: @json(__('Bạn cần đăng nhập để dùng Kỳ Sư AI.')),
         upgradeVip: @json(__('Bạn đã dùng hết lượt miễn phí hôm nay. Nâng cấp VIP để dùng không giới hạn!')),
-        errNet:     @json(__('Kết nối hơi trục trặc, thử lại nhé.')),
+        errNet:    @json(__('Kết nối hơi trục trặc, thử lại nhé.')),
+        hint:      @json(__('Gợi ý')),
+        threats:   @json(__('Đe dọa')),
+        eval:      @json(__('Đánh giá')),
         login:      @json(__('Đăng nhập')),
         upgrade:    @json(__('Nâng cấp VIP')),
         noBoard:    @json(__('Chưa tải được bàn cờ.')),
+        askThreats: @json(__('Có đe dọa gì?')),
+        askHint:    @json(__('Đi nước nào?')),
+        evalBtn:    @json(__('Đánh giá thế cờ')),
     }
 };
 </script>
