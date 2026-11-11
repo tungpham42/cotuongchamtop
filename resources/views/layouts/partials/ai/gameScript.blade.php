@@ -208,8 +208,8 @@
         clearHint();
         if (!move || move.length !== 4) return;
         hintMove = { from: move.substring(0, 2), to: move.substring(2, 4) };
-        $('#ban-co .square-' + hintMove.from).addClass('hint-from');
-        $('#ban-co .square-' + hintMove.to).addClass('hint-to');
+        // $('#ban-co .square-' + hintMove.from).addClass('hint-from');
+        // $('#ban-co .square-' + hintMove.to).addClass('hint-to');
         drawHintArrow();
     }
 
