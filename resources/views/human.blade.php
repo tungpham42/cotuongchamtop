@@ -67,9 +67,9 @@
             $el.toggleClass('disabled', disabled).attr('aria-disabled', disabled);
         }
 
-        // Asks the engine for a suggestion for the side to move (Red or Black).
+        // Asks the engine for a suggestion for Red's move (hints are disabled on Black's turn).
         async function fetchHint () {
-            if (isHintPending || game.game_over() || game.fen().includes('resign')) return;
+            if (isHintPending || game.game_over() || game.fen().includes('resign') || game.turn() !== 'r') return;
 
             const requestFen = game.fen();
             isHintPending = true;
@@ -296,7 +296,7 @@
                 $('#resign').addClass('disabled').attr('aria-disabled', true);
                 config.draggable = false;
             }
-            toggleDisabled($('#hint-btn'), game.game_over() || game.fen().includes('resign') || isHintPending);
+            toggleDisabled($('#hint-btn'), game.game_over() || game.fen().includes('resign') || game.turn() !== 'r' || isHintPending);
             if (kypho) {
                 kypho.updateControls();
             }
