@@ -8,6 +8,7 @@
 @endsection
 
 @section('rightSide')
+    @include('layouts.partials.hint')
     <p class="w-100 text-center mx-0 mb-0 mt-2">
         <span class="rounded d-none" id="game-over"><i class="fad fa-flag-checkered"></i> {{ __("HẾT TRẬN") }}</span>
     </p>
@@ -45,7 +46,70 @@
         <a data-step="4" data-intro="Ấn vào đây để {{ __("chơi") }} lại từ đầu" id="reset" class="w-25 btn btn-dark btn-lg"><i class="fad fa-redo-alt"></i> {{ __("Chơi lại") }}</a>
     </p>
     @include('layouts.partials.kypho')
+    @include('layouts.partials.hintArrow')
     <script>
+        const HINT_TIMEOUT_MS = 700;
+        const HINT_LEVEL = 3;
+        let isHintPending = false;
+
+        function postJson (url, payload, extraHeaders = {}) {
+            return fetch(url, {
+                method: 'POST',
+                headers: Object.assign({
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }, extraHeaders),
+                body: JSON.stringify(payload)
+            });
+        }
+
+        function toggleDisabled ($el, disabled) {
+            $el.toggleClass('disabled', disabled).attr('aria-disabled', disabled);
+        }
+
+        // Asks the engine for a suggestion for the side to move (Red or Black).
+        async function fetchHint () {
+            if (isHintPending || game.game_over() || game.fen().includes('resign')) return;
+
+            const requestFen = game.fen();
+            isHintPending = true;
+            clearHint();
+            toggleDisabled($('#hint-btn'), true);
+            $('#game-status').append(' <i class="fas fa-spinner fa-spin"></i>');
+
+            try {
+                const response = await postJson('/api/xiangqi/hint', {
+                    fen: requestFen,
+                    timeout: HINT_TIMEOUT_MS,
+                    level: HINT_LEVEL
+                }, { 'Accept': 'application/json' });
+
+                const data = await response.json();
+                if (!response.ok || !data.success || !data.hint_move) {
+                    if (data.error === 'free_limit_reached' && typeof bootbox !== 'undefined') {
+                        showVipUpsellDialog(data.message);
+                        return;
+                    }
+                    throw new Error(data.message || data.error || 'Hint unavailable');
+                }
+
+                // Ignore a response that belongs to an older position (move/undo/reset in the meantime).
+                if (game.fen() !== requestFen) return;
+                showHint(data.hint_move);
+            } catch (error) {
+                clearHint();
+                if (typeof bootbox !== 'undefined') {
+                    bootbox.alert({
+                        message: '{{ __("Không thể lấy gợi ý nước đi lúc này.") }}',
+                        size: 'small'
+                    });
+                }
+            } finally {
+                isHintPending = false;
+                updateStatus();
+            }
+        }
+
         let board = null;
         let $board = $('#ban-co');
         let game = new Xiangqi();
@@ -98,7 +162,7 @@
         }
 
         function onDragStart (source, piece) {
-            if (game.game_over()) return false;
+            if (game.game_over() || isHintPending) return false;
 
             if ((game.turn() === 'r' && piece.search(/^b/) !== -1) ||
                 (game.turn() === 'b' && piece.search(/^r/) !== -1)) {
@@ -114,6 +178,7 @@
                 to: target
             });
             if (move === null) return 'snapback';
+            clearHint();
             if (kypho) {
                 kypho.recordMove(move);
             }
@@ -231,6 +296,7 @@
                 $('#resign').addClass('disabled').attr('aria-disabled', true);
                 config.draggable = false;
             }
+            toggleDisabled($('#hint-btn'), game.game_over() || game.fen().includes('resign') || isHintPending);
             if (kypho) {
                 kypho.updateControls();
             }
@@ -268,11 +334,17 @@
                 }
             }
         });
+        $('#hint-btn').on('click', function(e) {
+            e.preventDefault();
+            fetchHint();
+        });
         $('#resign').on('click', function() {
+            clearHint();
             game.load(game.fen() + ' resign');
             updateStatus();
         });
         $('#undo').on('click', function(){
+            clearHint();
             game.undo();
             board.position(game.fen());
             XiangqiSound.playMove();
@@ -281,8 +353,12 @@
                 kypho.setMoves(game.history());
             }
         });
-        $('#switch').on('click', board.flip);
+        $('#switch').on('click', function() {
+            board.flip();
+            if (hintMove) setTimeout(drawHintArrow, 150); // re-anchor the arrow to the flipped squares
+        });
         $('#reset').on('click', function() {
+            clearHint();
             hasMoved = false;
             board.position('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR');
             game.load('rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1');
