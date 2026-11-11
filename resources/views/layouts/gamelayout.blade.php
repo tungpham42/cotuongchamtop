@@ -60,31 +60,7 @@
     @include('common.adsenseTop')
     @include('layouts.partials.header')
     @include('layouts.partials.analysisModal')
-    @if (session('status'))
-        <div class="container">
-            <div class="alert alert-success" role="alert">
-                {{ session('status') }}
-            </div>
-        </div>
-    @endif
-    @if (session('success'))
-        <div class="container">
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        </div>
-    @endif
-    @if ($errors->any())
-        <div class="container">
-            <div class="alert alert-warning">
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        </div>
-    @endif
+    @include('layouts.partials.flashMessages')
     <main>
         {{-- @include('common.xiangqiBanner') --}}
         <span id="checkmateText">{{ __('Chiếu!') }}</span>
@@ -109,9 +85,7 @@
                 @if ( !$roomCode && !isset($slug) )
                     <div class="row">
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 my-1">
-                            <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
-                            @include('layouts.partials.themeSelector')
-                            {{-- @include('layouts.partials.analyzeBtn') --}}
+                            @include('layouts.partials.boardCell')
                         </div>
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mb-auto mt-0 mt-sm-0 mt-md-0 mt-lg-5">
                             @yield('rightSide')
@@ -120,9 +94,7 @@
                 @elseif ( !$roomCode && isset($slug) )
                     <div class="puzzle-layout-wrapper">
                         <div class="puzzle-layout-board">
-                            <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
-                            @include('layouts.partials.themeSelector')
-                            {{-- @include('layouts.partials.analyzeBtn') --}}
+                            @include('layouts.partials.boardCell')
                             @yield('belowBoardExtras')
                         </div>
                         <div class="puzzle-layout-panel">
@@ -132,9 +104,7 @@
                 @else
                     <div class="row">
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                            <div id="ban-co" class="mx-auto mr-lg-0 h-auto"></div>
-                            @include('layouts.partials.themeSelector')
-                            {{-- @include('layouts.partials.analyzeBtn') --}}
+                            @include('layouts.partials.boardCell')
                         </div>
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 mt-lg-0 mt-md-5 mt-sm-5 mt-xs-5">
                             @include('layouts.partials.comments')
@@ -230,20 +200,41 @@
                             @yield('belowContent')
                             @if ( !isset($board) )
                                 <script>
+                                    // --- Shared helpers ---
+                                    const ROOM_BASE_URL = '{{ url(__('/phong/')) }}/';
+
+                                    // Resolves to the current FEN, or null (after optionally alerting) when the board isn't ready.
+                                    async function getCurrentFenOrAlert(alertWhenMissing = true) {
+                                        if (typeof game === 'undefined' || typeof game.fen !== 'function') {
+                                            await bootboxAlertAsync("{{ __('Chưa tải được dữ liệu bàn cờ.') }}");
+                                            return null;
+                                        }
+
+                                        const fen = game.fen();
+                                        if (!fen && alertWhenMissing) {
+                                            await bootboxAlertAsync("{{ __('Không lấy được mã FEN.') }}");
+                                        }
+                                        return fen || null;
+                                    }
+
+                                    // Small red-confirm alert used by the room flow.
+                                    function dangerAlert(message, extraOptions = {}) {
+                                        return bootboxAlertAsync({
+                                            message: message,
+                                            size: 'small',
+                                            centerVertical: true,
+                                            closeButton: false,
+                                            buttons: { ok: { className: 'btn-danger', label: '{{ __("Oki") }}' } },
+                                            ...extraOptions
+                                        });
+                                    }
+
                                     // --- 1. Analyze Board Event Handler ---
                                     $('#btn-analyze').on('click', async function(e) {
                                         e.preventDefault();
 
-                                        if (typeof game === 'undefined' || typeof game.fen !== 'function') {
-                                            await bootboxAlertAsync("{{ __('Chưa tải được dữ liệu bàn cờ.') }}");
-                                            return;
-                                        }
-
-                                        const currentFen = game.fen();
-                                        if (!currentFen) {
-                                            await bootboxAlertAsync("{{ __('Không lấy được mã FEN.') }}");
-                                            return;
-                                        }
+                                        const currentFen = await getCurrentFenOrAlert();
+                                        if (!currentFen) return;
 
                                         // openAnalysisModal is defined in analysisModal.blade.php
                                         openAnalysisModal(currentFen);
@@ -263,13 +254,7 @@
                                             });
 
                                             if (checkRes && checkRes.exists) {
-                                                await bootboxAlertAsync({
-                                                    message: "{{ __('Mã phòng bị trùng, vui lòng thử lại.') }}",
-                                                    size: 'small',
-                                                    centerVertical: true,
-                                                    closeButton: false,
-                                                    buttons: { ok: { className: 'btn-danger', label: '{{ __("Oki") }}' } }
-                                                });
+                                                await dangerAlert("{{ __('Mã phòng bị trùng, vui lòng thử lại.') }}");
                                                 setTimeout(() => location.reload(), 500);
                                                 return;
                                             }
@@ -292,14 +277,7 @@
                                             if (roomName === null) return; // User canceled prompt
 
                                             if (!roomName.trim()) {
-                                                await bootboxAlertAsync({
-                                                    message: "{{ __('Vui lòng đặt tên cho phòng!') }}",
-                                                    size: 'small',
-                                                    locale: '{{ __("vi") }}',
-                                                    centerVertical: true,
-                                                    closeButton: false,
-                                                    buttons: { ok: { className: 'btn-danger', label: '{{ __("Oki") }}' } }
-                                                });
+                                                await dangerAlert("{{ __('Vui lòng đặt tên cho phòng!') }}", { locale: '{{ __("vi") }}' });
                                                 $('#create-room').trigger('click');
                                                 return;
                                             }
@@ -319,15 +297,9 @@
                                             });
 
                                             // Step 4: Notify success and redirect
-                                            await bootboxAlertAsync({
-                                                message: "{{ __('Bạn đã tạo phòng thành công.') }}",
-                                                size: 'small',
-                                                centerVertical: true,
-                                                closeButton: false,
-                                                buttons: { ok: { className: 'btn-danger', label: '{{ __("Oki") }}' } }
-                                            });
+                                            await dangerAlert("{{ __('Bạn đã tạo phòng thành công.') }}");
 
-                                            window.location.href = '{{ url(__('/phong/')) }}/' + maPhong;
+                                            window.location.href = ROOM_BASE_URL + maPhong;
 
                                         } catch (error) {
                                             console.error('An error occurred while creating the room:', error);
@@ -365,12 +337,7 @@
                                     $('#share-board').on('click auxclick', async function(e) {
                                         e.preventDefault();
 
-                                        if (typeof game === 'undefined' || typeof game.fen !== 'function') {
-                                            await bootboxAlertAsync("{{ __('Chưa tải được dữ liệu bàn cờ.') }}");
-                                            return;
-                                        }
-
-                                        const currentFen = game.fen();
+                                        const currentFen = await getCurrentFenOrAlert(false);
                                         if (!currentFen) return;
 
                                         window.location.href = $(this).attr('href') + '/' + currentFen;
