@@ -31,6 +31,26 @@ class Room extends Model
 
     // --- Scopes (For clean queries) ---
 
+    /**
+     * Rooms that are genuinely live: they have a host, no result yet, and saw
+     * activity inside the freshness window (config xiangqi.live_window_hours).
+     *
+     * A game abandoned without a result keeps result = NULL forever, so
+     * without the window it would be listed as "live" for days. A window of 0
+     * disables the cutoff.
+     */
+    public function scopeLive($query)
+    {
+        $query->whereNotNull('host_id')->whereNull('result');
+
+        $hours = (int) config('xiangqi.live_window_hours', 24);
+        if ($hours > 0) {
+            $query->where('modified_at', '>=', now()->subHours($hours));
+        }
+
+        return $query;
+    }
+
     public function scopeOngoing($query)
     {
         return $query->whereNull('result')

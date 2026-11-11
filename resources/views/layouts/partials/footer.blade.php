@@ -34,21 +34,6 @@
           <li>
             <a target="_blank" class="game showPromotion" href="https://game.cotuong.top"><i class="fal fa-gamepad-alt"></i> {{ __("Trò chơi") }}</a>
           </li>
-          <li>
-            <a target="_blank" class="buy showPromotion" href="https://www.codester.com/items/41601/multilingual-chinese-chess-game-with-many-options?ref=tungpham"><i class="fal fa-shopping-cart"></i> {{ __("Mua mã nguồn") }}</a>
-          </li>
-          <li>
-            <a target="_blank" class="proxy showPromotion" href="https://proxyviet.org?ref=PROXYVIET-EECAD4F"><i class="fal fa-shield-alt"></i> {{ __("Mua Proxy giá rẻ") }}</a>
-          </li>
-          <li>
-            <a target="_blank" class="hikari showPromotion" href="https://hikarilearn.io.vn/"><i class="fal fa-book-reader"></i> {{ __("Học tiếng Nhật") }}</a>
-          </li>
-          <li>
-            <a target="_blank" class="hololab showPromotion" href="https://hololab.vn/"><i class="fal fa-cube"></i> Hologram</a>
-          </li>
-          <li>
-            <a target="_blank" class="tanphat showPromotion" href="https://tanphatdigital.com/"><i class="fal fa-usd-circle"></i> Tấn Phát Digital</a>
-          </li>
         </ul>
       </div>
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
@@ -58,13 +43,24 @@
         <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.tiktok.com/@cotuongchamtop"><i class="fab fa-tiktok"></i></a>
       </div>
       <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
-        <p>{{ __('Đã xác thực HTML5 và CSS3') }}</p>
-        <a title="Valid HTML5" class="w-100 mr-2 display-4 text-decoration-none showPromotion" target="_blank" href="https://validator.w3.org/check?uri=referer">
-          <i class="fab fa-html5"></i>
-        </a>
-        <a title="Valid CSS3" class="w-100 mr-2 display-4 text-decoration-none showPromotion" target="_blank" href="https://jigsaw.w3.org/css-validator/check/referer">
-          <i class="fab fa-css3-alt"></i>
-        </a>
+        <p>{{ __('Dự án khác') }}</p>
+        <ul class="list-unstyled">
+          <li>
+            <a target="_blank" rel="noopener" class="buy showPromotion" href="https://www.codester.com/items/41601/multilingual-chinese-chess-game-with-many-options?ref=tungpham"><i class="fal fa-shopping-cart"></i> {{ __("Mua mã nguồn") }}</a>
+          </li>
+          <li>
+            <a target="_blank" rel="sponsored noopener" class="proxy showPromotion" href="https://proxyviet.org?ref=PROXYVIET-EECAD4F"><i class="fal fa-shield-alt"></i> {{ __("Mua Proxy giá rẻ") }}</a>
+          </li>
+          <li>
+            <a target="_blank" rel="noopener" class="hikari showPromotion" href="https://hikarilearn.io.vn/"><i class="fal fa-book-reader"></i> {{ __("Học tiếng Nhật") }}</a>
+          </li>
+          <li>
+            <a target="_blank" rel="noopener" class="hololab showPromotion" href="https://hololab.vn/"><i class="fal fa-cube"></i> Hologram</a>
+          </li>
+          <li>
+            <a target="_blank" rel="noopener" class="tanphat showPromotion" href="https://tanphatdigital.com/"><i class="fal fa-usd-circle"></i> Tấn Phát Digital</a>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
@@ -166,4 +162,3 @@ $(document).ready(function() {
 </script>
 <a href="#0" class="cd-top js-cd-top rounded" style="background-image: url('{{ asset('img/cd-top-arrow.svg') }}');">Top</a>
 <script src="{{ asset('js/to-top.js?v=1') }}"></script>
-@include('cookie-consent::index')

@@ -50,12 +50,11 @@ class GetRoomQueriesAction
     }
 
     /**
-     * Get currently active/playing rooms (no result yet).
+     * Get currently active/playing rooms (no result yet, recent activity).
      */
     public function getPlayingRooms()
     {
-        return Room::whereNotNull('host_id')
-            ->whereNull('result')
+        return Room::live()
             ->orderBy('modified_at', 'desc')
             ->paginate(10);
     }
@@ -87,8 +86,7 @@ class GetRoomQueriesAction
      */
     public function getBoards()
     {
-        return Room::whereNotNull('host_id')
-            ->whereNull('result')
+        return Room::live()
             ->orderBy('modified_at', 'desc')
             ->paginate(6);
     }
@@ -98,8 +96,7 @@ class GetRoomQueriesAction
      */
     public function getFirstPageBoards()
     {
-        return Room::whereNotNull('host_id')
-            ->whereNull('result')
+        return Room::live()
             ->orderBy('modified_at', 'desc')
             ->paginate(6, ['*'], 'page', 1);
     }

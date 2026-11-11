@@ -11,16 +11,14 @@ class RoomService
 {
     public function getBoards(int $perPage = 6): LengthAwarePaginator
     {
-        return Room::whereNotNull('host_id')
-            ->whereNull('result')
+        return Room::live()
             ->orderBy('modified_at', 'desc')
             ->paginate($perPage);
     }
 
     public function getFirstPageBoards(int $perPage = 6): LengthAwarePaginator
     {
-        return Room::whereNotNull('host_id')
-            ->whereNull('result')
+        return Room::live()
             ->orderBy('modified_at', 'desc')
             ->paginate($perPage, ['*'], 'page', 1);
     }
@@ -48,7 +46,7 @@ class RoomService
 
     public function getPlayingRooms(int $perPage = 10): LengthAwarePaginator
     {
-        return Room::whereNotNull('host_id')->whereNull('result')->orderBy('modified_at', 'desc')->paginate($perPage);
+        return Room::live()->orderBy('modified_at', 'desc')->paginate($perPage);
     }
 
     public function getPlayedRooms(int $perPage = 10): LengthAwarePaginator

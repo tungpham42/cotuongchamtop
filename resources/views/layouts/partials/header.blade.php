@@ -13,6 +13,15 @@
         ['app.history',       'far fa-archive',      'Lịch sử thi đấu', 'dashboard'],
     ];
 
+    // The 8 items above are shown in three labelled groups instead of one flat list.
+    // Every route key in $competeMenu must appear in exactly one group.
+    $competeGroups = [
+        'Chơi'                => ['room.list', 'tournaments.index', 'app.dashboard'],
+        'Cộng đồng'           => ['app.ranking', 'user.list', 'search'],
+        'Luyện tập & lưu trữ' => ['puzzle.list', 'app.history'],
+    ];
+    $competeByKey = collect($competeMenu)->keyBy(fn (array $item): string => $item[0]);
+
     $resourceMenu = [
         ['article.index',   'far fa-file',         'Bài viết',     'resource'],
         ['games.library',   'far fa-database',     'Thư viện',     'resource'],
@@ -98,7 +107,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             <a class="navbar-brand small mr-auto my-0 showPromotion" href="{{ $homeUrl }}">
                 <img src="{{ asset('img/app-icons/logo.png') }}" class="xiangqi-logo" alt="xiangqi logo">
-                <h1 class="d-inline" style="font-size: inherit !important;"><strong>{{ __("Cờ tướng") }}</strong></h1>
+                <span class="brand-name d-inline"><strong>{{ __("Cờ tướng") }}</strong></span>
             </a>
 
             <div class="menu-toggle open" title="Trình đơn"></div>
@@ -114,9 +123,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             <i class="far fa-trophy-alt"></i> {{ __("Thi đấu") }}
                         </a>
                         <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow" aria-labelledby="dashboardDropdown">
-                            @foreach ($competeMenu as [$key, $icon, $label, $extraClass])
-                                @php $itemUrl = localized_url($key); @endphp
-                                <a class="{{ $extraClass ? $extraClass . ' ' : '' }}showPromotion dropdown-item{{ $activeClass($itemUrl) }}" href="{{ $itemUrl }}"><i class="{{ $icon }}"></i> {{ __($label) }}</a>
+                            @foreach ($competeGroups as $groupLabel => $groupKeys)
+                                @unless ($loop->first)
+                                    <div class="dropdown-divider"></div>
+                                @endunless
+                                <h6 class="dropdown-header">{{ __($groupLabel) }}</h6>
+                                @foreach ($groupKeys as $groupKey)
+                                    @php
+                                        [$key, $icon, $label, $extraClass] = $competeByKey[$groupKey];
+                                        $itemUrl = localized_url($key);
+                                    @endphp
+                                    <a class="{{ $extraClass ? $extraClass . ' ' : '' }}showPromotion dropdown-item{{ $activeClass($itemUrl) }}" href="{{ $itemUrl }}"><i class="{{ $icon }}"></i> {{ __($label) }}</a>
+                                @endforeach
                             @endforeach
                         </div>
                     </li>
@@ -205,3 +223,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </div>
 </header>
+{{-- The brand name in the header is a <span>, so every page needs exactly one real <h1>.
+     Pages that render their own visible <h1> opt out with @section('hasPageH1', '1');
+     all other pages get a screen-reader/SEO heading that matches their <title>. --}}
+@sectionMissing('hasPageH1')
+    @php
+        $pageH1 = url()->current() == localized_url('ai.home')
+            ? __('Cờ Tướng Online Miễn Phí – Chơi Cờ Tướng 2 Người, Với Máy & Cờ Thế')
+            : (! empty($headTitle) ? __($headTitle) : __('Cờ tướng'));
+    @endphp
+    <h1 class="sr-only">{{ $pageH1 }}</h1>
+@endif

@@ -1,18 +1,12 @@
-<div class="js-cookie-consent cookie-consent fixed bottom-0 inset-x-0 pb-2 text-light bg-dark font-weight-bold text-center">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="p-2 rounded-lg bg-yellow-100">
-            <div class="flex items-center justify-between flex-wrap">
-                <div class="w-0 flex-1 items-center hidden md:inline">
-                    <p class="ml-3 text-yellow-600 cookie-consent__message h6">
-                        {!! trans('cookie-consent::texts.message') !!}
-                    </p>
-                </div>
-                <div class="mt-2 flex-shrink-0 w-full sm:mt-0 sm:w-auto">
-                    <a class="btn btn-md btn-danger text-light js-cookie-consent-agree cookie-consent__agree flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium text-yellow-800 bg-yellow-400 hover:bg-yellow-300">
-                        {{ trans('cookie-consent::texts.agree') }}
-                    </a>
-                </div>
-            </div>
+<div class="js-cookie-consent cookie-consent" role="region" aria-label="{{ __('Thông báo về cookie') }}">
+    <div class="container cookie-consent__inner">
+        <p class="cookie-consent__message mb-0">
+            {!! trans('cookie-consent::texts.message') !!}
+            <a class="cookie-consent__link" href="{{ localized_url('privacy') }}">{{ __('Chính sách bảo mật') }}</a>
+        </p>
+        <div class="cookie-consent__actions">
+            <button type="button" class="btn btn-outline-light btn-sm js-cookie-consent-reject cookie-consent__reject">{{ __('Từ chối') }}</button>
+            <button type="button" class="btn btn-danger btn-sm js-cookie-consent-agree cookie-consent__agree">{{ trans('cookie-consent::texts.agree') }}</button>
         </div>
     </div>
 </div>

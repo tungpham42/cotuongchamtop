@@ -46,22 +46,22 @@
 
                     <div class="p-3 text-center flex-grow-1 d-flex align-items-center justify-content-center" style="background: linear-gradient(to top, var(--glass-bg-dark), transparent);">
                         <h5 class="royal-card-title m-0" style="cursor: pointer; font-size: 1.1rem;" data-toggle="tooltip" data-placement="top" title='{{ __("Thế cờ:") }} "{{ $userPuzzle->name }}"'>
-                            {{ $userPuzzle->name }}
+                            <a class="text-reset text-decoration-none" href="{{ url('/') }}{{ __('/the-co/') }}{{ $userPuzzle->slug }}">{{ $userPuzzle->name }}</a>
                         </h5>
                     </div>
 
                     <div class="d-flex border-top" style="border-color: var(--glass-border) !important; background: var(--glass-bg-dark); backdrop-filter: var(--glass-blur);">
-                        <a class="flex-fill text-center py-2 rounded-0 border-0 glass-action-btn solve-puzzle-btn" href="javascript:solvePuzzle('{{ $userPuzzle->fen }}')" data-toggle="tooltip" title='{{ __("Giải") }} {{ __("thế cờ") }} "{{ $userPuzzle->name }}"'>
-                            <i class="fas fa-play" style="color: var(--royal-gold);"></i>
+                        <a class="flex-fill text-center py-2 rounded-0 border-0 glass-action-btn solve-puzzle-btn" href="javascript:solvePuzzle('{{ $userPuzzle->fen }}')" data-toggle="tooltip" title='{{ __("Giải") }} {{ __("thế cờ") }} "{{ $userPuzzle->name }}"' aria-label='{{ __("Giải") }} {{ __("thế cờ") }} "{{ $userPuzzle->name }}"'>
+                            <i class="fas fa-play" style="color: var(--royal-gold);" aria-hidden="true"></i>
                         </a>
-                        <a class="flex-fill text-center py-2 rounded-0 border-0 border-left glass-action-btn puzzle-reaction-btn" style="border-color: rgba(212, 175, 55, 0.1) !important;" href="javascript:void(0);" data-reaction="like" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}" data-toggle="tooltip" title='{{ __("Hay") }}'>
-                            <i class="fas fa-thumbs-up" style="color: #4ade80;"></i> <span class="puzzle-reaction-count text-light" id="reaction-like-{{ $puzzleMd5 }}">{{ $userPuzzle->likes_count }}</span>
+                        <a class="flex-fill text-center py-2 rounded-0 border-0 border-left glass-action-btn puzzle-reaction-btn" style="border-color: rgba(212, 175, 55, 0.1) !important;" href="javascript:void(0);" role="button" data-reaction="like" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}" data-toggle="tooltip" title='{{ __("Hay") }}'>
+                            <i class="fas fa-thumbs-up" style="color: #4ade80;" aria-hidden="true"></i> <span class="sr-only">{{ __("Hay") }}:</span> <span class="puzzle-reaction-count text-light" id="reaction-like-{{ $puzzleMd5 }}">{{ $userPuzzle->likes_count }}</span>
                         </a>
-                        <a class="flex-fill text-center py-2 rounded-0 border-0 border-left glass-action-btn puzzle-reaction-btn" style="border-color: rgba(212, 175, 55, 0.1) !important;" href="javascript:void(0);" data-reaction="hard" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}" data-toggle="tooltip" title='{{ __("Khó") }}'>
-                            <i class="fas fa-fire" style="color: var(--royal-red-light);"></i> <span class="puzzle-reaction-count text-light" id="reaction-hard-{{ $puzzleMd5 }}">{{ $userPuzzle->hard_count }}</span>
+                        <a class="flex-fill text-center py-2 rounded-0 border-0 border-left glass-action-btn puzzle-reaction-btn" style="border-color: rgba(212, 175, 55, 0.1) !important;" href="javascript:void(0);" role="button" data-reaction="hard" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}" data-toggle="tooltip" title='{{ __("Khó") }}'>
+                            <i class="fas fa-fire" style="color: var(--royal-red-light);" aria-hidden="true"></i> <span class="sr-only">{{ __("Khó") }}:</span> <span class="puzzle-reaction-count text-light" id="reaction-hard-{{ $puzzleMd5 }}">{{ $userPuzzle->hard_count }}</span>
                         </a>
-                        <a class="flex-fill text-center py-2 rounded-0 border-0 border-left glass-action-btn puzzle-reaction-btn" style="border-color: rgba(212, 175, 55, 0.1) !important;" href="javascript:void(0);" data-reaction="unsolved" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}" data-toggle="tooltip" title='{{ __("Chưa giải được") }}'>
-                            <i class="fas fa-question-circle" style="color: #3b82f6;"></i> <span class="puzzle-reaction-count text-light" id="reaction-unsolved-{{ $puzzleMd5 }}">{{ $userPuzzle->unsolved_count }}</span>
+                        <a class="flex-fill text-center py-2 rounded-0 border-0 border-left glass-action-btn puzzle-reaction-btn" style="border-color: rgba(212, 175, 55, 0.1) !important;" href="javascript:void(0);" role="button" data-reaction="unsolved" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}" data-toggle="tooltip" title='{{ __("Chưa giải được") }}'>
+                            <i class="fas fa-question-circle" style="color: #3b82f6;" aria-hidden="true"></i> <span class="sr-only">{{ __("Chưa giải được") }}:</span> <span class="puzzle-reaction-count text-light" id="reaction-unsolved-{{ $puzzleMd5 }}">{{ $userPuzzle->unsolved_count }}</span>
                         </a>
                     </div>
                 </div>

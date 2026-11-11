@@ -3837,3 +3837,81 @@ table.dataTable.dtr-inline.collapsed
 .tooltip {
     z-index: 1080;
 }
+
+/* ==========================================================================
+   Cookie consent bar
+   The markup lives in resources/views/vendor/cookie-consent. It used to rely on
+   Tailwind-style utility classes (fixed, bottom-0, hidden, md:inline) that this
+   Bootstrap 4 stylesheet never defined, so it was never actually a fixed bar.
+   Sits below the header (1050), modal backdrop (1060) and modals (1070).
+   ========================================================================== */
+.cookie-consent {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999999999 !important;
+    padding: 0.75rem 0;
+    background: rgba(11, 12, 16, 0.97);
+    border-top: 1px solid rgba(212, 175, 55, 0.35);
+    box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.45);
+    color: #f1f1f1;
+}
+.cookie-consent__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.25rem;
+}
+.cookie-consent__message {
+    flex: 1 1 320px;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    text-align: left;
+}
+.cookie-consent__link {
+    color: var(--royal-gold-light);
+    text-decoration: underline;
+    white-space: nowrap;
+}
+.cookie-consent__link:hover,
+.cookie-consent__link:focus {
+    color: var(--royal-gold);
+}
+.cookie-consent__actions {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 0.5rem;
+}
+/* Accept and Reject get the same size and weight on purpose. */
+.cookie-consent__actions .btn {
+    min-width: 7.5rem;
+    min-height: 2.5rem;
+    font-weight: 700;
+}
+@media (max-width: 575.98px) {
+    .cookie-consent__actions {
+        flex: 1 1 100%;
+    }
+    .cookie-consent__actions .btn {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+}
+
+/* ==========================================================================
+   Grouped dropdown menu headings (Thi đấu menu in the site header)
+   ========================================================================== */
+header.site-header .dropdown-menu .dropdown-header {
+    padding-top: 0.5rem;
+    color: var(--royal-gold);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.85;
+}
+header.site-header .dropdown-menu .dropdown-divider {
+    border-top-color: rgba(212, 175, 55, 0.2);
+}

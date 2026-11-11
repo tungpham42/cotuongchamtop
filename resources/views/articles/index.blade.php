@@ -1,5 +1,7 @@
 @extends('layouts.mainlayout')
 
+@section('hasPageH1', '1')
+
 @section('og_image', asset('img/news.jpg'))
 
 @section('aboveContent')

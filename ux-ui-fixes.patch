@@ -1,0 +1,898 @@
+From 0c7d6525cc5e80188827a514d2edcb904e34733f Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 11 Nov 2026 12:29:58 +0000
+Subject: [PATCH] fix(ui): honest live-games list, real cookie consent, clearer
+ nav/footer, accessibility
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Live games
+- Add Room::live() scope + xiangqi.live_window_hours (env XIANGQI_LIVE_WINDOW_HOURS,
+  default 24, 0 disables). Games abandoned without a result (result IS NULL) were
+  listed as "live" for days. Used by the homepage boards and /thi-dau.
+- Homepage "đang thi đấu" heading now links to /thi-dau instead of the members list.
+
+Cookie consent
+- Rebuild the banner as a real fixed bar with equal-weight Accept/Reject and a
+  privacy link. The old Tailwind-style classes (fixed, bottom-0, hidden md:inline)
+  were never defined in the Bootstrap 4 stylesheet.
+- Wire the choice into Google Consent Mode v2: EEA/UK/CH default to denied until
+  accepted, all other regions keep the previous behaviour. A stored choice
+  (cookie 1/0) is restored on every page load; a rejection is kept for 180 days.
+
+Navigation and footer
+- Group the 8-item "Thi đấu" dropdown into Chơi / Cộng đồng / Luyện tập & lưu trữ.
+- Footer: move partner/affiliate links into their own "Dự án khác" column
+  (rel="sponsored" on the referral link) and drop the W3C validator badges.
+
+Accessibility and copy
+- The header brand is no longer the page <h1>; every page gets exactly one real
+  <h1> (pages that render their own opt out via @section('hasPageH1')).
+- Puzzle cards: like/hard/unsolved counters have text labels for touch and screen
+  readers, and the puzzle name is a real link.
+- Fix rules typos in vi.json (chuột -> chốt, chử -> chữ, chổ -> chỗ, giử -> giữ,
+  nữa -> nửa).
+- Add 6 new UI strings to all 9 language files; bump index_new.css to v=75.
+---
+ app/Actions/Room/GetRoomQueriesAction.php     | 11 +--
+ app/Models/Room.php                           | 20 +++++
+ app/Services/RoomService.php                  |  8 +-
+ config/xiangqi.php                            |  5 ++
+ public/css/index_new.css                      | 78 +++++++++++++++++++
+ resources/lang/de.json                        |  8 +-
+ resources/lang/en.json                        |  8 +-
+ resources/lang/es.json                        |  8 +-
+ resources/lang/fr.json                        |  8 +-
+ resources/lang/ja.json                        |  8 +-
+ resources/lang/ko.json                        |  8 +-
+ resources/lang/ru.json                        |  8 +-
+ resources/lang/vi.json                        | 18 +++--
+ resources/lang/zh.json                        |  8 +-
+ resources/views/articles/index.blade.php      |  2 +
+ resources/views/articles/show.blade.php       |  2 +
+ resources/views/common/head.blade.php         | 22 +++++-
+ resources/views/games/library.blade.php       |  2 +
+ resources/views/games/show.blade.php          |  2 +
+ .../layouts/partials/app/footer.blade.php     | 36 ++++-----
+ .../views/layouts/partials/boards.blade.php   |  2 +-
+ .../views/layouts/partials/footer.blade.php   | 36 ++++-----
+ .../views/layouts/partials/header.blade.php   | 37 ++++++++-
+ .../layouts/partials/userPuzzles.blade.php    | 18 ++---
+ .../cookie-consent/dialogContents.blade.php   | 24 +++---
+ .../vendor/cookie-consent/index.blade.php     | 55 +++++++++++--
+ resources/views/vip.blade.php                 |  2 +
+ 27 files changed, 340 insertions(+), 104 deletions(-)
+
+diff --git a/app/Actions/Room/GetRoomQueriesAction.php b/app/Actions/Room/GetRoomQueriesAction.php
+index b843cafd9..0684d7d2d 100644
+--- a/app/Actions/Room/GetRoomQueriesAction.php
++++ b/app/Actions/Room/GetRoomQueriesAction.php
+@@ -50,12 +50,11 @@ class GetRoomQueriesAction
+     }
+ 
+     /**
+-     * Get currently active/playing rooms (no result yet).
++     * Get currently active/playing rooms (no result yet, recent activity).
+      */
+     public function getPlayingRooms()
+     {
+-        return Room::whereNotNull('host_id')
+-            ->whereNull('result')
++        return Room::live()
+             ->orderBy('modified_at', 'desc')
+             ->paginate(10);
+     }
+@@ -87,8 +86,7 @@ class GetRoomQueriesAction
+      */
+     public function getBoards()
+     {
+-        return Room::whereNotNull('host_id')
+-            ->whereNull('result')
++        return Room::live()
+             ->orderBy('modified_at', 'desc')
+             ->paginate(6);
+     }
+@@ -98,8 +96,7 @@ class GetRoomQueriesAction
+      */
+     public function getFirstPageBoards()
+     {
+-        return Room::whereNotNull('host_id')
+-            ->whereNull('result')
++        return Room::live()
+             ->orderBy('modified_at', 'desc')
+             ->paginate(6, ['*'], 'page', 1);
+     }
+diff --git a/app/Models/Room.php b/app/Models/Room.php
+index 81f68b13f..ab0ef701c 100644
+--- a/app/Models/Room.php
++++ b/app/Models/Room.php
+@@ -31,6 +31,26 @@ class Room extends Model
+ 
+     // --- Scopes (For clean queries) ---
+ 
++    /**
++     * Rooms that are genuinely live: they have a host, no result yet, and saw
++     * activity inside the freshness window (config xiangqi.live_window_hours).
++     *
++     * A game abandoned without a result keeps result = NULL forever, so
++     * without the window it would be listed as "live" for days. A window of 0
++     * disables the cutoff.
++     */
++    public function scopeLive($query)
++    {
++        $query->whereNotNull('host_id')->whereNull('result');
++
++        $hours = (int) config('xiangqi.live_window_hours', 24);
++        if ($hours > 0) {
++            $query->where('modified_at', '>=', now()->subHours($hours));
++        }
++
++        return $query;
++    }
++
+     public function scopeOngoing($query)
+     {
+         return $query->whereNull('result')
+diff --git a/app/Services/RoomService.php b/app/Services/RoomService.php
+index ada64c998..382dcca97 100644
+--- a/app/Services/RoomService.php
++++ b/app/Services/RoomService.php
+@@ -11,16 +11,14 @@ class RoomService
+ {
+     public function getBoards(int $perPage = 6): LengthAwarePaginator
+     {
+-        return Room::whereNotNull('host_id')
+-            ->whereNull('result')
++        return Room::live()
+             ->orderBy('modified_at', 'desc')
+             ->paginate($perPage);
+     }
+ 
+     public function getFirstPageBoards(int $perPage = 6): LengthAwarePaginator
+     {
+-        return Room::whereNotNull('host_id')
+-            ->whereNull('result')
++        return Room::live()
+             ->orderBy('modified_at', 'desc')
+             ->paginate($perPage, ['*'], 'page', 1);
+     }
+@@ -48,7 +46,7 @@ class RoomService
+ 
+     public function getPlayingRooms(int $perPage = 10): LengthAwarePaginator
+     {
+-        return Room::whereNotNull('host_id')->whereNull('result')->orderBy('modified_at', 'desc')->paginate($perPage);
++        return Room::live()->orderBy('modified_at', 'desc')->paginate($perPage);
+     }
+ 
+     public function getPlayedRooms(int $perPage = 10): LengthAwarePaginator
+diff --git a/config/xiangqi.php b/config/xiangqi.php
+index d7e9104a7..d49b9196a 100644
+--- a/config/xiangqi.php
++++ b/config/xiangqi.php
+@@ -12,4 +12,9 @@ return [
+     'worker_count' => env('XIANGQI_WORKER_COUNT', 2),
+ 
+     'php_binary' => env('XIANGQI_PHP_BINARY'),
++
++    // A game with no result that has not moved for this many hours is treated
++    // as abandoned and is no longer listed as "live" (see Room::scopeLive).
++    // Set to 0 to disable the cutoff.
++    'live_window_hours' => (int) env('XIANGQI_LIVE_WINDOW_HOURS', 24),
+ ];
+diff --git a/public/css/index_new.css b/public/css/index_new.css
+index c2904c359..92f99797c 100644
+--- a/public/css/index_new.css
++++ b/public/css/index_new.css
+@@ -3837,3 +3837,81 @@ table.dataTable.dtr-inline.collapsed
+ .tooltip {
+     z-index: 1080;
+ }
++
++/* ==========================================================================
++   Cookie consent bar
++   The markup lives in resources/views/vendor/cookie-consent. It used to rely on
++   Tailwind-style utility classes (fixed, bottom-0, hidden, md:inline) that this
++   Bootstrap 4 stylesheet never defined, so it was never actually a fixed bar.
++   Sits below the header (1050), modal backdrop (1060) and modals (1070).
++   ========================================================================== */
++.cookie-consent {
++    position: fixed;
++    left: 0;
++    right: 0;
++    bottom: 0;
++    z-index: 1040;
++    padding: 0.75rem 0;
++    background: rgba(11, 12, 16, 0.97);
++    border-top: 1px solid rgba(212, 175, 55, 0.35);
++    box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.45);
++    color: #f1f1f1;
++}
++.cookie-consent__inner {
++    display: flex;
++    flex-wrap: wrap;
++    align-items: center;
++    justify-content: space-between;
++    gap: 0.75rem 1.25rem;
++}
++.cookie-consent__message {
++    flex: 1 1 320px;
++    font-size: 0.9rem;
++    line-height: 1.45;
++    text-align: left;
++}
++.cookie-consent__link {
++    color: var(--royal-gold-light);
++    text-decoration: underline;
++    white-space: nowrap;
++}
++.cookie-consent__link:hover,
++.cookie-consent__link:focus {
++    color: var(--royal-gold);
++}
++.cookie-consent__actions {
++    display: flex;
++    flex: 0 0 auto;
++    gap: 0.5rem;
++}
++/* Accept and Reject get the same size and weight on purpose. */
++.cookie-consent__actions .btn {
++    min-width: 7.5rem;
++    min-height: 2.5rem;
++    font-weight: 700;
++}
++@media (max-width: 575.98px) {
++    .cookie-consent__actions {
++        flex: 1 1 100%;
++    }
++    .cookie-consent__actions .btn {
++        flex: 1 1 0;
++        min-width: 0;
++    }
++}
++
++/* ==========================================================================
++   Grouped dropdown menu headings (Thi đấu menu in the site header)
++   ========================================================================== */
++header.site-header .dropdown-menu .dropdown-header {
++    padding-top: 0.5rem;
++    color: var(--royal-gold);
++    font-size: 0.72rem;
++    font-weight: 800;
++    letter-spacing: 0.08em;
++    text-transform: uppercase;
++    opacity: 0.85;
++}
++header.site-header .dropdown-menu .dropdown-divider {
++    border-top-color: rgba(212, 175, 55, 0.2);
++}
+diff --git a/resources/lang/de.json b/resources/lang/de.json
+index 46716925e..8b20941b8 100644
+--- a/resources/lang/de.json
++++ b/resources/lang/de.json
+@@ -957,5 +957,11 @@
+     "Bạn cần đăng nhập để dùng Kỳ Sư AI.": "Du musst dich anmelden, um den KI-Coach zu nutzen.",
+     "Bạn đã dùng hết lượt miễn phí hôm nay. Nâng cấp VIP để dùng không giới hạn!": "Du hast deine kostenlosen Nutzungen für heute aufgebraucht. Werde VIP für unbegrenzte Nutzung!",
+     "Kết nối hơi trục trặc, thử lại nhé.": "Die Verbindung ist etwas wackelig, bitte versuche es noch einmal.",
+-    "Đe dọa": "Bedrohungen"
++    "Đe dọa": "Bedrohungen",
++    "Từ chối": "Ablehnen",
++    "Chính sách bảo mật": "Datenschutzerklärung",
++    "Dự án khác": "Weitere Projekte",
++    "Cộng đồng": "Community",
++    "Luyện tập & lưu trữ": "Üben & Archiv",
++    "Thông báo về cookie": "Cookie-Hinweis"
+ }
+diff --git a/resources/lang/en.json b/resources/lang/en.json
+index d541d4f66..80ca0bec6 100644
+--- a/resources/lang/en.json
++++ b/resources/lang/en.json
+@@ -957,5 +957,11 @@
+     "Bạn cần đăng nhập để dùng Kỳ Sư AI.": "You need to log in to use the AI Coach.",
+     "Bạn đã dùng hết lượt miễn phí hôm nay. Nâng cấp VIP để dùng không giới hạn!": "You've used up your free uses for today. Upgrade to VIP for unlimited access!",
+     "Kết nối hơi trục trặc, thử lại nhé.": "The connection is a bit shaky, please try again.",
+-    "Đe dọa": "Threats"
++    "Đe dọa": "Threats",
++    "Từ chối": "Reject",
++    "Chính sách bảo mật": "Privacy Policy",
++    "Dự án khác": "Other projects",
++    "Cộng đồng": "Community",
++    "Luyện tập & lưu trữ": "Practice & archive",
++    "Thông báo về cookie": "Cookie notice"
+ }
+diff --git a/resources/lang/es.json b/resources/lang/es.json
+index d2aa1e49c..fc3b2716e 100644
+--- a/resources/lang/es.json
++++ b/resources/lang/es.json
+@@ -957,5 +957,11 @@
+     "Bạn cần đăng nhập để dùng Kỳ Sư AI.": "Debes iniciar sesión para usar el Coach IA.",
+     "Bạn đã dùng hết lượt miễn phí hôm nay. Nâng cấp VIP để dùng không giới hạn!": "Has agotado tus usos gratuitos de hoy. ¡Hazte VIP para disfrutar de acceso ilimitado!",
+     "Kết nối hơi trục trặc, thử lại nhé.": "La conexión falla un poco, inténtalo de nuevo.",
+-    "Đe dọa": "Amenazas"
++    "Đe dọa": "Amenazas",
++    "Từ chối": "Rechazar",
++    "Chính sách bảo mật": "Política de privacidad",
++    "Dự án khác": "Otros proyectos",
++    "Cộng đồng": "Comunidad",
++    "Luyện tập & lưu trữ": "Práctica y archivo",
++    "Thông báo về cookie": "Aviso de cookies"
+ }
+diff --git a/resources/lang/fr.json b/resources/lang/fr.json
+index 5b2878f59..51b9eda9b 100644
+--- a/resources/lang/fr.json
++++ b/resources/lang/fr.json
+@@ -957,5 +957,11 @@
+     "Bạn cần đăng nhập để dùng Kỳ Sư AI.": "Vous devez vous connecter pour utiliser le Coach IA.",
+     "Bạn đã dùng hết lượt miễn phí hôm nay. Nâng cấp VIP để dùng không giới hạn!": "Vous avez épuisé vos utilisations gratuites du jour. Passez VIP pour un accès illimité !",
+     "Kết nối hơi trục trặc, thử lại nhé.": "La connexion est un peu instable, veuillez réessayer.",
+-    "Đe dọa": "Menaces"
++    "Đe dọa": "Menaces",
++    "Từ chối": "Refuser",
++    "Chính sách bảo mật": "Politique de confidentialité",
++    "Dự án khác": "Autres projets",
++    "Cộng đồng": "Communauté",
++    "Luyện tập & lưu trữ": "Entraînement et archives",
++    "Thông báo về cookie": "Avis sur les cookies"
+ }
+diff --git a/resources/lang/ja.json b/resources/lang/ja.json
+index 15020b7b9..910a85f2d 100644
+--- a/resources/lang/ja.json
++++ b/resources/lang/ja.json
+@@ -959,5 +959,11 @@
+     "Bạn cần đăng nhập để dùng Kỳ Sư AI.": "AIコーチを利用するにはログインが必要です。",
+     "Bạn đã dùng hết lượt miễn phí hôm nay. Nâng cấp VIP để dùng không giới hạn!": "本日の無料利用回数を使い切りました。VIPにアップグレードすると無制限でご利用いただけます！",
+     "Kết nối hơi trục trặc, thử lại nhé.": "接続が少し不安定です。もう一度お試しください。",
+-    "Đe dọa": "脅威"
++    "Đe dọa": "脅威",
++    "Từ chối": "拒否",
++    "Chính sách bảo mật": "プライバシーポリシー",
++    "Dự án khác": "その他のプロジェクト",
++    "Cộng đồng": "コミュニティ",
++    "Luyện tập & lưu trữ": "練習とアーカイブ",
++    "Thông báo về cookie": "Cookieに関するお知らせ"
+ }
+diff --git a/resources/lang/ko.json b/resources/lang/ko.json
+index 829ce3950..19381598e 100644
+--- a/resources/lang/ko.json
++++ b/resources/lang/ko.json
+@@ -958,5 +958,11 @@
+     "Bạn cần đăng nhập để dùng Kỳ Sư AI.": "AI 코치를 사용하려면 로그인이 필요합니다.",
+     "Bạn đã dùng hết lượt miễn phí hôm nay. Nâng cấp VIP để dùng không giới hạn!": "오늘의 무료 이용 횟수를 모두 사용했습니다. VIP로 업그레이드하면 무제한으로 이용할 수 있어요!",
+     "Kết nối hơi trục trặc, thử lại nhé.": "연결이 조금 불안정해요. 다시 시도해 주세요.",
+-    "Đe dọa": "위협"
++    "Đe dọa": "위협",
++    "Từ chối": "거부",
++    "Chính sách bảo mật": "개인정보 처리방침",
++    "Dự án khác": "다른 프로젝트",
++    "Cộng đồng": "커뮤니티",
++    "Luyện tập & lưu trữ": "연습 및 보관",
++    "Thông báo về cookie": "쿠키 안내"
+ }
+diff --git a/resources/lang/ru.json b/resources/lang/ru.json
+index ddd48f3ab..1c1a95ec9 100644
+--- a/resources/lang/ru.json
++++ b/resources/lang/ru.json
+@@ -957,5 +957,11 @@
+     "Bạn cần đăng nhập để dùng Kỳ Sư AI.": "Чтобы пользоваться ИИ-тренером, нужно войти в аккаунт.",
+     "Bạn đã dùng hết lượt miễn phí hôm nay. Nâng cấp VIP để dùng không giới hạn!": "Вы использовали все бесплатные попытки на сегодня. Оформите VIP для безлимитного доступа!",
+     "Kết nối hơi trục trặc, thử lại nhé.": "Соединение немного барахлит, попробуйте ещё раз.",
+-    "Đe dọa": "Угрозы"
++    "Đe dọa": "Угрозы",
++    "Từ chối": "Отклонить",
++    "Chính sách bảo mật": "Политика конфиденциальности",
++    "Dự án khác": "Другие проекты",
++    "Cộng đồng": "Сообщество",
++    "Luyện tập & lưu trữ": "Практика и архив",
++    "Thông báo về cookie": "Уведомление о файлах cookie"
+ }
+diff --git a/resources/lang/vi.json b/resources/lang/vi.json
+index 41372c22e..005979534 100644
+--- a/resources/lang/vi.json
++++ b/resources/lang/vi.json
+@@ -1333,16 +1333,16 @@
+     "Tốt": "Tốt",
+     "Luật Cờ tướng": "Luật Cờ tướng",
+     "Quân cờ được di chuyển theo luật sau:": "Quân cờ được di chuyển theo luật sau:",
+-    "guide_rule_king": "Đi từng ô một, đi ngang hoặc dọc. Tướng luôn luôn phải ở trong phạm vi cung và không được ra ngoài. “Cung” tức là hình vuông 3×3 được đánh dấu bởi lằng chéo hình chử X.",
++    "guide_rule_king": "Đi từng ô một, đi ngang hoặc dọc. Tướng luôn luôn phải ở trong phạm vi cung và không được ra ngoài. “Cung” tức là hình vuông 3×3 được đánh dấu bởi các đường chéo hình chữ X.",
+     "guide_rule_advisor": "Đi xéo 1 ô mỗi nước. Sĩ luôn luôn phải ở trong cung như con Tướng.",
+-    "guide_rule_elephant": "Đi chéo 2 ô (ngang 2 và dọc 2) cho mỗi nước đi. Tượng chỉ được phép ở một bên của bàn cờ, không được di chuyển sang nữa bàn cờ của đối phương. Nước đi của tượng sẽ không hợp lệ khi có một quân cờ nằm chặn giữa đường đi.",
++    "guide_rule_elephant": "Đi chéo 2 ô (ngang 2 và dọc 2) cho mỗi nước đi. Tượng chỉ được phép ở một bên của bàn cờ, không được di chuyển sang nửa bàn cờ của đối phương. Nước đi của tượng sẽ không hợp lệ khi có một quân cờ nằm chặn giữa đường đi.",
+     "guide_rule_chariot": "Đi ngang hay dọc trên bàn cờ miễn là đừng bị quân khác cản đường từ điểm đi đến điểm đến.",
+     "guide_rule_horse": "Đi ngang 2 ô và dọc 1 ô (hay dọc 2 ô và ngang 1 ô) cho mỗi nước đi. Nếu có quân nằm ngay bên cạnh mã và cản đường ngang 2 (hay đường dọc 2), mã bị cản không được đi đường đó.",
+-    "guide_rule_cannon": "Đi ngang và dọc giống như xe. Điểm khác biệt là nếu pháo muốn ăn quân, pháo phải nhảy qua đúng 1 quân nào đó. Khi không ăn quân, tất cả những điểm từ chổ đi đến chổ đến phải không có quân cản.",
++    "guide_rule_cannon": "Đi ngang và dọc giống như xe. Điểm khác biệt là nếu pháo muốn ăn quân, pháo phải nhảy qua đúng 1 quân nào đó. Khi không ăn quân, tất cả những điểm từ chỗ đi đến chỗ đến phải không có quân cản.",
+     "Chuột": "Chuột",
+-    "guide_rule_pawn": "(hay Tốt) đi một ô mỗi nước. Nếu chuột chưa vượt qua sông, nó chỉ có thể đi thẳng tiến. Khi đã vượt sông rồi, chuột có thể đi ngang 1 nước hay đi thẳng tiến 1 bước mỗi nước.",
++    "guide_rule_pawn": "(hay Tốt) đi một ô mỗi nước. Nếu chốt chưa vượt qua sông, nó chỉ có thể đi thẳng tiến. Khi đã vượt sông rồi, chốt có thể đi ngang 1 nước hay đi thẳng tiến 1 bước mỗi nước.",
+     "Ăn quân": "Ăn quân",
+-    "guide_rule_capture": "Khi quân di chuyển đến 1 vị trí giử bởi quân đối phương, quân đối phương bị ăn và bị lấy ra khỏi bàn cờ.",
++    "guide_rule_capture": "Khi quân di chuyển đến 1 vị trí giữ bởi quân đối phương, quân đối phương bị ăn và bị lấy ra khỏi bàn cờ.",
+     "Chống tướng": "Chống tướng",
+     "guide_rule_flying_general": "Hai con tướng trên bàn không được nằm trên cùng 1 cột dọc mà không có quân cản nào ở giữa. Nước đi để 2 con tướng trong vị trí chống tướng là không hợp lệ.",
+     "An toàn của tướng": "An toàn của tướng",
+@@ -1905,5 +1905,11 @@
+     "Bạn cần đăng nhập để dùng Kỳ Sư AI.": "Bạn cần đăng nhập để dùng Kỳ Sư AI.",
+     "Bạn đã dùng hết lượt miễn phí hôm nay. Nâng cấp VIP để dùng không giới hạn!": "Bạn đã dùng hết lượt miễn phí hôm nay. Nâng cấp VIP để dùng không giới hạn!",
+     "Kết nối hơi trục trặc, thử lại nhé.": "Kết nối hơi trục trặc, thử lại nhé.",
+-    "Đe dọa": "Đe dọa"
++    "Đe dọa": "Đe dọa",
++    "Từ chối": "Từ chối",
++    "Chính sách bảo mật": "Chính sách bảo mật",
++    "Dự án khác": "Dự án khác",
++    "Cộng đồng": "Cộng đồng",
++    "Luyện tập & lưu trữ": "Luyện tập & lưu trữ",
++    "Thông báo về cookie": "Thông báo về cookie"
+ }
+diff --git a/resources/lang/zh.json b/resources/lang/zh.json
+index 8a692e004..6db23b8bf 100644
+--- a/resources/lang/zh.json
++++ b/resources/lang/zh.json
+@@ -961,5 +961,11 @@
+     "Bạn cần đăng nhập để dùng Kỳ Sư AI.": "需要登录后才能使用 AI 棋师。",
+     "Bạn đã dùng hết lượt miễn phí hôm nay. Nâng cấp VIP để dùng không giới hạn!": "你今天的免费次数已用完。升级 VIP 即可无限使用！",
+     "Kết nối hơi trục trặc, thử lại nhé.": "网络有点不稳定，请重试。",
+-    "Đe dọa": "威胁"
++    "Đe dọa": "威胁",
++    "Từ chối": "拒绝",
++    "Chính sách bảo mật": "隐私政策",
++    "Dự án khác": "其他项目",
++    "Cộng đồng": "社区",
++    "Luyện tập & lưu trữ": "练习与存档",
++    "Thông báo về cookie": "Cookie 通知"
+ }
+diff --git a/resources/views/articles/index.blade.php b/resources/views/articles/index.blade.php
+index 4b8df635d..0bea9e1b5 100644
+--- a/resources/views/articles/index.blade.php
++++ b/resources/views/articles/index.blade.php
+@@ -1,5 +1,7 @@
+ @extends('layouts.mainlayout')
+ 
++@section('hasPageH1', '1')
++
+ @section('og_image', asset('img/news.jpg'))
+ 
+ @section('aboveContent')
+diff --git a/resources/views/articles/show.blade.php b/resources/views/articles/show.blade.php
+index 9c44f98c0..b0b7d5e0c 100644
+--- a/resources/views/articles/show.blade.php
++++ b/resources/views/articles/show.blade.php
+@@ -1,5 +1,7 @@
+ @extends('layouts.mainlayout')
+ 
++@section('hasPageH1', '1')
++
+ @section('og_image', $article->featured_image_url ?? asset('img/news.jpg'))
+ 
+ @section('aboveContent')
+diff --git a/resources/views/common/head.blade.php b/resources/views/common/head.blade.php
+index 83c4b6053..c4ab56bdc 100644
+--- a/resources/views/common/head.blade.php
++++ b/resources/views/common/head.blade.php
+@@ -59,7 +59,7 @@
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&family=Pacifico&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Roboto:ital,wght@0,100..900;1,100..900&family=Texturina:ital,opsz,wght@0,12..72,100..900;1,12..72,100..900&display=swap" rel="stylesheet">
+ {{-- <link href="{{ asset('css/index.css?v=321') }}" rel="stylesheet"> --}}
+-<link href="{{ asset('css/index_new.css?v=74') }}" rel="stylesheet">
++<link href="{{ asset('css/index_new.css?v=75') }}" rel="stylesheet">
+ @if (!($showAds ?? true))
+ <style>
+   .adsense,
+@@ -79,6 +79,26 @@
+ <script>
+ window.dataLayer = window.dataLayer || [];
+ function gtag(){dataLayer.push(arguments);}
++
++// Google Consent Mode v2. Visitors in the EEA, UK and Switzerland start with
++// storage denied until they accept the cookie banner; everyone else keeps the
++// previous behaviour (granted). A stored choice (cookie value 1 = accepted,
++// 0 = rejected) always wins, on every page load. The region default must be
++// declared before the global one.
++(function () {
++    var granted = { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' };
++    var denied = { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied' };
++    var regulated = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IS','IE','IT','LV','LI','LT','LU','MT','NL','NO','PL','PT','RO','SK','SI','ES','SE','GB','CH'];
++
++    gtag('consent', 'default', Object.assign({ region: regulated }, denied));
++    gtag('consent', 'default', granted);
++
++    var choice = document.cookie.match(/(?:^|; ){{ config('cookie-consent.cookie_name') }}=([01])(?:;|$)/);
++    if (choice) {
++        gtag('consent', 'update', choice[1] === '1' ? granted : denied);
++    }
++})();
++
+ gtag('js', new Date());
+ 
+ gtag('config', 'G-QEW6K9YPY7');
+diff --git a/resources/views/games/library.blade.php b/resources/views/games/library.blade.php
+index 0c47f4bab..ac3901545 100644
+--- a/resources/views/games/library.blade.php
++++ b/resources/views/games/library.blade.php
+@@ -1,5 +1,7 @@
+ @extends('layouts.app')
+ 
++@section('hasPageH1', '1')
++
+ @section('og_image', asset('img/og/thu-vien.jpg'))
+ 
+ @section('content')
+diff --git a/resources/views/games/show.blade.php b/resources/views/games/show.blade.php
+index 426338972..f804c36a5 100644
+--- a/resources/views/games/show.blade.php
++++ b/resources/views/games/show.blade.php
+@@ -1,5 +1,7 @@
+ @extends('layouts.app')
+ 
++@section('hasPageH1', '1')
++
+ @section('title', $game->title)
+ @section('og_image', 'https://placehold.co/1200x630/DA251D/FFFF00/jpeg?font=roboto&text=' . urlencode($game->title))
+ @section('meta_description', Str::limit($game->description, 150))
+diff --git a/resources/views/layouts/partials/app/footer.blade.php b/resources/views/layouts/partials/app/footer.blade.php
+index 02322d45b..79d388d85 100644
+--- a/resources/views/layouts/partials/app/footer.blade.php
++++ b/resources/views/layouts/partials/app/footer.blade.php
+@@ -34,38 +34,34 @@
+           <li>
+             <a target="_blank" class="game showPromotion" href="https://game.cotuong.top"><i class="fal fa-gamepad-alt"></i> {{ __("Trò chơi") }}</a>
+           </li>
++        </ul>
++      </div>
++      <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
++        <p>{{ __("Chúng tôi trên mạng xã hội") }}</p>
++        <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.youtube.com/@CoTuongVlog/videos"><i class="fab fa-youtube"></i></a>
++        <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.facebook.com/CoTuongPage/"><i class="fab fa-facebook-square rounded"></i></a>
++        <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.tiktok.com/@cotuongchamtop"><i class="fab fa-tiktok"></i></a>
++      </div>
++      <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
++        <p>{{ __('Dự án khác') }}</p>
++        <ul class="list-unstyled">
+           <li>
+-            <a target="_blank" class="buy showPromotion" href="https://www.codester.com/items/41601/multilingual-chinese-chess-game-with-many-options?ref=tungpham"><i class="fal fa-shopping-cart"></i> {{ __("Mua mã nguồn") }}</a>
++            <a target="_blank" rel="noopener" class="buy showPromotion" href="https://www.codester.com/items/41601/multilingual-chinese-chess-game-with-many-options?ref=tungpham"><i class="fal fa-shopping-cart"></i> {{ __("Mua mã nguồn") }}</a>
+           </li>
+           <li>
+-            <a target="_blank" class="proxy showPromotion" href="https://proxyviet.org?ref=PROXYVIET-EECAD4F"><i class="fal fa-shield-alt"></i> {{ __("Mua Proxy giá rẻ") }}</a>
++            <a target="_blank" rel="sponsored noopener" class="proxy showPromotion" href="https://proxyviet.org?ref=PROXYVIET-EECAD4F"><i class="fal fa-shield-alt"></i> {{ __("Mua Proxy giá rẻ") }}</a>
+           </li>
+           <li>
+-            <a target="_blank" class="hikari showPromotion" href="https://hikarilearn.io.vn/"><i class="fal fa-book-reader"></i> {{ __("Học tiếng Nhật") }}</a>
++            <a target="_blank" rel="noopener" class="hikari showPromotion" href="https://hikarilearn.io.vn/"><i class="fal fa-book-reader"></i> {{ __("Học tiếng Nhật") }}</a>
+           </li>
+           <li>
+-            <a target="_blank" class="hololab showPromotion" href="https://hololab.vn/"><i class="fal fa-cube"></i> Hologram</a>
++            <a target="_blank" rel="noopener" class="hololab showPromotion" href="https://hololab.vn/"><i class="fal fa-cube"></i> Hologram</a>
+           </li>
+           <li>
+-            <a target="_blank" class="tanphat showPromotion" href="https://tanphatdigital.com/"><i class="fal fa-usd-circle"></i> Tấn Phát Digital</a>
++            <a target="_blank" rel="noopener" class="tanphat showPromotion" href="https://tanphatdigital.com/"><i class="fal fa-usd-circle"></i> Tấn Phát Digital</a>
+           </li>
+         </ul>
+       </div>
+-      <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
+-        <p>{{ __("Chúng tôi trên mạng xã hội") }}</p>
+-        <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.youtube.com/@CoTuongVlog/videos"><i class="fab fa-youtube"></i></a>
+-        <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.facebook.com/CoTuongPage/"><i class="fab fa-facebook-square rounded"></i></a>
+-        <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.tiktok.com/@cotuongchamtop"><i class="fab fa-tiktok"></i></a>
+-      </div>
+-      <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
+-        <p>{{ __("Đã xác thực HTML5 và CSS3") }}</p>
+-        <a title="Valid HTML5" class="w-100 mr-2 display-4 text-decoration-none showPromotion" target="_blank" href="https://validator.w3.org/check?uri=referer">
+-          <i class="fab fa-html5"></i>
+-        </a>
+-        <a title="Valid CSS3" class="w-100 mr-2 display-4 text-decoration-none showPromotion" target="_blank" href="https://jigsaw.w3.org/css-validator/check/referer">
+-          <i class="fab fa-css3-alt"></i>
+-        </a>
+-      </div>
+     </div>
+   </div>
+ </footer>
+diff --git a/resources/views/layouts/partials/boards.blade.php b/resources/views/layouts/partials/boards.blade.php
+index 0bcb667f1..d6e877bd2 100644
+--- a/resources/views/layouts/partials/boards.blade.php
++++ b/resources/views/layouts/partials/boards.blade.php
+@@ -10,7 +10,7 @@
+     <div class="container mx-auto px-3 pt-0">
+         <div class="row my-0">
+             <h2 class="d-block w-100 text-light ml-3 mb-4">
+-                <i class="fas fa-trophy-alt" style="color: var(--royal-gold); text-shadow: 0 0 10px var(--royal-gold);"></i> {{ $boardCollection->total() }} {{ __('ván cờ') }} <a class="text-light animate showPromotion" href="{{ localized_url('user.list') }}">{{ __('đang thi đấu') }}</a>
++                <i class="fas fa-trophy-alt" style="color: var(--royal-gold); text-shadow: 0 0 10px var(--royal-gold);"></i> {{ $boardCollection->total() }} {{ __('ván cờ') }} <a class="text-light animate showPromotion" href="{{ localized_url('app.dashboard') }}">{{ __('đang thi đấu') }}</a>
+             </h2>
+             {{ $boardCollection->links('vendor.pagination.boardVi') }}
+ 
+diff --git a/resources/views/layouts/partials/footer.blade.php b/resources/views/layouts/partials/footer.blade.php
+index 9d7096de4..4d7dc3b0e 100644
+--- a/resources/views/layouts/partials/footer.blade.php
++++ b/resources/views/layouts/partials/footer.blade.php
+@@ -34,38 +34,34 @@
+           <li>
+             <a target="_blank" class="game showPromotion" href="https://game.cotuong.top"><i class="fal fa-gamepad-alt"></i> {{ __("Trò chơi") }}</a>
+           </li>
++        </ul>
++      </div>
++      <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
++        <p>{{ __("Chúng tôi trên mạng xã hội") }}</p>
++        <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.youtube.com/@CoTuongVlog/videos"><i class="fab fa-youtube"></i></a>
++        <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.facebook.com/CoTuongPage/"><i class="fab fa-facebook-square rounded"></i></a>
++        <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.tiktok.com/@cotuongchamtop"><i class="fab fa-tiktok"></i></a>
++      </div>
++      <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
++        <p>{{ __('Dự án khác') }}</p>
++        <ul class="list-unstyled">
+           <li>
+-            <a target="_blank" class="buy showPromotion" href="https://www.codester.com/items/41601/multilingual-chinese-chess-game-with-many-options?ref=tungpham"><i class="fal fa-shopping-cart"></i> {{ __("Mua mã nguồn") }}</a>
++            <a target="_blank" rel="noopener" class="buy showPromotion" href="https://www.codester.com/items/41601/multilingual-chinese-chess-game-with-many-options?ref=tungpham"><i class="fal fa-shopping-cart"></i> {{ __("Mua mã nguồn") }}</a>
+           </li>
+           <li>
+-            <a target="_blank" class="proxy showPromotion" href="https://proxyviet.org?ref=PROXYVIET-EECAD4F"><i class="fal fa-shield-alt"></i> {{ __("Mua Proxy giá rẻ") }}</a>
++            <a target="_blank" rel="sponsored noopener" class="proxy showPromotion" href="https://proxyviet.org?ref=PROXYVIET-EECAD4F"><i class="fal fa-shield-alt"></i> {{ __("Mua Proxy giá rẻ") }}</a>
+           </li>
+           <li>
+-            <a target="_blank" class="hikari showPromotion" href="https://hikarilearn.io.vn/"><i class="fal fa-book-reader"></i> {{ __("Học tiếng Nhật") }}</a>
++            <a target="_blank" rel="noopener" class="hikari showPromotion" href="https://hikarilearn.io.vn/"><i class="fal fa-book-reader"></i> {{ __("Học tiếng Nhật") }}</a>
+           </li>
+           <li>
+-            <a target="_blank" class="hololab showPromotion" href="https://hololab.vn/"><i class="fal fa-cube"></i> Hologram</a>
++            <a target="_blank" rel="noopener" class="hololab showPromotion" href="https://hololab.vn/"><i class="fal fa-cube"></i> Hologram</a>
+           </li>
+           <li>
+-            <a target="_blank" class="tanphat showPromotion" href="https://tanphatdigital.com/"><i class="fal fa-usd-circle"></i> Tấn Phát Digital</a>
++            <a target="_blank" rel="noopener" class="tanphat showPromotion" href="https://tanphatdigital.com/"><i class="fal fa-usd-circle"></i> Tấn Phát Digital</a>
+           </li>
+         </ul>
+       </div>
+-      <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
+-        <p>{{ __("Chúng tôi trên mạng xã hội") }}</p>
+-        <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.youtube.com/@CoTuongVlog/videos"><i class="fab fa-youtube"></i></a>
+-        <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.facebook.com/CoTuongPage/"><i class="fab fa-facebook-square rounded"></i></a>
+-        <a class="w-100 mr-2 display-4 showPromotion" target="_blank" href="https://www.tiktok.com/@cotuongchamtop"><i class="fab fa-tiktok"></i></a>
+-      </div>
+-      <div class="col-12 col-xl-3 col-lg-3 col-md-6 col-sm-12 mb-3">
+-        <p>{{ __('Đã xác thực HTML5 và CSS3') }}</p>
+-        <a title="Valid HTML5" class="w-100 mr-2 display-4 text-decoration-none showPromotion" target="_blank" href="https://validator.w3.org/check?uri=referer">
+-          <i class="fab fa-html5"></i>
+-        </a>
+-        <a title="Valid CSS3" class="w-100 mr-2 display-4 text-decoration-none showPromotion" target="_blank" href="https://jigsaw.w3.org/css-validator/check/referer">
+-          <i class="fab fa-css3-alt"></i>
+-        </a>
+-      </div>
+     </div>
+   </div>
+ </footer>
+diff --git a/resources/views/layouts/partials/header.blade.php b/resources/views/layouts/partials/header.blade.php
+index ac946319f..3306ba568 100644
+--- a/resources/views/layouts/partials/header.blade.php
++++ b/resources/views/layouts/partials/header.blade.php
+@@ -13,6 +13,15 @@
+         ['app.history',       'far fa-archive',      'Lịch sử thi đấu', 'dashboard'],
+     ];
+ 
++    // The 8 items above are shown in three labelled groups instead of one flat list.
++    // Every route key in $competeMenu must appear in exactly one group.
++    $competeGroups = [
++        'Chơi'                => ['room.list', 'tournaments.index', 'app.dashboard'],
++        'Cộng đồng'           => ['app.ranking', 'user.list', 'search'],
++        'Luyện tập & lưu trữ' => ['puzzle.list', 'app.history'],
++    ];
++    $competeByKey = collect($competeMenu)->keyBy(fn (array $item): string => $item[0]);
++
+     $resourceMenu = [
+         ['article.index',   'far fa-file',         'Bài viết',     'resource'],
+         ['games.library',   'far fa-database',     'Thư viện',     'resource'],
+@@ -98,7 +107,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+ 
+             <a class="navbar-brand small mr-auto my-0 showPromotion" href="{{ $homeUrl }}">
+                 <img src="{{ asset('img/app-icons/logo.png') }}" class="xiangqi-logo" alt="xiangqi logo">
+-                <h1 class="d-inline" style="font-size: inherit !important;"><strong>{{ __("Cờ tướng") }}</strong></h1>
++                <span class="brand-name d-inline"><strong>{{ __("Cờ tướng") }}</strong></span>
+             </a>
+ 
+             <div class="menu-toggle open" title="Trình đơn"></div>
+@@ -114,9 +123,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+                             <i class="far fa-trophy-alt"></i> {{ __("Thi đấu") }}
+                         </a>
+                         <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow" aria-labelledby="dashboardDropdown">
+-                            @foreach ($competeMenu as [$key, $icon, $label, $extraClass])
+-                                @php $itemUrl = localized_url($key); @endphp
+-                                <a class="{{ $extraClass ? $extraClass . ' ' : '' }}showPromotion dropdown-item{{ $activeClass($itemUrl) }}" href="{{ $itemUrl }}"><i class="{{ $icon }}"></i> {{ __($label) }}</a>
++                            @foreach ($competeGroups as $groupLabel => $groupKeys)
++                                @unless ($loop->first)
++                                    <div class="dropdown-divider"></div>
++                                @endunless
++                                <h6 class="dropdown-header">{{ __($groupLabel) }}</h6>
++                                @foreach ($groupKeys as $groupKey)
++                                    @php
++                                        [$key, $icon, $label, $extraClass] = $competeByKey[$groupKey];
++                                        $itemUrl = localized_url($key);
++                                    @endphp
++                                    <a class="{{ $extraClass ? $extraClass . ' ' : '' }}showPromotion dropdown-item{{ $activeClass($itemUrl) }}" href="{{ $itemUrl }}"><i class="{{ $icon }}"></i> {{ __($label) }}</a>
++                                @endforeach
+                             @endforeach
+                         </div>
+                     </li>
+@@ -205,3 +223,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+         </div>
+     </div>
+ </header>
++{{-- The brand name in the header is a <span>, so every page needs exactly one real <h1>.
++     Pages that render their own visible <h1> opt out with @section('hasPageH1', '1');
++     all other pages get a screen-reader/SEO heading that matches their <title>. --}}
++@sectionMissing('hasPageH1')
++    @php
++        $pageH1 = url()->current() == localized_url('ai.home')
++            ? __('Cờ Tướng Online Miễn Phí – Chơi Cờ Tướng 2 Người, Với Máy & Cờ Thế')
++            : (! empty($headTitle) ? __($headTitle) : __('Cờ tướng'));
++    @endphp
++    <h1 class="sr-only">{{ $pageH1 }}</h1>
++@endif
+diff --git a/resources/views/layouts/partials/userPuzzles.blade.php b/resources/views/layouts/partials/userPuzzles.blade.php
+index 16e7fbfec..b830d1088 100644
+--- a/resources/views/layouts/partials/userPuzzles.blade.php
++++ b/resources/views/layouts/partials/userPuzzles.blade.php
+@@ -46,22 +46,22 @@
+ 
+                     <div class="p-3 text-center flex-grow-1 d-flex align-items-center justify-content-center" style="background: linear-gradient(to top, var(--glass-bg-dark), transparent);">
+                         <h5 class="royal-card-title m-0" style="cursor: pointer; font-size: 1.1rem;" data-toggle="tooltip" data-placement="top" title='{{ __("Thế cờ:") }} "{{ $userPuzzle->name }}"'>
+-                            {{ $userPuzzle->name }}
++                            <a class="text-reset text-decoration-none" href="{{ url('/') }}{{ __('/the-co/') }}{{ $userPuzzle->slug }}">{{ $userPuzzle->name }}</a>
+                         </h5>
+                     </div>
+ 
+                     <div class="d-flex border-top" style="border-color: var(--glass-border) !important; background: var(--glass-bg-dark); backdrop-filter: var(--glass-blur);">
+-                        <a class="flex-fill text-center py-2 rounded-0 border-0 glass-action-btn solve-puzzle-btn" href="javascript:solvePuzzle('{{ $userPuzzle->fen }}')" data-toggle="tooltip" title='{{ __("Giải") }} {{ __("thế cờ") }} "{{ $userPuzzle->name }}"'>
+-                            <i class="fas fa-play" style="color: var(--royal-gold);"></i>
++                        <a class="flex-fill text-center py-2 rounded-0 border-0 glass-action-btn solve-puzzle-btn" href="javascript:solvePuzzle('{{ $userPuzzle->fen }}')" data-toggle="tooltip" title='{{ __("Giải") }} {{ __("thế cờ") }} "{{ $userPuzzle->name }}"' aria-label='{{ __("Giải") }} {{ __("thế cờ") }} "{{ $userPuzzle->name }}"'>
++                            <i class="fas fa-play" style="color: var(--royal-gold);" aria-hidden="true"></i>
+                         </a>
+-                        <a class="flex-fill text-center py-2 rounded-0 border-0 border-left glass-action-btn puzzle-reaction-btn" style="border-color: rgba(212, 175, 55, 0.1) !important;" href="javascript:void(0);" data-reaction="like" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}" data-toggle="tooltip" title='{{ __("Hay") }}'>
+-                            <i class="fas fa-thumbs-up" style="color: #4ade80;"></i> <span class="puzzle-reaction-count text-light" id="reaction-like-{{ $puzzleMd5 }}">{{ $userPuzzle->likes_count }}</span>
++                        <a class="flex-fill text-center py-2 rounded-0 border-0 border-left glass-action-btn puzzle-reaction-btn" style="border-color: rgba(212, 175, 55, 0.1) !important;" href="javascript:void(0);" role="button" data-reaction="like" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}" data-toggle="tooltip" title='{{ __("Hay") }}'>
++                            <i class="fas fa-thumbs-up" style="color: #4ade80;" aria-hidden="true"></i> <span class="sr-only">{{ __("Hay") }}:</span> <span class="puzzle-reaction-count text-light" id="reaction-like-{{ $puzzleMd5 }}">{{ $userPuzzle->likes_count }}</span>
+                         </a>
+-                        <a class="flex-fill text-center py-2 rounded-0 border-0 border-left glass-action-btn puzzle-reaction-btn" style="border-color: rgba(212, 175, 55, 0.1) !important;" href="javascript:void(0);" data-reaction="hard" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}" data-toggle="tooltip" title='{{ __("Khó") }}'>
+-                            <i class="fas fa-fire" style="color: var(--royal-red-light);"></i> <span class="puzzle-reaction-count text-light" id="reaction-hard-{{ $puzzleMd5 }}">{{ $userPuzzle->hard_count }}</span>
++                        <a class="flex-fill text-center py-2 rounded-0 border-0 border-left glass-action-btn puzzle-reaction-btn" style="border-color: rgba(212, 175, 55, 0.1) !important;" href="javascript:void(0);" role="button" data-reaction="hard" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}" data-toggle="tooltip" title='{{ __("Khó") }}'>
++                            <i class="fas fa-fire" style="color: var(--royal-red-light);" aria-hidden="true"></i> <span class="sr-only">{{ __("Khó") }}:</span> <span class="puzzle-reaction-count text-light" id="reaction-hard-{{ $puzzleMd5 }}">{{ $userPuzzle->hard_count }}</span>
+                         </a>
+-                        <a class="flex-fill text-center py-2 rounded-0 border-0 border-left glass-action-btn puzzle-reaction-btn" style="border-color: rgba(212, 175, 55, 0.1) !important;" href="javascript:void(0);" data-reaction="unsolved" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}" data-toggle="tooltip" title='{{ __("Chưa giải được") }}'>
+-                            <i class="fas fa-question-circle" style="color: #3b82f6;"></i> <span class="puzzle-reaction-count text-light" id="reaction-unsolved-{{ $puzzleMd5 }}">{{ $userPuzzle->unsolved_count }}</span>
++                        <a class="flex-fill text-center py-2 rounded-0 border-0 border-left glass-action-btn puzzle-reaction-btn" style="border-color: rgba(212, 175, 55, 0.1) !important;" href="javascript:void(0);" role="button" data-reaction="unsolved" data-slug="{{ $userPuzzle->slug }}" data-md5="{{ $puzzleMd5 }}" data-toggle="tooltip" title='{{ __("Chưa giải được") }}'>
++                            <i class="fas fa-question-circle" style="color: #3b82f6;" aria-hidden="true"></i> <span class="sr-only">{{ __("Chưa giải được") }}:</span> <span class="puzzle-reaction-count text-light" id="reaction-unsolved-{{ $puzzleMd5 }}">{{ $userPuzzle->unsolved_count }}</span>
+                         </a>
+                     </div>
+                 </div>
+diff --git a/resources/views/vendor/cookie-consent/dialogContents.blade.php b/resources/views/vendor/cookie-consent/dialogContents.blade.php
+index e102270c4..d1aaa9346 100644
+--- a/resources/views/vendor/cookie-consent/dialogContents.blade.php
++++ b/resources/views/vendor/cookie-consent/dialogContents.blade.php
+@@ -1,18 +1,12 @@
+-<div class="js-cookie-consent cookie-consent fixed bottom-0 inset-x-0 pb-2 text-light bg-dark font-weight-bold text-center">
+-    <div class="max-w-7xl mx-auto px-6">
+-        <div class="p-2 rounded-lg bg-yellow-100">
+-            <div class="flex items-center justify-between flex-wrap">
+-                <div class="w-0 flex-1 items-center hidden md:inline">
+-                    <p class="ml-3 text-yellow-600 cookie-consent__message h6">
+-                        {!! trans('cookie-consent::texts.message') !!}
+-                    </p>
+-                </div>
+-                <div class="mt-2 flex-shrink-0 w-full sm:mt-0 sm:w-auto">
+-                    <a class="btn btn-md btn-danger text-light js-cookie-consent-agree cookie-consent__agree flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium text-yellow-800 bg-yellow-400 hover:bg-yellow-300">
+-                        {{ trans('cookie-consent::texts.agree') }}
+-                    </a>
+-                </div>
+-            </div>
++<div class="js-cookie-consent cookie-consent" role="region" aria-label="{{ __('Thông báo về cookie') }}">
++    <div class="container cookie-consent__inner">
++        <p class="cookie-consent__message mb-0">
++            {!! trans('cookie-consent::texts.message') !!}
++            <a class="cookie-consent__link" href="{{ localized_url('privacy') }}">{{ __('Chính sách bảo mật') }}</a>
++        </p>
++        <div class="cookie-consent__actions">
++            <button type="button" class="btn btn-outline-light btn-sm js-cookie-consent-reject cookie-consent__reject">{{ __('Từ chối') }}</button>
++            <button type="button" class="btn btn-danger btn-sm js-cookie-consent-agree cookie-consent__agree">{{ trans('cookie-consent::texts.agree') }}</button>
+         </div>
+     </div>
+ </div>
+diff --git a/resources/views/vendor/cookie-consent/index.blade.php b/resources/views/vendor/cookie-consent/index.blade.php
+index 550e30735..c618fb7a9 100644
+--- a/resources/views/vendor/cookie-consent/index.blade.php
++++ b/resources/views/vendor/cookie-consent/index.blade.php
+@@ -6,16 +6,48 @@
+ 
+         window.laravelCookieConsent = (function () {
+ 
+-            const COOKIE_VALUE = 1;
++            const ACCEPTED = 1;
++            const REJECTED = 0;
++            // A rejection is asked again after a while; an acceptance is kept for the configured lifetime.
++            const REJECT_LIFETIME_DAYS = 180;
++            const COOKIE_NAME = '{{ $cookieConsentConfig['cookie_name'] }}';
+             const COOKIE_DOMAIN = '{{ config('session.domain') ?? request()->getHost() }}';
+ 
+             function consentWithCookies() {
+-                setCookie('{{ $cookieConsentConfig['cookie_name'] }}', COOKIE_VALUE, {{ $cookieConsentConfig['cookie_lifetime'] }});
++                saveChoice(ACCEPTED, {{ $cookieConsentConfig['cookie_lifetime'] }});
++            }
++
++            function rejectCookies() {
++                saveChoice(REJECTED, REJECT_LIFETIME_DAYS);
++            }
++
++            function saveChoice(value, lifetimeInDays) {
++                setCookie(COOKIE_NAME, value, lifetimeInDays);
++                updateConsentMode(value);
+                 hideCookieDialog();
+             }
+ 
+-            function cookieExists(name) {
+-                return (document.cookie.split('; ').indexOf(name + '=' + COOKIE_VALUE) !== -1);
++            // Tell Google tags (see common/head.blade.php) about the visitor's choice.
++            function updateConsentMode(value) {
++                if (typeof gtag !== 'function') {
++                    return;
++                }
++
++                const state = value === ACCEPTED ? 'granted' : 'denied';
++
++                gtag('consent', 'update', {
++                    ad_storage: state,
++                    ad_user_data: state,
++                    ad_personalization: state,
++                    analytics_storage: state
++                });
++            }
++
++            // True once the visitor has made any choice, accepted or rejected.
++            function choiceExists(name) {
++                return document.cookie.split('; ').some(function (cookie) {
++                    return cookie === name + '=' + ACCEPTED || cookie === name + '=' + REJECTED;
++                });
+             }
+ 
+             function hideCookieDialog() {
+@@ -36,18 +68,25 @@
+                     + '{{ config('session.same_site') ? ';samesite='.config('session.same_site') : null }}';
+             }
+ 
+-            if (cookieExists('{{ $cookieConsentConfig['cookie_name'] }}')) {
++            if (choiceExists(COOKIE_NAME)) {
+                 hideCookieDialog();
+             }
+ 
+-            const buttons = document.getElementsByClassName('js-cookie-consent-agree');
++            const agreeButtons = document.getElementsByClassName('js-cookie-consent-agree');
++
++            for (let i = 0; i < agreeButtons.length; ++i) {
++                agreeButtons[i].addEventListener('click', consentWithCookies);
++            }
++
++            const rejectButtons = document.getElementsByClassName('js-cookie-consent-reject');
+ 
+-            for (let i = 0; i < buttons.length; ++i) {
+-                buttons[i].addEventListener('click', consentWithCookies);
++            for (let i = 0; i < rejectButtons.length; ++i) {
++                rejectButtons[i].addEventListener('click', rejectCookies);
+             }
+ 
+             return {
+                 consentWithCookies: consentWithCookies,
++                rejectCookies: rejectCookies,
+                 hideCookieDialog: hideCookieDialog
+             };
+         })();
+diff --git a/resources/views/vip.blade.php b/resources/views/vip.blade.php
+index 38932b506..322be0f9d 100644
+--- a/resources/views/vip.blade.php
++++ b/resources/views/vip.blade.php
+@@ -1,5 +1,7 @@
+ @extends('layouts.app')
+ 
++@section('hasPageH1', '1')
++
+ @section('og_image', asset('img/xiangqi_vip.jpg'))
+ 
+ @section('content')
+-- 
+2.43.0
+

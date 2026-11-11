@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('hasPageH1', '1')
+
 @section('og_image', asset('img/xiangqi_vip.jpg'))
 
 @section('content')

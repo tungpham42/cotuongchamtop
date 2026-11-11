@@ -12,4 +12,9 @@ return [
     'worker_count' => env('XIANGQI_WORKER_COUNT', 2),
 
     'php_binary' => env('XIANGQI_PHP_BINARY'),
+
+    // A game with no result that has not moved for this many hours is treated
+    // as abandoned and is no longer listed as "live" (see Room::scopeLive).
+    // Set to 0 to disable the cutoff.
+    'live_window_hours' => (int) env('XIANGQI_LIVE_WINDOW_HOURS', 24),
 ];
