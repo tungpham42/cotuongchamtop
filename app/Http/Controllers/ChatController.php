@@ -2,34 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Services\ChatLogService;
 use Asika\Autolink\AutolinkStatic;
+use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
-    /**
-     * Map supported locales to their respective folder and suffix parameters.
-     */
-    private const LOCALE_CONFIGS = [
-        'vi' => ['lang' => 'VI', 'folder' => 'phongChatLog',     'suffix' => 'phongchatlog'],
-        'en' => ['lang' => 'EN', 'folder' => 'roomChatLog',      'suffix' => 'roomchatlog'],
-        'ja' => ['lang' => 'JA', 'folder' => 'rumuChatLog',      'suffix' => 'rumuchatlog'],
-        'ko' => ['lang' => 'KO', 'folder' => 'bangChatLog',      'suffix' => 'bangchatlog'],
-        'zh' => ['lang' => 'ZH', 'folder' => 'fangjianChatLog',  'suffix' => 'fangjianchatlog'],
-    ];
+    public function __construct(private ChatLogService $chatLogs)
+    {
+    }
 
     /**
-     * Consolidated chat message handler.
+     * Consolidated chat message handler for every supported locale.
+     *
+     * Per-locale log folder, file suffix and session name come from
+     * config('locales.chat') via ChatLogService.
      */
     public function postChat(Request $request)
     {
-        $langKey = strtolower($request->input('lang', app()->getLocale()));
-        $config = self::LOCALE_CONFIGS[$langKey] ?? self::LOCALE_CONFIGS['en'];
+        $locale   = strtolower((string) $request->input('lang', app()->getLocale()));
+        $roomCode = $this->chatLogs->normalizeRoomCode($request->input('roomCode'));
+        $text     = (string) $request->input('text');
 
-        $roomCode = $request->input('roomCode');
-        $text     = $request->input('text');
+        if ($roomCode === null) {
+            return response()->json(['status' => 'error', 'message' => 'Invalid room code'], 422);
+        }
 
-        session_name("CoTuong_{$config['lang']}-{$roomCode}");
+        session_name($this->chatLogs->sessionName($roomCode, $locale));
         session_start();
 
         if (isset($_SESSION['name'])) {
@@ -38,8 +37,7 @@ class ChatController extends Controller
             $userName = $_SESSION['name'];
             $textMessage = "<div class='msgln'><span class='chat-time'>{$time}</span> <b class='user-name'>{$userName}</b> ".stripslashes($text)."<br></div>";
 
-            $filePath = public_path("/{$config['folder']}/{$roomCode}-{$config['suffix']}.html");
-            file_put_contents($filePath, $textMessage, FILE_APPEND | LOCK_EX);
+            $this->chatLogs->append($roomCode, $textMessage, $locale);
         }
 
         return response()->json(['status' => 'success']);

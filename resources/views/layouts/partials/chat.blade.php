@@ -1,33 +1,26 @@
 @php
-$localeConfigs = [
-    'vi' => ['prefix' => 'CoTuong_VI-', 'folder' => 'phongChatLog',    'suffix' => '-phongchatlog.html'],
-    'en' => ['prefix' => 'CoTuong_EN-', 'folder' => 'roomChatLog',     'suffix' => '-roomchatlog.html'],
-    'ja' => ['prefix' => 'CoTuong_JA-', 'folder' => 'rumuChatLog',     'suffix' => '-rumuchatlog.html'],
-    'ko' => ['prefix' => 'CoTuong_KO-', 'folder' => 'bangChatLog',     'suffix' => '-bangchatlog.html'],
-    'zh' => ['prefix' => 'CoTuong_ZH-', 'folder' => 'fangjianChatLog', 'suffix' => '-fangjianchatlog.html']
-];
+// Per-locale log folder / suffix / session name live in config('locales.chat')
+// (see App\Services\ChatLogService) so every supported language is handled
+// here without a hardcoded map.
+$chatLogs   = app(\App\Services\ChatLogService::class);
+$chatLocale = app()->getLocale();
 
-$config = $localeConfigs[app()->getLocale()] ?? $localeConfigs['en'];
-extract($config);
+abort_if($chatLogs->normalizeRoomCode($roomCode ?? null) === null, 404);
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_name($prefix . $roomCode);
+    session_name($chatLogs->sessionName($roomCode, $chatLocale));
     session_start();
 }
 
-$room_path = public_path("{$folder}/{$roomCode}{$suffix}");
-$log_path  = url("{$folder}/{$roomCode}{$suffix}");
+$room_path = $chatLogs->path($roomCode, $chatLocale);
+$log_path  = $chatLogs->url($roomCode, $chatLocale);
 
-if (!is_file($room_path)) {
-    $time = date("H:i");
-    $text = __('Phòng được tạo');
-    file_put_contents($room_path, "<div class='msgln system-msg'><span class='chat-time'>{$time}</span> <span class='welcome-info'>👋 {$text}</span></div>\n");
-}
+$chatLogs->ensureExists($roomCode, __('Phòng được tạo'), $chatLocale);
 
 if (isset($_GET['logout'])) {
     if (isset($_SESSION['name'])) {
         $logout_message = "<div class='msgln system-msg'><span class='chat-time'>".date("H:i")."</span> <span class='left-info'>".__('Người dùng')." <b>". $_SESSION['name'] ."</b> ".__('đã rời phòng chat.')."</span></div>\n";
-        file_put_contents($room_path, $logout_message, FILE_APPEND | LOCK_EX);
+        $chatLogs->append($roomCode, $logout_message, $chatLocale);
         $_SESSION = [];
         setcookie('cotuong_name', '', time() - 3600, "/");
     }
@@ -38,7 +31,7 @@ if (isset($_POST['enter'])) {
         $_SESSION['name'] = stripslashes(htmlspecialchars($_POST['name']));
         setcookie('cotuong_name', $_SESSION['name'], time() + (86400 * 30), "/");
         $login_message = "<div class='msgln system-msg'><span class='chat-time'>".date("H:i")."</span> <span class='enter-info'>".__('Người dùng')." <b>". $_SESSION['name'] ."</b> ".__('đã vào phòng chat.')."</span></div>\n";
-        file_put_contents($room_path, $login_message, FILE_APPEND | LOCK_EX);
+        $chatLogs->append($roomCode, $login_message, $chatLocale);
     }
 }
 

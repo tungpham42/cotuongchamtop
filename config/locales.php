@@ -31,6 +31,40 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Room chat log storage
+    |--------------------------------------------------------------------------
+    |
+    | Single source of truth for where each locale's room chat is stored and
+    | which PHP session it uses. Read by App\Services\ChatLogService, which is
+    | shared by ChatController (writes messages) and the chat Blade partial
+    | (creates the log, handles login/logout, polls it).
+    |
+    | - session: suffix of the PHP session name   -> "CoTuong_{session}-{roomCode}"
+    | - folder:  directory under public/          -> "public/{folder}/"
+    | - suffix:  file name = "{roomCode}-{suffix}.html"
+    |
+    | vi/en/ja/ko/zh MUST stay exactly as they are: they match the chat files
+    | already on disk. The folder name follows the first segment of that
+    | locale's 'room.host' path (phong, room, rumu, bang, fangjian, raum, ...).
+    |
+    | Every entry in 'supported' needs a matching entry here; the unit test
+    | ChatLogServiceTest fails if one is missing.
+    |
+    */
+    'chat' => [
+        'vi' => ['session' => 'VI', 'folder' => 'phongChatLog',    'suffix' => 'phongchatlog'],
+        'en' => ['session' => 'EN', 'folder' => 'roomChatLog',     'suffix' => 'roomchatlog'],
+        'ja' => ['session' => 'JA', 'folder' => 'rumuChatLog',     'suffix' => 'rumuchatlog'],
+        'ko' => ['session' => 'KO', 'folder' => 'bangChatLog',     'suffix' => 'bangchatlog'],
+        'zh' => ['session' => 'ZH', 'folder' => 'fangjianChatLog', 'suffix' => 'fangjianchatlog'],
+        'de' => ['session' => 'DE', 'folder' => 'raumChatLog',     'suffix' => 'raumchatlog'],
+        'fr' => ['session' => 'FR', 'folder' => 'salonChatLog',    'suffix' => 'salonchatlog'],
+        'es' => ['session' => 'ES', 'folder' => 'salaChatLog',     'suffix' => 'salachatlog'],
+        'ru' => ['session' => 'RU', 'folder' => 'komnataChatLog',  'suffix' => 'komnatachatlog'],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Legacy SEO paths
     |--------------------------------------------------------------------------
     |

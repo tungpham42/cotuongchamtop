@@ -1,0 +1,482 @@
+diff --git a/app/Http/Controllers/ChatController.php b/app/Http/Controllers/ChatController.php
+index 4a3a582b9..6172c7fc0 100644
+--- a/app/Http/Controllers/ChatController.php
++++ b/app/Http/Controllers/ChatController.php
+@@ -2,34 +2,33 @@
+ 
+ namespace App\Http\Controllers;
+ 
+-use Illuminate\Http\Request;
++use App\Services\ChatLogService;
+ use Asika\Autolink\AutolinkStatic;
++use Illuminate\Http\Request;
+ 
+ class ChatController extends Controller
+ {
+-    /**
+-     * Map supported locales to their respective folder and suffix parameters.
+-     */
+-    private const LOCALE_CONFIGS = [
+-        'vi' => ['lang' => 'VI', 'folder' => 'phongChatLog',     'suffix' => 'phongchatlog'],
+-        'en' => ['lang' => 'EN', 'folder' => 'roomChatLog',      'suffix' => 'roomchatlog'],
+-        'ja' => ['lang' => 'JA', 'folder' => 'rumuChatLog',      'suffix' => 'rumuchatlog'],
+-        'ko' => ['lang' => 'KO', 'folder' => 'bangChatLog',      'suffix' => 'bangchatlog'],
+-        'zh' => ['lang' => 'ZH', 'folder' => 'fangjianChatLog',  'suffix' => 'fangjianchatlog'],
+-    ];
++    public function __construct(private ChatLogService $chatLogs)
++    {
++    }
+ 
+     /**
+-     * Consolidated chat message handler.
++     * Consolidated chat message handler for every supported locale.
++     *
++     * Per-locale log folder, file suffix and session name come from
++     * config('locales.chat') via ChatLogService.
+      */
+     public function postChat(Request $request)
+     {
+-        $langKey = strtolower($request->input('lang', app()->getLocale()));
+-        $config = self::LOCALE_CONFIGS[$langKey] ?? self::LOCALE_CONFIGS['en'];
++        $locale   = strtolower((string) $request->input('lang', app()->getLocale()));
++        $roomCode = $this->chatLogs->normalizeRoomCode($request->input('roomCode'));
++        $text     = (string) $request->input('text');
+ 
+-        $roomCode = $request->input('roomCode');
+-        $text     = $request->input('text');
++        if ($roomCode === null) {
++            return response()->json(['status' => 'error', 'message' => 'Invalid room code'], 422);
++        }
+ 
+-        session_name("CoTuong_{$config['lang']}-{$roomCode}");
++        session_name($this->chatLogs->sessionName($roomCode, $locale));
+         session_start();
+ 
+         if (isset($_SESSION['name'])) {
+@@ -38,8 +37,7 @@ class ChatController extends Controller
+             $userName = $_SESSION['name'];
+             $textMessage = "<div class='msgln'><span class='chat-time'>{$time}</span> <b class='user-name'>{$userName}</b> ".stripslashes($text)."<br></div>";
+ 
+-            $filePath = public_path("/{$config['folder']}/{$roomCode}-{$config['suffix']}.html");
+-            file_put_contents($filePath, $textMessage, FILE_APPEND | LOCK_EX);
++            $this->chatLogs->append($roomCode, $textMessage, $locale);
+         }
+ 
+         return response()->json(['status' => 'success']);
+diff --git a/app/Services/ChatLogService.php b/app/Services/ChatLogService.php
+new file mode 100644
+index 000000000..818e2aa0b
+--- /dev/null
++++ b/app/Services/ChatLogService.php
+@@ -0,0 +1,113 @@
++<?php
++
++namespace App\Services;
++
++/**
++ * Locale-aware access to the per-room chat log files.
++ *
++ * All locale-specific values (log folder, file suffix, PHP session name) come
++ * from config('locales.chat'), so supporting a new language is a config change
++ * rather than an edit in every controller and view that touches the chat.
++ */
++class ChatLogService
++{
++    /** Locale used when the requested one has no chat settings. */
++    public const FALLBACK_LOCALE = 'en';
++
++    /** Room codes are 32 hex chars; this is deliberately a little looser. */
++    private const ROOM_CODE_PATTERN = '/^[A-Za-z0-9_-]{1,64}$/';
++
++    /**
++     * Resolve chat settings for a locale, falling back to English for
++     * locales that have no entry.
++     *
++     * @return array{session: string, folder: string, suffix: string}
++     */
++    public function settings(?string $locale = null): array
++    {
++        $configs = config('locales.chat', []);
++        $locale = strtolower((string) ($locale ?: app()->getLocale()));
++
++        return $configs[$locale]
++            ?? $configs[self::FALLBACK_LOCALE]
++            ?? ['session' => 'EN', 'folder' => 'roomChatLog', 'suffix' => 'roomchatlog'];
++    }
++
++    /**
++     * Returns the room code if it is safe to use in a file name, otherwise null.
++     *
++     * Room codes come from the request (ChatController) and end up in a file
++     * path, so anything that is not a plain token is rejected.
++     */
++    public function normalizeRoomCode(mixed $roomCode): ?string
++    {
++        if (!is_string($roomCode) || preg_match(self::ROOM_CODE_PATTERN, $roomCode) !== 1) {
++            return null;
++        }
++
++        return $roomCode;
++    }
++
++    /** PHP session name that holds the chat nickname for this room + locale. */
++    public function sessionName(string $roomCode, ?string $locale = null): string
++    {
++        return 'CoTuong_' . $this->settings($locale)['session'] . '-' . $roomCode;
++    }
++
++    /** Path relative to public/, e.g. "salonChatLog/<code>-salonchatlog.html". */
++    public function relativePath(string $roomCode, ?string $locale = null): string
++    {
++        $settings = $this->settings($locale);
++
++        return "{$settings['folder']}/{$roomCode}-{$settings['suffix']}.html";
++    }
++
++    /** Absolute filesystem path of the log file. */
++    public function path(string $roomCode, ?string $locale = null): string
++    {
++        return public_path($this->relativePath($roomCode, $locale));
++    }
++
++    /** Public URL the chat widget polls. */
++    public function url(string $roomCode, ?string $locale = null): string
++    {
++        return url($this->relativePath($roomCode, $locale));
++    }
++
++    /**
++     * Create the log file (and its folder) with a welcome line if it does not
++     * exist yet. Folders for newly added locales are created on first use.
++     */
++    public function ensureExists(string $roomCode, string $welcomeText, ?string $locale = null): void
++    {
++        $path = $this->path($roomCode, $locale);
++
++        if (is_file($path)) {
++            return;
++        }
++
++        $directory = dirname($path);
++        if (!is_dir($directory) && !@mkdir($directory, 0775, true) && !is_dir($directory)) {
++            return;
++        }
++
++        $time = date('H:i');
++        $line = "<div class='msgln system-msg'><span class='chat-time'>{$time}</span> "
++              . "<span class='welcome-info'>👋 {$welcomeText}</span></div>\n";
++
++        @file_put_contents($path, $line, LOCK_EX);
++    }
++
++    /** Append one pre-built HTML line to the log. */
++    public function append(string $roomCode, string $html, ?string $locale = null): bool
++    {
++        $path = $this->path($roomCode, $locale);
++        $directory = dirname($path);
++
++        if (!is_dir($directory) && !@mkdir($directory, 0775, true) && !is_dir($directory)) {
++            return false;
++        }
++
++        return @file_put_contents($path, $html, FILE_APPEND | LOCK_EX) !== false;
++    }
++}
+diff --git a/config/locales.php b/config/locales.php
+index 565a87bbd..10cd20e80 100644
+--- a/config/locales.php
++++ b/config/locales.php
+@@ -29,6 +29,40 @@ return [
+         'ru' => 'ru',
+     ],
+ 
++    /*
++    |--------------------------------------------------------------------------
++    | Room chat log storage
++    |--------------------------------------------------------------------------
++    |
++    | Single source of truth for where each locale's room chat is stored and
++    | which PHP session it uses. Read by App\Services\ChatLogService, which is
++    | shared by ChatController (writes messages) and the chat Blade partial
++    | (creates the log, handles login/logout, polls it).
++    |
++    | - session: suffix of the PHP session name   -> "CoTuong_{session}-{roomCode}"
++    | - folder:  directory under public/          -> "public/{folder}/"
++    | - suffix:  file name = "{roomCode}-{suffix}.html"
++    |
++    | vi/en/ja/ko/zh MUST stay exactly as they are: they match the chat files
++    | already on disk. The folder name follows the first segment of that
++    | locale's 'room.host' path (phong, room, rumu, bang, fangjian, raum, ...).
++    |
++    | Every entry in 'supported' needs a matching entry here; the unit test
++    | ChatLogServiceTest fails if one is missing.
++    |
++    */
++    'chat' => [
++        'vi' => ['session' => 'VI', 'folder' => 'phongChatLog',    'suffix' => 'phongchatlog'],
++        'en' => ['session' => 'EN', 'folder' => 'roomChatLog',     'suffix' => 'roomchatlog'],
++        'ja' => ['session' => 'JA', 'folder' => 'rumuChatLog',     'suffix' => 'rumuchatlog'],
++        'ko' => ['session' => 'KO', 'folder' => 'bangChatLog',     'suffix' => 'bangchatlog'],
++        'zh' => ['session' => 'ZH', 'folder' => 'fangjianChatLog', 'suffix' => 'fangjianchatlog'],
++        'de' => ['session' => 'DE', 'folder' => 'raumChatLog',     'suffix' => 'raumchatlog'],
++        'fr' => ['session' => 'FR', 'folder' => 'salonChatLog',    'suffix' => 'salonchatlog'],
++        'es' => ['session' => 'ES', 'folder' => 'salaChatLog',     'suffix' => 'salachatlog'],
++        'ru' => ['session' => 'RU', 'folder' => 'komnataChatLog',  'suffix' => 'komnatachatlog'],
++    ],
++
+     /*
+     |--------------------------------------------------------------------------
+     | Legacy SEO paths
+diff --git a/resources/views/layouts/partials/chat.blade.php b/resources/views/layouts/partials/chat.blade.php
+index 09c0305d4..9a18b140d 100644
+--- a/resources/views/layouts/partials/chat.blade.php
++++ b/resources/views/layouts/partials/chat.blade.php
+@@ -1,33 +1,26 @@
+ @php
+-$localeConfigs = [
+-    'vi' => ['prefix' => 'CoTuong_VI-', 'folder' => 'phongChatLog',    'suffix' => '-phongchatlog.html'],
+-    'en' => ['prefix' => 'CoTuong_EN-', 'folder' => 'roomChatLog',     'suffix' => '-roomchatlog.html'],
+-    'ja' => ['prefix' => 'CoTuong_JA-', 'folder' => 'rumuChatLog',     'suffix' => '-rumuchatlog.html'],
+-    'ko' => ['prefix' => 'CoTuong_KO-', 'folder' => 'bangChatLog',     'suffix' => '-bangchatlog.html'],
+-    'zh' => ['prefix' => 'CoTuong_ZH-', 'folder' => 'fangjianChatLog', 'suffix' => '-fangjianchatlog.html']
+-];
++// Per-locale log folder / suffix / session name live in config('locales.chat')
++// (see App\Services\ChatLogService) so every supported language is handled
++// here without a hardcoded map.
++$chatLogs   = app(\App\Services\ChatLogService::class);
++$chatLocale = app()->getLocale();
+ 
+-$config = $localeConfigs[app()->getLocale()] ?? $localeConfigs['en'];
+-extract($config);
++abort_if($chatLogs->normalizeRoomCode($roomCode ?? null) === null, 404);
+ 
+ if (session_status() !== PHP_SESSION_ACTIVE) {
+-    session_name($prefix . $roomCode);
++    session_name($chatLogs->sessionName($roomCode, $chatLocale));
+     session_start();
+ }
+ 
+-$room_path = public_path("{$folder}/{$roomCode}{$suffix}");
+-$log_path  = url("{$folder}/{$roomCode}{$suffix}");
++$room_path = $chatLogs->path($roomCode, $chatLocale);
++$log_path  = $chatLogs->url($roomCode, $chatLocale);
+ 
+-if (!is_file($room_path)) {
+-    $time = date("H:i");
+-    $text = __('Phòng được tạo');
+-    file_put_contents($room_path, "<div class='msgln system-msg'><span class='chat-time'>{$time}</span> <span class='welcome-info'>👋 {$text}</span></div>\n");
+-}
++$chatLogs->ensureExists($roomCode, __('Phòng được tạo'), $chatLocale);
+ 
+ if (isset($_GET['logout'])) {
+     if (isset($_SESSION['name'])) {
+         $logout_message = "<div class='msgln system-msg'><span class='chat-time'>".date("H:i")."</span> <span class='left-info'>".__('Người dùng')." <b>". $_SESSION['name'] ."</b> ".__('đã rời phòng chat.')."</span></div>\n";
+-        file_put_contents($room_path, $logout_message, FILE_APPEND | LOCK_EX);
++        $chatLogs->append($roomCode, $logout_message, $chatLocale);
+         $_SESSION = [];
+         setcookie('cotuong_name', '', time() - 3600, "/");
+     }
+@@ -38,7 +31,7 @@ if (isset($_POST['enter'])) {
+         $_SESSION['name'] = stripslashes(htmlspecialchars($_POST['name']));
+         setcookie('cotuong_name', $_SESSION['name'], time() + (86400 * 30), "/");
+         $login_message = "<div class='msgln system-msg'><span class='chat-time'>".date("H:i")."</span> <span class='enter-info'>".__('Người dùng')." <b>". $_SESSION['name'] ."</b> ".__('đã vào phòng chat.')."</span></div>\n";
+-        file_put_contents($room_path, $login_message, FILE_APPEND | LOCK_EX);
++        $chatLogs->append($roomCode, $login_message, $chatLocale);
+     }
+ }
+ 
+diff --git a/resources/views/layouts/playlayout.blade.php b/resources/views/layouts/playlayout.blade.php
+index 4315a1956..b3c4c02a4 100644
+--- a/resources/views/layouts/playlayout.blade.php
++++ b/resources/views/layouts/playlayout.blade.php
+@@ -96,6 +96,18 @@
+                 <audio id="nuoc-co" style="display:none"></audio>
+                 <audio id="het-tran" style="display:none"></audio>
+                 @include('common.xiangqiSound')
++                <script>
++                    // Room URLs for the active locale, built from config('locales.paths') so they
++                    // are correct for all 9 languages (e.g. /raum/{code}, /salon/{code}/invite).
++                    // Named localizedRoomUrl because findMatch.blade.php already defines roomUrl().
++                    const LOCALIZED_ROOM_URLS = {
++                        host:  @json(localized_url('room.host',  ['code' => '__ROOM_CODE__'])),
++                        guest: @json(localized_url('room.guest', ['code' => '__ROOM_CODE__']))
++                    };
++                    function localizedRoomUrl(kind, roomCode) {
++                        return LOCALIZED_ROOM_URLS[kind].replace('__ROOM_CODE__', encodeURIComponent(roomCode));
++                    }
++                </script>
+                 @if (!isset($room->tournament_id))
+                     <div class="row">
+                         @include('layouts.partials.findMatch')
+@@ -152,8 +164,8 @@
+                                         <script>
+                                             async function joinMatch(roomCode) {
+                                                 const currentUserId = Number('{{ auth()->id() }}');
+-                                                const hostUrl = '{{ url(__('/phong/')) }}/' + roomCode;
+-                                                const guestUrl = '{{ url(__('/phong/')) }}/' + roomCode + '{{ __('/khach') }}';
++                                                const hostUrl = localizedRoomUrl('host', roomCode);
++                                                const guestUrl = localizedRoomUrl('guest', roomCode);
+ 
+                                                 try {
+                                                     // 1. Get host and guest IDs for the specified room
+@@ -323,7 +335,7 @@
+                                                 buttons: { ok: { className: 'btn-danger', label: '{{ __("Oki") }}' } }
+                                             });
+ 
+-                                            window.location.href = '{{ url(__('/phong/')) }}/' + maPhong;
++                                            window.location.href = localizedRoomUrl('host', maPhong);
+ 
+                                         } catch (error) {
+                                             console.error('An error occurred while creating the room:', error);
+diff --git a/tests/Unit/Services/ChatLogServiceTest.php b/tests/Unit/Services/ChatLogServiceTest.php
+new file mode 100644
+index 000000000..f81047eed
+--- /dev/null
++++ b/tests/Unit/Services/ChatLogServiceTest.php
+@@ -0,0 +1,146 @@
++<?php
++
++namespace Tests\Unit\Services;
++
++use App\Services\ChatLogService;
++use Illuminate\Support\Facades\File;
++use PHPUnit\Framework\Attributes\DataProvider;
++use Tests\TestCase;
++
++class ChatLogServiceTest extends TestCase
++{
++    private const CODE = 'c52562efe4b8d90de795ddc290d275d5';
++
++    private ChatLogService $service;
++    private string $publicDir;
++
++    protected function setUp(): void
++    {
++        parent::setUp();
++
++        // Never write into the real public/ folder from a test.
++        $this->publicDir = sys_get_temp_dir() . '/chatlog-test-' . uniqid();
++        File::ensureDirectoryExists($this->publicDir);
++        $this->app->usePublicPath($this->publicDir);
++
++        $this->service = new ChatLogService();
++    }
++
++    protected function tearDown(): void
++    {
++        File::deleteDirectory($this->publicDir);
++
++        parent::tearDown();
++    }
++
++    public function test_every_supported_locale_has_unique_chat_settings(): void
++    {
++        $supported = config('locales.supported');
++        $chat = config('locales.chat');
++
++        $this->assertEqualsCanonicalizing($supported, array_keys($chat), 'locales.chat must cover exactly locales.supported');
++
++        foreach (['session', 'folder', 'suffix'] as $field) {
++            $values = array_column($chat, $field);
++            $this->assertCount(count($values), array_unique($values), "Duplicate chat '{$field}' across locales");
++        }
++    }
++
++    public static function legacyLocales(): array
++    {
++        // These must never change: they match chat files already on disk.
++        return [
++            'vi' => ['vi', 'CoTuong_VI-', 'phongChatLog/' . self::CODE . '-phongchatlog.html'],
++            'en' => ['en', 'CoTuong_EN-', 'roomChatLog/' . self::CODE . '-roomchatlog.html'],
++            'ja' => ['ja', 'CoTuong_JA-', 'rumuChatLog/' . self::CODE . '-rumuchatlog.html'],
++            'ko' => ['ko', 'CoTuong_KO-', 'bangChatLog/' . self::CODE . '-bangchatlog.html'],
++            'zh' => ['zh', 'CoTuong_ZH-', 'fangjianChatLog/' . self::CODE . '-fangjianchatlog.html'],
++        ];
++    }
++
++    #[DataProvider('legacyLocales')]
++    public function test_legacy_locales_keep_their_existing_paths(string $locale, string $sessionPrefix, string $relative): void
++    {
++        $this->assertSame($sessionPrefix . self::CODE, $this->service->sessionName(self::CODE, $locale));
++        $this->assertSame($relative, $this->service->relativePath(self::CODE, $locale));
++    }
++
++    public static function newLocales(): array
++    {
++        return [
++            'de' => ['de', 'CoTuong_DE-', 'raumChatLog/' . self::CODE . '-raumchatlog.html'],
++            'fr' => ['fr', 'CoTuong_FR-', 'salonChatLog/' . self::CODE . '-salonchatlog.html'],
++            'es' => ['es', 'CoTuong_ES-', 'salaChatLog/' . self::CODE . '-salachatlog.html'],
++            'ru' => ['ru', 'CoTuong_RU-', 'komnataChatLog/' . self::CODE . '-komnatachatlog.html'],
++        ];
++    }
++
++    #[DataProvider('newLocales')]
++    public function test_new_locales_get_their_own_chat_log(string $locale, string $sessionPrefix, string $relative): void
++    {
++        $this->assertSame($sessionPrefix . self::CODE, $this->service->sessionName(self::CODE, $locale));
++        $this->assertSame($relative, $this->service->relativePath(self::CODE, $locale));
++    }
++
++    public function test_unknown_locale_falls_back_to_english(): void
++    {
++        $this->assertSame(
++            $this->service->relativePath(self::CODE, 'en'),
++            $this->service->relativePath(self::CODE, 'pt')
++        );
++    }
++
++    public function test_locale_defaults_to_the_application_locale(): void
++    {
++        app()->setLocale('fr');
++
++        $this->assertSame(
++            $this->service->relativePath(self::CODE, 'fr'),
++            $this->service->relativePath(self::CODE)
++        );
++    }
++
++    public function test_room_code_must_be_a_plain_token(): void
++    {
++        $this->assertSame(self::CODE, $this->service->normalizeRoomCode(self::CODE));
++
++        foreach (['', '../../index', 'a/b', 'a\\b', "x\0y", "abc\"&&sleep(5)&&\"", '<!--', str_repeat('a', 65)] as $bad) {
++            $this->assertNull($this->service->normalizeRoomCode($bad), 'Should reject: ' . json_encode($bad));
++        }
++
++        $this->assertNull($this->service->normalizeRoomCode(null));
++        $this->assertNull($this->service->normalizeRoomCode(['a']));
++    }
++
++    #[DataProvider('newLocales')]
++    public function test_folder_is_created_on_first_use_for_new_locales(string $locale): void
++    {
++        $path = $this->service->path(self::CODE, $locale);
++        $this->assertFileDoesNotExist($path);
++
++        $this->service->ensureExists(self::CODE, 'Welcome', $locale);
++
++        $this->assertFileExists($path);
++        $this->assertStringContainsString('Welcome', file_get_contents($path));
++    }
++
++    public function test_ensure_exists_does_not_overwrite_an_existing_log(): void
++    {
++        $this->service->ensureExists(self::CODE, 'Welcome', 'de');
++        $this->service->append(self::CODE, "<div class='msgln'>hallo</div>\n", 'de');
++        $this->service->ensureExists(self::CODE, 'Welcome again', 'de');
++
++        $contents = file_get_contents($this->service->path(self::CODE, 'de'));
++        $this->assertStringContainsString('hallo', $contents);
++        $this->assertStringNotContainsString('Welcome again', $contents);
++    }
++
++    public function test_logs_are_kept_separate_per_locale(): void
++    {
++        $this->service->append(self::CODE, 'deutsch', 'de');
++        $this->service->append(self::CODE, 'francais', 'fr');
++
++        $this->assertStringNotContainsString('francais', file_get_contents($this->service->path(self::CODE, 'de')));
++        $this->assertStringNotContainsString('deutsch', file_get_contents($this->service->path(self::CODE, 'fr')));
++    }
++}

@@ -96,6 +96,18 @@
                 <audio id="nuoc-co" style="display:none"></audio>
                 <audio id="het-tran" style="display:none"></audio>
                 @include('common.xiangqiSound')
+                <script>
+                    // Room URLs for the active locale, built from config('locales.paths') so they
+                    // are correct for all 9 languages (e.g. /raum/{code}, /salon/{code}/invite).
+                    // Named localizedRoomUrl because findMatch.blade.php already defines roomUrl().
+                    const LOCALIZED_ROOM_URLS = {
+                        host:  @json(localized_url('room.host',  ['code' => '__ROOM_CODE__'])),
+                        guest: @json(localized_url('room.guest', ['code' => '__ROOM_CODE__']))
+                    };
+                    function localizedRoomUrl(kind, roomCode) {
+                        return LOCALIZED_ROOM_URLS[kind].replace('__ROOM_CODE__', encodeURIComponent(roomCode));
+                    }
+                </script>
                 @if (!isset($room->tournament_id))
                     <div class="row">
                         @include('layouts.partials.findMatch')
@@ -152,8 +164,8 @@
                                         <script>
                                             async function joinMatch(roomCode) {
                                                 const currentUserId = Number('{{ auth()->id() }}');
-                                                const hostUrl = '{{ url(__('/phong/')) }}/' + roomCode;
-                                                const guestUrl = '{{ url(__('/phong/')) }}/' + roomCode + '{{ __('/khach') }}';
+                                                const hostUrl = localizedRoomUrl('host', roomCode);
+                                                const guestUrl = localizedRoomUrl('guest', roomCode);
 
                                                 try {
                                                     // 1. Get host and guest IDs for the specified room
@@ -323,7 +335,7 @@
                                                 buttons: { ok: { className: 'btn-danger', label: '{{ __("Oki") }}' } }
                                             });
 
-                                            window.location.href = '{{ url(__('/phong/')) }}/' + maPhong;
+                                            window.location.href = localizedRoomUrl('host', maPhong);
 
                                         } catch (error) {
                                             console.error('An error occurred while creating the room:', error);
