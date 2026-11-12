@@ -344,17 +344,16 @@
     // ------------------------------------------------------------------- init
 
     let config = {
-        draggable: true,
+        draggable: false,
         position: USES_DEFAULT_START ? 'start' : GAME_CONFIG.startFen,
         onDragStart: onDragStart,
         onDrop: onDrop,
-        onMouseoutSquare: onMouseoutSquare,
-        onMouseoverSquare: onMouseoverSquare,
         onSnapEnd: onSnapEnd,
         showNotation: true
     };
 
     board = Xiangqiboard('ban-co', config);
+        initBoardClickInteraction(board, game, config);
     $(window).resize(board.resize);
     if (!USES_DEFAULT_START) game.load(START_GAME_FEN);
 

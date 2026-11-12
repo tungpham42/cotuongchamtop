@@ -571,13 +571,12 @@
             @endif
             onDragStart: onDragStart,
             onDrop: onDrop,
-            onMouseoutSquare: onMouseoutSquare,
-            onMouseoverSquare: onMouseoverSquare,
             onSnapEnd: onSnapEnd,
             showNotation: true
         };
 
         board = Xiangqiboard('ban-co', config);
+        initBoardClickInteraction(board, game, config);
         $(window).resize(board.resize);
         kypho = KyPho.initRoom({
             board: board,

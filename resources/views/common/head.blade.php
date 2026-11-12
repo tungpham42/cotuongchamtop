@@ -109,7 +109,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-WM9GZXN');</script>
 @include('common.schemaOrg')
-<script type="text/javascript" src="{{ asset('js/theme-manager.js?v=1') }}"></script>
+<script type="text/javascript" src="{{ asset('js/theme-manager.js?v=2') }}"></script>
 
 @guest
 <script src="https://accounts.google.com/gsi/client" async defer></script>

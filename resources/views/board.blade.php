@@ -241,17 +241,16 @@
         }
 
         let config = {
-            draggable: true,
+            draggable: false,
             position: '{{ $fen }}',
             onDragStart: onDragStart,
             onDrop: onDrop,
-            onMouseoutSquare: onMouseoutSquare,
-            onMouseoverSquare: onMouseoverSquare,
             onSnapEnd: onSnapEnd,
             showNotation: true
         };
 
         board = Xiangqiboard('ban-co', config);
+        initBoardClickInteraction(board, game, config);
         $(window).resize(board.resize);
         game.load('{{ $fen }}');
         updateStatus();

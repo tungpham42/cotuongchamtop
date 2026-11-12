@@ -343,9 +343,9 @@
                                     }
 
                                     // --- 3. Board Resizing Logic ---
-                                    const $board = $('#ban-co');
-                                    const initialWidth = $board.width() || 1;
-                                    const initialHeight = $board.height() || 1;
+                                    const $boardContainer = $('#ban-co');
+                                    const initialWidth = $boardContainer.width() || 1;
+                                    const initialHeight = $boardContainer.height() || 1;
                                     const ratio = initialHeight / initialWidth;
 
                                     function adjustBoard() {
@@ -362,7 +362,7 @@
 
                                         targetWidth = Math.min(targetWidth, containerWidth);
 
-                                        $board.css({ 'width': targetWidth });
+                                        $boardContainer.css({ 'width': targetWidth });
 
                                         if (typeof board !== 'undefined' && typeof board.resize === 'function') {
                                             board.resize();

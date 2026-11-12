@@ -156,18 +156,17 @@ function onSnapEnd () {
 }
 
 let config = {
-  draggable: true,
+  draggable: false,
   position: 'start',
   onDragStart: onDragStart,
   onDrop: onDrop,
-  onMouseoutSquare: onMouseoutSquare,
-  onMouseoverSquare: onMouseoverSquare,
   onSnapEnd: onSnapEnd,
   @if (@isset($_GET['duoc-moi']) || @isset($_GET['den'])) 'orientation: "black"' @else 'orientation: "red"' @endif
   //pieceTheme: '/static/img/xiangqipieces/traditional/{piece}.svg'
 
 };
 board = Xiangqiboard('ban-co', config);
+initBoardClickInteraction(board, game, config);
 if (game.turn() === 'r') {
   $('#game-status').removeClass('black').addClass('red').html('<i class="fal fa-chess-clock-alt"></i> {{ __("Tới lượt") }} ĐỎ');
 } else if (game.turn() === 'b') {

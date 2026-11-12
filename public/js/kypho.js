@@ -239,8 +239,6 @@
             !listEl ||
             !prevBtn ||
             !nextBtn ||
-            !playBtn ||
-            !pauseBtn ||
             !panelEl
         ) {
             return null;
@@ -459,8 +457,8 @@
             var hasMoves = state.moves.length > 0;
             var enabled = !live && hasMoves;
 
-            if (prevBtn) prevBtn.disabled = !enabled || state.isPlaying;
-            if (nextBtn) nextBtn.disabled = !enabled || state.isPlaying;
+            if (prevBtn) prevBtn.disabled = state.currentIndex <= 0;
+            if (nextBtn) nextBtn.disabled = state.currentIndex >= state.fens.length - 1;
             if (playBtn) playBtn.disabled = !enabled || state.isPlaying;
             if (pauseBtn) pauseBtn.disabled = !enabled || !state.isPlaying;
 
@@ -807,9 +805,14 @@
             }
             state.currentIndex = index;
             if (state.board) {
+                state.board.isReviewing = index < state.fens.length - 1;
+                state.board.reviewMove = state.prettyMoves[index - 1] || null;
+            }
+            if (state.board) {
                 state.board.position(state.fens[state.currentIndex], true);
             }
             highlightMove(state.currentIndex - 1);
+            updateControls();
         }
 
         function stepNext() {
@@ -857,12 +860,12 @@
             updateControls();
         });
 
-        playBtn.addEventListener("click", function () {
+        if (playBtn) playBtn.addEventListener("click", function () {
             playMoveSound();
             startPlayback();
         });
 
-        pauseBtn.addEventListener("click", function () {
+        if (pauseBtn) pauseBtn.addEventListener("click", function () {
             playMoveSound();
             stopPlayback();
             updateControls();

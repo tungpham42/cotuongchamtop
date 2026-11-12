@@ -7,24 +7,12 @@
     <button id="kypho-prev" type="button" class="btn btn-dark btn-sm mx-1" title="Nước trước">
       <i class="fad fa-step-backward"></i> {{ __("Trước") }}
     </button>
-    <button id="kypho-play" type="button" class="btn btn-danger btn-sm mx-1" title="{{ __("Phát kỳ phổ") }}">
-      <i class="fad fa-play"></i> {{ __("Phát") }}
-    </button>
-    <button id="kypho-pause" type="button" class="btn btn-dark btn-sm mx-1" title="{{ __("Tạm dừng") }}">
-      <i class="fad fa-pause"></i> {{ __("Tạm dừng") }}
-    </button>
     <button id="kypho-next" type="button" class="btn btn-dark btn-sm mx-1" title="Nước sau">
       <i class="fad fa-step-forward"></i> {{ __("Sau") }}
     </button>
-    <button id="kypho-copy" type="button" class="btn btn-danger btn-sm mx-1" title="{{ __("Sao chép kỳ phổ") }}">
-      <i class="fad fa-copy"></i> {{ __("Sao chép") }}
-    </button>
-    <button id="kypho-video" type="button" class="btn btn-danger btn-sm mx-1" title="{{ __("Tải Video (9:16)") }}" disabled>
-      <i class="fad fa-video"></i> {{ __("Video") }}
-    </button>
   </div>
   <div class="kypho-body">
-    <div id="kypho-list" class="kypho-moves"></div>
+    <div id="kypho-list" class="kypho-moves" tabindex="0" role="region" aria-label="{{ __('Danh sách nước đi') }}"></div>
   </div>
 </div>
 <style>
@@ -48,6 +36,17 @@
     flex-wrap: wrap;
     gap: 4px 6px;
     align-items: center;
+    align-content: flex-start;
+    box-sizing: border-box;
+    /* Three 24px rows, two 4px gaps, padding and border. */
+    max-height: 98px;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: thin;
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.18);
   }
   .kypho-move {
     display: inline-flex;
@@ -56,7 +55,11 @@
     border-radius: 6px;
     background: rgba(255, 255, 255, 0.06);
     font-size: 0.8rem;
-    line-height: 1.1;
+    line-height: 20px;
+    height: 24px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
   .kypho-move-number {
     font-size: 0.7rem;

@@ -93,15 +93,6 @@ window.updateBoardTheme = function () {
     const piecesUrlRaw = document.getElementById('piecesUrl')?.value || window.location.origin;
     const baseUrl = piecesUrlRaw.replace(/\/+$/, '');
 
-    // For guest users, check localStorage if inputs are still default
-    if (boardTheme === 'xiangqi-board' && localStorage.getItem('guest_board_theme')) {
-      boardTheme = localStorage.getItem('guest_board_theme');
-    }
-
-    if (piecesTheme === 'wiki' && localStorage.getItem('guest_pieces_theme')) {
-      piecesTheme = localStorage.getItem('guest_pieces_theme');
-    }
-
     console.log('Updating board theme:', boardTheme, piecesTheme);
 
     const newBoardTheme = baseUrl + '/img/xiangqiboards/' + boardTheme + '.svg';
@@ -137,27 +128,12 @@ window.updateBoardTheme = function () {
 
     const refreshInstance = instance => {
       try {
-        if (instance.config) {
+        if (typeof instance.applyTheme === 'function') {
+          instance.applyTheme(newBoardTheme, newPieceTheme);
+        } else if (instance.config) {
           instance.config.boardTheme = newBoardTheme;
           instance.config.pieceTheme = newPieceTheme;
-        }
-
-        const currentPosition = typeof instance.position === 'function' ? instance.position() : null;
-
-        if (typeof instance.resize === 'function') {
-          instance.resize();
-        } else if (currentPosition && typeof instance.position === 'function') {
-          instance.position(currentPosition, false);
-        }
-
-        if (currentPosition && typeof instance.position === 'function') {
-          setTimeout(() => {
-            try {
-              instance.position(currentPosition, false);
-            } catch (restoreError) {
-              console.log('Board restore error:', restoreError);
-            }
-          }, 100);
+          if (typeof instance.resize === 'function') instance.resize();
         }
       } catch (instanceError) {
         console.log('Board theme update error for instance:', instanceError);
@@ -212,11 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('piecesTheme').value = hasGuestPiecesTheme;
     }
 
-    // Wait for board to be initialized then apply theme
-    setTimeout(() => {
-      if (typeof window.updateBoardTheme === 'function') {
-        window.updateBoardTheme();
-      }
-    }, 1000);
+    // Page scripts initialize the boards before DOMContentLoaded.
+    window.updateBoardTheme();
   }
 });

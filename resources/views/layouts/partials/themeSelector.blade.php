@@ -369,7 +369,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle apply theme button click
     const applyBtn = document.getElementById('apply-theme-btn');
     if (applyBtn) {
-        applyBtn.addEventListener('click', function() {
+        applyBtn.addEventListener('click', async function() {
             const selectedBoardTheme = document.querySelector('.theme-option[data-theme-type="board"].active')?.dataset.theme || 'xiangqi-board';
             const selectedPiecesTheme = document.querySelector('.theme-option[data-theme-type="pieces"].active')?.dataset.theme || 'wiki';
 
@@ -377,24 +377,31 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('guest_board_theme', selectedBoardTheme);
             localStorage.setItem('guest_pieces_theme', selectedPiecesTheme);
 
-            this.classList.remove('btn-danger', 'btn-primary', 'btn-warning');
-            this.classList.add('btn-info');
-            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + '{{ __("Đang tải lại...") }}';
-            this.disabled = true;
+            // Change only visual assets; keep the live board, game and timers intact.
+            document.querySelectorAll('#boardTheme').forEach(input => input.value = selectedBoardTheme);
+            document.querySelectorAll('#piecesTheme').forEach(input => input.value = selectedPiecesTheme);
+            window.updateBoardTheme();
+            this.classList.remove('btn-danger', 'btn-primary', 'btn-warning', 'btn-info');
+            this.classList.add('btn-success');
+            this.innerHTML = '<i class="fas fa-check"></i> ' + '{{ __("Đã áp dụng") }}';
 
-            if (isAuthenticated) {
-                const themeForm = document.getElementById('theme-apply-form');
-                if (themeForm) {
-                    boardInput.value = selectedBoardTheme;
-                    piecesInput.value = selectedPiecesTheme;
-                    themeForm.submit();
-                } else {
-                    setTimeout(() => location.reload(), 100);
+            const themeForm = document.getElementById('theme-apply-form');
+            if (isAuthenticated && themeForm) {
+                this.disabled = true;
+                try {
+                    const response = await fetch(themeForm.action, {
+                        method: 'POST',
+                        body: new FormData(themeForm),
+                        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                    if (!response.ok) throw new Error('Theme save failed');
+                } catch (error) {
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-warning');
+                    this.innerHTML = '{{ __("Đã áp dụng trên máy này; chưa lưu tài khoản") }}';
+                } finally {
+                    this.disabled = false;
                 }
-            } else {
-                // Guests have no account to save to; localStorage above
-                // already persisted the choice, just reload to apply it.
-                setTimeout(() => location.reload(), 100);
             }
         });
     }

@@ -149,13 +149,17 @@ class UserController extends Controller
         return back()->with('success', __('Bạn đã thay đổi tên thành công!'));
     }
 
-    public function changeUserInterface(ChangeUserInterfaceRequest $request, ChangeUserInterfaceAction $action): RedirectResponse
+    public function changeUserInterface(ChangeUserInterfaceRequest $request, ChangeUserInterfaceAction $action): RedirectResponse|JsonResponse
     {
         $action->execute(
             auth()->user(),
             $request->validated('board_theme'),
             $request->validated('pieces_theme')
         );
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true]);
+        }
 
         return back()->with('success', __('Bạn đã thay đổi giao diện thành công!'));
     }
