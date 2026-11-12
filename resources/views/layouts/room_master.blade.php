@@ -575,6 +575,8 @@
             showNotation: true
         };
 
+        config.clickMovesEnabled = config.draggable;
+        config.draggable = false;
         board = Xiangqiboard('ban-co', config);
         initBoardClickInteraction(board, game, config);
         $(window).resize(board.resize);

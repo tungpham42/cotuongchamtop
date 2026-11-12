@@ -92,7 +92,7 @@ window.initBoardClickInteraction = function (board, game, config) {
         }
     }
     element.addEventListener('click', function (event) {
-        if (board.isReviewing) return;
+        if (board.isReviewing || config.clickMovesEnabled === false) return;
         if (sliding.some(animation => animation.playState === 'running')) return;
         const cell = event.target.closest('[data-square]');
         if (!cell || !element.contains(cell)) return;
