@@ -1,6 +1,7 @@
 @extends('layouts.playlayout')
 
 @section('aboveBoard')
+<div class="pvp-scoreboard">
     @if ($role === 'watch')
         @if (isset($room->host_id))
             <h5 id="room-title" class="text-center my-1"><span id="host-title">{!! $userPresenter->renderPlayerName($room->host_id, true) !!}</span> <span id="guest-title">{!! $userPresenter->renderPlayerName($room->guest_id, true) !!}</span></h5>
@@ -25,7 +26,13 @@
             <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __($tooltip) }}">{{ __($titleMap[$role]) }}</h5>
         @endif
     @endif
-    <span id="room-name">{{ __('Tên phòng') }}: {{ $room->name }}</span>
+    <span id="room-name"><i class="fad fa-chess-board"></i> {{ __('Tên phòng') }}: {{ $room->name }}</span>
+    <div id="pvp-turn-banner" class="pvp-turn-banner" role="status" aria-live="polite" data-state="idle">
+        <span class="pvp-turn-dot"></span>
+        <span id="pvp-turn-text">&nbsp;</span>
+        <span id="pvp-conn" class="pvp-conn" data-state="ok" title="{{ __('Đã kết nối') }}"><i class="fas fa-circle"></i></span>
+    </div>
+</div>
 
     @if ($role !== 'watch')
         {{-- @include('layouts.partials.timer') --}}
@@ -403,6 +410,57 @@
         const updatePlayers = setInterval(function() { updatePlayersTitle(); }, 5000);
         @endif
 
+        // ---- PvP UX helpers: last-move highlight, turn banner, tab title ----
+        const baseTitle = document.title;
+        const T_YOUR_TURN = '{{ __("Đến lượt bạn") }}';
+        const T_WAITING = '{{ __("Chờ đối thủ đi") }}';
+        const T_TURN_OF = '{{ __("Lượt của") }}';
+        const T_OVER = '{{ __("Hết trận") }}';
+
+        function markLastMove() {
+            $('#ban-co .square-2b8ce').removeClass('last-move-from last-move-to');
+            const h = game.history({ verbose: true });
+            if (!h.length) return;
+            const m = h[h.length - 1];
+            $('#ban-co .square-' + m.from).addClass('last-move-from');
+            $('#ban-co .square-' + m.to).addClass('last-move-to');
+        }
+
+        function updateTurnBanner() {
+            const $b = $('#pvp-turn-banner');
+            if (!$b.length) return;
+            const turnName = game.turn() === 'r' ? '{{ __("Đỏ") }}' : '{{ __("Đen") }}';
+            let state = 'idle', text = '';
+            if (game.game_over() || game.fen().includes('resign')) {
+                state = 'over'; text = T_OVER;
+            @if ($role === 'watch')
+            } else {
+                state = game.turn() === 'r' ? 'red' : 'black';
+                text = T_TURN_OF + ' ' + turnName;
+            }
+            @else
+            } else if ((board.orientation() === 'red' && game.turn() === 'r') || (board.orientation() === 'black' && game.turn() === 'b')) {
+                state = 'mine'; text = T_YOUR_TURN + ' (' + turnName + ')';
+            } else {
+                state = 'theirs'; text = T_WAITING + '…';
+            }
+            @endif
+            $b.attr('data-state', state);
+            $('#pvp-turn-text').text(text);
+            document.title = (state === 'mine' ? '● ' + T_YOUR_TURN + ' · ' : '') + baseTitle;
+        }
+
+        (function watchConnection() {
+            try {
+                const conn = Echo.connector.pusher.connection;
+                const set = function (st) { $('#pvp-conn').attr('data-state', st).attr('title', st === 'ok' ? '{{ __("Đã kết nối") }}' : '{{ __("Mất kết nối, đang thử lại...") }}'); };
+                conn.bind('connected', function () { set('ok'); });
+                conn.bind('connecting', function () { set('bad'); });
+                conn.bind('unavailable', function () { set('bad'); });
+                conn.bind('disconnected', function () { set('bad'); });
+            } catch (e) { /* Echo not ready: indicator stays neutral */ }
+        })();
+
         function updateStatus () {
             var status = ''
             var moveColor = '{{ __("Đỏ") }}'
@@ -490,6 +548,8 @@
                 $('#resign').addClass('disabled').attr('aria-disabled', true);
             }
 
+            markLastMove();
+            updateTurnBanner();
             if (kypho) { kypho.updateControls(); }
         }
 
@@ -529,10 +589,27 @@
         updateStatus();
 
         @if ($role !== 'watch')
-        $('#resign').on('click', function() {
-            game.load(game.fen() + ' resign-' + board.orientation());
-            updateFenCode('{{ $roomCode }}');
-            updateStatus();
+        $('#resign').on('click', function(e) {
+            e.preventDefault();
+            if ($(this).hasClass('disabled') || game.game_over()) return;
+            bootbox.confirm({
+                title: '<i class="fad fa-flag"></i> {{ __("Bạn chắc chắn muốn bỏ cuộc?") }}',
+                message: '{{ __("Bạn sẽ bị xử thua ván này.") }}',
+                centerVertical: true,
+                closeButton: false,
+                size: 'small',
+                locale: '{{ __("vi") }}',
+                buttons: {
+                    confirm: { label: '<i class="fad fa-flag"></i> {{ __("Bỏ cuộc") }}', className: 'btn-danger' },
+                    cancel: { label: '{{ __("Chơi tiếp") }}', className: 'btn-dark text-light' }
+                },
+                callback: function(ok) {
+                    if (!ok) return;
+                    game.load(game.fen() + ' resign-' + board.orientation());
+                    updateFenCode('{{ $roomCode }}');
+                    updateStatus();
+                }
+            });
         });
         @endif
 

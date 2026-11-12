@@ -3915,3 +3915,94 @@ header.site-header .dropdown-menu .dropdown-header {
 header.site-header .dropdown-menu .dropdown-divider {
     border-top-color: rgba(212, 175, 55, 0.2);
 }
+
+
+/* ==========================================================================
+   PVP ROOM UX (scoreboard, turn banner, last move, invite toggle)
+   ========================================================================== */
+.pvp-scoreboard {
+    max-width: 650px;
+    margin: 0 auto 10px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: var(--glass-bg-dark);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--liquid-shadow);
+}
+.pvp-scoreboard #room-name {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--royal-gold-light);
+    opacity: 0.8;
+}
+.pvp-turn-banner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 8px;
+    padding: 8px 40px;
+    border-radius: 8px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--royal-gold-light);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+.pvp-turn-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #777;
+    flex: none;
+}
+.pvp-turn-banner[data-state="mine"] {
+    background: linear-gradient(90deg, rgba(138, 21, 21, 0.2), rgba(255, 215, 0, 0.25), rgba(138, 21, 21, 0.2));
+    border-color: var(--royal-gold);
+    color: var(--royal-gold);
+}
+.pvp-turn-banner[data-state="mine"] .pvp-turn-dot {
+    background: var(--royal-gold);
+    animation: pvpPulse 1.4s ease-in-out infinite;
+}
+.pvp-turn-banner[data-state="theirs"] { opacity: 0.8; }
+.pvp-turn-banner[data-state="red"] .pvp-turn-dot { background: #ff5252; }
+.pvp-turn-banner[data-state="black"] .pvp-turn-dot { background: #222; box-shadow: 0 0 0 1px #aaa; }
+.pvp-turn-banner[data-state="over"] { border-color: var(--royal-red-light); color: #fff; }
+.pvp-conn {
+    position: absolute;
+    right: 12px;
+    font-size: 0.6rem;
+    color: #4caf50;
+}
+.pvp-conn[data-state="bad"] { color: #ff5252; animation: pvpPulse 1s ease-in-out infinite; }
+@keyframes pvpPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.55; }
+}
+
+/* Last move: make the opponent's reply easy to spot */
+#ban-co .square-2b8ce.last-move-from { background: rgba(255, 215, 0, 0.22); }
+#ban-co .square-2b8ce.last-move-to { box-shadow: inset 0 0 0 3px var(--royal-gold); background: rgba(255, 215, 0, 0.32); }
+
+/* Invite panel toggle */
+.invite-toggle { border-radius: 12px 12px 0 0 !important; }
+.invite-toggle[aria-expanded="false"] { border-radius: 12px !important; }
+.invite-toggle .invite-chevron { margin-left: 8px; transition: transform 0.3s ease; }
+.invite-toggle[aria-expanded="true"] .invite-chevron { transform: rotate(180deg); }
+.room-code-mini { font-family: "Noto Sans Mono", monospace; color: var(--royal-gold); }
+
+/* Mobile: board first, tighter chrome */
+@media (max-width: 575.98px) {
+    .pvp-scoreboard { padding: 8px 10px; margin-bottom: 6px; }
+    .pvp-turn-banner { font-size: 0.85rem; letter-spacing: 0.5px; padding: 6px 30px; }
+    #resign { width: 100% !important; }
+    #video-call-container #remoteVideo { max-height: 180px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pvp-turn-dot, .pvp-conn, .pulse-gold, .pulse-red { animation: none !important; }
+}

@@ -1,0 +1,451 @@
+diff --git a/public/css/index_new.css b/public/css/index_new.css
+index 0c10fc873..3ef6d5261 100644
+--- a/public/css/index_new.css
++++ b/public/css/index_new.css
+@@ -3915,3 +3915,94 @@ header.site-header .dropdown-menu .dropdown-header {
+ header.site-header .dropdown-menu .dropdown-divider {
+     border-top-color: rgba(212, 175, 55, 0.2);
+ }
++
++
++/* ==========================================================================
++   PVP ROOM UX (scoreboard, turn banner, last move, invite toggle)
++   ========================================================================== */
++.pvp-scoreboard {
++    max-width: 650px;
++    margin: 0 auto 10px;
++    padding: 10px 14px;
++    border-radius: 12px;
++    background: var(--glass-bg-dark);
++    border: 1px solid var(--glass-border);
++    box-shadow: var(--liquid-shadow);
++}
++.pvp-scoreboard #room-name {
++    display: block;
++    font-size: 0.85rem;
++    color: var(--royal-gold-light);
++    opacity: 0.8;
++}
++.pvp-turn-banner {
++    position: relative;
++    display: flex;
++    align-items: center;
++    justify-content: center;
++    gap: 10px;
++    margin-top: 8px;
++    padding: 8px 40px;
++    border-radius: 8px;
++    font-weight: 700;
++    letter-spacing: 1px;
++    text-transform: uppercase;
++    color: var(--royal-gold-light);
++    background: rgba(255, 255, 255, 0.05);
++    border: 1px solid rgba(212, 175, 55, 0.25);
++    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
++}
++.pvp-turn-dot {
++    width: 10px;
++    height: 10px;
++    border-radius: 50%;
++    background: #777;
++    flex: none;
++}
++.pvp-turn-banner[data-state="mine"] {
++    background: linear-gradient(90deg, rgba(138, 21, 21, 0.2), rgba(255, 215, 0, 0.25), rgba(138, 21, 21, 0.2));
++    border-color: var(--royal-gold);
++    color: var(--royal-gold);
++}
++.pvp-turn-banner[data-state="mine"] .pvp-turn-dot {
++    background: var(--royal-gold);
++    animation: pvpPulse 1.4s ease-in-out infinite;
++}
++.pvp-turn-banner[data-state="theirs"] { opacity: 0.8; }
++.pvp-turn-banner[data-state="red"] .pvp-turn-dot { background: #ff5252; }
++.pvp-turn-banner[data-state="black"] .pvp-turn-dot { background: #222; box-shadow: 0 0 0 1px #aaa; }
++.pvp-turn-banner[data-state="over"] { border-color: var(--royal-red-light); color: #fff; }
++.pvp-conn {
++    position: absolute;
++    right: 12px;
++    font-size: 0.6rem;
++    color: #4caf50;
++}
++.pvp-conn[data-state="bad"] { color: #ff5252; animation: pvpPulse 1s ease-in-out infinite; }
++@keyframes pvpPulse {
++    0%, 100% { transform: scale(1); opacity: 1; }
++    50% { transform: scale(1.5); opacity: 0.55; }
++}
++
++/* Last move: make the opponent's reply easy to spot */
++#ban-co .square-2b8ce.last-move-from { background: rgba(255, 215, 0, 0.22); }
++#ban-co .square-2b8ce.last-move-to { box-shadow: inset 0 0 0 3px var(--royal-gold); background: rgba(255, 215, 0, 0.32); }
++
++/* Invite panel toggle */
++.invite-toggle { border-radius: 12px 12px 0 0 !important; }
++.invite-toggle[aria-expanded="false"] { border-radius: 12px !important; }
++.invite-toggle .invite-chevron { margin-left: 8px; transition: transform 0.3s ease; }
++.invite-toggle[aria-expanded="true"] .invite-chevron { transform: rotate(180deg); }
++.room-code-mini { font-family: "Noto Sans Mono", monospace; color: var(--royal-gold); }
++
++/* Mobile: board first, tighter chrome */
++@media (max-width: 575.98px) {
++    .pvp-scoreboard { padding: 8px 10px; margin-bottom: 6px; }
++    .pvp-turn-banner { font-size: 0.85rem; letter-spacing: 0.5px; padding: 6px 30px; }
++    #resign { width: 100% !important; }
++    #video-call-container #remoteVideo { max-height: 180px !important; }
++}
++
++@media (prefers-reduced-motion: reduce) {
++    .pvp-turn-dot, .pvp-conn, .pulse-gold, .pulse-red { animation: none !important; }
++}
+diff --git a/resources/lang/de.json b/resources/lang/de.json
+index 8b20941b8..795c57505 100644
+--- a/resources/lang/de.json
++++ b/resources/lang/de.json
+@@ -963,5 +963,14 @@
+     "Dự án khác": "Weitere Projekte",
+     "Cộng đồng": "Community",
+     "Luyện tập & lưu trữ": "Üben & Archiv",
+-    "Thông báo về cookie": "Cookie-Hinweis"
++    "Thông báo về cookie": "Cookie-Hinweis",
++    "Đến lượt bạn": "Du bist am Zug",
++    "Chờ đối thủ đi": "Warte auf Gegner",
++    "Lượt của": "Am Zug:",
++    "Đã kết nối": "Verbunden",
++    "Mất kết nối, đang thử lại...": "Verbindung verloren, neuer Versuch...",
++    "Bạn chắc chắn muốn bỏ cuộc?": "Möchtest du wirklich aufgeben?",
++    "Bạn sẽ bị xử thua ván này.": "Du verlierst diese Partie.",
++    "Chơi tiếp": "Weiterspielen",
++    "Mời bạn bè": "Freund einladen"
+ }
+diff --git a/resources/lang/en.json b/resources/lang/en.json
+index 80ca0bec6..caff6dc11 100644
+--- a/resources/lang/en.json
++++ b/resources/lang/en.json
+@@ -963,5 +963,14 @@
+     "Dự án khác": "Other projects",
+     "Cộng đồng": "Community",
+     "Luyện tập & lưu trữ": "Practice & archive",
+-    "Thông báo về cookie": "Cookie notice"
++    "Thông báo về cookie": "Cookie notice",
++    "Đến lượt bạn": "Your turn",
++    "Chờ đối thủ đi": "Waiting for opponent",
++    "Lượt của": "Turn:",
++    "Đã kết nối": "Connected",
++    "Mất kết nối, đang thử lại...": "Connection lost, retrying...",
++    "Bạn chắc chắn muốn bỏ cuộc?": "Are you sure you want to resign?",
++    "Bạn sẽ bị xử thua ván này.": "You will lose this game.",
++    "Chơi tiếp": "Keep playing",
++    "Mời bạn bè": "Invite a friend"
+ }
+diff --git a/resources/lang/es.json b/resources/lang/es.json
+index fc3b2716e..2f6605982 100644
+--- a/resources/lang/es.json
++++ b/resources/lang/es.json
+@@ -963,5 +963,14 @@
+     "Dự án khác": "Otros proyectos",
+     "Cộng đồng": "Comunidad",
+     "Luyện tập & lưu trữ": "Práctica y archivo",
+-    "Thông báo về cookie": "Aviso de cookies"
++    "Thông báo về cookie": "Aviso de cookies",
++    "Đến lượt bạn": "Tu turno",
++    "Chờ đối thủ đi": "Esperando al rival",
++    "Lượt của": "Turno:",
++    "Đã kết nối": "Conectado",
++    "Mất kết nối, đang thử lại...": "Conexión perdida, reintentando...",
++    "Bạn chắc chắn muốn bỏ cuộc?": "¿Seguro que quieres abandonar?",
++    "Bạn sẽ bị xử thua ván này.": "Perderás esta partida.",
++    "Chơi tiếp": "Seguir jugando",
++    "Mời bạn bè": "Invitar a un amigo"
+ }
+diff --git a/resources/lang/fr.json b/resources/lang/fr.json
+index 51b9eda9b..468df4b15 100644
+--- a/resources/lang/fr.json
++++ b/resources/lang/fr.json
+@@ -963,5 +963,14 @@
+     "Dự án khác": "Autres projets",
+     "Cộng đồng": "Communauté",
+     "Luyện tập & lưu trữ": "Entraînement et archives",
+-    "Thông báo về cookie": "Avis sur les cookies"
++    "Thông báo về cookie": "Avis sur les cookies",
++    "Đến lượt bạn": "À vous de jouer",
++    "Chờ đối thủ đi": "En attente de l'adversaire",
++    "Lượt của": "Au tour de",
++    "Đã kết nối": "Connecté",
++    "Mất kết nối, đang thử lại...": "Connexion perdue, nouvelle tentative...",
++    "Bạn chắc chắn muốn bỏ cuộc?": "Voulez-vous vraiment abandonner ?",
++    "Bạn sẽ bị xử thua ván này.": "Vous perdrez cette partie.",
++    "Chơi tiếp": "Continuer",
++    "Mời bạn bè": "Inviter un ami"
+ }
+diff --git a/resources/lang/ja.json b/resources/lang/ja.json
+index 910a85f2d..3e0733903 100644
+--- a/resources/lang/ja.json
++++ b/resources/lang/ja.json
+@@ -965,5 +965,14 @@
+     "Dự án khác": "その他のプロジェクト",
+     "Cộng đồng": "コミュニティ",
+     "Luyện tập & lưu trữ": "練習とアーカイブ",
+-    "Thông báo về cookie": "Cookieに関するお知らせ"
++    "Thông báo về cookie": "Cookieに関するお知らせ",
++    "Đến lượt bạn": "あなたの番です",
++    "Chờ đối thủ đi": "相手の手番",
++    "Lượt của": "手番：",
++    "Đã kết nối": "接続済み",
++    "Mất kết nối, đang thử lại...": "接続が切れました。再接続中...",
++    "Bạn chắc chắn muốn bỏ cuộc?": "本当に投了しますか？",
++    "Bạn sẽ bị xử thua ván này.": "この対局は負けになります。",
++    "Chơi tiếp": "続ける",
++    "Mời bạn bè": "友達を招待"
+ }
+diff --git a/resources/lang/ko.json b/resources/lang/ko.json
+index 19381598e..1246657fa 100644
+--- a/resources/lang/ko.json
++++ b/resources/lang/ko.json
+@@ -964,5 +964,14 @@
+     "Dự án khác": "다른 프로젝트",
+     "Cộng đồng": "커뮤니티",
+     "Luyện tập & lưu trữ": "연습 및 보관",
+-    "Thông báo về cookie": "쿠키 안내"
++    "Thông báo về cookie": "쿠키 안내",
++    "Đến lượt bạn": "당신의 차례",
++    "Chờ đối thủ đi": "상대방 차례",
++    "Lượt của": "차례:",
++    "Đã kết nối": "연결됨",
++    "Mất kết nối, đang thử lại...": "연결이 끊겼습니다. 재시도 중...",
++    "Bạn chắc chắn muốn bỏ cuộc?": "정말 기권하시겠습니까?",
++    "Bạn sẽ bị xử thua ván này.": "이 대국은 패배 처리됩니다.",
++    "Chơi tiếp": "계속하기",
++    "Mời bạn bè": "친구 초대"
+ }
+diff --git a/resources/lang/ru.json b/resources/lang/ru.json
+index 1c1a95ec9..532ed6571 100644
+--- a/resources/lang/ru.json
++++ b/resources/lang/ru.json
+@@ -963,5 +963,14 @@
+     "Dự án khác": "Другие проекты",
+     "Cộng đồng": "Сообщество",
+     "Luyện tập & lưu trữ": "Практика и архив",
+-    "Thông báo về cookie": "Уведомление о файлах cookie"
++    "Thông báo về cookie": "Уведомление о файлах cookie",
++    "Đến lượt bạn": "Ваш ход",
++    "Chờ đối thủ đi": "Ожидание соперника",
++    "Lượt của": "Ход:",
++    "Đã kết nối": "Подключено",
++    "Mất kết nối, đang thử lại...": "Связь потеряна, повторная попытка...",
++    "Bạn chắc chắn muốn bỏ cuộc?": "Вы уверены, что хотите сдаться?",
++    "Bạn sẽ bị xử thua ván này.": "Вам будет засчитано поражение.",
++    "Chơi tiếp": "Продолжить",
++    "Mời bạn bè": "Пригласить друга"
+ }
+diff --git a/resources/lang/vi.json b/resources/lang/vi.json
+index 005979534..5b1481353 100644
+--- a/resources/lang/vi.json
++++ b/resources/lang/vi.json
+@@ -1911,5 +1911,14 @@
+     "Dự án khác": "Dự án khác",
+     "Cộng đồng": "Cộng đồng",
+     "Luyện tập & lưu trữ": "Luyện tập & lưu trữ",
+-    "Thông báo về cookie": "Thông báo về cookie"
++    "Thông báo về cookie": "Thông báo về cookie",
++    "Đến lượt bạn": "Đến lượt bạn",
++    "Chờ đối thủ đi": "Chờ đối thủ đi",
++    "Lượt của": "Lượt của",
++    "Đã kết nối": "Đã kết nối",
++    "Mất kết nối, đang thử lại...": "Mất kết nối, đang thử lại...",
++    "Bạn chắc chắn muốn bỏ cuộc?": "Bạn chắc chắn muốn bỏ cuộc?",
++    "Bạn sẽ bị xử thua ván này.": "Bạn sẽ bị xử thua ván này.",
++    "Chơi tiếp": "Chơi tiếp",
++    "Mời bạn bè": "Mời bạn bè"
+ }
+diff --git a/resources/lang/zh.json b/resources/lang/zh.json
+index 6db23b8bf..8b5684d15 100644
+--- a/resources/lang/zh.json
++++ b/resources/lang/zh.json
+@@ -967,5 +967,14 @@
+     "Dự án khác": "其他项目",
+     "Cộng đồng": "社区",
+     "Luyện tập & lưu trữ": "练习与存档",
+-    "Thông báo về cookie": "Cookie 通知"
++    "Thông báo về cookie": "Cookie 通知",
++    "Đến lượt bạn": "轮到你了",
++    "Chờ đối thủ đi": "等待对手走棋",
++    "Lượt của": "轮到：",
++    "Đã kết nối": "已连接",
++    "Mất kết nối, đang thử lại...": "连接中断，正在重试...",
++    "Bạn chắc chắn muốn bỏ cuộc?": "确定要认输吗？",
++    "Bạn sẽ bị xử thua ván này.": "本局将判负。",
++    "Chơi tiếp": "继续下棋",
++    "Mời bạn bè": "邀请好友"
+ }
+diff --git a/resources/views/common/head.blade.php b/resources/views/common/head.blade.php
+index c4ab56bdc..a5893fc7a 100644
+--- a/resources/views/common/head.blade.php
++++ b/resources/views/common/head.blade.php
+@@ -59,7 +59,7 @@
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&family=Pacifico&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Roboto:ital,wght@0,100..900;1,100..900&family=Texturina:ital,opsz,wght@0,12..72,100..900;1,12..72,100..900&display=swap" rel="stylesheet">
+ {{-- <link href="{{ asset('css/index.css?v=321') }}" rel="stylesheet"> --}}
+-<link href="{{ asset('css/index_new.css?v=75') }}" rel="stylesheet">
++<link href="{{ asset('css/index_new.css?v=76') }}" rel="stylesheet">
+ @if (!($showAds ?? true))
+ <style>
+   .adsense,
+diff --git a/resources/views/layouts/partials/inviteLink.blade.php b/resources/views/layouts/partials/inviteLink.blade.php
+index 38a5f4a39..1112cc2c2 100644
+--- a/resources/views/layouts/partials/inviteLink.blade.php
++++ b/resources/views/layouts/partials/inviteLink.blade.php
+@@ -14,7 +14,12 @@
+ 
+ {{-- Glassmorphism Wrapper for Controls --}}
+ <div class="room-control-panel card shadow-lg mb-4 mx-auto" style="max-width: 650px; border-radius: 12px; background: var(--glass-bg-dark); backdrop-filter: var(--glass-blur);">
+-    <div class="card-body p-3 text-center">
++    @php $hasOpponent = isset($room->host_id) && isset($room->guest_id); @endphp
++    <button type="button" id="invite-toggle" class="invite-toggle btn btn-dark btn-sm w-100" aria-expanded="{{ $hasOpponent ? 'false' : 'true' }}" aria-controls="invite-body">
++        <i class="fad fa-user-plus"></i> {{ __('Mời bạn bè') }} · <span class="room-code-mini">{{ $roomCode }}</span>
++        <i class="fas fa-chevron-down invite-chevron"></i>
++    </button>
++    <div id="invite-body" class="card-body p-3 text-center {{ $hasOpponent ? 'd-none' : '' }}">
+ 
+         {{-- Show the invite link for any active playing role --}}
+         @if ($inviteRoute)
+@@ -65,6 +70,14 @@
+ </div>
+ <script>
+     document.addEventListener('DOMContentLoaded', function () {
++        const inviteToggle = document.getElementById('invite-toggle');
++        const inviteBody = document.getElementById('invite-body');
++        if (inviteToggle && inviteBody) {
++            inviteToggle.addEventListener('click', function () {
++                const open = inviteBody.classList.toggle('d-none') === false;
++                inviteToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
++            });
++        }
+ 
+         // --- 1. Copy Invite Link Mechanism ---
+         const copyUrlContainer = document.getElementById('copy-url-invite');
+diff --git a/resources/views/layouts/room_master.blade.php b/resources/views/layouts/room_master.blade.php
+index fc81b8c1b..abad85b88 100644
+--- a/resources/views/layouts/room_master.blade.php
++++ b/resources/views/layouts/room_master.blade.php
+@@ -1,6 +1,7 @@
+ @extends('layouts.playlayout')
+ 
+ @section('aboveBoard')
++<div class="pvp-scoreboard">
+     @if ($role === 'watch')
+         @if (isset($room->host_id))
+             <h5 id="room-title" class="text-center my-1"><span id="host-title">{!! $userPresenter->renderPlayerName($room->host_id, true) !!}</span> <span id="guest-title">{!! $userPresenter->renderPlayerName($room->guest_id, true) !!}</span></h5>
+@@ -25,7 +26,13 @@
+             <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __($tooltip) }}">{{ __($titleMap[$role]) }}</h5>
+         @endif
+     @endif
+-    <span id="room-name">{{ __('Tên phòng') }}: {{ $room->name }}</span>
++    <span id="room-name"><i class="fad fa-chess-board"></i> {{ __('Tên phòng') }}: {{ $room->name }}</span>
++    <div id="pvp-turn-banner" class="pvp-turn-banner" role="status" aria-live="polite" data-state="idle">
++        <span class="pvp-turn-dot"></span>
++        <span id="pvp-turn-text">&nbsp;</span>
++        <span id="pvp-conn" class="pvp-conn" data-state="ok" title="{{ __('Đã kết nối') }}"><i class="fas fa-circle"></i></span>
++    </div>
++</div>
+ 
+     @if ($role !== 'watch')
+         {{-- @include('layouts.partials.timer') --}}
+@@ -403,6 +410,57 @@
+         const updatePlayers = setInterval(function() { updatePlayersTitle(); }, 5000);
+         @endif
+ 
++        // ---- PvP UX helpers: last-move highlight, turn banner, tab title ----
++        const baseTitle = document.title;
++        const T_YOUR_TURN = '{{ __("Đến lượt bạn") }}';
++        const T_WAITING = '{{ __("Chờ đối thủ đi") }}';
++        const T_TURN_OF = '{{ __("Lượt của") }}';
++        const T_OVER = '{{ __("Hết trận") }}';
++
++        function markLastMove() {
++            $('#ban-co .square-2b8ce').removeClass('last-move-from last-move-to');
++            const h = game.history({ verbose: true });
++            if (!h.length) return;
++            const m = h[h.length - 1];
++            $('#ban-co .square-' + m.from).addClass('last-move-from');
++            $('#ban-co .square-' + m.to).addClass('last-move-to');
++        }
++
++        function updateTurnBanner() {
++            const $b = $('#pvp-turn-banner');
++            if (!$b.length) return;
++            const turnName = game.turn() === 'r' ? '{{ __("Đỏ") }}' : '{{ __("Đen") }}';
++            let state = 'idle', text = '';
++            if (game.game_over() || game.fen().includes('resign')) {
++                state = 'over'; text = T_OVER;
++            @if ($role === 'watch')
++            } else {
++                state = game.turn() === 'r' ? 'red' : 'black';
++                text = T_TURN_OF + ' ' + turnName;
++            }
++            @else
++            } else if ((board.orientation() === 'red' && game.turn() === 'r') || (board.orientation() === 'black' && game.turn() === 'b')) {
++                state = 'mine'; text = T_YOUR_TURN + ' (' + turnName + ')';
++            } else {
++                state = 'theirs'; text = T_WAITING + '…';
++            }
++            @endif
++            $b.attr('data-state', state);
++            $('#pvp-turn-text').text(text);
++            document.title = (state === 'mine' ? '● ' + T_YOUR_TURN + ' · ' : '') + baseTitle;
++        }
++
++        (function watchConnection() {
++            try {
++                const conn = Echo.connector.pusher.connection;
++                const set = function (st) { $('#pvp-conn').attr('data-state', st).attr('title', st === 'ok' ? '{{ __("Đã kết nối") }}' : '{{ __("Mất kết nối, đang thử lại...") }}'); };
++                conn.bind('connected', function () { set('ok'); });
++                conn.bind('connecting', function () { set('bad'); });
++                conn.bind('unavailable', function () { set('bad'); });
++                conn.bind('disconnected', function () { set('bad'); });
++            } catch (e) { /* Echo not ready: indicator stays neutral */ }
++        })();
++
+         function updateStatus () {
+             var status = ''
+             var moveColor = '{{ __("Đỏ") }}'
+@@ -490,6 +548,8 @@
+                 $('#resign').addClass('disabled').attr('aria-disabled', true);
+             }
+ 
++            markLastMove();
++            updateTurnBanner();
+             if (kypho) { kypho.updateControls(); }
+         }
+ 
+@@ -529,10 +589,27 @@
+         updateStatus();
+ 
+         @if ($role !== 'watch')
+-        $('#resign').on('click', function() {
+-            game.load(game.fen() + ' resign-' + board.orientation());
+-            updateFenCode('{{ $roomCode }}');
+-            updateStatus();
++        $('#resign').on('click', function(e) {
++            e.preventDefault();
++            if ($(this).hasClass('disabled') || game.game_over()) return;
++            bootbox.confirm({
++                title: '<i class="fad fa-flag"></i> {{ __("Bạn chắc chắn muốn bỏ cuộc?") }}',
++                message: '{{ __("Bạn sẽ bị xử thua ván này.") }}',
++                centerVertical: true,
++                closeButton: false,
++                size: 'small',
++                locale: '{{ __("vi") }}',
++                buttons: {
++                    confirm: { label: '<i class="fad fa-flag"></i> {{ __("Bỏ cuộc") }}', className: 'btn-danger' },
++                    cancel: { label: '{{ __("Chơi tiếp") }}', className: 'btn-dark text-light' }
++                },
++                callback: function(ok) {
++                    if (!ok) return;
++                    game.load(game.fen() + ' resign-' + board.orientation());
++                    updateFenCode('{{ $roomCode }}');
++                    updateStatus();
++                }
++            });
+         });
+         @endif
+ 

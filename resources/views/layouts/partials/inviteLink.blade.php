@@ -14,7 +14,12 @@
 
 {{-- Glassmorphism Wrapper for Controls --}}
 <div class="room-control-panel card shadow-lg mb-4 mx-auto" style="max-width: 650px; border-radius: 12px; background: var(--glass-bg-dark); backdrop-filter: var(--glass-blur);">
-    <div class="card-body p-3 text-center">
+    @php $hasOpponent = isset($room->host_id) && isset($room->guest_id); @endphp
+    <button type="button" id="invite-toggle" class="invite-toggle btn btn-dark btn-sm w-100" aria-expanded="{{ $hasOpponent ? 'false' : 'true' }}" aria-controls="invite-body">
+        <i class="fad fa-user-plus"></i> {{ __('Mời bạn bè') }} · <span class="room-code-mini">{{ $roomCode }}</span>
+        <i class="fas fa-chevron-down invite-chevron"></i>
+    </button>
+    <div id="invite-body" class="card-body p-3 text-center {{ $hasOpponent ? 'd-none' : '' }}">
 
         {{-- Show the invite link for any active playing role --}}
         @if ($inviteRoute)
@@ -65,6 +70,14 @@
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        const inviteToggle = document.getElementById('invite-toggle');
+        const inviteBody = document.getElementById('invite-body');
+        if (inviteToggle && inviteBody) {
+            inviteToggle.addEventListener('click', function () {
+                const open = inviteBody.classList.toggle('d-none') === false;
+                inviteToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+        }
 
         // --- 1. Copy Invite Link Mechanism ---
         const copyUrlContainer = document.getElementById('copy-url-invite');
