@@ -114,7 +114,7 @@ class XiangqiController extends Controller
     }
 
     /**
-     * Return a hint for the Red side only.
+     * Return a hint for whichever side is to move (Red or Black).
      */
     public function getHintMove(Request $request): JsonResponse
     {
@@ -127,6 +127,9 @@ class XiangqiController extends Controller
             ], 401);
         }
 
+        $usageKey = null;
+        $usedCount = 0;
+
         if (!$user->isVip()) {
             $usageKey = 'hint_usage_' . $user->id . '_' . date('Ymd');
             $usedCount = (int) \Illuminate\Support\Facades\Cache::get($usageKey, 0);
@@ -137,7 +140,6 @@ class XiangqiController extends Controller
                     'message' => __('Bạn đã dùng hết 3 lượt gợi ý miễn phí hôm nay. Vui lòng nâng cấp VIP để sử dụng không giới hạn!'),
                 ], 403);
             }
-            \Illuminate\Support\Facades\Cache::put($usageKey, $usedCount + 1, now()->endOfDay());
         }
 
         $request->validate([
@@ -160,10 +162,10 @@ class XiangqiController extends Controller
         $parts = preg_split('/\s+/', $fen);
         $activeColor = $parts[1] ?? null;
 
-        if ($activeColor !== 'r') {
+        if (!in_array($activeColor, ['r', 'b'], true)) {
             return response()->json([
                 'success' => false,
-                'error' => 'Hint is only available when Red is to move',
+                'error' => 'Invalid active color in FEN',
                 'active_color' => $activeColor,
             ], 422);
         }
@@ -187,11 +189,16 @@ class XiangqiController extends Controller
             ], 503);
         }
 
+        // Count the free hint only after a move was actually delivered.
+        if ($usageKey !== null) {
+            \Illuminate\Support\Facades\Cache::put($usageKey, $usedCount + 1, now()->endOfDay());
+        }
+
         return response()->json([
             'success' => true,
             'hint_move' => $bestMove,
             'fen' => $fen,
-            'active_color' => 'r',
+            'active_color' => $activeColor,
             'level' => $level,
             'timeout' => $adjustedTimeout,
         ]);

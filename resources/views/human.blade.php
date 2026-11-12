@@ -104,9 +104,10 @@
                 showHint(data.hint_move);
             } catch (error) {
                 clearHint();
+                console.error('Hint error:', error);
                 if (typeof bootbox !== 'undefined') {
                     bootbox.alert({
-                        message: '{{ __("Không thể lấy gợi ý nước đi lúc này.") }}',
+                        message: error.message || '{{ __("Không thể lấy gợi ý nước đi lúc này.") }}',
                         size: 'small'
                     });
                 }
