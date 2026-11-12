@@ -5,6 +5,13 @@ return [
 
     'supported' => ['vi', 'en', 'ja', 'ko', 'zh', 'de', 'fr', 'es', 'ru'],
 
+    /*
+    | Locales that have full content (puzzle + article pages) and are therefore
+    | published in the sitemaps. Must be a subset of 'supported'. Add 'de', 'fr',
+    | 'es', 'ru' here once their translations and routes exist.
+    */
+    'sitemap' => ['vi', 'en', 'ja', 'ko', 'zh', 'de', 'fr', 'es', 'ru'],
+
     'labels' => [
         'vi' => 'Tiếng Việt',
         'en' => 'English',

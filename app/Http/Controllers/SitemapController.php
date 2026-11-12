@@ -23,10 +23,16 @@ use Spatie\Sitemap\Tags\Url;
  *  - GET /sitemap-articles-{locale}.xml   one <url> entry per published article
  *
  * sitemap_index.xml is the URL you actually submit to search
- * engines; it just points at the other three (times |SITEMAP_LOCALES|
- * for the locale-specific ones) rather than duplicating their
- * contents, so nothing about the child sitemaps needs to change
- * when a new one is added - see sitemapIndex()/buildSitemapIndex().
+ * engines; it just points at the other three (times the number of
+ * sitemap locales for the locale-specific ones) rather than
+ * duplicating their contents, so nothing about the child sitemaps
+ * needs to change when a new one is added - see
+ * sitemapIndex()/buildSitemapIndex().
+ *
+ * Locales come from config/locales.php (the single source of truth):
+ *  - locales.default  the unprefixed locale
+ *  - locales.sitemap  the locales published in the sitemaps
+ *                     (a subset of locales.supported)
  *
  * The puzzle and article sitemaps are each handled by a single
  * action, parameterised by {locale} (DRY: one action + one
@@ -59,14 +65,6 @@ class SitemapController extends Controller
      */
     private const CACHE_TTL = 21600; // 6 hours
 
-    /**
-     * The locales the puzzle and article sitemaps are published in.
-     * 'vi' is the default/unprefixed locale.
-     */
-    private const SITEMAP_LOCALES = ['vi', 'en', 'ja', 'ko', 'zh'];
-
-    private const DEFAULT_LOCALE = 'vi';
-
     public function __construct(
         private GetPuzzleQueriesAction $puzzleQueries
     ) {
@@ -75,7 +73,7 @@ class SitemapController extends Controller
     /**
      * Sitemap index: the single URL to submit to search engines.
      * Points at sitemap.xml plus the puzzle and article sitemaps
-     * for every supported locale, without duplicating their <url>
+     * for every sitemap locale, without duplicating their <url>
      * entries here.
      */
     public function sitemapIndex(): Response
@@ -96,11 +94,11 @@ class SitemapController extends Controller
     }
 
     /**
-     * Puzzle sitemap for a single locale (vi or en).
+     * Puzzle sitemap for a single locale.
      */
     public function puzzles(string $locale): Response
     {
-        abort_unless(in_array($locale, self::SITEMAP_LOCALES, true), 404);
+        abort_unless(in_array($locale, $this->sitemapLocales(), true), 404);
 
         return $this->cachedXmlResponse("sitemap.puzzles.$locale", function () use ($locale) {
             return $this->buildSitemap($this->puzzleUrls($locale));
@@ -112,11 +110,30 @@ class SitemapController extends Controller
      */
     public function articles(string $locale): Response
     {
-        abort_unless(in_array($locale, self::SITEMAP_LOCALES, true), 404);
+        abort_unless(in_array($locale, $this->sitemapLocales(), true), 404);
 
         return $this->cachedXmlResponse("sitemap.articles.$locale", function () use ($locale) {
             return $this->buildSitemap($this->articleUrls($locale));
         });
+    }
+
+    /**
+     * Locales published in the sitemaps, from config/locales.php.
+     * Falls back to every supported locale if 'sitemap' isn't defined.
+     *
+     * @return list<string>
+     */
+    private function sitemapLocales(): array
+    {
+        return config('locales.sitemap', config('locales.supported'));
+    }
+
+    /**
+     * The default (unprefixed) locale, from config/locales.php.
+     */
+    private function defaultLocale(): string
+    {
+        return config('locales.default');
     }
 
     /**
@@ -216,18 +233,7 @@ class SitemapController extends Controller
      */
     private function articleShowRouteName(string $locale): string
     {
-        return $locale === self::DEFAULT_LOCALE ? 'article.show' : "{$locale}.article.show";
-    }
-
-    /**
-     * The default locale (vi) is served unprefixed; every other
-     * locale is served under its own /{locale} segment, matching
-     * the existing localized_path()/langXxUrl conventions elsewhere
-     * in the app.
-     */
-    private function localePrefix(string $locale): string
-    {
-        return $locale === self::DEFAULT_LOCALE ? '' : '/' . $locale;
+        return $locale === $this->defaultLocale() ? 'article.show' : "{$locale}.article.show";
     }
 
     private function isApiRoute(RoutingRoute $route): bool
@@ -236,9 +242,9 @@ class SitemapController extends Controller
     }
 
     /**
-     * Lists sitemap.xml plus every locale's puzzle and article
-     * sitemap. New child sitemaps just need one line here - the
-     * cachedXmlResponse()/render() plumbing is shared with the
+     * Lists sitemap.xml plus every sitemap locale's puzzle and
+     * article sitemap. New child sitemaps just need one line here -
+     * the cachedXmlResponse()/render() plumbing is shared with the
      * child sitemaps themselves via buildSitemap().
      */
     private function buildSitemapIndex(): SitemapIndex
@@ -246,7 +252,7 @@ class SitemapController extends Controller
         $sitemapIndex = SitemapIndex::create()
             ->add(route('sitemap.index'));
 
-        foreach (self::SITEMAP_LOCALES as $locale) {
+        foreach ($this->sitemapLocales() as $locale) {
             $sitemapIndex
                 ->add(route('sitemap.puzzles', ['locale' => $locale]))
                 ->add(route('sitemap.articles', ['locale' => $locale]));
