@@ -14,22 +14,7 @@
     }
 
     /* ---------- Last move: soft gold wash (from) + glass tile (to) ---------- */
-    #ban-co .click-last-from,
-    #ban-co .click-last-to {
-        background:
-            radial-gradient(circle at 50% 35%, rgba(255, 242, 204, .38), rgba(255, 215, 0, .16) 60%, transparent 100%) !important;
-        box-shadow:
-            inset 0 0 0 1px rgba(255, 215, 0, .35),
-            inset 0 2px 8px rgba(255, 255, 255, .35) !important;
-    }
-    #ban-co .click-last-to {
-        background:
-            radial-gradient(circle at 50% 35%, rgba(255, 255, 255, .5), rgba(255, 215, 0, .3) 65%, rgba(138, 21, 21, .12) 100%) !important;
-        box-shadow:
-            inset 0 0 0 2px rgba(255, 215, 0, .8),
-            inset 0 0 14px rgba(255, 215, 0, .55),
-            inset 0 2px 8px rgba(255, 255, 255, .45) !important;
-    }
+    /* No square tile on from/to: only the bead (from) and piece ring (to) remain. */
     #ban-co .click-last-to img {
         border-radius: 50%;
         outline: 2px solid rgba(255, 215, 0, .95);
