@@ -125,6 +125,13 @@
         #ban-co .click-target:has(img)::after { animation: none !important; }
         #ban-co .square-2b8ce img { transition: none; }
     }
+    #ban-co .square-2b8ce.last-move-from {
+        background: none !important;
+    }
+    #ban-co .square-2b8ce.last-move-to {
+        box-shadow: none !important;
+        background: none !important;
+    }
 </style>
 <script>
 window.initBoardClickInteraction = function (board, game, config) {
