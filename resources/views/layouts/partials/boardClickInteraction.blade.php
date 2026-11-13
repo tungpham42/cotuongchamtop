@@ -1,18 +1,149 @@
 <style>
+    /* ==========================================================================
+       BOARD CLICK INTERACTION — LIQUID GLASS + CUNG ĐÌNH HUẾ
+       Classes toggled by paint(): click-selected, click-target,
+       click-last-from, click-last-to
+       ========================================================================== */
     #ban-co .square-2b8ce { pointer-events: auto !important; cursor: pointer; }
-    #ban-co .square-2b8ce.click-selected img,
-    #ban-co .square-2b8ce.click-selected:hover img { transform: translateY(-5px) !important; }
-    #ban-co .click-target::after, #ban-co .click-last-from::after {
-        content: ''; position: absolute; left: 50%; top: 50%;
-        width: 20%; height: 20%; border-radius: 50%;
-        transform: translate(-50%, -50%); background: rgba(255,255,255,.85);
+
+    /* Pieces sit above the halo layers */
+    #ban-co .square-2b8ce img {
+        position: relative;
+        z-index: 2;
+        transition: transform .28s cubic-bezier(.175, .885, .32, 1.275), filter .28s ease;
+    }
+
+    /* ---------- Last move: soft gold wash (from) + glass tile (to) ---------- */
+    #ban-co .click-last-from,
+    #ban-co .click-last-to {
+        background:
+            radial-gradient(circle at 50% 35%, rgba(255, 242, 204, .38), rgba(255, 215, 0, .16) 60%, transparent 100%) !important;
+        box-shadow:
+            inset 0 0 0 1px rgba(255, 215, 0, .35),
+            inset 0 2px 8px rgba(255, 255, 255, .35) !important;
+    }
+    #ban-co .click-last-to {
+        background:
+            radial-gradient(circle at 50% 35%, rgba(255, 255, 255, .5), rgba(255, 215, 0, .3) 65%, rgba(138, 21, 21, .12) 100%) !important;
+        box-shadow:
+            inset 0 0 0 2px rgba(255, 215, 0, .8),
+            inset 0 0 14px rgba(255, 215, 0, .55),
+            inset 0 2px 8px rgba(255, 255, 255, .45) !important;
+    }
+    #ban-co .click-last-to img {
+        border-radius: 50%;
+        outline: 2px solid rgba(255, 215, 0, .95);
+        outline-offset: 1px;
+        box-shadow: 0 0 12px rgba(255, 215, 0, .65);
+    }
+    /* Vacated square: tiny glossy bead */
+    #ban-co .click-last-from::after {
+        content: '';
+        position: absolute; left: 50%; top: 50%;
+        width: 16%; height: 16%; border-radius: 50%;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(circle at 35% 30%, #fff, rgba(255, 215, 0, .7) 70%);
+        box-shadow: 0 0 8px rgba(255, 215, 0, .8);
         pointer-events: none; z-index: 3;
     }
-    #ban-co .click-target:has(img)::after {
-        width: 80%; height: 80%; background: transparent; border: 3px solid white;
+
+    /* ---------- Selected piece: lifted, glowing gold halo ---------- */
+    #ban-co .square-2b8ce.click-selected {
+        background:
+            radial-gradient(circle at 50% 50%, rgba(255, 215, 0, .55), rgba(255, 215, 0, .15) 60%, transparent 75%) !important;
+        box-shadow:
+            inset 0 0 0 2px var(--royal-gold),
+            inset 0 0 18px rgba(255, 215, 0, .75) !important;
+        z-index: 4;
+        animation: clickSelectedPulse 1.4s ease-in-out infinite;
     }
-    #ban-co .click-last-to img { border-radius: 50%; outline: 2px solid white; outline-offset: 1px; }
+    #ban-co .square-2b8ce.click-selected img,
+    #ban-co .square-2b8ce.click-selected:hover img {
+        transform: translateY(-6px) scale(1.12) !important;
+        filter:
+            drop-shadow(0 8px 6px rgba(0, 0, 0, .55))
+            drop-shadow(0 0 10px rgba(255, 215, 0, .95)) !important;
+    }
+    @keyframes clickSelectedPulse {
+        0%, 100% { box-shadow: inset 0 0 0 2px var(--royal-gold), inset 0 0 14px rgba(255, 215, 0, .6); }
+        50%      { box-shadow: inset 0 0 0 2px #fff,              inset 0 0 26px rgba(255, 215, 0, .95); }
+    }
+
+    /* ---------- Legal move (empty square): glossy gold glass orb ---------- */
+    #ban-co .click-target::after {
+        content: '';
+        position: absolute; left: 50%; top: 50%;
+        width: 26%; height: 26%; border-radius: 50%;
+        transform: translate(-50%, -50%);
+        background:
+            radial-gradient(circle at 32% 28%, #fff 0%, rgba(255, 242, 204, .95) 18%, var(--royal-gold) 55%, #b89020 100%);
+        box-shadow:
+            0 0 0 2px rgba(138, 21, 21, .55),
+            0 3px 6px rgba(0, 0, 0, .55),
+            0 0 14px rgba(255, 215, 0, .85),
+            inset 0 -2px 4px rgba(0, 0, 0, .25);
+        pointer-events: none; z-index: 3;
+        animation: clickOrbIn .3s cubic-bezier(.175, .885, .32, 1.275) both,
+                   clickOrbGlow 1.8s ease-in-out .3s infinite;
+    }
+    #ban-co .click-target:hover::after {
+        width: 36%; height: 36%;
+        transition: width .2s ease, height .2s ease;
+    }
+    #ban-co .click-target:not(:has(img)):hover {
+        background: radial-gradient(circle, rgba(255, 215, 0, .35), transparent 75%) !important;
+    }
+
+    /* ---------- Capture (square holds an enemy piece): ruby-gold ring ---------- */
+    #ban-co .click-target:has(img)::after {
+        width: 92%; height: 92%;
+        background: transparent;
+        border: 3px solid transparent;
+        background-image:
+            linear-gradient(transparent, transparent),
+            conic-gradient(from 0deg, var(--royal-red-light), var(--royal-gold), #fff, var(--royal-gold), var(--royal-red-light));
+        background-origin: border-box;
+        background-clip: padding-box, border-box;
+        box-shadow:
+            0 0 14px rgba(230, 57, 70, .9),
+            inset 0 0 14px rgba(230, 57, 70, .6);
+        animation: clickRingIn .3s cubic-bezier(.175, .885, .32, 1.275) both,
+                   clickRingSpin 3s linear .3s infinite,
+                   clickRingGlow 1.2s ease-in-out .3s infinite;
+    }
+    #ban-co .click-target:has(img) img {
+        filter: drop-shadow(0 0 8px rgba(230, 57, 70, .9));
+    }
+
+    @keyframes clickOrbIn {
+        from { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+        to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+    @keyframes clickOrbGlow {
+        0%, 100% { filter: brightness(1); }
+        50%      { filter: brightness(1.2) drop-shadow(0 0 6px rgba(255, 215, 0, .9)); }
+    }
+    @keyframes clickRingIn {
+        from { transform: translate(-50%, -50%) scale(.4); opacity: 0; }
+        to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+    @keyframes clickRingSpin {
+        to { filter: hue-rotate(0deg); transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    @keyframes clickRingGlow {
+        0%, 100% { opacity: .75; }
+        50%      { opacity: 1; }
+    }
+
+    /* Existing highlight helpers stay neutral */
     #ban-co .highlight-red, #ban-co .highlight-black { background: transparent !important; box-shadow: none !important; }
+
+    @media (prefers-reduced-motion: reduce) {
+        #ban-co .click-selected,
+        #ban-co .click-target::after,
+        #ban-co .click-target:has(img)::after { animation: none !important; }
+        #ban-co .square-2b8ce img { transition: none; }
+    }
 </style>
 <script>
 window.initBoardClickInteraction = function (board, game, config) {
@@ -59,10 +190,12 @@ window.initBoardClickInteraction = function (board, game, config) {
             const end = image.getBoundingClientRect();
             const cell = square(target);
             cell.style.zIndex = '4';
+            // Glide with a soft ease-out, a small lift mid-flight, and a gold trail glow.
             const animation = image.animate([
-                { translate: `${rects[source].left - end.left}px ${rects[source].top - end.top}px` },
-                { translate: '0px 0px' }
-            ], { duration: 100, easing: 'linear' });
+                { translate: `${rects[source].left - end.left}px ${rects[source].top - end.top}px`,
+                  scale: '1.12', filter: 'drop-shadow(0 8px 6px rgba(0,0,0,.5)) drop-shadow(0 0 12px rgba(255,215,0,.9))' },
+                { translate: '0px 0px', scale: '1', filter: 'drop-shadow(0 0 0 rgba(255,215,0,0))' }
+            ], { duration: 180, easing: 'cubic-bezier(.22, .8, .3, 1)' });
             sliding.push(animation);
             const cleanup = () => { cell.style.zIndex = ''; };
             animation.onfinish = cleanup;
