@@ -36,11 +36,7 @@
     #ban-co .square-2b8ce.click-selected {
         background:
             radial-gradient(circle at 50% 50%, rgba(255, 215, 0, .55), rgba(255, 215, 0, .15) 60%, transparent 75%) !important;
-        box-shadow:
-            inset 0 0 0 2px var(--royal-gold),
-            inset 0 0 18px rgba(255, 215, 0, .75) !important;
         z-index: 4;
-        animation: clickSelectedPulse 1.4s ease-in-out infinite;
     }
     #ban-co .square-2b8ce.click-selected img,
     #ban-co .square-2b8ce.click-selected:hover img {
