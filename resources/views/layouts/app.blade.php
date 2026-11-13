@@ -1,14 +1,9 @@
-<!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    @include('layouts.partials.app.head')
-</head>
-
 @php
+    // Body class: explicit $bodyClass wins, otherwise derive it from the route name
+    // (wildcards cover every locale prefix).
     $bodyClassToApply = $bodyClass ?? '';
 
     if (!$bodyClassToApply) {
-        // Check using route names (with wildcard for locales) instead of hardcoded paths
         if (request()->routeIs('login', '*.login', 'register', '*.register', 'password.*', '*.password.*')) {
             $bodyClassToApply = 'login';
         } elseif (request()->routeIs('app.dashboard', '*.app.dashboard', 'app.ranking', '*.app.ranking', 'app.history', '*.app.history', 'room.list', '*.room.list', 'puzzle.list', '*.puzzle.list', 'search', '*.search')) {
@@ -16,18 +11,24 @@
         }
     }
 @endphp
-
-<body class="{{ $bodyClassToApply }}">
+<!doctype html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    @include('layouts.partials.app.head')
+</head>
+<body class="{{ $bodyClassToApply }}" data-layout="app">
     @include('common.afterBody')
+
     <div id="app">
         @include('common.adsenseTop')
         @include('layouts.partials.header')
-        <input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ url('/') }}" >
+        <input type="hidden" name="piecesUrl" id="piecesUrl" value="{{ url('/') }}">
         @include('common.themes')
 
-        <main class="py-5 bg-dark">
+        {{-- No bg-dark here: the xiangqi artwork on <body> must show through. --}}
+        <main class="py-5">
             <script>
-                // Modernized AJAX global loading state
+                // Global AJAX loading state
                 $(document).on({
                     ajaxStart: () => $('body').addClass('waiting'),
                     ajaxComplete: () => $('body').removeClass('waiting')
@@ -38,16 +39,9 @@
 
         @include('layouts.partials.app.footer')
     </div>
+
     @include('common.contactBtn')
     @include('common.onlineCounter')
-    @if (session('karma_earned'))
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                if (typeof showKarmaBootbox === 'function') {
-                    showKarmaBootbox(@json(session('karma_earned')));
-                }
-            });
-        </script>
-    @endif
+    @include('layouts.partials.karmaToast')
 </body>
 </html>

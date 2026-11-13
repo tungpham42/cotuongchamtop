@@ -18,6 +18,22 @@
     --glass-border: rgba(255, 215, 0, 0.55);
     --liquid-highlight: rgba(255, 255, 255, 0.4);
     --liquid-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+
+    /* Xiangqi artwork (served from public/img) */
+    --xiangqi-bg: url("/img/xiangqi-bg.webp");
+
+    /* Background brightness knobs: lower alpha = brighter background.
+       Raise these (max 1) if gold text on the page becomes hard to read. */
+    --xq-bg-color: #4a1a16;
+    --xq-tint-a: 0.22;
+    --xq-tint-b: 0.14;
+}
+
+/* Smaller artwork for phones / small tablets (saves bandwidth) */
+@media (max-width: 768px) {
+    :root {
+        --xiangqi-bg: url("/img/xiangqi-bg-mobile.webp");
+    }
 }
 
 * {
@@ -237,7 +253,31 @@ body {
         sans-serif !important;
     overflow-x: hidden;
     overflow-y: scroll;
-    background-color: var(--royal-bg) !important;
+    background-color: var(--xq-bg-color) !important;
+    background-image: var(--xiangqi-bg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* Overlay-only animation: keeps the artwork still while the tint drifts */
+@keyframes gradientOverlayBG {
+    0% {
+        background-position:
+            0% 50%,
+            center;
+    }
+    50% {
+        background-position:
+            100% 50%,
+            center;
+    }
+    100% {
+        background-position:
+            0% 50%,
+            center;
+    }
 }
 
 @keyframes gradientBG {
@@ -895,15 +935,6 @@ body.dashboard main,
 body.login main,
 body.register main {
     color: var(--royal-gold-light);
-    background-image: linear-gradient(
-        -45deg,
-        #121418,
-        #4a1515,
-        #1a1d24,
-        #3a2808
-    ) !important;
-    background-size: 400% 400%;
-    animation: gradientBG 12s ease infinite;
     isolation: isolate !important;
     position: relative !important;
 }
@@ -4065,4 +4096,35 @@ header.site-header .dropdown-menu .dropdown-divider {
     .pulse-red {
         animation: none !important;
     }
+}
+
+/* ==========================================================================
+   XIANGQI BACKGROUND - make <main> transparent so body artwork shows through
+   ========================================================================== */
+body > main,
+body > #app > main {
+    background-color: transparent !important;
+}
+
+/* iOS ignores background-attachment: fixed -> avoid blurry stretched artwork */
+@supports (-webkit-touch-callout: none) {
+    body,
+    .container-fluid.about,
+    .container-fluid.bmi,
+    .container-fluid.game,
+    .container-fluid.news,
+    .container-fluid.contact,
+    body.dashboard main,
+    body.login main,
+    body.register main {
+        background-attachment: scroll !important;
+    }
+}
+
+/* Checkmate banner visibility per layout (<body data-layout="...">). */
+body[data-layout="game"] #checkmateText {
+    display: none;
+}
+body[data-layout="play"] #checkmateText {
+    display: block;
 }
