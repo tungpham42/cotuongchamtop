@@ -1,9 +1,15 @@
 <style>
     /* ==========================================================================
-       AI COACH WIDGET - LIQUID GLASS + CUNG ĐÌNH HUẾ
+       AI COACH WIDGET - LIQUID GLASS + CUNG ĐÌNH HUẾ (GLOSSY / TRANSLUCENT)
        Dùng chung token với index_new.css (--royal-*, --glass-*, --liquid-*).
        Mọi selector đều nằm trong #ai-coach-widget để không đụng .btn / .form-control
        / .card toàn site. Có fallback nếu biến site chưa được nạp.
+
+       Ý tưởng thiết kế:
+         - Nền trong suốt, để hình nền bàn cờ của site xuyên qua (blur + saturate).
+         - Mọi bề mặt là "kính": lớp nền tint mỏng + vệt phản chiếu (gloss) nửa trên
+           + viền sáng mảnh (specular) + bóng đổ mềm.
+         - Chữ vẫn đủ tương phản nhờ lớp tint tối nhẹ phía sau bong bóng chat.
        ========================================================================== */
     #ai-coach-widget {
         --aic-red: var(--royal-red, #8a1515);
@@ -14,9 +20,15 @@
         --aic-gold-soft: var(--royal-gold-light, #fff2cc);
         --aic-ink: var(--royal-bg, #0b0c10);
         --aic-wood: var(--royal-wood, #4a2511);
-        --aic-glass: rgba(11, 12, 16, 0.88);
+
+        /* Kính: alpha thấp = trong hơn */
+        --aic-glass: rgba(16, 9, 9, 0.42);
+        --aic-glass-strong: rgba(16, 9, 9, 0.58);
+        --aic-blur: blur(22px) saturate(170%);
         --aic-border: var(--glass-border, rgba(255, 215, 0, 0.55));
-        --aic-line: rgba(255, 215, 0, 0.22);
+        --aic-line: rgba(255, 215, 0, 0.2);
+        --aic-edge: rgba(255, 255, 255, 0.55);   /* viền sáng phía trên */
+        --aic-gloss: linear-gradient(180deg, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.08) 48%, rgba(255, 255, 255, 0) 52%);
         --aic-ease: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
         /* Góc DƯỚI BÊN TRÁI: tách khỏi cụm Zalo / Online Counter / To-top ở góc phải */
@@ -44,7 +56,7 @@
     }
 
     /* --------------------------------------------------------------------------
-       LAUNCHER - viên ngọc ruby viền vàng
+       LAUNCHER - viên ngọc ruby trong suốt, phản chiếu như giọt kính
        -------------------------------------------------------------------------- */
     #ai-chat-btn {
         appearance: none;
@@ -58,39 +70,46 @@
         width: 62px;
         height: 62px;
         border-radius: 50%;
-        border: 2px solid var(--aic-gold);
+        border: 1.5px solid rgba(255, 215, 0, 0.75);
+        border-top-color: rgba(255, 255, 255, 0.85);
         color: var(--aic-gold-soft);
         font-size: 25px;
         cursor: pointer;
         background:
-            radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.55) 0, rgba(255, 255, 255, 0) 38%),
-            linear-gradient(145deg, var(--aic-red-light) 0%, var(--aic-red) 55%, var(--aic-red-deep) 100%);
+            radial-gradient(circle at 50% 120%, rgba(255, 215, 0, 0.35) 0%, rgba(255, 215, 0, 0) 55%),
+            linear-gradient(145deg, rgba(230, 57, 70, 0.62) 0%, rgba(138, 21, 21, 0.58) 55%, rgba(92, 10, 10, 0.7) 100%);
+        backdrop-filter: blur(14px) saturate(180%);
+        -webkit-backdrop-filter: blur(14px) saturate(180%);
         box-shadow:
-            0 8px 24px rgba(0, 0, 0, 0.7),
-            0 0 18px rgba(255, 215, 0, 0.35),
-            inset 0 2px 8px rgba(255, 255, 255, 0.45),
-            inset 0 -6px 12px rgba(0, 0, 0, 0.35);
+            0 10px 28px rgba(0, 0, 0, 0.55),
+            0 0 22px rgba(255, 215, 0, 0.3),
+            inset 0 2px 6px rgba(255, 255, 255, 0.55),
+            inset 0 -8px 14px rgba(0, 0, 0, 0.3),
+            inset 0 0 18px rgba(255, 215, 0, 0.18);
         transition: transform 0.4s var(--aic-ease), box-shadow 0.4s ease;
     }
     #ai-chat-btn:hover {
-        transform: translateY(-3px) scale(1.07);
+        transform: translateY(-3px) scale(1.08);
         box-shadow:
-            0 14px 30px rgba(0, 0, 0, 0.8),
-            0 0 26px rgba(255, 215, 0, 0.6),
-            inset 0 2px 10px rgba(255, 255, 255, 0.55),
-            inset 0 -6px 12px rgba(0, 0, 0, 0.35);
+            0 16px 34px rgba(0, 0, 0, 0.65),
+            0 0 30px rgba(255, 215, 0, 0.6),
+            inset 0 2px 8px rgba(255, 255, 255, 0.7),
+            inset 0 -8px 14px rgba(0, 0, 0, 0.3),
+            inset 0 0 22px rgba(255, 215, 0, 0.28);
     }
     #ai-chat-btn:active {
-        transform: scale(0.96);
+        transform: scale(0.95);
     }
 
-    /* Lớp phản chiếu quét ngang khi hover (giống .btn của site) */
+    /* Mặt kính cong: vệt sáng nửa trên + quét ngang khi hover */
     #ai-chat-btn .aic-orb-sheen {
         position: absolute;
         inset: 0;
         border-radius: 50%;
         overflow: hidden;
         pointer-events: none;
+        background:
+            radial-gradient(ellipse 70% 42% at 50% 14%, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 100%);
     }
     #ai-chat-btn .aic-orb-sheen::after {
         content: "";
@@ -99,7 +118,7 @@
         left: -130%;
         width: 90%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
         transform: skewX(-20deg);
         transition: left 0.7s ease;
     }
@@ -109,7 +128,7 @@
     #ai-chat-btn .aic-orb-icon {
         position: relative;
         z-index: 1;
-        filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6));
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 6px rgba(255, 215, 0, 0.35));
     }
 
     /* Vòng xung vàng - chỉ chạy tới khi khách mở chat lần đầu */
@@ -129,23 +148,27 @@
 
     .ai-btn-badge {
         position: absolute;
-        top: -5px;
-        right: -5px;
+        top: -6px;
+        right: -6px;
         z-index: 2;
-        background: linear-gradient(135deg, #fff2cc 0%, var(--aic-gold) 55%, #d9a400 100%);
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 55%),
+            linear-gradient(135deg, rgba(255, 242, 204, 0.92) 0%, rgba(255, 215, 0, 0.9) 55%, rgba(217, 164, 0, 0.9) 100%);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
         color: var(--aic-red-deep);
         font-size: 10px;
         font-weight: 800;
         line-height: 1;
         padding: 3px 7px;
         border-radius: 999px;
-        border: 1px solid rgba(92, 10, 10, 0.5);
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45), 0 0 10px rgba(255, 215, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.85);
         letter-spacing: 0.5px;
     }
 
     /* --------------------------------------------------------------------------
-       PANEL - kính mờ, viền vàng, ánh sáng phía trên
+       PANEL - tấm kính trong mờ, viền sáng, vệt phản chiếu phía trên
        -------------------------------------------------------------------------- */
     #ai-chat-box {
         position: absolute;
@@ -157,26 +180,49 @@
         display: none; /* JS bật flex */
         flex-direction: column;
         overflow: hidden;
-        border-radius: 18px;
-        background: var(--aic-glass);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid var(--aic-border);
-        border-top: 2px solid rgba(255, 215, 0, 0.55);
+        isolation: isolate;
+        border-radius: 20px;
+        background:
+            linear-gradient(155deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.03) 30%, rgba(255, 255, 255, 0) 55%),
+            radial-gradient(120% 70% at 0% 0%, rgba(138, 21, 21, 0.3), transparent 60%),
+            radial-gradient(100% 60% at 100% 100%, rgba(255, 215, 0, 0.1), transparent 60%),
+            var(--aic-glass);
+        backdrop-filter: var(--aic-blur);
+        -webkit-backdrop-filter: var(--aic-blur);
+        border: 1px solid rgba(255, 215, 0, 0.42);
+        border-top: 1.5px solid var(--aic-edge);
         box-shadow:
-            0 8px 32px rgba(0, 0, 0, 0.8),
-            0 24px 60px rgba(0, 0, 0, 0.6),
-            0 0 24px rgba(255, 215, 0, 0.12),
-            inset 0 2px 15px rgba(255, 255, 255, 0.18);
+            0 12px 40px rgba(0, 0, 0, 0.55),
+            0 28px 70px rgba(0, 0, 0, 0.4),
+            0 0 30px rgba(255, 215, 0, 0.1),
+            inset 0 2px 18px rgba(255, 255, 255, 0.22),
+            inset 0 -1px 0 rgba(255, 215, 0, 0.25);
         transform-origin: bottom left;
         animation: aicOpen 0.4s var(--aic-ease);
+    }
+    /* Vệt phản chiếu cong phía trên (như mặt kính bóng) */
+    #ai-chat-box::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 34%;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%);
+        border-radius: 20px 20px 60% 60% / 20px 20px 22% 22%;
+        pointer-events: none;
+        z-index: 0;
+    }
+    #ai-chat-box > * {
+        position: relative;
+        z-index: 1;
     }
     @keyframes aicOpen {
         from { opacity: 0; transform: translateY(18px) scale(0.92); }
         to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* Header: ruby + gloss */
+    /* Header: ruby kính + gloss */
     #ai-coach-widget .chat-header {
         position: relative;
         display: flex;
@@ -184,17 +230,12 @@
         justify-content: space-between;
         gap: 10px;
         padding: 12px 14px;
-        background: linear-gradient(135deg, rgba(138, 21, 21, 0.96) 0%, rgba(92, 10, 10, 0.96) 100%);
-        border-bottom: 1px solid var(--aic-border);
-        box-shadow: inset 0 2px 10px rgba(255, 215, 0, 0.2);
+        background:
+            var(--aic-gloss),
+            linear-gradient(135deg, rgba(183, 34, 34, 0.62) 0%, rgba(92, 10, 10, 0.55) 100%);
+        border-bottom: 1px solid rgba(255, 215, 0, 0.4);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -6px 14px rgba(255, 215, 0, 0.1);
         flex-shrink: 0;
-    }
-    #ai-coach-widget .chat-header::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 55%);
-        pointer-events: none;
     }
     #ai-coach-widget .chat-header > * {
         position: relative;
@@ -216,9 +257,13 @@
         justify-content: center;
         font-size: 16px;
         color: var(--aic-gold);
-        background: radial-gradient(circle at 30% 25%, #3a0c0c, var(--aic-ink));
-        border: 1.5px solid var(--aic-gold);
-        box-shadow: 0 0 12px rgba(255, 215, 0, 0.45), inset 0 1px 4px rgba(255, 255, 255, 0.3);
+        background:
+            radial-gradient(ellipse 70% 40% at 50% 15%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0)),
+            rgba(11, 12, 16, 0.55);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1.5px solid rgba(255, 215, 0, 0.85);
+        box-shadow: 0 0 14px rgba(255, 215, 0, 0.45), inset 0 1px 4px rgba(255, 255, 255, 0.35);
     }
     .aic-title-text {
         font-family: "Texturina", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC", serif;
@@ -228,7 +273,7 @@
         letter-spacing: 1px;
         text-transform: uppercase;
         color: var(--aic-gold);
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 215, 0, 0.35);
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.75), 0 0 12px rgba(255, 215, 0, 0.4);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -244,8 +289,11 @@
         padding: 3px 8px;
         border-radius: 999px;
         color: var(--aic-red-deep);
-        background: linear-gradient(135deg, #fff2cc, var(--aic-gold) 55%, #d9a400);
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.7);
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 55%),
+            linear-gradient(135deg, rgba(255, 242, 204, 0.92), rgba(255, 215, 0, 0.9) 55%, rgba(217, 164, 0, 0.9));
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 215, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.85);
     }
 
     #close-chat {
@@ -259,16 +307,19 @@
         align-items: center;
         justify-content: center;
         border-radius: 50%;
-        border: 1px solid rgba(255, 215, 0, 0.4);
-        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 215, 0, 0.45);
+        background: var(--aic-gloss), rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
         color: var(--aic-gold-soft);
         font-size: 14px;
         cursor: pointer;
+        box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.3);
         transition: all 0.3s var(--aic-ease);
     }
     #close-chat:hover {
         color: var(--aic-red-deep);
-        background: var(--aic-gold);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 55%), var(--aic-gold);
         border-color: #fff;
         transform: rotate(90deg);
     }
@@ -283,7 +334,7 @@
         font-size: 11.5px;
         font-weight: 500;
         color: var(--aic-gold-soft);
-        background: linear-gradient(90deg, rgba(255, 215, 0, 0.16), rgba(255, 215, 0, 0.04));
+        background: linear-gradient(90deg, rgba(255, 215, 0, 0.16), rgba(255, 215, 0, 0.03));
         border-bottom: 1px solid var(--aic-line);
         flex-shrink: 0;
     }
@@ -297,7 +348,7 @@
     }
 
     /* --------------------------------------------------------------------------
-       BUTTONS (không dùng .btn của site để tránh uppercase / backdrop-filter toàn cục)
+       BUTTONS - nút kính bóng (gloss nửa trên). Không dùng .btn của site.
        -------------------------------------------------------------------------- */
     #ai-coach-widget .aic-btn {
         position: relative;
@@ -315,6 +366,8 @@
         text-decoration: none !important;
         cursor: pointer;
         border: 1px solid transparent;
+        backdrop-filter: blur(10px) saturate(160%);
+        -webkit-backdrop-filter: blur(10px) saturate(160%);
         transition: transform 0.3s var(--aic-ease), box-shadow 0.3s ease, color 0.2s ease;
     }
     #ai-coach-widget .aic-btn::before {
@@ -324,7 +377,7 @@
         left: -150%;
         width: 120%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
         transform: skewX(-20deg);
         transition: left 0.6s ease;
         pointer-events: none;
@@ -342,36 +395,40 @@
 
     #ai-coach-widget .aic-btn-ruby {
         color: var(--aic-gold-soft) !important;
-        background: linear-gradient(135deg, var(--aic-red-bright), var(--aic-red-deep));
-        border-color: var(--aic-gold);
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), inset 0 2px 8px rgba(255, 215, 0, 0.2);
+        background: var(--aic-gloss), linear-gradient(135deg, rgba(183, 34, 34, 0.66), rgba(92, 10, 10, 0.6));
+        border-color: rgba(255, 215, 0, 0.7);
+        border-top-color: rgba(255, 255, 255, 0.6);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), inset 0 1px 6px rgba(255, 215, 0, 0.22);
     }
     #ai-coach-widget .aic-btn-ruby:hover {
         color: #fff !important;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7), 0 0 16px rgba(255, 215, 0, 0.4), inset 0 2px 10px rgba(255, 255, 255, 0.3);
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.5), 0 0 18px rgba(255, 215, 0, 0.4), inset 0 1px 10px rgba(255, 255, 255, 0.3);
     }
 
     #ai-coach-widget .aic-btn-gold {
         color: var(--aic-red-deep) !important;
-        background: linear-gradient(135deg, #fff2cc 0%, var(--aic-gold) 50%, #d9a400 100%);
-        border-color: rgba(92, 10, 10, 0.45);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 12px rgba(255, 215, 0, 0.25), inset 0 1px 3px rgba(255, 255, 255, 0.8);
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0) 52%),
+            linear-gradient(135deg, rgba(255, 242, 204, 0.88) 0%, rgba(255, 215, 0, 0.85) 50%, rgba(217, 164, 0, 0.85) 100%);
+        border-color: rgba(255, 255, 255, 0.65);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), 0 0 14px rgba(255, 215, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.85);
         font-weight: 800;
     }
     #ai-coach-widget .aic-btn-gold:hover {
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 215, 0, 0.55), inset 0 1px 3px rgba(255, 255, 255, 0.9);
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.5), 0 0 22px rgba(255, 215, 0, 0.6), inset 0 1px 3px rgba(255, 255, 255, 0.95);
     }
 
     #ai-coach-widget .aic-btn-ghost {
         color: var(--aic-gold) !important;
-        background: rgba(255, 255, 255, 0.05);
-        border-color: rgba(255, 215, 0, 0.45);
-        box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.12);
+        background: var(--aic-gloss), rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 215, 0, 0.5);
+        border-top-color: rgba(255, 255, 255, 0.5);
+        box-shadow: inset 0 1px 5px rgba(255, 255, 255, 0.15);
     }
     #ai-coach-widget .aic-btn-ghost:hover {
-        background: rgba(255, 215, 0, 0.14);
+        background: var(--aic-gloss), rgba(255, 215, 0, 0.16);
         border-color: var(--aic-gold);
-        box-shadow: 0 0 14px rgba(255, 215, 0, 0.3), inset 0 2px 8px rgba(255, 255, 255, 0.2);
+        box-shadow: 0 0 16px rgba(255, 215, 0, 0.32), inset 0 1px 8px rgba(255, 255, 255, 0.25);
     }
 
     /* Nút nâng cấp nhỏ trong banner */
@@ -388,17 +445,20 @@
         font-weight: 800;
         text-decoration: none !important;
         color: var(--aic-red-deep) !important;
-        background: linear-gradient(135deg, #fff2cc 0%, var(--aic-gold) 50%, #d9a400 100%);
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.8);
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 55%),
+            linear-gradient(135deg, rgba(255, 242, 204, 0.9) 0%, rgba(255, 215, 0, 0.88) 50%, rgba(217, 164, 0, 0.88) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.85);
         transition: transform 0.3s var(--aic-ease), box-shadow 0.3s ease;
     }
     #ai-coach-widget .btn-upgrade-pill:hover {
         transform: scale(1.06);
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6), 0 0 12px rgba(255, 215, 0, 0.55), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.5), 0 0 14px rgba(255, 215, 0, 0.55), inset 0 1px 2px rgba(255, 255, 255, 0.95);
     }
 
     /* --------------------------------------------------------------------------
-       MESSAGES
+       MESSAGES - vùng chat gần như trong suốt, bong bóng là các mảnh kính nhỏ
        -------------------------------------------------------------------------- */
     #ai-coach-widget .chat-body {
         flex: 1;
@@ -408,15 +468,13 @@
         gap: 12px;
         padding: 16px 14px;
         overflow-y: auto;
-        /* Lưới mờ gợi bàn cờ + ánh đỏ/vàng ở hai góc */
+        /* Lưới mờ gợi bàn cờ, rất nhẹ để nền site vẫn thấy rõ */
         background:
-            linear-gradient(rgba(255, 215, 0, 0.045) 1px, transparent 1px) 0 0 / 28px 28px,
-            linear-gradient(90deg, rgba(255, 215, 0, 0.045) 1px, transparent 1px) 0 0 / 28px 28px,
-            radial-gradient(120% 70% at 0% 0%, rgba(138, 21, 21, 0.32), transparent 60%),
-            radial-gradient(100% 60% at 100% 100%, rgba(255, 215, 0, 0.08), transparent 60%),
-            linear-gradient(180deg, #14161d 0%, var(--aic-ink) 100%);
+            linear-gradient(rgba(255, 215, 0, 0.035) 1px, transparent 1px) 0 0 / 28px 28px,
+            linear-gradient(90deg, rgba(255, 215, 0, 0.035) 1px, transparent 1px) 0 0 / 28px 28px,
+            linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.18));
         scrollbar-width: thin;
-        scrollbar-color: var(--aic-red) transparent;
+        scrollbar-color: rgba(183, 34, 34, 0.8) transparent;
     }
     #ai-coach-widget .chat-body::-webkit-scrollbar {
         width: 8px;
@@ -427,8 +485,8 @@
         border: 0;
     }
     #ai-coach-widget .chat-body::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, var(--aic-red), var(--aic-red-deep));
-        border: 1px solid rgba(255, 215, 0, 0.6);
+        background: linear-gradient(180deg, rgba(183, 34, 34, 0.85), rgba(92, 10, 10, 0.85));
+        border: 1px solid rgba(255, 215, 0, 0.55);
         border-radius: 6px;
     }
 
@@ -439,6 +497,8 @@
         font-size: 13.5px;
         line-height: 1.55;
         word-wrap: break-word;
+        backdrop-filter: blur(12px) saturate(160%);
+        -webkit-backdrop-filter: blur(12px) saturate(160%);
         animation: aicMsgIn 0.3s ease-out;
     }
     @keyframes aicMsgIn {
@@ -446,15 +506,19 @@
         to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* AI: kính tối + vạch vàng bên trái */
+    /* AI: kính khói + vạch vàng bên trái + viền sáng phía trên */
     #ai-coach-widget .msg-ai {
         align-self: flex-start;
-        color: #f6ead0;
-        background: linear-gradient(145deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03));
-        border: 1px solid rgba(255, 215, 0, 0.26);
-        border-left: 3px solid var(--aic-gold);
+        color: #fbf0d6;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.03) 45%, rgba(255, 255, 255, 0) 100%),
+            rgba(14, 10, 10, 0.4);
+        border: 1px solid rgba(255, 215, 0, 0.28);
+        border-top-color: rgba(255, 255, 255, 0.4);
+        border-left: 3px solid rgba(255, 215, 0, 0.85);
         border-radius: 14px 14px 14px 4px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45), inset 0 1px 8px rgba(255, 255, 255, 0.08);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), inset 0 1px 8px rgba(255, 255, 255, 0.1);
     }
     #ai-coach-widget .msg-ai strong,
     #ai-coach-widget .msg-ai b {
@@ -485,19 +549,22 @@
         border-radius: 6px;
         font-size: 12.5px;
         color: var(--aic-gold);
-        background: rgba(0, 0, 0, 0.45);
+        background: rgba(0, 0, 0, 0.35);
         border: 1px solid rgba(255, 215, 0, 0.25);
     }
 
-    /* Người dùng: ruby bóng viền vàng mảnh */
+    /* Người dùng: ruby kính bóng, viền vàng mảnh */
     #ai-coach-widget .msg-user {
         align-self: flex-end;
         color: #fff;
-        background: linear-gradient(135deg, var(--aic-red-bright) 0%, var(--aic-red) 55%, var(--aic-red-deep) 100%);
-        border: 1px solid rgba(255, 215, 0, 0.5);
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.06) 48%, rgba(255, 255, 255, 0) 52%),
+            linear-gradient(135deg, rgba(230, 57, 70, 0.6) 0%, rgba(138, 21, 21, 0.58) 55%, rgba(92, 10, 10, 0.62) 100%);
+        border: 1px solid rgba(255, 215, 0, 0.55);
+        border-top-color: rgba(255, 255, 255, 0.55);
         border-radius: 14px 14px 4px 14px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55), inset 0 2px 8px rgba(255, 215, 0, 0.22);
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), inset 0 1px 8px rgba(255, 215, 0, 0.22);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
     }
 
     /* Thẻ chào khách chưa đăng nhập / yêu cầu VIP */
@@ -508,10 +575,12 @@
         text-align: center;
         padding: 18px 16px;
         border-left-width: 1px;
-        border-radius: 14px;
-        border-top: 2px solid rgba(255, 215, 0, 0.5);
+        border-left-color: rgba(255, 215, 0, 0.28);
+        border-radius: 16px;
+        border-top: 1.5px solid rgba(255, 255, 255, 0.5);
     }
     .aic-medal {
+        position: relative;
         width: 54px;
         height: 54px;
         margin: 0 auto 10px;
@@ -521,9 +590,12 @@
         justify-content: center;
         font-size: 24px;
         color: var(--aic-gold);
-        background: radial-gradient(circle at 30% 25%, #4a1010, var(--aic-ink));
-        border: 2px solid var(--aic-gold);
-        box-shadow: 0 0 18px rgba(255, 215, 0, 0.4), inset 0 2px 6px rgba(255, 255, 255, 0.25);
+        background:
+            radial-gradient(ellipse 70% 40% at 50% 14%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0)),
+            radial-gradient(circle at 50% 110%, rgba(255, 215, 0, 0.25), transparent 60%),
+            rgba(92, 10, 10, 0.5);
+        border: 2px solid rgba(255, 215, 0, 0.85);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), inset 0 2px 6px rgba(255, 255, 255, 0.3);
     }
     .aic-card-title {
         display: block;
@@ -533,13 +605,13 @@
         letter-spacing: 1px;
         text-transform: uppercase;
         color: var(--aic-gold);
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7), 0 0 10px rgba(255, 215, 0, 0.3);
     }
     .aic-card-text {
         margin: 6px 0 14px;
         font-size: 12.5px;
         line-height: 1.55;
-        color: rgba(255, 242, 204, 0.78);
+        color: rgba(255, 242, 204, 0.85);
     }
     .aic-card-actions {
         display: flex;
@@ -560,9 +632,9 @@
         gap: 6px;
         margin-top: 10px;
         padding-top: 8px;
-        border-top: 1px solid rgba(255, 215, 0, 0.22);
+        border-top: 1px solid rgba(255, 215, 0, 0.25);
         font-size: 12px;
-        color: rgba(255, 242, 204, 0.7);
+        color: rgba(255, 242, 204, 0.78);
     }
     .aic-upsell .fa-bolt {
         color: var(--aic-gold);
@@ -574,7 +646,7 @@
         align-items: center;
         gap: 8px;
         font-size: 12.5px;
-        color: rgba(255, 242, 204, 0.8);
+        color: rgba(255, 242, 204, 0.85);
     }
     .aic-dots {
         display: inline-flex;
@@ -585,7 +657,7 @@
         height: 7px;
         border-radius: 50%;
         background: radial-gradient(circle at 35% 30%, #fff2cc, var(--aic-gold) 60%, #b88600);
-        box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+        box-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
         animation: aicDot 1.1s ease-in-out infinite;
     }
     .aic-dots i:nth-child(2) { animation-delay: 0.15s; }
@@ -596,20 +668,22 @@
     }
 
     /* --------------------------------------------------------------------------
-       QUICK ACTIONS
+       QUICK ACTIONS - viên thuốc kính
        -------------------------------------------------------------------------- */
     #ai-coach-widget .quick-actions-area {
         display: flex;
         flex-wrap: wrap;
         gap: 6px;
         padding: 9px 12px;
-        background: rgba(0, 0, 0, 0.32);
-        border-top: 1px solid var(--aic-line);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(0, 0, 0, 0.15));
+        border-top: 1px solid rgba(255, 215, 0, 0.22);
         flex-shrink: 0;
     }
     #ai-coach-widget .quick-btn {
         appearance: none;
         -webkit-appearance: none;
+        position: relative;
+        overflow: hidden;
         display: inline-flex;
         align-items: center;
         gap: 6px;
@@ -620,9 +694,13 @@
         font-weight: 600;
         line-height: 1.2;
         color: var(--aic-gold-soft);
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 215, 0, 0.35);
-        box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.1);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        background: var(--aic-gloss), rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 215, 0, 0.38);
+        border-top-color: rgba(255, 255, 255, 0.45);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow: inset 0 1px 5px rgba(255, 255, 255, 0.12);
         cursor: pointer;
         transition: all 0.3s var(--aic-ease);
     }
@@ -632,10 +710,10 @@
     }
     #ai-coach-widget .quick-btn:hover {
         color: var(--aic-gold);
-        background: rgba(255, 215, 0, 0.14);
+        background: var(--aic-gloss), rgba(255, 215, 0, 0.16);
         border-color: var(--aic-gold);
         transform: translateY(-2px);
-        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5), 0 0 12px rgba(255, 215, 0, 0.3), inset 0 2px 8px rgba(255, 255, 255, 0.18);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 0 0 14px rgba(255, 215, 0, 0.3), inset 0 1px 8px rgba(255, 255, 255, 0.2);
     }
 
     /* --------------------------------------------------------------------------
@@ -646,12 +724,12 @@
         align-items: center;
         gap: 8px;
         padding: 10px 12px 12px;
-        background: linear-gradient(180deg, rgba(20, 22, 28, 0.95), rgba(11, 12, 16, 0.99));
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.22));
         border-top: 1px solid rgba(255, 215, 0, 0.3);
         flex-shrink: 0;
     }
 
-    /* Giữ ngôn ngữ ô nhập của site: nền kem vàng + viền gỗ, focus vàng */
+    /* Ô nhập: kính kem vàng trong mờ, vẫn đọc rõ chữ tối */
     #ai-coach-widget #chat-input {
         flex: 1;
         min-width: 0;
@@ -661,9 +739,13 @@
         font-family: inherit;
         font-size: 13.5px;
         color: #2a1508;
-        background-color: var(--aic-gold-soft) !important;
-        border: 1px solid var(--aic-wood) !important;
-        box-shadow: inset 0 2px 5px rgba(74, 37, 17, 0.25);
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 55%),
+            rgba(255, 242, 204, 0.82) !important;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.6) !important;
+        box-shadow: inset 0 2px 5px rgba(74, 37, 17, 0.22), 0 2px 8px rgba(0, 0, 0, 0.25);
         transition: box-shadow 0.25s ease, border-color 0.25s ease;
     }
     #ai-coach-widget #chat-input::placeholder {
@@ -672,7 +754,7 @@
     #ai-coach-widget #chat-input:focus {
         outline: none;
         border-color: var(--aic-gold) !important;
-        box-shadow: 0 0 0 0.22rem rgba(212, 175, 55, 0.35), 0 0 16px rgba(255, 215, 0, 0.35) !important;
+        box-shadow: 0 0 0 0.22rem rgba(212, 175, 55, 0.35), 0 0 18px rgba(255, 215, 0, 0.4) !important;
     }
 
     #ai-coach-widget #send-chat {
@@ -688,17 +770,19 @@
         align-items: center;
         justify-content: center;
         border-radius: 50%;
-        border: 1px solid rgba(92, 10, 10, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.65);
         font-size: 14px;
         color: var(--aic-red-deep);
-        background: linear-gradient(145deg, #fff2cc 0%, var(--aic-gold) 50%, #c9970a 100%);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.55), 0 0 12px rgba(255, 215, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.85);
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0) 52%),
+            linear-gradient(145deg, rgba(255, 242, 204, 0.9) 0%, rgba(255, 215, 0, 0.88) 50%, rgba(201, 151, 10, 0.88) 100%);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4), 0 0 14px rgba(255, 215, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.9);
         cursor: pointer;
         transition: transform 0.3s var(--aic-ease), box-shadow 0.3s ease;
     }
     #ai-coach-widget #send-chat:hover {
         transform: scale(1.1) rotate(-8deg);
-        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.65), 0 0 20px rgba(255, 215, 0, 0.6), inset 0 1px 3px rgba(255, 255, 255, 0.95);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 0 22px rgba(255, 215, 0, 0.6), inset 0 1px 3px rgba(255, 255, 255, 1);
     }
     #ai-coach-widget #send-chat:active {
         transform: scale(0.95);
@@ -708,7 +792,8 @@
     #ai-coach-widget .chat-footer-guest {
         justify-content: center;
         font-size: 12px;
-        color: rgba(255, 242, 204, 0.75);
+        color: rgba(255, 242, 204, 0.85);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     }
     #ai-coach-widget .chat-footer-guest .fa-lock {
         color: var(--aic-gold);
@@ -721,6 +806,18 @@
     }
     #ai-coach-widget .chat-footer-guest a:hover {
         color: #fff;
+    }
+
+    /* --------------------------------------------------------------------------
+       FALLBACK: trình duyệt không hỗ trợ backdrop-filter -> tăng độ đặc để dễ đọc
+       -------------------------------------------------------------------------- */
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+        #ai-chat-box {
+            background-color: rgba(16, 9, 9, 0.9);
+        }
+        #ai-coach-widget .msg-ai {
+            background-color: rgba(30, 20, 20, 0.85);
+        }
     }
 
     /* --------------------------------------------------------------------------
