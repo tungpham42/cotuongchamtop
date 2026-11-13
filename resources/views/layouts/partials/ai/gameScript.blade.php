@@ -353,7 +353,7 @@
     };
 
     board = Xiangqiboard('ban-co', config);
-        initBoardClickInteraction(board, game, config);
+    initBoardClickInteraction(board, game, config);
     $(window).resize(board.resize);
     if (!USES_DEFAULT_START) game.load(START_GAME_FEN);
 
