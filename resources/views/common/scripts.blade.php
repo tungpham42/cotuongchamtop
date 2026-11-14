@@ -32,7 +32,6 @@
     // ==========================================
     // BOOTBOX ASYNC HELPERS
     // ==========================================
-
     const createBootboxAsync = (method) => (options) => {
         return new Promise((resolve) => {
             // Bootbox 'prompt' uses 'title' for its main text, while others use 'message'
@@ -48,9 +47,23 @@
                 config[primaryKey] = "An unexpected event occurred.";
             }
 
-            // 3. Execution: Call the requested Bootbox method and resolve the promise
+            // 3. Styling: Force every button to use btn-danger, keeping any custom labels
+            const buttonKeys = {
+                alert:   ['ok'],
+                confirm: ['confirm', 'cancel'],
+                prompt:  ['confirm', 'cancel'],
+            }[method];
+
+            const buttons = { ...(config.buttons || {}) };
+            buttonKeys.forEach((key) => {
+                buttons[key] = { ...(buttons[key] || {}), className: 'btn-danger' };
+            });
+
+            // 4. Execution: Call the requested Bootbox method, always vertically centered
             bootbox[method]({
                 ...config,
+                buttons,
+                centerVertical: true,
                 callback: resolve
             });
         });
