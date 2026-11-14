@@ -60,6 +60,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&family=Pacifico&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Roboto:ital,wght@0,100..900;1,100..900&family=Texturina:ital,opsz,wght@0,12..72,100..900;1,12..72,100..900&display=swap" rel="stylesheet">
 {{-- <link href="{{ asset('css/index.css?v=321') }}" rel="stylesheet"> --}}
 <link href="{{ asset('css/index_new.css?v=79') }}" rel="stylesheet">
+<link href="{{ asset('css/ban-co.css?v=6') }}" rel="stylesheet">
 @if (!($showAds ?? true))
 <style>
   .adsense,
