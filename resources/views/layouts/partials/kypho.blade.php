@@ -10,6 +10,12 @@
         <button id="kypho-next" type="button" class="btn btn-dark btn-sm mx-1" title="Nước sau">
             <i class="fad fa-step-forward"></i> {{ __("Sau") }}
         </button>
+        <button id="kypho-copy" type="button" class="btn btn-danger btn-sm mx-1" title="{{ __("Sao chép kỳ phổ") }}">
+            <i class="fad fa-copy"></i> {{ __("Sao chép") }}
+        </button>
+        <button id="kypho-video" type="button" class="btn btn-danger btn-sm mx-1" title="{{ __("Tải Video (9:16)") }}" disabled>
+            <i class="fad fa-video"></i> {{ __("Video") }}
+        </button>
     </div>
     <div class="kypho-body">
         <div id="kypho-list" class="kypho-moves" tabindex="0" role="region" aria-label="{{ __('Danh sách nước đi') }}"></div>
