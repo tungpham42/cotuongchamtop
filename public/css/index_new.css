@@ -3675,7 +3675,7 @@ table.dataTable.dtr-inline.collapsed
         rgba(255, 255, 255, 0.75),
         transparent 35%
     );
-    animation: gemsShimmerSpin 3s linear infinite;
+    /* animation: gemsShimmerSpin 3s linear infinite; */
     pointer-events: none;
     z-index: -1;
 }
@@ -3729,7 +3729,7 @@ table.dataTable.dtr-inline.collapsed
         var(--royal-gold),
         var(--royal-red)
     );
-    animation: gemsShimmerSpin 2.4s linear infinite;
+    /* animation: gemsShimmerSpin 2.4s linear infinite; */
     pointer-events: none;
     filter: blur(2px);
     opacity: 0.65;
