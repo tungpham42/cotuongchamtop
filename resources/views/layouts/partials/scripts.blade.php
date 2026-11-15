@@ -294,7 +294,7 @@
         if ('serviceWorker' in navigator) {
             console.log("Will the service worker register?");
             navigator.serviceWorker
-                .register("{{ asset('serviceWorker.js?v=27') }}")
+                .register("{{ asset('serviceWorker.js?v=28') }}")
                 .then(function(reg) {
                     console.log("Yes, it did.");
                 }).catch(function(err) {

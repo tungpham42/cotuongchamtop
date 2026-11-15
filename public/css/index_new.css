@@ -3182,12 +3182,12 @@ table.dataTable.dtr-inline.collapsed
     margin-top: 15px;
 }
 .alert-success {
-    background-color: rgba(46, 125, 50, 0.2);
+    background-color: rgba(46, 125, 50, 0.6);
     color: #81c784;
     border-left: 4px solid #4caf50;
 }
 .alert-warning {
-    background-color: rgba(245, 124, 0, 0.2);
+    background-color: rgba(245, 124, 0, 0.6);
     color: #ffb74d;
     border-left: 4px solid #ff9800;
 }
