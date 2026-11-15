@@ -100,8 +100,8 @@ return [
 
         // Gameplay Modes
         'human.play'   => ['vi' => 'choi-mot-minh', 'en' => 'play-alone', 'ja' => 'ichi-nin-de-asobu', 'ko' => 'honja-nolda', 'zh' => 'duchu', 'de' => 'allein-spielen', 'fr' => 'jouer-seul', 'es' => 'jugar-solo', 'ru' => 'igrat-odnomu'],
-        'puzzle.setup' => ['vi' => 'co-the', 'en' => 'puzzle', 'ja' => 'pazuru', 'ko' => 'peojeul', 'zh' => 'mi', 'de' => 'puzzle', 'fr' => 'probleme', 'es' => 'problema', 'ru' => 'zadacha'],
-        'puzzle.board' => ['vi' => 'co-the/{board}', 'en' => 'puzzle/{board}', 'ja' => 'pazuru/{board}', 'ko' => 'peojeul/{board}', 'zh' => 'mi/{board}', 'de' => 'puzzle/{board}', 'fr' => 'probleme/{board}', 'es' => 'problema/{board}', 'ru' => 'zadacha/{board}'],
+        'puzzle.setup' => ['vi' => 'co-the', 'en' => 'puzzle', 'ja' => 'pazuru', 'ko' => 'peojeul', 'zh' => 'mi', 'de' => 'puzzlespiel', 'fr' => 'probleme', 'es' => 'problema', 'ru' => 'zadacha'],
+        'puzzle.board' => ['vi' => 'co-the/{board}', 'en' => 'puzzle/{board}', 'ja' => 'pazuru/{board}', 'ko' => 'peojeul/{board}', 'zh' => 'mi/{board}', 'de' => 'puzzlespiel/{board}', 'fr' => 'probleme/{board}', 'es' => 'problema/{board}', 'ru' => 'zadacha/{board}'],
 
         // AI / Bots
         'board.self'         => ['vi' => 'ban-co/{fen}', 'en' => 'board/{fen}', 'ja' => 'bodo/{fen}', 'ko' => 'bodeu/{fen}', 'zh' => 'ban/{fen}', 'de' => 'brett/{fen}', 'fr' => 'plateau/{fen}', 'es' => 'tablero/{fen}', 'ru' => 'doska/{fen}'],

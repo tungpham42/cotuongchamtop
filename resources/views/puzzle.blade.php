@@ -42,7 +42,7 @@
 @section('belowContent')
     <p class="w-100 text-center mt-0 mb-1">
         <a data-step="2" data-intro="Ấn vào đây để vào trang giải {{ __("thế cờ") }}" id="solve-puzzle" class="w-25 btn btn-dark btn-lg" href="{{ url('/giai-co-the') }}"><i class="fad fa-abacus"></i> {{ __("Giải cờ thế") }}</a>
-        <a data-step="3" data-intro="Ấn vào đây để lưu và chia sẻ {{ __("thế cờ") }}" id="name-puzzle" class="w-25 btn btn-lg btn-dark" href="javascript:void(0);"><i class="fad fa-save"></i> Lưu &amp; chia sẻ</a>
+        <a data-step="3" data-intro="Ấn vào đây để lưu và chia sẻ {{ __("thế cờ") }}" id="name-puzzle" class="w-25 btn btn-lg btn-dark" href="javascript:void(0);"><i class="fad fa-save"></i> {{ __("Lưu & chia sẻ") }}</a>
     </p>
     <p class="w-100 text-center mt-0 mb-1">
         <a data-step="4" data-intro="Ấn vào đây để lưu trạng thái bàn cờ" id="new-board" class="w-25 btn btn-dark btn-lg"><i class="fad fa-chess-board"></i> {{ __("Lưu bàn cờ") }}</a>
