@@ -70,6 +70,48 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.svg.min.js" integrity="sha512-cX+p7MRIKvgo59Ap3QDj2ymdc7XFFCEJ71X+nWPT+3UxNylm/ztqgDJTbko2atIo4jiozj0dUpYb+xfv1bCl8g==" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js" integrity="sha256-u/J1Urdrk3nCYFefpoeTMgI5viU1ujCDu2fXXoSJjhg=" crossorigin="anonymous"></script>
     @include('common.volume')
+    <style>
+        /* Click to move: pieces are clickable, never draggable */
+        #ban-co .square-2b8ce { pointer-events: auto !important; cursor: pointer; }
+        #ban-co img[data-piece] {
+            cursor: pointer;
+            -webkit-user-drag: none;
+            user-select: none;
+            transition: transform .2s cubic-bezier(.175, .885, .32, 1.275), filter .2s ease;
+        }
+        #ban-co .square-2b8ce img { position: relative; z-index: 2; }
+
+        /* Selected piece (board square or tray): lifted with a gold halo */
+        #ban-co .square-2b8ce.pz-selected {
+            background: radial-gradient(circle, rgba(255, 215, 0, .55), rgba(255, 215, 0, .15) 60%, transparent 75%) !important;
+            z-index: 4;
+        }
+        #ban-co .square-2b8ce.pz-selected img,
+        #ban-co img[data-piece].pz-selected {
+            transform: translateY(-6px) scale(1.12);
+            filter: drop-shadow(0 8px 6px rgba(0, 0, 0, .55)) drop-shadow(0 0 10px rgba(255, 215, 0, .95));
+        }
+
+        /* While something is selected, hovering a square previews the drop */
+        #ban-co.pz-armed .square-2b8ce:hover::after {
+            content: '';
+            position: absolute; left: 50%; top: 50%;
+            width: 30%; height: 30%; border-radius: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle at 32% 28%, #fff 0%, rgba(255, 242, 204, .95) 18%, #ffd700 55%, #b89020 100%);
+            box-shadow: 0 0 0 2px rgba(138, 21, 21, .55), 0 3px 6px rgba(0, 0, 0, .55), 0 0 14px rgba(255, 215, 0, .85);
+            pointer-events: none; z-index: 3;
+        }
+        #ban-co.pz-armed .square-2b8ce:hover:has(img)::after {
+            width: 92%; height: 92%;
+            background: transparent;
+            box-shadow: 0 0 14px rgba(230, 57, 70, .9), inset 0 0 14px rgba(230, 57, 70, .6);
+            border: 3px solid rgba(255, 215, 0, .9);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            #ban-co img[data-piece] { transition: none; }
+        }
+    </style>
     <script>
         @if ($board != '')
             let history = ['{{ $board }}'];
@@ -94,8 +136,10 @@
         }
 
         const board = Xiangqiboard('ban-co', {
+            // sparePieces requires draggable, so keep it on but cancel every drag.
+            // Pieces are placed / moved / removed by clicking (see "Click to move" below).
             draggable: true,
-            dropOffBoard: 'trash',
+            onDragStart: function () { return false; },
             sparePieces: true,
             @if ($board != '')
                 position: '{{ $board }}',
@@ -105,6 +149,108 @@
         });
 
         let game = new Xiangqi(board.fen() + ' r - - 0 1');
+
+        /* ==================== Click to move (replaces drag & drop) ====================
+           - Click a piece in the tray, then a square          -> place it
+           - Click a piece on the board, then another square   -> move it (replaces any piece there)
+           - Click a piece on the board, then the tray         -> remove it (also Delete / Backspace)
+           - Click the selected piece again, press Esc, or click outside the board -> cancel
+        */
+        (function () {
+            const root = document.getElementById('ban-co');
+            let sel = null; // { from: 'spare' | squareName, piece: 'rK' ... }
+
+            // Pieces are re-rendered on resize / flip, so selection is re-applied on every DOM change.
+            function paint() {
+                if (sel && sel.from !== 'spare' && board.position()[sel.from] !== sel.piece) sel = null;
+                root.classList.toggle('pz-armed', !!sel);
+                root.querySelectorAll('.pz-selected').forEach(el => el.classList.remove('pz-selected'));
+                if (!sel) return;
+                if (sel.from === 'spare') {
+                    root.querySelectorAll('img[data-piece="' + sel.piece + '"]').forEach(img => {
+                        if (!img.closest('[data-square]')) img.classList.add('pz-selected');
+                    });
+                } else {
+                    root.querySelector('[data-square="' + sel.from + '"]')?.classList.add('pz-selected');
+                }
+            }
+
+            function commit(position) {
+                sel = null;
+                board.position(position, false);
+                onSnapEnd();
+                paint();
+            }
+
+            function removeSelected() {
+                if (!sel || sel.from === 'spare') return false;
+                const position = board.position();
+                delete position[sel.from];
+                commit(position);
+                return true;
+            }
+
+            root.addEventListener('click', function (event) {
+                const cell = event.target.closest('[data-square]');
+                const img = event.target.closest('img[data-piece]');
+                const spareImg = img && !img.closest('[data-square]') ? img : null;
+                const inTray = !cell && (spareImg || event.target.closest('[class*="spare-pieces"]'));
+
+                if (spareImg) {
+                    const piece = spareImg.dataset.piece;
+                    if (removeSelected()) return;
+                    sel = (sel && sel.from === 'spare' && sel.piece === piece) ? null : { from: 'spare', piece: piece };
+                    paint();
+                    return;
+                }
+
+                if (inTray) {
+                    if (!removeSelected()) { sel = null; paint(); }
+                    return;
+                }
+
+                if (!cell) { sel = null; paint(); return; }
+
+                const target = cell.dataset.square;
+                const position = board.position();
+                const occupant = position[target];
+
+                if (!sel) {
+                    if (occupant) sel = { from: target, piece: occupant };
+                    paint();
+                    return;
+                }
+                if (sel.from === target) { sel = null; paint(); return; }
+                // Clicking another piece of the same colour just switches the selection.
+                if (sel.from !== 'spare' && occupant && occupant.charAt(0) === sel.piece.charAt(0)) {
+                    sel = { from: target, piece: occupant };
+                    paint();
+                    return;
+                }
+                position[target] = sel.piece;
+                if (sel.from !== 'spare') delete position[sel.from];
+                commit(position);
+            });
+
+            // Click anywhere else on the page cancels the selection.
+            document.addEventListener('click', function (event) {
+                if (sel && !root.contains(event.target)) { sel = null; paint(); }
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (!sel || event.target.closest('input, textarea, select, [contenteditable]')) return;
+                if (event.key === 'Escape') { sel = null; paint(); }
+                else if (event.key === 'Delete' || event.key === 'Backspace') {
+                    if (removeSelected()) event.preventDefault();
+                }
+            });
+
+            // Block the browser's native image drag ghost.
+            root.addEventListener('dragstart', e => e.preventDefault());
+
+            new MutationObserver(paint).observe(root, { childList: true, subtree: true });
+            paint();
+        })();
 
         function updateStatus () {
             var status = ''
