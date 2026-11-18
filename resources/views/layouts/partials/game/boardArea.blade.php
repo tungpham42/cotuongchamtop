@@ -31,7 +31,7 @@
         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
             @include('layouts.partials.game.boardSlot')
         </div>
-        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 {{ $isPlay ? 'mt-0' : 'mt-lg-0 mt-md-5 mt-sm-5 mt-xs-5' }}">
+        <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 {{ $isPlay ? 'mt-3 mt-md-3 mt-lg-0' : 'mt-lg-0 mt-md-5 mt-sm-5 mt-xs-5' }}">
             @include($isPlay ? 'layouts.partials.chat' : 'layouts.partials.comments')
             {{-- @include('common.sideAds') --}}
         </div>
