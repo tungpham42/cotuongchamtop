@@ -477,16 +477,16 @@
         function rematchIdentity() {
             return REMATCH_MODE === 'user' ? { id: MY_USER_ID } : { session_id: getGuestSessionId() };
         }
-        const T_REMATCH = '{{ __("Đấu lại") }}';
-        const T_REMATCH_WAITING = '{{ __("Đã gửi lời mời đấu lại. Đang chờ đối thủ...") }}';
-        const T_REMATCH_INCOMING = '{{ __("Đối thủ muốn đấu lại!") }}';
-        const T_REMATCH_DECLINED = '{{ __("Đối thủ đã từ chối đấu lại.") }}';
-        const T_REMATCH_STARTING = '{{ __("Đang chuyển sang ván mới...") }}';
-        const T_REMATCH_ERROR = '{{ __("Không thể đấu lại lúc này") }}';
-        const T_ACCEPT = '{{ __("Chấp nhận") }}';
-        const T_DECLINE = '{{ __("Từ chối") }}';
-        const T_CANCEL_INVITE = '{{ __("Hủy lời mời") }}';
-        const T_LEAVE = '{{ __("Về trang chính") }}';
+        const T_REMATCH = @json(__("Đấu lại"));
+        const T_REMATCH_WAITING = @json(__("Đã gửi lời mời đấu lại. Đang chờ đối thủ..."));
+        const T_REMATCH_INCOMING = @json(__("Đối thủ muốn đấu lại!"));
+        const T_REMATCH_DECLINED = @json(__("Đối thủ đã từ chối đấu lại."));
+        const T_REMATCH_STARTING = @json(__("Đang chuyển sang ván mới..."));
+        const T_REMATCH_ERROR = @json(__("Không thể đấu lại lúc này"));
+        const T_ACCEPT = @json(__("Chấp nhận"));
+        const T_DECLINE = @json(__("Từ chối"));
+        const T_CANCEL_INVITE = @json(__("Hủy lời mời"));
+        const T_LEAVE = @json(__("Về trang chính"));
         const REMATCH_HOME_URL = '{{ localized_url('app.dashboard') }}';
 
         let rematchState = 'idle'; // idle | waiting | incoming | declined | closed | error | redirecting
@@ -583,6 +583,9 @@
                     renderRematch();
                 } else if (data.status === 'declined') {
                     rematchState = (rematchState === 'incoming') ? 'closed' : 'idle';
+                    renderRematch();
+                } else {
+                    rematchState = 'error';
                     renderRematch();
                 }
             }).fail(function () {
