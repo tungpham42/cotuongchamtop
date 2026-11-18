@@ -524,7 +524,7 @@
                 }
                 $p.append($leave);
             } else {
-                $p.append(btn('btn-danger pulse-red btn-lg', 'fad fa-redo', T_REMATCH, function () { rematchCall('request'); }))
+                $p.append(btn('btn-danger pulse-red', 'fad fa-redo', T_REMATCH, function () { rematchCall('request'); }))
                   .append($leave);
             }
             // The panel is above the board: make sure a player scrolled down at the board still sees it.
