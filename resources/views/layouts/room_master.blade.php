@@ -1,5 +1,21 @@
 @extends('layouts.playlayout')
 
+@php
+    // Rematch is offered to the two players of a normal (non-tournament) match:
+    //  - registered players (host_id / guest_id), or
+    //  - guests paired through matchmaking (host_session / guest_session).
+    $isUserRematch = in_array($role, ['host', 'guest', 'red', 'black'], true)
+        && auth()->check()
+        && isset($room->host_id, $room->guest_id)
+        && in_array(auth()->id(), [$room->host_id, $room->guest_id])
+        && !isset($room->tournament_id);
+    $isGuestRematch = in_array($role, ['red', 'black'], true)
+        && empty($room->host_id) && empty($room->guest_id)
+        && !empty($room->host_session) && !empty($room->guest_session)
+        && !isset($room->tournament_id);
+    $canRematch = $isUserRematch || $isGuestRematch;
+@endphp
+
 @section('aboveBoard')
 <div class="pvp-scoreboard">
     @if ($role === 'watch')
@@ -34,6 +50,31 @@
     </div>
 </div>
 
+@if ($canRematch)
+    {{-- Shown when the game is over. Sits right under the scoreboard so it is the first thing seen. --}}
+    <style>
+        #rematch-panel {
+            max-width: 560px;
+            margin: .75rem auto;
+            padding: .9rem 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--royal-gold, #d4af37);
+            background: var(--glass-bg-dark, rgba(20, 20, 20, .85));
+            -webkit-backdrop-filter: var(--glass-blur, blur(8px));
+            backdrop-filter: var(--glass-blur, blur(8px));
+            box-shadow: 0 6px 22px rgba(0, 0, 0, .55), 0 0 18px rgba(255, 215, 0, .25);
+            animation: rematchPanelIn .35s cubic-bezier(.175, .885, .32, 1.275) both;
+        }
+        #rematch-panel .btn { min-width: 9rem; }
+        @keyframes rematchPanelIn {
+            from { opacity: 0; transform: translateY(-8px) scale(.97); }
+            to   { opacity: 1; transform: none; }
+        }
+        @media (prefers-reduced-motion: reduce) { #rematch-panel { animation: none; } }
+    </style>
+    <div id="rematch-panel" class="text-center d-none" role="status" aria-live="polite"></div>
+@endif
+
     @if ($role !== 'watch')
         {{-- @include('layouts.partials.timer') --}}
 
@@ -52,21 +93,6 @@
 @endsection
 
 @section('belowContent')
-    @php
-        // Rematch is offered to the two players of a normal (non-tournament) match:
-        //  - registered players (host_id / guest_id), or
-        //  - guests paired through matchmaking (host_session / guest_session).
-        $isUserRematch = in_array($role, ['host', 'guest', 'red', 'black'], true)
-            && auth()->check()
-            && isset($room->host_id, $room->guest_id)
-            && in_array(auth()->id(), [$room->host_id, $room->guest_id])
-            && !isset($room->tournament_id);
-        $isGuestRematch = in_array($role, ['red', 'black'], true)
-            && empty($room->host_id) && empty($room->guest_id)
-            && !empty($room->host_session) && !empty($room->guest_session)
-            && !isset($room->tournament_id);
-        $canRematch = $isUserRematch || $isGuestRematch;
-    @endphp
     @if ($role === 'watch')
         @if (!isset($room->host_id) && !isset($room->result))
             <p class="w-100 text-center">
@@ -89,10 +115,6 @@
         <p class="w-100 text-center">
             <a data-step="{{ $resignStep }}" data-intro="{{ __('Ấn vào đây nếu bạn không biết đi nước nào') }}" id="resign" class="btn btn-dark btn-lg {{ in_array($role, ['host', 'red']) ? 'w-25' : '' }}"><i class="fad fa-flag"></i> {{ __('Bỏ cuộc') }}</a>
         </p>
-    @endif
-
-    @if ($canRematch)
-        <div id="rematch-panel" class="text-center mb-3 d-none" role="status" aria-live="polite"></div>
     @endif
 
     @include('layouts.partials.kypho')
@@ -470,6 +492,7 @@
             };
             const msg = function (text) { return $('<p class="text-light lead mb-2"></p>').text(text); };
 
+            const wasHidden = $p.hasClass('d-none');
             $p.empty().removeClass('d-none');
             if (rematchState === 'redirecting') {
                 $p.append(msg(T_REMATCH_STARTING));
@@ -492,6 +515,10 @@
             } else {
                 $p.append(btn('btn-danger pulse-red btn-lg', 'fad fa-redo', T_REMATCH, function () { rematchCall('request'); }))
                   .append($leave);
+            }
+            // The panel is above the board: make sure a player scrolled down at the board still sees it.
+            if (wasHidden || rematchState === 'incoming') {
+                try { $p[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) { $p[0].scrollIntoView(); }
             }
         }
 
