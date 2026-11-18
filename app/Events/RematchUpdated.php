@@ -23,9 +23,8 @@ class RematchUpdated implements ShouldBroadcastNow
     public function __construct(
         public string $roomCode,
         public string $status,
-        public ?int $by = null,
+        public ?string $by = null,      // 'red' | 'black': the sender's colour in the finished room
         public ?string $newCode = null,
-        public ?int $newHostId = null,
     ) {
     }
 

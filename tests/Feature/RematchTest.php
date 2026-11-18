@@ -42,7 +42,7 @@ class RematchTest extends TestCase
             ->assertOk()->assertJson(['status' => 'requested']);
 
         $res = $this->postJson('/api/room/finished-room/rematch', ['action' => 'accept', 'id' => $guest->id])
-            ->assertOk()->assertJson(['status' => 'accepted', 'new_host_id' => $guest->id]);
+            ->assertOk()->assertJson(['status' => 'accepted']);
 
         $new = Room::where('code', $res->json('new_code'))->first();
         $this->assertNotNull($new);
@@ -51,7 +51,7 @@ class RematchTest extends TestCase
         $this->assertNull($new->result);
         $this->assertSame(Room::INITIAL_FEN, $new->fen);
 
-        Event::assertDispatched(RematchUpdated::class, fn ($e) => $e->status === 'accepted' && $e->newCode === $new->code);
+        Event::assertDispatched(RematchUpdated::class, fn ($e) => $e->status === 'accepted' && $e->by === 'black' && $e->newCode === $new->code);
     }
 
     public function test_simultaneous_requests_auto_accept_once(): void
@@ -93,5 +93,60 @@ class RematchTest extends TestCase
         $this->postJson('/api/room/finished-room/rematch', ['action' => 'request', 'id' => $host->id])->assertStatus(409);
 
         $this->postJson('/api/room/nope/rematch', ['action' => 'request', 'id' => $host->id])->assertStatus(404);
+    }
+
+    private function finishedGuestRoom(): Room
+    {
+        Cache::forget('rematch_guest-room');
+
+        return Room::create([
+            'code' => 'guest-room',
+            'fen' => Room::INITIAL_FEN,
+            'name' => 'Guests',
+            'host_session' => 'guest_red_session',
+            'guest_session' => 'guest_black_session',
+            'result' => '-1',
+            'modified_at' => now(),
+        ]);
+    }
+
+    public function test_guests_can_rematch_with_swapped_sessions(): void
+    {
+        Event::fake([RematchUpdated::class]);
+        $this->finishedGuestRoom();
+
+        $this->postJson('/api/room/guest-room/rematch', ['action' => 'request', 'session_id' => 'guest_red_session'])
+            ->assertOk()->assertJson(['status' => 'requested']);
+
+        $res = $this->postJson('/api/room/guest-room/rematch', ['action' => 'accept', 'session_id' => 'guest_black_session'])
+            ->assertOk()->assertJson(['status' => 'accepted']);
+
+        $new = Room::where('code', $res->json('new_code'))->first();
+        $this->assertSame('guest_black_session', $new->host_session);
+        $this->assertSame('guest_red_session', $new->guest_session);
+        $this->assertNull($new->host_id);
+        $this->assertNull($new->guest_id);
+        $this->assertNull($new->result);
+
+        // The session ids are credentials and must never be broadcast.
+        Event::assertDispatched(RematchUpdated::class, fn ($e) => $e->status === 'requested' && $e->by === 'red');
+        Event::assertDispatched(RematchUpdated::class, fn ($e) => $e->status === 'accepted' && $e->newCode === $new->code);
+    }
+
+    public function test_guest_rematch_rejects_unknown_or_missing_session(): void
+    {
+        $this->finishedGuestRoom();
+
+        $this->postJson('/api/room/guest-room/rematch', ['action' => 'request', 'session_id' => 'someone_else'])->assertStatus(403);
+        $this->postJson('/api/room/guest-room/rematch', ['action' => 'request'])->assertStatus(403);
+        $this->assertSame(1, Room::count());
+    }
+
+    public function test_user_cannot_rematch_a_guest_room(): void
+    {
+        $this->finishedGuestRoom();
+        $user = User::factory()->create();
+
+        $this->postJson('/api/room/guest-room/rematch', ['action' => 'request', 'id' => $user->id])->assertStatus(403);
     }
 }

@@ -53,12 +53,19 @@
 
 @section('belowContent')
     @php
-        // Rematch is only offered to the two registered players of a normal (non-tournament) match.
-        $canRematch = in_array($role, ['host', 'guest', 'red', 'black'], true)
+        // Rematch is offered to the two players of a normal (non-tournament) match:
+        //  - registered players (host_id / guest_id), or
+        //  - guests paired through matchmaking (host_session / guest_session).
+        $isUserRematch = in_array($role, ['host', 'guest', 'red', 'black'], true)
             && auth()->check()
             && isset($room->host_id, $room->guest_id)
             && in_array(auth()->id(), [$room->host_id, $room->guest_id])
             && !isset($room->tournament_id);
+        $isGuestRematch = in_array($role, ['red', 'black'], true)
+            && empty($room->host_id) && empty($room->guest_id)
+            && !empty($room->host_session) && !empty($room->guest_session)
+            && !isset($room->tournament_id);
+        $canRematch = $isUserRematch || $isGuestRematch;
     @endphp
     @if ($role === 'watch')
         @if (!isset($room->host_id) && !isset($room->result))
@@ -329,7 +336,7 @@
                                 data: { 'ma-phong': roomCode, 'result': result },
                                 dataType: 'json'
                             }).always(function(){
-                                @if ($canRematch)
+                                @if ($isUserRematch)
                                 // Stay on the page and offer a rematch instead of redirecting away.
                                 showRematchPanel();
                                 @else
@@ -362,7 +369,13 @@
                         closeButton: false,
                         locale: '{{ __("vi") }}',
                         buttons: { ok: { className: 'btn-danger pulse-red' } },
-                        callback: function () { window.location.href = "{{ localized_url('room.list') }}"; }
+                        callback: function () {
+                            @if ($isGuestRematch)
+                            // Stay on the page and offer a rematch when this browser still has its match session.
+                            if (showRematchPanel()) return;
+                            @endif
+                            window.location.href = "{{ localized_url('room.list') }}";
+                        }
                     });
                 });
             @endif
@@ -419,7 +432,18 @@
         // A finished room is immutable, so an accepted rematch creates a new room
         // (colours swapped) and both players are sent to it.
         const REMATCH_URL = '{{ url('/api') }}/room/{{ $roomCode }}/rematch';
+        // 'user': registered players, identified by user id. 'guest': matchmaking guests,
+        // identified by the browser match session id (same identity findMatch uses).
+        const REMATCH_MODE = '{{ $isUserRematch ? 'user' : 'guest' }}';
+        // Colour in THIS room; colours swap in the rematch room.
+        const MY_SIDE = '{{ in_array($role, ['host', 'red']) ? 'red' : 'black' }}';
         const MY_USER_ID = {{ (int) auth()->id() }};
+        function getGuestSessionId() {
+            try { return sessionStorage.getItem('match_session_id') || ''; } catch (e) { return ''; }
+        }
+        function rematchIdentity() {
+            return REMATCH_MODE === 'user' ? { id: MY_USER_ID } : { session_id: getGuestSessionId() };
+        }
         const T_REMATCH = '{{ __("Đấu lại") }}';
         const T_REMATCH_WAITING = '{{ __("Đã gửi lời mời đấu lại. Đang chờ đối thủ...") }}';
         const T_REMATCH_INCOMING = '{{ __("Đối thủ muốn đấu lại!") }}';
@@ -471,16 +495,25 @@
             }
         }
 
+        // Returns false when a rematch can't be offered (guest without a match session).
         function showRematchPanel() {
+            if (REMATCH_MODE === 'guest' && !getGuestSessionId()) return false;
             rematchPanelVisible = true;
             renderRematch();
+            return true;
         }
 
-        function rematchRedirect(newCode, newHostId) {
+        function rematchRedirect(newCode) {
             if (!newCode || rematchState === 'redirecting') return;
             rematchState = 'redirecting';
             renderRematch();
-            window.location.href = (Number(newHostId) === MY_USER_ID) ? xqHostRoomUrl(newCode) : xqGuestRoomUrl(newCode);
+            // Colours swap: the old black player is red/host in the new room.
+            const newSide = MY_SIDE === 'red' ? 'black' : 'red';
+            if (REMATCH_MODE === 'user') {
+                window.location.href = newSide === 'red' ? xqHostRoomUrl(newCode) : xqGuestRoomUrl(newCode);
+            } else {
+                window.location.href = newSide === 'red' ? xqRedRoomUrl(newCode) : xqBlackRoomUrl(newCode);
+            }
         }
 
         function rematchCall(action) {
@@ -488,11 +521,11 @@
             $.ajax({
                 type: 'POST',
                 url: REMATCH_URL,
-                data: { id: MY_USER_ID, action: action },
+                data: Object.assign({ action: action }, rematchIdentity()),
                 dataType: 'json'
             }).done(function (data) {
                 if (data.status === 'accepted') {
-                    rematchRedirect(data.new_code, data.new_host_id);
+                    rematchRedirect(data.new_code);
                 } else if (data.status === 'requested') {
                     rematchState = 'waiting';
                     renderRematch();
@@ -508,11 +541,11 @@
 
         if (typeof Echo !== 'undefined') {
             Echo.channel('rematch.{{ $roomCode }}').listen('.rematch.updated', function (e) {
-                const mine = Number(e.by) === MY_USER_ID;
+                const mine = e.by === MY_SIDE;
                 if (e.status === 'requested') {
                     rematchState = mine ? 'waiting' : 'incoming';
                 } else if (e.status === 'accepted') {
-                    rematchRedirect(e.newCode, e.newHostId);
+                    rematchRedirect(e.newCode);
                     return;
                 } else if (e.status === 'declined') {
                     rematchState = mine ? 'closed' : 'declined';

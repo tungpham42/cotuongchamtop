@@ -26,7 +26,9 @@
                 <script>
                     const LOCALIZED_ROOM_URLS = {
                         host:  @json(localized_url('room.host',  ['code' => '__ROOM_CODE__'])),
-                        guest: @json(localized_url('room.guest', ['code' => '__ROOM_CODE__']))
+                        guest: @json(localized_url('room.guest', ['code' => '__ROOM_CODE__'])),
+                        red:   @json(localized_url('room.red',   ['code' => '__ROOM_CODE__'])),
+                        black: @json(localized_url('room.black', ['code' => '__ROOM_CODE__']))
                     };
                     function localizedRoomUrl(kind, roomCode) {
                         return LOCALIZED_ROOM_URLS[kind].replace('__ROOM_CODE__', encodeURIComponent(roomCode));
@@ -34,6 +36,8 @@
                     // Adapters used by the shared game partials
                     const xqHostRoomUrl  = (code) => localizedRoomUrl('host', code);
                     const xqGuestRoomUrl = (code) => localizedRoomUrl('guest', code);
+                    const xqRedRoomUrl   = (code) => localizedRoomUrl('red', code);
+                    const xqBlackRoomUrl = (code) => localizedRoomUrl('black', code);
                 </script>
 
                 @if (!isset($room->tournament_id))
