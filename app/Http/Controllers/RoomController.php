@@ -21,6 +21,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Jobs\QuickMatchJob;
 use App\Presenters\RoomDataTablePresenter;
 use App\Events\WebRtcSignal;
+use App\Events\RematchUpdated;
+use Illuminate\Support\Facades\Cache;
 
 class RoomController extends Controller
 {
@@ -763,6 +765,99 @@ class RoomController extends Controller
         return response()->json([
             'exists' => Room::where('code', $code)->exists(),
         ]);
+    }
+
+    /**
+     * Rematch negotiation for a finished, non-tournament match between two
+     * registered players.
+     *
+     * action=request  : ask the opponent for a rematch (auto-accepts when the
+     *                   opponent already asked, so simultaneous clicks work)
+     * action=accept   : accept the opponent's pending request
+     * action=decline  : decline the pending request / withdraw your own
+     *
+     * A finished room is immutable (re-entering it as a player is blocked), so
+     * accepting creates a NEW room with the same players and swapped colours.
+     */
+    public function rematch(Request $request, string $code): JsonResponse
+    {
+        $userId = (int) (auth()->id() ?? $request->input('id'));
+        $action = (string) $request->input('action');
+
+        if (!in_array($action, ['request', 'accept', 'decline'], true)) {
+            return response()->json(['success' => false, 'message' => 'Invalid action'], 422);
+        }
+
+        $cacheKey = "rematch_{$code}";
+
+        try {
+            return DB::transaction(function () use ($code, $userId, $action, $cacheKey) {
+                $room = Room::lockForUpdate()->where('code', $code)->firstOrFail();
+
+                if (!$room->host_id || !$room->guest_id || !in_array($userId, [$room->host_id, $room->guest_id], true)) {
+                    return response()->json(['success' => false, 'message' => __('Bạn không có quyền cập nhật ván này.')], 403);
+                }
+                if (is_null($room->result) || $room->tournament_id) {
+                    return response()->json(['success' => false, 'message' => 'Rematch not available'], 409);
+                }
+
+                $state = Cache::get($cacheKey);
+
+                // Already accepted (double click / both sides clicked at once).
+                if (is_array($state) && !empty($state['new_code'])) {
+                    return response()->json(['success' => true, 'status' => 'accepted', 'new_code' => $state['new_code'], 'new_host_id' => $state['new_host_id']]);
+                }
+
+                $pendingBy = is_array($state) ? ($state['by'] ?? null) : null;
+
+                if ($action === 'decline') {
+                    Cache::forget($cacheKey);
+                    broadcast(new RematchUpdated($code, $pendingBy === $userId ? 'cancelled' : 'declined', $userId));
+                    return response()->json(['success' => true, 'status' => 'declined']);
+                }
+
+                if ($action === 'request' && ($pendingBy === null || $pendingBy === $userId)) {
+                    Cache::put($cacheKey, ['by' => $userId], now()->addMinutes(5));
+                    broadcast(new RematchUpdated($code, 'requested', $userId));
+                    return response()->json(['success' => true, 'status' => 'requested']);
+                }
+
+                if ($pendingBy === null || $pendingBy === $userId) {
+                    return response()->json(['success' => false, 'message' => 'No pending rematch request'], 409);
+                }
+
+                // The opponent asked and this user accepts (or also requested): create the room.
+                $newRoom = Room::create([
+                    'code'          => md5(time() . $code . uniqid('', true)),
+                    'fen'           => self::INITIAL_FEN,
+                    'moves'         => json_encode([]),
+                    // Swap colours: previous guest (black) becomes host (red).
+                    'host_id'       => $room->guest_id,
+                    'guest_id'      => $room->host_id,
+                    'name'          => $room->name,
+                    'red_time'      => 600,
+                    'black_time'    => 600,
+                    'modified_at'   => now(),
+                ]);
+
+                Cache::put($cacheKey, [
+                    'by' => $pendingBy,
+                    'new_code' => $newRoom->code,
+                    'new_host_id' => $newRoom->host_id,
+                ], now()->addMinutes(5));
+
+                broadcast(new RematchUpdated($code, 'accepted', $userId, $newRoom->code, (int) $newRoom->host_id));
+
+                return response()->json([
+                    'success' => true,
+                    'status' => 'accepted',
+                    'new_code' => $newRoom->code,
+                    'new_host_id' => (int) $newRoom->host_id,
+                ]);
+            });
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'message' => 'Room not found'], 404);
+        }
     }
 
     /**

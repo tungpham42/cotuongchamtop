@@ -52,6 +52,14 @@
 @endsection
 
 @section('belowContent')
+    @php
+        // Rematch is only offered to the two registered players of a normal (non-tournament) match.
+        $canRematch = in_array($role, ['host', 'guest', 'red', 'black'], true)
+            && auth()->check()
+            && isset($room->host_id, $room->guest_id)
+            && in_array(auth()->id(), [$room->host_id, $room->guest_id])
+            && !isset($room->tournament_id);
+    @endphp
     @if ($role === 'watch')
         @if (!isset($room->host_id) && !isset($room->result))
             <p class="w-100 text-center">
@@ -74,6 +82,10 @@
         <p class="w-100 text-center">
             <a data-step="{{ $resignStep }}" data-intro="{{ __('Ấn vào đây nếu bạn không biết đi nước nào') }}" id="resign" class="btn btn-dark btn-lg {{ in_array($role, ['host', 'red']) ? 'w-25' : '' }}"><i class="fad fa-flag"></i> {{ __('Bỏ cuộc') }}</a>
         </p>
+    @endif
+
+    @if ($canRematch)
+        <div id="rematch-panel" class="text-center mb-3 d-none" role="status" aria-live="polite"></div>
     @endif
 
     @include('layouts.partials.kypho')
@@ -317,6 +329,10 @@
                                 data: { 'ma-phong': roomCode, 'result': result },
                                 dataType: 'json'
                             }).always(function(){
+                                @if ($canRematch)
+                                // Stay on the page and offer a rematch instead of redirecting away.
+                                showRematchPanel();
+                                @else
                                 setTimeout(function(){
                                     @if (!isset($room->tournament_id))
                                     window.location.href = "{{ localized_url('app.dashboard') }}";
@@ -324,6 +340,7 @@
                                     window.location.href = "{{ localized_url('tournaments.show', ['slug' => $tournament->slug ?? '']) }}";
                                     @endif
                                 }, 500);
+                                @endif
                             });
                         }
                     });
@@ -396,6 +413,116 @@
             updateFenCode('{{ $roomCode }}', lastMoveIccs);
             lastMoveIccs = null;
         }
+
+        @if ($canRematch)
+        // ---- Rematch ----
+        // A finished room is immutable, so an accepted rematch creates a new room
+        // (colours swapped) and both players are sent to it.
+        const REMATCH_URL = '{{ url('/api') }}/room/{{ $roomCode }}/rematch';
+        const MY_USER_ID = {{ (int) auth()->id() }};
+        const T_REMATCH = '{{ __("Đấu lại") }}';
+        const T_REMATCH_WAITING = '{{ __("Đã gửi lời mời đấu lại. Đang chờ đối thủ...") }}';
+        const T_REMATCH_INCOMING = '{{ __("Đối thủ muốn đấu lại!") }}';
+        const T_REMATCH_DECLINED = '{{ __("Đối thủ đã từ chối đấu lại.") }}';
+        const T_REMATCH_STARTING = '{{ __("Đang chuyển sang ván mới...") }}';
+        const T_REMATCH_ERROR = '{{ __("Không thể đấu lại lúc này") }}';
+        const T_ACCEPT = '{{ __("Chấp nhận") }}';
+        const T_DECLINE = '{{ __("Từ chối") }}';
+        const T_CANCEL_INVITE = '{{ __("Hủy lời mời") }}';
+        const T_LEAVE = '{{ __("Về trang chính") }}';
+        const REMATCH_HOME_URL = '{{ localized_url('app.dashboard') }}';
+
+        let rematchState = 'idle'; // idle | waiting | incoming | declined | closed | error | redirecting
+        let rematchPanelVisible = false;
+
+        function renderRematch() {
+            const $p = $('#rematch-panel');
+            if (!rematchPanelVisible || !$p.length) return;
+            const $leave = $('<a class="btn btn-dark text-light m-1"></a>').attr('href', REMATCH_HOME_URL)
+                .append('<i class="fad fa-home"></i> ').append(document.createTextNode(T_LEAVE));
+            const btn = function (cls, icon, label, handler) {
+                return $('<button type="button" class="btn m-1"></button>').addClass(cls)
+                    .append('<i class="' + icon + '"></i> ').append(document.createTextNode(label)).on('click', handler);
+            };
+            const msg = function (text) { return $('<p class="text-light lead mb-2"></p>').text(text); };
+
+            $p.empty().removeClass('d-none');
+            if (rematchState === 'redirecting') {
+                $p.append(msg(T_REMATCH_STARTING));
+            } else if (rematchState === 'waiting') {
+                $p.append(msg(T_REMATCH_WAITING))
+                  .append(btn('btn-dark text-light', 'fad fa-times', T_CANCEL_INVITE, function () { rematchCall('decline'); }))
+                  .append($leave);
+            } else if (rematchState === 'incoming') {
+                $p.append(msg(T_REMATCH_INCOMING))
+                  .append(btn('btn-danger pulse-red', 'fad fa-check', T_ACCEPT, function () { rematchCall('accept'); }))
+                  .append(btn('btn-dark text-light', 'fad fa-times', T_DECLINE, function () { rematchCall('decline'); }))
+                  .append($leave);
+            } else if (rematchState === 'declined' || rematchState === 'closed' || rematchState === 'error') {
+                if (rematchState === 'declined') $p.append(msg(T_REMATCH_DECLINED));
+                if (rematchState === 'error') $p.append(msg(T_REMATCH_ERROR));
+                if (rematchState === 'error') {
+                    $p.append(btn('btn-danger', 'fad fa-redo', T_REMATCH, function () { rematchCall('request'); }));
+                }
+                $p.append($leave);
+            } else {
+                $p.append(btn('btn-danger pulse-red btn-lg', 'fad fa-redo', T_REMATCH, function () { rematchCall('request'); }))
+                  .append($leave);
+            }
+        }
+
+        function showRematchPanel() {
+            rematchPanelVisible = true;
+            renderRematch();
+        }
+
+        function rematchRedirect(newCode, newHostId) {
+            if (!newCode || rematchState === 'redirecting') return;
+            rematchState = 'redirecting';
+            renderRematch();
+            window.location.href = (Number(newHostId) === MY_USER_ID) ? xqHostRoomUrl(newCode) : xqGuestRoomUrl(newCode);
+        }
+
+        function rematchCall(action) {
+            $('#rematch-panel button').prop('disabled', true);
+            $.ajax({
+                type: 'POST',
+                url: REMATCH_URL,
+                data: { id: MY_USER_ID, action: action },
+                dataType: 'json'
+            }).done(function (data) {
+                if (data.status === 'accepted') {
+                    rematchRedirect(data.new_code, data.new_host_id);
+                } else if (data.status === 'requested') {
+                    rematchState = 'waiting';
+                    renderRematch();
+                } else if (data.status === 'declined') {
+                    rematchState = (rematchState === 'incoming') ? 'closed' : 'idle';
+                    renderRematch();
+                }
+            }).fail(function () {
+                rematchState = 'error';
+                renderRematch();
+            });
+        }
+
+        if (typeof Echo !== 'undefined') {
+            Echo.channel('rematch.{{ $roomCode }}').listen('.rematch.updated', function (e) {
+                const mine = Number(e.by) === MY_USER_ID;
+                if (e.status === 'requested') {
+                    rematchState = mine ? 'waiting' : 'incoming';
+                } else if (e.status === 'accepted') {
+                    rematchRedirect(e.newCode, e.newHostId);
+                    return;
+                } else if (e.status === 'declined') {
+                    rematchState = mine ? 'closed' : 'declined';
+                } else if (e.status === 'cancelled') {
+                    rematchState = 'idle';
+                }
+                renderRematch();
+            });
+        }
+        @endif
 
         function updatePlayersTitle() {
             $.ajax({

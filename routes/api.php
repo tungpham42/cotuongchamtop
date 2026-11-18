@@ -63,6 +63,7 @@ Route::controller(RoomController::class)->group(function () {
     Route::post('/saveTime/{roomCode}', 'saveTime');
     Route::post('/startMatch/{roomCode}', 'startMatch')->name('startMatch');
     Route::post('/room/{code}/signal', 'sendSignal')->name('room.signal');
+    Route::post('/room/{code}/rematch', 'rematch')->name('room.rematch');
 });
 
 Route::controller(UserController::class)->group(function () {

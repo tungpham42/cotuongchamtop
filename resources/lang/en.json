@@ -975,5 +975,13 @@
     "Mời bạn bè": "Invite a friend",
     "Danh sách nước đi": "Move list",
     "Đã áp dụng": "Applied",
-    "Đã áp dụng trên máy này; chưa lưu tài khoản": "Applied on this device; account preferences were not saved"
+    "Đã áp dụng trên máy này; chưa lưu tài khoản": "Applied on this device; account preferences were not saved",
+    "Đấu lại": "Rematch",
+    "Đã gửi lời mời đấu lại. Đang chờ đối thủ...": "Rematch request sent. Waiting for your opponent...",
+    "Đối thủ muốn đấu lại!": "Your opponent wants a rematch!",
+    "Đối thủ đã từ chối đấu lại.": "Your opponent declined the rematch.",
+    "Đang chuyển sang ván mới...": "Starting a new game...",
+    "Không thể đấu lại lúc này": "Rematch is not available right now",
+    "Hủy lời mời": "Cancel invite",
+    "Về trang chính": "Back to dashboard"
 }
