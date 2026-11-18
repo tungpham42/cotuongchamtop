@@ -32,7 +32,7 @@
         pointer-events: none; z-index: 3;
     }
 
-    /* ---------- Last move arrow: glossy gold glass with ruby trim ---------- */
+    /* ---------- Last move arrow (one arrow, styled for the side that moved): glossy gold glass with ruby trim ---------- */
     #ban-co .click-arrow-layer {
         position: absolute;
         left: 0; top: 0;
@@ -56,13 +56,11 @@
         stroke-linejoin: round;
         opacity: .93;
     }
-    /* Black player's arrow: ink glass with gold trim, so it reads apart from red's gold/ruby arrow */
+    /* When black made the last move: ink glass with gold trim, so it reads apart from red's gold/ruby arrow */
     #ban-co .click-arrow--black .click-arrow__body {
         fill: url(#clickArrowInk);
         stroke: var(--royal-gold, #d4af37);
     }
-    /* Older of the two arrows sits underneath and is slightly quieter */
-    #ban-co .click-arrow--older { opacity: .78; }
     #ban-co .click-arrow__gloss { fill: rgba(255, 255, 255, .6); }
     #ban-co .click-arrow__rim   { fill: none; stroke: rgba(255, 255, 255, .55); stroke-linejoin: round; }
 
@@ -273,35 +271,24 @@ window.initBoardClickInteraction = function (board, game, config) {
         arrowLayer.dataset.key = '';
     }
 
-    // The last two moves, oldest first: [opponent of the last mover, last mover].
+    // The last move and the side that made it ('r' | 'b').
     // game.history() is empty after game.load() (e.g. an opponent's move arriving over the
-    // socket), so when it can't supply both moves we fall back to the move list kypho keeps.
-    function lastMoves() {
-        let newer, older, turn;
+    // socket), so when it has nothing we fall back to the move list kypho keeps.
+    function lastMove() {
+        let move, turn;
         if (board.isReviewing) {
-            newer = board.reviewMove;
-            older = board.reviewPrevMove;
+            move = board.reviewMove;
             turn = (board.reviewFen || '').split(' ')[1];
         } else {
             const h = game.history({ verbose: true });
             turn = game.turn();
             const kyphoInSync = board.reviewFen &&
                 board.reviewFen.split(' ')[0] === game.fen().split(' ')[0];
-            if (h.length < 2 && kyphoInSync && board.reviewMove) {
-                newer = board.reviewMove;
-                older = board.reviewPrevMove;
-            } else {
-                newer = h[h.length - 1];
-                older = h[h.length - 2];
-            }
+            move = h.length ? h[h.length - 1] : (kyphoInSync ? board.reviewMove : null);
         }
-        // The side to move did NOT make the newest move, so the last mover is the opposite colour.
-        const newerColor = (newer && newer.color) || (turn === 'r' ? 'b' : 'r');
-        const olderColor = (older && older.color) || (newerColor === 'r' ? 'b' : 'r');
-        const result = [];
-        if (older) result.push({ move: older, color: olderColor, newer: false });
-        if (newer) result.push({ move: newer, color: newerColor, newer: true });
-        return result;
+        if (!move) return null;
+        // The side to move did NOT make the last move, so the mover is the opposite colour.
+        return { move, color: move.color || (turn === 'r' ? 'b' : 'r') };
     }
 
     function arrowGeometry(last, base, sx, sy) {
@@ -325,7 +312,7 @@ window.initBoardClickInteraction = function (board, game, config) {
         return { a, b, dx, dy, dist, cell: b.size };
     }
 
-    function arrowGroup(g, item) {
+    function arrowGroup(g, color) {
         const { a, dx, dy, dist, cell } = g;
         const f = n => n.toFixed(2);
         // Start just off the vacated bead, stop at the edge of the moved piece.
@@ -356,8 +343,7 @@ window.initBoardClickInteraction = function (board, game, config) {
 
         const group = document.createElementNS(SVG_NS, 'g');
         group.setAttribute('class', 'click-arrow ' +
-            (item.color === 'b' ? 'click-arrow--black' : 'click-arrow--red') +
-            (item.newer ? '' : ' click-arrow--older'));
+            (color === 'b' ? 'click-arrow--black' : 'click-arrow--red'));
         group.setAttribute('transform', `translate(${f(x0)} ${f(y0)}) rotate(${f(angle)})`);
         group.innerHTML =
             '<g class="click-arrow__inner">' +
@@ -369,30 +355,25 @@ window.initBoardClickInteraction = function (board, game, config) {
         return group;
     }
 
-    function drawArrows(items) {
+    function drawArrow(last) {
         const base = element.getBoundingClientRect();
-        if (!items.length || !base.width || !base.height) return clearArrow();
+        if (!base.width || !base.height) return clearArrow();
 
         // Normalise away hover scaling so coordinates stay stable.
         const sx = element.offsetWidth / base.width;
         const sy = element.offsetHeight / base.height;
-        const drawable = items
-            .map(item => ({ item, g: arrowGeometry(item.move, base, sx, sy) }))
-            .filter(x => x.g);
-        if (!drawable.length) return clearArrow();
+        const g = arrowGeometry(last.move, base, sx, sy);
+        if (!g) return clearArrow();
 
         const layer = ensureArrowLayer();
         layer.setAttribute('viewBox', `0 0 ${element.clientWidth} ${element.clientHeight}`);
 
-        const key = drawable.map(({ item, g }) => [
-            item.move.from, item.move.to, item.color,
-            Math.round(g.a.x), Math.round(g.a.y), Math.round(g.b.x), Math.round(g.b.y)
-        ].join('|')).join('~');
+        const key = [last.move.from, last.move.to, last.color,
+            Math.round(g.a.x), Math.round(g.a.y), Math.round(g.b.x), Math.round(g.b.y)].join('|');
         if (layer.dataset.key === key && layer.querySelector('.click-arrow')) return;
         layer.dataset.key = key;
         layer.querySelectorAll('.click-arrow').forEach(el => el.remove());
-        // Oldest first so the newest arrow is painted on top.
-        drawable.forEach(({ item, g }) => layer.appendChild(arrowGroup(g, item)));
+        layer.appendChild(arrowGroup(g, last.color));
     }
 
     function paint() {
@@ -400,12 +381,11 @@ window.initBoardClickInteraction = function (board, game, config) {
         element.querySelectorAll('.square-2b8ce').forEach(el => {
             el.classList.remove('click-selected', 'click-target', 'click-last-from', 'click-last-to');
         });
-        const arrows = lastMoves();
-        const last = arrows.length ? arrows[arrows.length - 1].move : null;
+        const last = lastMove();
         if (last) {
-            square(last.from)?.classList.add('click-last-from');
-            square(last.to)?.classList.add('click-last-to');
-            drawArrows(arrows);
+            square(last.move.from)?.classList.add('click-last-from');
+            square(last.move.to)?.classList.add('click-last-to');
+            drawArrow(last);
         } else {
             clearArrow();
         }

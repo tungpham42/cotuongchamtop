@@ -807,7 +807,6 @@
             if (state.board) {
                 state.board.isReviewing = index < state.fens.length - 1;
                 state.board.reviewMove = state.prettyMoves[index - 1] || null;
-                state.board.reviewPrevMove = state.prettyMoves[index - 2] || null;
                 state.board.reviewFen = state.fens[index] || null;
             }
             if (state.board) {
