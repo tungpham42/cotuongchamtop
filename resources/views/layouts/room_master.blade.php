@@ -392,11 +392,11 @@
                         locale: '{{ __("vi") }}',
                         buttons: { ok: { className: 'btn-danger pulse-red' } },
                         callback: function () {
+                            // No redirect to the lobby: stay on the finished game. Guests who still
+                            // have their match session are offered a rematch.
                             @if ($isGuestRematch)
-                            // Stay on the page and offer a rematch when this browser still has its match session.
-                            if (showRematchPanel()) return;
+                            showRematchPanel();
                             @endif
-                            window.location.href = "{{ localized_url('room.list') }}";
                         }
                     });
                 });
