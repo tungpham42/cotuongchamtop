@@ -807,9 +807,15 @@
             if (state.board) {
                 state.board.isReviewing = index < state.fens.length - 1;
                 state.board.reviewMove = state.prettyMoves[index - 1] || null;
+                state.board.reviewPrevMove = state.prettyMoves[index - 2] || null;
+                state.board.reviewFen = state.fens[index] || null;
             }
             if (state.board) {
                 state.board.position(state.fens[state.currentIndex], true);
+                // position() is a no-op for an unchanged position; repaint the arrows anyway.
+                if (typeof state.board.refreshArrows === "function") {
+                    state.board.refreshArrows();
+                }
             }
             highlightMove(state.currentIndex - 1);
             updateControls();
