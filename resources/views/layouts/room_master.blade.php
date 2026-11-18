@@ -1,17 +1,22 @@
 @extends('layouts.playlayout')
 
 @php
-    // Rematch is offered to the two players of a normal (non-tournament) match:
+    // Rematch is offered to both seats (Host/Red and Guest/Black) of a normal (non-tournament) match:
     //  - registered players (host_id / guest_id), or
     //  - guests paired through matchmaking (host_session / guest_session).
+    //
+    // NOTE: this must NOT require the opponent to be present at render time. The host's page is
+    // usually rendered while waiting for an opponent, so guest_id / guest_session are still empty
+    // then. Whether an opponent really exists is checked when the game ends (showRematchPanel)
+    // and again by the server.
     $isUserRematch = in_array($role, ['host', 'guest', 'red', 'black'], true)
         && auth()->check()
-        && isset($room->host_id, $room->guest_id)
+        && !empty($room->host_id)
         && in_array(auth()->id(), [$room->host_id, $room->guest_id])
         && !isset($room->tournament_id);
     $isGuestRematch = in_array($role, ['red', 'black'], true)
         && empty($room->host_id) && empty($room->guest_id)
-        && !empty($room->host_session) && !empty($room->guest_session)
+        && !empty($room->host_session)
         && !isset($room->tournament_id);
     $canRematch = $isUserRematch || $isGuestRematch;
 @endphp
@@ -360,7 +365,13 @@
                             }).always(function(){
                                 @if ($isUserRematch)
                                 // Stay on the page and offer a rematch instead of redirecting away.
-                                showRematchPanel();
+                                // If no rematch can be offered (e.g. the opponent was an anonymous
+                                // random player), fall back to the old redirect.
+                                showRematchPanel(function () {
+                                    setTimeout(function () {
+                                        window.location.href = "{{ localized_url('app.dashboard') }}";
+                                    }, 500);
+                                });
                                 @else
                                 setTimeout(function(){
                                     @if (!isset($room->tournament_id))
@@ -522,12 +533,26 @@
             }
         }
 
-        // Returns false when a rematch can't be offered (guest without a match session).
-        function showRematchPanel() {
-            if (REMATCH_MODE === 'guest' && !getGuestSessionId()) return false;
-            rematchPanelVisible = true;
-            renderRematch();
-            return true;
+        // Shows the rematch panel when a rematch is actually possible; otherwise calls `unavailable`.
+        function showRematchPanel(unavailable) {
+            const offer = function () { rematchPanelVisible = true; renderRematch(); };
+            const cannot = function () { if (typeof unavailable === 'function') unavailable(); };
+
+            if (REMATCH_MODE === 'guest') {
+                // Guests are identified by the match session id kept in this browser tab.
+                if (getGuestSessionId()) offer(); else cannot();
+                return;
+            }
+            // Registered players: re-check the opponent now. This page may have been rendered
+            // before the opponent joined, and a random-room opponent has no account at all.
+            $.ajax({
+                type: 'POST',
+                url: '{{ url('/api/getRoomIds') }}',
+                data: { 'ma-phong': '{{ $roomCode }}' },
+                dataType: 'json'
+            }).done(function (ids) {
+                if (ids && ids.host_id && ids.guest_id) offer(); else cannot();
+            }).fail(offer); // the rematch endpoint validates again
         }
 
         function rematchRedirect(newCode) {
