@@ -14,7 +14,7 @@
         && !empty($room->host_id)
         && in_array(auth()->id(), [$room->host_id, $room->guest_id])
         && !isset($room->tournament_id);
-    $isGuestRematch = in_array($role, ['red', 'black'], true)
+    $isGuestRematch = in_array($role, ['host', 'guest', 'red', 'black'], true)
         && empty($room->host_id) && empty($room->guest_id)
         && !empty($room->host_session)
         && !isset($room->tournament_id);
@@ -364,14 +364,9 @@
                                 dataType: 'json'
                             }).always(function(){
                                 @if ($isUserRematch)
-                                // Stay on the page and offer a rematch instead of redirecting away.
-                                // If no rematch can be offered (e.g. the opponent was an anonymous
-                                // random player), fall back to the old redirect.
-                                showRematchPanel(function () {
-                                    setTimeout(function () {
-                                        window.location.href = "{{ localized_url('app.dashboard') }}";
-                                    }, 500);
-                                });
+                                // Stay on the page: the rematch panel is always shown after the match
+                                // (it is idempotent, and may already be visible from updateStatus()).
+                                showRematchPanel();
                                 @else
                                 setTimeout(function(){
                                     @if (!isset($room->tournament_id))
@@ -491,6 +486,7 @@
 
         let rematchState = 'idle'; // idle | waiting | incoming | declined | closed | error | redirecting
         let rematchPanelVisible = false;
+        var rematchGameOverHandled = false;
 
         function renderRematch() {
             const $p = $('#rematch-panel');
@@ -533,10 +529,15 @@
             }
         }
 
-        // Shows the rematch panel when a rematch is actually possible; otherwise calls `unavailable`.
-        function showRematchPanel(unavailable) {
+        // Always shows the panel once the match is over. When a rematch is not possible
+        // (e.g. anonymous opponent / no match session) the panel only offers the way back home.
+        function showRematchPanel() {
+            if (rematchPanelVisible) return;
             const offer = function () { rematchPanelVisible = true; renderRematch(); };
-            const cannot = function () { if (typeof unavailable === 'function') unavailable(); };
+            const cannot = function () {
+                if (rematchState === 'idle') rematchState = 'closed'; // "leave" button only
+                offer();
+            };
 
             if (REMATCH_MODE === 'guest') {
                 // Guests are identified by the match session id kept in this browser tab.
@@ -553,6 +554,13 @@
             }).done(function (ids) {
                 if (ids && ids.host_id && ids.guest_id) offer(); else cannot();
             }).fail(offer); // the rematch endpoint validates again
+        }
+
+        // Called as soon as the game is over (checkmate, draw, resign, timeout...), once.
+        function onGameOverRematch() {
+            if (rematchGameOverHandled) return;
+            rematchGameOverHandled = true;
+            showRematchPanel();
         }
 
         function rematchRedirect(newCode) {
@@ -736,6 +744,9 @@
                 }
                 $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> {{ __("Hết trận") }}');
                 $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
+                @if ($canRematch)
+                onGameOverRematch();
+                @endif
 
                 if (typeof Echo !== 'undefined') { Echo.leave('room.{{ $roomCode }}'); }
                 @if (isset($room->host_id))
@@ -761,6 +772,9 @@
                 });
                 $('#game-over').html('<i class="fad fa-flag-checkered"></i> {{ __("Đã bỏ cuộc") }}');
                 $('#resign').addClass('disabled').attr('aria-disabled', true);
+                @if ($canRematch)
+                onGameOverRematch();
+                @endif
             }
 
             markLastMove();
