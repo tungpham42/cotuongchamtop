@@ -37,6 +37,19 @@
                 {{-- Form control automatically inherits the gold/wood styling from CSS --}}
                 <input data-step="1" data-intro="{{ __('Ấn vào đây để mời bạn bè cùng chơi') }}" type="text" class="form-control" id="url-invite" value="{{ localized_url($inviteRoute, ['code' => $roomCode]) }}" style="border-left: none; font-weight: 600; color: var(--royal-bg);" readonly>
             </div>
+
+            {{-- Subtle QR code for the same invite link. Rendered client-side (no extra request),
+                 tap/click/Enter to enlarge it. Hidden automatically if the library fails to load. --}}
+            <div id="invite-qr-wrap" class="invite-qr-wrap d-none">
+                <div id="invite-qr" class="invite-qr" role="button" tabindex="0" aria-pressed="false" aria-label="{{ __('Quét mã QR để vào phòng') }}" title="{{ __('Quét mã QR để vào phòng') }}">
+                    <span class="invite-qr-frame">
+                        <span class="invite-qr-card">
+                            <span id="invite-qr-svg" class="invite-qr-svg"></span>
+                        </span>
+                    </span>
+                </div>
+                <span class="invite-qr-caption"><i class="fad fa-qrcode"></i> {{ __('Quét mã QR để vào phòng') }}</span>
+            </div>
         @endif
 
         <p id="room-code" class="w-100 text-center mt-0 mb-2">
@@ -68,6 +81,7 @@
         @endif
     </div>
 </div>
+<script src="{{ asset('js/qrcode-generator.js?v=1') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const inviteToggle = document.getElementById('invite-toggle');
@@ -108,6 +122,53 @@
                 });
             });
         }
+
+        // --- QR code for the invite link ---
+        (function () {
+            const wrap = document.getElementById('invite-qr-wrap');
+            const holder = document.getElementById('invite-qr-svg');
+            const qrBtn = document.getElementById('invite-qr');
+            const link = document.getElementById('url-invite');
+            if (!wrap || !holder || !qrBtn || !link || typeof qrcode !== 'function') return;
+
+            try {
+                const qr = qrcode(0, 'M');
+                qr.addData(link.value);
+                qr.make();
+
+                const n = qr.getModuleCount();
+                const margin = 1; // extra quiet zone, on top of the card padding
+                const size = n + margin * 2;
+                let rects = '';
+                for (let r = 0; r < n; r++) {
+                    for (let c = 0; c < n; c++) {
+                        if (qr.isDark(r, c)) {
+                            rects += '<rect x="' + (c + margin) + '" y="' + (r + margin) + '" width="1.02" height="1.02" rx="0.32"/>';
+                        }
+                    }
+                }
+                // Crimson -> ebony gradient keeps strong contrast on the cream card, so it stays scannable.
+                holder.innerHTML =
+                    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '" shape-rendering="geometricPrecision" role="img" aria-hidden="true">' +
+                    '<defs><linearGradient id="inviteQrInk" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="' + size + '" y2="' + size + '">' +
+                    '<stop offset="0" stop-color="#8a1515"/><stop offset="0.55" stop-color="#2a0a0a"/><stop offset="1" stop-color="#0b0c10"/>' +
+                    '</linearGradient></defs>' +
+                    '<g fill="url(#inviteQrInk)">' + rects + '</g></svg>';
+                wrap.classList.remove('d-none');
+            } catch (err) {
+                console.error('Could not build the invite QR code: ', err);
+                return;
+            }
+
+            const toggleQr = function () {
+                const zoomed = qrBtn.classList.toggle('is-zoomed');
+                qrBtn.setAttribute('aria-pressed', zoomed ? 'true' : 'false');
+            };
+            qrBtn.addEventListener('click', toggleQr);
+            qrBtn.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleQr(); }
+            });
+        })();
 
         // --- 2. Copy Room Code Mechanism ---
         const roomCodeSpan = document.querySelector('#room-code span');

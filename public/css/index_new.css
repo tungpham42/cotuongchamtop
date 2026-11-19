@@ -4333,3 +4333,181 @@ body[data-layout="game"] #checkmateText,
 body[data-layout="play"] #checkmateText {
     display: none;
 }
+
+/* ==========================================================================
+   INVITE QR CODE (PvP room invite panel)
+   Subtle by default: a small cream "jade seal" in a slowly turning gold ring.
+   Cream card + crimson/ebony ink keeps it scannable. Click/tap to enlarge.
+   ========================================================================== */
+@property --qr-angle {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+}
+
+.invite-qr-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 14px;
+}
+.invite-qr-wrap.d-none {
+    display: none !important;
+}
+
+.invite-qr {
+    --qr-size: 92px;
+    display: inline-block;
+    cursor: zoom-in;
+    border-radius: 16px;
+    outline: none;
+    transition: transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    -webkit-tap-highlight-color: transparent;
+}
+.invite-qr.is-zoomed {
+    --qr-size: 176px;
+    cursor: zoom-out;
+}
+.invite-qr:hover {
+    transform: translateY(-2px) scale(1.05);
+}
+.invite-qr.is-zoomed:hover {
+    transform: none;
+}
+
+/* Gold ring that slowly turns */
+.invite-qr-frame {
+    display: block;
+    padding: 3px;
+    border-radius: 16px;
+    background: conic-gradient(
+        from var(--qr-angle),
+        var(--royal-gold),
+        var(--royal-red-light),
+        var(--royal-gold-light),
+        var(--royal-gold),
+        var(--royal-red),
+        var(--royal-gold)
+    );
+    box-shadow:
+        0 8px 22px rgba(0, 0, 0, 0.7),
+        0 0 14px rgba(255, 215, 0, 0.3);
+    animation: inviteQrSpin 9s linear infinite;
+    transition: box-shadow 0.4s ease;
+}
+.invite-qr:hover .invite-qr-frame,
+.invite-qr:focus-visible .invite-qr-frame,
+.invite-qr.is-zoomed .invite-qr-frame {
+    box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.85),
+        0 0 26px rgba(255, 215, 0, 0.7);
+}
+.invite-qr:focus-visible .invite-qr-frame {
+    box-shadow:
+        0 0 0 3px var(--royal-bg),
+        0 0 0 5px var(--royal-gold),
+        0 0 26px rgba(255, 215, 0, 0.7);
+}
+
+/* Cream glass card with liquid highlight */
+.invite-qr-card {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    padding: 7px;
+    border-radius: 13px;
+    background: linear-gradient(145deg, #fffdf2, var(--royal-gold-light) 60%, #f3dfa6);
+    box-shadow:
+        inset 0 2px 6px rgba(255, 255, 255, 0.9),
+        inset 0 -3px 8px rgba(138, 90, 0, 0.25);
+}
+.invite-qr-svg {
+    display: block;
+    width: var(--qr-size);
+    height: var(--qr-size);
+    transition:
+        width 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        height 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.invite-qr-svg svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Glossy glass sheen: top-half gloss + a light streak that sweeps by */
+.invite-qr-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.45) 0%,
+        rgba(255, 255, 255, 0.08) 46%,
+        transparent 50%
+    );
+    pointer-events: none;
+}
+.invite-qr-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -80%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.85),
+        transparent
+    );
+    transform: skewX(-20deg);
+    pointer-events: none;
+    animation: inviteQrSheen 5.5s ease-in-out 1.2s infinite;
+}
+.invite-qr:hover .invite-qr-card::after {
+    animation-duration: 1.4s;
+}
+
+.invite-qr-caption {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--royal-gold-light);
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+.invite-qr-wrap:hover .invite-qr-caption {
+    opacity: 1;
+}
+.invite-qr-caption i {
+    color: var(--royal-gold);
+}
+
+@keyframes inviteQrSpin {
+    to {
+        --qr-angle: 360deg;
+    }
+}
+@keyframes inviteQrSheen {
+    0%,
+    62% {
+        left: -80%;
+    }
+    100% {
+        left: 160%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .invite-qr,
+    .invite-qr-svg {
+        transition: none;
+    }
+    .invite-qr-frame,
+    .invite-qr-card::after {
+        animation: none;
+    }
+}
