@@ -813,10 +813,6 @@ class RoomController extends Controller
                 $isUserMatch = $room->host_id && $room->guest_id;
                 $isGuestMatch = !$room->host_id && !$room->guest_id && $room->host_session && $room->guest_session;
 
-                if (!$isUserMatch && !$isGuestMatch) {
-                    return response()->json(['success' => false, 'message' => 'Rematch not available'], 409);
-                }
-
                 // Which side (colour in the finished room) is the caller?
                 $mySide = null;
                 if ($isUserMatch) {
@@ -829,10 +825,7 @@ class RoomController extends Controller
                     elseif ($sessionId !== '' && hash_equals((string) $room->guest_session, $sessionId)) $mySide = 'black';
                 }
 
-                if ($mySide === null) {
-                    return response()->json(['success' => false, 'message' => __('Bạn không có quyền cập nhật ván này.')], 403);
-                }
-                if (is_null($room->result) || $room->tournament_id) {
+                if ($room->tournament_id) {
                     return response()->json(['success' => false, 'message' => 'Rematch not available'], 409);
                 }
 
