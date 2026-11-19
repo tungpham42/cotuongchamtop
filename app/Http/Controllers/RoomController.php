@@ -463,6 +463,10 @@ class RoomController extends Controller
                 ->whereNull('result')
                 ->whereNotNull($hostColumn)
                 ->whereNull($guestColumn)
+                // Keep the two pools apart: a rematch room can mix a user seat with a session seat.
+                ->when($isAuthenticated,
+                    fn ($query) => $query->whereNull('host_session')->whereNull('guest_session'),
+                    fn ($query) => $query->whereNull('host_id')->whereNull('guest_id'))
                 ->when($isAuthenticated, fn ($query) => $query->where('host_id', '!=', $identifier))
                 ->orderByDesc('modified_at')
                 ->lockForUpdate()
@@ -810,23 +814,23 @@ class RoomController extends Controller
             $response = DB::transaction(function () use ($request, $code, $action, $cacheKey, &$pending) {
                 $room = Room::lockForUpdate()->where('code', $code)->firstOrFail();
 
-                $isUserMatch = $room->host_id && $room->guest_id;
-                $isGuestMatch = !$room->host_id && !$room->guest_id && $room->host_session && $room->guest_session;
-
-                // Which side (colour in the finished room) is the caller?
-                $mySide = null;
-                if ($isUserMatch) {
-                    $userId = (int) (auth()->id() ?? $request->input('id'));
-                    if ($userId === (int) $room->host_id) $mySide = 'red';
-                    elseif ($userId === (int) $room->guest_id) $mySide = 'black';
-                } else {
-                    $sessionId = (string) $request->input('session_id');
-                    if ($sessionId !== '' && hash_equals((string) $room->host_session, $sessionId)) $mySide = 'red';
-                    elseif ($sessionId !== '' && hash_equals((string) $room->guest_session, $sessionId)) $mySide = 'black';
-                }
-
                 if ($room->tournament_id) {
                     return response()->json(['success' => false, 'message' => 'Rematch not available'], 409);
+                }
+
+                // Which side (colour in the finished room) is the caller? Works for every kind of
+                // room: matchmaking (ids or sessions both pre-filled) AND invite-link rooms, whose
+                // seats are only identified once somebody asks for a rematch (see resolveRematchSide).
+                $mySide = $this->resolveRematchSide(
+                    $room,
+                    (int) (auth()->id() ?? $request->input('id')),
+                    (string) $request->input('session_id'),
+                    $request->input('side')
+                );
+
+                // Only the two players of the finished room may negotiate.
+                if ($mySide === null) {
+                    return response()->json(['success' => false, 'message' => 'Not a player of this room'], 403);
                 }
 
                 $state = Cache::get($cacheKey);
@@ -865,9 +869,22 @@ class RoomController extends Controller
                     'black_time'  => 600,
                     'modified_at' => now(),
                 ];
-                $attributes += $isUserMatch
-                    ? ['host_id' => $room->guest_id, 'guest_id' => $room->host_id]
-                    : ['host_session' => $room->guest_session, 'guest_session' => $room->host_session];
+                // Both seats must be identified (by user id or by session) to build the new room.
+                $redKnown   = $room->host_id  || $room->host_session;
+                $blackKnown = $room->guest_id || $room->guest_session;
+                if (!$redKnown || !$blackKnown) {
+                    return response()->json(['success' => false, 'message' => 'Opponent not ready'], 409);
+                }
+
+                // Seats are copied per seat, so mixed rooms (a registered host + an anonymous invited
+                // guest, or the reverse) work too. Colours swap. No `pass`: both players are already
+                // known, so the new room must not prompt for the old password again.
+                $attributes += [
+                    'host_id'       => $room->guest_id,
+                    'host_session'  => $room->guest_session,
+                    'guest_id'      => $room->host_id,
+                    'guest_session' => $room->host_session,
+                ];
 
                 $newRoom = Room::create($attributes);
 
@@ -891,6 +908,49 @@ class RoomController extends Controller
         }
 
         return $response;
+    }
+
+    /**
+     * Resolve which seat of a finished room the caller owns: 'red' (host), 'black' (guest) or null.
+     *
+     * Seats can be held by a registered user (host_id / guest_id) or an anonymous browser
+     * (host_session / guest_session, the same match session id the matchmaking uses).
+     *
+     * Invite-link rooms never get those columns filled for anonymous players, so the first
+     * rematch call of each player CLAIMS their (still empty) seat. A claim is only accepted when
+     *  - the game was actually played (not a fresh room), so nobody can grab a seat of a waiting room
+     *    (which would also make it eligible for matchmaking),
+     *  - the claimed seat has neither a user nor a session yet (first claim wins),
+     *  - the caller does not already own the other seat.
+     */
+    private function resolveRematchSide(Room $room, int $userId, string $sessionId, mixed $claimSide): ?string
+    {
+        if ($userId > 0) {
+            if ($userId === (int) $room->host_id) return 'red';
+            if ($userId === (int) $room->guest_id) return 'black';
+        }
+        if ($sessionId !== '') {
+            if ($room->host_session && hash_equals((string) $room->host_session, $sessionId)) return 'red';
+            if ($room->guest_session && hash_equals((string) $room->guest_session, $sessionId)) return 'black';
+        }
+
+        if (!in_array($claimSide, ['red', 'black'], true)) return null;
+        if ($room->fen === self::INITIAL_FEN && is_null($room->result)) return null;
+
+        $idColumn = $claimSide === 'red' ? 'host_id' : 'guest_id';
+        $sessionColumn = $claimSide === 'red' ? 'host_session' : 'guest_session';
+        if ($room->{$idColumn} || $room->{$sessionColumn}) return null;
+
+        if ($userId > 0) {
+            $room->{$idColumn} = $userId;
+        } elseif ($sessionId !== '') {
+            $room->{$sessionColumn} = $sessionId;
+        } else {
+            return null;
+        }
+        $room->save();
+
+        return $claimSide;
     }
 
     /**

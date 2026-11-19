@@ -1,24 +1,28 @@
 @extends('layouts.playlayout')
 
 @php
-    // Rematch is offered to both seats (Host/Red and Guest/Black) of a normal (non-tournament) match:
-    //  - registered players (host_id / guest_id), or
-    //  - guests paired through matchmaking (host_session / guest_session).
+    // Rematch is offered to both seats (Host/Red and Guest/Black) of every normal (non-tournament)
+    // match, however the players got into the room:
+    //  - matchmaking (Find match): seats are pre-filled with user ids or match session ids
+    //  - invite link: the invited player is NOT in the room row yet when the page renders, and either
+    //    player may be anonymous. Seats are identified when the rematch is requested/accepted
+    //    (user id if logged in, otherwise the browser match session id; see RoomController::rematch()).
     //
-    // NOTE: this must NOT require the opponent to be present at render time. The host's page is
-    // usually rendered while waiting for an opponent, so guest_id / guest_session are still empty
-    // then. Whether an opponent really exists is checked when the game ends (showRematchPanel)
-    // and again by the server.
-    $isUserRematch = in_array($role, ['host', 'guest', 'red', 'black'], true)
+    // So this must not depend on who is stored in the room row at render time. Whether a rematch is
+    // really possible is validated by the server.
+    $uid = auth()->id();
+    $isGuestSeat = in_array($role, ['guest', 'black'], true);
+    // A logged-in invited guest is written into rooms.guest_id only after the page rendered.
+    $isInvitedGuestSeat = $isGuestSeat
         && auth()->check()
         && !empty($room->host_id)
-        && in_array(auth()->id(), [$room->host_id, $room->guest_id])
+        && empty($room->guest_id)
+        && $uid != $room->host_id;
+    $isRegisteredPlayer = $role !== 'random'
+        && auth()->check()
+        && ($uid == $room->host_id || $uid == $room->guest_id || $isInvitedGuestSeat);
+    $canRematch = in_array($role, ['host', 'guest', 'red', 'black'], true)
         && !isset($room->tournament_id);
-    $isGuestRematch = in_array($role, ['host', 'guest', 'red', 'black'], true)
-        && empty($room->host_id) && empty($room->guest_id)
-        && !empty($room->host_session)
-        && !isset($room->tournament_id);
-    $canRematch = $isUserRematch || $isGuestRematch;
 @endphp
 
 @section('aboveBoard')
@@ -338,7 +342,7 @@
         function updateResult(roomCode, result) {
             if (alertShown) return;
             alertShown = true;
-            @if($role !== 'random' && auth()->check() && (auth()->id() == $room->host_id || auth()->id() == $room->guest_id))
+            @if($isRegisteredPlayer)
                 let successMsg = '{{ __("Trận đấu kết thúc") }}';
                 $.ajax({
                     type: "POST",
@@ -363,7 +367,7 @@
                                 data: { 'ma-phong': roomCode, 'result': result },
                                 dataType: 'json'
                             }).always(function(){
-                                @if ($isUserRematch)
+                                @if ($canRematch)
                                 // Stay on the page: the rematch panel is always shown after the match
                                 // (it is idempotent, and may already be visible from updateStatus()).
                                 showRematchPanel();
@@ -380,12 +384,12 @@
                         }
                     });
                 });
-            @elseif(!isset($room->host_id) || $role === 'random')
+            @else
                 let sideMsg = '{{ __("Trận đấu kết thúc") }}';
                 $.ajax({
                     type: "POST",
                     url: '{{ url('/api') }}/updateSideResult',
-                    data: { 'ma-phong': roomCode, 'result': result, 'lang': '{{ __('vi') }}', 'side': '{{ $updateSide }}' },
+                    data: { 'ma-phong': roomCode, 'result': result, 'lang': '{{ __('vi') }}', 'side': '{{ $updateSide ?? (in_array($role, ['host', 'red'], true) ? 'red' : 'black') }}' },
                     dataType: 'json'
                 }).done(function(data) {
                     if (data && data.success) sideMsg = data.success;
@@ -400,7 +404,7 @@
                         callback: function () {
                             // No redirect to the lobby: stay on the finished game. Guests who still
                             // have their match session are offered a rematch.
-                            @if ($isGuestRematch)
+                            @if ($canRematch)
                             showRematchPanel();
                             @endif
                         }
@@ -460,17 +464,31 @@
         // A finished room is immutable, so an accepted rematch creates a new room
         // (colours swapped) and both players are sent to it.
         const REMATCH_URL = '{{ url('/api') }}/room/{{ $roomCode }}/rematch';
-        // 'user': registered players, identified by user id. 'guest': matchmaking guests,
-        // identified by the browser match session id (same identity findMatch uses).
-        const REMATCH_MODE = '{{ $isUserRematch ? 'user' : 'guest' }}';
+        // Only selects the room URL family used after the rematch: 'user' = /host + /guest rooms
+        // (invite + logged-in matchmaking), 'guest' = /red + /black rooms (anonymous matchmaking).
+        const REMATCH_MODE = '{{ in_array($role, ['host', 'guest'], true) ? 'user' : 'guest' }}';
         // Colour in THIS room; colours swap in the rematch room.
         const MY_SIDE = '{{ in_array($role, ['host', 'red']) ? 'red' : 'black' }}';
         const MY_USER_ID = {{ (int) auth()->id() }};
+        // Browser match session id (same key findMatch uses). Invite-link players never went through
+        // matchmaking, so create one on demand: it is what identifies an anonymous player's seat.
         function getGuestSessionId() {
-            try { return sessionStorage.getItem('match_session_id') || ''; } catch (e) { return ''; }
+            try {
+                let id = sessionStorage.getItem('match_session_id');
+                if (!id) {
+                    id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID().replace(/-/g, '')
+                        : (Math.random().toString(36).slice(2) + Date.now().toString(36) + Math.random().toString(36).slice(2));
+                    sessionStorage.setItem('match_session_id', id);
+                }
+                return id;
+            } catch (e) { return ''; }
         }
+        // Every call sends everything the server may need: user id (if logged in), the session id and
+        // the seat this page was opened for. The server picks/claims the seat (resolveRematchSide).
         function rematchIdentity() {
-            return REMATCH_MODE === 'user' ? { id: MY_USER_ID } : { session_id: getGuestSessionId() };
+            const identity = { side: MY_SIDE, session_id: getGuestSessionId() };
+            if (MY_USER_ID) identity.id = MY_USER_ID;
+            return identity;
         }
         const T_REMATCH = @json(__("Đấu lại"));
         const T_REMATCH_WAITING = @json(__("Đã gửi lời mời đấu lại. Đang chờ đối thủ..."));
@@ -529,31 +547,12 @@
             }
         }
 
-        // Always shows the panel once the match is over. When a rematch is not possible
-        // (e.g. anonymous opponent / no match session) the panel only offers the way back home.
+        // Always shows the panel once the match is over. Whether a rematch is possible is decided by
+        // the server when it is requested (a failure shows the error state with a retry/leave button).
         function showRematchPanel() {
             if (rematchPanelVisible) return;
-            const offer = function () { rematchPanelVisible = true; renderRematch(); };
-            const cannot = function () {
-                if (rematchState === 'idle') rematchState = 'closed'; // "leave" button only
-                offer();
-            };
-
-            if (REMATCH_MODE === 'guest') {
-                // Guests are identified by the match session id kept in this browser tab.
-                if (getGuestSessionId()) offer(); else cannot();
-                return;
-            }
-            // Registered players: re-check the opponent now. This page may have been rendered
-            // before the opponent joined, and a random-room opponent has no account at all.
-            $.ajax({
-                type: 'POST',
-                url: '{{ url('/api/getRoomIds') }}',
-                data: { 'ma-phong': '{{ $roomCode }}' },
-                dataType: 'json'
-            }).done(function (ids) {
-                if (ids && ids.host_id && ids.guest_id) offer(); else cannot();
-            }).fail(offer); // the rematch endpoint validates again
+            rematchPanelVisible = true;
+            renderRematch();
         }
 
         // Called as soon as the game is over (checkmate, draw, resign, timeout...), once.
