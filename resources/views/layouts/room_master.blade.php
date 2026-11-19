@@ -588,8 +588,11 @@
                     rematchState = 'error';
                     renderRematch();
                 }
-            }).fail(function () {
-                rematchState = 'error';
+            }).fail(function (xhr) {
+                // 409 while answering an invitation means it is gone (expired after 5 minutes,
+                // withdrawn, or already handled): go back to the plain "Rematch" button instead of
+                // showing a generic error.
+                rematchState = (xhr && xhr.status === 409 && rematchState === 'incoming') ? 'idle' : 'error';
                 renderRematch();
             });
         }

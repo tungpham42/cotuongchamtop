@@ -797,8 +797,17 @@ class RoomController extends Controller
 
         $cacheKey = "rematch_{$code}";
 
+        // Broadcast only AFTER the transaction has committed, never inside it:
+        //  - a failing broadcast (Pusher unreachable / misconfigured) must not turn an otherwise
+        //    successful negotiation into a 500, which the client shows as rematchState === 'error';
+        //  - ShouldBroadcastNow is a synchronous HTTP call, and doing it inside the transaction would
+        //    hold the row lock for its whole duration;
+        //  - on 'accepted' the opponent is redirected the moment the event arrives, so the new room
+        //    must already be committed by then or the redirect can 404.
+        $pending = null;
+
         try {
-            return DB::transaction(function () use ($request, $code, $action, $cacheKey) {
+            $response = DB::transaction(function () use ($request, $code, $action, $cacheKey, &$pending) {
                 $room = Room::lockForUpdate()->where('code', $code)->firstOrFail();
 
                 $isUserMatch = $room->host_id && $room->guest_id;
@@ -838,13 +847,13 @@ class RoomController extends Controller
 
                 if ($action === 'decline') {
                     Cache::forget($cacheKey);
-                    broadcast(new RematchUpdated($code, $pendingBy === $mySide ? 'cancelled' : 'declined', $mySide));
+                    $pending = new RematchUpdated($code, $pendingBy === $mySide ? 'cancelled' : 'declined', $mySide);
                     return response()->json(['success' => true, 'status' => 'declined']);
                 }
 
                 if ($action === 'request' && ($pendingBy === null || $pendingBy === $mySide)) {
                     Cache::put($cacheKey, ['by' => $mySide], now()->addMinutes(5));
-                    broadcast(new RematchUpdated($code, 'requested', $mySide));
+                    $pending = new RematchUpdated($code, 'requested', $mySide);
                     return response()->json(['success' => true, 'status' => 'requested']);
                 }
 
@@ -871,13 +880,24 @@ class RoomController extends Controller
 
                 Cache::put($cacheKey, ['by' => $pendingBy, 'new_code' => $newRoom->code], now()->addMinutes(5));
 
-                broadcast(new RematchUpdated($code, 'accepted', $mySide, $newRoom->code));
+                $pending = new RematchUpdated($code, 'accepted', $mySide, $newRoom->code);
 
                 return response()->json(['success' => true, 'status' => 'accepted', 'new_code' => $newRoom->code]);
             });
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['success' => false, 'message' => 'Room not found'], 404);
         }
+
+        if ($pending) {
+            try {
+                broadcast($pending);
+            } catch (\Throwable $e) {
+                // The caller still gets the correct JSON answer; only the live push to the opponent failed.
+                report($e);
+            }
+        }
+
+        return $response;
     }
 
     /**
