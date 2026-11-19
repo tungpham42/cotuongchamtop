@@ -1,17 +1,19 @@
 @extends('layouts.playlayout')
 
 @php
-    $uid = auth()->id();
-    $isHostSeat = in_array($role, ['host', 'red'], true)
-        && $uid && (int) $room->host_id === (int) $uid;
-    // Invite guest: guest_id may not be written yet when this page renders.
-    $isGuestSeat = in_array($role, ['guest', 'black'], true)
-        && $uid && !empty($room->host_id)
-        && (int) $room->host_id !== (int) $uid
-        && (empty($room->guest_id) || (int) $room->guest_id === (int) $uid);
-
-    $isPlayerUser = $isHostSeat || $isGuestSeat;
-    $isUserRematch = $isPlayerUser && !isset($room->tournament_id);
+    // Rematch is offered to both seats (Host/Red and Guest/Black) of a normal (non-tournament) match:
+    //  - registered players (host_id / guest_id), or
+    //  - guests paired through matchmaking (host_session / guest_session).
+    //
+    // NOTE: this must NOT require the opponent to be present at render time. The host's page is
+    // usually rendered while waiting for an opponent, so guest_id / guest_session are still empty
+    // then. Whether an opponent really exists is checked when the game ends (showRematchPanel)
+    // and again by the server.
+    $isUserRematch = in_array($role, ['host', 'guest', 'red', 'black'], true)
+        && auth()->check()
+        && !empty($room->host_id)
+        && in_array(auth()->id(), [$room->host_id, $room->guest_id])
+        && !isset($room->tournament_id);
     $isGuestRematch = in_array($role, ['red', 'black'], true)
         && empty($room->host_id) && empty($room->guest_id)
         && !empty($room->host_session)
@@ -336,7 +338,7 @@
         function updateResult(roomCode, result) {
             if (alertShown) return;
             alertShown = true;
-            @if($role !== 'random' && $isPlayerUser)
+            @if($role !== 'random' && auth()->check() && (auth()->id() == $room->host_id || auth()->id() == $room->guest_id))
                 let successMsg = '{{ __("Trận đấu kết thúc") }}';
                 $.ajax({
                     type: "POST",
@@ -586,11 +588,8 @@
                     rematchState = 'error';
                     renderRematch();
                 }
-            }).fail(function (xhr) {
-                // 409 while answering an invitation means it is gone (expired after 5 minutes,
-                // withdrawn, or already handled): go back to the plain "Rematch" button instead of
-                // showing a generic error.
-                rematchState = (xhr && xhr.status === 409 && rematchState === 'incoming') ? 'idle' : 'error';
+            }).fail(function () {
+                rematchState = 'error';
                 renderRematch();
             });
         }
