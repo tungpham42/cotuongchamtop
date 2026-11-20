@@ -853,10 +853,6 @@ class RoomController extends Controller
                     return response()->json(['success' => true, 'status' => 'requested']);
                 }
 
-                if ($pendingBy === null || $pendingBy === $mySide) {
-                    return response()->json(['success' => false, 'message' => 'No pending rematch request'], 409);
-                }
-
                 // The opponent asked and this player accepts (or also requested): create the room.
                 // Colours are swapped: the previous guest (black) becomes host (red).
                 $attributes = [
