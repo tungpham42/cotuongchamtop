@@ -47,7 +47,7 @@
                 @endif
 
                 <div class="row">
-                    <div class="col-12 text-center mb-3">
+                    <div class="col-12 text-center mb-2">
                         @yield('aboveBoard')
                     </div>
                 </div>

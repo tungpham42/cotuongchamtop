@@ -9,6 +9,7 @@
       @include('layouts.partials.timer', ['timerPart' => 'bottom'])  plaque + caption + script
     The script comes last so both plaques already exist in the DOM when it runs.
     Needs: $roomCode, $orientation ('red' | 'black' = the side shown at the bottom).
+    Layout: both parts sit inside .xq-stage (boardSlot), which sizes board + clocks to fit the viewport height.
 --}}
 @php
     $timerPart = $timerPart ?? 'bottom';
@@ -17,14 +18,16 @@
 @endphp
 
 @if ($timerPart === 'top')
-    <div class="royal-timer royal-timer-top mx-auto mr-lg-0" data-position="top">
+    <div class="royal-timer royal-timer-top" data-position="top">
         @include('layouts.partials.timerPlaque', ['timerSide' => $timerTopSide, 'timerMine' => false])
     </div>
 @else
-    <div class="royal-timer royal-timer-bottom mx-auto mr-lg-0" data-position="bottom">
+    {{-- The "waiting for opponent" caption is an overlay on the plaque (position:absolute), so it never
+         adds height to the stage and the board does not jump when the opponent joins. --}}
+    <div class="royal-timer royal-timer-bottom" data-position="bottom">
         @include('layouts.partials.timerPlaque', ['timerSide' => $timerBottomSide, 'timerMine' => true])
         <div id="timer-caption" class="timer-caption" role="status" aria-live="polite">
-            <i class="fas fa-circle-notch fa-spin"></i> {{ __("Đang chờ đối thủ vào phòng...") }}
+            <i class="fas fa-circle-notch fa-spin"></i> <span>{{ __("Đang chờ đối thủ vào phòng...") }}</span>
         </div>
     </div>
 @endif
@@ -37,6 +40,11 @@
        - each side is a glass "plaque" with its general's seal (帥 / 將)
        - the side to move: gold light orbits the border, lantern dot pulses, plaque lifts
        - per-move bar drains gold → amber → red, total time turns red when low
+
+       SIZING: plaques no longer have their own width/margins. They live in .xq-stage
+       (boardSlot.blade.php), which is exactly as wide as the board and sizes the whole
+       stack to the viewport height. Only --xq-timer-h (plaque height) is read from there;
+       the seal, clock and spacing all derive from it.
        ========================================================================== */
     @property --pt-angle {
         syntax: "<angle>";
@@ -44,27 +52,31 @@
         initial-value: 0deg;
     }
 
-    /* One plaque per side, as wide as the board (#ban-co max-width 380px) and aligned with it. */
     .royal-timer {
         --pt-gold: var(--royal-gold, #ffd700);
         --pt-gold-light: var(--royal-gold-light, #fff2cc);
+        position: relative;          /* anchors the waiting caption overlay */
+        flex: none;
         width: 100%;
-        max-width: 380px;
+        max-width: var(--xq-board-w, 380px);   /* standalone fallback; inside the stage it is 100% of it */
+        margin: 0 auto;
         user-select: none;
         -webkit-user-select: none;
     }
-    .royal-timer-top    { margin-bottom: 10px; padding-top: 4px; }
-    .royal-timer-bottom { margin-top: 10px; }
 
     /* ---------- Plaque ---------- */
     .ptimer {
+        --pt-h: var(--xq-timer-h, 64px);
+        --pt-seal: calc(var(--pt-h) - 16px);
         position: relative;
+        box-sizing: border-box;
         width: 100%;
+        height: var(--pt-h);
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 9px 16px 9px 10px;
-        border-radius: 16px;
+        gap: clamp(6px, calc(var(--pt-h) * .16), 12px);
+        padding: 0 clamp(10px, calc(var(--pt-h) * .25), 16px) 0 6px;
+        border-radius: clamp(12px, calc(var(--pt-h) * .22), 16px);
         color: var(--pt-gold-light);
         border: 2px solid transparent;
         overflow: hidden;
@@ -115,13 +127,13 @@
     .pt-seal {
         position: relative;
         flex: none;
-        width: 52px;
-        height: 52px;
+        width: var(--pt-seal);
+        height: var(--pt-seal);
         border-radius: 50%;
         display: grid;
         place-items: center;
         font-family: "Texturina", "Noto Sans SC", "Noto Sans JP", serif;
-        font-size: 1.7rem;
+        font-size: calc(var(--pt-seal) * .52);
         font-weight: 900;
         line-height: 1;
         z-index: 1;
@@ -132,7 +144,7 @@
     .pt-seal::before { /* inner engraved ring */
         content: "";
         position: absolute;
-        inset: 4px;
+        inset: 3px;
         border-radius: 50%;
         border: 1.5px solid currentColor;
         opacity: .55;
@@ -157,7 +169,7 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        gap: 6px;
+        gap: clamp(3px, calc(var(--pt-h) * .09), 6px);
     }
     .pt-head {
         display: flex;
@@ -167,7 +179,7 @@
     }
     .ptimer .label {
         font-family: "Texturina", serif;
-        font-size: .78rem;
+        font-size: clamp(.62rem, calc(var(--pt-h) * .012rem), .78rem);
         font-weight: 800;
         letter-spacing: 1.5px;
         text-transform: uppercase;
@@ -203,7 +215,7 @@
         min-width: 4.4ch;
         font-family: "Noto Sans Mono", "JetBrains Mono", "Courier New", monospace;
         font-variant-numeric: tabular-nums;
-        font-size: 2.1rem;
+        font-size: calc(var(--pt-h) * .5);
         font-weight: 800;
         line-height: 1.1;
         letter-spacing: 1px;
@@ -324,19 +336,31 @@
     }
     .ptimer.expired .clock { color: #ff5252; }
 
-    /* ---------- Caption (waiting for opponent) ---------- */
+    /* ---------- Caption (waiting for opponent) ----------
+       An overlay on the bottom plaque instead of a block under it: it adds no height, so the
+       board + clocks keep fitting the screen and nothing shifts when the opponent arrives. */
     .timer-caption {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
         display: none;
-        margin: 8px auto 0;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 0 10px;
+        border-radius: clamp(12px, calc(var(--xq-timer-h, 64px) * .22), 16px);
+        background: rgba(10, 10, 14, .72);
+        -webkit-backdrop-filter: blur(3px);
+        backdrop-filter: blur(3px);
         text-align: center;
-        font-size: .8rem;
-        font-weight: 600;
+        font-size: clamp(.62rem, calc(var(--xq-timer-h, 64px) * .0125rem), .8rem);
+        font-weight: 700;
         letter-spacing: 1px;
+        line-height: 1.2;
         text-transform: uppercase;
         color: var(--royal-gold-light, #fff2cc);
-        opacity: .85;
     }
-    .timer-caption.show { display: block; }
+    .timer-caption.show { display: flex; }
 
     /* ---------- Keyframes ---------- */
     @keyframes ptOrbit  { to { --pt-angle: 360deg; } }
@@ -345,20 +369,20 @@
     @keyframes ptThrob  { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
     @keyframes ptAlarm  { from { filter: brightness(1); } to { filter: brightness(1.25) saturate(1.25); } }
 
-    /* ---------- Small screens ---------- */
+    /* ---------- Small screens (size follows --xq-timer-h; only text/spacing is trimmed) ---------- */
     @media (max-width: 575.98px) {
-        .royal-timer-top { margin-bottom: 6px; }
-        .royal-timer-bottom { margin-top: 6px; }
-        .ptimer { gap: 8px; padding: 8px 10px 8px 8px; border-radius: 14px; }
-        .pt-seal { width: 38px; height: 38px; font-size: 1.25rem; }
-        .pt-seal::before { inset: 3px; }
-        .ptimer .clock { font-size: 1.6rem; letter-spacing: 0; }
-        .ptimer .label { font-size: .68rem; letter-spacing: 1px; }
+        .ptimer { gap: 8px; padding-right: 10px; }
+        .ptimer .clock { font-size: calc(var(--pt-h) * .44); letter-spacing: 0; }
         .pt-you { font-size: .55rem; padding: 1px 5px; }
         .ptimer.active { transform: scale(1.015); }
     }
     @media (max-width: 359.98px) {
         .pt-seal { display: none; }
+    }
+    /* Very short screens: drop the per-move text, keep the bar */
+    @media (max-height: 560px) {
+        .ptimer .move-clock { display: none; }
+        .pt-you { display: none; }
     }
 
     @media (prefers-reduced-motion: reduce) {

@@ -2,6 +2,7 @@
     One side's clock plaque (seal + name + per-move bar + main clock).
     Params: $timerSide ('red' | 'black'), $timerMine (bool: this is the viewer's own side)
     Element ids (#red-box, #red-clock, ...) are what the timer script in timer.blade.php drives.
+    Height is set by --xq-timer-h (see boardSlot / timer styles), so the plaque scales with the stage.
 --}}
 <div id="{{ $timerSide }}-box" class="ptimer {{ $timerSide }}-glass paused-offline" data-side="{{ $timerSide }}" data-level="ok">
     <div class="pt-seal" aria-hidden="true"><span>{{ $timerSide === 'red' ? '帥' : '將' }}</span></div>
