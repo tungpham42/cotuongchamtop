@@ -25,6 +25,20 @@
         && !isset($room->tournament_id);
 @endphp
 
+{{-- Game clocks (10 min + 2 min/move), split around the board: the opponent's clock above it and the
+     player's own below it, following the board orientation (the side at the bottom is $orientation).
+     Only for the two seated players: spectators and the 'random' practice room have no opponent to
+     start/stop a clock against. The slots are rendered by layouts.partials.game.boardSlot. --}}
+@if (in_array($role, ['host', 'guest', 'red', 'black'], true))
+    @section('boardTop')
+        @include('layouts.partials.timer', ['timerPart' => 'top'])
+    @endsection
+
+    @section('boardBottom')
+        @include('layouts.partials.timer', ['timerPart' => 'bottom'])
+    @endsection
+@endif
+
 @section('aboveBoard')
 <div class="pvp-scoreboard">
     @if ($role === 'watch')
@@ -85,12 +99,6 @@
 @endif
 
     @if ($role !== 'watch')
-        {{-- Game clocks (10 min + 2 min/move). Only for the two seated players: spectators and
-             the 'random' practice room have no opponent to start/stop a clock against. --}}
-        @if (in_array($role, ['host', 'guest', 'red', 'black'], true))
-            @include('layouts.partials.timer')
-        @endif
-
         <!-- INCLUDE VIDEO CALL COMPONENT HERE -->
         @if(isset($room->host_id) && in_array($role, ['host', 'guest', 'red', 'black']) && auth()->check())
             <div class="w-75 mx-auto">

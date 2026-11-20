@@ -1,52 +1,35 @@
+{{--
+    Game clocks (10 min + 2 min per move), split in two parts around the board:
+      - the OPPONENT's clock sits ABOVE the board,
+      - YOUR clock sits BELOW it,
+    following the board orientation (red at the bottom => red clock at the bottom, and so on).
+
+    Included twice from room_master (sections `boardTop` / `boardBottom`, rendered by boardSlot):
+      @include('layouts.partials.timer', ['timerPart' => 'top'])     plaque + styles
+      @include('layouts.partials.timer', ['timerPart' => 'bottom'])  plaque + caption + script
+    The script comes last so both plaques already exist in the DOM when it runs.
+    Needs: $roomCode, $orientation ('red' | 'black' = the side shown at the bottom).
+--}}
 @php
-    // Which plaque belongs to the person looking at the page (so we can tag it "Bạn").
-    $timerMySide = in_array($role ?? '', ['host', 'red'], true) ? 'red' : 'black';
+    $timerPart = $timerPart ?? 'bottom';
+    $timerBottomSide = ($orientation ?? 'red') === 'black' ? 'black' : 'red';
+    $timerTopSide = $timerBottomSide === 'red' ? 'black' : 'red';
 @endphp
 
-<div class="royal-timer" id="royal-timer" data-my-side="{{ $timerMySide }}">
-    {{-- ============ RED (Đỏ · 帥) ============ --}}
-    <div id="red-box" class="ptimer red-glass paused-offline" data-side="red" data-level="ok">
-        <div class="pt-seal" aria-hidden="true"><span>帥</span></div>
-        <div class="pt-body">
-            <div class="pt-head">
-                <span class="label">{{ __("Đỏ") }}</span>
-                @if ($timerMySide === 'red')<span class="pt-you">{{ __("Bạn") }}</span>@endif
-                <span class="pt-turn" aria-hidden="true"></span>
-            </div>
-            <span id="red-clock" class="clock" role="timer" aria-live="off">10:00</span>
-            <div class="pt-move" title="{{ __('Thời gian mỗi nước') }}">
-                <div class="pt-bar"><i id="red-move-bar"></i></div>
-                <span id="red-move-clock" class="move-clock">2:00</span>
-            </div>
+@if ($timerPart === 'top')
+    <div class="royal-timer royal-timer-top mx-auto mr-lg-0" data-position="top">
+        @include('layouts.partials.timerPlaque', ['timerSide' => $timerTopSide, 'timerMine' => false])
+    </div>
+@else
+    <div class="royal-timer royal-timer-bottom mx-auto mr-lg-0" data-position="bottom">
+        @include('layouts.partials.timerPlaque', ['timerSide' => $timerBottomSide, 'timerMine' => true])
+        <div id="timer-caption" class="timer-caption" role="status" aria-live="polite">
+            <i class="fas fa-circle-notch fa-spin"></i> {{ __("Đang chờ đối thủ vào phòng...") }}
         </div>
     </div>
+@endif
 
-    {{-- ============ CENTER: hourglass ============ --}}
-    <div class="pt-center" aria-hidden="true">
-        <span class="pt-diamond"><i class="fas fa-hourglass-half"></i></span>
-    </div>
-
-    {{-- ============ BLACK (Đen · 將) ============ --}}
-    <div id="black-box" class="ptimer black-glass paused-offline" data-side="black" data-level="ok">
-        <div class="pt-seal" aria-hidden="true"><span>將</span></div>
-        <div class="pt-body">
-            <div class="pt-head">
-                <span class="label">{{ __("Đen") }}</span>
-                @if ($timerMySide === 'black')<span class="pt-you">{{ __("Bạn") }}</span>@endif
-                <span class="pt-turn" aria-hidden="true"></span>
-            </div>
-            <span id="black-clock" class="clock" role="timer" aria-live="off">10:00</span>
-            <div class="pt-move" title="{{ __('Thời gian mỗi nước') }}">
-                <div class="pt-bar"><i id="black-move-bar"></i></div>
-                <span id="black-move-clock" class="move-clock">2:00</span>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="timer-caption" class="timer-caption" role="status" aria-live="polite">
-    <i class="fas fa-circle-notch fa-spin"></i> {{ __("Đang chờ đối thủ vào phòng...") }}
-</div>
-
+@if ($timerPart === 'top')
 <style>
     /* ==========================================================================
        ROYAL DUAL CLOCKS  ·  10 min + 2 min per move
@@ -61,30 +44,26 @@
         initial-value: 0deg;
     }
 
+    /* One plaque per side, as wide as the board (#ban-co max-width 380px) and aligned with it. */
     .royal-timer {
         --pt-gold: var(--royal-gold, #ffd700);
         --pt-gold-light: var(--royal-gold-light, #fff2cc);
-        display: flex;
-        align-items: stretch;
-        justify-content: center;
-        gap: 10px;
-        max-width: 650px;
-        margin: 12px auto 4px;
-        padding: 6px 0 10px;
+        width: 100%;
+        max-width: 380px;
         user-select: none;
         -webkit-user-select: none;
     }
+    .royal-timer-top    { margin-bottom: 10px; padding-top: 4px; }
+    .royal-timer-bottom { margin-top: 10px; }
 
     /* ---------- Plaque ---------- */
     .ptimer {
         position: relative;
-        flex: 1 1 0;
-        min-width: 0;
-        max-width: 290px;
+        width: 100%;
         display: flex;
         align-items: center;
-        gap: 14px;
-        padding: 10px 14px 10px 10px;
+        gap: 12px;
+        padding: 9px 16px 9px 10px;
         border-radius: 16px;
         color: var(--pt-gold-light);
         border: 2px solid transparent;
@@ -177,7 +156,8 @@
         min-width: 0;
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        justify-content: center;
+        gap: 6px;
     }
     .pt-head {
         display: flex;
@@ -216,12 +196,16 @@
     }
 
     .ptimer .clock {
+        flex: none;
         display: block;
+        margin-left: auto;
+        text-align: right;
+        min-width: 4.4ch;
         font-family: "Noto Sans Mono", "JetBrains Mono", "Courier New", monospace;
         font-variant-numeric: tabular-nums;
-        font-size: 2rem;
+        font-size: 2.1rem;
         font-weight: 800;
-        line-height: 1.15;
+        line-height: 1.1;
         letter-spacing: 1px;
         color: #fff;
         text-shadow: 0 2px 6px rgba(0, 0, 0, .7);
@@ -233,7 +217,6 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        margin-top: 3px;
     }
     .pt-bar {
         flex: 1 1 auto;
@@ -281,7 +264,7 @@
 
     /* ---------- ACTIVE: orbiting gold light, lift, lantern ---------- */
     .ptimer.active {
-        transform: translateY(-4px) scale(1.04);
+        transform: scale(1.02);
         z-index: 2;
         box-shadow: 0 14px 34px rgba(0, 0, 0, .85),
                     0 0 26px rgba(255, 215, 0, .35),
@@ -341,34 +324,10 @@
     }
     .ptimer.expired .clock { color: #ff5252; }
 
-    /* ---------- Center hourglass ---------- */
-    .pt-center {
-        flex: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .pt-diamond {
-        width: 34px;
-        height: 34px;
-        display: grid;
-        place-items: center;
-        transform: rotate(45deg);
-        border-radius: 8px;
-        color: var(--pt-gold);
-        font-size: .85rem;
-        background: var(--glass-bg-dark, rgba(11, 12, 16, .85));
-        border: 1px solid var(--glass-border, rgba(255, 215, 0, .55));
-        box-shadow: var(--liquid-shadow, 0 8px 32px rgba(0, 0, 0, .8)),
-                    inset 0 1px 4px rgba(255, 255, 255, .25);
-    }
-    .pt-diamond i { transform: rotate(-45deg); animation: ptFlip 4s ease-in-out infinite; }
-    .royal-timer.is-running .pt-diamond { box-shadow: 0 0 16px rgba(255, 215, 0, .55), inset 0 1px 4px rgba(255, 255, 255, .25); }
-
     /* ---------- Caption (waiting for opponent) ---------- */
     .timer-caption {
         display: none;
-        margin: 0 auto 8px;
+        margin: 8px auto 0;
         text-align: center;
         font-size: .8rem;
         font-weight: 600;
@@ -385,19 +344,18 @@
     @keyframes ptPulse  { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: .6; } }
     @keyframes ptThrob  { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
     @keyframes ptAlarm  { from { filter: brightness(1); } to { filter: brightness(1.25) saturate(1.25); } }
-    @keyframes ptFlip   { 0%, 40% { transform: rotate(-45deg); } 50%, 90% { transform: rotate(135deg); } 100% { transform: rotate(315deg); } }
 
     /* ---------- Small screens ---------- */
     @media (max-width: 575.98px) {
-        .royal-timer { gap: 6px; margin-top: 8px; }
-        .pt-center { display: none; }
+        .royal-timer-top { margin-bottom: 6px; }
+        .royal-timer-bottom { margin-top: 6px; }
         .ptimer { gap: 8px; padding: 8px 10px 8px 8px; border-radius: 14px; }
         .pt-seal { width: 38px; height: 38px; font-size: 1.25rem; }
         .pt-seal::before { inset: 3px; }
-        .ptimer .clock { font-size: 1.45rem; letter-spacing: 0; }
+        .ptimer .clock { font-size: 1.6rem; letter-spacing: 0; }
         .ptimer .label { font-size: .68rem; letter-spacing: 1px; }
         .pt-you { font-size: .55rem; padding: 1px 5px; }
-        .ptimer.active { transform: translateY(-2px) scale(1.02); }
+        .ptimer.active { transform: scale(1.015); }
     }
     @media (max-width: 359.98px) {
         .pt-seal { display: none; }
@@ -407,7 +365,7 @@
         .ptimer, .ptimer * { animation: none !important; transition: none !important; }
     }
 </style>
-
+@else
 <script>
     const roomCode = "{{ $roomCode }}";
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
@@ -455,7 +413,6 @@
         red:   { box: document.getElementById("red-box"),   clock: document.getElementById("red-clock"),   moveClock: document.getElementById("red-move-clock"),   moveBar: document.getElementById("red-move-bar") },
         black: { box: document.getElementById("black-box"), clock: document.getElementById("black-clock"), moveClock: document.getElementById("black-move-clock"), moveBar: document.getElementById("black-move-bar") }
     };
-    const timerRoot = document.getElementById("royal-timer");
     const timerCaption = document.getElementById("timer-caption");
 
     const MOVE_TIME_LIMIT = 120;
@@ -517,8 +474,6 @@
                 : (movePct < 0.5 ? 'warn' : 'ok');
         });
 
-        if (timerRoot) timerRoot.classList.toggle('is-running', !!activePlayer);
-
         if (current.red <= 0 || current.black <= 0) {
             isGameOver = true;
             stopAll();
@@ -529,7 +484,6 @@
                 b.classList.add('finished');
                 b.classList.toggle('expired', current[side] <= 0);
             });
-            if (timerRoot) timerRoot.classList.remove('is-running');
 
             if (typeof updateResult === 'function') {
                 const result = current.red <= 0 && current.black <= 0 ? '0' : (current.red <= 0 ? '-1' : '1');
@@ -550,7 +504,6 @@
             ui[side].box.classList.remove('active', 'critical');
             ui[side].box.classList.add('finished');
         });
-        if (timerRoot) timerRoot.classList.remove('is-running');
         if (timerCaption) timerCaption.classList.remove('show');
     };
 
@@ -696,3 +649,4 @@
         checkRoomReadiness();
     });
 </script>
+@endif
