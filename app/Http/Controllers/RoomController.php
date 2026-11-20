@@ -29,47 +29,171 @@ class RoomController extends Controller
     public const INITIAL_FEN = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR r - - 0 1';
 
     /**
+     * Seconds a player may spend on a single move before losing on time.
+     * Mirrors the hard-coded 120 in Room::hasTimedOut() / Room::getCalculatedTimes().
+     */
+    private const MOVE_TIME_LIMIT = 120;
+
+    /**
      * Unified logic for generating Room DataTables using the app's active locale.
+     *
+     * Every call first settles the rooms whose clock has run out, so the table it
+     * returns is never stale. The JSON also carries `next_timeout_in` (seconds until
+     * the next running clock expires, or null) so the lobby can schedule its own
+     * refresh for that exact moment instead of waiting for somebody to make a move.
      */
     public function getRoomsData(Request $request): JsonResponse
     {
-        if ($request->ajax()) {
-            $ongoingRooms = Room::ongoing()->get();
-            foreach ($ongoingRooms as $r) {
-                if ($r->hasTimedOut()) {
-                    $r->processTimeout();
-                }
-            }
-
-            $rooms = Room::select(['fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at']);
-
-            // Instantiate the presenter dynamically using the active app locale
-            $presenter = new RoomDataTablePresenter(app()->getLocale());
-
-            return Datatables::of($rooms)
-                ->addColumn('code', fn($row) => $presenter->formatCode($row))
-                ->addColumn('turn', fn($row) => $presenter->formatTurn($row))
-                ->addColumn('result', fn($row) => $presenter->formatResult($row))
-                ->addColumn('action', fn($row) => $presenter->formatAction($row))
-                ->addColumn('time', fn($row) => $presenter->formatTime($row))
-                ->escapeColumns([])
-                ->orderColumn('code', 'code $1')
-                ->orderColumn('result', 'result $1')
-                ->orderColumn('time', 'modified_at $1')
-                ->filterColumn('code', function($query, $keyword) {
-                    $query->where(function($query) use ($keyword) {
-                        $query->orWhere('code', 'like', '%' . $keyword . '%')
-                              ->orWhere('name', 'like', '%' . $keyword . '%');
-                    });
-                })
-                ->filterColumn('time', function($query, $keyword) {
-                    $query->whereRaw("modified_at like ?", ["%{$keyword}%"]);
-                })
-                ->rawColumns(['code', 'turn', 'result', 'action', 'time'])
-                ->make(true);
+        if (!$request->ajax()) {
+            return response()->json([]);
         }
 
-        return response()->json([]);
+        $nextTimeoutIn = $this->settleTimedOutRooms();
+
+        // Deliberately NOT selecting red_time / black_time / active_player here: the
+        // sweep above has already written any timeout into `result`, which is the single
+        // source of truth the presenter renders from.
+        $rooms = Room::select(['fen', 'code', 'host_id', 'guest_id', 'result', 'name', 'pass', 'modified_at']);
+
+        // Instantiate the presenter dynamically using the active app locale
+        $presenter = new RoomDataTablePresenter(app()->getLocale());
+
+        return Datatables::of($rooms)
+            ->addColumn('code', fn($row) => $presenter->formatCode($row))
+            ->addColumn('turn', fn($row) => $presenter->formatTurn($row))
+            ->addColumn('result', fn($row) => $presenter->formatResult($row))
+            ->addColumn('action', fn($row) => $presenter->formatAction($row))
+            ->addColumn('time', fn($row) => $presenter->formatTime($row))
+            ->escapeColumns([])
+            ->orderColumn('code', 'code $1')
+            ->orderColumn('result', 'result $1')
+            ->orderColumn('time', 'modified_at $1')
+            ->filterColumn('code', function($query, $keyword) {
+                $query->where(function($query) use ($keyword) {
+                    $query->orWhere('code', 'like', '%' . $keyword . '%')
+                          ->orWhere('name', 'like', '%' . $keyword . '%');
+                });
+            })
+            ->filterColumn('time', function($query, $keyword) {
+                $query->whereRaw("modified_at like ?", ["%{$keyword}%"]);
+            })
+            // The presenter still reads `pass` from the model, but the raw room password
+            // must never be shipped to every lobby visitor in the JSON payload.
+            ->removeColumn('pass')
+            ->with('next_timeout_in', $nextTimeoutIn)
+            ->rawColumns(['code', 'turn', 'result', 'action', 'time'])
+            ->make(true);
+    }
+
+    /**
+     * Finish every ongoing room whose active player has run out of time, tell the
+     * lobby about each one, and report when the next running clock will expire.
+     *
+     * @return float|null Seconds until the next clock expires, null if no clock is running.
+     */
+    private function settleTimedOutRooms(): ?float
+    {
+        $nextTimeoutIn = null;
+        $settled = [];
+
+        // Only rooms with a clock that is actually ticking can time out
+        // ('waiting' and 'paused:*' never do, see Room::hasTimedOut()).
+        $candidates = Room::ongoing()->whereIn('active_player', ['red', 'black'])->get();
+
+        foreach ($candidates as $candidate) {
+            try {
+                if ($candidate->hasTimedOut()) {
+                    if ($room = $this->settleTimeout($candidate->code)) {
+                        $settled[] = $room;
+                    }
+                    continue;
+                }
+
+                $remaining = $this->secondsUntilTimeout($candidate);
+                if ($remaining !== null) {
+                    $nextTimeoutIn = $nextTimeoutIn === null ? $remaining : min($nextTimeoutIn, $remaining);
+                }
+            } catch (\Throwable $e) {
+                // One broken room must not take the whole lobby list down.
+                report($e);
+            }
+        }
+
+        // Broadcast only after every transaction has committed, so a client reacting to the
+        // event always reads the final state.
+        foreach ($settled as $room) {
+            $this->broadcastRoomUpdate($room);
+        }
+
+        return $nextTimeoutIn;
+    }
+
+    /**
+     * Record a timeout for one room, exactly once, with the same side effects as a result
+     * reported by a player (tournament advancement + karma). Without this, a lobby request
+     * that wins the race against the players' own updateResult() call would leave the
+     * result set but skip those side effects, because updateResult() only runs them while
+     * the result is still null.
+     *
+     * @return Room|null The settled room, or null if it was already finished / not expired.
+     */
+    private function settleTimeout(string $code): ?Room
+    {
+        return DB::transaction(function () use ($code) {
+            $room = Room::lockForUpdate()->where('code', $code)->first();
+
+            // Re-check under the row lock: concurrent lobby requests or the players'
+            // own clients may have finished this room since we loaded it.
+            if (!$room || !is_null($room->result) || !$room->hasTimedOut()) {
+                return null;
+            }
+
+            if (!$room->processTimeout()) {
+                return null;
+            }
+
+            $result = (string) $room->result;
+            $this->advanceTournament($room, $result);
+            $this->awardMatchKarma(
+                $room,
+                $result,
+                app(AwardMatchPlayedKarmaAction::class),
+                app(AwardMatchWinKarmaAction::class)
+            );
+
+            return $room;
+        });
+    }
+
+    /**
+     * Seconds until the active player's clock (or per-move limit) runs out.
+     * Same maths as Room::hasTimedOut(), expressed as a remaining duration.
+     */
+    private function secondsUntilTimeout(Room $room): ?float
+    {
+        if (!in_array($room->active_player, ['red', 'black'], true)) {
+            return null;
+        }
+
+        $times = $room->getCalculatedTimes();
+        $clock = $room->active_player === 'red' ? $times['red_time'] : $times['black_time'];
+
+        return round(max(0.0, min((float) $clock, self::MOVE_TIME_LIMIT - (float) $times['move_elapsed'])), 3);
+    }
+
+    /**
+     * Push a room's new state to its players and to the lobby table.
+     * A broadcast failure (Pusher down / misconfigured) must never fail the HTTP request.
+     */
+    private function broadcastRoomUpdate(Room $room): void
+    {
+        try {
+            if ($fresh = $room->fresh()) {
+                broadcast(new RoomUpdated($fresh));
+            }
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 
     public static function quickMatch(): JsonResponse
@@ -214,8 +338,12 @@ class RoomController extends Controller
 
         if ($request->has('lang')) app()->setLocale((string) $request->input('lang'));
 
+        // Set only when THIS call recorded the result (not when it was already finished), so the
+        // lobby is told exactly once per game and the broadcast can't loop with in-room clients.
+        $finishedRoom = null;
+
         try {
-            return DB::transaction(function () use ($code, $result, $auth_id, $playedKarma, $winKarma) {
+            $response = DB::transaction(function () use ($code, $result, $auth_id, $playedKarma, $winKarma, &$finishedRoom) {
                 $room = Room::lockForUpdate()->where('code', $code)->firstOrFail();
 
                 if (!in_array($auth_id, [$room->host_id, $room->guest_id])) {
@@ -226,6 +354,7 @@ class RoomController extends Controller
                     $room->update(['result' => $result, 'modified_at' => now()]);
                     $this->advanceTournament($room, $result);
                     $this->awardMatchKarma($room, $result, $playedKarma, $winKarma);
+                    $finishedRoom = $room;
                 }
 
                 $messageKey = $this->getResultMessageKey($auth_id === $room->host_id, $result);
@@ -237,6 +366,12 @@ class RoomController extends Controller
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 403);
         }
+
+        if ($finishedRoom) {
+            $this->broadcastRoomUpdate($finishedRoom);
+        }
+
+        return $response;
     }
 
     /**
@@ -325,6 +460,7 @@ class RoomController extends Controller
         if ($room && is_null($room->result)) {
             $result = (string) $request->input('result');
             $room->update(['result' => $result, 'modified_at' => now()]);
+            $this->broadcastRoomUpdate($room);
         }
 
         $successMessages = [

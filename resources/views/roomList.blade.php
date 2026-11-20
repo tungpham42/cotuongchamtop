@@ -69,6 +69,46 @@
             // Re-parent the modal to <body> so no ancestor stacking context can trap it below the backdrop
             $('#HoveredBoardModal').appendTo('body');
             console.log('List URL: ' + '{{ route(__('rooms_list_route')) }}');
+            // ---------------------------------------------------------------------
+            // Realtime refresh
+            //
+            // Three things can change a row without the visitor doing anything, and each
+            // one ends up in reloadSoon():
+            //   1. a Pusher `room.updated` event (a move, a finished game, a timeout);
+            //   2. the server-reported moment the next running clock expires: every
+            //      response carries `next_timeout_in`, so we reload right when a player's
+            //      time is up, even if nobody in that room is connected any more;
+            //   3. the tab becoming visible again (browsers throttle timers in background
+            //      tabs, so a deadline may have passed unnoticed).
+            // reloadSoon() coalesces bursts into a single request.
+            // ---------------------------------------------------------------------
+            var reloadTimer = null;
+            var deadlineTimer = null;
+
+            function reloadSoon(delayMs) {
+                if (reloadTimer !== null) return; // one is already queued
+                reloadTimer = setTimeout(function () {
+                    reloadTimer = null;
+                    // Keep the current page, sort order and search term.
+                    table.ajax.reload(null, false);
+                }, delayMs);
+            }
+
+            // Bound before the table is created so the very first response arms the timer.
+            $('#danh-sach-phong').on('xhr.dt', function (e, settings, json) {
+                clearTimeout(deadlineTimer);
+                deadlineTimer = null;
+
+                if (!json || json.next_timeout_in === null || json.next_timeout_in === undefined) return;
+
+                // The delay is relative to "now", so client/server clock skew doesn't matter.
+                // +750 ms lets the server's clock pass the deadline so the sweep sees the
+                // room as expired; the 1 s floor stops a never-expiring edge case from
+                // turning into a request loop.
+                var delay = Math.max(1000, Math.ceil(Number(json.next_timeout_in) * 1000) + 750);
+                deadlineTimer = setTimeout(function () { reloadSoon(0); }, delay);
+            });
+
             var table = $('#danh-sach-phong').DataTable({
                 processing: true,
                 responsive: true,
@@ -206,18 +246,19 @@
             });
             if (typeof window.Echo !== 'undefined') {
                 window.Echo.channel('lobby')
-                    .listen('.room.updated', (e) => {
-                        console.log('Room updated via Pusher:', e);
+                    .listen('.room.updated', function (e) {
                         // Silently reload the table data without resetting pagination/sorting
-                        table.ajax.reload(null, false);
+                        reloadSoon(300);
                     });
             } else {
                 console.warn('Laravel Echo is not loaded. Falling back to polling.');
                 // Fallback just in case WebSockets fail or aren't configured on the client
-                setInterval( function () {
-                    table.ajax.reload( null, false );
-                }, 15000 );
+                setInterval(function () { reloadSoon(0); }, 15000);
             }
+
+            document.addEventListener('visibilitychange', function () {
+                if (!document.hidden) reloadSoon(0);
+            });
 
             $('.dataTables_length').addClass('bs-select');
         });

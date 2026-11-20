@@ -1702,7 +1702,9 @@ foreach (config('locales.supported', []) as $locale) {
         $data = [
             'headTitle' => $page['title'],
             'bodyClass' => 'room dashboard',
-            'rooms' => Room::all(),
+            // The table is filled over AJAX by RoomController@getRoomsData (kept live by
+            // Pusher + the server-reported timeout deadline), so the page itself no longer
+            // loads every room row on each visit. `roomList` never read a $rooms variable.
             'roomCode' => '',
             'randomRoom' => app(GetRandomRoomAction::class)->execute(),
             'cdnUrl' => url(''),
