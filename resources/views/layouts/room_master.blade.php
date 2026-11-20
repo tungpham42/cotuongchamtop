@@ -25,20 +25,6 @@
         && !isset($room->tournament_id);
 @endphp
 
-{{-- Game clocks (10 min + 2 min/move), split around the board: the opponent's clock above it and the
-     player's own below it, following the board orientation (the side at the bottom is $orientation).
-     Only for the two seated players: spectators and the 'random' practice room have no opponent to
-     start/stop a clock against. The slots are rendered by layouts.partials.game.boardSlot. --}}
-@if (in_array($role, ['host', 'guest', 'red', 'black'], true))
-    @section('boardTop')
-        @include('layouts.partials.timer', ['timerPart' => 'top'])
-    @endsection
-
-    @section('boardBottom')
-        @include('layouts.partials.timer', ['timerPart' => 'bottom'])
-    @endsection
-@endif
-
 @section('aboveBoard')
 <div class="pvp-scoreboard">
     @if ($role === 'watch')
@@ -283,14 +269,6 @@
                 const payload = { 'ma-phong': roomCode, 'FEN': game.fen() };
                 if (moveIccs) { payload.move = moveIccs; }
 
-                // [SỬA Ở ĐÂY] Gọi chuyển lượt ngay lập tức trên Client (Optimistic UI)
-                if (!game.game_over()) {
-                    let activeColor = game.turn() === 'b' ? 'red' : 'black';
-                    if (typeof window.switchTurn === 'function') {
-                        window.switchTurn('{{ $roomCode }}', activeColor);
-                    }
-                }
-
                 // Gọi API cập nhật FEN chạy ngầm
                 $.ajax({
                     type: "POST",
@@ -312,7 +290,7 @@
 
                     // -------------------------------------------------------------
                     // FIX RUBBER-BANDING (GIẬT CỤC CỜ)
-                    // Bỏ qua bản tin FEN cũ do race condition của API switchTurn
+                    // Bỏ qua bản tin FEN cũ do race condition của API updateFEN
                     // -------------------------------------------------------------
                     if (expectedFEN && newFEN !== expectedFEN && game.fen() === expectedFEN) {
                         return;
@@ -567,7 +545,7 @@
             renderRematch();
         }
 
-        // Called as soon as the game is over (checkmate, draw, resign, timeout...), once.
+        // Called as soon as the game is over (checkmate, draw, resign...), once.
         function onGameOverRematch() {
             if (rematchGameOverHandled) return;
             rematchGameOverHandled = true;
@@ -755,8 +733,6 @@
                 }
                 $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> {{ __("Hết trận") }}');
                 $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
-                // Stop the clocks where they are once the game is decided on the board.
-                if (typeof window.freezeTimer === 'function') window.freezeTimer();
                 @if ($canRematch)
                 onGameOverRematch();
                 @endif
@@ -785,7 +761,6 @@
                 });
                 $('#game-over').html('<i class="fad fa-flag-checkered"></i> {{ __("Đã bỏ cuộc") }}');
                 $('#resign').addClass('disabled').attr('aria-disabled', true);
-                if (typeof window.freezeTimer === 'function') window.freezeTimer();
                 @if ($canRematch)
                 onGameOverRematch();
                 @endif
@@ -803,7 +778,7 @@
                 orientation: "{{ str_contains($room->fen, ' r ') ? 'red' : 'black' }}",
             @else
                 @if ($role === 'random')
-                    draggable: {{ ($room->red_time == 0 || $room->black_time == 0) ? 'false' : 'true' }},
+                    draggable: true,
                     position: 'start',
                 @else
                     {{-- Disable draggable config in tournament mode if room lacks 2 players --}}
