@@ -718,8 +718,12 @@ class RoomController extends Controller
     {
         $room = Room::where('code', $roomCode)->first();
 
-        if ($room && $room->active_player === 'waiting') {
-            $room->active_player = 'red';
+        // Tournament rooms are created as 'waiting'; matchmaking, invite and rematch rooms are
+        // created with a null active_player. Both must start the clock once both players are in.
+        // Finished rooms never restart. The side to move comes from the FEN, so a reload during a
+        // game (or a legacy room) doesn't hand the clock to the wrong colour.
+        if ($room && is_null($room->result) && in_array($room->active_player, [null, '', 'waiting'], true)) {
+            $room->active_player = str_contains((string) $room->fen, ' b ') ? 'black' : 'red';
             $room->last_update = now();
             $room->modified_at = now();
             $room->save();

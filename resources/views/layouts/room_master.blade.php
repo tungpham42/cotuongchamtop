@@ -85,7 +85,11 @@
 @endif
 
     @if ($role !== 'watch')
-        {{-- @include('layouts.partials.timer') --}}
+        {{-- Game clocks (10 min + 2 min/move). Only for the two seated players: spectators and
+             the 'random' practice room have no opponent to start/stop a clock against. --}}
+        @if (in_array($role, ['host', 'guest', 'red', 'black'], true))
+            @include('layouts.partials.timer')
+        @endif
 
         <!-- INCLUDE VIDEO CALL COMPONENT HERE -->
         @if(isset($room->host_id) && in_array($role, ['host', 'guest', 'red', 'black']) && auth()->check())
