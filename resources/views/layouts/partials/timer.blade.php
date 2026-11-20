@@ -1,143 +1,410 @@
-<div class="mini-timer">
-    <div id="red-box" class="ptimer red-glass">
-        <div class="timer-details">
-            <span class="label">{{ __("Đỏ") }}</span>
-            <span id="red-move-clock" class="move-clock">2:00</span>
+@php
+    // Which plaque belongs to the person looking at the page (so we can tag it "Bạn").
+    $timerMySide = in_array($role ?? '', ['host', 'red'], true) ? 'red' : 'black';
+@endphp
+
+<div class="royal-timer" id="royal-timer" data-my-side="{{ $timerMySide }}">
+    {{-- ============ RED (Đỏ · 帥) ============ --}}
+    <div id="red-box" class="ptimer red-glass paused-offline" data-side="red" data-level="ok">
+        <div class="pt-seal" aria-hidden="true"><span>帥</span></div>
+        <div class="pt-body">
+            <div class="pt-head">
+                <span class="label">{{ __("Đỏ") }}</span>
+                @if ($timerMySide === 'red')<span class="pt-you">{{ __("Bạn") }}</span>@endif
+                <span class="pt-turn" aria-hidden="true"></span>
+            </div>
+            <span id="red-clock" class="clock" role="timer" aria-live="off">10:00</span>
+            <div class="pt-move" title="{{ __('Thời gian mỗi nước') }}">
+                <div class="pt-bar"><i id="red-move-bar"></i></div>
+                <span id="red-move-clock" class="move-clock">2:00</span>
+            </div>
         </div>
-        <span id="red-clock" class="clock">10:00</span>
     </div>
 
-    <div id="black-box" class="ptimer black-glass">
-        <div class="timer-details">
-            <span class="label">{{ __("Đen") }}</span>
-            <span id="black-move-clock" class="move-clock">2:00</span>
-        </div>
-        <span id="black-clock" class="clock">10:00</span>
+    {{-- ============ CENTER: hourglass ============ --}}
+    <div class="pt-center" aria-hidden="true">
+        <span class="pt-diamond"><i class="fas fa-hourglass-half"></i></span>
     </div>
+
+    {{-- ============ BLACK (Đen · 將) ============ --}}
+    <div id="black-box" class="ptimer black-glass paused-offline" data-side="black" data-level="ok">
+        <div class="pt-seal" aria-hidden="true"><span>將</span></div>
+        <div class="pt-body">
+            <div class="pt-head">
+                <span class="label">{{ __("Đen") }}</span>
+                @if ($timerMySide === 'black')<span class="pt-you">{{ __("Bạn") }}</span>@endif
+                <span class="pt-turn" aria-hidden="true"></span>
+            </div>
+            <span id="black-clock" class="clock" role="timer" aria-live="off">10:00</span>
+            <div class="pt-move" title="{{ __('Thời gian mỗi nước') }}">
+                <div class="pt-bar"><i id="black-move-bar"></i></div>
+                <span id="black-move-clock" class="move-clock">2:00</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="timer-caption" class="timer-caption" role="status" aria-live="polite">
+    <i class="fas fa-circle-notch fa-spin"></i> {{ __("Đang chờ đối thủ vào phòng...") }}
 </div>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap');
-
     /* ==========================================================================
-       GLOSSY & COMPACT DUAL-TIMERS (10M + 2M/Move)
+       ROYAL DUAL CLOCKS  ·  10 min + 2 min per move
+       Theme: Liquid Glass + Cung đình Huế (uses the :root royal tokens from index_new.css)
+       - each side is a glass "plaque" with its general's seal (帥 / 將)
+       - the side to move: gold light orbits the border, lantern dot pulses, plaque lifts
+       - per-move bar drains gold → amber → red, total time turns red when low
        ========================================================================== */
-    .mini-timer {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 16px;
-        margin: 10px auto;
-        font-family: "Exo 2", "Plus Jakarta Sans", sans-serif;
-        user-select: none;
+    @property --pt-angle {
+        syntax: "<angle>";
+        inherits: false;
+        initial-value: 0deg;
     }
 
+    .royal-timer {
+        --pt-gold: var(--royal-gold, #ffd700);
+        --pt-gold-light: var(--royal-gold-light, #fff2cc);
+        display: flex;
+        align-items: stretch;
+        justify-content: center;
+        gap: 10px;
+        max-width: 650px;
+        margin: 12px auto 4px;
+        padding: 6px 0 10px;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    /* ---------- Plaque ---------- */
     .ptimer {
         position: relative;
+        flex: 1 1 0;
+        min-width: 0;
+        max-width: 290px;
         display: flex;
         align-items: center;
-        gap: 15px;
-        padding: 8px 20px;
-        border-radius: 40px;
-        min-width: 150px;
+        gap: 14px;
+        padding: 10px 14px 10px 10px;
+        border-radius: 16px;
+        color: var(--pt-gold-light);
+        border: 2px solid transparent;
         overflow: hidden;
-        background: linear-gradient(145deg, #2a2d38, #1a1c23);
-        box-shadow:
-            6px 6px 12px rgba(0, 0, 0, 0.6),
-            -2px -2px 8px rgba(255, 255, 255, 0.03),
-            inset 0 1px 1px rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        color: #e0e0e0;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        backdrop-filter: var(--glass-blur, blur(20px));
+        -webkit-backdrop-filter: var(--glass-blur, blur(20px));
+        box-shadow: var(--liquid-shadow, 0 8px 32px rgba(0, 0, 0, 0.8)),
+                    inset 0 1px 6px rgba(255, 255, 255, 0.12);
+        transition: transform .45s cubic-bezier(.175, .885, .32, 1.275),
+                    box-shadow .45s ease, opacity .3s ease, filter .3s ease;
+        /* the border is a second background layer so the orbiting light can animate it */
+        background:
+            linear-gradient(var(--pt-fill-a), var(--pt-fill-b)) padding-box,
+            linear-gradient(135deg, rgba(255, 215, 0, .55), rgba(255, 215, 0, .15), rgba(255, 215, 0, .55)) border-box;
     }
-
+    .ptimer.red-glass {
+        --pt-fill-a: rgba(150, 24, 24, .88);
+        --pt-fill-b: rgba(58, 8, 8, .94);
+        --pt-accent: #ff6b6b;
+    }
+    .ptimer.black-glass {
+        --pt-fill-a: rgba(36, 38, 48, .92);
+        --pt-fill-b: rgba(9, 10, 14, .96);
+        --pt-accent: #ffd54f;
+    }
+    /* glossy top highlight */
     .ptimer::before {
-        content: '';
+        content: "";
         position: absolute;
-        top: 0; left: 0; right: 0; height: 45%;
-        background: linear-gradient(to bottom, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 100%);
-        border-radius: 40px 40px 0 0;
+        inset: 0 0 auto 0;
+        height: 46%;
+        border-radius: 14px 14px 0 0;
+        background: linear-gradient(to bottom, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0));
+        pointer-events: none;
+    }
+    /* liquid sheen sweep (runs on the active plaque) */
+    .ptimer::after {
+        content: "";
+        position: absolute;
+        top: 0; bottom: 0; left: -60%;
+        width: 40%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .22), transparent);
+        transform: skewX(-20deg);
+        opacity: 0;
         pointer-events: none;
     }
 
-    .timer-details {
+    /* ---------- Seal (帥 / 將) ---------- */
+    .pt-seal {
+        position: relative;
+        flex: none;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-family: "Texturina", "Noto Sans SC", "Noto Sans JP", serif;
+        font-size: 1.7rem;
+        font-weight: 900;
+        line-height: 1;
+        z-index: 1;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, .6), inset 0 2px 4px rgba(255, 255, 255, .35),
+                    inset 0 -3px 6px rgba(0, 0, 0, .45);
+        transition: transform .45s cubic-bezier(.175, .885, .32, 1.275), box-shadow .45s ease;
+    }
+    .pt-seal::before { /* inner engraved ring */
+        content: "";
+        position: absolute;
+        inset: 4px;
+        border-radius: 50%;
+        border: 1.5px solid currentColor;
+        opacity: .55;
+    }
+    .red-glass .pt-seal {
+        background: radial-gradient(circle at 32% 28%, #fff7e0 0%, #f3dca6 55%, #d6b568 100%);
+        color: #b11d1d;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, .6);
+    }
+    .black-glass .pt-seal {
+        background: radial-gradient(circle at 32% 28%, #f3dca6 0%, #e3c27c 55%, #b89020 100%);
+        color: #15161c;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, .45);
+    }
+
+    /* ---------- Body ---------- */
+    .pt-body {
+        position: relative;
+        z-index: 1;
+        flex: 1 1 auto;
+        min-width: 0;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        z-index: 1;
+        gap: 2px;
     }
-
-    .timer-details .label {
-        font-size: 0.75rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        opacity: 0.9;
+    .pt-head {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 6px;
+        line-height: 1;
     }
-
-    .timer-details .move-clock {
-        font-size: 0.75rem;
-        font-weight: 700;
-        font-family: "JetBrains Mono", "Courier New", monospace;
-        background: rgba(0, 0, 0, 0.5);
-        padding: 2px 8px;
-        border-radius: 6px;
-        margin-top: 4px;
-        box-shadow: inset 0 1px 4px rgba(0,0,0,0.8);
-        transition: all 0.2s ease;
+    .ptimer .label {
+        font-family: "Texturina", serif;
+        font-size: .78rem;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--pt-gold);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, .8);
+    }
+    .pt-you {
+        padding: 2px 7px;
+        border-radius: 999px;
+        font-size: .62rem;
+        font-weight: 800;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+        color: #1a0a00;
+        background: linear-gradient(to bottom, #ffe680, #d4af37);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, .5);
+    }
+    /* lantern dot = "it is this side's move" */
+    .pt-turn {
+        margin-left: auto;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, .18);
+        transition: background .3s ease, box-shadow .3s ease;
     }
 
     .ptimer .clock {
-        font-family: "JetBrains Mono", "Courier New", monospace;
-        font-size: 1.4rem;
-        font-weight: 900;
-        margin-left: auto;
-        z-index: 1;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        display: block;
+        font-family: "Noto Sans Mono", "JetBrains Mono", "Courier New", monospace;
+        font-variant-numeric: tabular-nums;
+        font-size: 2rem;
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: 1px;
+        color: #fff;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, .7);
+        transition: color .3s ease, text-shadow .3s ease;
     }
 
-    /* Colors for RED */
-    .red-glass .clock, .red-glass .label { color: #ff5252; }
-    .red-glass .move-clock { color: #ff8a80; }
-    .red-glass.active {
-        background: linear-gradient(145deg, #5c1616, #300808);
-        border-color: rgba(255, 82, 82, 0.4);
-        box-shadow: 0 0 20px rgba(255, 82, 82, 0.3), inset 0 2px 4px rgba(255, 138, 128, 0.2);
-        transform: translateY(-3px) scale(1.03);
+    /* ---------- Per-move bar ---------- */
+    .pt-move {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 3px;
+    }
+    .pt-bar {
+        flex: 1 1 auto;
+        height: 6px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(0, 0, 0, .55);
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, .9);
+    }
+    .pt-bar > i {
+        display: block;
+        height: 100%;
+        width: 100%;
+        border-radius: inherit;
+        transform-origin: left center;
+        background: linear-gradient(90deg, #b89020, var(--pt-gold));
+        box-shadow: 0 0 8px rgba(255, 215, 0, .55);
+        transition: background .3s ease, box-shadow .3s ease;
+    }
+    .ptimer .move-clock {
+        flex: none;
+        min-width: 3.1ch;
+        text-align: right;
+        font-family: "Noto Sans Mono", "JetBrains Mono", monospace;
+        font-variant-numeric: tabular-nums;
+        font-size: .72rem;
+        font-weight: 700;
+        color: var(--pt-gold-light);
+        opacity: .85;
+    }
+    .ptimer[data-level="warn"] .pt-bar > i {
+        background: linear-gradient(90deg, #e08a00, #ffb300);
+        box-shadow: 0 0 8px rgba(255, 179, 0, .7);
+    }
+    .ptimer[data-level="danger"] .pt-bar > i {
+        background: linear-gradient(90deg, #b71c1c, #ff5252);
+        box-shadow: 0 0 10px rgba(255, 82, 82, .9);
     }
 
-    /* Colors for BLACK */
-    .black-glass .clock, .black-glass .label { color: #ffd54f; }
-    .black-glass .move-clock { color: #ffe082; }
-    .black-glass.active {
-        background: linear-gradient(145deg, #2b2b2b, #111111);
-        border-color: rgba(255, 213, 79, 0.4);
-        box-shadow: 0 0 20px rgba(255, 213, 79, 0.2), inset 0 2px 4px rgba(255, 224, 130, 0.2);
-        transform: translateY(-3px) scale(1.03);
+    /* ---------- Idle (not this side's move) ---------- */
+    .ptimer:not(.active):not(.paused-offline):not(.finished) {
+        opacity: .78;
+        filter: saturate(.8);
     }
 
-    /* Utility Classes */
+    /* ---------- ACTIVE: orbiting gold light, lift, lantern ---------- */
+    .ptimer.active {
+        transform: translateY(-4px) scale(1.04);
+        z-index: 2;
+        box-shadow: 0 14px 34px rgba(0, 0, 0, .85),
+                    0 0 26px rgba(255, 215, 0, .35),
+                    inset 0 1px 8px rgba(255, 255, 255, .2);
+        background:
+            linear-gradient(var(--pt-fill-a), var(--pt-fill-b)) padding-box,
+            conic-gradient(from var(--pt-angle),
+                rgba(255, 215, 0, .15) 0deg,
+                #fff2cc 40deg,
+                var(--pt-gold) 70deg,
+                rgba(255, 215, 0, .15) 130deg,
+                rgba(255, 215, 0, .15) 360deg) border-box;
+        animation: ptOrbit 3.2s linear infinite;
+    }
+    .ptimer.active::after { animation: ptSheen 3.6s ease-in-out infinite; }
+    .ptimer.active .pt-seal {
+        transform: scale(1.04) rotate(-4deg);
+        box-shadow: 0 0 0 3px rgba(255, 215, 0, .55), 0 0 18px rgba(255, 215, 0, .65),
+                    0 4px 10px rgba(0, 0, 0, .6), inset 0 2px 4px rgba(255, 255, 255, .35);
+    }
+    .ptimer.active .pt-turn {
+        background: var(--pt-gold);
+        box-shadow: 0 0 10px 2px rgba(255, 215, 0, .85);
+        animation: ptPulse 1.2s ease-in-out infinite;
+    }
+    .ptimer.active .clock {
+        color: var(--pt-gold-light);
+        text-shadow: 0 0 14px rgba(255, 215, 0, .55), 0 2px 6px rgba(0, 0, 0, .7);
+    }
+
+    /* ---------- LOW TIME (≤ 60 s total) ---------- */
+    .ptimer.low .clock { color: #ff8a80; }
+    .ptimer.low.active .clock {
+        color: #ff5252;
+        text-shadow: 0 0 16px rgba(255, 82, 82, .85), 0 2px 6px rgba(0, 0, 0, .7);
+        animation: ptThrob 1s ease-in-out infinite;
+    }
+    /* ---------- CRITICAL (≤ 10 s on this move or in total) ---------- */
+    .ptimer.critical.active {
+        box-shadow: 0 14px 34px rgba(0, 0, 0, .85), 0 0 34px rgba(255, 82, 82, .75),
+                    inset 0 0 18px rgba(255, 82, 82, .3);
+        animation: ptOrbit 1.4s linear infinite, ptAlarm .6s ease-in-out infinite alternate;
+    }
+    .ptimer.critical.active .clock { animation: ptThrob .5s ease-in-out infinite; }
+
+    /* ---------- Waiting / finished ---------- */
     .ptimer.paused-offline {
-        opacity: 0.5;
-        filter: grayscale(80%);
-        pointer-events: none;
-        transform: translateY(0) scale(1);
+        opacity: .5;
+        filter: grayscale(.7);
+        transform: none;
         box-shadow: none;
+        pointer-events: none;
+    }
+    .ptimer.finished { opacity: .9; filter: saturate(.9); }
+    .ptimer.expired {
+        box-shadow: 0 0 28px rgba(255, 82, 82, .7), var(--liquid-shadow, 0 8px 32px rgba(0, 0, 0, .8));
+    }
+    .ptimer.expired .clock { color: #ff5252; }
+
+    /* ---------- Center hourglass ---------- */
+    .pt-center {
+        flex: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .pt-diamond {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        transform: rotate(45deg);
+        border-radius: 8px;
+        color: var(--pt-gold);
+        font-size: .85rem;
+        background: var(--glass-bg-dark, rgba(11, 12, 16, .85));
+        border: 1px solid var(--glass-border, rgba(255, 215, 0, .55));
+        box-shadow: var(--liquid-shadow, 0 8px 32px rgba(0, 0, 0, .8)),
+                    inset 0 1px 4px rgba(255, 255, 255, .25);
+    }
+    .pt-diamond i { transform: rotate(-45deg); animation: ptFlip 4s ease-in-out infinite; }
+    .royal-timer.is-running .pt-diamond { box-shadow: 0 0 16px rgba(255, 215, 0, .55), inset 0 1px 4px rgba(255, 255, 255, .25); }
+
+    /* ---------- Caption (waiting for opponent) ---------- */
+    .timer-caption {
+        display: none;
+        margin: 0 auto 8px;
+        text-align: center;
+        font-size: .8rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--royal-gold-light, #fff2cc);
+        opacity: .85;
+    }
+    .timer-caption.show { display: block; }
+
+    /* ---------- Keyframes ---------- */
+    @keyframes ptOrbit  { to { --pt-angle: 360deg; } }
+    @keyframes ptSheen  { 0%, 55% { left: -60%; opacity: 0; } 62% { opacity: 1; } 100% { left: 160%; opacity: 0; } }
+    @keyframes ptPulse  { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: .6; } }
+    @keyframes ptThrob  { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+    @keyframes ptAlarm  { from { filter: brightness(1); } to { filter: brightness(1.25) saturate(1.25); } }
+    @keyframes ptFlip   { 0%, 40% { transform: rotate(-45deg); } 50%, 90% { transform: rotate(135deg); } 100% { transform: rotate(315deg); } }
+
+    /* ---------- Small screens ---------- */
+    @media (max-width: 575.98px) {
+        .royal-timer { gap: 6px; margin-top: 8px; }
+        .pt-center { display: none; }
+        .ptimer { gap: 8px; padding: 8px 10px 8px 8px; border-radius: 14px; }
+        .pt-seal { width: 38px; height: 38px; font-size: 1.25rem; }
+        .pt-seal::before { inset: 3px; }
+        .ptimer .clock { font-size: 1.45rem; letter-spacing: 0; }
+        .ptimer .label { font-size: .68rem; letter-spacing: 1px; }
+        .pt-you { font-size: .55rem; padding: 1px 5px; }
+        .ptimer.active { transform: translateY(-2px) scale(1.02); }
+    }
+    @media (max-width: 359.98px) {
+        .pt-seal { display: none; }
     }
 
-    .move-clock.danger {
-        color: #ffffff !important;
-        background: #e53935 !important;
-        box-shadow: 0 0 12px #e53935, inset 0 1px 2px rgba(0,0,0,0.5) !important;
-        animation: urgent-strobe 0.6s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    @keyframes urgent-strobe {
-        0% { opacity: 1; transform: scale(1); }
-        100% { opacity: 0.85; transform: scale(1.05); }
+    @media (prefers-reduced-motion: reduce) {
+        .ptimer, .ptimer * { animation: none !important; transition: none !important; }
     }
 </style>
 
@@ -185,11 +452,15 @@
     };
 
     const ui = {
-        red: { box: document.getElementById("red-box"), clock: document.getElementById("red-clock"), moveClock: document.getElementById("red-move-clock") },
-        black: { box: document.getElementById("black-box"), clock: document.getElementById("black-clock"), moveClock: document.getElementById("black-move-clock") }
+        red:   { box: document.getElementById("red-box"),   clock: document.getElementById("red-clock"),   moveClock: document.getElementById("red-move-clock"),   moveBar: document.getElementById("red-move-bar") },
+        black: { box: document.getElementById("black-box"), clock: document.getElementById("black-clock"), moveClock: document.getElementById("black-move-clock"), moveBar: document.getElementById("black-move-bar") }
     };
+    const timerRoot = document.getElementById("royal-timer");
+    const timerCaption = document.getElementById("timer-caption");
 
     const MOVE_TIME_LIMIT = 120;
+    const LOW_TIME = 60;        // total time: plaque turns red
+    const CRITICAL_TIME = 10;   // total or move time: alarm + tenths of a second
     let time = { red: 600, black: 600 };
     let serverMoveElapsed = 0, activePlayer = null, isGameOver = false;
     let tickInterval = null, localLastUpdate = Date.now();
@@ -197,9 +468,24 @@
     let playersOnline = 0;
     window.hasMatchStarted = false;
 
-    const formatTime = (s) => `${Math.floor(s / 60)}:${(Math.floor(s) % 60).toString().padStart(2, '0')}`;
+    const pad2 = (n) => n.toString().padStart(2, '0');
+    const formatTime = (s) => `${Math.floor(s / 60)}:${pad2(Math.floor(s) % 60)}`;
+    // Under 10 s the main clock shows tenths (0:09.4) so the last seconds feel tense and precise.
+    const formatClock = (s, withTenths) => {
+        if (withTenths && s < CRITICAL_TIME) {
+            const t = Math.max(0, Math.floor(s * 10) / 10);
+            return `0:${pad2(Math.floor(t))}.${Math.floor((t * 10) % 10)}`;
+        }
+        return formatTime(Math.ceil(s));
+    };
     const stopAll = () => clearInterval(tickInterval);
     const startAll = () => { stopAll(); localLastUpdate = Date.now(); tickInterval = setInterval(updateUI, 100); };
+
+    // Show / hide the "waiting for opponent" state.
+    const setWaiting = (waiting) => {
+        ['red', 'black'].forEach(side => ui[side].box.classList.toggle('paused-offline', waiting));
+        if (timerCaption) timerCaption.classList.toggle('show', waiting);
+    };
 
     const updateUI = () => {
         if (isGameOver) return;
@@ -215,24 +501,57 @@
         }
 
         ['red', 'black'].forEach(side => {
-            ui[side].clock.innerText = formatTime(Math.ceil(current[side]));
+            const isActive = activePlayer === side;
+            const box = ui[side].box;
+            const movePct = Math.max(0, Math.min(1, moveTime[side] / MOVE_TIME_LIMIT));
+
+            ui[side].clock.innerText = formatClock(current[side], isActive);
             ui[side].moveClock.innerText = formatTime(Math.ceil(moveTime[side]));
-            ui[side].moveClock.classList.toggle('danger', moveTime[side] <= 10 && activePlayer === side);
-            ui[side].box.classList.toggle('active', activePlayer === side);
+            ui[side].moveBar.style.transform = `scaleX(${movePct})`;
+
+            box.classList.toggle('active', isActive);
+            box.classList.toggle('low', current[side] <= LOW_TIME);
+            box.classList.toggle('critical', isActive && (current[side] <= CRITICAL_TIME || moveTime[side] <= CRITICAL_TIME));
+            box.dataset.level = !isActive ? 'ok'
+                : (moveTime[side] <= CRITICAL_TIME || movePct < 0.25) ? 'danger'
+                : (movePct < 0.5 ? 'warn' : 'ok');
         });
+
+        if (timerRoot) timerRoot.classList.toggle('is-running', !!activePlayer);
 
         if (current.red <= 0 || current.black <= 0) {
             isGameOver = true;
             stopAll();
             activePlayer = null;
-            ui.red.box.classList.remove("active");
-            ui.black.box.classList.remove("active");
+            ['red', 'black'].forEach(side => {
+                const b = ui[side].box;
+                b.classList.remove('active', 'critical');
+                b.classList.add('finished');
+                b.classList.toggle('expired', current[side] <= 0);
+            });
+            if (timerRoot) timerRoot.classList.remove('is-running');
 
             if (typeof updateResult === 'function') {
                 const result = current.red <= 0 && current.black <= 0 ? '0' : (current.red <= 0 ? '-1' : '1');
                 updateResult(roomCode, result);
             }
         }
+    };
+
+    // Called by the room page when the game ends for any other reason (checkmate, draw, resign):
+    // stop the clocks where they are instead of letting the active side run out afterwards.
+    window.freezeTimer = () => {
+        if (isGameOver) return;
+        updateUI();
+        isGameOver = true;
+        stopAll();
+        activePlayer = null;
+        ['red', 'black'].forEach(side => {
+            ui[side].box.classList.remove('active', 'critical');
+            ui[side].box.classList.add('finished');
+        });
+        if (timerRoot) timerRoot.classList.remove('is-running');
+        if (timerCaption) timerCaption.classList.remove('show');
     };
 
     const syncTimerState = (serverData) => {
@@ -246,6 +565,7 @@
         } else {
             newActivePlayer = sPlayer.startsWith('paused:') ? sPlayer.split(':')[1] : sPlayer;
             window.hasMatchStarted = true;
+            setWaiting(false);
         }
 
         const newRed = parseFloat(serverData.red_time);
@@ -269,8 +589,7 @@
     const handlePresenceChange = () => {
         if (!window.hasMatchStarted && playersOnline >= 2) {
             window.hasMatchStarted = true;
-            ui.red.box.classList.remove('paused-offline');
-            ui.black.box.classList.remove('paused-offline');
+            setWaiting(false);
 
             // Explicitly pass 'POST' method for startMatch
             apiReq(`startMatch/${roomCode}`, 'POST').then(() => {
@@ -279,8 +598,7 @@
         }
 
         if (!window.hasMatchStarted && playersOnline < 2) {
-            ui.red.box.classList.add('paused-offline');
-            ui.black.box.classList.add('paused-offline');
+            setWaiting(true);
         }
     };
 
@@ -295,8 +613,7 @@
 
             if (hasHost && hasGuest) {
                 window.hasMatchStarted = true;
-                ui.red.box.classList.remove('paused-offline');
-                ui.black.box.classList.remove('paused-offline');
+                setWaiting(false);
 
                 // Explicitly pass 'POST' method for startMatch
                 await apiReq(`startMatch/${roomCode}`, 'POST');
@@ -328,6 +645,9 @@
     };
 
     document.addEventListener('DOMContentLoaded', () => {
+        // Until we know a match is running, show the "waiting for opponent" state.
+        if (!window.hasMatchStarted) setWaiting(true);
+
         if (typeof window.Echo === 'undefined' && typeof Echo !== 'undefined') {
             window.Echo = new Echo({
                 broadcaster: 'pusher',

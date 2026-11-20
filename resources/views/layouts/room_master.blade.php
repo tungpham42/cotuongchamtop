@@ -747,6 +747,8 @@
                 }
                 $('#game-over').removeClass('d-none').addClass('d-inline-block').html('<i class="fad fa-flag-checkered"></i> {{ __("Hết trận") }}');
                 $('#header-status').html(': '+status+' - {{ __("Hết trận") }}');
+                // Stop the clocks where they are once the game is decided on the board.
+                if (typeof window.freezeTimer === 'function') window.freezeTimer();
                 @if ($canRematch)
                 onGameOverRematch();
                 @endif
@@ -775,6 +777,7 @@
                 });
                 $('#game-over').html('<i class="fad fa-flag-checkered"></i> {{ __("Đã bỏ cuộc") }}');
                 $('#resign').addClass('disabled').attr('aria-disabled', true);
+                if (typeof window.freezeTimer === 'function') window.freezeTimer();
                 @if ($canRematch)
                 onGameOverRematch();
                 @endif

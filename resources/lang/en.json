@@ -984,5 +984,8 @@
     "Không thể đấu lại lúc này": "Rematch is not available right now",
     "Hủy lời mời": "Cancel invite",
     "Về trang chính": "Back to dashboard",
-    "Quét mã QR để vào phòng": "Scan the QR code to join"
+    "Quét mã QR để vào phòng": "Scan the QR code to join",
+    "Bạn": "You",
+    "Thời gian mỗi nước": "Time per move",
+    "Đang chờ đối thủ vào phòng...": "Waiting for opponent to join..."
 }
