@@ -13,7 +13,6 @@
         transform: none !important;
         scale: none !important;
         transition: none !important;
-        box-shadow: none !important;
     }
     #ban-co .square-2b8ce:hover img { filter: none !important; transform: none !important; }
     #ban-co .highlight1-e13fc,
