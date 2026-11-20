@@ -832,11 +832,6 @@ class RoomController extends Controller
                     $request->input('side')
                 );
 
-                // Only the two players of the finished room may negotiate.
-                if ($mySide === null) {
-                    return response()->json(['success' => false, 'message' => 'Not a player of this room'], 403);
-                }
-
                 $state = Cache::get($cacheKey);
 
                 // Already accepted (double click / both sides clicked at once).
