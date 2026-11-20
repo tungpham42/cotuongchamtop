@@ -80,7 +80,7 @@
     </main>
 
     @include('layouts.partials.playFooter')
-    @include('common.onlineCounter')
+    {{-- @include('common.onlineCounter') --}}
     @include('layouts.partials.karmaToast')
 </body>
 </html>
