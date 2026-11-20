@@ -10,7 +10,7 @@
     <div class="container mx-auto px-3 pt-0">
         <div class="row my-0">
             <h2 class="d-block w-100 ml-3 mb-4 text-light">
-                <i class="fas fa-users"></i> {{ $playerCollection->total() }} {{ __("kỳ thủ đang hoạt động, mời bạn") }} <a class="animate showPromotion" href="{{ localized_url('register') }}">{{ __("tham gia") }}</a>
+                <i class="fas fa-users"></i> {{ $playerCollection->total() }} {{ __("kỳ thủ đang hoạt động, mời bạn") }} <a class="animate showPromotion text-light" href="{{ localized_url('register') }}">{{ __("tham gia") }}</a>
             </h2>
             {{ $playerCollection->links('vendor.pagination.playerVi') }}
 
