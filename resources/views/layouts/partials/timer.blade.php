@@ -82,8 +82,9 @@
         overflow: hidden;
         backdrop-filter: var(--glass-blur, blur(20px));
         -webkit-backdrop-filter: var(--glass-blur, blur(20px));
-        box-shadow: var(--liquid-shadow, 0 8px 32px rgba(0, 0, 0, 0.8)),
-                    inset 0 1px 6px rgba(255, 255, 255, 0.12);
+        /* Inset only: an outer shadow would fall onto the board next to the plaque. */
+        box-shadow: inset 0 1px 6px rgba(255, 255, 255, 0.12),
+                    inset 0 -3px 8px rgba(0, 0, 0, .35);
         transition: transform .45s cubic-bezier(.175, .885, .32, 1.275),
                     box-shadow .45s ease, opacity .3s ease, filter .3s ease;
         /* the border is a second background layer so the orbiting light can animate it */
@@ -275,11 +276,12 @@
     }
 
     /* ---------- ACTIVE: orbiting gold light, lift, lantern ---------- */
+    /* Everything stays INSIDE the plaque's box: no scale, no z-index lift, no outer shadow or
+       glow, so nothing can overlap the board. The "lit" feel comes from the orbiting border,
+       and an inner gold glow. */
     .ptimer.active {
-        transform: scale(1.02);
-        z-index: 2;
-        box-shadow: 0 14px 34px rgba(0, 0, 0, .85),
-                    0 0 26px rgba(255, 215, 0, .35),
+        box-shadow: inset 0 0 0 1px rgba(255, 215, 0, .25),
+                    inset 0 0 22px rgba(255, 215, 0, .22),
                     inset 0 1px 8px rgba(255, 255, 255, .2);
         background:
             linear-gradient(var(--pt-fill-a), var(--pt-fill-b)) padding-box,
@@ -316,8 +318,8 @@
     }
     /* ---------- CRITICAL (≤ 10 s on this move or in total) ---------- */
     .ptimer.critical.active {
-        box-shadow: 0 14px 34px rgba(0, 0, 0, .85), 0 0 34px rgba(255, 82, 82, .75),
-                    inset 0 0 18px rgba(255, 82, 82, .3);
+        box-shadow: inset 0 0 0 1px rgba(255, 82, 82, .55),
+                    inset 0 0 26px rgba(255, 82, 82, .45);
         animation: ptOrbit 1.4s linear infinite, ptAlarm .6s ease-in-out infinite alternate;
     }
     .ptimer.critical.active .clock { animation: ptThrob .5s ease-in-out infinite; }
@@ -332,7 +334,7 @@
     }
     .ptimer.finished { opacity: .9; filter: saturate(.9); }
     .ptimer.expired {
-        box-shadow: 0 0 28px rgba(255, 82, 82, .7), var(--liquid-shadow, 0 8px 32px rgba(0, 0, 0, .8));
+        box-shadow: inset 0 0 0 1px rgba(255, 82, 82, .6), inset 0 0 24px rgba(255, 82, 82, .5);
     }
     .ptimer.expired .clock { color: #ff5252; }
 
@@ -374,7 +376,6 @@
         .ptimer { gap: 8px; padding-right: 10px; }
         .ptimer .clock { font-size: calc(var(--pt-h) * .44); letter-spacing: 0; }
         .pt-you { font-size: .55rem; padding: 1px 5px; }
-        .ptimer.active { transform: scale(1.015); }
     }
     @media (max-width: 359.98px) {
         .pt-seal { display: none; }
