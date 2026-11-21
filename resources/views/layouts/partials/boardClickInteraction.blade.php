@@ -1,6 +1,6 @@
 <style>
     /* ==========================================================================
-       BOARD CLICK INTERACTION — LIQUID GLASS + CUNG ĐÌNH HUẾ
+       BOARD CLICK INTERACTION — COZY TEA-HOUSE (honey glow, ember capture, sage dots)
        Classes toggled by paint(): click-selected, click-target,
        click-last-from, click-last-to
        ========================================================================== */
@@ -17,9 +17,9 @@
     /* No square tile on from/to: only the bead (from) and piece ring (to) remain. */
     #ban-co .click-last-to img {
         border-radius: 50%;
-        outline: 2px solid rgba(255, 215, 0, .95);
+        outline: 2.5px solid rgba(255, 200, 97, .95);
         outline-offset: 1px;
-        box-shadow: 0 0 12px rgba(255, 215, 0, .65);
+        box-shadow: 0 0 12px rgba(255, 200, 97, .65);
     }
     /* Vacated square: tiny glossy bead */
     #ban-co .click-last-from::after {
@@ -27,8 +27,8 @@
         position: absolute; left: 50%; top: 50%;
         width: 16%; height: 16%; border-radius: 50%;
         transform: translate(-50%, -50%);
-        background: radial-gradient(circle at 35% 30%, #fff, rgba(255, 215, 0, .7) 70%);
-        box-shadow: 0 0 8px rgba(255, 215, 0, .8);
+        background: radial-gradient(circle at 35% 30%, #fff, rgba(255, 200, 97, .7) 70%);
+        box-shadow: 0 0 8px rgba(255, 200, 97, .8);
         pointer-events: none; z-index: 3;
     }
 
@@ -41,8 +41,8 @@
         pointer-events: none;
         z-index: 6;
         filter:
-            drop-shadow(0 3px 3px rgba(0, 0, 0, .6))
-            drop-shadow(0 0 7px rgba(255, 215, 0, .75));
+            drop-shadow(0 3px 3px rgba(20, 8, 4, .55))
+            drop-shadow(0 0 7px rgba(255, 200, 97, .75));
     }
     #ban-co .click-arrow__inner {
         transform-origin: 0 0;
@@ -52,14 +52,14 @@
     }
     #ban-co .click-arrow__body {
         fill: url(#clickArrowGold);
-        stroke: var(--royal-red, #8a1515);
+        stroke: #a8402c;
         stroke-linejoin: round;
         opacity: .93;
     }
     /* When black made the last move: ink glass with gold trim, so it reads apart from red's gold/ruby arrow */
     #ban-co .click-arrow--black .click-arrow__body {
         fill: url(#clickArrowInk);
-        stroke: var(--royal-gold, #d4af37);
+        stroke: var(--royal-gold, #e0a43a);
     }
     #ban-co .click-arrow__gloss { fill: rgba(255, 255, 255, .6); }
     #ban-co .click-arrow__rim   { fill: none; stroke: rgba(255, 255, 255, .55); stroke-linejoin: round; }
@@ -76,7 +76,7 @@
     /* ---------- Selected piece: lifted, glowing gold halo ---------- */
     #ban-co .square-2b8ce.click-selected {
         background:
-            radial-gradient(circle at 50% 50%, rgba(255, 215, 0, .55), rgba(255, 215, 0, .15) 60%, transparent 75%) !important;
+            radial-gradient(circle at 50% 50%, rgba(255, 200, 97, .6), rgba(255, 170, 70, .18) 60%, transparent 76%) !important;
         z-index: 4;
     }
     #ban-co .square-2b8ce.click-selected img,
@@ -84,11 +84,11 @@
         transform: translateY(-6px) scale(1.12) !important;
         filter:
             drop-shadow(0 8px 6px rgba(0, 0, 0, .55))
-            drop-shadow(0 0 10px rgba(255, 215, 0, .95)) !important;
+            drop-shadow(0 0 10px rgba(255, 200, 97, .95)) !important;
     }
     @keyframes clickSelectedPulse {
-        0%, 100% { box-shadow: inset 0 0 0 2px var(--royal-gold), inset 0 0 14px rgba(255, 215, 0, .6); }
-        50%      { box-shadow: inset 0 0 0 2px #fff,              inset 0 0 26px rgba(255, 215, 0, .95); }
+        0%, 100% { box-shadow: inset 0 0 0 2px var(--royal-gold), inset 0 0 14px rgba(255, 200, 97, .6); }
+        50%      { box-shadow: inset 0 0 0 2px #fff,              inset 0 0 26px rgba(255, 200, 97, .95); }
     }
 
     /* ---------- Legal move (empty square): glossy gold glass orb ---------- */
@@ -98,11 +98,11 @@
         width: 26%; height: 26%; border-radius: 50%;
         transform: translate(-50%, -50%);
         background:
-            radial-gradient(circle at 32% 28%, #fff 0%, rgba(255, 242, 204, .95) 18%, var(--royal-gold) 55%, #b89020 100%);
+            radial-gradient(circle at 34% 30%, #fffdf3 0%, #fff1d6 20%, #9fd18a 58%, #5f9450 100%);
         box-shadow:
-            0 0 0 2px rgba(138, 21, 21, .55),
-            0 3px 6px rgba(0, 0, 0, .55),
-            0 0 14px rgba(255, 215, 0, .85),
+            0 0 0 2px rgba(255, 246, 228, .75),
+            0 3px 6px rgba(20, 8, 4, .5),
+            0 0 14px rgba(150, 210, 130, .8),
             inset 0 -2px 4px rgba(0, 0, 0, .25);
         pointer-events: none; z-index: 3;
         animation: clickOrbIn .3s cubic-bezier(.175, .885, .32, 1.275) both,
@@ -113,7 +113,7 @@
         transition: width .2s ease, height .2s ease;
     }
     #ban-co .click-target:not(:has(img)):hover {
-        background: radial-gradient(circle, rgba(255, 215, 0, .35), transparent 75%) !important;
+        background: radial-gradient(circle, rgba(150, 210, 130, .35), transparent 75%) !important;
     }
 
     /* ---------- Capture (square holds an enemy piece): ruby-gold ring ---------- */
@@ -127,14 +127,14 @@
         background-origin: border-box;
         background-clip: padding-box, border-box;
         box-shadow:
-            0 0 14px rgba(230, 57, 70, .9),
-            inset 0 0 14px rgba(230, 57, 70, .6);
+            0 0 14px rgba(238, 122, 95, .9),
+            inset 0 0 14px rgba(238, 122, 95, .6);
         animation: clickRingIn .3s cubic-bezier(.175, .885, .32, 1.275) both,
                    clickRingSpin 3s linear .3s infinite,
                    clickRingGlow 1.2s ease-in-out .3s infinite;
     }
     #ban-co .click-target:has(img) img {
-        filter: drop-shadow(0 0 8px rgba(230, 57, 70, .9));
+        filter: drop-shadow(0 0 8px rgba(255, 138, 76, .95));
     }
 
     @keyframes clickOrbIn {
@@ -143,7 +143,7 @@
     }
     @keyframes clickOrbGlow {
         0%, 100% { filter: brightness(1); }
-        50%      { filter: brightness(1.2) drop-shadow(0 0 6px rgba(255, 215, 0, .9)); }
+        50%      { filter: brightness(1.12) drop-shadow(0 0 6px rgba(150, 210, 130, .85)); }
     }
     @keyframes clickRingIn {
         from { transform: translate(-50%, -50%) scale(.4); opacity: 0; }
@@ -250,15 +250,15 @@ window.initBoardClickInteraction = function (board, game, config) {
         arrowLayer.innerHTML =
             '<defs>' +
               '<linearGradient id="clickArrowGold" x1="0" y1="0" x2="0" y2="1">' +
-                '<stop offset="0" stop-color="#fff2cc"/>' +
-                '<stop offset=".35" stop-color="#ffd700"/>' +
-                '<stop offset=".78" stop-color="#d4af37"/>' +
-                '<stop offset="1" stop-color="#b89020"/>' +
+                '<stop offset="0" stop-color="#fff1d6"/>' +
+                '<stop offset=".35" stop-color="#ffc861"/>' +
+                '<stop offset=".78" stop-color="#e8a93f"/>' +
+                '<stop offset="1" stop-color="#d9962e"/>' +
               '</linearGradient>' +
               '<linearGradient id="clickArrowInk" x1="0" y1="0" x2="0" y2="1">' +
-                '<stop offset="0" stop-color="#9aa4b5"/>' +
-                '<stop offset=".4" stop-color="#4a5262"/>' +
-                '<stop offset="1" stop-color="#14171d"/>' +
+                '<stop offset="0" stop-color="#b79a86"/>' +
+                '<stop offset=".4" stop-color="#6b4533"/>' +
+                '<stop offset="1" stop-color="#2a150e"/>' +
               '</linearGradient>' +
             '</defs>';
         element.appendChild(arrowLayer);

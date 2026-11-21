@@ -1,6 +1,6 @@
 <style>
     /* ==========================================================================
-       AI COACH WIDGET - LIQUID GLASS + CUNG ĐÌNH HUẾ (GLOSSY / TRANSLUCENT)
+       AI COACH WIDGET - COZY TEA-HOUSE (warm glass, cream & terracotta)
        Dùng chung token với index_new.css (--royal-*, --glass-*, --liquid-*).
        Mọi selector đều nằm trong #ai-coach-widget để không đụng .btn / .form-control
        / .card toàn site. Có fallback nếu biến site chưa được nạp.
@@ -12,24 +12,24 @@
          - Chữ vẫn đủ tương phản nhờ lớp tint tối nhẹ phía sau bong bóng chat.
        ========================================================================== */
     #ai-coach-widget {
-        --aic-red: var(--royal-red, #8a1515);
-        --aic-red-bright: var(--royal-red-dark, #b72222);
-        --aic-red-light: var(--royal-red-light, #e63946);
-        --aic-red-deep: #5c0a0a;
-        --aic-gold: var(--royal-gold, #ffd700);
-        --aic-gold-soft: var(--royal-gold-light, #fff2cc);
-        --aic-ink: var(--royal-bg, #0b0c10);
+        --aic-red: var(--royal-red, #a8402c);
+        --aic-red-bright: var(--royal-red-dark, #c4513a);
+        --aic-red-light: var(--royal-red-light, #ee7a5f);
+        --aic-red-deep: #4a1c12;
+        --aic-gold: var(--royal-gold, #ffc861);
+        --aic-gold-soft: var(--royal-gold-light, #fff1d6);
+        --aic-ink: var(--royal-bg, #1f110c);
         --aic-wood: var(--royal-wood, #4a2511);
 
         /* Kính: alpha thấp = trong hơn */
-        --aic-glass: rgba(16, 9, 9, 0.42);
-        --aic-glass-strong: rgba(16, 9, 9, 0.58);
-        --aic-blur: blur(22px) saturate(170%);
-        --aic-border: var(--glass-border, rgba(255, 215, 0, 0.55));
-        --aic-line: rgba(255, 215, 0, 0.2);
+        --aic-glass: rgba(46, 26, 19, 0.72);
+        --aic-glass-strong: rgba(46, 26, 19, 0.86);
+        --aic-blur: blur(20px) saturate(140%);
+        --aic-border: var(--glass-border, rgba(255, 200, 97, 0.55));
+        --aic-line: rgba(255, 200, 97, 0.2);
         --aic-edge: rgba(255, 255, 255, 0.55);   /* viền sáng phía trên */
-        --aic-gloss: linear-gradient(180deg, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.08) 48%, rgba(255, 255, 255, 0) 52%);
-        --aic-ease: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        --aic-gloss: linear-gradient(180deg, rgba(255, 241, 214, 0.2) 0%, rgba(255, 241, 214, 0.05) 48%, rgba(255, 255, 255, 0) 52%);
+        --aic-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
 
         /* Góc DƯỚI BÊN TRÁI: tách khỏi cụm Zalo / Online Counter / To-top ở góc phải */
         position: fixed;
@@ -70,32 +70,32 @@
         width: 62px;
         height: 62px;
         border-radius: 50%;
-        border: 1.5px solid rgba(255, 215, 0, 0.75);
+        border: 1.5px solid rgba(255, 200, 97, 0.75);
         border-top-color: rgba(255, 255, 255, 0.85);
         color: var(--aic-gold-soft);
         font-size: 25px;
         cursor: pointer;
         background:
-            radial-gradient(circle at 50% 120%, rgba(255, 215, 0, 0.35) 0%, rgba(255, 215, 0, 0) 55%),
-            linear-gradient(145deg, rgba(230, 57, 70, 0.62) 0%, rgba(138, 21, 21, 0.58) 55%, rgba(92, 10, 10, 0.7) 100%);
+            radial-gradient(circle at 50% 120%, rgba(255, 200, 97, 0.35) 0%, rgba(255, 200, 97, 0) 55%),
+            linear-gradient(145deg, rgba(238, 122, 95, 0.62) 0%, rgba(168, 64, 44, 0.58) 55%, rgba(110, 38, 26, 0.7) 100%);
         backdrop-filter: blur(14px) saturate(180%);
         -webkit-backdrop-filter: blur(14px) saturate(180%);
         box-shadow:
-            0 10px 28px rgba(0, 0, 0, 0.55),
-            0 0 22px rgba(255, 215, 0, 0.3),
+            0 10px 28px rgba(20, 8, 4, 0.55),
+            0 0 22px rgba(255, 200, 97, 0.3),
             inset 0 2px 6px rgba(255, 255, 255, 0.55),
-            inset 0 -8px 14px rgba(0, 0, 0, 0.3),
-            inset 0 0 18px rgba(255, 215, 0, 0.18);
+            inset 0 -8px 14px rgba(20, 8, 4, 0.3),
+            inset 0 0 18px rgba(255, 200, 97, 0.18);
         transition: transform 0.4s var(--aic-ease), box-shadow 0.4s ease;
     }
     #ai-chat-btn:hover {
         transform: translateY(-3px) scale(1.08);
         box-shadow:
-            0 16px 34px rgba(0, 0, 0, 0.65),
-            0 0 30px rgba(255, 215, 0, 0.6),
+            0 16px 34px rgba(20, 8, 4, 0.65),
+            0 0 30px rgba(255, 200, 97, 0.6),
             inset 0 2px 8px rgba(255, 255, 255, 0.7),
-            inset 0 -8px 14px rgba(0, 0, 0, 0.3),
-            inset 0 0 22px rgba(255, 215, 0, 0.28);
+            inset 0 -8px 14px rgba(20, 8, 4, 0.3),
+            inset 0 0 22px rgba(255, 200, 97, 0.28);
     }
     #ai-chat-btn:active {
         transform: scale(0.95);
@@ -128,7 +128,7 @@
     #ai-chat-btn .aic-orb-icon {
         position: relative;
         z-index: 1;
-        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 6px rgba(255, 215, 0, 0.35));
+        filter: drop-shadow(0 2px 4px rgba(20, 8, 4, 0.55)) drop-shadow(0 0 6px rgba(255, 200, 97, 0.35));
     }
 
     /* Vòng xung vàng - chỉ chạy tới khi khách mở chat lần đầu */
@@ -141,9 +141,9 @@
         animation: aicPulse 2.4s ease-out infinite;
     }
     @keyframes aicPulse {
-        0%   { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.6); }
-        70%  { box-shadow: 0 0 0 18px rgba(255, 215, 0, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        0%   { box-shadow: 0 0 0 0 rgba(255, 200, 97, 0.6); }
+        70%  { box-shadow: 0 0 0 18px rgba(255, 200, 97, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(255, 200, 97, 0); }
     }
 
     .ai-btn-badge {
@@ -153,7 +153,7 @@
         z-index: 2;
         background:
             linear-gradient(180deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 55%),
-            linear-gradient(135deg, rgba(255, 242, 204, 0.92) 0%, rgba(255, 215, 0, 0.9) 55%, rgba(217, 164, 0, 0.9) 100%);
+            linear-gradient(135deg, rgba(255, 241, 214, 0.92) 0%, rgba(255, 200, 97, 0.9) 55%, rgba(217, 164, 0, 0.9) 100%);
         backdrop-filter: blur(6px);
         -webkit-backdrop-filter: blur(6px);
         color: var(--aic-red-deep);
@@ -163,7 +163,7 @@
         padding: 3px 7px;
         border-radius: 999px;
         border: 1px solid rgba(255, 255, 255, 0.7);
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45), 0 0 10px rgba(255, 215, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.85);
+        box-shadow: 0 3px 8px rgba(20, 8, 4, 0.45), 0 0 10px rgba(255, 200, 97, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.85);
         letter-spacing: 0.5px;
     }
 
@@ -181,22 +181,22 @@
         flex-direction: column;
         overflow: hidden;
         isolation: isolate;
-        border-radius: 20px;
+        border-radius: 24px;
         background:
             linear-gradient(155deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.03) 30%, rgba(255, 255, 255, 0) 55%),
-            radial-gradient(120% 70% at 0% 0%, rgba(138, 21, 21, 0.3), transparent 60%),
-            radial-gradient(100% 60% at 100% 100%, rgba(255, 215, 0, 0.1), transparent 60%),
+            radial-gradient(120% 70% at 0% 0%, rgba(168, 64, 44, 0.3), transparent 60%),
+            radial-gradient(100% 60% at 100% 100%, rgba(255, 200, 97, 0.1), transparent 60%),
             var(--aic-glass);
         backdrop-filter: var(--aic-blur);
         -webkit-backdrop-filter: var(--aic-blur);
-        border: 1px solid rgba(255, 215, 0, 0.42);
+        border: 1px solid rgba(255, 200, 97, 0.42);
         border-top: 1.5px solid var(--aic-edge);
         box-shadow:
-            0 12px 40px rgba(0, 0, 0, 0.55),
-            0 28px 70px rgba(0, 0, 0, 0.4),
-            0 0 30px rgba(255, 215, 0, 0.1),
+            0 12px 40px rgba(20, 8, 4, 0.55),
+            0 28px 70px rgba(20, 8, 4, 0.4),
+            0 0 30px rgba(255, 200, 97, 0.1),
             inset 0 2px 18px rgba(255, 255, 255, 0.22),
-            inset 0 -1px 0 rgba(255, 215, 0, 0.25);
+            inset 0 -1px 0 rgba(255, 200, 97, 0.25);
         transform-origin: bottom left;
         animation: aicOpen 0.4s var(--aic-ease);
     }
@@ -209,7 +209,7 @@
         right: 0;
         height: 34%;
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%);
-        border-radius: 20px 20px 60% 60% / 20px 20px 22% 22%;
+        border-radius: 24px 24px 60% 60% / 24px 24px 22% 22%;
         pointer-events: none;
         z-index: 0;
     }
@@ -232,9 +232,9 @@
         padding: 12px 14px;
         background:
             var(--aic-gloss),
-            linear-gradient(135deg, rgba(183, 34, 34, 0.62) 0%, rgba(92, 10, 10, 0.55) 100%);
-        border-bottom: 1px solid rgba(255, 215, 0, 0.4);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -6px 14px rgba(255, 215, 0, 0.1);
+            linear-gradient(135deg, rgba(196, 81, 58, 0.62) 0%, rgba(110, 38, 26, 0.55) 100%);
+        border-bottom: 1px solid rgba(255, 200, 97, 0.4);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -6px 14px rgba(255, 200, 97, 0.1);
         flex-shrink: 0;
     }
     #ai-coach-widget .chat-header > * {
@@ -259,21 +259,21 @@
         color: var(--aic-gold);
         background:
             radial-gradient(ellipse 70% 40% at 50% 15%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0)),
-            rgba(11, 12, 16, 0.55);
+            rgba(46, 26, 19, 0.7);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
-        border: 1.5px solid rgba(255, 215, 0, 0.85);
-        box-shadow: 0 0 14px rgba(255, 215, 0, 0.45), inset 0 1px 4px rgba(255, 255, 255, 0.35);
+        border: 1.5px solid rgba(255, 200, 97, 0.85);
+        box-shadow: 0 0 14px rgba(255, 200, 97, 0.45), inset 0 1px 4px rgba(255, 255, 255, 0.35);
     }
     .aic-title-text {
-        font-family: "Texturina", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC", serif;
-        font-size: 15px;
-        font-weight: 600;
+        font-family: "Fraunces", "Texturina", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC", serif;
+        font-size: 16px;
+        font-weight: 700;
         line-height: 1.2;
-        letter-spacing: 1px;
-        text-transform: uppercase;
+        letter-spacing: 0.1px;
+        text-transform: none;
         color: var(--aic-gold);
-        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.75), 0 0 12px rgba(255, 215, 0, 0.4);
+        text-shadow: 1px 1px 3px rgba(20, 8, 4, 0.75), 0 0 12px rgba(255, 200, 97, 0.4);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -291,9 +291,9 @@
         color: var(--aic-red-deep);
         background:
             linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 55%),
-            linear-gradient(135deg, rgba(255, 242, 204, 0.92), rgba(255, 215, 0, 0.9) 55%, rgba(217, 164, 0, 0.9));
+            linear-gradient(135deg, rgba(255, 241, 214, 0.92), rgba(255, 200, 97, 0.9) 55%, rgba(217, 164, 0, 0.9));
         border: 1px solid rgba(255, 255, 255, 0.6);
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 215, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.85);
+        box-shadow: 0 2px 6px rgba(20, 8, 4, 0.4), 0 0 10px rgba(255, 200, 97, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.85);
     }
 
     #close-chat {
@@ -307,8 +307,8 @@
         align-items: center;
         justify-content: center;
         border-radius: 50%;
-        border: 1px solid rgba(255, 215, 0, 0.45);
-        background: var(--aic-gloss), rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 200, 97, 0.45);
+        background: var(--aic-gloss), rgba(20, 8, 4, 0.25);
         backdrop-filter: blur(6px);
         -webkit-backdrop-filter: blur(6px);
         color: var(--aic-gold-soft);
@@ -334,7 +334,7 @@
         font-size: 11.5px;
         font-weight: 500;
         color: var(--aic-gold-soft);
-        background: linear-gradient(90deg, rgba(255, 215, 0, 0.16), rgba(255, 215, 0, 0.03));
+        background: linear-gradient(90deg, rgba(255, 200, 97, 0.16), rgba(255, 200, 97, 0.03));
         border-bottom: 1px solid var(--aic-line);
         flex-shrink: 0;
     }
@@ -395,40 +395,40 @@
 
     #ai-coach-widget .aic-btn-ruby {
         color: var(--aic-gold-soft) !important;
-        background: var(--aic-gloss), linear-gradient(135deg, rgba(183, 34, 34, 0.66), rgba(92, 10, 10, 0.6));
-        border-color: rgba(255, 215, 0, 0.7);
+        background: var(--aic-gloss), linear-gradient(135deg, rgba(196, 81, 58, 0.66), rgba(110, 38, 26, 0.6));
+        border-color: rgba(255, 200, 97, 0.7);
         border-top-color: rgba(255, 255, 255, 0.6);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), inset 0 1px 6px rgba(255, 215, 0, 0.22);
+        box-shadow: 0 6px 16px rgba(20, 8, 4, 0.4), inset 0 1px 6px rgba(255, 200, 97, 0.22);
     }
     #ai-coach-widget .aic-btn-ruby:hover {
         color: #fff !important;
-        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.5), 0 0 18px rgba(255, 215, 0, 0.4), inset 0 1px 10px rgba(255, 255, 255, 0.3);
+        box-shadow: 0 10px 22px rgba(20, 8, 4, 0.5), 0 0 18px rgba(255, 200, 97, 0.4), inset 0 1px 10px rgba(255, 255, 255, 0.3);
     }
 
     #ai-coach-widget .aic-btn-gold {
         color: var(--aic-red-deep) !important;
         background:
             linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0) 52%),
-            linear-gradient(135deg, rgba(255, 242, 204, 0.88) 0%, rgba(255, 215, 0, 0.85) 50%, rgba(217, 164, 0, 0.85) 100%);
+            linear-gradient(135deg, rgba(255, 241, 214, 0.88) 0%, rgba(255, 200, 97, 0.85) 50%, rgba(217, 164, 0, 0.85) 100%);
         border-color: rgba(255, 255, 255, 0.65);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), 0 0 14px rgba(255, 215, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.85);
+        box-shadow: 0 6px 16px rgba(20, 8, 4, 0.4), 0 0 14px rgba(255, 200, 97, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.85);
         font-weight: 800;
     }
     #ai-coach-widget .aic-btn-gold:hover {
-        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.5), 0 0 22px rgba(255, 215, 0, 0.6), inset 0 1px 3px rgba(255, 255, 255, 0.95);
+        box-shadow: 0 10px 22px rgba(20, 8, 4, 0.5), 0 0 22px rgba(255, 200, 97, 0.6), inset 0 1px 3px rgba(255, 255, 255, 0.95);
     }
 
     #ai-coach-widget .aic-btn-ghost {
         color: var(--aic-gold) !important;
         background: var(--aic-gloss), rgba(255, 255, 255, 0.05);
-        border-color: rgba(255, 215, 0, 0.5);
+        border-color: rgba(255, 200, 97, 0.5);
         border-top-color: rgba(255, 255, 255, 0.5);
         box-shadow: inset 0 1px 5px rgba(255, 255, 255, 0.15);
     }
     #ai-coach-widget .aic-btn-ghost:hover {
-        background: var(--aic-gloss), rgba(255, 215, 0, 0.16);
+        background: var(--aic-gloss), rgba(255, 200, 97, 0.16);
         border-color: var(--aic-gold);
-        box-shadow: 0 0 16px rgba(255, 215, 0, 0.32), inset 0 1px 8px rgba(255, 255, 255, 0.25);
+        box-shadow: 0 0 16px rgba(255, 200, 97, 0.32), inset 0 1px 8px rgba(255, 255, 255, 0.25);
     }
 
     /* Nút nâng cấp nhỏ trong banner */
@@ -447,14 +447,14 @@
         color: var(--aic-red-deep) !important;
         background:
             linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 55%),
-            linear-gradient(135deg, rgba(255, 242, 204, 0.9) 0%, rgba(255, 215, 0, 0.88) 50%, rgba(217, 164, 0, 0.88) 100%);
+            linear-gradient(135deg, rgba(255, 241, 214, 0.9) 0%, rgba(255, 200, 97, 0.88) 50%, rgba(217, 164, 0, 0.88) 100%);
         border: 1px solid rgba(255, 255, 255, 0.6);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.85);
+        box-shadow: 0 2px 8px rgba(20, 8, 4, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.85);
         transition: transform 0.3s var(--aic-ease), box-shadow 0.3s ease;
     }
     #ai-coach-widget .btn-upgrade-pill:hover {
         transform: scale(1.06);
-        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.5), 0 0 14px rgba(255, 215, 0, 0.55), inset 0 1px 2px rgba(255, 255, 255, 0.95);
+        box-shadow: 0 3px 12px rgba(20, 8, 4, 0.5), 0 0 14px rgba(255, 200, 97, 0.55), inset 0 1px 2px rgba(255, 255, 255, 0.95);
     }
 
     /* --------------------------------------------------------------------------
@@ -470,11 +470,11 @@
         overflow-y: auto;
         /* Lưới mờ gợi bàn cờ, rất nhẹ để nền site vẫn thấy rõ */
         background:
-            linear-gradient(rgba(255, 215, 0, 0.035) 1px, transparent 1px) 0 0 / 28px 28px,
-            linear-gradient(90deg, rgba(255, 215, 0, 0.035) 1px, transparent 1px) 0 0 / 28px 28px,
-            linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.18));
+            linear-gradient(rgba(255, 200, 97, 0.035) 1px, transparent 1px) 0 0 / 28px 28px,
+            linear-gradient(90deg, rgba(255, 200, 97, 0.035) 1px, transparent 1px) 0 0 / 28px 28px,
+            linear-gradient(180deg, rgba(20, 8, 4, 0.1), rgba(20, 8, 4, 0.2));
         scrollbar-width: thin;
-        scrollbar-color: rgba(183, 34, 34, 0.8) transparent;
+        scrollbar-color: rgba(196, 81, 58, 0.8) transparent;
     }
     #ai-coach-widget .chat-body::-webkit-scrollbar {
         width: 8px;
@@ -485,8 +485,8 @@
         border: 0;
     }
     #ai-coach-widget .chat-body::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, rgba(183, 34, 34, 0.85), rgba(92, 10, 10, 0.85));
-        border: 1px solid rgba(255, 215, 0, 0.55);
+        background: linear-gradient(180deg, rgba(196, 81, 58, 0.85), rgba(110, 38, 26, 0.85));
+        border: 1px solid rgba(255, 200, 97, 0.55);
         border-radius: 6px;
     }
 
@@ -494,8 +494,8 @@
         position: relative;
         max-width: 88%;
         padding: 10px 14px;
-        font-size: 13.5px;
-        line-height: 1.55;
+        font-size: 14px;
+        line-height: 1.6;
         word-wrap: break-word;
         backdrop-filter: blur(12px) saturate(160%);
         -webkit-backdrop-filter: blur(12px) saturate(160%);
@@ -509,16 +509,16 @@
     /* AI: kính khói + vạch vàng bên trái + viền sáng phía trên */
     #ai-coach-widget .msg-ai {
         align-self: flex-start;
-        color: #fbf0d6;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+        color: #fff1d6;
+        text-shadow: 0 1px 2px rgba(20, 8, 4, 0.55);
         background:
             linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.03) 45%, rgba(255, 255, 255, 0) 100%),
-            rgba(14, 10, 10, 0.4);
-        border: 1px solid rgba(255, 215, 0, 0.28);
+            rgba(40, 22, 16, 0.55);
+        border: 1px solid rgba(255, 200, 97, 0.28);
         border-top-color: rgba(255, 255, 255, 0.4);
-        border-left: 3px solid rgba(255, 215, 0, 0.85);
-        border-radius: 14px 14px 14px 4px;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), inset 0 1px 8px rgba(255, 255, 255, 0.1);
+        border-left: 3px solid rgba(255, 200, 97, 0.85);
+        border-radius: 18px 18px 18px 6px;
+        box-shadow: 0 6px 18px rgba(20, 8, 4, 0.35), inset 0 1px 8px rgba(255, 255, 255, 0.1);
     }
     #ai-coach-widget .msg-ai strong,
     #ai-coach-widget .msg-ai b {
@@ -549,8 +549,8 @@
         border-radius: 6px;
         font-size: 12.5px;
         color: var(--aic-gold);
-        background: rgba(0, 0, 0, 0.35);
-        border: 1px solid rgba(255, 215, 0, 0.25);
+        background: rgba(20, 8, 4, 0.35);
+        border: 1px solid rgba(255, 200, 97, 0.25);
     }
 
     /* Người dùng: ruby kính bóng, viền vàng mảnh */
@@ -559,12 +559,12 @@
         color: #fff;
         background:
             linear-gradient(180deg, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.06) 48%, rgba(255, 255, 255, 0) 52%),
-            linear-gradient(135deg, rgba(230, 57, 70, 0.6) 0%, rgba(138, 21, 21, 0.58) 55%, rgba(92, 10, 10, 0.62) 100%);
-        border: 1px solid rgba(255, 215, 0, 0.55);
+            linear-gradient(135deg, rgba(238, 122, 95, 0.6) 0%, rgba(168, 64, 44, 0.58) 55%, rgba(110, 38, 26, 0.62) 100%);
+        border: 1px solid rgba(255, 200, 97, 0.55);
         border-top-color: rgba(255, 255, 255, 0.55);
-        border-radius: 14px 14px 4px 14px;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4), inset 0 1px 8px rgba(255, 215, 0, 0.22);
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+        border-radius: 18px 18px 6px 18px;
+        box-shadow: 0 6px 18px rgba(20, 8, 4, 0.4), inset 0 1px 8px rgba(255, 200, 97, 0.22);
+        text-shadow: 0 1px 2px rgba(20, 8, 4, 0.45);
     }
 
     /* Thẻ chào khách chưa đăng nhập / yêu cầu VIP */
@@ -575,7 +575,7 @@
         text-align: center;
         padding: 18px 16px;
         border-left-width: 1px;
-        border-left-color: rgba(255, 215, 0, 0.28);
+        border-left-color: rgba(255, 200, 97, 0.28);
         border-radius: 16px;
         border-top: 1.5px solid rgba(255, 255, 255, 0.5);
     }
@@ -592,26 +592,26 @@
         color: var(--aic-gold);
         background:
             radial-gradient(ellipse 70% 40% at 50% 14%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0)),
-            radial-gradient(circle at 50% 110%, rgba(255, 215, 0, 0.25), transparent 60%),
-            rgba(92, 10, 10, 0.5);
-        border: 2px solid rgba(255, 215, 0, 0.85);
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), inset 0 2px 6px rgba(255, 255, 255, 0.3);
+            radial-gradient(circle at 50% 110%, rgba(255, 200, 97, 0.25), transparent 60%),
+            rgba(110, 38, 26, 0.5);
+        border: 2px solid rgba(255, 200, 97, 0.85);
+        box-shadow: 0 0 20px rgba(255, 200, 97, 0.4), inset 0 2px 6px rgba(255, 255, 255, 0.3);
     }
     .aic-card-title {
         display: block;
-        font-family: "Texturina", serif;
+        font-family: "Fraunces", "Texturina", serif;
         font-size: 16px;
         font-weight: 600;
-        letter-spacing: 1px;
-        text-transform: uppercase;
+        letter-spacing: 0.1px;
+        text-transform: none;
         color: var(--aic-gold);
-        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7), 0 0 10px rgba(255, 215, 0, 0.3);
+        text-shadow: 1px 1px 3px rgba(20, 8, 4, 0.7), 0 0 10px rgba(255, 200, 97, 0.3);
     }
     .aic-card-text {
         margin: 6px 0 14px;
         font-size: 12.5px;
         line-height: 1.55;
-        color: rgba(255, 242, 204, 0.85);
+        color: rgba(255, 241, 214, 0.85);
     }
     .aic-card-actions {
         display: flex;
@@ -632,9 +632,9 @@
         gap: 6px;
         margin-top: 10px;
         padding-top: 8px;
-        border-top: 1px solid rgba(255, 215, 0, 0.25);
+        border-top: 1px solid rgba(255, 200, 97, 0.25);
         font-size: 12px;
-        color: rgba(255, 242, 204, 0.78);
+        color: rgba(255, 241, 214, 0.78);
     }
     .aic-upsell .fa-bolt {
         color: var(--aic-gold);
@@ -646,7 +646,7 @@
         align-items: center;
         gap: 8px;
         font-size: 12.5px;
-        color: rgba(255, 242, 204, 0.85);
+        color: rgba(255, 241, 214, 0.85);
     }
     .aic-dots {
         display: inline-flex;
@@ -656,8 +656,8 @@
         width: 7px;
         height: 7px;
         border-radius: 50%;
-        background: radial-gradient(circle at 35% 30%, #fff2cc, var(--aic-gold) 60%, #b88600);
-        box-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
+        background: radial-gradient(circle at 35% 30%, #fff1d6, var(--aic-gold) 60%, #b88600);
+        box-shadow: 0 0 8px rgba(255, 200, 97, 0.7);
         animation: aicDot 1.1s ease-in-out infinite;
     }
     .aic-dots i:nth-child(2) { animation-delay: 0.15s; }
@@ -675,8 +675,8 @@
         flex-wrap: wrap;
         gap: 6px;
         padding: 9px 12px;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(0, 0, 0, 0.15));
-        border-top: 1px solid rgba(255, 215, 0, 0.22);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(20, 8, 4, 0.15));
+        border-top: 1px solid rgba(255, 200, 97, 0.22);
         flex-shrink: 0;
     }
     #ai-coach-widget .quick-btn {
@@ -694,9 +694,9 @@
         font-weight: 600;
         line-height: 1.2;
         color: var(--aic-gold-soft);
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        text-shadow: 0 1px 2px rgba(20, 8, 4, 0.5);
         background: var(--aic-gloss), rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 215, 0, 0.38);
+        border: 1px solid rgba(255, 200, 97, 0.38);
         border-top-color: rgba(255, 255, 255, 0.45);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
@@ -710,10 +710,10 @@
     }
     #ai-coach-widget .quick-btn:hover {
         color: var(--aic-gold);
-        background: var(--aic-gloss), rgba(255, 215, 0, 0.16);
+        background: var(--aic-gloss), rgba(255, 200, 97, 0.16);
         border-color: var(--aic-gold);
         transform: translateY(-2px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 0 0 14px rgba(255, 215, 0, 0.3), inset 0 1px 8px rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 16px rgba(20, 8, 4, 0.4), 0 0 14px rgba(255, 200, 97, 0.3), inset 0 1px 8px rgba(255, 255, 255, 0.2);
     }
 
     /* --------------------------------------------------------------------------
@@ -724,8 +724,8 @@
         align-items: center;
         gap: 8px;
         padding: 10px 12px 12px;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.22));
-        border-top: 1px solid rgba(255, 215, 0, 0.3);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(20, 8, 4, 0.22));
+        border-top: 1px solid rgba(255, 200, 97, 0.3);
         flex-shrink: 0;
     }
 
@@ -738,23 +738,23 @@
         border-radius: 999px;
         font-family: inherit;
         font-size: 13.5px;
-        color: #2a1508;
+        color: #3a1f14;
         background:
             linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 55%),
-            rgba(255, 242, 204, 0.82) !important;
+            rgba(255, 241, 214, 0.82) !important;
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.6) !important;
-        box-shadow: inset 0 2px 5px rgba(74, 37, 17, 0.22), 0 2px 8px rgba(0, 0, 0, 0.25);
+        box-shadow: inset 0 2px 5px rgba(74, 37, 17, 0.22), 0 2px 8px rgba(20, 8, 4, 0.25);
         transition: box-shadow 0.25s ease, border-color 0.25s ease;
     }
     #ai-coach-widget #chat-input::placeholder {
-        color: rgba(74, 37, 17, 0.6);
+        color: rgba(58, 31, 20, 0.55);
     }
     #ai-coach-widget #chat-input:focus {
         outline: none;
         border-color: var(--aic-gold) !important;
-        box-shadow: 0 0 0 0.22rem rgba(212, 175, 55, 0.35), 0 0 18px rgba(255, 215, 0, 0.4) !important;
+        box-shadow: 0 0 0 0.22rem rgba(255, 190, 90, 0.35), 0 0 18px rgba(255, 200, 97, 0.4) !important;
     }
 
     #ai-coach-widget #send-chat {
@@ -775,14 +775,14 @@
         color: var(--aic-red-deep);
         background:
             linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0) 52%),
-            linear-gradient(145deg, rgba(255, 242, 204, 0.9) 0%, rgba(255, 215, 0, 0.88) 50%, rgba(201, 151, 10, 0.88) 100%);
-        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4), 0 0 14px rgba(255, 215, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.9);
+            linear-gradient(145deg, rgba(255, 241, 214, 0.9) 0%, rgba(255, 200, 97, 0.88) 50%, rgba(201, 151, 10, 0.88) 100%);
+        box-shadow: 0 6px 14px rgba(20, 8, 4, 0.4), 0 0 14px rgba(255, 200, 97, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.9);
         cursor: pointer;
         transition: transform 0.3s var(--aic-ease), box-shadow 0.3s ease;
     }
     #ai-coach-widget #send-chat:hover {
         transform: scale(1.1) rotate(-8deg);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 0 22px rgba(255, 215, 0, 0.6), inset 0 1px 3px rgba(255, 255, 255, 1);
+        box-shadow: 0 10px 20px rgba(20, 8, 4, 0.5), 0 0 22px rgba(255, 200, 97, 0.6), inset 0 1px 3px rgba(255, 255, 255, 1);
     }
     #ai-coach-widget #send-chat:active {
         transform: scale(0.95);
@@ -792,8 +792,8 @@
     #ai-coach-widget .chat-footer-guest {
         justify-content: center;
         font-size: 12px;
-        color: rgba(255, 242, 204, 0.85);
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        color: rgba(255, 241, 214, 0.85);
+        text-shadow: 0 1px 2px rgba(20, 8, 4, 0.5);
     }
     #ai-coach-widget .chat-footer-guest .fa-lock {
         color: var(--aic-gold);
@@ -813,10 +813,10 @@
        -------------------------------------------------------------------------- */
     @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
         #ai-chat-box {
-            background-color: rgba(16, 9, 9, 0.9);
+            background-color: rgba(46, 26, 19, 0.96);
         }
         #ai-coach-widget .msg-ai {
-            background-color: rgba(30, 20, 20, 0.85);
+            background-color: rgba(66, 38, 28, 0.9);
         }
     }
 
@@ -848,6 +848,15 @@
         #ai-coach-widget #send-chat {
             transition: none;
         }
+    }
+
+    @media (prefers-reduced-transparency: reduce) {
+        #ai-chat-box, #ai-chat-btn, #ai-coach-widget .msg, #ai-coach-widget .aic-btn,
+        #ai-coach-widget .quick-btn, #ai-coach-widget #chat-input {
+            -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+        }
+        #ai-chat-box { background-color: rgba(46, 26, 19, 0.97); }
     }
 </style>
 
