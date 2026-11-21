@@ -8,7 +8,7 @@
    Board container
    -------------------------------------------------------------------------- */
 #ban-co {
-    touch-action: none !important;
+    /* touch-action: none !important; */
     pointer-events: all;
     width: 100%;
     max-width: 380px;
