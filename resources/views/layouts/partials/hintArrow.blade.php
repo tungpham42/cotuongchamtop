@@ -77,7 +77,7 @@
             ' ' + (baseX + ox).toFixed(1) + ' ' + (baseY + oy).toFixed(1);
 
         const pathD = pathFor(0, 0);
-        // Glossy highlight rides slightly off-centre, like light on wet glass.
+        // Soft highlight rides slightly off-centre, like lantern light on lacquer.
         const glossD = pathFor(-px * shaftW * 0.2, -py * shaftW * 0.2);
 
         const svgNS = 'http://www.w3.org/2000/svg';
@@ -95,7 +95,7 @@
             viewBox: '0 0 ' + b.width + ' ' + b.height
         });
         svg.style.cssText = 'position:absolute;left:0;top:0;pointer-events:none;z-index:50;overflow:visible;' +
-            'filter:drop-shadow(0 6px 10px rgba(0,0,0,.7)) drop-shadow(0 0 14px rgba(255,215,0,.55));';
+            'filter:drop-shadow(0 6px 10px rgba(20,8,4,.6)) drop-shadow(0 0 14px rgba(255,190,90,.5));';
 
         const style = el('style', {}, svg);
         style.textContent =
@@ -114,7 +114,7 @@
             '#hint-arrow .ha-spark{transform-box:fill-box;transform-origin:center;animation:ha-twinkle 1.6s .9s ease-in-out infinite}' +
             '@media (prefers-reduced-motion:reduce){#hint-arrow *{animation:none!important}#hint-arrow .ha-shaft{stroke-dashoffset:0!important}#hint-arrow .ha-sheen{display:none}}';
 
-        // Gradients run along the arrow: ruby glass body, liquid gold trim.
+        // Gradients run along the arrow: terracotta lacquer body, honey trim.
         const defs = el('defs', {}, svg);
         const lin = (id, stops) => {
             const g = el('linearGradient', {
@@ -122,38 +122,38 @@
             }, defs);
             stops.forEach(([o, c]) => el('stop', { offset: o, 'stop-color': c }, g));
         };
-        lin('ha-ruby', [['0%', '#5c0a0a'], ['55%', '#b72222'], ['100%', '#e63946']]);
-        lin('ha-gold', [['0%', '#b89020'], ['50%', '#ffd700'], ['100%', '#fff2cc']]);
+        lin('ha-ruby', [['0%', '#7d2e1e'], ['55%', '#c4513a'], ['100%', '#ee7a5f']]);
+        lin('ha-gold', [['0%', '#d9962e'], ['50%', '#ffc861'], ['100%', '#fff1d6']]);
 
         const radial = el('radialGradient', { id: 'ha-aura' }, defs);
-        el('stop', { offset: '0%', 'stop-color': 'rgba(255,215,0,.35)' }, radial);
-        el('stop', { offset: '100%', 'stop-color': 'rgba(138,21,21,.15)' }, radial);
+        el('stop', { offset: '0%', 'stop-color': 'rgba(255,200,97,.35)' }, radial);
+        el('stop', { offset: '100%', 'stop-color': 'rgba(168,64,44,.18)' }, radial);
 
         // Target: royal gold aura + pulsing rings.
         const ringR = size * 0.4;
-        el('circle', { cx: x2, cy: y2, r: ringR, fill: 'url(#ha-aura)', stroke: '#ffd700', 'stroke-width': Math.max(2, size * 0.04) }, svg);
+        el('circle', { cx: x2, cy: y2, r: ringR, fill: 'url(#ha-aura)', stroke: '#ffc861', 'stroke-width': Math.max(2, size * 0.04) }, svg);
         [0, 1].forEach(i => {
             el('circle', {
                 class: 'ha-ring' + (i ? ' ha-ring2' : ''),
                 cx: x2, cy: y2, r: ringR,
-                fill: 'none', stroke: '#ffd700',
+                fill: 'none', stroke: '#ffc861',
                 'stroke-width': Math.max(2, size * 0.05)
             }, svg);
         });
 
-        // Shaft: gold trim -> dark gap -> ruby glass body.
+        // Shaft: honey trim -> cocoa gap -> terracotta body.
         const shaft = (stroke, w, extra) => el('path', Object.assign({
             d: pathD, pathLength: 1, fill: 'none', stroke,
             'stroke-width': w, 'stroke-linecap': 'round', class: 'ha-shaft'
         }, extra || {}), svg);
 
         shaft('url(#ha-gold)', shaftW + trim * 2.6);
-        shaft('#0b0c10', shaftW + trim * 0.8);
+        shaft('#2a150e', shaftW + trim * 0.8);
         shaft('url(#ha-ruby)', shaftW);
 
         // Glossy specular streak.
         el('path', {
-            d: glossD, pathLength: 1, fill: 'none', stroke: 'rgba(255,255,255,.55)',
+            d: glossD, pathLength: 1, fill: 'none', stroke: 'rgba(255,246,228,.5)',
             'stroke-width': shaftW * 0.24, 'stroke-linecap': 'round', class: 'ha-shaft'
         }, svg);
 
@@ -163,13 +163,13 @@
             'stroke-width': shaftW * 0.85, 'stroke-linecap': 'butt', class: 'ha-sheen'
         }, svg);
 
-        // Start marker: gold coin with a ruby gem.
+        // Start marker: honey coin with an ember gem.
         const startG = el('g', { class: 'ha-pop' }, svg);
-        el('circle', { cx: x1, cy: y1, r: size * 0.18, fill: '#0b0c10', stroke: 'url(#ha-gold)', 'stroke-width': trim * 1.4 }, startG);
-        el('circle', { cx: x1, cy: y1, r: size * 0.1, fill: '#e63946' }, startG);
-        el('circle', { cx: x1 - size * 0.035, cy: y1 - size * 0.035, r: size * 0.03, fill: 'rgba(255,255,255,.8)' }, startG);
+        el('circle', { cx: x1, cy: y1, r: size * 0.18, fill: '#2a150e', stroke: 'url(#ha-gold)', 'stroke-width': trim * 1.4 }, startG);
+        el('circle', { cx: x1, cy: y1, r: size * 0.1, fill: '#ee7a5f' }, startG);
+        el('circle', { cx: x1 - size * 0.035, cy: y1 - size * 0.035, r: size * 0.03, fill: '#fff6e4' }, startG);
 
-        // Arrowhead: faceted ruby gem with gold trim, pops in then bobs toward the target.
+        // Arrowhead: faceted ember gem with honey trim, pops in then bobs toward the target.
         const bob = el('g', { class: 'ha-bob' }, svg);
         const headG = el('g', { class: 'ha-pop' }, bob);
         const base = [(baseL[0] + baseR[0]) / 2, (baseL[1] + baseR[1]) / 2];
@@ -181,7 +181,7 @@
         // Lit facet (half of the head) for the glossy, cut-gem look.
         el('polygon', {
             points: pts([[tipX, tipY], baseL, base]),
-            fill: 'rgba(255,255,255,.28)'
+            fill: 'rgba(255,246,228,.26)'
         }, headG);
 
         // Twinkling sparkle on the tip.
@@ -190,7 +190,7 @@
         el('path', {
             class: 'ha-spark',
             d: 'M0 ' + (-sparkR) + ' Q0 0 ' + sparkR + ' 0 Q0 0 0 ' + sparkR + ' Q0 0 ' + (-sparkR) + ' 0 Q0 0 0 ' + (-sparkR) + 'Z',
-            fill: '#fff'
+            fill: '#fff6e4'
         }, sparkG);
 
         boardEl.appendChild(svg);
@@ -211,8 +211,8 @@
 
     function showVipUpsellDialog(message) {
         bootbox.dialog({
-            title: '<i class="fas fa-crown text-warning"></i> {{ __("Nâng cấp Kỳ Thủ VIP") }}',
-            message: '<div class="text-center py-2"><p>' + (message || '{{ __("Bạn đã dùng hết lượt gợi ý miễn phí hôm nay.") }}') + '</p><a href="{{ localized_url("app.vip") ?? "/vip" }}" class="btn btn-warning font-weight-bold text-dark mt-2 shadow" style="border-radius: 20px;"><i class="fas fa-bolt"></i> {{ __("Nâng cấp VIP (Chỉ từ 19k)") }}</a></div>',
+            title: '<i class="fas fa-crown"></i> {{ __("Nâng cấp Kỳ Thủ VIP") }}',
+            message: '<div class="text-center py-2"><p>' + (message || '{{ __("Bạn đã dùng hết lượt gợi ý miễn phí hôm nay.") }}') + '</p><a href="{{ localized_url("app.vip") ?? "/vip" }}" class="btn btn-warning font-weight-bold mt-2" style="border-radius: 999px;"><i class="fas fa-bolt"></i> {{ __("Nâng cấp VIP (Chỉ từ 19k)") }}</a></div>',
             size: 'small',
             backdrop: true,
             centerVertical: true,
