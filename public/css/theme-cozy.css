@@ -1,0 +1,957 @@
+/* ==========================================================================
+   THEME COZY — "Quán trà đêm bên bàn cờ"
+   A warm, lantern-lit redesign layered on top of index_new.css / ban-co.css.
+   Load LAST:  <link href="{{ asset('css/theme-cozy.css?v=1') }}" rel="stylesheet">
+
+   Idea: a cosy tea-house at dusk. Cocoa-brown wood, terracotta lacquer, honey
+   gold lantern light and cream paper. Softer corners, friendlier type, gentle
+   motion. Everything is driven by the same :root tokens index_new.css already
+   uses, so existing components inherit the new look automatically; the rules
+   below then refine the components that need more than a recolour.
+   Board pieces / squares / game logic selectors are intentionally untouched.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Design tokens
+   -------------------------------------------------------------------------- */
+:root {
+    /* Lacquer & lantern palette (same names as before → whole site re-themes) */
+    --royal-red: #a8402c;
+    --royal-red-dark: #c4513a;
+    --royal-red-light: #ee7a5f;
+    --royal-gold: #ffc861;
+    --royal-gold-light: #fff1d6;
+    --royal-bg: #1f110c;
+    --royal-wood: #6b3a22;
+
+    /* Warm glass */
+    --glass-blur: blur(18px) saturate(1.25);
+    --glass-bg-dark: rgba(46, 26, 19, 0.78);
+    --glass-bg-red: rgba(160, 58, 40, 0.8);
+    --glass-border: rgba(255, 200, 97, 0.32);
+    --liquid-highlight: rgba(255, 236, 200, 0.22);
+    --liquid-shadow: 0 10px 30px rgba(18, 7, 4, 0.55);
+
+    /* Page background (artwork stays; tint is warmer + a touch lighter) */
+    --xq-bg-color: #3b1d14;
+
+    /* New cozy tokens */
+    --cozy-cream: #fff6e4;
+    --cozy-paper: #f7e7c6;
+    --cozy-ink: #3a1f14;
+    --cozy-ember: #ff8a4c;
+    --cozy-sage: #7fb069;
+    --cozy-sage-dark: #4f7a45;
+    --cozy-radius: 18px;
+    --cozy-radius-sm: 12px;
+    --cozy-radius-pill: 999px;
+    --cozy-shadow-soft: 0 6px 18px rgba(20, 8, 4, 0.35);
+    --cozy-shadow-lift: 0 16px 36px rgba(20, 8, 4, 0.5);
+    --cozy-glow: 0 0 22px rgba(255, 190, 90, 0.28);
+    --cozy-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --cozy-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* --------------------------------------------------------------------------
+   2. Page atmosphere: lantern glow, paper grain, warm vignette
+   -------------------------------------------------------------------------- */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    color: var(--cozy-cream);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        radial-gradient(
+            ellipse 55% 40% at 12% 0%,
+            rgba(255, 170, 70, 0.28),
+            transparent 70%
+        ),
+        radial-gradient(
+            ellipse 50% 40% at 92% 6%,
+            rgba(238, 122, 95, 0.22),
+            transparent 70%
+        ),
+        radial-gradient(
+            ellipse 90% 60% at 50% 115%,
+            rgba(20, 8, 4, 0.7),
+            transparent 70%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(58, 29, 20, 0.35),
+            rgba(30, 14, 9, 0.55)
+        );
+    animation: cozyLantern 9s ease-in-out infinite alternate;
+}
+
+/* Fine paper grain – cheap inline SVG noise */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.07;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 .9  0 0 0 0 .7  0 0 0 .8 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+@keyframes cozyLantern {
+    from {
+        opacity: 0.85;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+a {
+    color: var(--royal-gold);
+    transition: color 0.25s var(--cozy-ease);
+}
+a:hover {
+    color: var(--cozy-ember);
+}
+
+p,
+li,
+label {
+    color: inherit;
+}
+
+/* Headings: soft serif, sentence case, warm */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+    font-family:
+        "Fraunces", "Texturina", "Noto Sans JP", "Noto Sans KR",
+        "Noto Sans SC", serif !important;
+    text-transform: none;
+    letter-spacing: 0.1px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--royal-gold);
+    text-shadow: 0 2px 10px rgba(20, 8, 4, 0.55);
+}
+
+/* Accessible, friendly focus ring everywhere */
+:focus-visible {
+    outline: 3px solid rgba(255, 200, 97, 0.85);
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+
+::selection {
+    background: var(--royal-gold);
+    color: var(--cozy-ink);
+    text-shadow: none;
+}
+::-moz-selection {
+    background: var(--royal-gold);
+    color: var(--cozy-ink);
+    text-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   3. Scrollbar
+   -------------------------------------------------------------------------- */
+html,
+body {
+    scrollbar-color: #b8553a var(--royal-bg);
+}
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+::-webkit-scrollbar-track {
+    background: var(--royal-bg);
+    border-left: 1px solid rgba(255, 200, 97, 0.12);
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
+}
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #c4513a, #7d2e1e);
+    border: 2px solid var(--royal-bg);
+    border-radius: 999px;
+    box-shadow: none;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #ffd27a, #e0a43a);
+    border-color: var(--royal-bg);
+    box-shadow: none;
+}
+::-webkit-scrollbar-thumb:active {
+    background: var(--royal-gold);
+}
+::-webkit-scrollbar-corner {
+    background: var(--royal-bg);
+}
+
+/* --------------------------------------------------------------------------
+   4. Header — a warm lacquered rail with a soft gold underglow
+   -------------------------------------------------------------------------- */
+header.site-header {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(176, 66, 46, 0.9),
+            rgba(122, 41, 28, 0.88)
+        );
+    border-bottom: 1px solid rgba(255, 200, 97, 0.45);
+    border-radius: 0 0 var(--cozy-radius) var(--cozy-radius);
+    box-shadow:
+        0 12px 32px rgba(18, 7, 4, 0.55),
+        inset 0 1px 0 rgba(255, 236, 200, 0.28),
+        inset 0 -1px 18px rgba(255, 200, 97, 0.14);
+}
+header.site-header:hover {
+    background: linear-gradient(
+        180deg,
+        rgba(190, 74, 52, 0.92),
+        rgba(134, 46, 31, 0.9)
+    );
+}
+
+header.site-header a {
+    text-transform: none;
+    letter-spacing: 0.2px;
+    font-weight: 700;
+    color: var(--cozy-cream);
+}
+header.site-header .navbar li a {
+    font-size: 15px;
+}
+header.site-header a:not(.navbar-brand):hover {
+    color: var(--royal-gold);
+}
+header.site-header a:not(.navbar-brand)::before {
+    height: 3px;
+    border-radius: 3px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--royal-gold),
+        transparent
+    );
+}
+
+header.site-header .navbar-brand h1,
+header.site-header .navbar-brand span {
+    font-family: "Fraunces", serif !important;
+    text-transform: none;
+    letter-spacing: 0.2px;
+}
+
+header.site-header a.login,
+header.site-header a.register {
+    border-radius: var(--cozy-radius-pill);
+    padding: 8px 22px;
+}
+header.site-header a.register {
+    background: linear-gradient(180deg, #ffd98a, #f0a93e) !important;
+    color: var(--cozy-ink) !important;
+    border: 1px solid rgba(255, 246, 228, 0.8);
+    box-shadow:
+        0 6px 16px rgba(240, 169, 62, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+header.site-header a.login {
+    background: rgba(46, 26, 19, 0.55) !important;
+    color: var(--royal-gold) !important;
+    border: 1px solid rgba(255, 200, 97, 0.7);
+}
+header.site-header a.login:hover {
+    background: rgba(46, 26, 19, 0.8) !important;
+}
+
+header.site-header ul.navbar-nav .dropdown-menu {
+    border: 1px solid rgba(255, 200, 97, 0.4);
+    background-color: #2e1a13;
+    border-radius: var(--cozy-radius-sm);
+}
+
+@media (max-width: 1199.98px) {
+    header.site-header .menu-toggle.close ~ nav.navbar {
+        background: linear-gradient(180deg, #8a3223, #4a1c12);
+        border-bottom: 1px solid rgba(255, 200, 97, 0.5);
+        border-radius: 0 0 var(--cozy-radius) var(--cozy-radius);
+        box-shadow: 0 18px 30px rgba(18, 7, 4, 0.55);
+    }
+    header.site-header .menu-toggle.close ~ nav.navbar ul li {
+        border-bottom: 1px solid rgba(255, 200, 97, 0.14);
+    }
+    header.site-header ul.navbar-nav .dropdown-menu {
+        background-color: rgba(31, 17, 12, 0.7);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   5. Buttons — friendly pills with a gentle bounce
+   -------------------------------------------------------------------------- */
+.btn {
+    text-transform: none;
+    letter-spacing: 0.2px;
+    font-weight: 700;
+    border-radius: 14px;
+    padding-left: 1.15rem;
+    padding-right: 1.15rem;
+    transition:
+        transform 0.3s var(--cozy-spring),
+        box-shadow 0.3s var(--cozy-ease),
+        background 0.3s var(--cozy-ease),
+        color 0.2s ease;
+}
+.btn:hover {
+    transform: translateY(-2px);
+}
+.btn:active {
+    transform: translateY(1px) scale(0.98);
+}
+.btn-lg {
+    border-radius: 16px;
+    font-size: 1.1rem;
+}
+.btn-sm {
+    border-radius: 10px;
+}
+
+/* Primary: terracotta lacquer */
+.btn-danger,
+.btn-royal {
+    background: linear-gradient(180deg, #d9674c, #a8402c) !important;
+    border: 1px solid rgba(255, 214, 160, 0.55) !important;
+    color: var(--cozy-cream) !important;
+    box-shadow:
+        0 8px 18px rgba(168, 64, 44, 0.45),
+        inset 0 1px 0 rgba(255, 236, 200, 0.45) !important;
+    text-shadow: 0 1px 2px rgba(60, 14, 6, 0.5);
+}
+.btn-danger:hover,
+.btn-royal:hover {
+    background: linear-gradient(180deg, #e87a5e, #b84a34) !important;
+    box-shadow:
+        0 12px 26px rgba(168, 64, 44, 0.55),
+        0 0 22px rgba(255, 170, 90, 0.35),
+        inset 0 1px 0 rgba(255, 236, 200, 0.55) !important;
+    color: #fff !important;
+}
+
+/* Secondary: cocoa glass */
+.btn-dark {
+    background: rgba(58, 33, 24, 0.82) !important;
+    border: 1px solid rgba(255, 200, 97, 0.38) !important;
+    color: var(--cozy-cream) !important;
+    box-shadow:
+        0 6px 16px rgba(18, 7, 4, 0.4),
+        inset 0 1px 0 rgba(255, 236, 200, 0.14) !important;
+}
+.btn-dark:hover {
+    background: rgba(86, 50, 36, 0.92) !important;
+    border-color: rgba(255, 200, 97, 0.75) !important;
+    color: var(--royal-gold) !important;
+    box-shadow:
+        0 10px 22px rgba(18, 7, 4, 0.5),
+        0 0 18px rgba(255, 200, 97, 0.22),
+        inset 0 1px 0 rgba(255, 236, 200, 0.2) !important;
+}
+
+/* Positive: sage */
+.btn-success {
+    background: linear-gradient(180deg, #8fc27a, #4f7a45) !important;
+    border: 1px solid rgba(235, 255, 220, 0.6) !important;
+    color: #fff !important;
+    box-shadow: 0 8px 18px rgba(79, 122, 69, 0.4) !important;
+}
+
+/* Honey: outline / light */
+.btn-royal-outline,
+.btn-outline-light,
+.btn-light {
+    border-radius: 14px;
+}
+.btn-warning {
+    background: linear-gradient(180deg, #ffd98a, #f0a93e) !important;
+    border: 1px solid rgba(255, 246, 228, 0.7) !important;
+    color: var(--cozy-ink) !important;
+}
+
+.btn.bootbox-cancel {
+    background: rgba(58, 33, 24, 0.9) !important;
+    border-color: rgba(255, 200, 97, 0.35) !important;
+}
+
+/* Calmer pulse: warm ember ring instead of hard flash */
+.pulse-red {
+    box-shadow: 0 0 0 0 rgba(238, 122, 95, 0.7);
+}
+.pulse-gold {
+    box-shadow: 0 0 0 0 rgba(255, 200, 97, 0.7);
+}
+@keyframes pulse-red {
+    to {
+        box-shadow: 0 0 0 16px rgba(238, 122, 95, 0);
+    }
+}
+@keyframes pulse-gold {
+    to {
+        box-shadow: 0 0 0 16px rgba(255, 200, 97, 0);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   6. Cards, panels, hero — warm glass "tea trays"
+   -------------------------------------------------------------------------- */
+.card,
+.royal-grid-card,
+.article-card,
+.article-detail-card,
+.match-card,
+.info,
+.hero .hero-box {
+    border-radius: var(--cozy-radius) !important;
+}
+
+.card {
+    background: var(--glass-bg-dark);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    color: var(--cozy-cream);
+    box-shadow: var(--cozy-shadow-soft);
+    overflow: hidden;
+}
+
+.royal-grid-card,
+.article-card {
+    transition:
+        transform 0.4s var(--cozy-spring),
+        box-shadow 0.4s var(--cozy-ease),
+        border-color 0.3s ease;
+}
+.royal-grid-card:hover,
+.article-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 200, 97, 0.7);
+    box-shadow:
+        var(--cozy-shadow-lift),
+        0 0 28px rgba(255, 190, 90, 0.2);
+}
+
+.card-header {
+    background: linear-gradient(
+        90deg,
+        rgba(168, 64, 44, 0.55),
+        rgba(168, 64, 44, 0.12)
+    );
+    border-bottom: 1px solid rgba(255, 200, 97, 0.25);
+    font-family: "Fraunces", serif;
+    font-weight: 700;
+    color: var(--royal-gold);
+}
+
+.hero .hero-box {
+    background: rgba(46, 26, 19, 0.78);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+        var(--cozy-shadow-lift),
+        inset 0 1px 0 rgba(255, 236, 200, 0.12);
+}
+.hero .hero-box .nav-tabs li a {
+    text-transform: none;
+    border-radius: 12px 12px 0 0;
+}
+.hero .hero-box .nav-tabs li.active a {
+    background: linear-gradient(180deg, #c4513a, #8f2f21);
+}
+
+.info {
+    background: rgba(46, 26, 19, 0.7);
+    border: 1px solid var(--glass-border);
+}
+
+/* Proverb = a handwritten tea-house scroll */
+#proverb {
+    border-radius: var(--cozy-radius);
+    border-left: 4px solid var(--royal-gold);
+    border-right: 4px solid var(--royal-gold);
+    background:
+        linear-gradient(
+            90deg,
+            rgba(168, 64, 44, 0.3),
+            rgba(168, 64, 44, 0.08),
+            rgba(168, 64, 44, 0.3)
+        );
+    text-shadow: 0 2px 8px rgba(20, 8, 4, 0.7);
+}
+
+/* Section dividers / lists */
+hr {
+    border-top: 1px solid rgba(255, 200, 97, 0.25);
+}
+.list-group-item {
+    background: rgba(46, 26, 19, 0.7);
+    border-color: rgba(255, 200, 97, 0.18);
+    color: var(--cozy-cream);
+}
+
+/* --------------------------------------------------------------------------
+   7. Forms — cream paper fields
+   -------------------------------------------------------------------------- */
+.form-control,
+.custom-select {
+    background-color: var(--cozy-cream) !important;
+    color: var(--cozy-ink) !important;
+    border: 1.5px solid rgba(107, 58, 34, 0.55) !important;
+    border-radius: var(--cozy-radius-sm) !important;
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+.form-control::placeholder {
+    color: rgba(58, 31, 20, 0.5);
+}
+.form-control:focus,
+.custom-select:focus {
+    border-color: var(--royal-gold) !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 190, 90, 0.35) !important;
+}
+form label,
+.col-form-label {
+    color: var(--royal-gold-light);
+    font-weight: 600;
+}
+.input-group-text {
+    background: var(--cozy-paper);
+    border-color: rgba(107, 58, 34, 0.55);
+    color: var(--cozy-ink);
+    border-radius: var(--cozy-radius-sm);
+}
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: var(--royal-red);
+    border-color: var(--royal-gold);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+    -webkit-text-fill-color: var(--cozy-ink) !important;
+    border: 1px solid var(--royal-gold) !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 190, 90, 0.3) !important;
+}
+
+/* --------------------------------------------------------------------------
+   8. Tables
+   -------------------------------------------------------------------------- */
+.table-responsive,
+.dataTables_wrapper {
+    border-radius: var(--cozy-radius);
+    background: rgba(46, 26, 19, 0.78);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--cozy-shadow-soft);
+}
+.table thead th {
+    background: rgba(168, 64, 44, 0.3);
+    border-bottom: 2px solid rgba(255, 200, 97, 0.6);
+    text-transform: none;
+    font-family: "Fraunces", serif;
+    letter-spacing: 0.2px;
+}
+.table td,
+.table th {
+    border-top: 1px solid rgba(255, 200, 97, 0.12) !important;
+}
+.table tbody tr:hover {
+    background-color: rgba(255, 190, 90, 0.08) !important;
+    box-shadow: inset 3px 0 0 var(--royal-gold);
+}
+table.table:not(#danh-sach-ky-thu) td.room-code span {
+    border-radius: var(--cozy-radius-pill);
+    background: rgba(255, 200, 97, 0.14);
+    border: 1px solid rgba(255, 200, 97, 0.55);
+    padding: 4px 12px 5px;
+}
+div.dataTables_wrapper div.dataTables_length label,
+div.dataTables_wrapper div.dataTables_filter label,
+.dataTables_info {
+    color: var(--royal-gold-light);
+}
+
+/* --------------------------------------------------------------------------
+   9. Dropdowns, modals, tooltips, alerts, badges, pagination
+   -------------------------------------------------------------------------- */
+.dropdown-menu {
+    background: rgba(46, 26, 19, 0.96);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid rgba(255, 200, 97, 0.4);
+    border-radius: var(--cozy-radius-sm);
+    box-shadow: var(--cozy-shadow-lift);
+    padding: 0.4rem;
+}
+.dropdown-item {
+    border-radius: 10px;
+    color: var(--cozy-cream);
+    font-weight: 600;
+}
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background: rgba(255, 200, 97, 0.14);
+    color: var(--royal-gold);
+}
+.dropdown-item.active,
+.dropdown-item:active {
+    background: linear-gradient(180deg, #ffd98a, #f0a93e) !important;
+    color: var(--cozy-ink) !important;
+}
+header.site-header .dropdown-menu a:hover {
+    background-color: rgba(255, 200, 97, 0.16);
+}
+header.site-header .dropdown-menu .dropdown-item.active,
+header.site-header .dropdown-menu .dropdown-item:active {
+    background: linear-gradient(180deg, #ffd98a, #f0a93e) !important;
+    color: var(--cozy-ink) !important;
+}
+
+.modal-backdrop.show {
+    background: #1a0c08;
+    opacity: 0.72;
+}
+.modal-content {
+    background: linear-gradient(
+        180deg,
+        rgba(66, 38, 28, 0.97),
+        rgba(40, 22, 16, 0.97)
+    );
+    color: var(--cozy-cream);
+    border: 1px solid rgba(255, 200, 97, 0.45);
+    border-radius: 22px;
+    box-shadow:
+        0 30px 70px rgba(10, 4, 2, 0.7),
+        0 0 40px rgba(255, 190, 90, 0.14);
+    overflow: hidden;
+}
+.modal-header {
+    border-bottom: 1px solid rgba(255, 200, 97, 0.2);
+    background: linear-gradient(
+        90deg,
+        rgba(168, 64, 44, 0.45),
+        transparent
+    );
+}
+.modal-footer {
+    border-top: 1px solid rgba(255, 200, 97, 0.2);
+}
+.modal.fade .modal-dialog {
+    transition:
+        transform 0.4s var(--cozy-spring),
+        opacity 0.3s ease;
+}
+.bootbox .modal-body {
+    font-size: 1.05rem;
+}
+
+.tooltip .tooltip-inner {
+    background: rgba(31, 17, 12, 0.96) !important;
+    border: 1px solid rgba(255, 200, 97, 0.6) !important;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.alert {
+    border-radius: var(--cozy-radius-sm);
+    border-width: 1px;
+    box-shadow: var(--cozy-shadow-soft);
+}
+
+.badge {
+    border-radius: var(--cozy-radius-pill);
+    font-weight: 700;
+    padding: 0.4em 0.8em;
+}
+
+.page-link {
+    font-weight: 700;
+}
+.page-item:first-child .page-link {
+    border-top-left-radius: 14px;
+    border-bottom-left-radius: 14px;
+}
+.page-item:last-child .page-link {
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+}
+.page-item.active .page-link {
+    background: linear-gradient(180deg, #ffd98a, #f0a93e) !important;
+    color: var(--cozy-ink) !important;
+}
+
+/* --------------------------------------------------------------------------
+   10. The board — a lacquered walnut tray under lantern light
+   -------------------------------------------------------------------------- */
+#ban-co {
+    background:
+        linear-gradient(145deg, #7a4630, #4a2615 55%, #5e321d);
+    border: 1px solid rgba(255, 200, 97, 0.65);
+    border-radius: 20px;
+    padding: 12px;
+    box-shadow:
+        0 0 0 3px rgba(46, 26, 19, 0.95),
+        0 0 0 4px rgba(255, 200, 97, 0.35),
+        0 10px 22px rgba(10, 4, 2, 0.55),
+        0 28px 60px rgba(10, 4, 2, 0.6),
+        0 0 70px rgba(255, 170, 70, 0.24),
+        inset 0 1px 0 rgba(255, 236, 200, 0.4),
+        inset 0 -3px 8px rgba(10, 4, 2, 0.45) !important;
+}
+#ban-co:hover {
+    box-shadow:
+        0 0 0 3px rgba(46, 26, 19, 0.95),
+        0 0 0 4px rgba(255, 200, 97, 0.55),
+        0 14px 28px rgba(10, 4, 2, 0.6),
+        0 36px 72px rgba(10, 4, 2, 0.65),
+        0 0 90px rgba(255, 170, 70, 0.34),
+        inset 0 1px 0 rgba(255, 236, 200, 0.5),
+        inset 0 -3px 8px rgba(10, 4, 2, 0.45) !important;
+}
+#ban-co:has(.notation-8c7a2) {
+    background-color: #e3c28a !important;
+    background-image: none;
+}
+
+/* Game status / over chips */
+#game-status {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(168, 64, 44, 0.85),
+        transparent
+    ) !important;
+    text-transform: none;
+    letter-spacing: 0.5px;
+    font-family: "Fraunces", serif;
+    border-radius: var(--cozy-radius-pill);
+}
+#game-over {
+    border: 1px solid rgba(255, 200, 97, 0.7);
+    border-radius: var(--cozy-radius-pill);
+    background: rgba(46, 26, 19, 0.9);
+    text-transform: none;
+}
+#game-over:hover {
+    background: var(--royal-red);
+}
+.side-color {
+    font-family: "Fraunces", serif;
+}
+
+/* Scoreboard + turn banner: friendly chips instead of hard boxes */
+.pvp-scoreboard {
+    border-radius: var(--cozy-radius);
+}
+.pvp-turn-banner {
+    border-radius: var(--cozy-radius-pill);
+    font-weight: 700;
+    box-shadow: var(--cozy-shadow-soft);
+}
+.pvp-turn-banner[data-state="mine"] {
+    box-shadow:
+        var(--cozy-shadow-soft),
+        0 0 24px rgba(127, 176, 105, 0.45);
+}
+
+/* Rematch panel & match status */
+#rematch-panel {
+    border-radius: 20px !important;
+    border-color: rgba(255, 200, 97, 0.55) !important;
+    background: rgba(46, 26, 19, 0.92) !important;
+}
+#match-status {
+    border-radius: var(--cozy-radius-sm);
+}
+
+/* Last-move highlight a bit warmer (colours only) */
+#ban-co .square-2b8ce.last-move-from,
+#ban-co .square-2b8ce.last-move-to {
+    transition: background-color 0.3s ease;
+}
+
+/* --------------------------------------------------------------------------
+   11. Footer — warm hearth
+   -------------------------------------------------------------------------- */
+footer {
+    background:
+        linear-gradient(180deg, #2c1710, #170a06);
+    border-top: 1px solid rgba(255, 200, 97, 0.5);
+    border-radius: 28px 28px 0 0;
+    margin-top: 2rem;
+    box-shadow: 0 -12px 40px rgba(10, 4, 2, 0.45);
+    color: var(--royal-gold-light);
+}
+footer a {
+    color: #e0b878;
+}
+footer a:hover {
+    color: var(--royal-gold);
+}
+footer p {
+    font-family: "Fraunces", serif;
+    font-weight: 700;
+    color: var(--royal-gold);
+}
+footer ul li {
+    margin-bottom: 0.55em;
+}
+footer ul.list-unstyled > li > a {
+    display: inline-block;
+    transition: transform 0.25s var(--cozy-ease), color 0.2s ease;
+}
+footer ul.list-unstyled > li > a:hover {
+    transform: translateX(4px);
+}
+footer .display-4 {
+    transition: transform 0.3s var(--cozy-spring), color 0.2s ease;
+    display: inline-block;
+}
+footer .display-4:hover {
+    transform: translateY(-3px) scale(1.1);
+}
+
+/* --------------------------------------------------------------------------
+   12. Misc widgets: scroll-top, cookie banner, intro.js, avatar
+   -------------------------------------------------------------------------- */
+.cd-top {
+    border-radius: 50%;
+}
+.cookie-consent {
+    background: rgba(31, 17, 12, 0.96);
+    border-top: 1px solid rgba(255, 200, 97, 0.45);
+    border-radius: var(--cozy-radius) var(--cozy-radius) 0 0;
+    box-shadow: 0 -10px 30px rgba(10, 4, 2, 0.5);
+}
+.introjs-tooltip {
+    border-radius: var(--cozy-radius);
+}
+.introjs-button {
+    border-radius: 12px;
+}
+.badge-status,
+.badge-online,
+.badge-offline {
+    border-radius: var(--cozy-radius-pill);
+}
+
+/* --------------------------------------------------------------------------
+   13. Gentle entrance motion (disabled for reduced-motion users)
+   -------------------------------------------------------------------------- */
+@keyframes cozyRise {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+main .card,
+main .royal-grid-card,
+main .article-card,
+main .hero-box,
+main .table-responsive {
+    animation: cozyRise 0.6s var(--cozy-ease) both;
+}
+main .row > div:nth-child(2) .card,
+main .row > div:nth-child(2) .royal-grid-card {
+    animation-delay: 0.06s;
+}
+main .row > div:nth-child(3) .card,
+main .row > div:nth-child(3) .royal-grid-card {
+    animation-delay: 0.12s;
+}
+main .row > div:nth-child(4) .card,
+main .row > div:nth-child(4) .royal-grid-card {
+    animation-delay: 0.18s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    body::before {
+        animation: none;
+    }
+    main .card,
+    main .royal-grid-card,
+    main .article-card,
+    main .hero-box,
+    main .table-responsive {
+        animation: none;
+    }
+    .btn,
+    .btn:hover,
+    .btn:active,
+    .royal-grid-card:hover,
+    .article-card:hover {
+        transform: none;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   14. Small screens: bigger touch targets, tighter chrome
+   -------------------------------------------------------------------------- */
+@media (max-width: 576px) {
+    header.site-header {
+        border-radius: 0 0 14px 14px;
+    }
+    footer {
+        border-radius: 20px 20px 0 0;
+    }
+    .btn-lg {
+        padding-top: 0.7rem;
+        padding-bottom: 0.7rem;
+    }
+    .modal-content {
+        border-radius: 18px;
+    }
+    #ban-co {
+        border-radius: 16px;
+        padding: 8px;
+    }
+}
+
+/* The page paints its own warm backdrop; the heavy blur layers are
+   skipped on devices that ask for less data/transparency. */
+@media (prefers-reduced-transparency: reduce) {
+    .card,
+    .dropdown-menu,
+    .hero .hero-box,
+    header.site-header {
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+}

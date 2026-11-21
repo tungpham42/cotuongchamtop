@@ -3,8 +3,8 @@
     "name": "Cờ tướng cho mọi người",
     "description": "Cờ tướng 2 người, cờ tướng online, chơi cờ tướng với máy",
     "lang": "vi-VN",
-    "theme_color": "#f04124",
-    "background_color": "#f04124",
+    "theme_color": "#7a291c",
+    "background_color": "#3b1d14",
     "display": "fullscreen",
     "icons": [
         {

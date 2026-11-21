@@ -4,7 +4,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="twitter:card" content="summary">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#f04124" >
+<meta name="theme-color" content="#7a291c" >
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta property="og:image" content="@yield('og_image', url('/img/1200x630.jpg'))">
 <meta property="og:image:width" content="@yield('og_image_width', '1200')" >
@@ -57,10 +57,11 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.bootstrap4.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&family=Pacifico&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Roboto:ital,wght@0,100..900;1,100..900&family=Texturina:ital,opsz,wght@0,12..72,100..900;1,12..72,100..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..900&family=Lexend+Deca:wght@100..900&family=Pacifico&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Roboto:ital,wght@0,100..900;1,100..900&family=Texturina:ital,opsz,wght@0,12..72,100..900;1,12..72,100..900&display=swap" rel="stylesheet">
 {{-- <link href="{{ asset('css/index.css?v=321') }}" rel="stylesheet"> --}}
 <link href="{{ asset('css/index_new.css?v=84') }}" rel="stylesheet">
 <link href="{{ asset('css/ban-co.css?v=8') }}" rel="stylesheet">
+<link href="{{ asset('css/theme-cozy.css?v=1') }}" rel="stylesheet">
 @if (!($showAds ?? true))
 <style>
   .adsense,
