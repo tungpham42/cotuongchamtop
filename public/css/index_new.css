@@ -4288,9 +4288,6 @@ header.site-header .dropdown-menu .dropdown-divider {
         letter-spacing: 0.5px;
         padding: 6px 30px;
     }
-    #resign {
-        width: 100% !important;
-    }
     #video-call-container #remoteVideo {
         max-height: 180px !important;
     }
