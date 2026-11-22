@@ -2,7 +2,7 @@
 {{-- AdSense Top Banner --}}
 <div class="container-fluid w-100 my-0 mx-auto p-0 text-center" style="min-height: 100px;">
     <ins class="adsbygoogle"
-            style="display:block"
+            style="display: block; width: 100%; max-width: 100%; min-width: 100%"
             data-ad-client="ca-pub-3585118770961536"
             data-ad-slot="9745772897"
             data-ad-format="auto"
