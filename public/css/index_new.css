@@ -838,6 +838,28 @@ header.site-header .menu-toggle.close {
         background-color: var(--royal-gold);
         color: var(--royal-red);
     }
+
+    /* Đăng nhập: in the mobile menu, render as a plain link like the others
+       (no pill/button chrome). Selector is deliberately more specific than
+       "header.site-header a.login" here and in theme-cozy.css. */
+    header.site-header .navbar li a.login {
+        display: inline;
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        background: transparent !important;
+        color: var(--royal-gold-light) !important;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        overflow: visible;
+    }
+    header.site-header .navbar li a.login:hover,
+    body.login header.site-header .navbar li a.login {
+        background: transparent !important;
+        color: var(--royal-gold) !important;
+        box-shadow: none;
+    }
 }
 
 /* ==========================================================================
