@@ -230,8 +230,23 @@
             wxfBtn.id = "kypho-wxf";
             wxfBtn.type = "button";
             wxfBtn.className = copyBtn.className;
-            wxfBtn.textContent = Lw.wxf_export || "Export as WXF";
+            var wxfIcon = document.createElement("i");
+            wxfIcon.className = "fad fa-file-export";
+            wxfBtn.appendChild(wxfIcon);
+            wxfBtn.appendChild(document.createTextNode(" "));
+            wxfBtn.appendChild(
+                document.createTextNode(Lw.wxf_export || "Export as WXF"),
+            );
             copyBtn.parentNode.insertBefore(wxfBtn, copyBtn.nextSibling);
+        } else if (wxfBtn && !wxfBtn.querySelector("i")) {
+            // Nút WXF có sẵn trong HTML nhưng chưa có icon -> thêm vào đầu nút
+            var existingIcon = document.createElement("i");
+            existingIcon.className = "fad fa-file-export";
+            wxfBtn.insertBefore(
+                document.createTextNode(" "),
+                wxfBtn.firstChild,
+            );
+            wxfBtn.insertBefore(existingIcon, wxfBtn.firstChild);
         }
         var panelEl = document.getElementById("kypho-panel");
 
