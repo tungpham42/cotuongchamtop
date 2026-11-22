@@ -27,11 +27,35 @@
         ['games.library',   'far fa-database',     'Thư viện',     'resource'],
     ];
 
+    $vipMenu = [
+        ['app.vip', 'fas fa-crown', 'VIP', 'vip'],
+    ];
+
     $accountMenu = [
         ['app.profile',  'far fa-id-card',   'Hồ sơ của tôi',   'profile'],
         ['app.name',     'far fa-user-edit', 'Đổi tên',         'profile'],
         ['app.password', 'far fa-lock-alt',  'Đổi mật khẩu',    'profile'],
         ['app.ui',       'far fa-palette',   'Đổi giao diện',   'profile'],
+    ];
+
+    // One short line under each menu label. Wrapped in __() so it can be translated per locale;
+    // untranslated locales simply fall back to the Vietnamese text.
+    $menuHints = [
+        'room.list'         => 'Vào phòng, tìm đối thủ',
+        'tournaments.index' => 'Tranh tài, nhận phần thưởng',
+        'app.dashboard'     => 'Xem các ván đang diễn ra',
+        'app.ranking'       => 'Top kỳ thủ mạnh nhất',
+        'user.list'         => 'Làm quen bạn cờ mới',
+        'search'            => 'Tìm theo tên kỳ thủ',
+        'puzzle.list'       => 'Rèn tính toán mỗi ngày',
+        'app.history'       => 'Xem lại các ván đã chơi',
+        'article.index'     => 'Kiến thức & chiến thuật',
+        'games.library'     => 'Kỳ phổ các danh thủ',
+        'app.vip'           => 'Mở khóa quyền lợi riêng',
+        'app.profile'       => 'Thành tích & thông tin',
+        'app.name'          => 'Tên hiển thị của bạn',
+        'app.password'      => 'Giữ tài khoản an toàn',
+        'app.ui'            => 'Chọn bàn cờ & màu sắc',
     ];
 
     // Strip trailing slashes so "/vi/puzzles/" and "/vi/puzzles" compare equal.
@@ -53,7 +77,7 @@
 
     // Every way a menu item can match: its own URL, plus the URL prefix of each of its child routes.
     $menuMatchers = [];
-    foreach (collect([$competeMenu, $resourceMenu, $accountMenu])->flatten(1) as $item) {
+    foreach (collect([$competeMenu, $resourceMenu, $vipMenu, $accountMenu])->flatten(1) as $item) {
         $menuUrl = $normalize(localized_url($item[0]));
         $menuMatchers[] = ['menu' => $menuUrl, 'match' => $menuUrl];
 
@@ -84,146 +108,274 @@
     // The matched menu item (the exact page or any of its child pages) always gets "active".
     $activeClass = fn (string $target): string => $normalize($target) === $matchedMenuUrl ? ' active' : '';
 
-    // True on any account page or its children. The avatar toggle uses it for its own "current page" ring,
-    // because the underline that text links get makes no sense on a round image.
-    $onAccountPage = $matchedMenuUrl !== null
-        && collect($accountMenu)->contains(fn (array $item): bool => $normalize(localized_url($item[0])) === $matchedMenuUrl);
+    // Does the matched item live inside this menu? Used to light up the top-level pill (Thi đấu, Tài nguyên, ...)
+    // so people always see which section they are in, even while the dropdown is closed.
+    $menuHasMatch = fn (array $menu): bool => $matchedMenuUrl !== null
+        && collect($menu)->contains(fn (array $item): bool => $normalize(localized_url($item[0])) === $matchedMenuUrl);
+
+    $onHome = $currentUrl === $normalize($homeUrl);
+    $onCompete = $menuHasMatch($competeMenu);
+    $onResource = $menuHasMatch($resourceMenu);
+    $onVip = $menuHasMatch($vipMenu);
+    $onAccountPage = $menuHasMatch($accountMenu);
 
     $supportedLocales = config('locales.supported', []);
     $labels = config('locales.labels', []);
     $flags = config('locales.flags', []);
+    $activeLocale = $locale ?? config('locales.default');
 
     // Per-locale paths of the current page, set by localized_page_data() for every supported locale.
     // Pages that don't use it fall back to each language's home page.
     $langPaths = $langUrls ?? localized_alternate_paths('home');
     $currentPath = $canonicalUrl ?? null;
+
+    // Small helper: one rich dropdown row (icon tile + label + hint).
+    $renderItem = function (string $key, string $icon, string $label, string $extraClass) use ($menuHints, $activeClass): string {
+        $itemUrl = localized_url($key);
+        $hint = $menuHints[$key] ?? null;
+
+        return '<a class="' . ($extraClass ? e($extraClass) . ' ' : '') . 'showPromotion dropdown-item cz-item' . $activeClass($itemUrl) . '" href="' . e($itemUrl) . '">'
+            . '<span class="cz-item-ico" aria-hidden="true"><i class="' . e($icon) . '"></i></span>'
+            . '<span class="cz-item-text"><b class="cz-item-label">' . e(__($label)) . '</b>'
+            . ($hint ? '<small class="cz-item-hint">' . e(__($hint)) . '</small>' : '')
+            . '</span></a>';
+    };
 @endphp
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WM9GZXN"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
-<header class="site-header shadow-lg sticky-top">
-    <div class="container mx-auto">
-        <div class="row align-items-center">
+<header class="site-header cz-header sticky-top" id="siteHeader">
+    <div class="cz-bar">
 
-            <a class="navbar-brand small mr-auto my-0 showPromotion" href="{{ $homeUrl }}">
-                <img src="{{ asset('img/app-icons/logo.png') }}" class="xiangqi-logo" alt="xiangqi logo">
-                <span class="brand-name d-inline"><strong>{{ __("Cờ tướng") }}</strong></span>
-            </a>
+        {{-- Mobile / tablet menu button (hidden on large screens) --}}
+        <button type="button" class="cz-burger" id="czBurger" aria-expanded="false" aria-controls="czNav"
+                aria-label="{{ __('Trình đơn') }}" data-label-open="{{ __('Trình đơn') }}" data-label-close="{{ __('Đóng') }}">
+            <span></span><span></span><span></span>
+        </button>
 
-            <div class="menu-toggle open" title="Trình đơn"></div>
+        {{-- Brand: lantern-lit logo coin + name + tagline --}}
+        <a class="cz-brand showPromotion" href="{{ $homeUrl }}">
+            <img src="{{ asset('img/app-icons/logo.png') }}" class="xiangqi-logo" alt="xiangqi logo" width="46" height="46">
+            <div class="cz-brand-text">
+                <strong class="cz-brand-name">{{ __("Cờ tướng") }}</strong>
+                <em class="cz-brand-tag">{{ __('Chơi · Học · Kết bạn') }}</em>
+            </div>
+        </a>
 
-            <nav class="navbar py-0">
-                <ul class="nav navbar-nav align-items-center">
-                    <li class="nav-item">
-                        <a class="home showPromotion" href="{{ $homeUrl }}"><i class="far fa-home-lg-alt"></i> {{ __("Trang chủ") }}</a>
-                    </li>
+        {{-- Main navigation: a floating pill rail on desktop, a slide-down sheet on phones/tablets --}}
+        <nav class="navbar cz-nav" id="czNav" aria-label="{{ __('Trình đơn') }}">
+            <ul class="cz-menu">
+                <li>
+                    <a class="cz-link showPromotion{{ $onHome ? ' is-current' : '' }}" href="{{ $homeUrl }}" @if ($onHome) aria-current="page" @endif>
+                        <i class="far fa-home-lg-alt"></i> {{ __("Trang chủ") }}
+                    </a>
+                </li>
 
-                    <li class="dropdown">
-                        <a id="dashboardDropdown" class="dashboard room trophy thi-dau dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false">
-                            <i class="far fa-trophy-alt"></i> {{ __("Thi đấu") }}
-                        </a>
-                        <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow" aria-labelledby="dashboardDropdown">
+                {{-- Thi đấu: a three-column mega menu on desktop, an accordion on mobile --}}
+                <li class="dropdown cz-has-mega">
+                    <a id="dashboardDropdown" class="cz-link dropdown-toggle{{ $onCompete ? ' is-current' : '' }}" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="far fa-trophy-alt"></i> {{ __("Thi đấu") }}
+                    </a>
+                    <div class="dropdown-menu cz-mega" aria-labelledby="dashboardDropdown">
+                        <div class="cz-panel cz-panel--mega">
                             @foreach ($competeGroups as $groupLabel => $groupKeys)
-                                @unless ($loop->first)
-                                    <div class="dropdown-divider"></div>
-                                @endunless
-                                <h6 class="dropdown-header">{{ __($groupLabel) }}</h6>
-                                @foreach ($groupKeys as $groupKey)
-                                    @php
-                                        [$key, $icon, $label, $extraClass] = $competeByKey[$groupKey];
-                                        $itemUrl = localized_url($key);
-                                    @endphp
-                                    <a class="{{ $extraClass ? $extraClass . ' ' : '' }}showPromotion dropdown-item{{ $activeClass($itemUrl) }}" href="{{ $itemUrl }}"><i class="{{ $icon }}"></i> {{ __($label) }}</a>
-                                @endforeach
+                                <div class="cz-group">
+                                    <div class="cz-group-title">{{ __($groupLabel) }}</div>
+                                    @foreach ($groupKeys as $groupKey)
+                                        @php [$key, $icon, $label, $extraClass] = $competeByKey[$groupKey]; @endphp
+                                        {!! $renderItem($key, $icon, $label, $extraClass) !!}
+                                    @endforeach
+                                </div>
                             @endforeach
                         </div>
-                    </li>
+                    </div>
+                </li>
 
-                    <li class="dropdown">
-                        <a id="resourceDropdown" class="resource dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false">
-                            <i class="far fa-books"></i> {{ __("Tài nguyên") }}
-                        </a>
-                        <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow" aria-labelledby="resourceDropdown">
+                <li class="dropdown">
+                    <a id="resourceDropdown" class="cz-link dropdown-toggle{{ $onResource ? ' is-current' : '' }}" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="far fa-books"></i> {{ __("Tài nguyên") }}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="resourceDropdown">
+                        <div class="cz-panel">
                             @foreach ($resourceMenu as [$key, $icon, $label, $extraClass])
-                                @php $itemUrl = localized_url($key); @endphp
-                                <a class="{{ $extraClass ? $extraClass . ' ' : '' }}showPromotion dropdown-item{{ $activeClass($itemUrl) }}" href="{{ $itemUrl }}"><i class="{{ $icon }}"></i> {{ __($label) }}</a>
+                                {!! $renderItem($key, $icon, $label, $extraClass) !!}
                             @endforeach
-                            <a class="showPromotion dropdown-item" target="_blank" href="https://blog.cotuong.top"><i class="far fa-blog"></i> {{ __("Blog") }}</a>
-                        </div>
-                    </li>
-
-                    <li class="dropdown">
-                        <a id="vipDropdown" class="vip dropdown-toggle font-weight-bold" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false" style="color: #d4af37 !important;">
-                            <i class="fas fa-crown text-warning"></i> VIP
-                        </a>
-                        <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow" aria-labelledby="vipDropdown">
-                            <a class="showPromotion vip dropdown-item{{ $activeClass(localized_url('app.vip')) }}" href="{{ localized_url('app.vip') }}">
-                                <i class="fas fa-crown text-warning"></i> {{ __("VIP") }}
-                            </a>
-                            <a class="showPromotion dropdown-item text-danger font-weight-bold" href="javascript:void(0);" onclick="var btn = document.getElementById('ai-chat-btn'); if(btn) { btn.click(); } else { window.location.href='{{ localized_url('ai.normal') }}'; }" title="{{ __('Trợ lý Cờ Tướng AI') }}">
-                                <i class="fas fa-robot text-danger"></i> AI Coach
+                            <a class="showPromotion dropdown-item cz-item" target="_blank" rel="noopener" href="https://blog.cotuong.top">
+                                <span class="cz-item-ico" aria-hidden="true"><i class="far fa-blog"></i></span>
+                                <span class="cz-item-text">
+                                    <b class="cz-item-label">{{ __("Blog") }}</b>
+                                    <small class="cz-item-hint">{{ __('Tin tức & bài hay') }}</small>
+                                </span>
                             </a>
                         </div>
-                    </li>
+                    </div>
+                </li>
 
-                    @guest
-                        @if (Route::has('login'))
-                            <li class="nav-item">
-                                <a class="showPromotion login" href="{{ localized_url('login') }}"><i class="far fa-sign-in"></i> {{ __('Đăng nhập') }}</a>
-                            </li>
-                        @endif
-                    @else
-                        <li class="dropdown">
-                            <a id="navbarDropdown" class="profile nav-avatar-link dropdown-toggle p-0{{ $onAccountPage ? ' is-current' : '' }}" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false" @if ($onAccountPage) aria-current="page" @endif>
-                                <img src="{{ Auth::user()->getAvatarUrl(24, 12) }}" class="nav-avatar{{ $onAccountPage ? '' : ' pulse-gold' }}" alt="{{ __('Hồ sơ của tôi') }}" />
+                <li class="dropdown">
+                    <a id="vipDropdown" class="cz-link cz-vip dropdown-toggle{{ $onVip ? ' is-current' : '' }}" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-crown"></i> VIP
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="vipDropdown">
+                        <div class="cz-panel">
+                            {!! $renderItem('app.vip', 'fas fa-crown', 'VIP', 'vip') !!}
+                            {{-- Real href as a fallback; when the chat widget is on the page we open it instead. --}}
+                            <a class="showPromotion dropdown-item cz-item cz-item--ai" href="{{ localized_url('ai.normal') }}"
+                               onclick="var btn = document.getElementById('ai-chat-btn'); if (btn) { btn.click(); return false; }"
+                               title="{{ __('Trợ lý Cờ Tướng AI') }}">
+                                <span class="cz-item-ico" aria-hidden="true"><i class="fas fa-robot"></i></span>
+                                <span class="cz-item-text">
+                                    <b class="cz-item-label">AI Coach</b>
+                                    <small class="cz-item-hint">{{ __('Trợ lý Cờ Tướng AI') }}</small>
+                                </span>
                             </a>
+                        </div>
+                    </div>
+                </li>
 
-                            <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow" aria-labelledby="navbarDropdown">
-                                @if (Auth::user()->isStandard())
-                                    <span class="dropdown-item text-success"><i class="fas fa-crown text-warning"></i> {{ Auth::user()->getVipLabel() }}</span>
-                                @else
-                                    <a href="{{ localized_url('app.vip') }}" class="showPromotion dropdown-item text-warning font-weight-bold">
-                                        <i class="fas fa-crown text-warning"></i> {{ __("Nâng cấp VIP") }}
-                                    </a>
-                                @endif
-                                <div class="dropdown-divider"></div>
-                                @foreach ($accountMenu as [$key, $icon, $label, $extraClass])
-                                    @php $itemUrl = localized_url($key); @endphp
-                                    <a href="{{ $itemUrl }}" class="{{ $extraClass ? $extraClass . ' ' : '' }}showPromotion dropdown-item{{ $activeClass($itemUrl) }}"><i class="{{ $icon }}"></i> {{ __($label) }}</a>
-                                @endforeach
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{{ localized_url('logout') }}"
-                                    onclick="event.preventDefault();
-                                        document.getElementById('logout-form').submit();">
-                                    <i class="far fa-sign-out"></i> {{ __('Logout') }}
-                                </a>
-
-                                <form id="logout-form" action="{{ localized_url('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
-                            </div>
-                        </li>
-                    @endguest
-
-                    <li class="dropdown language-switcher">
-                        <a class="lang dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false">
-                            <i class="far fa-language"></i> {{ $labels[$locale] ?? $labels[config('locales.default')] ?? '' }}
-                        </a>
-                        <div class="scrollable-menu dropdown-menu dropdown-menu-right shadow">
+                <li class="dropdown cz-lang">
+                    <a class="cz-link cz-lang-toggle dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{ __('Ngôn ngữ') }}">
+                        <span class="shadow-sm fi fi-{{ $flags[$activeLocale] ?? $activeLocale }}"></span>
+                        <span class="d-none d-xl-inline">{{ strtoupper($activeLocale) }}</span>
+                        <span class="d-xl-none">{{ $labels[$activeLocale] ?? $labels[config('locales.default')] ?? '' }}</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right cz-lang-menu">
+                        <div class="cz-panel cz-panel--lang">
                             @foreach ($supportedLocales as $code)
                                 @php $langPath = $langPaths[$code] ?? localized_path('home', [], $code); @endphp
-                                <a class="dropdown-item showPromotion{{ $currentPath === $langPath ? ' active' : '' }}" href="{{ url($langPath) }}">
-                                    <span class="shadow-sm fi fi-{{ $flags[$code] ?? $code }} mr-2"></span> {{ $labels[$code] ?? $code }}
+                                <a class="dropdown-item cz-item cz-item--lang showPromotion{{ $currentPath === $langPath ? ' active' : '' }}" href="{{ url($langPath) }}" hreflang="{{ $code }}" lang="{{ $code }}">
+                                    <span class="shadow-sm fi fi-{{ $flags[$code] ?? $code }}"></span>
+                                    <span class="cz-item-label">{{ $labels[$code] ?? $code }}</span>
                                 </a>
                             @endforeach
                         </div>
-                    </li>
-                </ul>
-            </nav>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+
+        {{-- Always-visible actions: the big "play" button + account. They stay in the bar on phones too. --}}
+        <div class="navbar cz-actions">
+            <a class="cz-cta showPromotion" href="{{ localized_url('room.list') }}">
+                <i class="fas fa-chess-board" aria-hidden="true"></i>
+                <b class="cz-cta-text">{{ __('Chơi ngay') }}</b>
+            </a>
+
+            @guest
+                @if (Route::has('login'))
+                    <a class="cz-login showPromotion" href="{{ localized_url('login') }}" aria-label="{{ __('Đăng nhập') }}">
+                        <i class="far fa-sign-in" aria-hidden="true"></i>
+                        <b class="cz-login-text">{{ __('Đăng nhập') }}</b>
+                    </a>
+                @endif
+            @else
+                <div class="dropdown cz-user">
+                    <a id="navbarDropdown" class="nav-avatar-link dropdown-toggle p-0{{ $onAccountPage ? ' is-current' : '' }}" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{ __('Hồ sơ của tôi') }}" @if ($onAccountPage) aria-current="page" @endif>
+                        <img src="{{ Auth::user()->getAvatarUrl(24, 12) }}" class="nav-avatar{{ $onAccountPage ? '' : ' pulse-gold' }}" alt="{{ __('Hồ sơ của tôi') }}" />
+                    </a>
+
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <div class="cz-panel">
+                            <div class="cz-me">
+                                <img src="{{ Auth::user()->getAvatarUrl(24, 12) }}" class="cz-me-avatar" alt="" />
+                                <div class="cz-me-text">
+                                    <b class="cz-me-name">{{ Auth::user()->name }}</b>
+                                    @if (Auth::user()->isStandard())
+                                        <small class="cz-me-badge is-vip"><i class="fas fa-crown"></i> {{ Auth::user()->getVipLabel() }}</small>
+                                    @else
+                                        <a href="{{ localized_url('app.vip') }}" class="showPromotion cz-me-badge is-upgrade"><i class="fas fa-crown"></i> {{ __("Nâng cấp VIP") }}</a>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="cz-divider"></div>
+                            @foreach ($accountMenu as [$key, $icon, $label, $extraClass])
+                                {!! $renderItem($key, $icon, $label, $extraClass) !!}
+                            @endforeach
+                            <div class="cz-divider"></div>
+                            <a class="dropdown-item cz-item cz-item--logout" href="{{ localized_url('logout') }}"
+                                onclick="event.preventDefault();
+                                    document.getElementById('logout-form').submit();">
+                                <span class="cz-item-ico" aria-hidden="true"><i class="far fa-sign-out"></i></span>
+                                <span class="cz-item-text"><b class="cz-item-label">{{ __('Logout') }}</b></span>
+                            </a>
+
+                            <form id="logout-form" action="{{ localized_url('logout') }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endguest
         </div>
     </div>
 </header>
-{{-- The brand name in the header is a <span>, so every page needs exactly one real <h1>.
+{{-- Dimmed backdrop behind the mobile menu sheet (CSS shows it only while the header has .is-open). --}}
+<div class="cz-scrim" id="czScrim" aria-hidden="true"></div>
+
+<script>
+(function () {
+    var header = document.getElementById('siteHeader');
+    var burger = document.getElementById('czBurger');
+    var scrim = document.getElementById('czScrim');
+    if (!header || !burger) { return; }
+
+    var desktop = window.matchMedia('(min-width: 1200px)');
+
+    function closeDropdowns() {
+        // Bootstrap 4 dropdowns: collapse anything left open so the sheet reopens clean.
+        if (window.jQuery && jQuery.fn.dropdown) {
+            jQuery(header).find('[data-toggle="dropdown"][aria-expanded="true"]').dropdown('hide');
+        }
+    }
+
+    function setOpen(open) {
+        header.classList.toggle('is-open', open);
+        document.body.classList.toggle('cz-lock', open);
+        burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        burger.setAttribute('aria-label', burger.getAttribute(open ? 'data-label-close' : 'data-label-open'));
+        if (!open) { closeDropdowns(); }
+    }
+
+    burger.addEventListener('click', function () {
+        setOpen(!header.classList.contains('is-open'));
+    });
+
+    if (scrim) { scrim.addEventListener('click', function () { setOpen(false); }); }
+
+    // Tapping a real link inside the sheet closes it (the page is about to change anyway;
+    // this also covers same-page links and the AI Coach button).
+    document.getElementById('czNav').addEventListener('click', function (e) {
+        var link = e.target.closest('a');
+        if (!link || link.getAttribute('data-toggle') === 'dropdown') { return; }
+        if (!desktop.matches) { setOpen(false); }
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && header.classList.contains('is-open')) {
+            setOpen(false);
+            burger.focus();
+        }
+    });
+
+    // Rotating a tablet or resizing a window past the breakpoint must not leave the page scroll-locked.
+    var onBreakpoint = function (e) { if (e.matches) { setOpen(false); } };
+    if (desktop.addEventListener) { desktop.addEventListener('change', onBreakpoint); }
+    else if (desktop.addListener) { desktop.addListener(onBreakpoint); }
+
+    // Compact the bar once the page scrolls.
+    var ticking = false;
+    function onScroll() {
+        if (ticking) { return; }
+        ticking = true;
+        window.requestAnimationFrame(function () {
+            header.classList.toggle('is-scrolled', (window.pageYOffset || document.documentElement.scrollTop) > 12);
+            ticking = false;
+        });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+})();
+</script>
+{{-- The brand name in the header is a <strong>, so every page needs exactly one real <h1>.
      Pages that render their own visible <h1> opt out with @section('hasPageH1', '1');
      all other pages get a screen-reader/SEO heading that matches their <title>. --}}
 @sectionMissing('hasPageH1')

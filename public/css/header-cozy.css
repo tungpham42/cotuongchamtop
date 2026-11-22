@@ -1,0 +1,1019 @@
+/* ==========================================================================
+   HEADER COZY — "Cổng đèn lồng"
+   A lantern-lit header for the tea-house theme.
+   Load AFTER theme-cozy.css:
+     <link href="{{ asset('css/header-cozy.css?v=1') }}" rel="stylesheet">
+
+   Desktop (>= 1200px):  logo coin · floating pill rail · gold "Chơi ngay" button · avatar
+                         "Thi đấu" opens a 3-column mega menu with icon tiles + hints.
+   Tablet / phone:       burger → full-width slide-down sheet with big touch targets,
+                         dropdowns become accordions. "Chơi ngay" + avatar stay in the bar.
+
+   Every selector starts with `header.site-header.cz-header` so it out-ranks the older
+   header rules in index_new.css / theme-cozy.css without touching them. Where the old
+   global `.dropdown-item` / `.dropdown-menu` rules use !important, we match with !important
+   at a higher specificity.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Shell
+   -------------------------------------------------------------------------- */
+header.site-header.cz-header {
+    --cz-h: 74px;
+    --cz-gold: var(--royal-gold, #ffc861);
+    --cz-gold-hi: #ffd98a;
+    --cz-gold-lo: #f0a93e;
+    --cz-cream: var(--cozy-cream, #fff6e4);
+    --cz-ink: var(--cozy-ink, #3a1f14);
+    --cz-ember: var(--cozy-ember, #ff8a4c);
+    --cz-line: rgba(255, 200, 97, 0.28);
+    --cz-ease: var(--cozy-ease, cubic-bezier(0.22, 1, 0.36, 1));
+    --cz-spring: var(--cozy-spring, cubic-bezier(0.34, 1.56, 0.64, 1));
+
+    position: sticky;
+    top: 0;
+    z-index: 1050;
+    width: 100%;
+    padding-top: env(safe-area-inset-top, 0);
+    background:
+        radial-gradient(520px 130px at 6% -30%, rgba(255, 190, 90, 0.38), transparent 70%),
+        radial-gradient(460px 130px at 96% -40%, rgba(255, 138, 76, 0.28), transparent 70%),
+        linear-gradient(180deg, rgba(180, 66, 46, 0.96), rgba(112, 36, 25, 0.96));
+    -webkit-backdrop-filter: blur(16px) saturate(1.3);
+    backdrop-filter: blur(16px) saturate(1.3);
+    border-bottom: 0;
+    border-radius: 0 0 24px 24px;
+    box-shadow:
+        0 12px 32px rgba(18, 7, 4, 0.5),
+        inset 0 1px 0 rgba(255, 236, 200, 0.3);
+    animation: czDrop 0.7s var(--cz-ease) both;
+    transition: box-shadow 0.3s ease, border-radius 0.3s ease;
+}
+/* The old header hover swaps the background and uses an !important shadow; keep it calm. */
+header.site-header.cz-header:hover {
+    background:
+        radial-gradient(520px 130px at 6% -30%, rgba(255, 190, 90, 0.38), transparent 70%),
+        radial-gradient(460px 130px at 96% -40%, rgba(255, 138, 76, 0.28), transparent 70%),
+        linear-gradient(180deg, rgba(180, 66, 46, 0.96), rgba(112, 36, 25, 0.96));
+    box-shadow:
+        0 12px 32px rgba(18, 7, 4, 0.5),
+        inset 0 1px 0 rgba(255, 236, 200, 0.3) !important;
+}
+header.site-header.cz-header.is-scrolled,
+header.site-header.cz-header.is-scrolled:hover {
+    --cz-h: 60px;
+    border-radius: 0 0 18px 18px;
+    box-shadow:
+        0 14px 36px rgba(10, 4, 2, 0.62),
+        inset 0 1px 0 rgba(255, 236, 200, 0.3) !important;
+}
+
+/* Kill the old liquid sheen layer; draw a thin gold thread along the bottom instead. */
+header.site-header.cz-header::before {
+    content: none;
+}
+header.site-header.cz-header::after {
+    content: "";
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    bottom: 0;
+    height: 2px;
+    border-radius: 2px;
+    pointer-events: none;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 200, 97, 0.9) 30%,
+        #fff1d6 50%,
+        rgba(255, 200, 97, 0.9) 70%,
+        transparent
+    );
+    background-size: 200% 100%;
+    animation: czThread 7s linear infinite;
+}
+
+header.site-header.cz-header a {
+    text-transform: none;
+    letter-spacing: 0.1px;
+    text-decoration: none;
+}
+/* Retire the old animated underline on every header link. */
+header.site-header.cz-header a::before {
+    content: none;
+}
+
+.cz-bar {
+    position: relative; /* containing block for the mega menu and the mobile sheet */
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 1320px;
+    min-height: var(--cz-h);
+    margin: 0 auto;
+    padding: 0 max(20px, env(safe-area-inset-right, 0px)) 0 max(20px, env(safe-area-inset-left, 0px));
+    transition: min-height 0.3s var(--cz-ease);
+}
+
+/* --------------------------------------------------------------------------
+   2. Brand
+   -------------------------------------------------------------------------- */
+header.site-header.cz-header .cz-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 0 0 auto;
+    min-width: 0;
+    color: var(--cz-cream);
+    top: 0;
+}
+header.site-header.cz-header .cz-brand img.xiangqi-logo {
+    width: 46px;
+    height: 46px;
+    margin: 0;
+    padding: 3px;
+    border-radius: 50%;
+    object-fit: contain;
+    background: radial-gradient(circle at 32% 25%, #fff0c8, #f3b24a 72%);
+    border: 0;
+    filter: none;
+    box-shadow:
+        0 0 0 2px rgba(255, 236, 200, 0.7),
+        0 0 18px rgba(255, 190, 90, 0.55),
+        0 6px 14px rgba(20, 8, 4, 0.5);
+    transition: transform 0.5s var(--cz-spring), width 0.3s ease, height 0.3s ease;
+    animation: czLantern 3.4s ease-in-out infinite alternate;
+}
+header.site-header.cz-header.is-scrolled .cz-brand img.xiangqi-logo {
+    width: 38px;
+    height: 38px;
+}
+header.site-header.cz-header .cz-brand:hover img.xiangqi-logo {
+    transform: rotate(-10deg) scale(1.08);
+}
+header.site-header.cz-header .cz-brand:active img.xiangqi-logo {
+    transform: scale(0.94);
+}
+body.loading header.site-header.cz-header .cz-brand img.xiangqi-logo {
+    animation: spin 0.6s linear infinite !important;
+}
+.cz-brand-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+header.site-header.cz-header .cz-brand-name {
+    font-family: "Fraunces", "Texturina", serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--cz-cream);
+    text-shadow: 0 2px 10px rgba(20, 8, 4, 0.55);
+    white-space: nowrap;
+}
+header.site-header.cz-header .cz-brand-tag {
+    display: block;
+    margin-top: 5px;
+    font-style: normal;
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cz-gold);
+    opacity: 0.92;
+    white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   3. Navigation rail (desktop)
+   -------------------------------------------------------------------------- */
+header.site-header.cz-header .cz-nav {
+    position: static; /* beats Bootstrap's .navbar { position: relative } so the mega menu anchors to .cz-bar */
+    flex: 0 1 auto;
+    margin: 0 0 0 auto;
+    padding: 0;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+header.site-header.cz-header .cz-menu {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: 2px;
+    margin: 0;
+    padding: 5px;
+    list-style: none;
+    border-radius: 999px;
+    background: rgba(40, 17, 10, 0.38);
+    border: 1px solid var(--cz-line);
+    box-shadow: inset 0 2px 8px rgba(10, 4, 2, 0.4), 0 1px 0 rgba(255, 236, 200, 0.12);
+}
+header.site-header.cz-header .cz-menu > li {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+header.site-header.cz-header .cz-menu > li.cz-has-mega {
+    position: static;
+}
+
+header.site-header.cz-header .cz-link {
+    position: relative;
+    top: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+    color: var(--cz-cream);
+    background: transparent;
+    cursor: pointer;
+    transition:
+        background 0.25s var(--cz-ease),
+        color 0.2s ease,
+        box-shadow 0.25s var(--cz-ease),
+        transform 0.25s var(--cz-spring);
+}
+header.site-header.cz-header .cz-link i {
+    width: 1.15em;
+    font-size: 0.95em;
+    text-align: center;
+    opacity: 0.92;
+}
+header.site-header.cz-header .cz-link:hover,
+header.site-header.cz-header .cz-link:focus-visible {
+    color: var(--cz-gold);
+    background: rgba(255, 200, 97, 0.15);
+    text-shadow: none;
+    transform: translateY(-1px);
+}
+header.site-header.cz-header .cz-link.dropdown-toggle::after {
+    margin-left: 2px;
+    border-width: 0.3em 0.28em 0;
+    vertical-align: 0.15em;
+    transition: transform 0.25s var(--cz-ease);
+}
+header.site-header.cz-header .cz-link.dropdown-toggle[aria-expanded="true"]::after {
+    transform: rotate(180deg);
+}
+/* The page you are on, and the menu you have open: a honey-gold pill. */
+header.site-header.cz-header .cz-link.is-current,
+header.site-header.cz-header .cz-link.is-current:hover,
+header.site-header.cz-header .cz-link[aria-expanded="true"],
+header.site-header.cz-header .cz-link[aria-expanded="true"]:hover {
+    color: var(--cz-ink);
+    background: linear-gradient(180deg, var(--cz-gold-hi), var(--cz-gold-lo));
+    box-shadow:
+        0 6px 14px rgba(240, 169, 62, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    transform: none;
+}
+
+/* VIP: a gold-trimmed pill with a slow shimmer */
+header.site-header.cz-header .cz-link.cz-vip {
+    overflow: hidden;
+    color: var(--cz-gold-hi);
+    background: linear-gradient(135deg, rgba(255, 217, 138, 0.22), rgba(240, 169, 62, 0.1));
+    box-shadow: inset 0 0 0 1px rgba(255, 200, 97, 0.6);
+}
+header.site-header.cz-header .cz-link.cz-vip i {
+    color: #ffc861;
+    filter: drop-shadow(0 0 6px rgba(255, 200, 97, 0.7));
+}
+header.site-header.cz-header a.cz-link.cz-vip::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -60%;
+    width: 40%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    transform: skewX(-20deg);
+    animation: czShimmer 4.5s ease-in-out infinite;
+    pointer-events: none;
+}
+header.site-header.cz-header .cz-link.cz-vip.is-current,
+header.site-header.cz-header .cz-link.cz-vip[aria-expanded="true"] {
+    color: var(--cz-ink);
+}
+header.site-header.cz-header .cz-link.cz-vip.is-current i,
+header.site-header.cz-header .cz-link.cz-vip[aria-expanded="true"] i {
+    color: #8a3a00;
+    filter: none;
+}
+
+/* Language switcher: compact flag + code */
+header.site-header.cz-header .cz-lang-toggle {
+    padding: 9px 12px;
+}
+header.site-header.cz-header .cz-lang-toggle .fi {
+    width: 1.35em;
+    height: 1em;
+    border-radius: 3px;
+    background-size: cover;
+}
+
+/* --------------------------------------------------------------------------
+   4. Actions: Chơi ngay · Đăng nhập · avatar
+   -------------------------------------------------------------------------- */
+header.site-header.cz-header .cz-actions {
+    flex: 0 0 auto;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+header.site-header.cz-header .cz-cta {
+    position: relative;
+    top: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    color: var(--cz-ink);
+    background: linear-gradient(180deg, #ffe39e, var(--cz-gold-lo));
+    border: 1px solid rgba(255, 246, 228, 0.85);
+    box-shadow:
+        0 8px 20px rgba(240, 169, 62, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.75);
+    animation: czPulse 2.8s ease-out infinite;
+    transition: transform 0.3s var(--cz-spring), filter 0.2s ease;
+}
+header.site-header.cz-header .cz-cta i {
+    font-size: 1.05em;
+}
+header.site-header.cz-header .cz-cta:hover,
+header.site-header.cz-header .cz-cta:focus-visible {
+    color: var(--cz-ink);
+    transform: translateY(-2px) scale(1.03);
+    filter: brightness(1.05);
+    animation-play-state: paused;
+}
+header.site-header.cz-header .cz-cta:active {
+    transform: translateY(1px) scale(0.97);
+}
+header.site-header.cz-header .cz-cta i {
+    transition: transform 0.4s var(--cz-spring);
+}
+header.site-header.cz-header .cz-cta:hover i {
+    transform: rotate(-12deg) scale(1.15);
+}
+
+header.site-header.cz-header .cz-login {
+    position: relative;
+    top: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.92rem;
+    white-space: nowrap;
+    color: var(--cz-gold);
+    background: rgba(40, 17, 10, 0.5);
+    border: 1px solid rgba(255, 200, 97, 0.7);
+    box-shadow: none;
+    transition: background 0.25s ease, transform 0.25s var(--cz-spring);
+}
+header.site-header.cz-header .cz-login:hover,
+header.site-header.cz-header .cz-login:focus-visible {
+    color: var(--cz-gold-hi);
+    background: rgba(40, 17, 10, 0.78);
+    transform: translateY(-1px);
+}
+
+/* Avatar: keep the existing ring/pulse states from index_new.css, just size it for the new bar */
+header.site-header.cz-header .nav-avatar-link {
+    top: 0;
+    padding: 0;
+}
+header.site-header.cz-header .nav-avatar-link::after {
+    display: none;
+}
+header.site-header.cz-header .nav-avatar {
+    width: 40px;
+    height: 40px;
+}
+
+/* --------------------------------------------------------------------------
+   5. Dropdown panels
+   -------------------------------------------------------------------------- */
+header.site-header.cz-header .dropdown-menu {
+    min-width: 280px;
+    /* hang just below the header's bottom edge, whatever its (compact or full) height */
+    margin: calc(var(--cz-h) / 2 - 19px + 10px) 0 0;
+    padding: 0;
+    overflow: visible;
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(62, 34, 25, 0.985), rgba(37, 19, 13, 0.985)) !important;
+    border: 1px solid rgba(255, 200, 97, 0.38) !important;
+    border-top: 2px solid rgba(255, 200, 97, 0.85) !important;
+    box-shadow:
+        0 28px 60px rgba(10, 4, 2, 0.65),
+        0 0 40px rgba(255, 170, 70, 0.12) !important;
+    animation: czPop 0.28s var(--cz-ease) both;
+    transform-origin: top right;
+}
+header.site-header.cz-header .cz-lang-menu {
+    min-width: 330px;
+}
+
+header.site-header.cz-header .cz-panel {
+    padding: 8px;
+}
+
+/* Mega menu (Thi đấu): centred under the whole bar */
+header.site-header.cz-header .cz-mega {
+    left: 0;
+    right: 0;
+    width: min(900px, calc(100vw - 40px));
+    margin: 10px auto 0;
+    transform-origin: top center;
+}
+header.site-header.cz-header .cz-panel--mega {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px 18px;
+    padding: 18px 18px 16px;
+}
+header.site-header.cz-header .cz-group-title {
+    margin: 0 0 8px;
+    padding: 2px 10px 9px;
+    font-family: "Fraunces", "Texturina", serif;
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cz-gold);
+    border-bottom: 1px dashed rgba(255, 200, 97, 0.3);
+}
+
+/* Rows: icon tile + label + hint */
+header.site-header.cz-header .dropdown-menu .cz-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin: 2px 0;
+    padding: 9px 10px;
+    overflow: visible;
+    border: 0;
+    border-radius: 14px;
+    font-weight: 600;
+    white-space: normal;
+    text-shadow: none;
+    color: var(--cz-cream) !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    transform: none;
+    top: 0 !important;
+    transition: background 0.2s ease, transform 0.25s var(--cz-ease);
+}
+header.site-header.cz-header .dropdown-menu .cz-item:hover,
+header.site-header.cz-header .dropdown-menu .cz-item:focus {
+    color: var(--cz-gold-hi) !important;
+    background: rgba(255, 200, 97, 0.13) !important;
+    box-shadow: none !important;
+    text-shadow: none;
+    border: 0;
+    transform: translateX(3px);
+}
+header.site-header.cz-header .dropdown-menu .cz-item.active,
+header.site-header.cz-header .dropdown-menu .cz-item:active {
+    color: var(--cz-gold-hi) !important;
+    background: linear-gradient(90deg, rgba(255, 200, 97, 0.26), rgba(255, 200, 97, 0.08)) !important;
+    box-shadow: inset 0 0 0 1px rgba(255, 200, 97, 0.55) !important;
+    transform: none;
+}
+header.site-header.cz-header .dropdown-menu .cz-item:focus-visible {
+    outline: 2px solid var(--cz-gold);
+    outline-offset: -2px;
+}
+
+.cz-item-ico {
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(255, 200, 97, 0.13);
+    border: 1px solid rgba(255, 200, 97, 0.3);
+    transition: background 0.25s ease, transform 0.3s var(--cz-spring), border-color 0.25s ease;
+}
+header.site-header.cz-header .dropdown-menu .cz-item-ico i {
+    font-size: 1rem;
+    color: var(--cz-gold) !important;
+    text-shadow: none !important;
+    transform: none !important;
+}
+header.site-header.cz-header .dropdown-menu .cz-item:hover .cz-item-ico,
+header.site-header.cz-header .dropdown-menu .cz-item.active .cz-item-ico {
+    background: linear-gradient(180deg, var(--cz-gold-hi), var(--cz-gold-lo));
+    border-color: rgba(255, 246, 228, 0.7);
+    transform: rotate(-6deg) scale(1.06);
+}
+header.site-header.cz-header .dropdown-menu .cz-item:hover .cz-item-ico i,
+header.site-header.cz-header .dropdown-menu .cz-item.active .cz-item-ico i {
+    color: var(--cz-ink) !important;
+}
+.cz-item-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.25;
+}
+.cz-item-label {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+.cz-item-hint {
+    margin-top: 1px;
+    font-size: 0.76rem;
+    font-weight: 500;
+    color: rgba(255, 241, 214, 0.62);
+}
+header.site-header.cz-header .dropdown-menu .cz-item--ai .cz-item-ico {
+    background: rgba(238, 122, 95, 0.2);
+    border-color: rgba(238, 122, 95, 0.55);
+}
+header.site-header.cz-header .dropdown-menu .cz-item--ai .cz-item-ico i {
+    color: #ff9c82 !important;
+}
+header.site-header.cz-header .dropdown-menu .cz-item--logout .cz-item-ico {
+    background: rgba(255, 246, 228, 0.07);
+    border-color: rgba(255, 246, 228, 0.2);
+}
+
+.cz-divider {
+    height: 1px;
+    margin: 8px 6px;
+    background: linear-gradient(90deg, transparent, rgba(255, 200, 97, 0.35), transparent);
+}
+
+/* Language rows: two columns of flags */
+header.site-header.cz-header .cz-panel--lang {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2px 6px;
+}
+header.site-header.cz-header .dropdown-menu .cz-item--lang {
+    gap: 10px;
+    padding: 9px 12px;
+}
+header.site-header.cz-header .cz-item--lang .fi {
+    width: 1.5em;
+    height: 1.1em;
+    flex: 0 0 auto;
+    border-radius: 3px;
+    background-size: cover;
+}
+
+/* Account header inside the avatar menu */
+.cz-me {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 8px 4px;
+}
+.cz-me-avatar {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--cz-gold);
+    box-shadow: 0 0 0 3px rgba(255, 200, 97, 0.18);
+}
+.cz-me-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    min-width: 0;
+}
+.cz-me-name {
+    max-width: 190px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: "Fraunces", serif;
+    font-size: 1.05rem;
+    color: var(--cz-cream);
+}
+header.site-header.cz-header .cz-me-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 11px;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    font-weight: 800;
+    color: var(--cz-ink);
+    background: linear-gradient(180deg, var(--cz-gold-hi), var(--cz-gold-lo));
+}
+header.site-header.cz-header .cz-me-badge.is-upgrade:hover {
+    color: var(--cz-ink);
+    filter: brightness(1.08);
+}
+
+/* --------------------------------------------------------------------------
+   6. Burger + scrim (hidden on desktop)
+   -------------------------------------------------------------------------- */
+.cz-burger {
+    display: none;
+    position: relative;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 14px;
+    cursor: pointer;
+    color: var(--cozy-cream, #fff6e4);
+    background: rgba(40, 17, 10, 0.4);
+    border: 1px solid rgba(255, 200, 97, 0.4);
+    transition: background 0.25s ease, transform 0.25s var(--cozy-spring, ease);
+    -webkit-tap-highlight-color: transparent;
+}
+.cz-burger:hover {
+    background: rgba(40, 17, 10, 0.65);
+}
+.cz-burger:active {
+    transform: scale(0.94);
+}
+.cz-burger span {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    height: 2.5px;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform 0.35s var(--cozy-ease, ease), opacity 0.2s ease, top 0.35s var(--cozy-ease, ease);
+}
+.cz-burger span:nth-child(1) { top: 14px; }
+.cz-burger span:nth-child(2) { top: 20.75px; }
+.cz-burger span:nth-child(3) { top: 27.5px; }
+.cz-header.is-open .cz-burger {
+    background: linear-gradient(180deg, #ffd98a, #f0a93e);
+    color: #3a1f14;
+    border-color: rgba(255, 246, 228, 0.8);
+}
+.cz-header.is-open .cz-burger span:nth-child(1) { top: 20.75px; transform: rotate(45deg); }
+.cz-header.is-open .cz-burger span:nth-child(2) { opacity: 0; transform: scaleX(0.2); }
+.cz-header.is-open .cz-burger span:nth-child(3) { top: 20.75px; transform: rotate(-45deg); }
+
+.cz-scrim {
+    display: none;
+}
+
+body.cz-lock {
+    overflow: hidden !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. Tablet & phone (< 1200px): sheet menu
+   -------------------------------------------------------------------------- */
+@media (max-width: 1199.98px) {
+    header.site-header.cz-header {
+        --cz-h: 66px;
+    }
+    header.site-header.cz-header.is-scrolled,
+    header.site-header.cz-header.is-scrolled:hover {
+        --cz-h: 58px;
+    }
+    .cz-bar {
+        gap: 12px;
+        padding-left: max(14px, env(safe-area-inset-left, 0px));
+        padding-right: max(14px, env(safe-area-inset-right, 0px));
+    }
+    .cz-burger {
+        display: inline-block;
+    }
+    header.site-header.cz-header .cz-brand {
+        margin-right: auto;
+    }
+    header.site-header.cz-header .cz-brand img.xiangqi-logo {
+        width: 40px;
+        height: 40px;
+    }
+    header.site-header.cz-header.is-scrolled .cz-brand img.xiangqi-logo {
+        width: 36px;
+        height: 36px;
+    }
+    header.site-header.cz-header .cz-brand-name {
+        font-size: 1.3rem;
+    }
+
+    /* The sheet */
+    header.site-header.cz-header .cz-nav {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        margin: 0;
+        padding: 16px 16px max(22px, env(safe-area-inset-bottom, 0px));
+        max-height: calc(100vh - var(--cz-h) - 16px);
+        max-height: calc(100dvh - var(--cz-h) - 16px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 0 0 24px 24px;
+        background:
+            radial-gradient(400px 160px at 100% 0%, rgba(255, 170, 70, 0.16), transparent 70%),
+            linear-gradient(180deg, #7a2a1c, #451a10);
+        border-top: 1px solid rgba(255, 200, 97, 0.3) !important;
+        box-shadow: 0 30px 50px rgba(10, 4, 2, 0.6) !important;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(-12px);
+        transition:
+            opacity 0.25s ease,
+            transform 0.35s var(--cz-ease),
+            visibility 0s linear 0.35s;
+    }
+    header.site-header.cz-header.is-open .cz-nav {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: none;
+        transition-delay: 0s;
+    }
+
+    header.site-header.cz-header .cz-nav {
+        display: block; /* undo .navbar's flex so the list can fill the sheet */
+    }
+    header.site-header.cz-header .cz-menu {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: none;
+        box-shadow: none;
+    }
+    header.site-header.cz-header .cz-menu > li {
+        width: 100%;
+    }
+    header.site-header.cz-header .cz-menu > li.cz-has-mega {
+        position: relative;
+    }
+    header.site-header.cz-header .cz-link {
+        width: 100%;
+        padding: 14px 16px;
+        font-size: 1.02rem;
+        border-radius: 16px;
+        background: rgba(255, 246, 228, 0.07);
+        border: 1px solid rgba(255, 200, 97, 0.16);
+    }
+    header.site-header.cz-header .cz-link.dropdown-toggle::after {
+        margin-left: auto;
+    }
+    header.site-header.cz-header .cz-link.cz-vip {
+        background: linear-gradient(135deg, rgba(255, 217, 138, 0.22), rgba(240, 169, 62, 0.1));
+        border-color: rgba(255, 200, 97, 0.6);
+    }
+
+    /* Dropdowns become accordions inside the sheet */
+    header.site-header.cz-header .cz-menu .dropdown-menu,
+    header.site-header.cz-header .cz-menu .cz-mega {
+        position: static !important;
+        transform: none !important;
+        inset: auto !important;
+        float: none;
+        width: auto;
+        min-width: 0;
+        margin: 6px 0 0;
+        border-radius: 18px;
+        background: rgba(20, 8, 4, 0.38) !important;
+        border: 1px solid rgba(255, 200, 97, 0.2) !important;
+        border-top: 1px solid rgba(255, 200, 97, 0.2) !important;
+        box-shadow: none !important;
+        animation: czExpand 0.28s var(--cz-ease) both;
+    }
+    header.site-header.cz-header .cz-panel--mega {
+        grid-template-columns: 1fr;
+        gap: 4px;
+        padding: 10px;
+    }
+    header.site-header.cz-header .cz-group + .cz-group {
+        margin-top: 8px;
+    }
+    header.site-header.cz-header .dropdown-menu .cz-item {
+        padding: 11px 10px;
+    }
+    header.site-header.cz-header .dropdown-menu .cz-item:hover,
+    header.site-header.cz-header .dropdown-menu .cz-item:focus {
+        transform: none;
+    }
+    header.site-header.cz-header .cz-lang-toggle {
+        padding: 14px 16px;
+    }
+    header.site-header.cz-header .cz-lang-toggle .fi {
+        width: 1.5em;
+    }
+    header.site-header.cz-header .cz-lang-menu {
+        min-width: 0;
+    }
+    header.site-header.cz-header .cz-panel--lang {
+        padding: 8px;
+    }
+
+    /* The avatar menu still floats from the bar's right edge */
+    header.site-header.cz-header .cz-user .dropdown-menu {
+        position: absolute !important;
+        top: 100%;
+        left: auto !important;
+        right: 0 !important;
+        transform: none !important;
+        width: min(300px, calc(100vw - 28px));
+        margin-top: calc(var(--cz-h) / 2 - 20px + 10px);
+        border-radius: 22px;
+        background: linear-gradient(180deg, rgba(62, 34, 25, 0.985), rgba(37, 19, 13, 0.985)) !important;
+        border: 1px solid rgba(255, 200, 97, 0.38) !important;
+        border-top: 2px solid rgba(255, 200, 97, 0.85) !important;
+        box-shadow: 0 28px 60px rgba(10, 4, 2, 0.65) !important;
+        animation: czPop 0.28s var(--cz-ease) both;
+    }
+
+    /* Dimmed backdrop behind the open sheet */
+    .cz-scrim {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 1040;
+        background: rgba(18, 7, 4, 0.62);
+        -webkit-backdrop-filter: blur(3px);
+        backdrop-filter: blur(3px);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+    }
+    .cz-header.is-open ~ .cz-scrim {
+        opacity: 1;
+        visibility: visible;
+        transition-delay: 0s;
+    }
+}
+
+/* Tablet portrait & small laptops: tighten the rail so nothing wraps just above the breakpoint */
+@media (min-width: 1200px) and (max-width: 1379.98px) {
+    header.site-header.cz-header .cz-link {
+        padding: 9px 13px;
+        gap: 7px;
+    }
+    header.site-header.cz-header .cz-brand-tag {
+        display: none;
+    }
+    header.site-header.cz-header .cz-cta {
+        padding: 10px 16px;
+    }
+}
+
+/* Phones */
+@media (max-width: 575.98px) {
+    header.site-header.cz-header {
+        border-radius: 0 0 18px 18px;
+    }
+    .cz-bar {
+        gap: 10px;
+    }
+    header.site-header.cz-header .cz-brand-tag {
+        display: none;
+    }
+    header.site-header.cz-header .cz-brand {
+        gap: 9px;
+    }
+    header.site-header.cz-header .cz-actions {
+        gap: 8px;
+    }
+    header.site-header.cz-header .cz-cta {
+        padding: 11px 15px;
+    }
+    header.site-header.cz-header .cz-login {
+        padding: 11px 13px;
+    }
+    header.site-header.cz-header .cz-login-text {
+        display: none;
+    }
+    header.site-header.cz-header .nav-avatar {
+        width: 38px;
+        height: 38px;
+    }
+    header.site-header.cz-header .cz-nav {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    header.site-header.cz-header .cz-panel--lang {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+/* Very narrow phones: the play button collapses to an icon so the brand never gets squeezed */
+@media (max-width: 439.98px) {
+    header.site-header.cz-header .cz-cta-text {
+        display: none;
+    }
+    header.site-header.cz-header .cz-cta {
+        width: 42px;
+        height: 42px;
+        padding: 0;
+        justify-content: center;
+    }
+    header.site-header.cz-header .cz-brand-name {
+        font-size: 1.18rem;
+    }
+}
+@media (max-width: 359.98px) {
+    header.site-header.cz-header .cz-brand-name {
+        display: none;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   8. Motion
+   -------------------------------------------------------------------------- */
+@keyframes czDrop {
+    from { opacity: 0; transform: translateY(-100%); }
+    to   { opacity: 1; transform: none; }
+}
+@keyframes czPop {
+    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+    to   { opacity: 1; transform: none; }
+}
+@keyframes czExpand {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: none; }
+}
+@keyframes czThread {
+    from { background-position: 0% 0; }
+    to   { background-position: 200% 0; }
+}
+@keyframes czLantern {
+    from {
+        box-shadow:
+            0 0 0 2px rgba(255, 236, 200, 0.7),
+            0 0 12px rgba(255, 190, 90, 0.4),
+            0 6px 14px rgba(20, 8, 4, 0.5);
+    }
+    to {
+        box-shadow:
+            0 0 0 2px rgba(255, 236, 200, 0.85),
+            0 0 26px rgba(255, 190, 90, 0.8),
+            0 6px 14px rgba(20, 8, 4, 0.5);
+    }
+}
+@keyframes czPulse {
+    0%   { box-shadow: 0 8px 20px rgba(240, 169, 62, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 0 0 0 rgba(255, 200, 97, 0.55); }
+    70%  { box-shadow: 0 8px 20px rgba(240, 169, 62, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 0 0 14px rgba(255, 200, 97, 0); }
+    100% { box-shadow: 0 8px 20px rgba(240, 169, 62, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 0 0 0 rgba(255, 200, 97, 0); }
+}
+@keyframes czShimmer {
+    0%, 55% { left: -60%; }
+    100%    { left: 140%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    header.site-header.cz-header,
+    header.site-header.cz-header::after,
+    header.site-header.cz-header .cz-brand img.xiangqi-logo,
+    header.site-header.cz-header .cz-cta,
+    header.site-header.cz-header a.cz-link.cz-vip::before,
+    header.site-header.cz-header .dropdown-menu,
+    header.site-header.cz-header .cz-menu .dropdown-menu {
+        animation: none !important;
+    }
+    header.site-header.cz-header .cz-nav,
+    .cz-burger span,
+    .cz-scrim {
+        transition: none !important;
+    }
+}
+@media (prefers-reduced-transparency: reduce) {
+    header.site-header.cz-header,
+    .cz-scrim {
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+}
