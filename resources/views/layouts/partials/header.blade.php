@@ -168,12 +168,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                     @guest
                         @if (Route::has('login'))
-                            <li class="nav-item ml-2">
+                            <li class="nav-item">
                                 <a class="showPromotion login" href="{{ localized_url('login') }}"><i class="far fa-sign-in"></i> {{ __('Đăng nhập') }}</a>
                             </li>
                         @endif
                     @else
-                        <li class="dropdown ml-2">
+                        <li class="dropdown">
                             <a id="navbarDropdown" class="profile nav-avatar-link dropdown-toggle p-0{{ $onAccountPage ? ' is-current' : '' }}" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false" @if ($onAccountPage) aria-current="page" @endif>
                                 <img src="{{ Auth::user()->getAvatarUrl(24, 12) }}" class="nav-avatar{{ $onAccountPage ? '' : ' pulse-gold' }}" alt="{{ __('Hồ sơ của tôi') }}" />
                             </a>
@@ -205,7 +205,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </li>
                     @endguest
 
-                    <li class="dropdown language-switcher ml-2 pl-2">
+                    <li class="dropdown language-switcher">
                         <a class="lang dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-expanded="false">
                             <i class="far fa-language"></i> {{ $labels[$locale] ?? $labels[config('locales.default')] ?? '' }}
                         </a>
