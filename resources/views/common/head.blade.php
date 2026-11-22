@@ -72,6 +72,9 @@
   .hoc-link {
     display: none !important;
   }
+  #st-3 {
+    z-index: -1 !important;
+  }
 </style>
 @endif
 <link rel="manifest" href="{{ asset('manifest.webmanifest?v=3') }}">
