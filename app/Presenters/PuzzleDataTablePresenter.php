@@ -25,6 +25,7 @@ class PuzzleDataTablePresenter
             'ja' => ['solve' => 'パズルを解く', 'preview' => 'プレビュー'],
             'ko' => ['solve' => '퍼즐 풀기', 'preview' => '미리보기'],
             'zh' => ['solve' => '解谜', 'preview' => '预览'],
+            'pt' => ['solve' => 'Resolver problema', 'preview' => 'Pré-visualizar'],
         ];
 
         $this->t = $texts[$locale] ?? $texts['en'];

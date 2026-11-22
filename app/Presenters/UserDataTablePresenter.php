@@ -25,6 +25,7 @@ class UserDataTablePresenter
             'ja' => ['challenge' => '挑戦', 'profile' => 'プロフィール'],
             'ko' => ['challenge' => '도전', 'profile' => '프로필'],
             'zh' => ['challenge' => '挑战', 'profile' => '个人资料'],
+            'pt' => ['challenge' => 'Desafiar', 'profile' => 'Perfil'],
         ];
 
         $this->t = $texts[$locale] ?? $texts['en'];

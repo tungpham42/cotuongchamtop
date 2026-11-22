@@ -24,6 +24,7 @@ class RoomDataTablePresenter
             'ja' => ['public' => '公開', 'private' => '非公開', 'red' => '赤', 'black' => '黒', 'guest_won' => 'ゲストの勝ち', 'draw' => '引き分け', 'host_won' => 'ホストの勝ち', 'not_started' => '未開始', 'ongoing' => '対局中', 'play' => '参加', 'watch' => '観戦', 'finished_btn' => '終了', 'finished_auth' => '終了', 'play_now' => '今すぐ参加', 'login' => 'ログイン', 'preview' => 'プレビュー'],
             'ko' => ['public' => '공개', 'private' => '비공개', 'red' => '홍', 'black' => '흑', 'guest_won' => '손님 승리', 'draw' => '무승부', 'host_won' => '방장 승리', 'not_started' => '시작 전', 'ongoing' => '진행 중', 'play' => '참여', 'watch' => '관전', 'finished_btn' => '종료', 'finished_auth' => '종료', 'play_now' => '지금 참여', 'login' => '로그인', 'preview' => '미리보기'],
             'zh' => ['public' => '公开', 'private' => '私密', 'red' => '红方', 'black' => '黑方', 'guest_won' => '客方获胜', 'draw' => '和棋', 'host_won' => '房主获胜', 'not_started' => '未开始', 'ongoing' => '进行中', 'play' => '参加', 'watch' => '观战', 'finished_btn' => '已结束', 'finished_auth' => '已结束', 'play_now' => '立即参加', 'login' => '登录', 'preview' => '预览'],
+            'pt' => ['public' => 'Pública', 'private' => 'Privada', 'red' => 'Vermelhas', 'black' => 'Pretas', 'guest_won' => 'Convidado venceu', 'draw' => 'Empate', 'host_won' => 'Anfitrião venceu', 'not_started' => 'Não iniciada', 'ongoing' => 'Em andamento', 'play' => 'Jogar', 'watch' => 'Assistir', 'finished_btn' => 'Encerrada', 'finished_auth' => 'Encerrada', 'play_now' => 'Jogar agora', 'login' => 'Entrar', 'preview' => 'Pré-visualizar'],
         ];
 
         $this->t = $texts[$locale] ?? $texts['en'];
