@@ -36,9 +36,21 @@ header.site-header.cz-header {
     width: 100%;
     padding-top: env(safe-area-inset-top, 0);
     background:
-        radial-gradient(520px 130px at 6% -30%, rgba(255, 190, 90, 0.38), transparent 70%),
-        radial-gradient(460px 130px at 96% -40%, rgba(255, 138, 76, 0.28), transparent 70%),
-        linear-gradient(180deg, rgba(180, 66, 46, 0.96), rgba(112, 36, 25, 0.96));
+        radial-gradient(
+            520px 130px at 6% -30%,
+            rgba(255, 190, 90, 0.38),
+            transparent 70%
+        ),
+        radial-gradient(
+            460px 130px at 96% -40%,
+            rgba(255, 138, 76, 0.28),
+            transparent 70%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(180, 66, 46, 0.96),
+            rgba(112, 36, 25, 0.96)
+        );
     -webkit-backdrop-filter: blur(16px) saturate(1.3);
     backdrop-filter: blur(16px) saturate(1.3);
     border-bottom: 0;
@@ -47,14 +59,28 @@ header.site-header.cz-header {
         0 12px 32px rgba(18, 7, 4, 0.5),
         inset 0 1px 0 rgba(255, 236, 200, 0.3);
     animation: czDrop 0.7s var(--cz-ease) both;
-    transition: box-shadow 0.3s ease, border-radius 0.3s ease;
+    transition:
+        box-shadow 0.3s ease,
+        border-radius 0.3s ease;
 }
 /* The old header hover swaps the background and uses an !important shadow; keep it calm. */
 header.site-header.cz-header:hover {
     background:
-        radial-gradient(520px 130px at 6% -30%, rgba(255, 190, 90, 0.38), transparent 70%),
-        radial-gradient(460px 130px at 96% -40%, rgba(255, 138, 76, 0.28), transparent 70%),
-        linear-gradient(180deg, rgba(180, 66, 46, 0.96), rgba(112, 36, 25, 0.96));
+        radial-gradient(
+            520px 130px at 6% -30%,
+            rgba(255, 190, 90, 0.38),
+            transparent 70%
+        ),
+        radial-gradient(
+            460px 130px at 96% -40%,
+            rgba(255, 138, 76, 0.28),
+            transparent 70%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(180, 66, 46, 0.96),
+            rgba(112, 36, 25, 0.96)
+        );
     box-shadow:
         0 12px 32px rgba(18, 7, 4, 0.5),
         inset 0 1px 0 rgba(255, 236, 200, 0.3) !important;
@@ -111,7 +137,8 @@ header.site-header.cz-header a::before {
     max-width: 1320px;
     min-height: var(--cz-h);
     margin: 0 auto;
-    padding: 0 max(20px, env(safe-area-inset-right, 0px)) 0 max(20px, env(safe-area-inset-left, 0px));
+    padding: 0 max(20px, env(safe-area-inset-right, 0px)) 0
+        max(20px, env(safe-area-inset-left, 0px));
     transition: min-height 0.3s var(--cz-ease);
 }
 
@@ -141,7 +168,10 @@ header.site-header.cz-header .cz-brand img.xiangqi-logo {
         0 0 0 2px rgba(255, 236, 200, 0.7),
         0 0 18px rgba(255, 190, 90, 0.55),
         0 6px 14px rgba(20, 8, 4, 0.5);
-    transition: transform 0.5s var(--cz-spring), width 0.3s ease, height 0.3s ease;
+    transition:
+        transform 0.5s var(--cz-spring),
+        width 0.3s ease,
+        height 0.3s ease;
     animation: czLantern 3.4s ease-in-out infinite alternate;
 }
 header.site-header.cz-header.is-scrolled .cz-brand img.xiangqi-logo {
@@ -206,7 +236,9 @@ header.site-header.cz-header .cz-menu {
     border-radius: 999px;
     background: rgba(40, 17, 10, 0.38);
     border: 1px solid var(--cz-line);
-    box-shadow: inset 0 2px 8px rgba(10, 4, 2, 0.4), 0 1px 0 rgba(255, 236, 200, 0.12);
+    box-shadow:
+        inset 0 2px 8px rgba(10, 4, 2, 0.4),
+        0 1px 0 rgba(255, 236, 200, 0.12);
 }
 header.site-header.cz-header .cz-menu > li {
     position: relative;
@@ -258,7 +290,8 @@ header.site-header.cz-header .cz-link.dropdown-toggle::after {
     vertical-align: 0.15em;
     transition: transform 0.25s var(--cz-ease);
 }
-header.site-header.cz-header .cz-link.dropdown-toggle[aria-expanded="true"]::after {
+header.site-header.cz-header
+    .cz-link.dropdown-toggle[aria-expanded="true"]::after {
     transform: rotate(180deg);
 }
 /* The page you are on, and the menu you have open: a honey-gold pill. */
@@ -278,7 +311,11 @@ header.site-header.cz-header .cz-link[aria-expanded="true"]:hover {
 header.site-header.cz-header .cz-link.cz-vip {
     overflow: hidden;
     color: var(--cz-gold-hi);
-    background: linear-gradient(135deg, rgba(255, 217, 138, 0.22), rgba(240, 169, 62, 0.1));
+    background: linear-gradient(
+        135deg,
+        rgba(255, 217, 138, 0.22),
+        rgba(240, 169, 62, 0.1)
+    );
     box-shadow: inset 0 0 0 1px rgba(255, 200, 97, 0.6);
 }
 header.site-header.cz-header .cz-link.cz-vip i {
@@ -292,7 +329,12 @@ header.site-header.cz-header a.cz-link.cz-vip::before {
     bottom: 0;
     left: -60%;
     width: 40%;
-    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+    background: linear-gradient(
+        100deg,
+        transparent,
+        rgba(255, 255, 255, 0.5),
+        transparent
+    );
     transform: skewX(-20deg);
     animation: czShimmer 4.5s ease-in-out infinite;
     pointer-events: none;
@@ -353,7 +395,9 @@ header.site-header.cz-header .cz-cta {
         0 8px 20px rgba(240, 169, 62, 0.42),
         inset 0 1px 0 rgba(255, 255, 255, 0.75);
     animation: czPulse 2.8s ease-out infinite;
-    transition: transform 0.3s var(--cz-spring), filter 0.2s ease;
+    transition:
+        transform 0.3s var(--cz-spring),
+        filter 0.2s ease;
 }
 header.site-header.cz-header .cz-cta i {
     font-size: 1.05em;
@@ -390,7 +434,9 @@ header.site-header.cz-header .cz-login {
     background: rgba(40, 17, 10, 0.5);
     border: 1px solid rgba(255, 200, 97, 0.7);
     box-shadow: none;
-    transition: background 0.25s ease, transform 0.25s var(--cz-spring);
+    transition:
+        background 0.25s ease,
+        transform 0.25s var(--cz-spring);
 }
 header.site-header.cz-header .cz-login:hover,
 header.site-header.cz-header .cz-login:focus-visible {
@@ -422,7 +468,11 @@ header.site-header.cz-header .dropdown-menu {
     padding: 0;
     overflow: visible;
     border-radius: 22px;
-    background: linear-gradient(180deg, rgba(62, 34, 25, 0.985), rgba(37, 19, 13, 0.985)) !important;
+    background: linear-gradient(
+        180deg,
+        rgba(62, 34, 25, 0.985),
+        rgba(37, 19, 13, 0.985)
+    ) !important;
     border: 1px solid rgba(255, 200, 97, 0.38) !important;
     border-top: 2px solid rgba(255, 200, 97, 0.85) !important;
     box-shadow:
@@ -430,6 +480,8 @@ header.site-header.cz-header .dropdown-menu {
         0 0 40px rgba(255, 170, 70, 0.12) !important;
     animation: czPop 0.28s var(--cz-ease) both;
     transform-origin: top right;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
 }
 header.site-header.cz-header .cz-lang-menu {
     min-width: 330px;
@@ -487,7 +539,9 @@ header.site-header.cz-header .dropdown-menu .cz-item {
     backdrop-filter: none;
     transform: none;
     top: 0 !important;
-    transition: background 0.2s ease, transform 0.25s var(--cz-ease);
+    transition:
+        background 0.2s ease,
+        transform 0.25s var(--cz-ease);
 }
 header.site-header.cz-header .dropdown-menu .cz-item:hover,
 header.site-header.cz-header .dropdown-menu .cz-item:focus {
@@ -501,7 +555,11 @@ header.site-header.cz-header .dropdown-menu .cz-item:focus {
 header.site-header.cz-header .dropdown-menu .cz-item.active,
 header.site-header.cz-header .dropdown-menu .cz-item:active {
     color: var(--cz-gold-hi) !important;
-    background: linear-gradient(90deg, rgba(255, 200, 97, 0.26), rgba(255, 200, 97, 0.08)) !important;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 200, 97, 0.26),
+        rgba(255, 200, 97, 0.08)
+    ) !important;
     box-shadow: inset 0 0 0 1px rgba(255, 200, 97, 0.55) !important;
     transform: none;
 }
@@ -519,7 +577,10 @@ header.site-header.cz-header .dropdown-menu .cz-item:focus-visible {
     border-radius: 12px;
     background: rgba(255, 200, 97, 0.13);
     border: 1px solid rgba(255, 200, 97, 0.3);
-    transition: background 0.25s ease, transform 0.3s var(--cz-spring), border-color 0.25s ease;
+    transition:
+        background 0.25s ease,
+        transform 0.3s var(--cz-spring),
+        border-color 0.25s ease;
 }
 header.site-header.cz-header .dropdown-menu .cz-item-ico i {
     font-size: 1rem;
@@ -568,7 +629,12 @@ header.site-header.cz-header .dropdown-menu .cz-item--logout .cz-item-ico {
 .cz-divider {
     height: 1px;
     margin: 8px 6px;
-    background: linear-gradient(90deg, transparent, rgba(255, 200, 97, 0.35), transparent);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 200, 97, 0.35),
+        transparent
+    );
 }
 
 /* Language rows: two columns of flags */
@@ -652,7 +718,9 @@ header.site-header.cz-header .cz-me-badge.is-upgrade:hover {
     color: var(--cozy-cream, #fff6e4);
     background: rgba(40, 17, 10, 0.4);
     border: 1px solid rgba(255, 200, 97, 0.4);
-    transition: background 0.25s ease, transform 0.25s var(--cozy-spring, ease);
+    transition:
+        background 0.25s ease,
+        transform 0.25s var(--cozy-spring, ease);
     -webkit-tap-highlight-color: transparent;
 }
 .cz-burger:hover {
@@ -668,19 +736,37 @@ header.site-header.cz-header .cz-me-badge.is-upgrade:hover {
     height: 2.5px;
     border-radius: 2px;
     background: currentColor;
-    transition: transform 0.35s var(--cozy-ease, ease), opacity 0.2s ease, top 0.35s var(--cozy-ease, ease);
+    transition:
+        transform 0.35s var(--cozy-ease, ease),
+        opacity 0.2s ease,
+        top 0.35s var(--cozy-ease, ease);
 }
-.cz-burger span:nth-child(1) { top: 14px; }
-.cz-burger span:nth-child(2) { top: 20.75px; }
-.cz-burger span:nth-child(3) { top: 27.5px; }
+.cz-burger span:nth-child(1) {
+    top: 14px;
+}
+.cz-burger span:nth-child(2) {
+    top: 20.75px;
+}
+.cz-burger span:nth-child(3) {
+    top: 27.5px;
+}
 .cz-header.is-open .cz-burger {
     background: linear-gradient(180deg, #ffd98a, #f0a93e);
     color: #3a1f14;
     border-color: rgba(255, 246, 228, 0.8);
 }
-.cz-header.is-open .cz-burger span:nth-child(1) { top: 20.75px; transform: rotate(45deg); }
-.cz-header.is-open .cz-burger span:nth-child(2) { opacity: 0; transform: scaleX(0.2); }
-.cz-header.is-open .cz-burger span:nth-child(3) { top: 20.75px; transform: rotate(-45deg); }
+.cz-header.is-open .cz-burger span:nth-child(1) {
+    top: 20.75px;
+    transform: rotate(45deg);
+}
+.cz-header.is-open .cz-burger span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0.2);
+}
+.cz-header.is-open .cz-burger span:nth-child(3) {
+    top: 20.75px;
+    transform: rotate(-45deg);
+}
 
 .cz-scrim {
     display: none;
@@ -739,7 +825,11 @@ body.cz-lock {
         -webkit-overflow-scrolling: touch;
         border-radius: 0 0 24px 24px;
         background:
-            radial-gradient(400px 160px at 100% 0%, rgba(255, 170, 70, 0.16), transparent 70%),
+            radial-gradient(
+                400px 160px at 100% 0%,
+                rgba(255, 170, 70, 0.16),
+                transparent 70%
+            ),
             linear-gradient(180deg, #7a2a1c, #451a10);
         border-top: 1px solid rgba(255, 200, 97, 0.3) !important;
         box-shadow: 0 30px 50px rgba(10, 4, 2, 0.6) !important;
@@ -792,7 +882,11 @@ body.cz-lock {
         margin-left: auto;
     }
     header.site-header.cz-header .cz-link.cz-vip {
-        background: linear-gradient(135deg, rgba(255, 217, 138, 0.22), rgba(240, 169, 62, 0.1));
+        background: linear-gradient(
+            135deg,
+            rgba(255, 217, 138, 0.22),
+            rgba(240, 169, 62, 0.1)
+        );
         border-color: rgba(255, 200, 97, 0.6);
     }
 
@@ -851,7 +945,11 @@ body.cz-lock {
         width: min(300px, calc(100vw - 28px));
         margin-top: calc(var(--cz-h) / 2 - 20px + 10px);
         border-radius: 22px;
-        background: linear-gradient(180deg, rgba(62, 34, 25, 0.985), rgba(37, 19, 13, 0.985)) !important;
+        background: linear-gradient(
+            180deg,
+            rgba(62, 34, 25, 0.985),
+            rgba(37, 19, 13, 0.985)
+        ) !important;
         border: 1px solid rgba(255, 200, 97, 0.38) !important;
         border-top: 2px solid rgba(255, 200, 97, 0.85) !important;
         box-shadow: 0 28px 60px rgba(10, 4, 2, 0.65) !important;
@@ -869,7 +967,9 @@ body.cz-lock {
         backdrop-filter: blur(3px);
         opacity: 0;
         visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+        transition:
+            opacity 0.3s ease,
+            visibility 0s linear 0.3s;
     }
     .cz-header.is-open ~ .cz-scrim {
         opacity: 1;
@@ -955,20 +1055,42 @@ body.cz-lock {
    8. Motion
    -------------------------------------------------------------------------- */
 @keyframes czDrop {
-    from { opacity: 0; transform: translateY(-100%); }
-    to   { opacity: 1; transform: none; }
+    from {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
 }
 @keyframes czPop {
-    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
-    to   { opacity: 1; transform: none; }
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
 }
 @keyframes czExpand {
-    from { opacity: 0; transform: translateY(-6px); }
-    to   { opacity: 1; transform: none; }
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
 }
 @keyframes czThread {
-    from { background-position: 0% 0; }
-    to   { background-position: 200% 0; }
+    from {
+        background-position: 0% 0;
+    }
+    to {
+        background-position: 200% 0;
+    }
 }
 @keyframes czLantern {
     from {
@@ -985,13 +1107,33 @@ body.cz-lock {
     }
 }
 @keyframes czPulse {
-    0%   { box-shadow: 0 8px 20px rgba(240, 169, 62, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 0 0 0 rgba(255, 200, 97, 0.55); }
-    70%  { box-shadow: 0 8px 20px rgba(240, 169, 62, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 0 0 14px rgba(255, 200, 97, 0); }
-    100% { box-shadow: 0 8px 20px rgba(240, 169, 62, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 0 0 0 rgba(255, 200, 97, 0); }
+    0% {
+        box-shadow:
+            0 8px 20px rgba(240, 169, 62, 0.42),
+            inset 0 1px 0 rgba(255, 255, 255, 0.75),
+            0 0 0 0 rgba(255, 200, 97, 0.55);
+    }
+    70% {
+        box-shadow:
+            0 8px 20px rgba(240, 169, 62, 0.42),
+            inset 0 1px 0 rgba(255, 255, 255, 0.75),
+            0 0 0 14px rgba(255, 200, 97, 0);
+    }
+    100% {
+        box-shadow:
+            0 8px 20px rgba(240, 169, 62, 0.42),
+            inset 0 1px 0 rgba(255, 255, 255, 0.75),
+            0 0 0 0 rgba(255, 200, 97, 0);
+    }
 }
 @keyframes czShimmer {
-    0%, 55% { left: -60%; }
-    100%    { left: 140%; }
+    0%,
+    55% {
+        left: -60%;
+    }
+    100% {
+        left: 140%;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
