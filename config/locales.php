@@ -3,14 +3,14 @@
 return [
     'default' => 'vi',
 
-    'supported' => ['vi', 'en', 'ja', 'ko', 'zh', 'de', 'fr', 'es', 'ru'],
+    'supported' => ['vi', 'en', 'ja', 'ko', 'zh', 'de', 'fr', 'es', 'ru', 'pt'],
 
     /*
     | Locales that have full content (puzzle + article pages) and are therefore
     | published in the sitemaps. Must be a subset of 'supported'. Add 'de', 'fr',
     | 'es', 'ru' here once their translations and routes exist.
     */
-    'sitemap' => ['vi', 'en', 'ja', 'ko', 'zh', 'de', 'fr', 'es', 'ru'],
+    'sitemap' => ['vi', 'en', 'ja', 'ko', 'zh', 'de', 'fr', 'es', 'ru', 'pt'],
 
     'labels' => [
         'vi' => 'Tiếng Việt',
@@ -22,6 +22,7 @@ return [
         'fr' => 'Français',
         'es' => 'Español',
         'ru' => 'Русский',
+        'pt' => 'Português',
     ],
 
     'flags' => [
@@ -34,6 +35,7 @@ return [
         'fr' => 'fr',
         'es' => 'es',
         'ru' => 'ru',
+        'pt' => 'br',
     ],
 
     /*
@@ -52,7 +54,7 @@ return [
     |
     | vi/en/ja/ko/zh MUST stay exactly as they are: they match the chat files
     | already on disk. The folder name follows the first segment of that
-    | locale's 'room.host' path (phong, room, rumu, bang, fangjian, raum, ...).
+    | locale's 'room.host' path (phong, room, rumu, bang, fangjian, raum, ..., sala-de-jogo -> salaDeJogo).
     |
     | Every entry in 'supported' needs a matching entry here; the unit test
     | ChatLogServiceTest fails if one is missing.
@@ -68,6 +70,7 @@ return [
         'fr' => ['session' => 'FR', 'folder' => 'salonChatLog',    'suffix' => 'salonchatlog'],
         'es' => ['session' => 'ES', 'folder' => 'salaChatLog',     'suffix' => 'salachatlog'],
         'ru' => ['session' => 'RU', 'folder' => 'komnataChatLog',  'suffix' => 'komnatachatlog'],
+        'pt' => ['session' => 'PT', 'folder' => 'salaDeJogoChatLog', 'suffix' => 'saladejogochatlog'],
     ],
 
     /*
@@ -81,102 +84,102 @@ return [
     */
     'paths' => [
         // App/Home
-        'home' => ['vi' => '/', 'en' => 'en', 'ja' => 'ja', 'ko' => 'ko', 'zh' => 'zh', 'de' => 'de', 'fr' => 'fr', 'es' => 'es', 'ru' => 'ru'],
+        'home' => ['vi' => '/', 'en' => 'en', 'ja' => 'ja', 'ko' => 'ko', 'zh' => 'zh', 'de' => 'de', 'fr' => 'fr', 'es' => 'es', 'ru' => 'ru', 'pt' => 'pt'],
 
         // Rooms / Lobby
-        'room.list'   => ['vi' => 'sanh-cho', 'en' => 'lobby', 'ja' => 'heya-ichiran', 'ko' => 'bang-moglog', 'zh' => 'fangjianliebiao', 'de' => 'raumliste', 'fr' => 'liste-des-salons', 'es' => 'lista-de-salas', 'ru' => 'spisok-komnat'],
-        'room.host'   => ['vi' => 'phong/{code}', 'en' => 'room/{code}', 'ja' => 'rumu/{code}', 'ko' => 'bang/{code}', 'zh' => 'fangjian/{code}', 'de' => 'raum/{code}', 'fr' => 'salon/{code}', 'es' => 'sala/{code}', 'ru' => 'komnata/{code}'],
-        'room.guest'  => ['vi' => 'phong/{code}/khach', 'en' => 'room/{code}/guest', 'ja' => 'rumu/{code}/geesuto', 'ko' => 'bang/{code}/bangmun', 'zh' => 'fangjian/{code}/zhuke', 'de' => 'raum/{code}/gast', 'fr' => 'salon/{code}/invite', 'es' => 'sala/{code}/invitado', 'ru' => 'komnata/{code}/gost'],
-        'room.random' => ['vi' => 'phong/{code}/ngau-nhien', 'en' => 'room/{code}/random', 'ja' => 'rumu/{code}/randamu', 'ko' => 'bang/{code}/mujag-wiui', 'zh' => 'fangjian/{code}/suijide', 'de' => 'raum/{code}/zufall', 'fr' => 'salon/{code}/aleatoire', 'es' => 'sala/{code}/aleatorio', 'ru' => 'komnata/{code}/sluchaynyy'],
-        'room.watch'  => ['vi' => 'phong/{code}/theo-doi', 'en' => 'room/{code}/watch', 'ja' => 'rumu/{code}/miru', 'ko' => 'bang/{code}/boda', 'zh' => 'fangjian/{code}/kan', 'de' => 'raum/{code}/zuschauen', 'fr' => 'salon/{code}/observer', 'es' => 'sala/{code}/observar', 'ru' => 'komnata/{code}/nablyudat'],
-        'room.red'    => ['vi' => 'phong/{code}/do', 'en' => 'room/{code}/red', 'ja' => 'rumu/{code}/aka', 'ko' => 'bang/{code}/ppalgan', 'zh' => 'fangjian/{code}/hongse', 'de' => 'raum/{code}/rot', 'fr' => 'salon/{code}/rouge', 'es' => 'sala/{code}/rojo', 'ru' => 'komnata/{code}/krasnye'],
-        'room.black'  => ['vi' => 'phong/{code}/den', 'en' => 'room/{code}/black', 'ja' => 'rumu/{code}/kuro', 'ko' => 'bang/{code}/geom-eunsaeg', 'zh' => 'fangjian/{code}/heise', 'de' => 'raum/{code}/schwarz', 'fr' => 'salon/{code}/noir', 'es' => 'sala/{code}/negro', 'ru' => 'komnata/{code}/chernye'],
+        'room.list'   => ['vi' => 'sanh-cho', 'en' => 'lobby', 'ja' => 'heya-ichiran', 'ko' => 'bang-moglog', 'zh' => 'fangjianliebiao', 'de' => 'raumliste', 'fr' => 'liste-des-salons', 'es' => 'lista-de-salas', 'ru' => 'spisok-komnat', 'pt' => 'salas-de-jogo'],
+        'room.host'   => ['vi' => 'phong/{code}', 'en' => 'room/{code}', 'ja' => 'rumu/{code}', 'ko' => 'bang/{code}', 'zh' => 'fangjian/{code}', 'de' => 'raum/{code}', 'fr' => 'salon/{code}', 'es' => 'sala/{code}', 'ru' => 'komnata/{code}', 'pt' => 'sala-de-jogo/{code}'],
+        'room.guest'  => ['vi' => 'phong/{code}/khach', 'en' => 'room/{code}/guest', 'ja' => 'rumu/{code}/geesuto', 'ko' => 'bang/{code}/bangmun', 'zh' => 'fangjian/{code}/zhuke', 'de' => 'raum/{code}/gast', 'fr' => 'salon/{code}/invite', 'es' => 'sala/{code}/invitado', 'ru' => 'komnata/{code}/gost', 'pt' => 'sala-de-jogo/{code}/convidado'],
+        'room.random' => ['vi' => 'phong/{code}/ngau-nhien', 'en' => 'room/{code}/random', 'ja' => 'rumu/{code}/randamu', 'ko' => 'bang/{code}/mujag-wiui', 'zh' => 'fangjian/{code}/suijide', 'de' => 'raum/{code}/zufall', 'fr' => 'salon/{code}/aleatoire', 'es' => 'sala/{code}/aleatorio', 'ru' => 'komnata/{code}/sluchaynyy', 'pt' => 'sala-de-jogo/{code}/aleatorio'],
+        'room.watch'  => ['vi' => 'phong/{code}/theo-doi', 'en' => 'room/{code}/watch', 'ja' => 'rumu/{code}/miru', 'ko' => 'bang/{code}/boda', 'zh' => 'fangjian/{code}/kan', 'de' => 'raum/{code}/zuschauen', 'fr' => 'salon/{code}/observer', 'es' => 'sala/{code}/observar', 'ru' => 'komnata/{code}/nablyudat', 'pt' => 'sala-de-jogo/{code}/assistir'],
+        'room.red'    => ['vi' => 'phong/{code}/do', 'en' => 'room/{code}/red', 'ja' => 'rumu/{code}/aka', 'ko' => 'bang/{code}/ppalgan', 'zh' => 'fangjian/{code}/hongse', 'de' => 'raum/{code}/rot', 'fr' => 'salon/{code}/rouge', 'es' => 'sala/{code}/rojo', 'ru' => 'komnata/{code}/krasnye', 'pt' => 'sala-de-jogo/{code}/vermelho'],
+        'room.black'  => ['vi' => 'phong/{code}/den', 'en' => 'room/{code}/black', 'ja' => 'rumu/{code}/kuro', 'ko' => 'bang/{code}/geom-eunsaeg', 'zh' => 'fangjian/{code}/heise', 'de' => 'raum/{code}/schwarz', 'fr' => 'salon/{code}/noir', 'es' => 'sala/{code}/negro', 'ru' => 'komnata/{code}/chernye', 'pt' => 'sala-de-jogo/{code}/preto'],
 
         // Static Pages
-        'terms'   => ['vi' => 'dieu-khoan', 'en' => 'terms-and-conditions', 'ja' => 'riyo-kiyaku', 'ko' => 'iyong-yaggwan', 'zh' => 'tiaokuan-he-tiaojian', 'de' => 'nutzungsbedingungen', 'fr' => 'conditions-generales', 'es' => 'terminos-y-condiciones', 'ru' => 'usloviya-ispolzovaniya'],
-        'privacy' => ['vi' => 'chinh-sach-bao-mat', 'en' => 'privacy-policy', 'ja' => 'puraibashi-porishi', 'ko' => 'gaeinjeongbo-cheolibangchim', 'zh' => 'yinsi-zhengce', 'de' => 'datenschutz', 'fr' => 'politique-de-confidentialite', 'es' => 'politica-de-privacidad', 'ru' => 'politika-konfidentsialnosti'],
-        'about'   => ['vi' => 'gioi-thieu', 'en' => 'about-us', 'ja' => 'yaku', 'ko' => 'urie-daehae', 'zh' => 'guanyuwomens', 'de' => 'ueber-uns', 'fr' => 'a-propos', 'es' => 'sobre-nosotros', 'ru' => 'o-nas'],
-        'contact' => ['vi' => 'lien-he', 'en' => 'contact-us', 'ja' => 'kontakuto', 'ko' => 'mun-uihagi', 'zh' => 'lianxiwomen', 'de' => 'kontakt', 'fr' => 'contact', 'es' => 'contacto', 'ru' => 'kontakty'],
+        'terms'   => ['vi' => 'dieu-khoan', 'en' => 'terms-and-conditions', 'ja' => 'riyo-kiyaku', 'ko' => 'iyong-yaggwan', 'zh' => 'tiaokuan-he-tiaojian', 'de' => 'nutzungsbedingungen', 'fr' => 'conditions-generales', 'es' => 'terminos-y-condiciones', 'ru' => 'usloviya-ispolzovaniya', 'pt' => 'termos-e-condicoes'],
+        'privacy' => ['vi' => 'chinh-sach-bao-mat', 'en' => 'privacy-policy', 'ja' => 'puraibashi-porishi', 'ko' => 'gaeinjeongbo-cheolibangchim', 'zh' => 'yinsi-zhengce', 'de' => 'datenschutz', 'fr' => 'politique-de-confidentialite', 'es' => 'politica-de-privacidad', 'ru' => 'politika-konfidentsialnosti', 'pt' => 'politica-de-privacidade'],
+        'about'   => ['vi' => 'gioi-thieu', 'en' => 'about-us', 'ja' => 'yaku', 'ko' => 'urie-daehae', 'zh' => 'guanyuwomens', 'de' => 'ueber-uns', 'fr' => 'a-propos', 'es' => 'sobre-nosotros', 'ru' => 'o-nas', 'pt' => 'sobre-nos'],
+        'contact' => ['vi' => 'lien-he', 'en' => 'contact-us', 'ja' => 'kontakuto', 'ko' => 'mun-uihagi', 'zh' => 'lianxiwomen', 'de' => 'kontakt', 'fr' => 'contact', 'es' => 'contacto', 'ru' => 'kontakty', 'pt' => 'contato'],
 
         // Gameplay Modes
-        'human.play'   => ['vi' => 'choi-mot-minh', 'en' => 'play-alone', 'ja' => 'ichi-nin-de-asobu', 'ko' => 'honja-nolda', 'zh' => 'duchu', 'de' => 'allein-spielen', 'fr' => 'jouer-seul', 'es' => 'jugar-solo', 'ru' => 'igrat-odnomu'],
-        'puzzle.setup' => ['vi' => 'co-the', 'en' => 'puzzle', 'ja' => 'pazuru', 'ko' => 'peojeul', 'zh' => 'mi', 'de' => 'puzzlespiel', 'fr' => 'probleme', 'es' => 'problema', 'ru' => 'zadacha'],
-        'puzzle.board' => ['vi' => 'co-the/{board}', 'en' => 'puzzle/{board}', 'ja' => 'pazuru/{board}', 'ko' => 'peojeul/{board}', 'zh' => 'mi/{board}', 'de' => 'puzzlespiel/{board}', 'fr' => 'probleme/{board}', 'es' => 'problema/{board}', 'ru' => 'zadacha/{board}'],
+        'human.play'   => ['vi' => 'choi-mot-minh', 'en' => 'play-alone', 'ja' => 'ichi-nin-de-asobu', 'ko' => 'honja-nolda', 'zh' => 'duchu', 'de' => 'allein-spielen', 'fr' => 'jouer-seul', 'es' => 'jugar-solo', 'ru' => 'igrat-odnomu', 'pt' => 'jogar-sozinho'],
+        'puzzle.setup' => ['vi' => 'co-the', 'en' => 'puzzle', 'ja' => 'pazuru', 'ko' => 'peojeul', 'zh' => 'mi', 'de' => 'puzzlespiel', 'fr' => 'probleme', 'es' => 'problema', 'ru' => 'zadacha', 'pt' => 'quebra-cabeca'],
+        'puzzle.board' => ['vi' => 'co-the/{board}', 'en' => 'puzzle/{board}', 'ja' => 'pazuru/{board}', 'ko' => 'peojeul/{board}', 'zh' => 'mi/{board}', 'de' => 'puzzlespiel/{board}', 'fr' => 'probleme/{board}', 'es' => 'problema/{board}', 'ru' => 'zadacha/{board}', 'pt' => 'quebra-cabeca/{board}'],
 
         // AI / Bots
-        'board.self'         => ['vi' => 'ban-co/{fen}', 'en' => 'board/{fen}', 'ja' => 'bodo/{fen}', 'ko' => 'bodeu/{fen}', 'zh' => 'ban/{fen}', 'de' => 'brett/{fen}', 'fr' => 'plateau/{fen}', 'es' => 'tablero/{fen}', 'ru' => 'doska/{fen}'],
-        'board.ai.easiest'   => ['vi' => 'ban-co-de-nhat/{fen}', 'en' => 'easiest-board/{fen}', 'ja' => 'mottomo-kantanna-bodo/{fen}', 'ko' => 'gajang-swiun-bodeu/{fen}', 'zh' => 'zuijiandandeban/{fen}', 'de' => 'einfachstes-brett/{fen}', 'fr' => 'plateau-tres-facile/{fen}', 'es' => 'tablero-facilisimo/{fen}', 'ru' => 'samaya-legkaya-doska/{fen}'],
-        'board.ai.newbie'    => ['vi' => 'ban-co-moi-choi/{fen}', 'en' => 'newbie-board/{fen}', 'ja' => 'shoshinsha-bodo/{fen}', 'ko' => 'nyubi-bodeu/{fen}', 'zh' => 'xinshouban/{fen}', 'de' => 'anfaenger-brett/{fen}', 'fr' => 'plateau-debutant/{fen}', 'es' => 'tablero-principiante/{fen}', 'ru' => 'doska-novichka/{fen}'],
-        'board.ai.easy'      => ['vi' => 'ban-co-de/{fen}', 'en' => 'easy-board/{fen}', 'ja' => 'kantan-bodo/{fen}', 'ko' => 'iji-bodeu/{fen}', 'zh' => 'jianyiban/{fen}', 'de' => 'leichtes-brett/{fen}', 'fr' => 'plateau-facile/{fen}', 'es' => 'tablero-facil/{fen}', 'ru' => 'legkaya-doska/{fen}'],
-        'board.ai.normal'    => ['vi' => 'ban-co-binh-thuong/{fen}', 'en' => 'normal-board/{fen}', 'ja' => 'tsujo-bodo/{fen}', 'ko' => 'nomol-bodeu/{fen}', 'zh' => 'putongban/{fen}', 'de' => 'normales-brett/{fen}', 'fr' => 'plateau-normal/{fen}', 'es' => 'tablero-normal/{fen}', 'ru' => 'normalnaya-doska/{fen}'],
-        'board.ai.hard'      => ['vi' => 'ban-co-kho/{fen}', 'en' => 'hard-board/{fen}', 'ja' => 'hado-bodo/{fen}', 'ko' => 'hadeu-bodeu/{fen}', 'zh' => 'yingban/{fen}', 'de' => 'schweres-brett/{fen}', 'fr' => 'plateau-difficile/{fen}', 'es' => 'tablero-dificil/{fen}', 'ru' => 'slozhnaya-doska/{fen}'],
-        'board.ai.hardest'   => ['vi' => 'ban-co-kho-nhat/{fen}', 'en' => 'hardest-board/{fen}', 'ja' => 'mottomo-muzukashi-bodo/{fen}', 'ko' => 'gajang-dandanhan-bodeu/{fen}', 'zh' => 'zuiyingban/{fen}', 'de' => 'schwerstes-brett/{fen}', 'fr' => 'plateau-tres-difficile/{fen}', 'es' => 'tablero-dificilisimo/{fen}', 'ru' => 'samaya-slozhnaya-doska/{fen}'],
-        'puzzle.ai.solve'    => ['vi' => 'giai-co-the/{fen}', 'en' => 'solve-puzzle/{fen}', 'ja' => 'pazuru-o-toku/{fen}', 'ko' => 'pojeureul-pulda/{fen}', 'zh' => 'jiejuenanti/{fen}', 'de' => 'puzzle-loesen/{fen}', 'fr' => 'resoudre-probleme/{fen}', 'es' => 'resolver-problema/{fen}', 'ru' => 'reshit-zadachu/{fen}'],
-        'puzzle.rating'      => ['vi' => 'the-co/{slug}', 'en' => 'puzzle-record/{slug}', 'ja' => 'pazuru-kiroku/{slug}', 'ko' => 'peojeul-girog/{slug}', 'zh' => 'mi-jilu/{slug}', 'de' => 'puzzle-eintrag/{slug}', 'fr' => 'fiche-probleme/{slug}', 'es' => 'registro-problema/{slug}', 'ru' => 'zapis-zadachi/{slug}'],
+        'board.self'         => ['vi' => 'ban-co/{fen}', 'en' => 'board/{fen}', 'ja' => 'bodo/{fen}', 'ko' => 'bodeu/{fen}', 'zh' => 'ban/{fen}', 'de' => 'brett/{fen}', 'fr' => 'plateau/{fen}', 'es' => 'tablero/{fen}', 'ru' => 'doska/{fen}', 'pt' => 'tabuleiro/{fen}'],
+        'board.ai.easiest'   => ['vi' => 'ban-co-de-nhat/{fen}', 'en' => 'easiest-board/{fen}', 'ja' => 'mottomo-kantanna-bodo/{fen}', 'ko' => 'gajang-swiun-bodeu/{fen}', 'zh' => 'zuijiandandeban/{fen}', 'de' => 'einfachstes-brett/{fen}', 'fr' => 'plateau-tres-facile/{fen}', 'es' => 'tablero-facilisimo/{fen}', 'ru' => 'samaya-legkaya-doska/{fen}', 'pt' => 'tabuleiro-facilimo/{fen}'],
+        'board.ai.newbie'    => ['vi' => 'ban-co-moi-choi/{fen}', 'en' => 'newbie-board/{fen}', 'ja' => 'shoshinsha-bodo/{fen}', 'ko' => 'nyubi-bodeu/{fen}', 'zh' => 'xinshouban/{fen}', 'de' => 'anfaenger-brett/{fen}', 'fr' => 'plateau-debutant/{fen}', 'es' => 'tablero-principiante/{fen}', 'ru' => 'doska-novichka/{fen}', 'pt' => 'tabuleiro-iniciante/{fen}'],
+        'board.ai.easy'      => ['vi' => 'ban-co-de/{fen}', 'en' => 'easy-board/{fen}', 'ja' => 'kantan-bodo/{fen}', 'ko' => 'iji-bodeu/{fen}', 'zh' => 'jianyiban/{fen}', 'de' => 'leichtes-brett/{fen}', 'fr' => 'plateau-facile/{fen}', 'es' => 'tablero-facil/{fen}', 'ru' => 'legkaya-doska/{fen}', 'pt' => 'tabuleiro-facil/{fen}'],
+        'board.ai.normal'    => ['vi' => 'ban-co-binh-thuong/{fen}', 'en' => 'normal-board/{fen}', 'ja' => 'tsujo-bodo/{fen}', 'ko' => 'nomol-bodeu/{fen}', 'zh' => 'putongban/{fen}', 'de' => 'normales-brett/{fen}', 'fr' => 'plateau-normal/{fen}', 'es' => 'tablero-normal/{fen}', 'ru' => 'normalnaya-doska/{fen}', 'pt' => 'tabuleiro-normal/{fen}'],
+        'board.ai.hard'      => ['vi' => 'ban-co-kho/{fen}', 'en' => 'hard-board/{fen}', 'ja' => 'hado-bodo/{fen}', 'ko' => 'hadeu-bodeu/{fen}', 'zh' => 'yingban/{fen}', 'de' => 'schweres-brett/{fen}', 'fr' => 'plateau-difficile/{fen}', 'es' => 'tablero-dificil/{fen}', 'ru' => 'slozhnaya-doska/{fen}', 'pt' => 'tabuleiro-dificil/{fen}'],
+        'board.ai.hardest'   => ['vi' => 'ban-co-kho-nhat/{fen}', 'en' => 'hardest-board/{fen}', 'ja' => 'mottomo-muzukashi-bodo/{fen}', 'ko' => 'gajang-dandanhan-bodeu/{fen}', 'zh' => 'zuiyingban/{fen}', 'de' => 'schwerstes-brett/{fen}', 'fr' => 'plateau-tres-difficile/{fen}', 'es' => 'tablero-dificilisimo/{fen}', 'ru' => 'samaya-slozhnaya-doska/{fen}', 'pt' => 'tabuleiro-dificilimo/{fen}'],
+        'puzzle.ai.solve'    => ['vi' => 'giai-co-the/{fen}', 'en' => 'solve-puzzle/{fen}', 'ja' => 'pazuru-o-toku/{fen}', 'ko' => 'pojeureul-pulda/{fen}', 'zh' => 'jiejuenanti/{fen}', 'de' => 'puzzle-loesen/{fen}', 'fr' => 'resoudre-probleme/{fen}', 'es' => 'resolver-problema/{fen}', 'ru' => 'reshit-zadachu/{fen}', 'pt' => 'resolver-quebra-cabeca/{fen}'],
+        'puzzle.rating'      => ['vi' => 'the-co/{slug}', 'en' => 'puzzle-record/{slug}', 'ja' => 'pazuru-kiroku/{slug}', 'ko' => 'peojeul-girog/{slug}', 'zh' => 'mi-jilu/{slug}', 'de' => 'puzzle-eintrag/{slug}', 'fr' => 'fiche-probleme/{slug}', 'es' => 'registro-problema/{slug}', 'ru' => 'zapis-zadachi/{slug}', 'pt' => 'registro-quebra-cabeca/{slug}'],
 
         // AI Home / Levels
-        'ai.home'    => ['vi' => '/', 'en' => 'en', 'ja' => 'ja', 'ko' => 'ko', 'zh' => 'zh', 'de' => 'de', 'fr' => 'fr', 'es' => 'es', 'ru' => 'ru'],
-        'ai.easiest' => ['vi' => 'de-nhat', 'en' => 'easiest', 'ja' => 'mottomo-kantan', 'ko' => 'gajang-swiun', 'zh' => 'zuijiandan', 'de' => 'einfachste', 'fr' => 'tres-facile', 'es' => 'facilisimo', 'ru' => 'samyy-legkiy'],
-        'ai.newbie'  => ['vi' => 'moi-choi', 'en' => 'newbie', 'ja' => 'shoshinsha', 'ko' => 'nyubi', 'zh' => 'xinshou', 'de' => 'anfaenger', 'fr' => 'debutant', 'es' => 'principiante', 'ru' => 'novichok'],
-        'ai.easy'    => ['vi' => 'de-dang', 'en' => 'easy', 'ja' => 'kantan', 'ko' => 'iji', 'zh' => 'jianyiban', 'de' => 'leicht', 'fr' => 'facile', 'es' => 'facil', 'ru' => 'legkiy'],
-        'ai.normal'  => ['vi' => 'binh-thuong', 'en' => 'normal', 'ja' => 'tsujo', 'ko' => 'nomol', 'zh' => 'putong', 'de' => 'normalerweise', 'fr' => 'normalement', 'es' => 'normalmente', 'ru' => 'normalnyy'],
-        'ai.hard'    => ['vi' => 'kho', 'en' => 'hard', 'ja' => 'hado', 'ko' => 'hadeu', 'zh' => 'ying', 'de' => 'schwer', 'fr' => 'difficile', 'es' => 'dificil', 'ru' => 'slozhnyy'],
-        'ai.hardest' => ['vi' => 'kho-nhat', 'en' => 'hardest', 'ja' => 'mottomo-muzukashi', 'ko' => 'gajang-dandanhan', 'zh' => 'zuiying', 'de' => 'schwerste', 'fr' => 'tres-difficile', 'es' => 'dificilisimo', 'ru' => 'samyy-slozhnyy'],
-        'ai.master'  => ['vi' => 'kien-tuong', 'en' => 'grandmaster', 'ja' => 'masuta', 'ko' => 'maseuteo', 'zh' => 'dashi', 'de' => 'meister', 'fr' => 'maitre', 'es' => 'maestro', 'ru' => 'grossmeyster'],
+        'ai.home'    => ['vi' => '/', 'en' => 'en', 'ja' => 'ja', 'ko' => 'ko', 'zh' => 'zh', 'de' => 'de', 'fr' => 'fr', 'es' => 'es', 'ru' => 'ru', 'pt' => 'pt'],
+        'ai.easiest' => ['vi' => 'de-nhat', 'en' => 'easiest', 'ja' => 'mottomo-kantan', 'ko' => 'gajang-swiun', 'zh' => 'zuijiandan', 'de' => 'einfachste', 'fr' => 'tres-facile', 'es' => 'facilisimo', 'ru' => 'samyy-legkiy', 'pt' => 'facilimo'],
+        'ai.newbie'  => ['vi' => 'moi-choi', 'en' => 'newbie', 'ja' => 'shoshinsha', 'ko' => 'nyubi', 'zh' => 'xinshou', 'de' => 'anfaenger', 'fr' => 'debutant', 'es' => 'principiante', 'ru' => 'novichok', 'pt' => 'iniciante'],
+        'ai.easy'    => ['vi' => 'de-dang', 'en' => 'easy', 'ja' => 'kantan', 'ko' => 'iji', 'zh' => 'jianyiban', 'de' => 'leicht', 'fr' => 'facile', 'es' => 'facil', 'ru' => 'legkiy', 'pt' => 'modo-facil'],
+        'ai.normal'  => ['vi' => 'binh-thuong', 'en' => 'normal', 'ja' => 'tsujo', 'ko' => 'nomol', 'zh' => 'putong', 'de' => 'normalerweise', 'fr' => 'normalement', 'es' => 'normalmente', 'ru' => 'normalnyy', 'pt' => 'modo-normal'],
+        'ai.hard'    => ['vi' => 'kho', 'en' => 'hard', 'ja' => 'hado', 'ko' => 'hadeu', 'zh' => 'ying', 'de' => 'schwer', 'fr' => 'difficile', 'es' => 'dificil', 'ru' => 'slozhnyy', 'pt' => 'modo-dificil'],
+        'ai.hardest' => ['vi' => 'kho-nhat', 'en' => 'hardest', 'ja' => 'mottomo-muzukashi', 'ko' => 'gajang-dandanhan', 'zh' => 'zuiying', 'de' => 'schwerste', 'fr' => 'tres-difficile', 'es' => 'dificilisimo', 'ru' => 'samyy-slozhnyy', 'pt' => 'dificilimo'],
+        'ai.master'  => ['vi' => 'kien-tuong', 'en' => 'grandmaster', 'ja' => 'masuta', 'ko' => 'maseuteo', 'zh' => 'dashi', 'de' => 'meister', 'fr' => 'maitre', 'es' => 'maestro', 'ru' => 'grossmeyster', 'pt' => 'mestre'],
 
         // Application (Dashboard, Profile, Settings)
-        'app.dashboard' => ['vi' => 'thi-dau', 'en' => 'compete', 'ja' => 'kyogi', 'ko' => 'gyeong-gi', 'zh' => 'jingzheng', 'de' => 'wettkampf', 'fr' => 'competition', 'es' => 'competir', 'ru' => 'sorevnovanie'],
-        'app.history'   => ['vi' => 'lich-su', 'en' => 'history', 'ja' => 'rekishi', 'ko' => 'yeogsa', 'zh' => 'lishi', 'de' => 'verlauf', 'fr' => 'historique', 'es' => 'historial', 'ru' => 'istoriya'],
-        'app.ranking'   => ['vi' => 'bang-xep-hang', 'en' => 'ranking', 'ja' => 'rankingu', 'ko' => 'sun-wi', 'zh' => 'paiming', 'de' => 'rangliste', 'fr' => 'classement', 'es' => 'clasificacion', 'ru' => 'reyting'],
-        'app.password'  => ['vi' => 'doi-mat-khau', 'en' => 'change-password', 'ja' => 'pasuwado-henko', 'ko' => 'bimilbeonho-byeongyeong', 'zh' => 'genggaimima', 'de' => 'passwort-aendern', 'fr' => 'changer-mot-de-passe', 'es' => 'cambiar-contrasena', 'ru' => 'smenit-parol'],
-        'app.name'      => ['vi' => 'doi-ten', 'en' => 'change-name', 'ja' => 'namae-henko', 'ko' => 'ileum-byeongyeong', 'zh' => 'genggaimingcheng', 'de' => 'name-aendern', 'fr' => 'changer-nom', 'es' => 'cambiar-nombre', 'ru' => 'smenit-imya'],
-        'app.ui'        => ['vi' => 'doi-giao-dien', 'en' => 'change-ui', 'ja' => 'ui-henko', 'ko' => 'ui-byeongyeong', 'zh' => 'genggai-ui', 'de' => 'oberflaeche-aendern', 'fr' => 'changer-interface', 'es' => 'cambiar-interfaz', 'ru' => 'smenit-oformlenie'],
-        'app.profile'   => ['vi' => 'ho-so-cua-toi', 'en' => 'my-profile', 'ja' => 'watashi-no-purofiru', 'ko' => 'nae-peulopil', 'zh' => 'wodeziliao', 'de' => 'mein-profil', 'fr' => 'mon-profil', 'es' => 'mi-perfil', 'ru' => 'moy-profil'],
-        'app.vip'       => ['vi' => 'vip', 'en' => 'en/vip', 'ja' => 'ja/vip', 'ko' => 'ko/vip', 'zh' => 'zh/vip', 'de' => 'de/vip', 'fr' => 'fr/vip', 'es' => 'es/vip', 'ru' => 'ru/vip'],
-        'app.player'    => ['vi' => 'ky-thu/{id}', 'en' => 'player/{id}', 'ja' => 'pureya/{id}', 'ko' => 'peulleieo/{id}', 'zh' => 'wanjia/{id}', 'de' => 'spieler/{id}', 'fr' => 'joueur/{id}', 'es' => 'jugador/{id}', 'ru' => 'igrok/{id}'],
+        'app.dashboard' => ['vi' => 'thi-dau', 'en' => 'compete', 'ja' => 'kyogi', 'ko' => 'gyeong-gi', 'zh' => 'jingzheng', 'de' => 'wettkampf', 'fr' => 'competition', 'es' => 'competir', 'ru' => 'sorevnovanie', 'pt' => 'competicao'],
+        'app.history'   => ['vi' => 'lich-su', 'en' => 'history', 'ja' => 'rekishi', 'ko' => 'yeogsa', 'zh' => 'lishi', 'de' => 'verlauf', 'fr' => 'historique', 'es' => 'historial', 'ru' => 'istoriya', 'pt' => 'historico'],
+        'app.ranking'   => ['vi' => 'bang-xep-hang', 'en' => 'ranking', 'ja' => 'rankingu', 'ko' => 'sun-wi', 'zh' => 'paiming', 'de' => 'rangliste', 'fr' => 'classement', 'es' => 'clasificacion', 'ru' => 'reyting', 'pt' => 'classificacao'],
+        'app.password'  => ['vi' => 'doi-mat-khau', 'en' => 'change-password', 'ja' => 'pasuwado-henko', 'ko' => 'bimilbeonho-byeongyeong', 'zh' => 'genggaimima', 'de' => 'passwort-aendern', 'fr' => 'changer-mot-de-passe', 'es' => 'cambiar-contrasena', 'ru' => 'smenit-parol', 'pt' => 'alterar-senha'],
+        'app.name'      => ['vi' => 'doi-ten', 'en' => 'change-name', 'ja' => 'namae-henko', 'ko' => 'ileum-byeongyeong', 'zh' => 'genggaimingcheng', 'de' => 'name-aendern', 'fr' => 'changer-nom', 'es' => 'cambiar-nombre', 'ru' => 'smenit-imya', 'pt' => 'alterar-nome'],
+        'app.ui'        => ['vi' => 'doi-giao-dien', 'en' => 'change-ui', 'ja' => 'ui-henko', 'ko' => 'ui-byeongyeong', 'zh' => 'genggai-ui', 'de' => 'oberflaeche-aendern', 'fr' => 'changer-interface', 'es' => 'cambiar-interfaz', 'ru' => 'smenit-oformlenie', 'pt' => 'alterar-interface'],
+        'app.profile'   => ['vi' => 'ho-so-cua-toi', 'en' => 'my-profile', 'ja' => 'watashi-no-purofiru', 'ko' => 'nae-peulopil', 'zh' => 'wodeziliao', 'de' => 'mein-profil', 'fr' => 'mon-profil', 'es' => 'mi-perfil', 'ru' => 'moy-profil', 'pt' => 'meu-perfil'],
+        'app.vip'       => ['vi' => 'vip', 'en' => 'en/vip', 'ja' => 'ja/vip', 'ko' => 'ko/vip', 'zh' => 'zh/vip', 'de' => 'de/vip', 'fr' => 'fr/vip', 'es' => 'es/vip', 'ru' => 'ru/vip', 'pt' => 'pt/vip'],
+        'app.player'    => ['vi' => 'ky-thu/{id}', 'en' => 'player/{id}', 'ja' => 'pureya/{id}', 'ko' => 'peulleieo/{id}', 'zh' => 'wanjia/{id}', 'de' => 'spieler/{id}', 'fr' => 'joueur/{id}', 'es' => 'jugador/{id}', 'ru' => 'igrok/{id}', 'pt' => 'jogador/{id}'],
 
         // Auth
-        'login'            => ['vi' => 'dang-nhap', 'en' => 'login', 'ja' => 'roguin', 'ko' => 'log-in', 'zh' => 'denglu', 'de' => 'anmelden', 'fr' => 'connexion', 'es' => 'iniciar-sesion', 'ru' => 'vkhod'],
-        'register'         => ['vi' => 'dang-ky', 'en' => 'register', 'ja' => 'toroku', 'ko' => 'deunglog', 'zh' => 'zhuce', 'de' => 'registrieren', 'fr' => 'inscription', 'es' => 'registrarse', 'ru' => 'registratsiya'],
-        'password.request' => ['vi' => 'quen-mat-khau', 'en' => 'forgot-password', 'ja' => 'pasuwado-wasureta', 'ko' => 'bimilbeonho-ij-eobeolim', 'zh' => 'wangjimima', 'de' => 'passwort-vergessen', 'fr' => 'mot-de-passe-oublie', 'es' => 'olvide-contrasena', 'ru' => 'zabyl-parol'],
-        'password.create'  => ['vi' => 'tao-mat-khau', 'en' => 'create-password', 'ja' => 'pasuwado-sakusei', 'ko' => 'bimilbeonho-mandeulgi', 'zh' => 'chuangjianmima', 'de' => 'passwort-erstellen', 'fr' => 'creer-mot-de-passe', 'es' => 'crear-contrasena', 'ru' => 'sozdat-parol'],
-        'password.reset'   => ['vi' => 'dat-lai-mat-khau/{token}', 'en' => 'reset-password/{token}', 'ja' => 'pasuwado-risetto/{token}', 'ko' => 'bimilbeonho-jaeseoljeong/{token}', 'zh' => 'chongzhimima/{token}', 'de' => 'passwort-zuruecksetzen/{token}', 'fr' => 'reinitialiser-mot-de-passe/{token}', 'es' => 'restablecer-contrasena/{token}', 'ru' => 'sbros-parolya/{token}'],
+        'login'            => ['vi' => 'dang-nhap', 'en' => 'login', 'ja' => 'roguin', 'ko' => 'log-in', 'zh' => 'denglu', 'de' => 'anmelden', 'fr' => 'connexion', 'es' => 'iniciar-sesion', 'ru' => 'vkhod', 'pt' => 'entrar'],
+        'register'         => ['vi' => 'dang-ky', 'en' => 'register', 'ja' => 'toroku', 'ko' => 'deunglog', 'zh' => 'zhuce', 'de' => 'registrieren', 'fr' => 'inscription', 'es' => 'registrarse', 'ru' => 'registratsiya', 'pt' => 'cadastro'],
+        'password.request' => ['vi' => 'quen-mat-khau', 'en' => 'forgot-password', 'ja' => 'pasuwado-wasureta', 'ko' => 'bimilbeonho-ij-eobeolim', 'zh' => 'wangjimima', 'de' => 'passwort-vergessen', 'fr' => 'mot-de-passe-oublie', 'es' => 'olvide-contrasena', 'ru' => 'zabyl-parol', 'pt' => 'esqueci-a-senha'],
+        'password.create'  => ['vi' => 'tao-mat-khau', 'en' => 'create-password', 'ja' => 'pasuwado-sakusei', 'ko' => 'bimilbeonho-mandeulgi', 'zh' => 'chuangjianmima', 'de' => 'passwort-erstellen', 'fr' => 'creer-mot-de-passe', 'es' => 'crear-contrasena', 'ru' => 'sozdat-parol', 'pt' => 'criar-senha'],
+        'password.reset'   => ['vi' => 'dat-lai-mat-khau/{token}', 'en' => 'reset-password/{token}', 'ja' => 'pasuwado-risetto/{token}', 'ko' => 'bimilbeonho-jaeseoljeong/{token}', 'zh' => 'chongzhimima/{token}', 'de' => 'passwort-zuruecksetzen/{token}', 'fr' => 'reinitialiser-mot-de-passe/{token}', 'es' => 'restablecer-contrasena/{token}', 'ru' => 'sbros-parolya/{token}', 'pt' => 'redefinir-senha/{token}'],
 
         // Auth Actions (Add these to your existing configuration)
-        'logout'           => ['vi' => 'dang-xuat', 'en' => 'logout', 'ja' => 'roguauto', 'ko' => 'log-a-us', 'zh' => 'dengchu', 'de' => 'abmelden', 'fr' => 'deconnexion', 'es' => 'cerrar-sesion', 'ru' => 'vykhod'],
-        'password.email'   => ['vi' => 'gui-duong-dan-tao-mat-khau', 'en' => 'send-reset-link', 'ja' => 'risetto-rinku-soshin', 'ko' => 'jaeseoljeong-lingkeu-boda', 'zh' => 'fasong-chongzhi-lianjie', 'de' => 'zuruecksetzen-link-senden', 'fr' => 'envoyer-lien-de-reinitialisation', 'es' => 'enviar-enlace-de-restablecimiento', 'ru' => 'otpravit-ssylku-dlya-sbrosa'],
-        'password.update'  => ['vi' => 'quen-mat-khau', 'en' => 'forgot-password-update', 'ja' => 'pasuwado-koshin', 'ko' => 'bimilbeonho-eobdeiteu', 'zh' => 'wangjimima-gengxin', 'de' => 'passwort-vergessen-aktualisieren', 'fr' => 'mot-de-passe-oublie-mise-a-jour', 'es' => 'olvide-contrasena-actualizar', 'ru' => 'zabyl-parol-obnovit'],
+        'logout'           => ['vi' => 'dang-xuat', 'en' => 'logout', 'ja' => 'roguauto', 'ko' => 'log-a-us', 'zh' => 'dengchu', 'de' => 'abmelden', 'fr' => 'deconnexion', 'es' => 'cerrar-sesion', 'ru' => 'vykhod', 'pt' => 'sair'],
+        'password.email'   => ['vi' => 'gui-duong-dan-tao-mat-khau', 'en' => 'send-reset-link', 'ja' => 'risetto-rinku-soshin', 'ko' => 'jaeseoljeong-lingkeu-boda', 'zh' => 'fasong-chongzhi-lianjie', 'de' => 'zuruecksetzen-link-senden', 'fr' => 'envoyer-lien-de-reinitialisation', 'es' => 'enviar-enlace-de-restablecimiento', 'ru' => 'otpravit-ssylku-dlya-sbrosa', 'pt' => 'enviar-link-de-redefinicao'],
+        'password.update'  => ['vi' => 'quen-mat-khau', 'en' => 'forgot-password-update', 'ja' => 'pasuwado-koshin', 'ko' => 'bimilbeonho-eobdeiteu', 'zh' => 'wangjimima-gengxin', 'de' => 'passwort-vergessen-aktualisieren', 'fr' => 'mot-de-passe-oublie-mise-a-jour', 'es' => 'olvide-contrasena-actualizar', 'ru' => 'zabyl-parol-obnovit', 'pt' => 'esqueci-a-senha-atualizar'],
 
         // Lists/Misc
-        'puzzle.list' => ['vi' => 'tat-ca-the-co', 'en' => 'all-puzzles', 'ja' => 'subete-no-pazuru', 'ko' => 'modeun-peojeul', 'zh' => 'suoyou-mi', 'de' => 'alle-puzzles', 'fr' => 'tous-les-problemes', 'es' => 'todos-los-problemas', 'ru' => 'vse-zadachi'],
-        'user.list'   => ['vi' => 'thanh-vien', 'en' => 'members', 'ja' => 'pureya', 'ko' => 'peulleieo', 'zh' => 'wanjia', 'de' => 'mitglieder', 'fr' => 'membres', 'es' => 'miembros', 'ru' => 'uchastniki'],
-        'search'      => ['vi' => 'tim-kiem', 'en' => 'search', 'ja' => 'kensaku', 'ko' => 'geomsaeg', 'zh' => 'sousuo', 'de' => 'suche', 'fr' => 'recherche', 'es' => 'buscar', 'ru' => 'poisk'],
+        'puzzle.list' => ['vi' => 'tat-ca-the-co', 'en' => 'all-puzzles', 'ja' => 'subete-no-pazuru', 'ko' => 'modeun-peojeul', 'zh' => 'suoyou-mi', 'de' => 'alle-puzzles', 'fr' => 'tous-les-problemes', 'es' => 'todos-los-problemas', 'ru' => 'vse-zadachi', 'pt' => 'todos-os-quebra-cabecas'],
+        'user.list'   => ['vi' => 'thanh-vien', 'en' => 'members', 'ja' => 'pureya', 'ko' => 'peulleieo', 'zh' => 'wanjia', 'de' => 'mitglieder', 'fr' => 'membres', 'es' => 'miembros', 'ru' => 'uchastniki', 'pt' => 'membros'],
+        'search'      => ['vi' => 'tim-kiem', 'en' => 'search', 'ja' => 'kensaku', 'ko' => 'geomsaeg', 'zh' => 'sousuo', 'de' => 'suche', 'fr' => 'recherche', 'es' => 'buscar', 'ru' => 'poisk', 'pt' => 'pesquisar'],
 
         // Tournaments
-        'tournaments.index'    => ['vi' => 'giai-dau', 'en' => 'tournaments', 'ja' => 'tonamento', 'ko' => 'toneomeonteu', 'zh' => 'jinbiaosai', 'de' => 'turniere', 'fr' => 'tournois', 'es' => 'torneos', 'ru' => 'turniry'],
-        'tournaments.show'     => ['vi' => 'giai-dau/{slug}', 'en' => 'tournament/{slug}', 'ja' => 'tonamento/{slug}', 'ko' => 'toneomeonteu/{slug}', 'zh' => 'jinbiaosai/{slug}', 'de' => 'turnier/{slug}', 'fr' => 'tournoi/{slug}', 'es' => 'torneo/{slug}', 'ru' => 'turnir/{slug}'],
-        'tournaments.join'     => ['vi' => 'giai-dau/{slug}/tham-gia', 'en' => 'tournaments/{slug}/join', 'ja' => 'tonamento/{slug}/sanka', 'ko' => 'toneomeonteu/{slug}/chamga', 'zh' => 'jinbiaosai/{slug}/jiaru', 'de' => 'turniere/{slug}/beitreten', 'fr' => 'tournois/{slug}/rejoindre', 'es' => 'torneos/{slug}/unirse', 'ru' => 'turniry/{slug}/prisoedinitsya'],
-        'tournaments.generate' => ['vi' => 'giai-dau/{slug}/tao-bang', 'en' => 'tournaments/{slug}/generate-bracket', 'ja' => 'tonamento/{slug}/buraketto-sakusei', 'ko' => 'toneomeonteu/{slug}/daejinpyo-saengseong', 'zh' => 'jinbiaosai/{slug}/shengcheng-duizhentu', 'de' => 'turniere/{slug}/turnierbaum-erstellen', 'fr' => 'tournois/{slug}/generer-tableau', 'es' => 'torneos/{slug}/generar-cuadro', 'ru' => 'turniry/{slug}/sozdat-setku'],
-        'tournaments.create'   => ['vi' => 'admin/giai-dau/tao-moi', 'en' => 'admin/tournaments/create', 'ja' => 'admin/tonamento/sakusei', 'ko' => 'admin/toneomeonteu/mandeulgi', 'zh' => 'admin/jinbiaosai/chuangjian', 'de' => 'admin/turniere/erstellen', 'fr' => 'admin/tournois/creer', 'es' => 'admin/torneos/crear', 'ru' => 'admin/turniry/sozdat'],
-        'tournaments.store'    => ['vi' => 'admin/giai-dau', 'en' => 'admin/tournaments', 'ja' => 'admin/tonamento', 'ko' => 'admin/toneomeonteu', 'zh' => 'admin/jinbiaosai', 'de' => 'admin/turniere', 'fr' => 'admin/tournois', 'es' => 'admin/torneos', 'ru' => 'admin/turniry'],
-        'tournaments.edit'     => ['vi' => 'admin/giai-dau/{slug}/sua', 'en' => 'admin/tournaments/{slug}/edit', 'ja' => 'admin/tonamento/{slug}/henshuu', 'ko' => 'admin/toneomeonteu/{slug}/pyeongseong', 'zh' => 'admin/jinbiaosai/{slug}/bianji', 'de' => 'admin/turniere/{slug}/bearbeiten', 'fr' => 'admin/tournois/{slug}/modifier', 'es' => 'admin/torneos/{slug}/editar', 'ru' => 'admin/turniry/{slug}/izmenit'],
-        'tournaments.update'   => ['vi' => 'admin/giai-dau/{slug}', 'en' => 'admin/tournaments/{slug}', 'ja' => 'admin/tonamento/{slug}', 'ko' => 'admin/toneomeonteu/{slug}', 'zh' => 'admin/jinbiaosai/{slug}', 'de' => 'admin/turniere/{slug}', 'fr' => 'admin/tournois/{slug}', 'es' => 'admin/torneos/{slug}', 'ru' => 'admin/turniry/{slug}'],
-        'tournaments.cancel'   => ['vi' => 'admin/giai-dau/{slug}/huy', 'en' => 'admin/tournaments/{slug}/cancel', 'ja' => 'admin/tonamento/{slug}/kyanseru', 'ko' => 'admin/toneomeonteu/{slug}/chuiseo', 'zh' => 'admin/jinbiaosai/{slug}/quxiao', 'de' => 'admin/turniere/{slug}/absagen', 'fr' => 'admin/tournois/{slug}/annuler', 'es' => 'admin/torneos/{slug}/cancelar', 'ru' => 'admin/turniry/{slug}/otmenit'],
-        'tournaments.destroy'  => ['vi' => 'admin/giai-dau/{slug}', 'en' => 'admin/tournaments/{slug}', 'ja' => 'admin/tonamento/{slug}', 'ko' => 'admin/toneomeonteu/{slug}', 'zh' => 'admin/jinbiaosai/{slug}', 'de' => 'admin/turniere/{slug}', 'fr' => 'admin/tournois/{slug}', 'es' => 'admin/torneos/{slug}', 'ru' => 'admin/turniry/{slug}'],
+        'tournaments.index'    => ['vi' => 'giai-dau', 'en' => 'tournaments', 'ja' => 'tonamento', 'ko' => 'toneomeonteu', 'zh' => 'jinbiaosai', 'de' => 'turniere', 'fr' => 'tournois', 'es' => 'torneos', 'ru' => 'turniry', 'pt' => 'torneios'],
+        'tournaments.show'     => ['vi' => 'giai-dau/{slug}', 'en' => 'tournament/{slug}', 'ja' => 'tonamento/{slug}', 'ko' => 'toneomeonteu/{slug}', 'zh' => 'jinbiaosai/{slug}', 'de' => 'turnier/{slug}', 'fr' => 'tournoi/{slug}', 'es' => 'torneo/{slug}', 'ru' => 'turnir/{slug}', 'pt' => 'torneio/{slug}'],
+        'tournaments.join'     => ['vi' => 'giai-dau/{slug}/tham-gia', 'en' => 'tournaments/{slug}/join', 'ja' => 'tonamento/{slug}/sanka', 'ko' => 'toneomeonteu/{slug}/chamga', 'zh' => 'jinbiaosai/{slug}/jiaru', 'de' => 'turniere/{slug}/beitreten', 'fr' => 'tournois/{slug}/rejoindre', 'es' => 'torneos/{slug}/unirse', 'ru' => 'turniry/{slug}/prisoedinitsya', 'pt' => 'torneios/{slug}/participar'],
+        'tournaments.generate' => ['vi' => 'giai-dau/{slug}/tao-bang', 'en' => 'tournaments/{slug}/generate-bracket', 'ja' => 'tonamento/{slug}/buraketto-sakusei', 'ko' => 'toneomeonteu/{slug}/daejinpyo-saengseong', 'zh' => 'jinbiaosai/{slug}/shengcheng-duizhentu', 'de' => 'turniere/{slug}/turnierbaum-erstellen', 'fr' => 'tournois/{slug}/generer-tableau', 'es' => 'torneos/{slug}/generar-cuadro', 'ru' => 'turniry/{slug}/sozdat-setku', 'pt' => 'torneios/{slug}/gerar-chaveamento'],
+        'tournaments.create'   => ['vi' => 'admin/giai-dau/tao-moi', 'en' => 'admin/tournaments/create', 'ja' => 'admin/tonamento/sakusei', 'ko' => 'admin/toneomeonteu/mandeulgi', 'zh' => 'admin/jinbiaosai/chuangjian', 'de' => 'admin/turniere/erstellen', 'fr' => 'admin/tournois/creer', 'es' => 'admin/torneos/crear', 'ru' => 'admin/turniry/sozdat', 'pt' => 'admin/torneios/criar'],
+        'tournaments.store'    => ['vi' => 'admin/giai-dau', 'en' => 'admin/tournaments', 'ja' => 'admin/tonamento', 'ko' => 'admin/toneomeonteu', 'zh' => 'admin/jinbiaosai', 'de' => 'admin/turniere', 'fr' => 'admin/tournois', 'es' => 'admin/torneos', 'ru' => 'admin/turniry', 'pt' => 'admin/torneios'],
+        'tournaments.edit'     => ['vi' => 'admin/giai-dau/{slug}/sua', 'en' => 'admin/tournaments/{slug}/edit', 'ja' => 'admin/tonamento/{slug}/henshuu', 'ko' => 'admin/toneomeonteu/{slug}/pyeongseong', 'zh' => 'admin/jinbiaosai/{slug}/bianji', 'de' => 'admin/turniere/{slug}/bearbeiten', 'fr' => 'admin/tournois/{slug}/modifier', 'es' => 'admin/torneos/{slug}/editar', 'ru' => 'admin/turniry/{slug}/izmenit', 'pt' => 'admin/torneios/{slug}/editar'],
+        'tournaments.update'   => ['vi' => 'admin/giai-dau/{slug}', 'en' => 'admin/tournaments/{slug}', 'ja' => 'admin/tonamento/{slug}', 'ko' => 'admin/toneomeonteu/{slug}', 'zh' => 'admin/jinbiaosai/{slug}', 'de' => 'admin/turniere/{slug}', 'fr' => 'admin/tournois/{slug}', 'es' => 'admin/torneos/{slug}', 'ru' => 'admin/turniry/{slug}', 'pt' => 'admin/torneios/{slug}'],
+        'tournaments.cancel'   => ['vi' => 'admin/giai-dau/{slug}/huy', 'en' => 'admin/tournaments/{slug}/cancel', 'ja' => 'admin/tonamento/{slug}/kyanseru', 'ko' => 'admin/toneomeonteu/{slug}/chuiseo', 'zh' => 'admin/jinbiaosai/{slug}/quxiao', 'de' => 'admin/turniere/{slug}/absagen', 'fr' => 'admin/tournois/{slug}/annuler', 'es' => 'admin/torneos/{slug}/cancelar', 'ru' => 'admin/turniry/{slug}/otmenit', 'pt' => 'admin/torneios/{slug}/cancelar'],
+        'tournaments.destroy'  => ['vi' => 'admin/giai-dau/{slug}', 'en' => 'admin/tournaments/{slug}', 'ja' => 'admin/tonamento/{slug}', 'ko' => 'admin/toneomeonteu/{slug}', 'zh' => 'admin/jinbiaosai/{slug}', 'de' => 'admin/turniere/{slug}', 'fr' => 'admin/tournois/{slug}', 'es' => 'admin/torneos/{slug}', 'ru' => 'admin/turniry/{slug}', 'pt' => 'admin/torneios/{slug}'],
 
         // Profile Actions
-        'change.password'        => ['vi' => 'doi-mat-khau', 'en' => 'change-password', 'ja' => 'pasuwado-henko', 'ko' => 'bimilbeonho-byeongyeong', 'zh' => 'genggaimima', 'de' => 'passwort-aendern', 'fr' => 'changer-mot-de-passe', 'es' => 'cambiar-contrasena', 'ru' => 'smenit-parol'],
-        'change.name'            => ['vi' => 'doi-ten', 'en' => 'change-name', 'ja' => 'namae-henko', 'ko' => 'ileum-byeongyeong', 'zh' => 'genggaimingcheng', 'de' => 'name-aendern', 'fr' => 'changer-nom', 'es' => 'cambiar-nombre', 'ru' => 'smenit-imya'],
-        'change.ui'              => ['vi' => 'doi-giao-dien', 'en' => 'change-ui', 'ja' => 'ui-henko', 'ko' => 'ui-byeongyeong', 'zh' => 'genggai-ui', 'de' => 'oberflaeche-aendern', 'fr' => 'changer-interface', 'es' => 'cambiar-interfaz', 'ru' => 'smenit-oformlenie'],
-        'profile.picture.upload' => ['vi' => 'doi-anh-dai-dien', 'en' => 'upload-profile-picture', 'ja' => 'purofiru-gazo-appurodo', 'ko' => 'peulopil-sajin-eoblodeu', 'zh' => 'shangchuan-touxiang', 'de' => 'profilbild-hochladen', 'fr' => 'telecharger-photo-de-profil', 'es' => 'subir-foto-de-perfil', 'ru' => 'zagruzit-foto-profilya'],
-        'profile.picture.remove' => ['vi' => 'xoa-anh-dai-dien', 'en' => 'remove-profile-picture', 'ja' => 'purofiru-gazo-sakujo', 'ko' => 'peulopil-sajin-sakje', 'zh' => 'shanchu-touxiang', 'de' => 'profilbild-entfernen', 'fr' => 'supprimer-photo-de-profil', 'es' => 'eliminar-foto-de-perfil', 'ru' => 'udalit-foto-profilya'],
+        'change.password'        => ['vi' => 'doi-mat-khau', 'en' => 'change-password', 'ja' => 'pasuwado-henko', 'ko' => 'bimilbeonho-byeongyeong', 'zh' => 'genggaimima', 'de' => 'passwort-aendern', 'fr' => 'changer-mot-de-passe', 'es' => 'cambiar-contrasena', 'ru' => 'smenit-parol', 'pt' => 'alterar-senha'],
+        'change.name'            => ['vi' => 'doi-ten', 'en' => 'change-name', 'ja' => 'namae-henko', 'ko' => 'ileum-byeongyeong', 'zh' => 'genggaimingcheng', 'de' => 'name-aendern', 'fr' => 'changer-nom', 'es' => 'cambiar-nombre', 'ru' => 'smenit-imya', 'pt' => 'alterar-nome'],
+        'change.ui'              => ['vi' => 'doi-giao-dien', 'en' => 'change-ui', 'ja' => 'ui-henko', 'ko' => 'ui-byeongyeong', 'zh' => 'genggai-ui', 'de' => 'oberflaeche-aendern', 'fr' => 'changer-interface', 'es' => 'cambiar-interfaz', 'ru' => 'smenit-oformlenie', 'pt' => 'alterar-interface'],
+        'profile.picture.upload' => ['vi' => 'doi-anh-dai-dien', 'en' => 'upload-profile-picture', 'ja' => 'purofiru-gazo-appurodo', 'ko' => 'peulopil-sajin-eoblodeu', 'zh' => 'shangchuan-touxiang', 'de' => 'profilbild-hochladen', 'fr' => 'telecharger-photo-de-profil', 'es' => 'subir-foto-de-perfil', 'ru' => 'zagruzit-foto-profilya', 'pt' => 'enviar-foto-de-perfil'],
+        'profile.picture.remove' => ['vi' => 'xoa-anh-dai-dien', 'en' => 'remove-profile-picture', 'ja' => 'purofiru-gazo-sakujo', 'ko' => 'peulopil-sajin-sakje', 'zh' => 'shanchu-touxiang', 'de' => 'profilbild-entfernen', 'fr' => 'supprimer-photo-de-profil', 'es' => 'eliminar-foto-de-perfil', 'ru' => 'udalit-foto-profilya', 'pt' => 'remover-foto-de-perfil'],
 
-        'article.index' => ['vi' => 'bai-viet', 'en' => 'articles', 'ja' => 'kiji', 'ko' => 'gisa', 'zh' => 'wenzhang', 'de' => 'artikel', 'fr' => 'article', 'es' => 'articulos', 'ru' => 'stati'],
-        'article.show'  => ['vi' => 'bai-viet/{slug}', 'en' => 'articles/{slug}', 'ja' => 'kiji/{slug}', 'ko' => 'gisa/{slug}', 'zh' => 'wenzhang/{slug}', 'de' => 'artikel/{slug}', 'fr' => 'article/{slug}', 'es' => 'articulos/{slug}', 'ru' => 'stati/{slug}'],
+        'article.index' => ['vi' => 'bai-viet', 'en' => 'articles', 'ja' => 'kiji', 'ko' => 'gisa', 'zh' => 'wenzhang', 'de' => 'artikel', 'fr' => 'article', 'es' => 'articulos', 'ru' => 'stati', 'pt' => 'artigos'],
+        'article.show'  => ['vi' => 'bai-viet/{slug}', 'en' => 'articles/{slug}', 'ja' => 'kiji/{slug}', 'ko' => 'gisa/{slug}', 'zh' => 'wenzhang/{slug}', 'de' => 'artikel/{slug}', 'fr' => 'article/{slug}', 'es' => 'articulos/{slug}', 'ru' => 'stati/{slug}', 'pt' => 'artigos/{slug}'],
 
         // Games (shared game library — CRUD is admin-only, these two are the
         // only public-facing pages for the games feature)
-        'games.library' => ['vi' => 'thu-vien', 'en' => 'library', 'ja' => 'raiburari', 'ko' => 'raibeureoli', 'zh' => 'tushuguan', 'de' => 'bibliothek', 'fr' => 'bibliotheque', 'es' => 'biblioteca', 'ru' => 'biblioteka'],
-        'games.show'    => ['vi' => 'van-co/{slug}', 'en' => 'games/{slug}', 'ja' => 'kifu/{slug}', 'ko' => 'gibo/{slug}', 'zh' => 'qipu/{slug}', 'de' => 'partien/{slug}', 'fr' => 'parties/{slug}', 'es' => 'partidas/{slug}', 'ru' => 'partii/{slug}'],
+        'games.library' => ['vi' => 'thu-vien', 'en' => 'library', 'ja' => 'raiburari', 'ko' => 'raibeureoli', 'zh' => 'tushuguan', 'de' => 'bibliothek', 'fr' => 'bibliotheque', 'es' => 'biblioteca', 'ru' => 'biblioteka', 'pt' => 'biblioteca-de-partidas'],
+        'games.show'    => ['vi' => 'van-co/{slug}', 'en' => 'games/{slug}', 'ja' => 'kifu/{slug}', 'ko' => 'gibo/{slug}', 'zh' => 'qipu/{slug}', 'de' => 'partien/{slug}', 'fr' => 'parties/{slug}', 'es' => 'partidas/{slug}', 'ru' => 'partii/{slug}', 'pt' => 'partida/{slug}'],
     ],
 ];
