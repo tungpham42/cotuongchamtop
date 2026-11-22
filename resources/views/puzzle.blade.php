@@ -77,38 +77,89 @@
             cursor: pointer;
             -webkit-user-drag: none;
             user-select: none;
-            transition: transform .2s cubic-bezier(.175, .885, .32, 1.275), filter .2s ease;
+            transition: transform .28s cubic-bezier(.175, .885, .32, 1.275), filter .28s ease;
         }
         #ban-co .square-2b8ce img { position: relative; z-index: 2; }
 
-        /* Selected piece (board square or tray): lifted with a gold halo */
+        /* ---------- Selected piece (board square or tray): honey halo, lifted ---------- */
         #ban-co .square-2b8ce.pz-selected {
-            background: radial-gradient(circle, rgba(255, 215, 0, .55), rgba(255, 215, 0, .15) 60%, transparent 75%) !important;
+            background:
+                radial-gradient(circle at 50% 50%, rgba(255, 200, 97, .6), rgba(255, 170, 70, .18) 60%, transparent 76%) !important;
             z-index: 4;
         }
         #ban-co .square-2b8ce.pz-selected img,
         #ban-co img[data-piece].pz-selected {
             transform: translateY(-6px) scale(1.12);
-            filter: drop-shadow(0 8px 6px rgba(0, 0, 0, .55)) drop-shadow(0 0 10px rgba(255, 215, 0, .95));
+            filter:
+                drop-shadow(0 8px 6px rgba(0, 0, 0, .55))
+                drop-shadow(0 0 10px rgba(255, 200, 97, .95));
         }
 
-        /* While something is selected, hovering a square previews the drop */
+        /* ---------- Drop preview (empty square): glossy sage orb ---------- */
         #ban-co.pz-armed .square-2b8ce:hover::after {
             content: '';
             position: absolute; left: 50%; top: 50%;
-            width: 30%; height: 30%; border-radius: 50%;
+            width: 36%; height: 36%; border-radius: 50%;
             transform: translate(-50%, -50%);
-            background: radial-gradient(circle at 32% 28%, #fff 0%, rgba(255, 242, 204, .95) 18%, #ffd700 55%, #b89020 100%);
-            box-shadow: 0 0 0 2px rgba(138, 21, 21, .55), 0 3px 6px rgba(0, 0, 0, .55), 0 0 14px rgba(255, 215, 0, .85);
+            background:
+                radial-gradient(circle at 34% 30%, #fffdf3 0%, #fff1d6 20%, #9fd18a 58%, #5f9450 100%);
+            box-shadow:
+                0 0 0 2px rgba(255, 246, 228, .75),
+                0 3px 6px rgba(20, 8, 4, .5),
+                0 0 14px rgba(150, 210, 130, .8),
+                inset 0 -2px 4px rgba(0, 0, 0, .25);
             pointer-events: none; z-index: 3;
+            animation: pzOrbIn .3s cubic-bezier(.175, .885, .32, 1.275) both,
+                       pzOrbGlow 1.8s ease-in-out .3s infinite;
         }
+        #ban-co.pz-armed .square-2b8ce:not(:has(img)):hover {
+            background: radial-gradient(circle, rgba(150, 210, 130, .35), transparent 75%) !important;
+        }
+
+        /* ---------- Drop preview (occupied square, will be replaced): ruby-gold ring ---------- */
         #ban-co.pz-armed .square-2b8ce:hover:has(img)::after {
             width: 92%; height: 92%;
             background: transparent;
-            box-shadow: 0 0 14px rgba(230, 57, 70, .9), inset 0 0 14px rgba(230, 57, 70, .6);
-            border: 3px solid rgba(255, 215, 0, .9);
+            border: 3px solid transparent;
+            background-image:
+                linear-gradient(transparent, transparent),
+                conic-gradient(from 0deg, var(--royal-red-light, #ee7a5f), var(--royal-gold, #e0a43a), #fff, var(--royal-gold, #e0a43a), var(--royal-red-light, #ee7a5f));
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            box-shadow:
+                0 0 14px rgba(238, 122, 95, .9),
+                inset 0 0 14px rgba(238, 122, 95, .6);
+            animation: pzRingIn .3s cubic-bezier(.175, .885, .32, 1.275) both,
+                       pzRingSpin 3s linear .3s infinite,
+                       pzRingGlow 1.2s ease-in-out .3s infinite;
         }
+        #ban-co.pz-armed .square-2b8ce:hover:has(img) img {
+            filter: drop-shadow(0 0 8px rgba(255, 138, 76, .95));
+        }
+
+        @keyframes pzOrbIn {
+            from { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        @keyframes pzOrbGlow {
+            0%, 100% { filter: brightness(1); }
+            50%      { filter: brightness(1.12) drop-shadow(0 0 6px rgba(150, 210, 130, .85)); }
+        }
+        @keyframes pzRingIn {
+            from { transform: translate(-50%, -50%) scale(.4); opacity: 0; }
+            to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        @keyframes pzRingSpin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        @keyframes pzRingGlow {
+            0%, 100% { opacity: .75; }
+            50%      { opacity: 1; }
+        }
+
         @media (prefers-reduced-motion: reduce) {
+            #ban-co.pz-armed .square-2b8ce:hover::after,
+            #ban-co.pz-armed .square-2b8ce:hover:has(img)::after { animation: none !important; }
             #ban-co img[data-piece] { transition: none; }
         }
     </style>
