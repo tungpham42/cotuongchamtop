@@ -1108,7 +1108,7 @@ pseudo-element (an animation cannot beat an !important declaration). */
 }
 
 :root[data-theme="light"] body.game-detail .royal-glass-card {
-    background-color: unset !important;
+    background-color: var(--cozy-paper) !important;
 }
 
 :root[data-theme="light"] .puzzle-empty-comment,

@@ -47,7 +47,7 @@
                             @if (auth()->id() != $player->id)
                                 <a class="btn btn-danger text-light ml-2 pulse-red" style="width: 140px;" href="javascript:compete({{ $player->id }});"><i class="far fa-mouse"></i> {{ __("Thách đấu") }}</a>
                             @else
-                                <a class="btn btn-dark text-light ml-2" style="width: 140px; cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> {{ __("Thách đấu") }}</a>
+                                <a class="btn btn-dark text-light ml-2" style="width: 140px; cursor: not-allowed !important;" href="javascript:void(0);"><i class="far fa-ban"></i> {{ __("Bản thân") }}</a>
                             @endif
                         @else
                             <a class="btn btn-danger text-light ml-2 pulse-red" style="width: 140px;" href=" {{ localized_url('login') }} "><i class="far fa-sign-in"></i> {{ __("Thách đấu") }}</a>
