@@ -257,7 +257,7 @@
 
                 {{-- Controls Toolbar --}}
                 <div class="d-flex align-items-center justify-content-center flex-wrap gap-toolbar mt-4">
-                    <div class="d-flex align-items-center gap-controls p-1 rounded-pill" style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(212, 175, 55, 0.2);">
+                    <div class="d-flex align-items-center gap-controls p-1 rounded-pill" style="border: 1px solid rgba(212, 175, 55, 0.2);">
                         <button id="btn-start" class="btn btn-royal-icon" data-tippy-content="{{ __('Về đầu') }}">
                             <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
                         </button>
