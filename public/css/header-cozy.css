@@ -2,18 +2,12 @@
    HEADER COZY — "Cổng đèn lồng"
    A lantern-lit header for the tea-house theme.
    Load AFTER theme-cozy.css:
-     <link href="{{ asset('css/header-cozy.css?v=2') }}" rel="stylesheet">
+     <link href="{{ asset('css/header-cozy.css?v=1') }}" rel="stylesheet">
 
    Desktop (>= 1200px):  logo coin · floating pill rail · gold "Chơi ngay" button · avatar
                          "Thi đấu" opens a 3-column mega menu with icon tiles + hints.
    Tablet / phone:       burger → full-width slide-down sheet with big touch targets,
                          dropdowns become accordions. "Chơi ngay" + avatar stay in the bar.
-
-   Dark / light: the bar itself is lacquer red in both themes (it is the brand
-   frame), light mode just brightens it ("morning lacquer"). Dropdown panels are
-   cocoa in dark mode and rice-paper in light mode. All of that is driven by the
-   --cz-* tokens at the top of section 1 and the light overrides at the end of
-   section 1. The theme switch (.cz-theme) is section 4b.
 
    Every selector starts with `header.site-header.cz-header` so it out-ranks the older
    header rules in index_new.css / theme-cozy.css without touching them. Where the old
@@ -26,66 +20,43 @@
    -------------------------------------------------------------------------- */
 header.site-header.cz-header {
     --cz-h: 74px;
-    /* Literal brand colours: the bar is dark lacquer in both themes, so these
-       must NOT follow --royal-gold (which turns deep amber in light mode). */
-    --cz-gold: #ffc861;
+    --cz-gold: var(--royal-gold, #ffc861);
     --cz-gold-hi: #ffd98a;
     --cz-gold-lo: #f0a93e;
-    --cz-cream: #fff6e4;
-    --cz-ink: #3a1f14;
-    --cz-ember: #ff8a4c;
+    --cz-cream: var(--cozy-cream, #fff6e4);
+    --cz-ink: var(--cozy-ink, #3a1f14);
+    --cz-ember: var(--cozy-ember, #ff8a4c);
     --cz-line: rgba(255, 200, 97, 0.28);
     --cz-ease: var(--cozy-ease, cubic-bezier(0.22, 1, 0.36, 1));
     --cz-spring: var(--cozy-spring, cubic-bezier(0.34, 1.56, 0.64, 1));
-
-    /* Bar */
-    --cz-bar-a: rgba(180, 66, 46, 0.96);
-    --cz-bar-b: rgba(112, 36, 25, 0.96);
-    --cz-bar-glow-a: rgba(255, 190, 90, 0.38);
-    --cz-bar-glow-b: rgba(255, 138, 76, 0.28);
-    --cz-bar-shadow: 0 12px 32px rgba(18, 7, 4, 0.5);
-    --cz-bar-shadow-scrolled: 0 14px 36px rgba(10, 4, 2, 0.62);
-    --cz-bar-bg:
-        radial-gradient(520px 130px at 6% -30%, var(--cz-bar-glow-a), transparent 70%),
-        radial-gradient(460px 130px at 96% -40%, var(--cz-bar-glow-b), transparent 70%),
-        linear-gradient(180deg, var(--cz-bar-a), var(--cz-bar-b));
-    --cz-rail: rgba(40, 17, 10, 0.38);
-    --cz-sheet-a: #7a2a1c;
-    --cz-sheet-b: #451a10;
-
-    /* Dropdown panels (cocoa by default; rice paper in light mode) */
-    --cz-panel-a: rgba(62, 34, 25, 0.985);
-    --cz-panel-b: rgba(37, 19, 13, 0.985);
-    --cz-panel-line: rgba(255, 200, 97, 0.38);
-    --cz-panel-line-top: rgba(255, 200, 97, 0.85);
-    --cz-panel-shadow: 0 28px 60px rgba(10, 4, 2, 0.65), 0 0 40px rgba(255, 170, 70, 0.12);
-    --cz-panel-text: #fff6e4;
-    --cz-panel-hint: rgba(255, 241, 214, 0.62);
-    --cz-panel-accent: #ffc861;
-    --cz-panel-accent-hi: #ffd98a;
-    --cz-panel-hover: rgba(255, 200, 97, 0.13);
-    --cz-panel-tile: rgba(255, 200, 97, 0.13);
-    --cz-panel-tile-line: rgba(255, 200, 97, 0.3);
-    --cz-panel-active-a: rgba(255, 200, 97, 0.26);
-    --cz-panel-active-b: rgba(255, 200, 97, 0.08);
-    --cz-panel-active-line: rgba(255, 200, 97, 0.55);
-    --cz-panel-rule: rgba(255, 200, 97, 0.35);
-    --cz-panel-group-rule: rgba(255, 200, 97, 0.3);
-    --cz-panel-quiet: rgba(255, 246, 228, 0.07);
-    --cz-panel-quiet-line: rgba(255, 246, 228, 0.2);
 
     position: sticky;
     top: 0;
     z-index: 1050;
     width: 100%;
     padding-top: env(safe-area-inset-top, 0);
-    background: var(--cz-bar-bg);
+    background:
+        radial-gradient(
+            520px 130px at 6% -30%,
+            rgba(255, 190, 90, 0.38),
+            transparent 70%
+        ),
+        radial-gradient(
+            460px 130px at 96% -40%,
+            rgba(255, 138, 76, 0.28),
+            transparent 70%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(180, 66, 46, 0.96),
+            rgba(112, 36, 25, 0.96)
+        );
     -webkit-backdrop-filter: blur(16px) saturate(1.3);
     backdrop-filter: blur(16px) saturate(1.3);
     border-bottom: 0;
     border-radius: 0 0 24px 24px;
     box-shadow:
-        var(--cz-bar-shadow),
+        0 12px 32px rgba(18, 7, 4, 0.5),
         inset 0 1px 0 rgba(255, 236, 200, 0.3);
     animation: czDrop 0.7s var(--cz-ease) both;
     transition:
@@ -94,9 +65,24 @@ header.site-header.cz-header {
 }
 /* The old header hover swaps the background and uses an !important shadow; keep it calm. */
 header.site-header.cz-header:hover {
-    background: var(--cz-bar-bg);
+    background:
+        radial-gradient(
+            520px 130px at 6% -30%,
+            rgba(255, 190, 90, 0.38),
+            transparent 70%
+        ),
+        radial-gradient(
+            460px 130px at 96% -40%,
+            rgba(255, 138, 76, 0.28),
+            transparent 70%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(180, 66, 46, 0.96),
+            rgba(112, 36, 25, 0.96)
+        );
     box-shadow:
-        var(--cz-bar-shadow),
+        0 12px 32px rgba(18, 7, 4, 0.5),
         inset 0 1px 0 rgba(255, 236, 200, 0.3) !important;
 }
 header.site-header.cz-header.is-scrolled,
@@ -104,50 +90,8 @@ header.site-header.cz-header.is-scrolled:hover {
     --cz-h: 60px;
     border-radius: 0 0 18px 18px;
     box-shadow:
-        var(--cz-bar-shadow-scrolled),
+        0 14px 36px rgba(10, 4, 2, 0.62),
         inset 0 1px 0 rgba(255, 236, 200, 0.3) !important;
-}
-
-/* Light mode: "morning lacquer". Same terracotta frame, lit from the front,
-   with rice-paper dropdown panels. Specificity beats the base tokens above. */
-:root[data-theme="light"] header.site-header.cz-header {
-    --cz-bar-a: rgba(204, 92, 66, 0.97);
-    --cz-bar-b: rgba(158, 54, 37, 0.97);
-    --cz-bar-glow-a: rgba(255, 214, 150, 0.5);
-    --cz-bar-glow-b: rgba(255, 170, 110, 0.32);
-    --cz-bar-shadow: 0 10px 26px rgba(107, 58, 34, 0.32);
-    --cz-bar-shadow-scrolled: 0 12px 30px rgba(107, 58, 34, 0.4);
-    --cz-rail: rgba(70, 22, 12, 0.26);
-    --cz-sheet-a: #b84a33;
-    --cz-sheet-b: #8f2f21;
-
-    --cz-panel-a: #fffaf0;
-    --cz-panel-b: #f7e7c6;
-    --cz-panel-line: rgba(107, 58, 34, 0.3);
-    --cz-panel-line-top: rgba(168, 64, 44, 0.75);
-    --cz-panel-shadow: 0 24px 50px rgba(107, 58, 34, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.4);
-    --cz-panel-text: #3a1f14;
-    --cz-panel-hint: rgba(58, 31, 20, 0.64);
-    --cz-panel-accent: #a8402c;
-    --cz-panel-accent-hi: #7d2e1e;
-    --cz-panel-hover: rgba(168, 64, 44, 0.09);
-    --cz-panel-tile: rgba(168, 64, 44, 0.09);
-    --cz-panel-tile-line: rgba(168, 64, 44, 0.26);
-    --cz-panel-active-a: rgba(255, 200, 97, 0.6);
-    --cz-panel-active-b: rgba(255, 200, 97, 0.16);
-    --cz-panel-active-line: rgba(176, 110, 20, 0.55);
-    --cz-panel-rule: rgba(107, 58, 34, 0.25);
-    --cz-panel-group-rule: rgba(107, 58, 34, 0.28);
-    --cz-panel-quiet: rgba(58, 31, 20, 0.06);
-    --cz-panel-quiet-line: rgba(58, 31, 20, 0.2);
-}
-
-:root[data-theme="light"] header.site-header.cz-header .dropdown-menu .cz-item--ai .cz-item-ico {
-    background: rgba(196, 81, 58, 0.12);
-    border-color: rgba(196, 81, 58, 0.4);
-}
-:root[data-theme="light"] header.site-header.cz-header .dropdown-menu .cz-item--ai .cz-item-ico i {
-    color: #b8402a !important;
 }
 
 /* Kill the old liquid sheen layer; draw a thin gold thread along the bottom instead. */
@@ -290,7 +234,7 @@ header.site-header.cz-header .cz-menu {
     padding: 5px;
     list-style: none;
     border-radius: 999px;
-    background: var(--cz-rail);
+    background: rgba(40, 17, 10, 0.38);
     border: 1px solid var(--cz-line);
     box-shadow:
         inset 0 2px 8px rgba(10, 4, 2, 0.4),
@@ -519,105 +463,6 @@ header.site-header.cz-header .nav-avatar {
 }
 
 /* --------------------------------------------------------------------------
-   4b. Theme switch — "lantern" toggle
-   A pill with a gold knob. Dark = knob on the right, showing a moon, glowing
-   like a lit lantern. Light = knob on the left, showing a sun, no glow.
-   State is read from <html data-theme>, so it can never drift from the page.
-   -------------------------------------------------------------------------- */
-header.site-header.cz-header .cz-theme {
-    position: relative;
-    flex: 0 0 auto;
-    width: 60px;
-    height: 34px;
-    padding: 0;
-    border-radius: 999px;
-    cursor: pointer;
-    color: var(--cz-cream);
-    background: var(--cz-rail);
-    border: 1px solid rgba(255, 200, 97, 0.6);
-    box-shadow: inset 0 2px 6px rgba(10, 4, 2, 0.35);
-    transition:
-        border-color 0.25s ease,
-        background 0.3s ease,
-        transform 0.25s var(--cz-spring);
-    -webkit-tap-highlight-color: transparent;
-}
-header.site-header.cz-header .cz-theme:hover {
-    border-color: var(--cz-gold-hi);
-}
-header.site-header.cz-header .cz-theme:active {
-    transform: scale(0.95);
-}
-header.site-header.cz-header .cz-theme:focus-visible {
-    outline: 3px solid var(--cz-gold);
-    outline-offset: 3px;
-}
-/* The "other" mode, faintly visible on the empty side of the track */
-header.site-header.cz-header .cz-theme-hint {
-    position: absolute;
-    top: 50%;
-    width: 14px;
-    margin-top: -0.5em;
-    font-size: 13px;
-    line-height: 1;
-    text-align: center;
-    color: rgba(255, 246, 228, 0.55);
-    pointer-events: none;
-}
-header.site-header.cz-header .cz-theme-hint--sun {
-    left: 9px;
-}
-header.site-header.cz-header .cz-theme-hint--moon {
-    right: 9px;
-}
-header.site-header.cz-header .cz-theme-knob {
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 26px;
-    height: 26px;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    color: var(--cz-ink);
-    background: radial-gradient(circle at 32% 25%, #fff0c8, #f3b24a 75%);
-    box-shadow:
-        0 0 14px rgba(255, 200, 97, 0.7),
-        0 2px 5px rgba(20, 8, 4, 0.45),
-        inset 0 1px 0 rgba(255, 255, 255, 0.7);
-    transform: translateX(26px); /* dark = lantern lit, knob on the right */
-    transition:
-        transform 0.45s var(--cz-spring),
-        box-shadow 0.35s ease;
-}
-header.site-header.cz-header .cz-theme-knob i {
-    grid-area: 1 / 1;
-    font-size: 13px;
-    transition:
-        opacity 0.25s ease,
-        transform 0.45s var(--cz-spring);
-}
-header.site-header.cz-header .cz-theme-knob .cz-theme-sun {
-    opacity: 0;
-    transform: rotate(-90deg) scale(0.4);
-}
-/* Light state */
-:root[data-theme="light"] header.site-header.cz-header .cz-theme-knob {
-    transform: translateX(0);
-    box-shadow:
-        0 2px 6px rgba(60, 20, 8, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8);
-}
-:root[data-theme="light"] header.site-header.cz-header .cz-theme-knob .cz-theme-sun {
-    opacity: 1;
-    transform: none;
-}
-:root[data-theme="light"] header.site-header.cz-header .cz-theme-knob .cz-theme-moon {
-    opacity: 0;
-    transform: rotate(90deg) scale(0.4);
-}
-
-/* --------------------------------------------------------------------------
    5. Dropdown panels
    -------------------------------------------------------------------------- */
 header.site-header.cz-header .dropdown-menu {
@@ -627,10 +472,16 @@ header.site-header.cz-header .dropdown-menu {
     padding: 0;
     overflow: visible;
     border-radius: 22px;
-    background: linear-gradient(180deg, var(--cz-panel-a), var(--cz-panel-b)) !important;
-    border: 1px solid var(--cz-panel-line) !important;
-    border-top: 2px solid var(--cz-panel-line-top) !important;
-    box-shadow: var(--cz-panel-shadow) !important;
+    background: linear-gradient(
+        180deg,
+        rgba(62, 34, 25, 0.985),
+        rgba(37, 19, 13, 0.985)
+    ) !important;
+    border: 1px solid rgba(255, 200, 97, 0.38) !important;
+    border-top: 2px solid rgba(255, 200, 97, 0.85) !important;
+    box-shadow:
+        0 28px 60px rgba(10, 4, 2, 0.65),
+        0 0 40px rgba(255, 170, 70, 0.12) !important;
     animation: czPop 0.28s var(--cz-ease) both;
     transform-origin: top right;
     max-height: calc(100vh - 120px);
@@ -666,8 +517,8 @@ header.site-header.cz-header .cz-group-title {
     font-weight: 800;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--cz-panel-accent);
-    border-bottom: 1px dashed var(--cz-panel-group-rule);
+    color: var(--cz-gold);
+    border-bottom: 1px dashed rgba(255, 200, 97, 0.3);
 }
 
 /* Rows: icon tile + label + hint */
@@ -685,7 +536,7 @@ header.site-header.cz-header .dropdown-menu .cz-item {
     font-weight: 600;
     white-space: normal;
     text-shadow: none;
-    color: var(--cz-panel-text) !important;
+    color: var(--cz-cream) !important;
     background: transparent !important;
     box-shadow: none !important;
     -webkit-backdrop-filter: none;
@@ -698,8 +549,8 @@ header.site-header.cz-header .dropdown-menu .cz-item {
 }
 header.site-header.cz-header .dropdown-menu .cz-item:hover,
 header.site-header.cz-header .dropdown-menu .cz-item:focus {
-    color: var(--cz-panel-accent-hi) !important;
-    background: var(--cz-panel-hover) !important;
+    color: var(--cz-gold-hi) !important;
+    background: rgba(255, 200, 97, 0.13) !important;
     box-shadow: none !important;
     text-shadow: none;
     border: 0;
@@ -707,17 +558,17 @@ header.site-header.cz-header .dropdown-menu .cz-item:focus {
 }
 header.site-header.cz-header .dropdown-menu .cz-item.active,
 header.site-header.cz-header .dropdown-menu .cz-item:active {
-    color: var(--cz-panel-accent-hi) !important;
+    color: var(--cz-gold-hi) !important;
     background: linear-gradient(
         90deg,
-        var(--cz-panel-active-a),
-        var(--cz-panel-active-b)
+        rgba(255, 200, 97, 0.26),
+        rgba(255, 200, 97, 0.08)
     ) !important;
-    box-shadow: inset 0 0 0 1px var(--cz-panel-active-line) !important;
+    box-shadow: inset 0 0 0 1px rgba(255, 200, 97, 0.55) !important;
     transform: none;
 }
 header.site-header.cz-header .dropdown-menu .cz-item:focus-visible {
-    outline: 2px solid var(--cz-panel-accent);
+    outline: 2px solid var(--cz-gold);
     outline-offset: -2px;
 }
 
@@ -728,8 +579,8 @@ header.site-header.cz-header .dropdown-menu .cz-item:focus-visible {
     display: grid;
     place-items: center;
     border-radius: 12px;
-    background: var(--cz-panel-tile);
-    border: 1px solid var(--cz-panel-tile-line);
+    background: rgba(255, 200, 97, 0.13);
+    border: 1px solid rgba(255, 200, 97, 0.3);
     transition:
         background 0.25s ease,
         transform 0.3s var(--cz-spring),
@@ -737,7 +588,7 @@ header.site-header.cz-header .dropdown-menu .cz-item:focus-visible {
 }
 header.site-header.cz-header .dropdown-menu .cz-item-ico i {
     font-size: 1rem;
-    color: var(--cz-panel-accent) !important;
+    color: var(--cz-gold) !important;
     text-shadow: none !important;
     transform: none !important;
 }
@@ -765,7 +616,7 @@ header.site-header.cz-header .dropdown-menu .cz-item.active .cz-item-ico i {
     margin-top: 1px;
     font-size: 0.76rem;
     font-weight: 500;
-    color: var(--cz-panel-hint);
+    color: rgba(255, 241, 214, 0.62);
 }
 header.site-header.cz-header .dropdown-menu .cz-item--ai .cz-item-ico {
     background: rgba(238, 122, 95, 0.2);
@@ -775,8 +626,8 @@ header.site-header.cz-header .dropdown-menu .cz-item--ai .cz-item-ico i {
     color: #ff9c82 !important;
 }
 header.site-header.cz-header .dropdown-menu .cz-item--logout .cz-item-ico {
-    background: var(--cz-panel-quiet);
-    border-color: var(--cz-panel-quiet-line);
+    background: rgba(255, 246, 228, 0.07);
+    border-color: rgba(255, 246, 228, 0.2);
 }
 
 .cz-divider {
@@ -785,7 +636,7 @@ header.site-header.cz-header .dropdown-menu .cz-item--logout .cz-item-ico {
     background: linear-gradient(
         90deg,
         transparent,
-        var(--cz-panel-rule),
+        rgba(255, 200, 97, 0.35),
         transparent
     );
 }
@@ -821,8 +672,8 @@ header.site-header.cz-header .cz-item--lang .fi {
     flex: 0 0 48px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--cz-gold-lo);
-    box-shadow: 0 0 0 3px var(--cz-panel-tile);
+    border: 2px solid var(--cz-gold);
+    box-shadow: 0 0 0 3px rgba(255, 200, 97, 0.18);
 }
 .cz-me-text {
     display: flex;
@@ -838,7 +689,7 @@ header.site-header.cz-header .cz-item--lang .fi {
     white-space: nowrap;
     font-family: "Fraunces", serif;
     font-size: 1.05rem;
-    color: var(--cz-panel-text);
+    color: var(--cz-cream);
 }
 header.site-header.cz-header .cz-me-badge {
     display: inline-flex;
@@ -983,7 +834,7 @@ body.cz-lock {
                 rgba(255, 170, 70, 0.16),
                 transparent 70%
             ),
-            linear-gradient(180deg, var(--cz-sheet-a), var(--cz-sheet-b));
+            linear-gradient(180deg, #7a2a1c, #451a10);
         border-top: 1px solid rgba(255, 200, 97, 0.3) !important;
         box-shadow: 0 30px 50px rgba(10, 4, 2, 0.6) !important;
         opacity: 0;
@@ -1054,22 +905,6 @@ body.cz-lock {
         min-width: 0;
         margin: 6px 0 0;
         border-radius: 18px;
-        /* Accordions sit on the red sheet, so they always use the dark-panel
-           tokens, whatever the page theme is. */
-        --cz-panel-text: #fff6e4;
-        --cz-panel-hint: rgba(255, 241, 214, 0.62);
-        --cz-panel-accent: #ffc861;
-        --cz-panel-accent-hi: #ffd98a;
-        --cz-panel-hover: rgba(255, 200, 97, 0.13);
-        --cz-panel-tile: rgba(255, 200, 97, 0.13);
-        --cz-panel-tile-line: rgba(255, 200, 97, 0.3);
-        --cz-panel-active-a: rgba(255, 200, 97, 0.26);
-        --cz-panel-active-b: rgba(255, 200, 97, 0.08);
-        --cz-panel-active-line: rgba(255, 200, 97, 0.55);
-        --cz-panel-rule: rgba(255, 200, 97, 0.35);
-        --cz-panel-group-rule: rgba(255, 200, 97, 0.3);
-        --cz-panel-quiet: rgba(255, 246, 228, 0.07);
-        --cz-panel-quiet-line: rgba(255, 246, 228, 0.2);
         background: rgba(20, 8, 4, 0.38) !important;
         border: 1px solid rgba(255, 200, 97, 0.2) !important;
         border-top: 1px solid rgba(255, 200, 97, 0.2) !important;
@@ -1114,10 +949,14 @@ body.cz-lock {
         width: min(300px, calc(100vw - 28px));
         margin-top: calc(var(--cz-h) / 2 - 20px + 10px);
         border-radius: 22px;
-        background: linear-gradient(180deg, var(--cz-panel-a), var(--cz-panel-b)) !important;
-        border: 1px solid var(--cz-panel-line) !important;
-        border-top: 2px solid var(--cz-panel-line-top) !important;
-        box-shadow: var(--cz-panel-shadow) !important;
+        background: linear-gradient(
+            180deg,
+            rgba(62, 34, 25, 0.985),
+            rgba(37, 19, 13, 0.985)
+        ) !important;
+        border: 1px solid rgba(255, 200, 97, 0.38) !important;
+        border-top: 2px solid rgba(255, 200, 97, 0.85) !important;
+        box-shadow: 0 28px 60px rgba(10, 4, 2, 0.65) !important;
         animation: czPop 0.28s var(--cz-ease) both;
     }
 
@@ -1179,21 +1018,6 @@ body.cz-lock {
     }
     header.site-header.cz-header .cz-login {
         padding: 11px 13px;
-    }
-    header.site-header.cz-header .cz-theme {
-        width: 54px;
-        height: 32px;
-    }
-    header.site-header.cz-header .cz-theme-knob {
-        width: 24px;
-        height: 24px;
-        transform: translateX(22px);
-    }
-    :root[data-theme="light"] header.site-header.cz-header .cz-theme-knob {
-        transform: translateX(0);
-    }
-    header.site-header.cz-header .cz-theme-hint {
-        font-size: 12px;
     }
     header.site-header.cz-header .cz-login-text {
         display: none;
@@ -1327,9 +1151,6 @@ body.cz-lock {
         animation: none !important;
     }
     header.site-header.cz-header .cz-nav,
-    header.site-header.cz-header .cz-theme,
-    header.site-header.cz-header .cz-theme-knob,
-    header.site-header.cz-header .cz-theme-knob i,
     .cz-burger span,
     .cz-scrim {
         transition: none !important;

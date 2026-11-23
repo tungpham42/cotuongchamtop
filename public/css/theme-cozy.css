@@ -1,11 +1,7 @@
 /* ==========================================================================
    THEME COZY — "Quán trà đêm bên bàn cờ"
    A warm, lantern-lit redesign layered on top of index_new.css / ban-co.css.
-   Load LAST:  <link href="{{ asset('css/theme-cozy.css?v=2') }}" rel="stylesheet">
-
-   Dark (default) and light share one set of semantic tokens (--cozy-text,
-   --cozy-surface, --cozy-line, ...) defined in section 1. Section 15 holds the
-   light palette, activated by <html data-theme="light">.
+   Load LAST:  <link href="{{ asset('css/theme-cozy.css?v=1') }}" rel="stylesheet">
 
    Idea: a cosy tea-house at dusk. Cocoa-brown wood, terracotta lacquer, honey
    gold lantern light and cream paper. Softer corners, friendlier type, gentle
@@ -54,46 +50,6 @@
     --cozy-glow: 0 0 22px rgba(255, 190, 90, 0.28);
     --cozy-ease: cubic-bezier(0.22, 1, 0.36, 1);
     --cozy-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-
-    /* ---- Semantic tokens: the roles that flip between dark and light ----
-       --cozy-cream / --cozy-ink / --royal-red stay literal colours (text on a
-       gold or lacquer button must not change with the theme). Everything
-       below is a *role*; section 15 re-assigns each role for light mode. */
-    color-scheme: dark;
-    --cozy-text: #fff6e4;
-    --cozy-text-soft: rgba(255, 241, 214, 0.62);
-    --cozy-heading: #ffc861;
-    --cozy-heading-shadow: 0 2px 10px rgba(20, 8, 4, 0.55);
-    --cozy-link: #ffc861;
-    --cozy-link-hover: #ff8a4c;
-
-    --cozy-surface: rgba(46, 26, 19, 0.78); /* cards, tables, hero box */
-    --cozy-surface-2: rgba(46, 26, 19, 0.7); /* list rows, info boxes */
-    --cozy-surface-pop: rgba(46, 26, 19, 0.96); /* dropdowns, panels */
-    --cozy-surface-deep: rgba(31, 17, 12, 0.96); /* cookie bar */
-    --cozy-tooltip-bg: rgba(31, 17, 12, 0.96);
-    --cozy-line: rgba(255, 200, 97, 0.32);
-    --cozy-line-strong: rgba(255, 200, 97, 0.45);
-    --cozy-line-faint: rgba(255, 200, 97, 0.18);
-    --cozy-wash: rgba(168, 64, 44, 0.3);
-    --cozy-wash-strong: rgba(168, 64, 44, 0.55);
-    --cozy-wash-fade: rgba(168, 64, 44, 0.12);
-    --cozy-hover-wash: rgba(255, 200, 97, 0.14);
-    --cozy-row-hover: rgba(255, 190, 90, 0.08);
-    --cozy-modal-top: rgba(66, 38, 28, 0.97);
-    --cozy-modal-bottom: rgba(40, 22, 16, 0.97);
-    --cozy-backdrop: #1a0c08;
-    --cozy-scroll-track: #1f110c;
-    --cozy-field-bg: #fff6e4;
-
-    /* Page atmosphere (body::before / body::after) */
-    --cozy-atmosphere:
-        radial-gradient(ellipse 55% 40% at 12% 0%, rgba(255, 170, 70, 0.28), transparent 70%),
-        radial-gradient(ellipse 50% 40% at 92% 6%, rgba(238, 122, 95, 0.22), transparent 70%),
-        radial-gradient(ellipse 90% 60% at 50% 115%, rgba(20, 8, 4, 0.7), transparent 70%),
-        linear-gradient(180deg, rgba(58, 29, 20, 0.35), rgba(30, 14, 9, 0.55));
-    --cozy-grain-opacity: 0.07;
-    --cozy-grain-blend: overlay;
 }
 
 /* --------------------------------------------------------------------------
@@ -104,7 +60,7 @@ html {
 }
 
 body {
-    color: var(--cozy-text);
+    color: var(--cozy-cream);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -116,7 +72,27 @@ body::before {
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    background: var(--cozy-atmosphere);
+    background:
+        radial-gradient(
+            ellipse 55% 40% at 12% 0%,
+            rgba(255, 170, 70, 0.28),
+            transparent 70%
+        ),
+        radial-gradient(
+            ellipse 50% 40% at 92% 6%,
+            rgba(238, 122, 95, 0.22),
+            transparent 70%
+        ),
+        radial-gradient(
+            ellipse 90% 60% at 50% 115%,
+            rgba(20, 8, 4, 0.7),
+            transparent 70%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(58, 29, 20, 0.35),
+            rgba(30, 14, 9, 0.55)
+        );
     animation: cozyLantern 9s ease-in-out infinite alternate;
 }
 
@@ -127,8 +103,8 @@ body::after {
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    opacity: var(--cozy-grain-opacity);
-    mix-blend-mode: var(--cozy-grain-blend);
+    opacity: 0.07;
+    mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 .9  0 0 0 0 .7  0 0 0 .8 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
 
@@ -142,11 +118,11 @@ body::after {
 }
 
 a {
-    color: var(--cozy-link);
+    color: var(--royal-gold);
     transition: color 0.25s var(--cozy-ease);
 }
 a:hover {
-    color: var(--cozy-link-hover);
+    color: var(--cozy-ember);
 }
 
 p,
@@ -175,8 +151,8 @@ h6,
     letter-spacing: 0.1px;
     font-weight: 700;
     line-height: 1.25;
-    color: var(--cozy-heading);
-    text-shadow: var(--cozy-heading-shadow);
+    color: var(--royal-gold);
+    text-shadow: 0 2px 10px rgba(20, 8, 4, 0.55);
 }
 
 /* Accessible, friendly focus ring everywhere */
@@ -202,56 +178,131 @@ h6,
    -------------------------------------------------------------------------- */
 html,
 body {
-    scrollbar-color: #b8553a var(--cozy-scroll-track);
+    scrollbar-color: #b8553a var(--royal-bg);
 }
 ::-webkit-scrollbar {
     width: 12px;
     height: 12px;
 }
 ::-webkit-scrollbar-track {
-    background: var(--cozy-scroll-track);
-    border-left: 1px solid var(--cozy-line-faint);
+    background: var(--royal-bg);
+    border-left: 1px solid rgba(255, 200, 97, 0.12);
     box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
 }
 ::-webkit-scrollbar-thumb {
     background: linear-gradient(180deg, #c4513a, #7d2e1e);
-    border: 2px solid var(--cozy-scroll-track);
+    border: 2px solid var(--royal-bg);
     border-radius: 999px;
     box-shadow: none;
 }
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, #ffd27a, #e0a43a);
-    border-color: var(--cozy-scroll-track);
+    border-color: var(--royal-bg);
     box-shadow: none;
 }
 ::-webkit-scrollbar-thumb:active {
     background: var(--royal-gold);
 }
 ::-webkit-scrollbar-corner {
-    background: var(--cozy-scroll-track);
+    background: var(--royal-bg);
 }
 
 /* --------------------------------------------------------------------------
-   4. Header — owned by header-cozy.css
-   The old `header.site-header` rules that lived here were fully superseded by
-   `header.site-header.cz-header` and are removed. Only a small fallback for any
-   page still rendering the pre-cozy header (no .cz-header class) is kept.
+   4. Header — a warm lacquered rail with a soft gold underglow
    -------------------------------------------------------------------------- */
-header.site-header:not(.cz-header) {
-    background: linear-gradient(180deg, rgba(176, 66, 46, 0.9), rgba(122, 41, 28, 0.88));
+header.site-header {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(176, 66, 46, 0.9),
+            rgba(122, 41, 28, 0.88)
+        );
     border-bottom: 1px solid rgba(255, 200, 97, 0.45);
     border-radius: 0 0 var(--cozy-radius) var(--cozy-radius);
     box-shadow:
         0 12px 32px rgba(18, 7, 4, 0.55),
-        inset 0 1px 0 rgba(255, 236, 200, 0.28);
+        inset 0 1px 0 rgba(255, 236, 200, 0.28),
+        inset 0 -1px 18px rgba(255, 200, 97, 0.14);
 }
-header.site-header:not(.cz-header) a {
+header.site-header:hover {
+    background: linear-gradient(
+        180deg,
+        rgba(190, 74, 52, 0.92),
+        rgba(134, 46, 31, 0.9)
+    );
+}
+
+header.site-header a {
     text-transform: none;
+    letter-spacing: 0.2px;
     font-weight: 700;
     color: var(--cozy-cream);
 }
-header.site-header:not(.cz-header) a:not(.navbar-brand):hover {
-    color: #ffc861;
+header.site-header .navbar li a {
+    font-size: 15px;
+}
+header.site-header a:not(.navbar-brand):hover {
+    color: var(--royal-gold);
+}
+header.site-header a:not(.navbar-brand)::before {
+    height: 3px;
+    border-radius: 3px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--royal-gold),
+        transparent
+    );
+}
+
+header.site-header .navbar-brand h1,
+header.site-header .navbar-brand span {
+    font-family: "Fraunces", serif !important;
+    text-transform: none;
+    letter-spacing: 0.2px;
+}
+
+header.site-header a.login,
+header.site-header a.register {
+    border-radius: var(--cozy-radius-pill);
+    padding: 8px 22px;
+}
+header.site-header a.register {
+    background: linear-gradient(180deg, #ffd98a, #f0a93e) !important;
+    color: var(--cozy-ink) !important;
+    border: 1px solid rgba(255, 246, 228, 0.8);
+    box-shadow:
+        0 6px 16px rgba(240, 169, 62, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+header.site-header a.login {
+    background: rgba(46, 26, 19, 0.55) !important;
+    color: var(--royal-gold) !important;
+    border: 1px solid rgba(255, 200, 97, 0.7);
+}
+header.site-header a.login:hover {
+    background: rgba(46, 26, 19, 0.8) !important;
+}
+
+header.site-header ul.navbar-nav .dropdown-menu {
+    border: 1px solid rgba(255, 200, 97, 0.4);
+    background-color: #2e1a13;
+    border-radius: var(--cozy-radius-sm);
+}
+
+@media (max-width: 1199.98px) {
+    header.site-header .menu-toggle.close ~ nav.navbar {
+        background: linear-gradient(180deg, #8a3223, #4a1c12);
+        border-bottom: 1px solid rgba(255, 200, 97, 0.5);
+        border-radius: 0 0 var(--cozy-radius) var(--cozy-radius);
+        box-shadow: 0 18px 30px rgba(18, 7, 4, 0.55);
+    }
+    header.site-header .menu-toggle.close ~ nav.navbar ul li {
+        border-bottom: 1px solid rgba(255, 200, 97, 0.14);
+    }
+    header.site-header ul.navbar-nav .dropdown-menu {
+        background-color: rgba(31, 17, 12, 0.7);
+    }
 }
 
 /* --------------------------------------------------------------------------
@@ -381,11 +432,11 @@ header.site-header:not(.cz-header) a:not(.navbar-brand):hover {
 }
 
 .card {
-    background: var(--cozy-surface);
+    background: var(--glass-bg-dark);
     -webkit-backdrop-filter: var(--glass-blur);
     backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--cozy-line);
-    color: var(--cozy-text);
+    border: 1px solid var(--glass-border);
+    color: var(--cozy-cream);
     box-shadow: var(--cozy-shadow-soft);
     overflow: hidden;
 }
@@ -400,25 +451,29 @@ header.site-header:not(.cz-header) a:not(.navbar-brand):hover {
 .royal-grid-card:hover,
 .article-card:hover {
     transform: translateY(-5px);
-    border-color: var(--cozy-line-hover, rgba(255, 200, 97, 0.7));
+    border-color: rgba(255, 200, 97, 0.7);
     box-shadow:
         var(--cozy-shadow-lift),
-        var(--cozy-card-glow, 0 0 28px rgba(255, 190, 90, 0.2));
+        0 0 28px rgba(255, 190, 90, 0.2);
 }
 
 .card-header {
-    background: linear-gradient(90deg, var(--cozy-wash-strong), var(--cozy-wash-fade));
-    border-bottom: 1px solid var(--cozy-line-faint);
+    background: linear-gradient(
+        90deg,
+        rgba(168, 64, 44, 0.55),
+        rgba(168, 64, 44, 0.12)
+    );
+    border-bottom: 1px solid rgba(255, 200, 97, 0.25);
     font-family: "Fraunces", serif;
     font-weight: 700;
-    color: var(--cozy-heading);
+    color: var(--royal-gold);
 }
 
 .hero .hero-box {
-    background: var(--cozy-surface);
+    background: rgba(46, 26, 19, 0.78);
     -webkit-backdrop-filter: var(--glass-blur);
     backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--cozy-line);
+    border: 1px solid var(--glass-border);
     box-shadow:
         var(--cozy-shadow-lift),
         inset 0 1px 0 rgba(255, 236, 200, 0.12);
@@ -432,8 +487,8 @@ header.site-header:not(.cz-header) a:not(.navbar-brand):hover {
 }
 
 .info {
-    background: var(--cozy-surface-2);
-    border: 1px solid var(--cozy-line);
+    background: rgba(46, 26, 19, 0.7);
+    border: 1px solid var(--glass-border);
 }
 
 /* Proverb = a handwritten tea-house scroll */
@@ -444,21 +499,21 @@ header.site-header:not(.cz-header) a:not(.navbar-brand):hover {
     background:
         linear-gradient(
             90deg,
-            var(--cozy-wash),
-            var(--cozy-wash-fade),
-            var(--cozy-wash)
+            rgba(168, 64, 44, 0.3),
+            rgba(168, 64, 44, 0.08),
+            rgba(168, 64, 44, 0.3)
         );
-    text-shadow: var(--cozy-heading-shadow);
+    text-shadow: 0 2px 8px rgba(20, 8, 4, 0.7);
 }
 
 /* Section dividers / lists */
 hr {
-    border-top: 1px solid var(--cozy-line-faint);
+    border-top: 1px solid rgba(255, 200, 97, 0.25);
 }
 .list-group-item {
-    background: var(--cozy-surface-2);
-    border-color: var(--cozy-line-faint);
-    color: var(--cozy-text);
+    background: rgba(46, 26, 19, 0.7);
+    border-color: rgba(255, 200, 97, 0.18);
+    color: var(--cozy-cream);
 }
 
 /* --------------------------------------------------------------------------
@@ -466,7 +521,7 @@ hr {
    -------------------------------------------------------------------------- */
 .form-control,
 .custom-select {
-    background-color: var(--cozy-field-bg) !important;
+    background-color: var(--cozy-cream) !important;
     color: var(--cozy-ink) !important;
     border: 1.5px solid rgba(107, 58, 34, 0.55) !important;
     border-radius: var(--cozy-radius-sm) !important;
@@ -514,23 +569,23 @@ select:-webkit-autofill {
 .table-responsive,
 .dataTables_wrapper {
     border-radius: var(--cozy-radius);
-    background: var(--cozy-surface);
-    border: 1px solid var(--cozy-line);
+    background: rgba(46, 26, 19, 0.78);
+    border: 1px solid var(--glass-border);
     box-shadow: var(--cozy-shadow-soft);
 }
 .table thead th {
-    background: var(--cozy-wash);
-    border-bottom: 2px solid var(--royal-gold);
+    background: rgba(168, 64, 44, 0.3);
+    border-bottom: 2px solid rgba(255, 200, 97, 0.6);
     text-transform: none;
     font-family: "Fraunces", serif;
     letter-spacing: 0.2px;
 }
 .table td,
 .table th {
-    border-top: 1px solid var(--cozy-line-faint) !important;
+    border-top: 1px solid rgba(255, 200, 97, 0.12) !important;
 }
 .table tbody tr:hover {
-    background-color: var(--cozy-row-hover) !important;
+    background-color: rgba(255, 190, 90, 0.08) !important;
     box-shadow: inset 3px 0 0 var(--royal-gold);
 }
 table.table:not(#danh-sach-ky-thu) td.room-code span {
@@ -549,41 +604,50 @@ div.dataTables_wrapper div.dataTables_filter label,
    9. Dropdowns, modals, tooltips, alerts, badges, pagination
    -------------------------------------------------------------------------- */
 .dropdown-menu {
-    background: var(--cozy-surface-pop);
+    background: rgba(46, 26, 19, 0.96);
     -webkit-backdrop-filter: var(--glass-blur);
     backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--cozy-line-strong);
+    border: 1px solid rgba(255, 200, 97, 0.4);
     border-radius: var(--cozy-radius-sm);
     box-shadow: var(--cozy-shadow-lift);
     padding: 0.4rem;
 }
 .dropdown-item {
     border-radius: 10px;
-    color: var(--cozy-text);
+    color: var(--cozy-cream);
     font-weight: 600;
 }
 .dropdown-item:hover,
 .dropdown-item:focus {
-    background: var(--cozy-hover-wash);
-    color: var(--cozy-link);
+    background: rgba(255, 200, 97, 0.14);
+    color: var(--royal-gold);
 }
 .dropdown-item.active,
 .dropdown-item:active {
     background: linear-gradient(180deg, #ffd98a, #f0a93e) !important;
     color: var(--cozy-ink) !important;
 }
+header.site-header .dropdown-menu a:hover {
+    background-color: rgba(255, 200, 97, 0.16);
+}
+header.site-header .dropdown-menu .dropdown-item.active,
+header.site-header .dropdown-menu .dropdown-item:active {
+    background: linear-gradient(180deg, #ffd98a, #f0a93e) !important;
+    color: var(--cozy-ink) !important;
+}
+
 .modal-backdrop.show {
-    background: var(--cozy-backdrop);
+    background: #1a0c08;
     opacity: 0.72;
 }
 .modal-content {
     background: linear-gradient(
         180deg,
-        var(--cozy-modal-top),
-        var(--cozy-modal-bottom)
+        rgba(66, 38, 28, 0.97),
+        rgba(40, 22, 16, 0.97)
     );
-    color: var(--cozy-text);
-    border: 1px solid var(--cozy-line-strong);
+    color: var(--cozy-cream);
+    border: 1px solid rgba(255, 200, 97, 0.45);
     border-radius: 22px;
     box-shadow:
         0 30px 70px rgba(10, 4, 2, 0.7),
@@ -591,11 +655,15 @@ div.dataTables_wrapper div.dataTables_filter label,
     overflow: hidden;
 }
 .modal-header {
-    border-bottom: 1px solid var(--cozy-line-faint);
-    background: linear-gradient(90deg, var(--cozy-wash-strong), transparent);
+    border-bottom: 1px solid rgba(255, 200, 97, 0.2);
+    background: linear-gradient(
+        90deg,
+        rgba(168, 64, 44, 0.45),
+        transparent
+    );
 }
 .modal-footer {
-    border-top: 1px solid var(--cozy-line-faint);
+    border-top: 1px solid rgba(255, 200, 97, 0.2);
 }
 .modal.fade .modal-dialog {
     transition:
@@ -607,8 +675,8 @@ div.dataTables_wrapper div.dataTables_filter label,
 }
 
 .tooltip .tooltip-inner {
-    background: var(--cozy-tooltip-bg) !important;
-    border: 1px solid var(--cozy-line-strong) !important;
+    background: rgba(31, 17, 12, 0.96) !important;
+    border: 1px solid rgba(255, 200, 97, 0.6) !important;
     border-radius: 12px;
     font-weight: 600;
 }
@@ -642,9 +710,38 @@ div.dataTables_wrapper div.dataTables_filter label,
 }
 
 /* --------------------------------------------------------------------------
-   10. Game chrome. The board tray itself lives in ban-co.css and is driven by
-   --board-* tokens, which section 15 re-assigns for light mode.
+   10. The board — a lacquered walnut tray under lantern light
    -------------------------------------------------------------------------- */
+#ban-co {
+    background:
+        linear-gradient(145deg, #7a4630, #4a2615 55%, #5e321d);
+    border: 1px solid rgba(255, 200, 97, 0.65);
+    border-radius: 20px;
+    padding: 12px;
+    box-shadow:
+        0 0 0 3px rgba(46, 26, 19, 0.95),
+        0 0 0 4px rgba(255, 200, 97, 0.35),
+        0 10px 22px rgba(10, 4, 2, 0.55),
+        0 28px 60px rgba(10, 4, 2, 0.6),
+        0 0 70px rgba(255, 170, 70, 0.24),
+        inset 0 1px 0 rgba(255, 236, 200, 0.4),
+        inset 0 -3px 8px rgba(10, 4, 2, 0.45) !important;
+}
+#ban-co:hover {
+    box-shadow:
+        0 0 0 3px rgba(46, 26, 19, 0.95),
+        0 0 0 4px rgba(255, 200, 97, 0.55),
+        0 14px 28px rgba(10, 4, 2, 0.6),
+        0 36px 72px rgba(10, 4, 2, 0.65),
+        0 0 90px rgba(255, 170, 70, 0.34),
+        inset 0 1px 0 rgba(255, 236, 200, 0.5),
+        inset 0 -3px 8px rgba(10, 4, 2, 0.45) !important;
+}
+#ban-co:has(.notation-8c7a2) {
+    background-color: #e3c28a !important;
+    background-image: none;
+}
+
 /* Game status / over chips */
 #game-status {
     background: linear-gradient(
@@ -659,10 +756,9 @@ div.dataTables_wrapper div.dataTables_filter label,
     border-radius: var(--cozy-radius-pill);
 }
 #game-over {
-    border: 1px solid var(--cozy-line-strong);
+    border: 1px solid rgba(255, 200, 97, 0.7);
     border-radius: var(--cozy-radius-pill);
-    background: var(--cozy-surface-pop);
-    color: var(--cozy-text);
+    background: rgba(46, 26, 19, 0.9);
     text-transform: none;
 }
 #game-over:hover {
@@ -690,11 +786,17 @@ div.dataTables_wrapper div.dataTables_filter label,
 /* Rematch panel & match status */
 #rematch-panel {
     border-radius: 20px !important;
-    border-color: var(--cozy-line-strong) !important;
-    background: var(--cozy-surface-pop) !important;
+    border-color: rgba(255, 200, 97, 0.55) !important;
+    background: rgba(46, 26, 19, 0.92) !important;
 }
 #match-status {
     border-radius: var(--cozy-radius-sm);
+}
+
+/* Last-move highlight a bit warmer (colours only) */
+#ban-co .square-2b8ce.last-move-from,
+#ban-co .square-2b8ce.last-move-to {
+    transition: background-color 0.3s ease;
 }
 
 /* --------------------------------------------------------------------------
@@ -745,9 +847,8 @@ footer .display-4:hover {
     border-radius: 50%;
 }
 .cookie-consent {
-    background: var(--cozy-surface-deep);
-    color: var(--cozy-text);
-    border-top: 1px solid var(--cozy-line-strong);
+    background: rgba(31, 17, 12, 0.96);
+    border-top: 1px solid rgba(255, 200, 97, 0.45);
     border-radius: var(--cozy-radius) var(--cozy-radius) 0 0;
     box-shadow: 0 -10px 30px rgba(10, 4, 2, 0.5);
 }
@@ -837,6 +938,10 @@ main .row > div:nth-child(4) .royal-grid-card {
     .modal-content {
         border-radius: 18px;
     }
+    #ban-co {
+        border-radius: 16px;
+        padding: 8px;
+    }
 }
 
 /* The page paints its own warm backdrop; the heavy blur layers are
@@ -848,163 +953,5 @@ main .row > div:nth-child(4) .royal-grid-card {
     header.site-header {
         -webkit-backdrop-filter: none;
         backdrop-filter: none;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   15. LIGHT MODE — "Trà sáng" (morning tea house)
-   Same room, daylight instead of lantern light: rice-paper surfaces, walnut
-   ink, terracotta headings. The chess artwork is kept but ghosted behind a
-   warm paper veil. The header (lacquer red) and footer (hearth) stay dark in
-   both themes so the brand frame never changes; only the "room" does.
-
-   Activated by <html data-theme="light"> (set before first paint by the
-   snippet in header.blade.php). Dark is the default and needs no attribute.
-   -------------------------------------------------------------------------- */
-:root[data-theme="light"] {
-    color-scheme: light;
-
-    /* Re-tint the legacy tokens index_new.css reads (text, borders, glass).
-       --royal-bg stays dark on purpose: it is the "ink on gold" colour. */
-    --royal-gold: #9c5614; /* deep amber: gold, but readable on paper */
-    --royal-gold-light: #6b3a22; /* secondary text on paper */
-    --glass-bg-dark: rgba(255, 250, 238, 0.84);
-    --glass-border: rgba(107, 58, 34, 0.28);
-    --liquid-shadow: 0 10px 30px rgba(107, 58, 34, 0.22);
-    --xq-bg-color: #efdcb8;
-
-    --cozy-text: #3a1f14;
-    --cozy-text-soft: rgba(58, 31, 20, 0.68);
-    --cozy-heading: #8f2f21;
-    --cozy-heading-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
-    --cozy-link: #a8402c;
-    --cozy-link-hover: #7d2e1e;
-
-    --cozy-surface: rgba(255, 251, 242, 0.86);
-    --cozy-surface-2: rgba(255, 246, 228, 0.8);
-    --cozy-surface-pop: rgba(255, 251, 242, 0.98);
-    --cozy-surface-deep: rgba(255, 246, 228, 0.98);
-    --cozy-tooltip-bg: rgba(58, 31, 20, 0.96);
-    --cozy-line: rgba(107, 58, 34, 0.28);
-    --cozy-line-strong: rgba(107, 58, 34, 0.4);
-    --cozy-line-hover: rgba(168, 64, 44, 0.55);
-    --cozy-line-faint: rgba(107, 58, 34, 0.14);
-    --cozy-wash: rgba(168, 64, 44, 0.12);
-    --cozy-wash-strong: rgba(168, 64, 44, 0.18);
-    --cozy-wash-fade: rgba(168, 64, 44, 0.03);
-    --cozy-hover-wash: rgba(168, 64, 44, 0.09);
-    --cozy-row-hover: rgba(168, 64, 44, 0.06);
-    --cozy-modal-top: #fffaf0;
-    --cozy-modal-bottom: #f7e7c6;
-    --cozy-backdrop: #3a1f14;
-    --cozy-scroll-track: #ead6b0;
-    --cozy-field-bg: #fffdf7;
-
-    --cozy-shadow-soft: 0 6px 18px rgba(107, 58, 34, 0.16);
-    --cozy-shadow-lift: 0 16px 36px rgba(107, 58, 34, 0.24);
-    --cozy-glow: 0 0 22px rgba(255, 190, 90, 0.35);
-    --cozy-card-glow: 0 0 24px rgba(255, 190, 90, 0.3);
-
-    --cozy-atmosphere:
-        radial-gradient(ellipse 60% 45% at 10% 0%, rgba(255, 200, 120, 0.55), transparent 70%),
-        radial-gradient(ellipse 50% 40% at 94% 4%, rgba(238, 122, 95, 0.18), transparent 70%),
-        linear-gradient(180deg, rgba(255, 246, 228, 0.8), rgba(243, 225, 190, 0.88));
-    --cozy-grain-opacity: 0.06;
-    --cozy-grain-blend: multiply;
-
-    /* Board tray (consumed by ban-co.css) */
-    --board-bg: linear-gradient(145deg, #a8754f, #7d4b2c 55%, #93603d);
-    --board-border: rgba(107, 58, 34, 0.6);
-    --board-ring: rgba(255, 250, 238, 0.95);
-    --board-ring-outer: rgba(107, 58, 34, 0.35);
-    --board-shadow-a: 0 10px 22px rgba(107, 58, 34, 0.28);
-    --board-shadow-b: 0 28px 60px rgba(107, 58, 34, 0.3);
-    --board-aura: 0 0 70px rgba(255, 190, 90, 0.3);
-    --board-aura-hover: 0 0 90px rgba(255, 190, 90, 0.45);
-    --board-inset-top: rgba(255, 236, 200, 0.5);
-    --board-inset-bottom: rgba(60, 30, 14, 0.35);
-}
-
-/* Selection must stay readable: ink on the *bright* honey, not on deep amber */
-:root[data-theme="light"] ::selection {
-    background: #ffc861;
-    color: var(--cozy-ink);
-}
-:root[data-theme="light"] ::-moz-selection {
-    background: #ffc861;
-    color: var(--cozy-ink);
-}
-
-/* Dark "islands" hard-coded in index_new.css (they read #0b0c10 / #2a1910
-   directly, so tokens cannot reach them). !important matches the originals. */
-:root[data-theme="light"] .comments,
-:root[data-theme="light"] .chart,
-:root[data-theme="light"] .adsense,
-:root[data-theme="light"] .container-fluid.bmi-explanation,
-:root[data-theme="light"] .container-fluid.game-explanation {
-    background-color: var(--cozy-surface-2);
-    color: var(--cozy-text);
-}
-:root[data-theme="light"] .dropdown-menu {
-    background-color: var(--cozy-surface-pop) !important;
-    border: 1px solid var(--cozy-line-strong) !important;
-    box-shadow: var(--cozy-shadow-lift) !important;
-}
-:root[data-theme="light"] .page-item.disabled .page-link {
-    background: rgba(107, 58, 34, 0.08) !important;
-    border-color: var(--cozy-line-faint) !important;
-    color: rgba(58, 31, 20, 0.4) !important;
-}
-:root[data-theme="light"] .article-search .form-control {
-    background: var(--cozy-field-bg) !important;
-    border: 1px solid var(--cozy-line-strong) !important;
-    color: var(--cozy-ink) !important;
-}
-:root[data-theme="light"] .table thead th {
-    background: var(--cozy-wash);
-}
-:root[data-theme="light"] .article-body,
-:root[data-theme="light"] .article-body p {
-    color: var(--cozy-text);
-}
-:root[data-theme="light"] .article-body a:hover {
-    color: var(--cozy-link-hover);
-    text-shadow: none;
-}
-:root[data-theme="light"] .modal-body,
-:root[data-theme="light"] .card-body {
-    color: var(--cozy-text);
-}
-:root[data-theme="light"] .badge-light,
-:root[data-theme="light"] .text-white-50 {
-    color: var(--cozy-text-soft) !important;
-}
-
-/* The proverb scroll and status chips keep their lacquer look but need ink */
-:root[data-theme="light"] #proverb {
-    color: var(--cozy-text);
-}
-:root[data-theme="light"] #game-status {
-    color: var(--cozy-cream);
-}
-
-/* Smooth cross-fade when the switch is pressed (class is added for ~400ms by
-   the toggle script; it is skipped for reduced-motion users). */
-html.cz-theme-anim,
-html.cz-theme-anim *,
-html.cz-theme-anim *::before,
-html.cz-theme-anim *::after {
-    transition:
-        background-color 0.35s ease,
-        border-color 0.35s ease,
-        color 0.35s ease,
-        box-shadow 0.35s ease !important;
-}
-@media (prefers-reduced-motion: reduce) {
-    html.cz-theme-anim,
-    html.cz-theme-anim *,
-    html.cz-theme-anim *::before,
-    html.cz-theme-anim *::after {
-        transition: none !important;
     }
 }

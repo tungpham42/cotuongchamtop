@@ -1,7 +1,7 @@
 /* ==========================================================================
    ADS COZY — understated, policy-safe AdSense slots (top / between / bottom)
    Load AFTER theme-cozy.css:
-     <link href="{{ asset('css/ads-cozy.css?v=4') }}" rel="stylesheet">
+     <link href="{{ asset('css/ads-cozy.css?v=3') }}" rel="stylesheet">
 
    Design notes (AdSense policy friendly)
    - The ad unit is never covered, cropped, animated or restyled.
@@ -9,19 +9,12 @@
    - A plain, readable "Quảng cáo" label separates ads from content.
    - Space is reserved with min-height so late ad fills do not shift layout.
    - Unfilled slots collapse automatically.
-   - Dark / light: every colour is a token on .ad-slot. Dark is the default;
-     :root[data-theme="light"] (set by the header switch) re-assigns them.
-     Both themes keep the same plain label and the same border weight, so the
-     ad is always clearly separated from content.
    ========================================================================== */
 
 .ad-slot {
     --ad-border: rgba(255, 200, 97, 0.35);
     --ad-surface: rgba(38, 20, 14, 0.55);
-    --ad-label-ink: #fff6e4;
-    --ad-label-bg: #3a2218;
-    --ad-contrast-bg: #2a160f;
-    --ad-contrast-border: #ffc861;
+    --ad-label-ink: var(--cozy-cream, #fff6e4);
     --ad-radius: var(--cozy-radius, 18px);
     --ad-gap: clamp(0.75rem, 2.2vw, 1.5rem);
     --ad-pad: clamp(0.5rem, 1.6vw, 0.9rem);
@@ -82,7 +75,7 @@
     transform: translate(-50%, -50%);
     border-radius: 999px;
     border: 1px solid var(--ad-border);
-    background: var(--ad-label-bg);
+    background: #3a2218;
     color: var(--ad-label-ink);
     font-family: "Plus Jakarta Sans", "Lexend Deca", system-ui, sans-serif;
     font-size: clamp(0.62rem, 1.6vw, 0.72rem);
@@ -181,21 +174,21 @@
 
 @media (prefers-contrast: more) {
     .ad-slot__frame {
-        background: var(--ad-contrast-bg);
-        border: 2px solid var(--ad-contrast-border);
+        background: #2a160f;
+        border: 2px solid #ffc861;
     }
     .ad-slot__label {
-        border-color: var(--ad-contrast-border);
+        border-color: #ffc861;
     }
 }
 
 :root[data-theme="light"] .ad-slot {
-    --ad-border: rgba(107, 58, 34, 0.3);
-    --ad-surface: rgba(255, 251, 242, 0.78);
+    --ad-border: rgba(107, 58, 34, 0.25);
+    --ad-surface: rgba(255, 246, 228, 0.7);
     --ad-label-ink: #3a1f14;
-    --ad-label-bg: #f7e7c6;
-    --ad-contrast-bg: #fffdf7;
-    --ad-contrast-border: #6b3a22;
+}
+:root[data-theme="light"] .ad-slot__label {
+    background: #f7e7c6;
 }
 
 @media print {
