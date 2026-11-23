@@ -752,8 +752,7 @@ html[data-theme="light"] {
 }
 
 :root[data-theme="light"] .badge.badge-status.badge-online.pulse-gold {
-    background: var(--royal-gold) !important;
-    color: var(--cozy-paper) !important;
+    background: var(--cozy-paper) !important;
 }
 
 :root[data-theme="light"] .badge.badge-status.badge-offline {
@@ -1084,4 +1083,12 @@ pseudo-element (an animation cannot beat an !important declaration). */
         rgba(196, 81, 58, 0.16)
     ) !important;
     border-top-color: rgba(138, 74, 36, 0.3) !important;
+}
+
+:root[data-theme="light"] .kypho-moves {
+    background-color: rgba(255, 246, 228, 0.86) !important;
+}
+
+:root[data-theme="light"] body.game-detail .royal-glass-card {
+    background-color: unset !important;
 }
