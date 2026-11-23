@@ -90,6 +90,14 @@
         transition: width 0.3s ease;
     }
 
+    .btn-royal-icon i,
+    .btn-royal-play i {
+        line-height: 1;
+        pointer-events: none;
+    }
+    .btn-royal-icon i { font-size: 1rem; }
+    .btn-royal-play i { font-size: 1.15rem; }
+
     .btn-royal-icon {
         width: 42px;
         height: 42px;
@@ -259,22 +267,22 @@
                 <div class="d-flex align-items-center justify-content-center flex-wrap gap-toolbar mt-4">
                     <div class="d-flex align-items-center gap-controls p-1 rounded-pill" style="border: 1px solid rgba(212, 175, 55, 0.2);">
                         <button id="btn-start" class="btn btn-royal-icon" data-tippy-content="{{ __('Về đầu') }}">
-                            <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
+                            <i class="fas fa-fast-backward" aria-hidden="true"></i>
                         </button>
                         <button id="btn-prev" class="btn btn-royal-icon" data-tippy-content="{{ __('Lùi 1 bước') }}">
-                            <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            <i class="fas fa-step-backward" aria-hidden="true"></i>
                         </button>
 
                         <button id="btn-autoplay" class="btn btn-royal-play pulse-glow mx-1" data-tippy-content="{{ __('Phát tự động') }}">
-                            <svg id="icon-play" style="width: 24px; height: 24px;" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
-                            <svg id="icon-pause" class="d-none" style="width: 24px; height: 24px;" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
+                            <i id="icon-play" class="fas fa-play" style="margin-left: 3px;" aria-hidden="true"></i>
+                            <i id="icon-pause" class="fas fa-pause d-none" aria-hidden="true"></i>
                         </button>
 
                         <button id="btn-next" class="btn btn-royal-icon" data-tippy-content="{{ __('Tới 1 bước') }}">
-                            <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            <i class="fas fa-step-forward" aria-hidden="true"></i>
                         </button>
                         <button id="btn-end" class="btn btn-royal-icon" data-tippy-content="{{ __('Tới cuối') }}">
-                            <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
+                            <i class="fas fa-fast-forward" aria-hidden="true"></i>
                         </button>
                     </div>
 
