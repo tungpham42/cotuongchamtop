@@ -730,7 +730,7 @@ html[data-theme="light"] {
         ) !important;
 }
 
-.page-link:hover,
+:root[data-theme="light"] .page-link:hover, :root[data-theme="light"]
 .page-link:focus {
     background: linear-gradient(180deg, #ffd98a, #f0a93e) !important;
 }
