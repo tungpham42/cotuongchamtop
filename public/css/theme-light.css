@@ -1074,3 +1074,14 @@ pseudo-element (an animation cannot beat an !important declaration). */
         animation: none;
     }
 }
+
+:root[data-theme="light"] .article-hero,
+:root[data-theme="light"] .article-card-footer {
+    background: linear-gradient(
+        90deg,
+        rgba(196, 81, 58, 0.16),
+        rgba(196, 81, 58, 0.04),
+        rgba(196, 81, 58, 0.16)
+    ) !important;
+    border-top-color: rgba(138, 74, 36, 0.3) !important;
+}
