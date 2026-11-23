@@ -72,7 +72,7 @@
   .hoc-link {
     display: none !important;
   }
-  #st-3 .st-total, #st-3 .st-btn, #st-3 .st-toggle {
+  #st-3, #st-3 .st-total, #st-3 .st-btn, #st-3 .st-toggle {
     z-index: -1 !important;
   }
 </style>
