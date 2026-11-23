@@ -1,7 +1,7 @@
 /* ==========================================================================
    ADS COZY — understated, policy-safe AdSense slots (top / between / bottom)
    Load AFTER theme-cozy.css:
-     <link href="{{ asset('css/ads-cozy.css?v=2') }}" rel="stylesheet">
+     <link href="{{ asset('css/ads-cozy.css?v=3') }}" rel="stylesheet">
 
    Design notes (AdSense policy friendly)
    - The ad unit is never covered, cropped, animated or restyled.
@@ -30,6 +30,7 @@
     box-sizing: border-box;
     text-align: center;
     contain: layout style;
+    z-index: 1;
 }
 .ad-slot *,
 .ad-slot *::before,
