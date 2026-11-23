@@ -746,6 +746,11 @@ html[data-theme="light"] {
     color: var(--cozy-paper) !important;
 }
 
+:root[data-theme="light"] .badge.badge-status.badge-online.pulse-gold {
+    background: var(--royal-gold) !important;
+    color: var(--cozy-paper) !important;
+}
+
 :root[data-theme="light"] .badge.badge-status.badge-offline {
     color: var(--cozy-paper) !important;
 }
