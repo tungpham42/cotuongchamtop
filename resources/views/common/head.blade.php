@@ -63,6 +63,7 @@
 <link href="{{ asset('css/ban-co.css?v=8') }}" rel="stylesheet">
 <link href="{{ asset('css/theme-cozy.css?v=1') }}" rel="stylesheet">
 <link href="{{ asset('css/header-cozy.css?v=6') }}" rel="stylesheet">
+<link href="{{ asset('css/ads-cozy.css?v=1') }}" rel="stylesheet">
 @if (!($showAds ?? true))
 <style>
   .adsense,
