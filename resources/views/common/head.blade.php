@@ -64,6 +64,11 @@
 <link href="{{ asset('css/theme-cozy.css?v=1') }}" rel="stylesheet">
 <link href="{{ asset('css/header-cozy.css?v=6') }}" rel="stylesheet">
 <link href="{{ asset('css/ads-cozy.css?v=1') }}" rel="stylesheet">
+<style>
+  #st-3, #st-3 * {
+    z-index: 0 !important;
+  }
+</style>
 @if (!($showAds ?? true))
 <style>
   .adsense,
@@ -72,9 +77,6 @@
   .aff-link,
   .hoc-link {
     display: none !important;
-  }
-  #st-3, #st-3 * {
-    z-index: 0 !important;
   }
 </style>
 @endif
