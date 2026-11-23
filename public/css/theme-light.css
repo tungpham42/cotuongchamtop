@@ -1007,6 +1007,9 @@ html[data-theme="light"] {
 :root[data-theme="light"] .alert {
     color: #3a1f14;
 }
+:root[data-theme="light"] .alert.alert-dark {
+    color: var(--cozy-paper) !important;
+}
 :root[data-theme="light"] .swal2-popup {
     background: #fff8e8;
     color: #3a1f14;
@@ -1022,7 +1025,8 @@ html[data-theme="light"] {
 :root[data-theme="light"]
     #danh-sach-phong
     td:not(.room-code)
-    .badge.badge-status:not(:has(.fa-hourglass-start)) {
+    .badge.badge-status:not(:has(.fa-hourglass-start)),
+:root[data-theme="light"] body.dashboard .badge.badge-status {
     color: var(--cozy-paper) !important;
 }
 
