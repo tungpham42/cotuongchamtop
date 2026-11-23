@@ -160,6 +160,9 @@ html.theme-switching *::after {
 :root[data-theme="light"] a:hover {
     color: #7a291c;
 }
+:root[data-theme="light"] a.text-light:hover {
+    color: var(--cozy-paper) !important;
+}
 :root[data-theme="light"] h1,
 :root[data-theme="light"] h2,
 :root[data-theme="light"] h3,
