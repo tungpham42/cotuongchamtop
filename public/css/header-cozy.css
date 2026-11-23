@@ -299,11 +299,15 @@ header.site-header.cz-header .cz-link.is-current,
 header.site-header.cz-header .cz-link.is-current:hover,
 header.site-header.cz-header .cz-link[aria-expanded="true"],
 header.site-header.cz-header .cz-link[aria-expanded="true"]:hover {
-    color: var(--cz-ink);
-    background: linear-gradient(180deg, var(--cz-gold-hi), var(--cz-gold-lo));
+    color: var(--cz-ink) !important;
+    background: linear-gradient(
+        180deg,
+        var(--cz-gold-hi),
+        var(--cz-gold-lo)
+    ) !important;
     box-shadow:
         0 6px 14px rgba(240, 169, 62, 0.35),
-        inset 0 1px 0 rgba(255, 255, 255, 0.65);
+        inset 0 1px 0 rgba(255, 255, 255, 0.65) !important;
     transform: none;
 }
 
@@ -389,7 +393,7 @@ header.site-header.cz-header .cz-cta {
     line-height: 1.2;
     white-space: nowrap;
     color: var(--cz-ink);
-    background: linear-gradient(180deg, #ffe39e, var(--cz-gold-lo));
+    background: linear-gradient(180deg, #ffe39e, var(--cz-gold-lo)) !important;
     border: 1px solid rgba(255, 246, 228, 0.85);
     box-shadow:
         0 8px 20px rgba(240, 169, 62, 0.42),
