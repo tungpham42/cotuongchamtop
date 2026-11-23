@@ -1,6 +1,6 @@
 @if ($showAds ?? true)
 {{-- AdSense Top Banner (styles: public/css/ads-cozy.css) --}}
-<aside class="ad-slot ad-slot--top" aria-label="{{ __('Quảng cáo') }}">
+<aside class="ad-slot ad-slot--top mt-3" aria-label="{{ __('Quảng cáo') }}">
     <div class="ad-slot__frame">
         <span class="ad-slot__label">{{ __('Quảng cáo') }}</span>
         <div class="ad-slot__body">
