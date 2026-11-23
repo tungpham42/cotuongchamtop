@@ -473,36 +473,36 @@ html[data-theme="light"] {
 :root[data-theme="light"] .article-empty,
 :root[data-theme="light"] .match-card,
 :root[data-theme="light"] .pvp-scoreboard {
-    color: #3a1f14;
+    color: #3a1f14 !important;
 }
 :root[data-theme="light"] .royal-grid-card:hover,
 :root[data-theme="light"] .article-card:hover {
-    border-color: rgba(196, 81, 58, 0.6);
+    border-color: rgba(196, 81, 58, 0.6) !important;
     box-shadow:
         var(--cozy-shadow-lift),
-        0 0 24px rgba(255, 190, 90, 0.25);
+        0 0 24px rgba(255, 190, 90, 0.25) !important;
 }
 :root[data-theme="light"] .card-header {
     background: linear-gradient(
         90deg,
         rgba(196, 81, 58, 0.22),
         rgba(196, 81, 58, 0.04)
-    );
-    border-bottom-color: rgba(138, 74, 36, 0.25);
-    color: #8a2f1d;
+    ) !important;
+    border-bottom-color: rgba(138, 74, 36, 0.25) !important;
+    color: #8a2f1d !important;
 }
 :root[data-theme="light"] .hero .hero-box,
 :root[data-theme="light"] .info,
 :root[data-theme="light"] .list-group-item,
 :root[data-theme="light"] #match-status {
-    background: rgba(255, 248, 232, 0.88);
-    color: #3a1f14;
-    border-color: rgba(138, 74, 36, 0.3);
+    background: rgba(255, 248, 232, 0.88) !important;
+    color: #3a1f14 !important;
+    border-color: rgba(138, 74, 36, 0.3) !important;
 }
 :root[data-theme="light"] .hero .hero-box {
     box-shadow:
         var(--cozy-shadow-lift),
-        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
 }
 :root[data-theme="light"] #proverb {
     color: #5a2f1b;
@@ -517,26 +517,26 @@ html[data-theme="light"] {
     border-right-color: #c4513a;
 }
 :root[data-theme="light"] hr {
-    border-top-color: rgba(138, 74, 36, 0.25);
+    border-top-color: rgba(138, 74, 36, 0.25) !important;
 }
 :root[data-theme="light"] .comments {
-    background-color: rgba(255, 248, 232, 0.9);
-    color: #3a1f14;
+    background-color: rgba(255, 248, 232, 0.9) !important;
+    color: #3a1f14 !important;
 }
 
 :root[data-theme="light"] .table {
-    color: #3a1f14;
+    color: #3a1f14 !important;
 }
 :root[data-theme="light"] .table-responsive,
 :root[data-theme="light"] .dataTables_wrapper {
-    background: rgba(255, 248, 232, 0.9);
-    border-color: rgba(138, 74, 36, 0.3);
-    color: #3a1f14;
+    background: rgba(255, 248, 232, 0.9) !important;
+    border-color: rgba(138, 74, 36, 0.3) !important;
+    color: #3a1f14 !important;
 }
 :root[data-theme="light"] .table thead th {
-    background: rgba(196, 81, 58, 0.16);
-    border-bottom-color: rgba(154, 91, 18, 0.55);
-    color: #8a2f1d;
+    background: rgba(196, 81, 58, 0.16) !important;
+    border-bottom-color: rgba(154, 91, 18, 0.55) !important;
+    color: #8a2f1d !important;
 }
 :root[data-theme="light"] .table td,
 :root[data-theme="light"] .table th {
@@ -544,16 +544,16 @@ html[data-theme="light"] {
 }
 :root[data-theme="light"] .table tbody tr:hover {
     background-color: rgba(255, 190, 90, 0.16) !important;
-    box-shadow: inset 3px 0 0 #c4513a;
+    box-shadow: inset 3px 0 0 #c4513a !important;
 }
 :root[data-theme="light"] table.table:not(#danh-sach-ky-thu) td.room-code span {
-    background: rgba(255, 200, 97, 0.3);
-    border-color: rgba(154, 91, 18, 0.55);
+    background: rgba(255, 200, 97, 0.3) !important;
+    border-color: rgba(154, 91, 18, 0.55) !important;
 }
 :root[data-theme="light"] div.dataTables_wrapper div.dataTables_length label,
 :root[data-theme="light"] div.dataTables_wrapper div.dataTables_filter label,
 :root[data-theme="light"] .dataTables_info {
-    color: #5a2f1b;
+    color: #5a2f1b !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -596,40 +596,44 @@ html[data-theme="light"] {
 
 :root[data-theme="light"] .modal-backdrop.show {
     background-color: #3a1f14 !important;
-    opacity: 0.45;
+    opacity: 0.45 !important;
 }
 :root[data-theme="light"] .modal-content {
     background: linear-gradient(180deg, #fffaf0, #f7e7c6) !important;
     color: #3a1f14;
-    border-color: rgba(138, 74, 36, 0.4);
+    border-color: rgba(138, 74, 36, 0.4) !important;
     box-shadow:
         0 30px 70px rgba(107, 58, 34, 0.4),
-        0 0 30px rgba(255, 190, 90, 0.2);
+        0 0 30px rgba(255, 190, 90, 0.2) !important;
 }
 :root[data-theme="light"] .modal-header {
-    border-bottom-color: rgba(138, 74, 36, 0.2);
-    background: linear-gradient(90deg, rgba(196, 81, 58, 0.18), transparent);
+    border-bottom-color: rgba(138, 74, 36, 0.2) !important;
+    background: linear-gradient(
+        90deg,
+        rgba(196, 81, 58, 0.18),
+        transparent
+    ) !important;
 }
 :root[data-theme="light"] .modal-footer {
-    border-top-color: rgba(138, 74, 36, 0.2);
+    border-top-color: rgba(138, 74, 36, 0.2) !important;
 }
 :root[data-theme="light"] .close {
-    color: #3a1f14;
-    text-shadow: none;
+    color: #3a1f14 !important;
+    text-shadow: none !important;
 }
 :root[data-theme="light"] .tooltip .tooltip-inner {
     background: rgba(58, 31, 20, 0.96) !important;
-    color: #fff6e4;
+    color: #fff6e4 !important;
 }
 :root[data-theme="light"] .cookie-consent {
-    background: rgba(255, 248, 232, 0.98);
-    color: #3a1f14;
-    border-top-color: rgba(138, 74, 36, 0.4);
+    background: rgba(255, 248, 232, 0.98) !important;
+    color: #3a1f14 !important;
+    border-top-color: rgba(138, 74, 36, 0.4) !important;
     box-shadow: 0 -8px 24px rgba(107, 58, 34, 0.25);
 }
 :root[data-theme="light"] .introjs-tooltip {
-    background-color: #fff8e8;
-    color: #3a1f14;
+    background-color: #fff8e8 !important;
+    color: #3a1f14 !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -638,12 +642,12 @@ html[data-theme="light"] {
 :root[data-theme="light"] #game-over,
 :root[data-theme="light"] #rematch-panel {
     background: rgba(255, 248, 232, 0.95) !important;
-    color: #3a1f14;
+    color: #3a1f14 !important;
     border-color: rgba(138, 74, 36, 0.5) !important;
 }
 :root[data-theme="light"] #game-over:hover {
     background: var(--royal-red) !important;
-    color: #fff6e4;
+    color: #fff6e4 !important;
 }
 :root[data-theme="light"] #ban-co {
     /* softer aura on a light page; the wood tray is unchanged */
@@ -660,7 +664,7 @@ html[data-theme="light"] {
    8. Ads (frame colours live in ads-cozy.css; this keeps the page behind it calm)
    -------------------------------------------------------------------------- */
 :root[data-theme="light"] .adsense {
-    background-color: transparent;
+    background-color: transparent !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -675,7 +679,7 @@ html[data-theme="light"] {
     }
     .cz-theme-toggle,
     .cz-theme-toggle i {
-        transition: none;
+        transition: none !important;
     }
 }
 
@@ -706,7 +710,7 @@ html[data-theme="light"] {
 }
 
 :root[data-theme="light"] .cd-top {
-    background-color: var(--glass-bg-red);
+    background-color: var(--glass-bg-red) !important;
 }
 
 :root[data-theme="light"] .room-code-mini {
