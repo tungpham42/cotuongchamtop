@@ -151,14 +151,14 @@ class User extends Authenticatable
     public function getVipLabel(): string
     {
         if (!$this->isStandard()) {
-            return 'Miễn phí';
+            return __('Miễn phí');
         }
 
         return match ($this->subscription_plan) {
-            'vip_week' => 'Kỳ Thủ VIP (Tuần)',
-            'vip_month' => 'Kỳ Thủ VIP (Tháng)',
-            'standard' => 'Kỳ Thủ Hoàng Gia',
-            default => 'Kỳ Thủ VIP',
+            'vip_week' => __('Kỳ Thủ VIP (Tuần)'),
+            'vip_month' => __('Kỳ Thủ VIP (Tháng)'),
+            'standard' => __('Kỳ Thủ Hoàng Gia'),
+            default => __('Kỳ Thủ VIP'),
         };
     }
 
