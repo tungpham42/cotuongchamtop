@@ -685,6 +685,9 @@ html[data-theme="light"] {
 :root[data-theme="light"] .text-light {
     color: var(--royal-gold) !important;
 }
+:root[data-theme="light"] .bg-light {
+    background-color: var(--royal-gold) !important;
+}
 /* ...but buttons that carry .text-light sit on dark/terracotta fills and need cream text */
 :root[data-theme="light"] .btn.text-light,
 :root[data-theme="light"] .btn-dark.text-light,
@@ -706,11 +709,11 @@ html[data-theme="light"] {
     background-color: var(--glass-bg-red);
 }
 
-.room-code-mini {
+:root[data-theme="light"] .room-code-mini {
     color: var(--cozy-paper) !important;
 }
 
-.invite-qr-card::before {
+:root[data-theme="light"] .invite-qr-card::before {
     background: linear-gradient(
         90deg,
         rgba(196, 81, 58, 0.16),
@@ -721,7 +724,7 @@ html[data-theme="light"] {
     border-right-color: #c4513a !important;
 }
 
-.invite-qr-card {
+:root[data-theme="light"] .invite-qr-card {
     background: fixed
         linear-gradient(
             180deg,
@@ -730,7 +733,28 @@ html[data-theme="light"] {
         ) !important;
 }
 
-:root[data-theme="light"] .page-link:hover, :root[data-theme="light"]
-.page-link:focus {
+:root[data-theme="light"] .page-link:hover,
+:root[data-theme="light"] .page-link:focus {
     background: linear-gradient(180deg, #ffd98a, #f0a93e) !important;
+}
+:root[data-theme="light"] .royal-card-title {
+    color: var(--cozy-paper) !important;
+}
+
+:root[data-theme="light"].badge.badge-status.pulse-red {
+    background: var(--royal-red) !important;
+    color: var(--cozy-paper) !important;
+}
+
+:root[data-theme="light"] .badge.badge-status.badge-offline {
+    color: var(--cozy-paper) !important;
+}
+
+:root[data-theme="light"] .royal-grid-card .text-center.py-2 {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--glass-bg-dark),
+        transparent
+    ) !important;
 }
