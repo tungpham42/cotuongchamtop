@@ -694,7 +694,7 @@ html[data-theme="light"] {
     color: var(--royal-gold) !important;
 }
 :root[data-theme="light"] .bg-light {
-    background-color: var(--cozy-paper) !important;
+    background-color: var(--royal-gold) !important;
 }
 /* ...but buttons that carry .text-light sit on dark/terracotta fills and need cream text */
 :root[data-theme="light"] .btn.text-light,
