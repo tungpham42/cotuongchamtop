@@ -1103,6 +1103,7 @@ pseudo-element (an animation cannot beat an !important declaration). */
     background-color: unset !important;
 }
 
-:root[data-theme="light"] .puzzle-empty-comment {
+:root[data-theme="light"] .puzzle-empty-comment,
+:root[data-theme="light"] .puzzle-reaction-mini .reaction-btn .reaction-count {
     background: unset !important;
 }
