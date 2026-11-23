@@ -1029,7 +1029,10 @@ html[data-theme="light"] {
     color: var(--cozy-paper) !important;
 }
 
-:root[data-theme="light"] body.dashboard td.dtr-control .badge.badge-status:has(i.fa-medal) {
+:root[data-theme="light"]
+    body.dashboard
+    td.dtr-control
+    .badge.badge-status:has(i.fa-medal) {
     color: #3a1f14 !important;
 }
 
@@ -1098,4 +1101,8 @@ pseudo-element (an animation cannot beat an !important declaration). */
 
 :root[data-theme="light"] body.game-detail .royal-glass-card {
     background-color: unset !important;
+}
+
+:root[data-theme="light"] .puzzle-empty-comment {
+    background: unset !important;
 }
