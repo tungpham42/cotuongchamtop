@@ -77,7 +77,7 @@
 <link href="{{ asset('css/theme-cozy.css?v=2') }}" rel="stylesheet">
 <link href="{{ asset('css/header-cozy.css?v=7') }}" rel="stylesheet">
 <link href="{{ asset('css/ads-cozy.css?v=5') }}" rel="stylesheet">
-<link href="{{ asset('css/theme-light.css?v=15') }}" rel="stylesheet">
+<link href="{{ asset('css/theme-light.css?v=16') }}" rel="stylesheet">
 <style>
   #st-3, #st-3 * {
     z-index: 0 !important;

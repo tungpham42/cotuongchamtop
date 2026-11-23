@@ -1021,6 +1021,7 @@ html[data-theme="light"] {
 
 :root[data-theme="light"]
     #danh-sach-phong
+    td:not(.room-code)
     .badge.badge-status:not(:has(.fa-hourglass-start)) {
     color: var(--cozy-paper) !important;
 }
