@@ -1,0 +1,621 @@
+/* ==========================================================================
+   THEME LIGHT — "Quán trà buổi sáng" (daylight tea-house)
+   Light-mode overrides for the cozy theme. Dark stays the default and is NOT
+   touched: every light rule below is scoped to :root[data-theme="light"].
+   Load LAST (after ads-cozy.css):
+     <link href="{{ asset('css/theme-light.css?v=1') }}" rel="stylesheet">
+
+   How it works
+   - The switcher in header.blade.php sets  <html data-theme="light|dark">
+     and remembers the choice in localStorage ("xq-theme").
+   - Section 1 flips the design tokens, so every component that already uses
+     var(--glass-bg-dark), var(--royal-gold-light), var(--cozy-cream) ... follows.
+   - Section 2 re-asserts the DARK tokens on surfaces that stay lacquered
+     (header, footer, mobile sheet) so they keep their look.
+   - Sections 3+ fix components that hard-code dark colours.
+   - Section 0 (switcher button) applies in BOTH modes.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   0. Theme switcher button (both modes)
+   -------------------------------------------------------------------------- */
+.cz-theme-toggle {
+    position: relative;
+    flex: 0 0 auto;
+    display: inline-grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #ffd98a;
+    background: rgba(40, 17, 10, 0.5);
+    border: 1px solid rgba(255, 200, 97, 0.7);
+    transition:
+        background 0.25s ease,
+        transform 0.3s var(--cozy-spring, cubic-bezier(0.34, 1.56, 0.64, 1)),
+        color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+.cz-theme-toggle:hover,
+.cz-theme-toggle:focus-visible {
+    background: rgba(40, 17, 10, 0.8);
+    color: #fff1d6;
+    transform: translateY(-1px) rotate(-12deg);
+}
+.cz-theme-toggle:active {
+    transform: scale(0.92);
+}
+.cz-theme-toggle i {
+    grid-area: 1 / 1;
+    font-size: 1.05rem;
+    line-height: 1;
+    transition:
+        opacity 0.25s ease,
+        transform 0.4s var(--cozy-spring, cubic-bezier(0.34, 1.56, 0.64, 1));
+}
+/* Dark mode shows the sun (= "switch to light"); light mode shows the moon. */
+.cz-theme-toggle .cz-ico-moon {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.4);
+}
+:root[data-theme="light"] .cz-theme-toggle .cz-ico-sun {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.4);
+}
+:root[data-theme="light"] .cz-theme-toggle .cz-ico-moon {
+    opacity: 1;
+    transform: none;
+}
+@media (max-width: 575.98px) {
+    .cz-theme-toggle {
+        width: 40px;
+        height: 40px;
+    }
+}
+@media (max-width: 439.98px) {
+    /* the play button is an icon here too; keep the bar from overflowing */
+    .cz-theme-toggle {
+        width: 38px;
+        height: 38px;
+    }
+}
+
+/* Smooth cross-fade only while the user is actively switching (class is added by JS) */
+html.theme-switching,
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after {
+    transition:
+        background-color 0.35s ease,
+        color 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease !important;
+}
+
+/* --------------------------------------------------------------------------
+   1. Light design tokens
+   -------------------------------------------------------------------------- */
+:root[data-theme="light"] {
+    color-scheme: light;
+
+    --royal-red: #b4472f;
+    --royal-red-dark: #c4513a;
+    --royal-red-light: #d9674c;
+    --royal-gold: #9a5b12; /* darker honey: readable as text on cream */
+    --royal-gold-light: #5a2f1b; /* used for body-ish text on panels */
+    --royal-bg: #f3e3c3;
+    --royal-wood: #8a4f2b;
+
+    --glass-bg-dark: rgba(255, 248, 232, 0.9);
+    --glass-bg-red: rgba(196, 81, 58, 0.9);
+    --glass-border: rgba(138, 74, 36, 0.35);
+    --liquid-highlight: rgba(255, 255, 255, 0.65);
+    --liquid-shadow: 0 10px 30px rgba(107, 58, 34, 0.22);
+
+    --xq-bg-color: #f5e6c8;
+
+    --cozy-cream: #3a1f14; /* "light text" token becomes ink */
+    --cozy-paper: #fff6e4;
+    --cozy-ink: #3a1f14;
+    --cozy-ember: #c4513a;
+    --cozy-shadow-soft: 0 6px 18px rgba(107, 58, 34, 0.2);
+    --cozy-shadow-lift: 0 16px 36px rgba(107, 58, 34, 0.3);
+    --cozy-glow: 0 0 22px rgba(255, 190, 90, 0.35);
+}
+
+/* Page atmosphere: the artwork stays, washed with warm morning light */
+:root[data-theme="light"] body {
+    color: #3a1f14;
+}
+:root[data-theme="light"] body::before {
+    background:
+        radial-gradient(
+            ellipse 55% 40% at 12% 0%,
+            rgba(255, 200, 110, 0.55),
+            transparent 70%
+        ),
+        radial-gradient(
+            ellipse 50% 40% at 92% 6%,
+            rgba(238, 150, 120, 0.3),
+            transparent 70%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(255, 246, 228, 0.86),
+            rgba(247, 231, 198, 0.93)
+        );
+    animation: none;
+}
+:root[data-theme="light"] body::after {
+    opacity: 0.05;
+    mix-blend-mode: multiply;
+}
+
+:root[data-theme="light"] a {
+    color: #a8402c;
+}
+:root[data-theme="light"] a:hover {
+    color: #7a291c;
+}
+:root[data-theme="light"] h1,
+:root[data-theme="light"] h2,
+:root[data-theme="light"] h3,
+:root[data-theme="light"] h4,
+:root[data-theme="light"] h5,
+:root[data-theme="light"] h6,
+:root[data-theme="light"] .h1,
+:root[data-theme="light"] .h2,
+:root[data-theme="light"] .h3,
+:root[data-theme="light"] .h4,
+:root[data-theme="light"] .h5,
+:root[data-theme="light"] .h6 {
+    color: #8a2f1d;
+    text-shadow: none;
+}
+:root[data-theme="light"] :focus-visible {
+    outline-color: rgba(168, 64, 44, 0.8);
+}
+:root[data-theme="light"] ::selection {
+    background: #ffc861;
+    color: #3a1f14;
+}
+:root[data-theme="light"] ::-moz-selection {
+    background: #ffc861;
+    color: #3a1f14;
+}
+
+/* Scrollbar */
+:root[data-theme="light"] html,
+:root[data-theme="light"] body,
+html[data-theme="light"] {
+    scrollbar-color: #c4513a #f3e3c3;
+}
+:root[data-theme="light"] ::-webkit-scrollbar-track {
+    background: #f3e3c3;
+    border-left-color: rgba(138, 74, 36, 0.15);
+    box-shadow: inset 0 0 6px rgba(107, 58, 34, 0.18);
+}
+:root[data-theme="light"] ::-webkit-scrollbar-thumb {
+    border-color: #f3e3c3;
+}
+:root[data-theme="light"] ::-webkit-scrollbar-corner {
+    background: #f3e3c3;
+}
+
+/* --------------------------------------------------------------------------
+   2. Surfaces that stay lacquered / dark: header and footer
+      Re-assert the dark-theme tokens locally so their existing rules
+      (which read var(--royal-gold), var(--cozy-cream) ...) are unchanged.
+   -------------------------------------------------------------------------- */
+:root[data-theme="light"] header.site-header,
+:root[data-theme="light"] footer {
+    --royal-gold: #ffc861;
+    --royal-gold-light: #fff1d6;
+    --cozy-cream: #fff6e4;
+    --cozy-ink: #3a1f14;
+    --cozy-ember: #ff8a4c;
+    --glass-border: rgba(255, 200, 97, 0.32);
+    color: #fff1d6;
+}
+/* A touch brighter terracotta than the night version */
+:root[data-theme="light"] header.site-header.cz-header,
+:root[data-theme="light"] header.site-header.cz-header:hover {
+    background:
+        radial-gradient(
+            520px 130px at 6% -30%,
+            rgba(255, 214, 140, 0.5),
+            transparent 70%
+        ),
+        radial-gradient(
+            460px 130px at 96% -40%,
+            rgba(255, 160, 110, 0.35),
+            transparent 70%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(196, 81, 58, 0.97),
+            rgba(150, 52, 36, 0.97)
+        );
+    box-shadow:
+        0 10px 26px rgba(107, 58, 34, 0.35),
+        inset 0 1px 0 rgba(255, 236, 200, 0.4) !important;
+}
+:root[data-theme="light"] footer {
+    background: linear-gradient(180deg, #6b3a22, #3a1f14);
+    box-shadow: 0 -10px 30px rgba(107, 58, 34, 0.25);
+}
+:root[data-theme="light"] footer a {
+    color: #f0cf94;
+}
+:root[data-theme="light"] footer a:hover {
+    color: #ffc861;
+}
+:root[data-theme="light"] footer p {
+    color: #ffc861;
+}
+
+/* Desktop dropdown panels (mega menu, language, resource, VIP) and the avatar
+   menu (every width) turn into cream paper with ink text: re-point the --cz-*
+   tokens those rows read. On phones/tablets the nav accordion stays dark. */
+:root[data-theme="light"] header.site-header.cz-header .cz-user .dropdown-menu {
+    --cz-cream: #3a1f14;
+    --cz-gold: #9a5b12;
+}
+@media (min-width: 1200px) {
+    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu {
+        --cz-cream: #3a1f14;
+        --cz-gold: #9a5b12;
+    }
+}
+
+/* Panel surface (desktop menus + avatar menu on every width) */
+@media (min-width: 1200px) {
+    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu {
+        background: linear-gradient(
+            180deg,
+            rgba(255, 250, 238, 0.99),
+            rgba(247, 231, 198, 0.99)
+        ) !important;
+        border: 1px solid rgba(138, 74, 36, 0.3) !important;
+        border-top: 2px solid #c4513a !important;
+        box-shadow:
+            0 24px 50px rgba(107, 58, 34, 0.35),
+            0 0 30px rgba(255, 190, 90, 0.18) !important;
+    }
+}
+:root[data-theme="light"] header.site-header.cz-header .cz-user .dropdown-menu {
+    background: linear-gradient(
+        180deg,
+        rgba(255, 250, 238, 0.99),
+        rgba(247, 231, 198, 0.99)
+    ) !important;
+    border: 1px solid rgba(138, 74, 36, 0.3) !important;
+    border-top: 2px solid #c4513a !important;
+    box-shadow: 0 24px 50px rgba(107, 58, 34, 0.35) !important;
+}
+
+/* Rows inside those panels */
+@media (min-width: 1200px) {
+    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu .cz-item-hint {
+        color: rgba(58, 31, 20, 0.62);
+    }
+    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu .cz-item:hover,
+    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu .cz-item:focus {
+        color: #8a2f1d !important;
+        background: rgba(196, 81, 58, 0.1) !important;
+    }
+    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu .cz-item.active {
+        color: #8a2f1d !important;
+        background: linear-gradient(
+            90deg,
+            rgba(255, 200, 97, 0.5),
+            rgba(255, 200, 97, 0.12)
+        ) !important;
+        box-shadow: inset 0 0 0 1px rgba(154, 91, 18, 0.5) !important;
+    }
+    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu .cz-item-ico {
+        background: rgba(196, 81, 58, 0.1);
+        border-color: rgba(154, 91, 18, 0.35);
+    }
+    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu .cz-item--logout .cz-item-ico {
+        background: rgba(58, 31, 20, 0.06);
+        border-color: rgba(58, 31, 20, 0.2);
+    }
+    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu .cz-divider,
+    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu .cz-group-title {
+        border-color: rgba(138, 74, 36, 0.3);
+    }
+}
+:root[data-theme="light"] header.site-header.cz-header .cz-user .dropdown-menu .cz-item-hint {
+    color: rgba(58, 31, 20, 0.62);
+}
+:root[data-theme="light"] header.site-header.cz-header .cz-user .dropdown-menu .cz-item:hover,
+:root[data-theme="light"] header.site-header.cz-header .cz-user .dropdown-menu .cz-item:focus {
+    color: #8a2f1d !important;
+    background: rgba(196, 81, 58, 0.1) !important;
+}
+:root[data-theme="light"] header.site-header.cz-header .cz-user .dropdown-menu .cz-item.active {
+    color: #8a2f1d !important;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 200, 97, 0.5),
+        rgba(255, 200, 97, 0.12)
+    ) !important;
+    box-shadow: inset 0 0 0 1px rgba(154, 91, 18, 0.5) !important;
+}
+:root[data-theme="light"] header.site-header.cz-header .cz-user .dropdown-menu .cz-item-ico {
+    background: rgba(196, 81, 58, 0.1);
+    border-color: rgba(154, 91, 18, 0.35);
+}
+:root[data-theme="light"] header.site-header.cz-header .cz-user .dropdown-menu .cz-divider {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(138, 74, 36, 0.4),
+        transparent
+    );
+}
+
+/* --------------------------------------------------------------------------
+   3. Buttons — keep cream text on the dark/terracotta ones
+   -------------------------------------------------------------------------- */
+:root[data-theme="light"] .btn-danger,
+:root[data-theme="light"] .btn-royal,
+:root[data-theme="light"] .btn-dark,
+:root[data-theme="light"] .btn.bootbox-cancel {
+    color: #fff6e4 !important;
+}
+:root[data-theme="light"] .btn-danger:hover,
+:root[data-theme="light"] .btn-royal:hover {
+    color: #fff !important;
+}
+:root[data-theme="light"] .btn-dark:hover {
+    color: #ffc861 !important;
+}
+:root[data-theme="light"] .btn-dark {
+    background: rgba(90, 47, 27, 0.92) !important;
+    box-shadow: 0 6px 14px rgba(107, 58, 34, 0.3) !important;
+}
+:root[data-theme="light"] .btn-dark:hover {
+    background: rgba(58, 31, 20, 0.96) !important;
+}
+:root[data-theme="light"] .btn.bootbox-cancel {
+    background: rgba(90, 47, 27, 0.92) !important;
+}
+:root[data-theme="light"] .btn-royal-outline,
+:root[data-theme="light"] .btn-outline-light {
+    color: #8a2f1d !important;
+    border-color: rgba(138, 47, 29, 0.6) !important;
+}
+:root[data-theme="light"] .page-link {
+    color: #8a2f1d !important;
+}
+:root[data-theme="light"] .page-item.disabled .page-link {
+    background: rgba(243, 227, 195, 0.8) !important;
+    color: rgba(58, 31, 20, 0.4) !important;
+}
+:root[data-theme="light"] .page-item.active .page-link {
+    color: #3a1f14 !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. Cards, hero, lists, tables
+   -------------------------------------------------------------------------- */
+:root[data-theme="light"] .card,
+:root[data-theme="light"] .royal-grid-card,
+:root[data-theme="light"] .article-card,
+:root[data-theme="light"] .article-detail-card,
+:root[data-theme="light"] .article-empty,
+:root[data-theme="light"] .match-card,
+:root[data-theme="light"] .pvp-scoreboard {
+    color: #3a1f14;
+}
+:root[data-theme="light"] .royal-grid-card:hover,
+:root[data-theme="light"] .article-card:hover {
+    border-color: rgba(196, 81, 58, 0.6);
+    box-shadow:
+        var(--cozy-shadow-lift),
+        0 0 24px rgba(255, 190, 90, 0.25);
+}
+:root[data-theme="light"] .card-header {
+    background: linear-gradient(
+        90deg,
+        rgba(196, 81, 58, 0.22),
+        rgba(196, 81, 58, 0.04)
+    );
+    border-bottom-color: rgba(138, 74, 36, 0.25);
+    color: #8a2f1d;
+}
+:root[data-theme="light"] .hero .hero-box,
+:root[data-theme="light"] .info,
+:root[data-theme="light"] .list-group-item,
+:root[data-theme="light"] #match-status {
+    background: rgba(255, 248, 232, 0.88);
+    color: #3a1f14;
+    border-color: rgba(138, 74, 36, 0.3);
+}
+:root[data-theme="light"] .hero .hero-box {
+    box-shadow:
+        var(--cozy-shadow-lift),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+:root[data-theme="light"] #proverb {
+    color: #5a2f1b;
+    text-shadow: none;
+    background: linear-gradient(
+        90deg,
+        rgba(196, 81, 58, 0.16),
+        rgba(196, 81, 58, 0.04),
+        rgba(196, 81, 58, 0.16)
+    );
+    border-left-color: #c4513a;
+    border-right-color: #c4513a;
+}
+:root[data-theme="light"] hr {
+    border-top-color: rgba(138, 74, 36, 0.25);
+}
+:root[data-theme="light"] .comments {
+    background-color: rgba(255, 248, 232, 0.9);
+    color: #3a1f14;
+}
+
+:root[data-theme="light"] .table {
+    color: #3a1f14;
+}
+:root[data-theme="light"] .table-responsive,
+:root[data-theme="light"] .dataTables_wrapper {
+    background: rgba(255, 248, 232, 0.9);
+    border-color: rgba(138, 74, 36, 0.3);
+    color: #3a1f14;
+}
+:root[data-theme="light"] .table thead th {
+    background: rgba(196, 81, 58, 0.16);
+    border-bottom-color: rgba(154, 91, 18, 0.55);
+    color: #8a2f1d;
+}
+:root[data-theme="light"] .table td,
+:root[data-theme="light"] .table th {
+    border-top-color: rgba(138, 74, 36, 0.14) !important;
+}
+:root[data-theme="light"] .table tbody tr:hover {
+    background-color: rgba(255, 190, 90, 0.16) !important;
+    box-shadow: inset 3px 0 0 #c4513a;
+}
+:root[data-theme="light"] table.table:not(#danh-sach-ky-thu) td.room-code span {
+    background: rgba(255, 200, 97, 0.3);
+    border-color: rgba(154, 91, 18, 0.55);
+}
+:root[data-theme="light"] div.dataTables_wrapper div.dataTables_length label,
+:root[data-theme="light"] div.dataTables_wrapper div.dataTables_filter label,
+:root[data-theme="light"] .dataTables_info {
+    color: #5a2f1b;
+}
+
+/* --------------------------------------------------------------------------
+   5. Forms (already cream paper) — just warm the border and labels
+   -------------------------------------------------------------------------- */
+:root[data-theme="light"] .form-control,
+:root[data-theme="light"] .custom-select {
+    background-color: #fffdf6 !important;
+    border-color: rgba(138, 74, 36, 0.5) !important;
+}
+:root[data-theme="light"] .form-control:focus,
+:root[data-theme="light"] .custom-select:focus {
+    border-color: #c4513a !important;
+    box-shadow: 0 0 0 0.25rem rgba(196, 81, 58, 0.22) !important;
+}
+:root[data-theme="light"] .article-search .form-control {
+    background: #fffdf6 !important;
+}
+:root[data-theme="light"] form label,
+:root[data-theme="light"] .col-form-label {
+    color: #5a2f1b;
+}
+
+/* --------------------------------------------------------------------------
+   6. Generic dropdowns, modals, tooltips, toasts, cookie banner
+   -------------------------------------------------------------------------- */
+:root[data-theme="light"] .dropdown-menu {
+    background: rgba(255, 250, 238, 0.98) !important;
+    border-color: rgba(138, 74, 36, 0.35);
+    color: #3a1f14;
+}
+:root[data-theme="light"] .dropdown-item {
+    color: #3a1f14;
+}
+:root[data-theme="light"] .dropdown-item:hover,
+:root[data-theme="light"] .dropdown-item:focus {
+    background: rgba(196, 81, 58, 0.1);
+    color: #8a2f1d;
+}
+
+:root[data-theme="light"] .modal-backdrop.show {
+    background-color: #3a1f14 !important;
+    opacity: 0.45;
+}
+:root[data-theme="light"] .modal-content {
+    background: linear-gradient(180deg, #fffaf0, #f7e7c6) !important;
+    color: #3a1f14;
+    border-color: rgba(138, 74, 36, 0.4);
+    box-shadow:
+        0 30px 70px rgba(107, 58, 34, 0.4),
+        0 0 30px rgba(255, 190, 90, 0.2);
+}
+:root[data-theme="light"] .modal-header {
+    border-bottom-color: rgba(138, 74, 36, 0.2);
+    background: linear-gradient(
+        90deg,
+        rgba(196, 81, 58, 0.18),
+        transparent
+    );
+}
+:root[data-theme="light"] .modal-footer {
+    border-top-color: rgba(138, 74, 36, 0.2);
+}
+:root[data-theme="light"] .close {
+    color: #3a1f14;
+    text-shadow: none;
+}
+:root[data-theme="light"] .tooltip .tooltip-inner {
+    background: rgba(58, 31, 20, 0.96) !important;
+    color: #fff6e4;
+}
+:root[data-theme="light"] .cookie-consent {
+    background: rgba(255, 248, 232, 0.98);
+    color: #3a1f14;
+    border-top-color: rgba(138, 74, 36, 0.4);
+    box-shadow: 0 -8px 24px rgba(107, 58, 34, 0.25);
+}
+:root[data-theme="light"] .introjs-tooltip {
+    background-color: #fff8e8;
+    color: #3a1f14;
+}
+
+/* --------------------------------------------------------------------------
+   7. Game chrome around the board (the board itself keeps its walnut look)
+   -------------------------------------------------------------------------- */
+:root[data-theme="light"] #game-over,
+:root[data-theme="light"] #rematch-panel {
+    background: rgba(255, 248, 232, 0.95) !important;
+    color: #3a1f14;
+    border-color: rgba(138, 74, 36, 0.5) !important;
+}
+:root[data-theme="light"] #game-over:hover {
+    background: var(--royal-red) !important;
+    color: #fff6e4;
+}
+:root[data-theme="light"] #ban-co {
+    /* softer aura on a light page; the wood tray is unchanged */
+    box-shadow:
+        0 0 0 3px rgba(46, 26, 19, 0.95),
+        0 0 0 4px rgba(255, 200, 97, 0.45),
+        0 10px 22px rgba(107, 58, 34, 0.35),
+        0 24px 48px rgba(107, 58, 34, 0.35),
+        inset 0 1px 0 rgba(255, 236, 200, 0.4),
+        inset 0 -3px 8px rgba(10, 4, 2, 0.45) !important;
+}
+
+/* --------------------------------------------------------------------------
+   8. Ads (frame colours live in ads-cozy.css; this keeps the page behind it calm)
+   -------------------------------------------------------------------------- */
+:root[data-theme="light"] .adsense {
+    background-color: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   9. Reduced motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    html.theme-switching,
+    html.theme-switching *,
+    html.theme-switching *::before,
+    html.theme-switching *::after {
+        transition: none !important;
+    }
+    .cz-theme-toggle,
+    .cz-theme-toggle i {
+        transition: none;
+    }
+}

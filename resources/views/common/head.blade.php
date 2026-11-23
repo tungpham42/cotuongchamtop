@@ -12,6 +12,19 @@
 <meta property="og:image:alt" content="@yield('og_image_alt', __('Cờ tướng 2 người'))" >
 <meta property="og:image:type" content="@yield('og_image_type', 'image/jpeg')" />
 
+{{-- Apply the saved dark/light choice before first paint (no flash). Default is dark. --}}
+<script>
+(function () {
+    var t = 'dark';
+    try { var s = localStorage.getItem('xq-theme'); if (s === 'light' || s === 'dark') { t = s; } } catch (e) {}
+    document.documentElement.setAttribute('data-theme', t);
+    if (t === 'light') {
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) { m.setAttribute('content', '#b4472f'); }
+    }
+})();
+</script>
+
 {{-- SEO: Canonical and Hreflang Tags --}}
 @isset($canonicalUrl)
 <link rel="canonical" href="{{ url($canonicalUrl) }}" >
@@ -64,6 +77,7 @@
 <link href="{{ asset('css/theme-cozy.css?v=2') }}" rel="stylesheet">
 <link href="{{ asset('css/header-cozy.css?v=7') }}" rel="stylesheet">
 <link href="{{ asset('css/ads-cozy.css?v=5') }}" rel="stylesheet">
+<link href="{{ asset('css/theme-light.css?v=1') }}" rel="stylesheet">
 <style>
   #st-3, #st-3 * {
     z-index: 0 !important;

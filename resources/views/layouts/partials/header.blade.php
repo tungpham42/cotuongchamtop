@@ -255,6 +255,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         {{-- Always-visible actions: the big "play" button + account. They stay in the bar on phones too. --}}
         <div class="navbar cz-actions">
+            {{-- Dark / light switcher: JS below flips <html data-theme> and remembers the choice. --}}
+            <button type="button" class="cz-theme-toggle" id="czThemeToggle" aria-pressed="false"
+                    data-label-to-light="{{ __('Chuyển sang giao diện sáng') }}"
+                    data-label-to-dark="{{ __('Chuyển sang giao diện tối') }}"
+                    aria-label="{{ __('Chuyển sang giao diện sáng') }}" title="{{ __('Chuyển sang giao diện sáng') }}">
+                <i class="fas fa-sun cz-ico-sun" aria-hidden="true"></i>
+                <i class="fas fa-moon cz-ico-moon" aria-hidden="true"></i>
+            </button>
+
             <a class="cz-cta showPromotion" href="{{ localized_url('room.list') }}">
                 <i class="fas fa-chess-board" aria-hidden="true"></i>
                 <b class="cz-cta-text">{{ __('Chơi ngay') }}</b>
@@ -361,6 +370,59 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (desktop.addEventListener) { desktop.addEventListener('change', onBreakpoint); }
     else if (desktop.addListener) { desktop.addListener(onBreakpoint); }
 
+})();
+</script>
+{{-- Dark / light mode switcher. The saved choice is applied before first paint by the snippet in head.blade.php;
+     this script only wires up the button, keeps tabs in sync and updates the labels. --}}
+<script>
+(function () {
+    var KEY = 'xq-theme';
+    var root = document.documentElement;
+    var toggle = document.getElementById('czThemeToggle');
+    var themeColor = document.querySelector('meta[name="theme-color"]');
+    var COLORS = { dark: '#7a291c', light: '#b4472f' };
+
+    function stored() {
+        try { var v = localStorage.getItem(KEY); return (v === 'light' || v === 'dark') ? v : null; }
+        catch (e) { return null; }
+    }
+    function current() { return root.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
+
+    function paint(theme) {
+        root.setAttribute('data-theme', theme);
+        if (themeColor) { themeColor.setAttribute('content', COLORS[theme]); }
+        if (toggle) {
+            // The button always describes the action it will perform.
+            var label = toggle.getAttribute(theme === 'light' ? 'data-label-to-dark' : 'data-label-to-light');
+            toggle.setAttribute('aria-pressed', theme === 'light' ? 'true' : 'false');
+            toggle.setAttribute('aria-label', label);
+            toggle.setAttribute('title', label);
+        }
+    }
+
+    function apply(theme, persist, animate) {
+        if (animate) {
+            root.classList.add('theme-switching');
+            window.setTimeout(function () { root.classList.remove('theme-switching'); }, 450);
+        }
+        paint(theme);
+        if (persist) { try { localStorage.setItem(KEY, theme); } catch (e) {} }
+        // Lets other scripts (board, charts, embeds) react: document.addEventListener('themechange', ...)
+        document.dispatchEvent(new CustomEvent('themechange', { detail: { theme: theme } }));
+    }
+
+    paint(stored() || current());
+
+    if (toggle) {
+        toggle.addEventListener('click', function () {
+            apply(current() === 'light' ? 'dark' : 'light', true, true);
+        });
+    }
+
+    // Another tab changed the theme.
+    window.addEventListener('storage', function (e) {
+        if (e.key === KEY && (e.newValue === 'light' || e.newValue === 'dark')) { apply(e.newValue, false, true); }
+    });
 })();
 </script>
 {{-- The brand name in the header is a <strong>, so every page needs exactly one real <h1>.
