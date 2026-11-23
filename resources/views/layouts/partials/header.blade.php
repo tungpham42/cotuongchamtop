@@ -361,18 +361,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (desktop.addEventListener) { desktop.addEventListener('change', onBreakpoint); }
     else if (desktop.addListener) { desktop.addListener(onBreakpoint); }
 
-    // Compact the bar once the page scrolls.
-    var ticking = false;
-    function onScroll() {
-        if (ticking) { return; }
-        ticking = true;
-        window.requestAnimationFrame(function () {
-            header.classList.toggle('is-scrolled', (window.pageYOffset || document.documentElement.scrollTop) > 12);
-            ticking = false;
-        });
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
 })();
 </script>
 {{-- The brand name in the header is a <strong>, so every page needs exactly one real <h1>.
