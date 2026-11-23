@@ -4,9 +4,6 @@ const CACHE_NAME = `game-pwa-${CACHE_VERSION}`;
 
 // 2. Updated Asset List based on latest HTML/layout includes
 const FILES_TO_CACHE = [
-    "/css/index_new.css?v=87",
-    "/css/theme-cozy.css?v=1",
-    "/css/header-cozy.css?v=1",
     "/css/fa/css/all.min.css?v=2",
     "/js/theme-manager.js?v=1",
     "/js/scripts.js?v=18",
