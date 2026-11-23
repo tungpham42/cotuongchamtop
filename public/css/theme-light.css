@@ -1028,6 +1028,10 @@ html[data-theme="light"] {
 :root[data-theme="light"]
     body.dashboard
     td:not(.room-code)
+    .badge.badge-status:not(:has(.fa-hourglass-start)),
+:root[data-theme="light"]
+    body.profile
+    td:not(.room-code)
     .badge.badge-status:not(:has(.fa-hourglass-start)) {
     color: var(--cozy-paper) !important;
 }
