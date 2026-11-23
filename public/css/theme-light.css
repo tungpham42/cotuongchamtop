@@ -729,3 +729,8 @@ html[data-theme="light"] {
             rgba(247, 231, 198, 0.99)
         ) !important;
 }
+
+.page-link:hover,
+.page-link:focus {
+    background: linear-gradient(180deg, #ffd98a, #f0a93e) !important;
+}
