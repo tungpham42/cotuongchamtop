@@ -686,7 +686,7 @@ html[data-theme="light"] {
     color: var(--royal-gold) !important;
 }
 :root[data-theme="light"] .bg-light {
-    background-color: var(--royal-gold) !important;
+    background-color: var(--cozy-paper) !important;
 }
 /* ...but buttons that carry .text-light sit on dark/terracotta fills and need cream text */
 :root[data-theme="light"] .btn.text-light,
@@ -738,7 +738,7 @@ html[data-theme="light"] {
     background: linear-gradient(180deg, #ffd98a, #f0a93e) !important;
 }
 :root[data-theme="light"] .royal-card-title {
-    color: var(--cozy-paper) !important;
+    color: #8a2f1d !important; /* sits on cream paper, not on the red band */
 }
 
 :root[data-theme="light"] .badge.badge-status.pulse-red {
@@ -752,7 +752,9 @@ html[data-theme="light"] {
 }
 
 :root[data-theme="light"] .badge.badge-status.badge-offline {
-    color: var(--cozy-paper) !important;
+    background: rgba(90, 47, 27, 0.9);
+    border-color: #8a4f2b;
+    color: #f0cf94 !important;
 }
 
 :root[data-theme="light"] .royal-grid-card .text-center.py-2 {
@@ -762,4 +764,253 @@ html[data-theme="light"] {
         var(--glass-bg-dark),
         transparent
     ) !important;
+}
+
+/* --------------------------------------------------------------------------
+   11. Light-mode completion
+       Components whose own stylesheet / inline <style> hard-codes dark-mode
+       colours (cream text, black shadows, white-alpha fills).
+   -------------------------------------------------------------------------- */
+
+/* 11.1 Status badges */
+:root[data-theme="light"] .badge-status {
+    box-shadow: 0 2px 6px rgba(107, 58, 34, 0.25);
+}
+:root[data-theme="light"] .badge.badge-status.badge-online {
+    background: linear-gradient(180deg, #3f8f68, #2d6a4f);
+    border-color: #2d6a4f;
+    color: #f4fff8;
+    box-shadow: 0 2px 8px rgba(45, 106, 79, 0.35);
+}
+:root[data-theme="light"] .badge-royal {
+    background: rgba(196, 81, 58, 0.14);
+    color: #8a2f1d;
+    border-color: rgba(154, 91, 18, 0.6);
+    box-shadow: none;
+}
+
+/* 11.2 Tournament bracket / match cards */
+:root[data-theme="light"] .match-card {
+    border-top-color: rgba(196, 81, 58, 0.55) !important;
+}
+:root[data-theme="light"] .match-card:hover {
+    border-color: rgba(196, 81, 58, 0.6) !important;
+    box-shadow:
+        var(--cozy-shadow-lift),
+        0 0 24px rgba(255, 190, 90, 0.25),
+        inset 0 3px 15px var(--liquid-highlight) !important;
+}
+:root[data-theme="light"] .match-player {
+    border-bottom-color: rgba(138, 74, 36, 0.18);
+}
+:root[data-theme="light"] .match-player:hover {
+    background-color: rgba(255, 190, 90, 0.18) !important;
+    box-shadow: inset 0 0 12px rgba(154, 91, 18, 0.12);
+}
+:root[data-theme="light"] .match-player.red-side {
+    color: #b3261e;
+    text-shadow: none;
+}
+:root[data-theme="light"] .match-winner {
+    background: rgba(255, 200, 97, 0.38) !important;
+    box-shadow: inset 0 0 0 2px var(--royal-gold);
+    color: #6b3a0a !important;
+    text-shadow: none;
+}
+:root[data-theme="light"] .bracket-room-link {
+    background: linear-gradient(
+        90deg,
+        rgba(196, 81, 58, 0.18),
+        rgba(196, 81, 58, 0.06)
+    ) !important;
+    color: #8a2f1d !important;
+    border-top-color: rgba(138, 74, 36, 0.25);
+}
+:root[data-theme="light"] .bracket-room-link:hover {
+    background: linear-gradient(90deg, #c4513a, #d9674c) !important;
+    color: #fff6e4 !important;
+    text-shadow: none;
+    box-shadow: inset 0 2px 8px rgba(255, 255, 255, 0.35);
+}
+
+/* 11.3 Articles */
+:root[data-theme="light"] .article-card:hover {
+    transform: translateY(-6px) scale(1.015);
+}
+:root[data-theme="light"] .article-card-title a {
+    color: #8a2f1d !important;
+    text-shadow: none;
+}
+:root[data-theme="light"] .article-card-title a:hover {
+    color: #c4513a !important;
+    text-shadow: none;
+}
+:root[data-theme="light"] .article-card-excerpt {
+    color: rgba(58, 31, 20, 0.75) !important;
+}
+:root[data-theme="light"] .article-card-footer {
+    border-top-color: rgba(138, 74, 36, 0.22) !important;
+}
+:root[data-theme="light"] .article-meta-pill {
+    background: rgba(196, 81, 58, 0.08);
+    border-color: rgba(138, 74, 36, 0.3);
+    color: #5a2f1b;
+}
+:root[data-theme="light"] .article-empty,
+:root[data-theme="light"] .article-empty svg {
+    color: #5a2f1b !important;
+    filter: none;
+}
+:root[data-theme="light"] .article-detail-card {
+    border-top-color: rgba(196, 81, 58, 0.55) !important;
+}
+:root[data-theme="light"] .article-body,
+:root[data-theme="light"] .article-body p,
+:root[data-theme="light"] .article-body li {
+    color: #3a1f14;
+}
+:root[data-theme="light"] .article-body :is(h1, h2, h3, h4, h5, h6) {
+    color: #8a2f1d;
+}
+:root[data-theme="light"] .article-body a {
+    color: #a8402c;
+}
+:root[data-theme="light"] .article-body blockquote {
+    background: rgba(196, 81, 58, 0.08);
+    border-left-color: #c4513a;
+    color: #5a2f1b;
+}
+:root[data-theme="light"] .article-body table td,
+:root[data-theme="light"] .article-body table th {
+    border-color: rgba(138, 74, 36, 0.25);
+}
+
+/* 11.4 PvP scoreboard / turn banner */
+:root[data-theme="light"] .pvp-turn-banner {
+    background: rgba(196, 81, 58, 0.07);
+    border-color: rgba(138, 74, 36, 0.3);
+    color: #5a2f1b;
+}
+:root[data-theme="light"] .pvp-turn-banner[data-state="mine"] {
+    background: linear-gradient(
+        90deg,
+        rgba(196, 81, 58, 0.14),
+        rgba(255, 200, 97, 0.45),
+        rgba(196, 81, 58, 0.14)
+    );
+    border-color: var(--royal-gold);
+    color: #6b3a0a;
+}
+:root[data-theme="light"] .pvp-turn-banner[data-state="over"] {
+    background: rgba(196, 81, 58, 0.16);
+    color: #8a2f1d;
+}
+:root[data-theme="light"] .pvp-turn-dot {
+    background: #a89880;
+}
+:root[data-theme="light"] .pvp-turn-banner[data-state="red"] .pvp-turn-dot {
+    background: #d9382c;
+}
+:root[data-theme="light"] .pvp-turn-banner[data-state="black"] .pvp-turn-dot {
+    background: #222;
+    box-shadow: 0 0 0 1px #8a4f2b;
+}
+
+/* 11.5 Game page (games/show.blade.php) */
+:root[data-theme="light"] .royal-glass-card:hover {
+    box-shadow:
+        var(--cozy-shadow-lift),
+        0 0 20px rgba(255, 190, 90, 0.3),
+        inset 0 1px 8px rgba(255, 255, 255, 0.6);
+}
+:root[data-theme="light"] .progress-bar-royal-track {
+    background: rgba(138, 74, 36, 0.14);
+    border-color: rgba(138, 74, 36, 0.3);
+}
+:root[data-theme="light"] .progress-bar-royal-fill {
+    background: linear-gradient(90deg, #c4513a, #e0a23a, #ffc861);
+    box-shadow: 0 0 8px rgba(255, 190, 90, 0.7);
+}
+:root[data-theme="light"] .btn-royal-icon,
+:root[data-theme="light"] .social-share-btn {
+    background: rgba(196, 81, 58, 0.08);
+    border-color: rgba(138, 74, 36, 0.4);
+    color: #8a2f1d;
+}
+:root[data-theme="light"] .btn-royal-icon:hover {
+    background: rgba(255, 200, 97, 0.45);
+    color: #6b3a0a;
+    border-color: var(--royal-gold);
+    box-shadow: 0 4px 12px rgba(154, 91, 18, 0.3);
+}
+:root[data-theme="light"] .social-share-btn:hover {
+    background: #c4513a;
+    color: #fff6e4;
+    border-color: #c4513a;
+    box-shadow: 0 4px 12px rgba(196, 81, 58, 0.4);
+}
+:root[data-theme="light"] .btn-royal-play {
+    background: linear-gradient(135deg, #e0a23a, #c4513a);
+    box-shadow: 0 4px 16px rgba(196, 81, 58, 0.45);
+}
+:root[data-theme="light"] .chip-stat {
+    background: rgba(255, 253, 246, 0.8);
+    border-color: rgba(138, 74, 36, 0.3);
+    color: #5a2f1b;
+}
+:root[data-theme="light"] .moves-container::-webkit-scrollbar-track {
+    background: rgba(138, 74, 36, 0.12);
+}
+:root[data-theme="light"] .move-btn {
+    color: #3a1f14;
+}
+:root[data-theme="light"] .move-btn:hover {
+    background: rgba(196, 81, 58, 0.12);
+    color: #8a2f1d;
+}
+:root[data-theme="light"] .move-btn.active-step {
+    background: linear-gradient(90deg, #c4513a, #d9674c);
+    color: #fff6e4 !important;
+    border-color: #8a2f1d;
+}
+:root[data-theme="light"] #ban-co .square-2b8ce.last-move-from {
+    background: rgba(255, 190, 60, 0.4);
+}
+:root[data-theme="light"] #ban-co .square-2b8ce.last-move-to {
+    box-shadow: inset 0 0 0 3px #c4513a;
+    background: rgba(255, 190, 60, 0.5);
+}
+
+/* 11.6 Played-boards cards (layouts/partials/playedBoards.blade.php: inline styles) */
+:root[data-theme="light"] .royal-grid-card .host-title {
+    color: #b3261e !important;
+    text-shadow: none !important;
+}
+:root[data-theme="light"] .royal-grid-card .guest-title {
+    color: #3a1f14 !important;
+    text-shadow: none !important;
+}
+:root[data-theme="light"] .puzzles .fa-archive {
+    color: var(--royal-gold) !important;
+    text-shadow: none !important;
+}
+
+/* 11.7 Misc. */
+:root[data-theme="light"] .watch-btn,
+:root[data-theme="light"] .btn.previewBtn {
+    color: #3a1f14;
+}
+:root[data-theme="light"] .alert {
+    color: #3a1f14;
+}
+:root[data-theme="light"] .swal2-popup {
+    background: #fff8e8;
+    color: #3a1f14;
+}
+:root[data-theme="light"] .swal2-title,
+:root[data-theme="light"] .swal2-html-container {
+    color: #3a1f14;
+}
+:root[data-theme="light"] .bootbox .modal-body {
+    color: #3a1f14;
 }
