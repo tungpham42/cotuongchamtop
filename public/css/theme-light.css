@@ -741,7 +741,7 @@ html[data-theme="light"] {
     color: var(--cozy-paper) !important;
 }
 
-:root[data-theme="light"].badge.badge-status.pulse-red {
+:root[data-theme="light"] .badge.badge-status.pulse-red {
     background: var(--royal-red) !important;
     color: var(--cozy-paper) !important;
 }
