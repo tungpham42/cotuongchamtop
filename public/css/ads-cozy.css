@@ -1,46 +1,25 @@
 /* ==========================================================================
-   ADS COZY — "Đèn lồng trước hiên quán trà"
-   Dedicated styles for the three AdSense placements (top / between / bottom).
+   ADS COZY — understated, policy-safe AdSense slots (top / between / bottom)
    Load AFTER theme-cozy.css:
-     <link href="{{ asset('css/ads-cozy.css?v=1') }}" rel="stylesheet">
+     <link href="{{ asset('css/ads-cozy.css?v=2') }}" rel="stylesheet">
 
-   Markup contract (see resources/views/common/adsense*.blade.php):
-     <aside class="ad-slot ad-slot--top|between|bottom" aria-label="…">
-       <div class="ad-slot__frame">
-         <span class="ad-slot__label">…</span>
-         <div class="ad-slot__body"><ins class="adsbygoogle"></ins></div>
-       </div>
-     </aside>
-
-   Design notes
-   - The ad unit itself is never covered, cropped, animated or restyled:
-     the warm "lantern tray" lives AROUND it, and a clear "Quảng cáo" label
-     keeps the placement honest (AdSense policy friendly: no click bait,
-     no arrows, no overlays).
+   Design notes (AdSense policy friendly)
+   - The ad unit is never covered, cropped, animated or restyled.
+   - Calm, neutral frame: no glow, no pulse, no hover effects, no entrance animation.
+   - A plain, readable "Quảng cáo" label separates ads from content.
    - Space is reserved with min-height so late ad fills do not shift layout.
-   - Unfilled slots collapse automatically (no empty glowing boxes).
-   - Everything is fluid: phones → tablets → desktops → ultra-wide.
+   - Unfilled slots collapse automatically.
    ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   1. Tokens (fall back gracefully if theme-cozy.css tokens are missing)
-   -------------------------------------------------------------------------- */
 .ad-slot {
-    --ad-gold: var(--royal-gold, #ffc861);
-    --ad-gold-soft: var(--royal-gold-light, #fff1d6);
-    --ad-ember: var(--cozy-ember, #ff8a4c);
-    --ad-terracotta: var(--royal-red, #a8402c);
-    --ad-cream: var(--cozy-cream, #fff6e4);
-    --ad-ink: var(--cozy-ink, #3a1f14);
+    --ad-border: rgba(255, 200, 97, 0.35);
+    --ad-surface: rgba(38, 20, 14, 0.55);
+    --ad-label-ink: var(--cozy-cream, #fff6e4);
     --ad-radius: var(--cozy-radius, 18px);
-    --ad-ease: var(--cozy-ease, cubic-bezier(0.22, 1, 0.36, 1));
     --ad-gap: clamp(0.75rem, 2.2vw, 1.5rem);
     --ad-pad: clamp(0.5rem, 1.6vw, 0.9rem);
 }
 
-/* --------------------------------------------------------------------------
-   2. The slot wrapper
-   -------------------------------------------------------------------------- */
 .ad-slot {
     position: relative;
     display: block;
@@ -51,155 +30,65 @@
     box-sizing: border-box;
     text-align: center;
     contain: layout style;
-    animation: adRise 0.7s var(--ad-ease) both;
 }
-
 .ad-slot *,
 .ad-slot *::before,
 .ad-slot *::after {
     box-sizing: border-box;
 }
 
-/* Placement variants -------------------------------------------------- */
 .ad-slot--top {
     max-width: 100%;
     margin-top: 0;
     margin-bottom: 0;
     padding: 0.4rem clamp(0.5rem, 2vw, 1rem) 0.5rem;
 }
-
 .ad-slot--between {
     margin-top: clamp(1.5rem, 4vw, 3rem);
     margin-bottom: clamp(1.5rem, 4vw, 3rem);
 }
-
 .ad-slot--bottom {
     margin-top: var(--ad-gap);
     margin-bottom: 0;
 }
 
-/* --------------------------------------------------------------------------
-   3. The frame — a lantern-lit tea tray with a honey-gold gradient edge
-   -------------------------------------------------------------------------- */
 .ad-slot__frame {
     position: relative;
     padding: calc(var(--ad-pad) + 0.55rem) var(--ad-pad) var(--ad-pad);
     border-radius: var(--ad-radius);
-    border: 1px solid transparent;
-    /* two-layer background: warm glass fill + gradient border */
-    background:
-        linear-gradient(
-                180deg,
-                rgba(62, 34, 24, 0.9),
-                rgba(38, 20, 14, 0.9)
-            )
-            padding-box,
-        linear-gradient(
-                135deg,
-                rgba(255, 200, 97, 0.85),
-                rgba(238, 122, 95, 0.55) 45%,
-                rgba(255, 200, 97, 0.85)
-            )
-            border-box;
-    box-shadow:
-        0 10px 26px rgba(14, 5, 2, 0.5),
-        0 0 32px rgba(255, 170, 70, 0.16),
-        inset 0 1px 0 rgba(255, 236, 200, 0.18);
-    transition:
-        box-shadow 0.4s var(--ad-ease),
-        transform 0.4s var(--ad-ease);
+    border: 1px solid var(--ad-border);
+    background: var(--ad-surface);
 }
-
-/* soft lantern glow spilling from the top corners */
-.ad-slot__frame::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    background:
-        radial-gradient(
-            ellipse 45% 70% at 8% 0%,
-            rgba(255, 170, 70, 0.2),
-            transparent 70%
-        ),
-        radial-gradient(
-            ellipse 45% 70% at 92% 0%,
-            rgba(238, 122, 95, 0.16),
-            transparent 70%
-        );
-}
-
-@media (hover: hover) and (pointer: fine) {
-    .ad-slot__frame:hover {
-        transform: translateY(-2px);
-        box-shadow:
-            0 16px 34px rgba(14, 5, 2, 0.55),
-            0 0 46px rgba(255, 180, 80, 0.28),
-            inset 0 1px 0 rgba(255, 236, 200, 0.26);
-    }
-}
-
-/* Top banner: flatter, full-bleed rail that melts into the header */
 .ad-slot--top .ad-slot__frame {
     border-radius: 0 0 var(--ad-radius) var(--ad-radius);
-    border-top-color: transparent;
 }
 
-/* --------------------------------------------------------------------------
-   4. The label chip — a little paper lantern tag ("Quảng cáo")
-   -------------------------------------------------------------------------- */
 .ad-slot__label {
     position: absolute;
     top: 0;
     left: 50%;
     z-index: 2;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4em;
+    display: inline-block;
     max-width: calc(100% - 1.5rem);
-    padding: 0.18em 0.85em 0.22em;
+    padding: 0.15em 0.8em 0.2em;
     transform: translate(-50%, -50%);
     border-radius: 999px;
-    border: 1px solid rgba(255, 246, 228, 0.7);
-    background: linear-gradient(180deg, #ffd98a, #f0a93e);
-    color: var(--ad-ink);
+    border: 1px solid var(--ad-border);
+    background: #3a2218;
+    color: var(--ad-label-ink);
     font-family: "Plus Jakarta Sans", "Lexend Deca", system-ui, sans-serif;
-    font-size: clamp(0.62rem, 1.6vw, 0.74rem);
-    font-weight: 800;
-    letter-spacing: 0.06em;
+    font-size: clamp(0.62rem, 1.6vw, 0.72rem);
+    font-weight: 600;
+    letter-spacing: 0.04em;
     line-height: 1.4;
     text-transform: uppercase;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    box-shadow:
-        0 4px 12px rgba(240, 169, 62, 0.35),
-        inset 0 1px 0 rgba(255, 255, 255, 0.65);
     pointer-events: none;
     user-select: none;
 }
 
-/* tiny CSS lantern (no icon-font dependency) */
-.ad-slot__label::before {
-    content: "";
-    flex: none;
-    width: 0.55em;
-    height: 0.7em;
-    border-radius: 45% 45% 40% 40%;
-    background: radial-gradient(
-        circle at 50% 35%,
-        #fff3c9 0%,
-        var(--ad-ember) 55%,
-        var(--ad-terracotta) 100%
-    );
-    box-shadow: 0 0 6px rgba(255, 138, 76, 0.85);
-    animation: adLanternGlow 3.2s ease-in-out infinite alternate;
-}
-
-/* --------------------------------------------------------------------------
-   5. The body — reserved space + the ad unit itself
-   -------------------------------------------------------------------------- */
 .ad-slot__body {
     position: relative;
     z-index: 1;
@@ -208,12 +97,8 @@
     justify-content: center;
     width: 100%;
     min-height: 100px;
-    overflow: hidden;
-    border-radius: calc(var(--ad-radius) - 6px);
-    /* subtle "paper" under the creative so transparent ads still read well */
-    background: rgba(255, 246, 228, 0.045);
+    overflow: visible;
 }
-
 .ad-slot--top .ad-slot__body {
     min-height: 90px;
 }
@@ -224,22 +109,6 @@
     min-height: 120px;
 }
 
-/* A warm shimmer while the ad is still loading (only on unfilled-yet slots) */
-.ad-slot__body:has(ins.adsbygoogle:not([data-ad-status]))::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(
-        100deg,
-        transparent 20%,
-        rgba(255, 200, 97, 0.1) 50%,
-        transparent 80%
-    );
-    background-size: 220% 100%;
-    animation: adShimmer 2.2s ease-in-out infinite;
-}
-
 .ad-slot .adsbygoogle {
     display: block;
     width: 100%;
@@ -248,18 +117,10 @@
     background: transparent;
 }
 
-/* --------------------------------------------------------------------------
-   6. Auto-collapse: no ad served → no empty glowing frame
-   -------------------------------------------------------------------------- */
 .ad-slot:has(ins.adsbygoogle[data-ad-status="unfilled"]) {
     display: none;
 }
 
-/* --------------------------------------------------------------------------
-   7. Responsive tuning
-   -------------------------------------------------------------------------- */
-
-/* Large phones / small tablets */
 @media (max-width: 767.98px) {
     .ad-slot__frame {
         border-radius: 14px;
@@ -267,15 +128,10 @@
     .ad-slot--top .ad-slot__frame {
         border-radius: 0 0 14px 14px;
     }
-    .ad-slot__body {
-        border-radius: 10px;
-    }
     .ad-slot--between .ad-slot__body {
-        min-height: 280px; /* mobile ads are usually taller (300x250 / 336x280) */
+        min-height: 280px;
     }
 }
-
-/* Small phones: tighter chrome, full width, calmer glow */
 @media (max-width: 575.98px) {
     .ad-slot {
         padding-left: 0.375rem;
@@ -283,9 +139,6 @@
     }
     .ad-slot__frame {
         padding: calc(var(--ad-pad) + 0.5rem) 0.35rem 0.4rem;
-        box-shadow:
-            0 6px 16px rgba(14, 5, 2, 0.5),
-            0 0 18px rgba(255, 170, 70, 0.12);
     }
     .ad-slot--top .ad-slot__body {
         min-height: 60px;
@@ -294,8 +147,6 @@
         min-height: 100px;
     }
 }
-
-/* Tablets landscape / small laptops */
 @media (min-width: 992px) {
     .ad-slot {
         max-width: 1100px;
@@ -304,16 +155,12 @@
         max-width: 100%;
     }
 }
-
-/* Big desktops: let the top rail breathe but keep the others readable */
 @media (min-width: 1400px) {
     .ad-slot--between,
     .ad-slot--bottom {
         max-width: 1240px;
     }
 }
-
-/* Very short landscape phones: don't eat the viewport */
 @media (max-height: 480px) and (orientation: landscape) {
     .ad-slot--between {
         margin-top: 1rem;
@@ -324,84 +171,25 @@
     }
 }
 
-/* --------------------------------------------------------------------------
-   8. Motion & accessibility
-   -------------------------------------------------------------------------- */
-@keyframes adRise {
-    from {
-        opacity: 0;
-        transform: translateY(12px);
-    }
-    to {
-        opacity: 1;
-        transform: none;
-    }
-}
-
-@keyframes adLanternGlow {
-    from {
-        box-shadow: 0 0 4px rgba(255, 138, 76, 0.5);
-        filter: brightness(0.95);
-    }
-    to {
-        box-shadow: 0 0 9px rgba(255, 170, 70, 1);
-        filter: brightness(1.15);
-    }
-}
-
-@keyframes adShimmer {
-    from {
-        background-position: 130% 0;
-    }
-    to {
-        background-position: -130% 0;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .ad-slot,
-    .ad-slot__label::before,
-    .ad-slot__body::after {
-        animation: none !important;
-    }
-    .ad-slot__frame,
-    .ad-slot__frame:hover {
-        transition: none;
-        transform: none;
-    }
-}
-
 @media (prefers-contrast: more) {
     .ad-slot__frame {
         background: #2a160f;
-        border: 2px solid var(--ad-gold);
+        border: 2px solid #ffc861;
     }
     .ad-slot__label {
-        border-color: #000;
+        border-color: #ffc861;
     }
 }
 
-/* Light theme support (theme-manager.js may switch data-theme) */
-:root[data-theme="light"] .ad-slot__frame {
-    background:
-        linear-gradient(180deg, #fff6e4, #f7e7c6) padding-box,
-        linear-gradient(
-                135deg,
-                rgba(224, 164, 58, 0.95),
-                rgba(238, 122, 95, 0.6) 45%,
-                rgba(224, 164, 58, 0.95)
-            )
-            border-box;
-    box-shadow:
-        0 8px 22px rgba(107, 58, 34, 0.22),
-        0 0 28px rgba(255, 190, 90, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+:root[data-theme="light"] .ad-slot {
+    --ad-border: rgba(107, 58, 34, 0.25);
+    --ad-surface: rgba(255, 246, 228, 0.7);
+    --ad-label-ink: #3a1f14;
 }
-:root[data-theme="light"] .ad-slot__body {
-    background: rgba(107, 58, 34, 0.05);
+:root[data-theme="light"] .ad-slot__label {
+    background: #f7e7c6;
 }
 
-/* Never print ads */
 @media print {
     .ad-slot {
         display: none !important;
