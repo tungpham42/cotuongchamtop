@@ -858,6 +858,192 @@
         }
         #ai-chat-box { background-color: rgba(46, 26, 19, 0.97); }
     }
+    /* ==========================================================================
+       LIGHT MODE — cream glass panel. The lacquered parts (launcher orb, header,
+       ruby buttons, your own bubbles) keep their ruby/gold look; everything that
+       sits on the panel becomes ink-on-paper. Dark mode above is untouched.
+       ========================================================================== */
+    :root[data-theme="light"] #ai-coach-widget {
+        /* keep the lacquer tokens bright: they are only used on ruby/gold surfaces */
+        --aic-gold: #ffc861;
+        --aic-gold-soft: #fff1d6;
+        --aic-red: #b4472f;
+        --aic-red-bright: #c4513a;
+        --aic-red-light: #d9674c;
+        --aic-ink: #3a1f14;
+        --aic-wood: #6b3a22;
+        --aic-glass: rgba(255, 248, 232, 0.8);
+        --aic-glass-strong: rgba(255, 248, 232, 0.93);
+        --aic-border: rgba(138, 74, 36, 0.35);
+        --aic-line: rgba(138, 74, 36, 0.22);
+        --aic-edge: rgba(255, 255, 255, 0.95);
+        /* new: colours for text that sits on the cream panel */
+        --aic-text: #3a1f14;
+        --aic-text-soft: rgba(58, 31, 20, 0.78);
+        --aic-accent: #9a5b12;
+        --aic-accent-strong: #8a2f1d;
+    }
+    :root[data-theme="light"] #ai-coach-widget :focus-visible { outline-color: #c4513a; }
+
+    /* Launcher */
+    :root[data-theme="light"] #ai-chat-btn {
+        box-shadow:
+            0 10px 24px rgba(107, 58, 34, 0.4),
+            0 0 20px rgba(255, 190, 90, 0.35),
+            inset 0 2px 6px rgba(255, 255, 255, 0.55),
+            inset 0 -8px 14px rgba(20, 8, 4, 0.25),
+            inset 0 0 18px rgba(255, 200, 97, 0.18);
+    }
+    :root[data-theme="light"] .ai-btn-badge { box-shadow: 0 3px 8px rgba(107, 58, 34, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.85); }
+
+    /* Panel */
+    :root[data-theme="light"] #ai-chat-box {
+        background:
+            linear-gradient(155deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.12) 35%, rgba(255, 255, 255, 0) 60%),
+            radial-gradient(120% 70% at 0% 0%, rgba(196, 81, 58, 0.14), transparent 60%),
+            radial-gradient(100% 60% at 100% 100%, rgba(255, 200, 97, 0.24), transparent 60%),
+            var(--aic-glass);
+        border: 1px solid rgba(138, 74, 36, 0.35);
+        border-top: 1.5px solid var(--aic-edge);
+        box-shadow:
+            0 12px 34px rgba(107, 58, 34, 0.32),
+            0 28px 60px rgba(107, 58, 34, 0.18),
+            0 0 26px rgba(255, 190, 90, 0.16),
+            inset 0 2px 18px rgba(255, 255, 255, 0.6),
+            inset 0 -1px 0 rgba(154, 91, 18, 0.2);
+    }
+    :root[data-theme="light"] #ai-chat-box::before { background: linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 100%); }
+    :root[data-theme="light"] #ai-coach-widget .chat-header { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 2px 8px rgba(107, 58, 34, 0.2); }
+
+    /* Trial / upgrade banner */
+    :root[data-theme="light"] #ai-coach-widget .ai-trial-bar {
+        color: var(--aic-text);
+        background: linear-gradient(90deg, rgba(255, 200, 97, 0.38), rgba(255, 200, 97, 0.08));
+    }
+    :root[data-theme="light"] #ai-coach-widget .ai-trial-bar .fa-gift { color: var(--aic-accent); }
+    :root[data-theme="light"] #ai-coach-widget .btn-upgrade-pill { box-shadow: 0 2px 8px rgba(107, 58, 34, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.85); }
+
+    /* Buttons on the panel */
+    :root[data-theme="light"] #ai-coach-widget .aic-btn-ghost {
+        color: var(--aic-accent-strong) !important;
+        background: rgba(255, 255, 255, 0.6);
+        border-color: rgba(138, 74, 36, 0.45);
+        border-top-color: #fff;
+        box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.8), 0 2px 6px rgba(107, 58, 34, 0.12);
+    }
+    :root[data-theme="light"] #ai-coach-widget .aic-btn-ghost:hover {
+        background: rgba(196, 81, 58, 0.1);
+        border-color: #c4513a;
+        box-shadow: 0 6px 14px rgba(107, 58, 34, 0.2);
+    }
+    :root[data-theme="light"] #ai-coach-widget .aic-btn-ruby,
+    :root[data-theme="light"] #ai-coach-widget .aic-btn-gold { box-shadow: 0 6px 14px rgba(107, 58, 34, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.6); }
+
+    /* Messages */
+    :root[data-theme="light"] #ai-coach-widget .chat-body {
+        background:
+            linear-gradient(rgba(154, 91, 18, 0.06) 1px, transparent 1px) 0 0 / 28px 28px,
+            linear-gradient(90deg, rgba(154, 91, 18, 0.06) 1px, transparent 1px) 0 0 / 28px 28px,
+            linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(247, 231, 198, 0.32));
+    }
+    :root[data-theme="light"] #ai-coach-widget .msg-ai {
+        color: var(--aic-text);
+        text-shadow: none;
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.3) 100%),
+            rgba(255, 253, 246, 0.8);
+        border: 1px solid rgba(138, 74, 36, 0.25);
+        border-top-color: #fff;
+        border-left: 3px solid #c4513a;
+        box-shadow: 0 6px 16px rgba(107, 58, 34, 0.15), inset 0 1px 6px rgba(255, 255, 255, 0.7);
+    }
+    :root[data-theme="light"] #ai-coach-widget .msg-ai strong,
+    :root[data-theme="light"] #ai-coach-widget .msg-ai b { color: var(--aic-accent-strong); }
+    :root[data-theme="light"] #ai-coach-widget .msg-ai a:not(.aic-btn) { color: #a8402c; }
+    :root[data-theme="light"] #ai-coach-widget .msg-ai a:not(.aic-btn):hover { color: #7a291c; }
+    :root[data-theme="light"] #ai-coach-widget .msg-ai code {
+        color: var(--aic-accent-strong);
+        background: rgba(196, 81, 58, 0.1);
+        border-color: rgba(138, 74, 36, 0.25);
+    }
+    :root[data-theme="light"] #ai-coach-widget .msg-user { box-shadow: 0 6px 14px rgba(107, 58, 34, 0.3), inset 0 1px 8px rgba(255, 200, 97, 0.22); }
+    :root[data-theme="light"] #ai-coach-widget .msg-card {
+        border-left-color: rgba(138, 74, 36, 0.25);
+        border-top: 1.5px solid #fff;
+    }
+    :root[data-theme="light"] .aic-medal {
+        color: #fff1d6;
+        background:
+            radial-gradient(ellipse 70% 40% at 50% 14%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0)),
+            linear-gradient(145deg, #d9674c, #a8402c);
+        border-color: #ffc861;
+        box-shadow: 0 6px 16px rgba(168, 64, 44, 0.35), inset 0 2px 6px rgba(255, 255, 255, 0.3);
+    }
+    :root[data-theme="light"] .aic-card-title { color: #8a2f1d; text-shadow: none; }
+    :root[data-theme="light"] .aic-card-text { color: rgba(58, 31, 20, 0.78); }
+    :root[data-theme="light"] .aic-upsell {
+        color: rgba(58, 31, 20, 0.72);
+        border-top-color: rgba(138, 74, 36, 0.25);
+    }
+    :root[data-theme="light"] .aic-upsell .fa-bolt { color: #9a5b12; }
+    :root[data-theme="light"] .aic-typing { color: rgba(58, 31, 20, 0.78); }
+    :root[data-theme="light"] .aic-dots i {
+        background: radial-gradient(circle at 35% 30%, #fff1d6, #c4513a 60%, #8a2f1d);
+        box-shadow: 0 0 8px rgba(196, 81, 58, 0.45);
+    }
+
+    /* Quick actions */
+    :root[data-theme="light"] #ai-coach-widget .quick-actions-area {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(247, 231, 198, 0.55));
+        border-top-color: rgba(138, 74, 36, 0.2);
+    }
+    :root[data-theme="light"] #ai-coach-widget .quick-btn {
+        color: #5a2f1b;
+        text-shadow: none;
+        background: rgba(255, 255, 255, 0.65);
+        border-color: rgba(138, 74, 36, 0.35);
+        border-top-color: #fff;
+        box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.8);
+    }
+    :root[data-theme="light"] #ai-coach-widget .quick-btn .fas { color: var(--aic-accent); }
+    :root[data-theme="light"] #ai-coach-widget .quick-btn:hover {
+        color: var(--aic-accent-strong);
+        background: rgba(255, 200, 97, 0.35);
+        border-color: #c4513a;
+        box-shadow: 0 8px 16px rgba(107, 58, 34, 0.2), inset 0 1px 6px rgba(255, 255, 255, 0.6);
+    }
+
+    /* Footer */
+    :root[data-theme="light"] #ai-coach-widget .chat-footer {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(247, 231, 198, 0.6));
+        border-top-color: rgba(138, 74, 36, 0.25);
+    }
+    :root[data-theme="light"] #ai-coach-widget #chat-input {
+        background: #fffdf6 !important;
+        border: 1px solid rgba(138, 74, 36, 0.45) !important;
+        box-shadow: inset 0 2px 5px rgba(107, 58, 34, 0.14), 0 2px 6px rgba(107, 58, 34, 0.1);
+    }
+    :root[data-theme="light"] #ai-coach-widget #chat-input:focus {
+        border-color: #c4513a !important;
+        box-shadow: 0 0 0 0.22rem rgba(196, 81, 58, 0.22), 0 0 14px rgba(255, 190, 90, 0.35) !important;
+    }
+    :root[data-theme="light"] #ai-coach-widget #send-chat { box-shadow: 0 6px 14px rgba(107, 58, 34, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.9); }
+    :root[data-theme="light"] #ai-coach-widget .chat-footer-guest {
+        color: var(--aic-text-soft);
+        text-shadow: none;
+    }
+    :root[data-theme="light"] #ai-coach-widget .chat-footer-guest .fa-lock { color: var(--aic-accent); }
+    :root[data-theme="light"] #ai-coach-widget .chat-footer-guest a { color: #a8402c; }
+    :root[data-theme="light"] #ai-coach-widget .chat-footer-guest a:hover { color: #7a291c; }
+
+    /* Fallbacks */
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+        :root[data-theme="light"] #ai-chat-box { background-color: rgba(255, 248, 232, 0.97); }
+        :root[data-theme="light"] #ai-coach-widget .msg-ai { background-color: rgba(255, 253, 246, 0.95); }
+    }
+    @media (prefers-reduced-transparency: reduce) {
+        :root[data-theme="light"] #ai-chat-box { background-color: rgba(255, 248, 232, 0.98); }
+    }
 </style>
 
 <div id="ai-coach-widget">

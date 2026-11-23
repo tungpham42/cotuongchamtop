@@ -75,6 +75,12 @@
             animation: rematchPanelIn .35s cubic-bezier(.175, .885, .32, 1.275) both;
         }
         #rematch-panel .btn { min-width: 9rem; }
+        /* Light mode: paper panel, soft warm shadow (dark look above is unchanged) */
+        :root[data-theme="light"] #rematch-panel {
+            border-color: rgba(138, 74, 36, 0.5);
+            background: rgba(255, 248, 232, 0.95);
+            box-shadow: 0 6px 20px rgba(107, 58, 34, .3), 0 0 16px rgba(255, 190, 90, .3);
+        }
         @keyframes rematchPanelIn {
             from { opacity: 0; transform: translateY(-8px) scale(.97); }
             to   { opacity: 1; transform: none; }

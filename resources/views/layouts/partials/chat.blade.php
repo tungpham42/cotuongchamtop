@@ -321,6 +321,97 @@ a#exit:hover {
     from { opacity: 0; transform: translateY(15px) scale(0.95); }
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
+/* ==========================================================================
+   LIGHT MODE — daylight tea-house chat (dark look above is untouched)
+   ========================================================================== */
+:root[data-theme="light"] #chat-wrapper {
+    border-top-color: rgba(196, 81, 58, 0.55);
+    box-shadow: var(--liquid-shadow), inset 0 3px 15px var(--liquid-highlight);
+}
+:root[data-theme="light"] #chat-wrapper:hover {
+    box-shadow: 0 14px 34px rgba(107, 58, 34, 0.32), 0 0 26px rgba(255, 190, 90, 0.3), inset 0 2px 18px var(--liquid-highlight);
+}
+:root[data-theme="light"] #menu {
+    background: linear-gradient(90deg, transparent, rgba(196, 81, 58, 0.16), transparent);
+    border-bottom-color: rgba(138, 74, 36, 0.25);
+}
+:root[data-theme="light"] #menu p.welcome { color: #5a2f1b; }
+:root[data-theme="light"] #menu p.welcome b,
+:root[data-theme="light"] #menu p.welcome i { color: #8a2f1d; text-shadow: none; }
+:root[data-theme="light"] a#exit {
+    color: #8a2f1d;
+    background: rgba(255, 248, 232, 0.9);
+    border-color: rgba(138, 74, 36, 0.35);
+}
+:root[data-theme="light"] a#exit:hover {
+    color: #fff6e4;
+    background: #c4513a;
+    border-color: #c4513a;
+    box-shadow: 0 4px 12px rgba(168, 64, 44, 0.35);
+}
+:root[data-theme="light"] #chatbox::-webkit-scrollbar-track { background: #f3e3c3; border-left-color: rgba(138, 74, 36, 0.2); }
+:root[data-theme="light"] #chatbox::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #d9674c, #a8402c); border-color: rgba(255, 246, 228, 0.8); }
+:root[data-theme="light"] #chatbox::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #ffd98a, #f0a93e); border-color: #fff; }
+
+:root[data-theme="light"] .message-theirs .msg-content {
+    color: #3a1f14;
+    background: rgba(255, 253, 246, 0.92);
+    border-color: rgba(138, 74, 36, 0.22);
+    box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.8), 0 4px 10px rgba(107, 58, 34, 0.14);
+}
+:root[data-theme="light"] .message-theirs .msg-meta,
+:root[data-theme="light"] .message-mine .msg-meta { color: #8a6a2a; }
+:root[data-theme="light"] .message-theirs .msg-meta b { color: #8a2f1d; }
+:root[data-theme="light"] .message-mine .msg-content {
+    color: #fff6e4;
+    background: linear-gradient(180deg, #d9674c, #a8402c);
+    border-color: rgba(255, 214, 160, 0.55);
+    box-shadow: inset 0 1px 0 rgba(255, 236, 200, 0.4), 0 4px 10px rgba(168, 64, 44, 0.3);
+}
+:root[data-theme="light"] .message-system {
+    color: #8a2f1d;
+    background: rgba(196, 81, 58, 0.1);
+    box-shadow: 0 3px 8px rgba(107, 58, 34, 0.12);
+}
+:root[data-theme="light"] .message-system .welcome-info { color: #5a2f1b; }
+:root[data-theme="light"] .message-system .enter-info { color: #3f7a35; text-shadow: none; }
+:root[data-theme="light"] .message-system .left-info { color: #b3261e; }
+
+:root[data-theme="light"] #footer-action {
+    background: rgba(255, 246, 228, 0.75);
+    border-top-color: rgba(138, 74, 36, 0.22);
+}
+:root[data-theme="light"] #name,
+:root[data-theme="light"] #usermsg {
+    color: #3a1f14;
+    background: #fffdf6;
+    border-color: rgba(138, 74, 36, 0.5);
+    box-shadow: inset 0 2px 5px rgba(107, 58, 34, 0.14);
+}
+:root[data-theme="light"] #name::placeholder,
+:root[data-theme="light"] #usermsg::placeholder { color: #3a1f14; opacity: 0.5; }
+:root[data-theme="light"] #name:focus,
+:root[data-theme="light"] #usermsg:focus {
+    background: #fff;
+    border-color: #c4513a;
+    box-shadow: 0 0 0 0.25rem rgba(196, 81, 58, 0.22), inset 0 2px 5px rgba(107, 58, 34, 0.1);
+}
+:root[data-theme="light"] #enter,
+:root[data-theme="light"] #submitmsg {
+    color: #fff6e4;
+    background: linear-gradient(180deg, #d9674c, #a8402c);
+    border-color: rgba(255, 214, 160, 0.6);
+    box-shadow: 0 6px 14px rgba(168, 64, 44, 0.35), inset 0 1px 0 rgba(255, 236, 200, 0.45);
+}
+:root[data-theme="light"] #enter:hover,
+:root[data-theme="light"] #submitmsg:hover {
+    background: linear-gradient(180deg, #e87a5e, #b84a34);
+    box-shadow: 0 10px 20px rgba(168, 64, 44, 0.45), 0 0 16px rgba(255, 190, 90, 0.4), inset 0 1px 0 rgba(255, 236, 200, 0.55);
+}
+:root[data-theme="light"] .error {
+    background: #b3261e;
+    box-shadow: 0 4px 10px rgba(107, 58, 34, 0.3);
+}
 </style>
 
 <!-- Hidden div to hold initial payload for immediate render -->

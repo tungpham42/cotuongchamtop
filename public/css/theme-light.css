@@ -264,7 +264,10 @@ html[data-theme="light"] {
     --cz-gold: #9a5b12;
 }
 @media (min-width: 1200px) {
-    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu {
+    :root[data-theme="light"]
+        header.site-header.cz-header
+        .cz-menu
+        .dropdown-menu {
         --cz-cream: #3a1f14;
         --cz-gold: #9a5b12;
     }
@@ -272,7 +275,10 @@ html[data-theme="light"] {
 
 /* Panel surface (desktop menus + avatar menu on every width) */
 @media (min-width: 1200px) {
-    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu {
+    :root[data-theme="light"]
+        header.site-header.cz-header
+        .cz-menu
+        .dropdown-menu {
         background: linear-gradient(
             180deg,
             rgba(255, 250, 238, 0.99),
@@ -298,15 +304,31 @@ html[data-theme="light"] {
 
 /* Rows inside those panels */
 @media (min-width: 1200px) {
-    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu .cz-item-hint {
+    :root[data-theme="light"]
+        header.site-header.cz-header
+        .cz-menu
+        .dropdown-menu
+        .cz-item-hint {
         color: rgba(58, 31, 20, 0.62);
     }
-    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu .cz-item:hover,
-    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu .cz-item:focus {
+    :root[data-theme="light"]
+        header.site-header.cz-header
+        .cz-menu
+        .dropdown-menu
+        .cz-item:hover,
+    :root[data-theme="light"]
+        header.site-header.cz-header
+        .cz-menu
+        .dropdown-menu
+        .cz-item:focus {
         color: #8a2f1d !important;
         background: rgba(196, 81, 58, 0.1) !important;
     }
-    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu .cz-item.active {
+    :root[data-theme="light"]
+        header.site-header.cz-header
+        .cz-menu
+        .dropdown-menu
+        .cz-item.active {
         color: #8a2f1d !important;
         background: linear-gradient(
             90deg,
@@ -315,28 +337,61 @@ html[data-theme="light"] {
         ) !important;
         box-shadow: inset 0 0 0 1px rgba(154, 91, 18, 0.5) !important;
     }
-    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu .cz-item-ico {
+    :root[data-theme="light"]
+        header.site-header.cz-header
+        .cz-menu
+        .dropdown-menu
+        .cz-item-ico {
         background: rgba(196, 81, 58, 0.1);
         border-color: rgba(154, 91, 18, 0.35);
     }
-    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu .cz-item--logout .cz-item-ico {
+    :root[data-theme="light"]
+        header.site-header.cz-header
+        .cz-menu
+        .dropdown-menu
+        .cz-item--logout
+        .cz-item-ico {
         background: rgba(58, 31, 20, 0.06);
         border-color: rgba(58, 31, 20, 0.2);
     }
-    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu .cz-divider,
-    :root[data-theme="light"] header.site-header.cz-header .cz-menu .dropdown-menu .cz-group-title {
+    :root[data-theme="light"]
+        header.site-header.cz-header
+        .cz-menu
+        .dropdown-menu
+        .cz-divider,
+    :root[data-theme="light"]
+        header.site-header.cz-header
+        .cz-menu
+        .dropdown-menu
+        .cz-group-title {
         border-color: rgba(138, 74, 36, 0.3);
     }
 }
-:root[data-theme="light"] header.site-header.cz-header .cz-user .dropdown-menu .cz-item-hint {
+:root[data-theme="light"]
+    header.site-header.cz-header
+    .cz-user
+    .dropdown-menu
+    .cz-item-hint {
     color: rgba(58, 31, 20, 0.62);
 }
-:root[data-theme="light"] header.site-header.cz-header .cz-user .dropdown-menu .cz-item:hover,
-:root[data-theme="light"] header.site-header.cz-header .cz-user .dropdown-menu .cz-item:focus {
+:root[data-theme="light"]
+    header.site-header.cz-header
+    .cz-user
+    .dropdown-menu
+    .cz-item:hover,
+:root[data-theme="light"]
+    header.site-header.cz-header
+    .cz-user
+    .dropdown-menu
+    .cz-item:focus {
     color: #8a2f1d !important;
     background: rgba(196, 81, 58, 0.1) !important;
 }
-:root[data-theme="light"] header.site-header.cz-header .cz-user .dropdown-menu .cz-item.active {
+:root[data-theme="light"]
+    header.site-header.cz-header
+    .cz-user
+    .dropdown-menu
+    .cz-item.active {
     color: #8a2f1d !important;
     background: linear-gradient(
         90deg,
@@ -345,11 +400,19 @@ html[data-theme="light"] {
     ) !important;
     box-shadow: inset 0 0 0 1px rgba(154, 91, 18, 0.5) !important;
 }
-:root[data-theme="light"] header.site-header.cz-header .cz-user .dropdown-menu .cz-item-ico {
+:root[data-theme="light"]
+    header.site-header.cz-header
+    .cz-user
+    .dropdown-menu
+    .cz-item-ico {
     background: rgba(196, 81, 58, 0.1);
     border-color: rgba(154, 91, 18, 0.35);
 }
-:root[data-theme="light"] header.site-header.cz-header .cz-user .dropdown-menu .cz-divider {
+:root[data-theme="light"]
+    header.site-header.cz-header
+    .cz-user
+    .dropdown-menu
+    .cz-divider {
     background: linear-gradient(
         90deg,
         transparent,
@@ -527,8 +590,8 @@ html[data-theme="light"] {
 }
 :root[data-theme="light"] .dropdown-item:hover,
 :root[data-theme="light"] .dropdown-item:focus {
-    background: rgba(196, 81, 58, 0.1);
-    color: #8a2f1d;
+    background: rgba(196, 81, 58, 0.1) !important;
+    color: #8a2f1d !important;
 }
 
 :root[data-theme="light"] .modal-backdrop.show {
@@ -545,11 +608,7 @@ html[data-theme="light"] {
 }
 :root[data-theme="light"] .modal-header {
     border-bottom-color: rgba(138, 74, 36, 0.2);
-    background: linear-gradient(
-        90deg,
-        rgba(196, 81, 58, 0.18),
-        transparent
-    );
+    background: linear-gradient(90deg, rgba(196, 81, 58, 0.18), transparent);
 }
 :root[data-theme="light"] .modal-footer {
     border-top-color: rgba(138, 74, 36, 0.2);
@@ -618,4 +677,55 @@ html[data-theme="light"] {
     .cz-theme-toggle i {
         transition: none;
     }
+}
+
+/* --------------------------------------------------------------------------
+   10. Utility fixes (scoped to light so dark mode keeps Bootstrap's defaults)
+   -------------------------------------------------------------------------- */
+:root[data-theme="light"] .text-light {
+    color: var(--royal-gold) !important;
+}
+/* ...but buttons that carry .text-light sit on dark/terracotta fills and need cream text */
+:root[data-theme="light"] .btn.text-light,
+:root[data-theme="light"] .btn-dark.text-light,
+:root[data-theme="light"] .btn-danger.text-light {
+    color: #fff6e4 !important;
+}
+:root[data-theme="light"] .btn-dark.text-light:hover {
+    color: #ffc861 !important;
+}
+:root[data-theme="light"] .btn-danger.text-light:hover {
+    color: #fff !important;
+}
+
+:root[data-theme="light"] #game-status {
+    color: var(--cozy-paper) !important;
+}
+
+:root[data-theme="light"] .cd-top {
+    background-color: var(--glass-bg-red);
+}
+
+.room-code-mini {
+    color: var(--cozy-paper) !important;
+}
+
+.invite-qr-card::before {
+    background: linear-gradient(
+        90deg,
+        rgba(196, 81, 58, 0.16),
+        rgba(196, 81, 58, 0.04),
+        rgba(196, 81, 58, 0.16)
+    ) !important;
+    border-left-color: #c4513a !important;
+    border-right-color: #c4513a !important;
+}
+
+.invite-qr-card {
+    background: fixed
+        linear-gradient(
+            180deg,
+            rgba(255, 250, 238, 0.99),
+            rgba(247, 231, 198, 0.99)
+        ) !important;
 }
