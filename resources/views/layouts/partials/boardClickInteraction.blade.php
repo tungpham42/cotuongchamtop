@@ -91,70 +91,124 @@
         50%      { box-shadow: inset 0 0 0 2px #fff,              inset 0 0 26px rgba(255, 200, 97, .95); }
     }
 
-    /* ---------- Legal move (empty square): glossy gold glass orb ---------- */
+    /* ---------- Selected piece: breathing lantern ring under the lifted piece ---------- */
+    #ban-co .square-2b8ce.click-selected::before {
+        content: '';
+        position: absolute; left: 50%; top: 50%;
+        width: 88%; height: 88%; border-radius: 50%;
+        transform: translate(-50%, -50%);
+        border: 2px solid rgba(255, 226, 160, .9);
+        box-shadow: 0 0 16px rgba(255, 190, 90, .75), inset 0 0 14px rgba(255, 190, 90, .45);
+        pointer-events: none; z-index: 1;
+        animation: clickSelectedBreath 1.9s ease-in-out infinite;
+    }
+    @keyframes clickSelectedBreath {
+        0%, 100% { transform: translate(-50%, -50%) scale(.94); opacity: .75; }
+        50%      { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+    }
+
+    /* ---------- Legal move (empty square): warm "honey pearl" + tea-ripple ----------
+       A cream-to-amber glossy pearl with a soft ink halo (readable on any board
+       colour). A gentle ripple ring spreads out from it, like a drop in a teacup.
+       Hovering turns the pearl into a bigger lantern and warms the whole square. */
     #ban-co .click-target::after {
         content: '';
         position: absolute; left: 50%; top: 50%;
-        width: 26%; height: 26%; border-radius: 50%;
+        width: 25%; height: 25%; border-radius: 50%;
         transform: translate(-50%, -50%);
         background:
-            radial-gradient(circle at 34% 30%, #fffdf3 0%, #fff1d6 20%, #9fd18a 58%, #5f9450 100%);
+            radial-gradient(circle at 33% 28%, #ffffff 0%, #fff4d9 18%, #ffd47a 52%, #f0a23a 82%, #d9822a 100%);
         box-shadow:
-            0 0 0 2px rgba(255, 246, 228, .75),
-            0 3px 6px rgba(20, 8, 4, .5),
-            0 0 14px rgba(150, 210, 130, .8),
-            inset 0 -2px 4px rgba(0, 0, 0, .25);
+            0 0 0 2px rgba(255, 250, 235, .9),
+            0 0 0 4px rgba(90, 38, 18, .38),
+            0 4px 8px rgba(20, 8, 4, .5),
+            0 0 16px 3px rgba(255, 184, 82, .75),
+            inset 0 -3px 5px rgba(160, 80, 20, .35);
         pointer-events: none; z-index: 3;
-        animation: clickOrbIn .3s cubic-bezier(.175, .885, .32, 1.275) both,
-                   clickOrbGlow 1.8s ease-in-out .3s infinite;
+        animation: clickOrbIn .38s cubic-bezier(.34, 1.56, .64, 1) both,
+                   clickOrbBreath 2.2s ease-in-out .4s infinite;
     }
-    #ban-co .click-target:hover::after {
-        width: 36%; height: 36%;
-        transition: width .2s ease, height .2s ease;
+    #ban-co .click-target::before {
+        content: '';
+        position: absolute; left: 50%; top: 50%;
+        width: 25%; height: 25%; border-radius: 50%;
+        transform: translate(-50%, -50%);
+        border: 2px solid rgba(255, 206, 120, .85);
+        pointer-events: none; z-index: 2;
+        animation: clickRipple 2.2s ease-out .4s infinite;
     }
-    #ban-co .click-target:not(:has(img)):hover {
-        background: radial-gradient(circle, rgba(150, 210, 130, .35), transparent 75%) !important;
-    }
+    /* Tiny cascade so the dots "bloom" across the board instead of all at once */
+    #ban-co .click-target:nth-child(2n)::after { animation-delay: .04s, .44s; }
+    #ban-co .click-target:nth-child(3n)::after { animation-delay: .08s, .48s; }
+    #ban-co .click-target:nth-child(5n)::after { animation-delay: .12s, .52s; }
 
-    /* ---------- Capture (square holds an enemy piece): ruby-gold ring ---------- */
-    #ban-co .click-target:has(img)::after {
-        width: 92%; height: 92%;
-        background: transparent;
-        border: 3px solid transparent;
-        background-image:
-            linear-gradient(transparent, transparent),
-            conic-gradient(from 0deg, var(--royal-red-light), var(--royal-gold), #fff, var(--royal-gold), var(--royal-red-light));
-        background-origin: border-box;
-        background-clip: padding-box, border-box;
+    #ban-co .click-target:not(:has(img)):hover {
+        background: radial-gradient(circle, rgba(255, 190, 90, .5), rgba(255, 170, 70, .16) 55%, transparent 78%) !important;
+    }
+    #ban-co .click-target:not(:has(img)):hover::after {
+        width: 40%; height: 40%;
+        transition: width .22s cubic-bezier(.34, 1.56, .64, 1), height .22s cubic-bezier(.34, 1.56, .64, 1);
         box-shadow:
-            0 0 14px rgba(238, 122, 95, .9),
-            inset 0 0 14px rgba(238, 122, 95, .6);
-        animation: clickRingIn .3s cubic-bezier(.175, .885, .32, 1.275) both,
-                   clickRingSpin 3s linear .3s infinite,
-                   clickRingGlow 1.2s ease-in-out .3s infinite;
+            0 0 0 2px #fff,
+            0 0 0 4px rgba(90, 38, 18, .4),
+            0 6px 12px rgba(20, 8, 4, .55),
+            0 0 26px 7px rgba(255, 184, 82, .95),
+            inset 0 -3px 5px rgba(160, 80, 20, .35);
+    }
+    #ban-co .click-target:not(:has(img)):hover::before { animation-duration: 1.1s; }
+
+    /* ---------- Capture (square holds an enemy piece): ember ring + warm glow ----------
+       A soft terracotta glow pools under the piece and a honey/ember ring turns
+       around it, so "you can take this" reads differently from "you can go here". */
+    #ban-co .click-target:has(img)::before {
+        content: '';
+        position: absolute; left: 50%; top: 50%;
+        width: 96%; height: 96%; border-radius: 50%;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(circle, rgba(255, 120, 70, .55), rgba(238, 100, 60, .25) 55%, transparent 74%);
+        border: 0;
+        animation: clickEmberBreath 1.4s ease-in-out infinite;
+        pointer-events: none; z-index: 1;
+    }
+    #ban-co .click-target:has(img)::after {
+        width: 94%; height: 94%;
+        background: conic-gradient(from 0deg, #ff8a4c, #ffe3a0, #ee5a3c, #ffc861, #ff8a4c);
+            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
+            mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
+        box-shadow:
+            0 0 0 1px rgba(90, 38, 18, .35),
+            0 0 16px rgba(255, 120, 70, .9),
+            inset 0 0 14px rgba(255, 120, 70, .55);
+        animation: clickRingIn .34s cubic-bezier(.34, 1.56, .64, 1) both,
+                   clickRingSpin 4s linear .35s infinite;
     }
     #ban-co .click-target:has(img) img {
-        filter: drop-shadow(0 0 8px rgba(255, 138, 76, .95));
+        filter: drop-shadow(0 0 9px rgba(255, 138, 76, .95));
     }
+    #ban-co .click-target:has(img):hover::after { filter: brightness(1.15); }
 
     @keyframes clickOrbIn {
         from { transform: translate(-50%, -50%) scale(0); opacity: 0; }
         to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
     }
-    @keyframes clickOrbGlow {
-        0%, 100% { filter: brightness(1); }
-        50%      { filter: brightness(1.12) drop-shadow(0 0 6px rgba(150, 210, 130, .85)); }
+    @keyframes clickOrbBreath {
+        0%, 100% { transform: translate(-50%, -50%) scale(1); }
+        50%      { transform: translate(-50%, -50%) scale(1.14); }
+    }
+    @keyframes clickRipple {
+        0%   { transform: translate(-50%, -50%) scale(1);   opacity: .85; }
+        100% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
+    }
+    @keyframes clickEmberBreath {
+        0%, 100% { opacity: .7; }
+        50%      { opacity: 1; }
     }
     @keyframes clickRingIn {
         from { transform: translate(-50%, -50%) scale(.4); opacity: 0; }
         to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
     }
     @keyframes clickRingSpin {
-        to { filter: hue-rotate(0deg); transform: translate(-50%, -50%) rotate(360deg); }
-    }
-    @keyframes clickRingGlow {
-        0%, 100% { opacity: .75; }
-        50%      { opacity: 1; }
+        to { transform: translate(-50%, -50%) rotate(360deg); }
     }
 
     /* Existing highlight helpers stay neutral */
@@ -162,7 +216,10 @@
 
     @media (prefers-reduced-motion: reduce) {
         #ban-co .click-selected,
+        #ban-co .click-selected::before,
+        #ban-co .click-target::before,
         #ban-co .click-target::after,
+        #ban-co .click-target:has(img)::before,
         #ban-co .click-target:has(img)::after,
         #ban-co .click-arrow__inner { animation: none !important; }
         #ban-co .square-2b8ce img { transition: none; }

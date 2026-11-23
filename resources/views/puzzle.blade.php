@@ -95,55 +95,76 @@
                 drop-shadow(0 0 10px rgba(255, 200, 97, .95));
         }
 
-        /* ---------- Drop preview (empty square): glossy sage orb ---------- */
+        /* ---------- Drop preview (empty square): warm honey pearl + tea-ripple ---------- */
         #ban-co.pz-armed .square-2b8ce:hover::after {
             content: '';
             position: absolute; left: 50%; top: 50%;
-            width: 36%; height: 36%; border-radius: 50%;
+            width: 38%; height: 38%; border-radius: 50%;
             transform: translate(-50%, -50%);
             background:
-                radial-gradient(circle at 34% 30%, #fffdf3 0%, #fff1d6 20%, #9fd18a 58%, #5f9450 100%);
+                radial-gradient(circle at 33% 28%, #ffffff 0%, #fff4d9 18%, #ffd47a 52%, #f0a23a 82%, #d9822a 100%);
             box-shadow:
-                0 0 0 2px rgba(255, 246, 228, .75),
-                0 3px 6px rgba(20, 8, 4, .5),
-                0 0 14px rgba(150, 210, 130, .8),
-                inset 0 -2px 4px rgba(0, 0, 0, .25);
+                0 0 0 2px #fff,
+                0 0 0 4px rgba(90, 38, 18, .4),
+                0 6px 12px rgba(20, 8, 4, .55),
+                0 0 26px 7px rgba(255, 184, 82, .95),
+                inset 0 -3px 5px rgba(160, 80, 20, .35);
             pointer-events: none; z-index: 3;
-            animation: pzOrbIn .3s cubic-bezier(.175, .885, .32, 1.275) both,
-                       pzOrbGlow 1.8s ease-in-out .3s infinite;
+            animation: pzOrbIn .38s cubic-bezier(.34, 1.56, .64, 1) both,
+                       pzOrbBreath 2.2s ease-in-out .4s infinite;
+        }
+        #ban-co.pz-armed .square-2b8ce:hover::before {
+            content: '';
+            position: absolute; left: 50%; top: 50%;
+            width: 38%; height: 38%; border-radius: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(255, 206, 120, .85);
+            pointer-events: none; z-index: 2;
+            animation: pzRipple 1.2s ease-out infinite;
         }
         #ban-co.pz-armed .square-2b8ce:not(:has(img)):hover {
-            background: radial-gradient(circle, rgba(150, 210, 130, .35), transparent 75%) !important;
+            background: radial-gradient(circle, rgba(255, 190, 90, .5), rgba(255, 170, 70, .16) 55%, transparent 78%) !important;
         }
 
-        /* ---------- Drop preview (occupied square, will be replaced): ruby-gold ring ---------- */
+        /* ---------- Drop preview (occupied square, will be replaced): ember ring ---------- */
+        #ban-co.pz-armed .square-2b8ce:hover:has(img)::before {
+            width: 96%; height: 96%;
+            background: radial-gradient(circle, rgba(255, 120, 70, .55), rgba(238, 100, 60, .25) 55%, transparent 74%);
+            border: 0;
+            animation: pzEmber 1.4s ease-in-out infinite;
+            z-index: 1;
+        }
         #ban-co.pz-armed .square-2b8ce:hover:has(img)::after {
-            width: 92%; height: 92%;
-            background: transparent;
-            border: 3px solid transparent;
-            background-image:
-                linear-gradient(transparent, transparent),
-                conic-gradient(from 0deg, var(--royal-red-light, #ee7a5f), var(--royal-gold, #e0a43a), #fff, var(--royal-gold, #e0a43a), var(--royal-red-light, #ee7a5f));
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
+            width: 94%; height: 94%;
+            background: conic-gradient(from 0deg, #ff8a4c, #ffe3a0, #ee5a3c, #ffc861, #ff8a4c);
+                -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
+                mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
             box-shadow:
-                0 0 14px rgba(238, 122, 95, .9),
-                inset 0 0 14px rgba(238, 122, 95, .6);
-            animation: pzRingIn .3s cubic-bezier(.175, .885, .32, 1.275) both,
-                       pzRingSpin 3s linear .3s infinite,
-                       pzRingGlow 1.2s ease-in-out .3s infinite;
+                0 0 0 1px rgba(90, 38, 18, .35),
+                0 0 16px rgba(255, 120, 70, .9),
+                inset 0 0 14px rgba(255, 120, 70, .55);
+            animation: pzRingIn .34s cubic-bezier(.34, 1.56, .64, 1) both,
+                       pzRingSpin 4s linear .35s infinite;
         }
         #ban-co.pz-armed .square-2b8ce:hover:has(img) img {
-            filter: drop-shadow(0 0 8px rgba(255, 138, 76, .95));
+            filter: drop-shadow(0 0 9px rgba(255, 138, 76, .95));
         }
 
         @keyframes pzOrbIn {
             from { transform: translate(-50%, -50%) scale(0); opacity: 0; }
             to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
-        @keyframes pzOrbGlow {
-            0%, 100% { filter: brightness(1); }
-            50%      { filter: brightness(1.12) drop-shadow(0 0 6px rgba(150, 210, 130, .85)); }
+        @keyframes pzOrbBreath {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50%      { transform: translate(-50%, -50%) scale(1.12); }
+        }
+        @keyframes pzRipple {
+            0%   { transform: translate(-50%, -50%) scale(1);   opacity: .85; }
+            100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
+        }
+        @keyframes pzEmber {
+            0%, 100% { opacity: .7; }
+            50%      { opacity: 1; }
         }
         @keyframes pzRingIn {
             from { transform: translate(-50%, -50%) scale(.4); opacity: 0; }
@@ -152,13 +173,11 @@
         @keyframes pzRingSpin {
             to { transform: translate(-50%, -50%) rotate(360deg); }
         }
-        @keyframes pzRingGlow {
-            0%, 100% { opacity: .75; }
-            50%      { opacity: 1; }
-        }
 
         @media (prefers-reduced-motion: reduce) {
+            #ban-co.pz-armed .square-2b8ce:hover::before,
             #ban-co.pz-armed .square-2b8ce:hover::after,
+            #ban-co.pz-armed .square-2b8ce:hover:has(img)::before,
             #ban-co.pz-armed .square-2b8ce:hover:has(img)::after { animation: none !important; }
             #ban-co img[data-piece] { transition: none; }
         }
