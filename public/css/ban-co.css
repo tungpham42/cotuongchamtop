@@ -1,8 +1,29 @@
 /* ==========================================================================
    BAN-CO.CSS — styles for the Xiangqi board container (#ban-co)
-   Load AFTER index_new.css:
-   <link href="{{ asset('css/ban-co.css?v=7') }}" rel="stylesheet">
+   Load AFTER index_new.css (theme-cozy.css may load before or after):
+   <link href="{{ asset('css/ban-co.css?v=8') }}" rel="stylesheet">
+
+   The tray (the wooden frame around the board) is driven by --board-* tokens.
+   Dark values live here; theme-cozy.css (section 15) re-assigns them under
+   :root[data-theme="light"]. The board art, pieces and game logic selectors
+   below are theme-independent and unchanged.
    ========================================================================== */
+
+:root {
+    --board-bg: linear-gradient(145deg, #7a4630, #4a2615 55%, #5e321d);
+    --board-border: rgba(255, 200, 97, 0.65);
+    --board-ring: rgba(46, 26, 19, 0.95);
+    --board-ring-outer: rgba(255, 200, 97, 0.35);
+    --board-ring-outer-hover: rgba(255, 200, 97, 0.55);
+    --board-shadow-a: 0 10px 22px rgba(10, 4, 2, 0.55);
+    --board-shadow-b: 0 28px 60px rgba(10, 4, 2, 0.6);
+    --board-aura: 0 0 70px rgba(255, 170, 70, 0.24);
+    --board-aura-hover: 0 0 90px rgba(255, 170, 70, 0.34);
+    --board-inset-top: rgba(255, 236, 200, 0.4);
+    --board-inset-bottom: rgba(10, 4, 2, 0.45);
+    --board-paper: #e3c28a; /* tray colour when coordinates are shown */
+    --board-highlight: #d4af37; /* last-move / selection glow on the board art */
+}
 
 /* --------------------------------------------------------------------------
    Board container
@@ -13,28 +34,23 @@
     width: 100%;
     max-width: 380px;
     margin: 0 auto 15px !important;
-    padding: 10px;
-    background-color: #252a36;
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    /* Stunning layered shadow: gilded rim, contact shadow, deep ambient
-       shadow, soft golden aura and an inner bevel (top light / bottom dark). */
+    padding: 12px;
+    background: var(--board-bg);
+    border: 1px solid var(--board-border);
+    border-radius: 20px;
+    /* gilded rim → contact shadow → ambient shadow → lantern aura → bevel */
     box-shadow:
-        0 0 0 1px rgba(255, 215, 0, 0.55),
-        0 0 0 4px rgba(37, 42, 54, 0.9),
-        0 0 0 5px rgba(255, 215, 0, 0.25),
-        0 2px 4px rgba(0, 0, 0, 0.5),
-        0 8px 16px rgba(0, 0, 0, 0.45),
-        0 24px 48px rgba(0, 0, 0, 0.55),
-        0 48px 96px rgba(0, 0, 0, 0.6),
-        0 0 60px rgba(255, 215, 0, 0.22),
-        0 0 120px rgba(255, 170, 0, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.28),
-        inset 0 -2px 6px rgba(0, 0, 0, 0.45),
-        inset 0 0 24px rgba(255, 215, 0, 0.08) !important;
+        0 0 0 3px var(--board-ring),
+        0 0 0 4px var(--board-ring-outer),
+        var(--board-shadow-a),
+        var(--board-shadow-b),
+        var(--board-aura),
+        inset 0 1px 0 var(--board-inset-top),
+        inset 0 -3px 8px var(--board-inset-bottom) !important;
     transition:
         transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-        box-shadow 0.4s ease;
+        box-shadow 0.4s ease,
+        background 0.35s ease;
 
     /* The board itself uses the normal arrow */
     cursor: default;
@@ -43,24 +59,19 @@
 #ban-co:hover {
     transform: translateY(-2px) scale(1.005);
     box-shadow:
-        0 0 0 1px rgba(255, 223, 90, 0.8),
-        0 0 0 4px rgba(37, 42, 54, 0.9),
-        0 0 0 5px rgba(255, 215, 0, 0.45),
-        0 4px 8px rgba(0, 0, 0, 0.5),
-        0 14px 28px rgba(0, 0, 0, 0.5),
-        0 36px 72px rgba(0, 0, 0, 0.6),
-        0 64px 120px rgba(0, 0, 0, 0.65),
-        0 0 80px rgba(255, 215, 0, 0.38),
-        0 0 160px rgba(255, 170, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.35),
-        inset 0 -2px 6px rgba(0, 0, 0, 0.45),
-        inset 0 0 32px rgba(255, 215, 0, 0.12) !important;
+        0 0 0 3px var(--board-ring),
+        0 0 0 4px var(--board-ring-outer-hover, var(--board-ring-outer)),
+        var(--board-shadow-a),
+        var(--board-shadow-b),
+        var(--board-aura-hover),
+        inset 0 1px 0 var(--board-inset-top),
+        inset 0 -3px 8px var(--board-inset-bottom) !important;
 }
 
 /* Board with coordinate notation */
 #ban-co:has(.notation-8c7a2) {
     padding: 25px 5px !important;
-    background-color: #dfbd85 !important;
+    background: var(--board-paper) !important;
 }
 #ban-co:has(.notation-8c7a2):has(.spare-pieces-9e77b) {
     padding: 5px !important;
@@ -130,6 +141,12 @@ img.piece-1e8b9 {
     filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.8));
 }
 
+/* Last-move highlight: colour fade only (selectors from game logic) */
+#ban-co .square-2b8ce.last-move-from,
+#ban-co .square-2b8ce.last-move-to {
+    transition: background-color 0.3s ease;
+}
+
 /* Coordinate notation */
 #ban-co .notation-8c7a2 {
     position: absolute;
@@ -167,7 +184,7 @@ img.piece-1e8b9 {
 /* Highlights */
 #ban-co .highlight1-e13fc,
 #ban-co .highlight2-e0a03 {
-    box-shadow: inset 0 0 3px 3px var(--royal-gold);
+    box-shadow: inset 0 0 3px 3px var(--board-highlight);
     background: rgba(212, 175, 55, 0.2);
 }
 
@@ -177,6 +194,12 @@ img.piece-1e8b9 {
 @media (max-width: 991px) {
     #ban-co {
         height: auto !important;
+    }
+}
+@media (max-width: 576px) {
+    #ban-co {
+        border-radius: 16px;
+        padding: 8px;
     }
 }
 @media screen and (max-width: 380px) {

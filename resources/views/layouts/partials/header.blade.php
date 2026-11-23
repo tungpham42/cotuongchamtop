@@ -141,6 +141,22 @@
             . '</span></a>';
     };
 @endphp
+{{-- Theme bootstrap. Runs before the header paints so there is no dark→light flash.
+     For zero flash, ALSO paste this one block into <head> of the layout (see notes);
+     running it twice is harmless. Order of precedence: saved choice → OS setting → dark. --}}
+<script>
+(function () {
+    try {
+        var saved = localStorage.getItem('cz-theme');
+        var theme = (saved === 'light' || saved === 'dark')
+            ? saved
+            : (window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+    } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    }
+})();
+</script>
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WM9GZXN"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
@@ -255,6 +271,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         {{-- Always-visible actions: the big "play" button + account. They stay in the bar on phones too. --}}
         <div class="navbar cz-actions">
+            {{-- Dark / light switch. State comes from <html data-theme>; aria-checked mirrors it. --}}
+            <button type="button" class="cz-theme" id="czTheme" role="switch" aria-checked="true"
+                    aria-label="{{ __('Giao diện tối') }}"
+                    title="{{ __('Chuyển sang giao diện sáng') }}"
+                    data-title-to-light="{{ __('Chuyển sang giao diện sáng') }}"
+                    data-title-to-dark="{{ __('Chuyển sang giao diện tối') }}">
+                <i class="far fa-sun cz-theme-hint cz-theme-hint--sun" aria-hidden="true"></i>
+                <i class="far fa-moon cz-theme-hint cz-theme-hint--moon" aria-hidden="true"></i>
+                <span class="cz-theme-knob" aria-hidden="true">
+                    <i class="far fa-moon cz-theme-moon"></i>
+                    <i class="far fa-sun cz-theme-sun"></i>
+                </span>
+            </button>
+
             <a class="cz-cta showPromotion" href="{{ localized_url('room.list') }}">
                 <i class="fas fa-chess-board" aria-hidden="true"></i>
                 <b class="cz-cta-text">{{ __('Chơi ngay') }}</b>
@@ -361,6 +391,73 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (desktop.addEventListener) { desktop.addEventListener('change', onBreakpoint); }
     else if (desktop.addListener) { desktop.addListener(onBreakpoint); }
 
+})();
+</script>
+<script>
+(function () {
+    var KEY = 'cz-theme';
+    var root = document.documentElement;
+    var btn = document.getElementById('czTheme');
+    if (!btn) { return; }
+
+    // Browser UI colour (address bar on phones) follows the header lacquer.
+    var BAR = { dark: '#8a3223', light: '#c4513a' };
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) {
+        meta = document.createElement('meta');
+        meta.name = 'theme-color';
+        document.head.appendChild(meta);
+    }
+
+    var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var animTimer = null;
+
+    function current() { return root.getAttribute('data-theme') === 'light' ? 'light' : 'dark'; }
+
+    function sync() {
+        var theme = current();
+        btn.setAttribute('aria-checked', theme === 'dark' ? 'true' : 'false');
+        btn.title = btn.getAttribute(theme === 'dark' ? 'data-title-to-light' : 'data-title-to-dark');
+        meta.setAttribute('content', BAR[theme]);
+    }
+
+    function apply(theme, animate) {
+        if (animate && !reduceMotion) {
+            root.classList.add('cz-theme-anim');
+            clearTimeout(animTimer);
+            animTimer = setTimeout(function () { root.classList.remove('cz-theme-anim'); }, 450);
+        }
+        root.setAttribute('data-theme', theme);
+        sync();
+        // Let charts / canvases / third-party widgets re-colour themselves.
+        try {
+            document.dispatchEvent(new CustomEvent('cz:themechange', { detail: { theme: theme } }));
+        } catch (e) {}
+    }
+
+    function save(theme) { try { localStorage.setItem(KEY, theme); } catch (e) {} }
+    function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+
+    btn.addEventListener('click', function () {
+        var next = current() === 'dark' ? 'light' : 'dark';
+        save(next);
+        apply(next, true);
+    });
+
+    // Until the person makes a choice, follow the operating system live.
+    if (window.matchMedia) {
+        var mq = matchMedia('(prefers-color-scheme: light)');
+        var onSystem = function (e) { if (!saved()) { apply(e.matches ? 'light' : 'dark', true); } };
+        if (mq.addEventListener) { mq.addEventListener('change', onSystem); }
+        else if (mq.addListener) { mq.addListener(onSystem); }
+    }
+
+    // Keep other open tabs in step.
+    window.addEventListener('storage', function (e) {
+        if (e.key === KEY && (e.newValue === 'light' || e.newValue === 'dark')) { apply(e.newValue, false); }
+    });
+
+    sync();
 })();
 </script>
 {{-- The brand name in the header is a <strong>, so every page needs exactly one real <h1>.
