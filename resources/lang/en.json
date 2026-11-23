@@ -1018,5 +1018,9 @@
     "Kỳ Thủ VIP (Tuần)": "VIP Master (Weekly)",
     "Kỳ Thủ VIP (Tháng)": "VIP Master (Monthly)",
     "Kỳ Thủ Hoàng Gia": "Royal Master",
-    "Quảng cáo": "Advertisement"
+    "Quảng cáo": "Advertisement",
+    "Chuyển sang giao diện sáng": "Switch to light theme",
+    "Chuyển sang giao diện tối": "Switch to dark theme",
+    "Tối": "Dark",
+    "VIP": "VIP"
 }
