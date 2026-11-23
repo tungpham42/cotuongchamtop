@@ -1,4 +1,5 @@
-/* ==========================================================================
+/* ===================================================================}
+
    THEME LIGHT — "Quán trà buổi sáng" (daylight tea-house)
    Light-mode overrides for the cozy theme. Dark stays the default and is NOT
    touched: every light rule below is scoped to :root[data-theme="light"].
@@ -1024,4 +1025,44 @@ html[data-theme="light"] {
     td:not(.room-code)
     .badge.badge-status:not(:has(.fa-hourglass-start)) {
     color: var(--cozy-paper) !important;
+=======
+/* 11.8 DataTables "processing" indicator — warm paper card with an ember ring.
+   The base rule pins box-shadow with !important, so the pulse is drawn on a
+   pseudo-element (an animation cannot beat an !important declaration). */
+:root[data-theme="light"] div.dataTables_wrapper div.dataTables_processing {
+    background: linear-gradient(
+        145deg,
+        rgba(255, 252, 242, 0.98),
+        rgba(247, 231, 198, 0.98)
+    ) !important;
+    border: 2px solid #c4513a !important;
+    box-shadow:
+        0 14px 36px rgba(107, 58, 34, 0.3),
+        0 0 18px rgba(255, 190, 90, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+    color: #8a2f1d !important;
+    text-shadow: none;
+    animation: none;
+}
+:root[data-theme="light"] div.dataTables_wrapper div.dataTables_processing::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: 0 0 0 0 rgba(196, 81, 58, 0.55);
+    animation: xq-light-pulse 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+:root[data-theme="light"] div.dataTables_wrapper div.dataTables_processing .indicator {
+    background-color: #c4513a;
+}
+@keyframes xq-light-pulse {
+    to {
+        box-shadow: 0 0 0 16px rgba(196, 81, 58, 0);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    :root[data-theme="light"] div.dataTables_wrapper div.dataTables_processing::after {
+        animation: none;
+    }
 }
