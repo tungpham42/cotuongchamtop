@@ -73,7 +73,7 @@
     display: none !important;
   }
   #st-3, #st-3 * {
-    z-index: -1 !important;
+    z-index: 0 !important;
   }
 </style>
 @endif
