@@ -1029,7 +1029,7 @@ html[data-theme="light"] {
     color: var(--cozy-paper) !important;
 }
 
-:root[data-theme="light"] body.dashboard td.dtr-control .badge.badge-status {
+:root[data-theme="light"] body.dashboard td.dtr-control .badge.badge-status:has(i.fa-medal) {
     color: #3a1f14 !important;
 }
 
