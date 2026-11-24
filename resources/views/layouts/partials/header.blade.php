@@ -340,7 +340,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     function setOpen(open) {
         header.classList.toggle('is-open', open);
-        document.body.classList.toggle('cz-lock', open);
         burger.setAttribute('aria-expanded', open ? 'true' : 'false');
         burger.setAttribute('aria-label', burger.getAttribute(open ? 'data-label-close' : 'data-label-open'));
         if (!open) { closeDropdowns(); }

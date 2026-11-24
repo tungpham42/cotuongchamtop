@@ -776,10 +776,6 @@ header.site-header.cz-header .cz-me-badge.is-upgrade:hover {
     display: none;
 }
 
-body.cz-lock {
-    overflow: hidden !important;
-}
-
 /* --------------------------------------------------------------------------
    7. Tablet & phone (< 1200px): sheet menu
    -------------------------------------------------------------------------- */
