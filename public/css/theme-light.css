@@ -1108,7 +1108,7 @@ pseudo-element (an animation cannot beat an !important declaration). */
 }
 
 :root[data-theme="light"] .kypho-move {
-    color: var(--cozy-cream) !important;
+    background-color: var(--cozy-cream) !important;
 }
 
 :root[data-theme="light"] body.game-detail .royal-glass-card {
