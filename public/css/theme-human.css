@@ -1,0 +1,621 @@
+/* ==========================================================================
+   THEME HUMAN — "Góc cờ nhà mình"
+   A hand-made, lived-in finish layered on top of the earlier themes.
+   Load LAST (after theme-light.css).
+
+   Idea: a family game table. Warm walnut and paper instead of liquid glass;
+   a serif voice for headings (Fraunces), sentence case instead of shouting,
+   soft real-world shadows instead of glow, buttons that feel pressed like
+   wooden tokens, and a few slightly tilted details so nothing looks
+   machine-stamped.
+
+   Safe by design
+   - Board internals, hashed chessboard selectors and game logic: untouched
+     (only the frame around #ban-co changes).
+   - Header JS contract (.is-tight / .is-collapsed / .is-open ...): untouched.
+   - Ad slots: no animation, nothing covers or crops the ad unit.
+   - Honors prefers-reduced-motion.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Tokens
+   -------------------------------------------------------------------------- */
+:root {
+    --hm-serif: "Fraunces", "Texturina", "Noto Sans JP", "Noto Sans KR",
+        "Noto Sans SC", Georgia, serif;
+    --hm-sans: "Plus Jakarta Sans", "Noto Sans JP", "Noto Sans KR",
+        "Noto Sans SC", system-ui, sans-serif;
+    --hm-hand: "Pacifico", "Fraunces", cursive;
+
+    /* walnut + paper + persimmon + tea green */
+    --hm-wood-deep: #2b1a12;
+    --hm-wood: #4a2e1f;
+    --hm-wood-soft: #6a4430;
+    --hm-paper: #f4e6c9;
+    --hm-paper-warm: #ecd8b0;
+    --hm-ink: #35201a;
+    --hm-persimmon: #d2603f;
+    --hm-persimmon-deep: #a9452b;
+    --hm-honey: #e3a948;
+    --hm-tea: #7c9a62;
+
+    --hm-r: 14px;
+    --hm-r-sm: 9px;
+
+    /* shadows that look like objects resting on a table */
+    --hm-rest: 0 1px 0 rgba(255, 240, 210, 0.08) inset,
+        0 2px 3px rgba(15, 6, 2, 0.4), 0 8px 18px rgba(15, 6, 2, 0.28);
+    --hm-lift: 0 1px 0 rgba(255, 240, 210, 0.1) inset,
+        0 4px 6px rgba(15, 6, 2, 0.4), 0 14px 26px rgba(15, 6, 2, 0.32);
+
+    /* retarget the older tokens so every component calms down at once */
+    --glass-blur: none;
+    --glass-bg-dark: rgba(58, 36, 25, 0.94);
+    --glass-bg-red: #b24f33;
+    --glass-border: rgba(236, 200, 140, 0.26);
+    --liquid-highlight: rgba(255, 240, 210, 0.1);
+    --liquid-shadow: 0 3px 6px rgba(15, 6, 2, 0.4);
+    --royal-gold: #efbf6a;
+    --royal-gold-light: #f6e8cb;
+    --cozy-radius: var(--hm-r);
+    --cozy-radius-sm: var(--hm-r-sm);
+    --cozy-shadow-soft: var(--hm-rest);
+    --cozy-shadow-lift: var(--hm-lift);
+    --cozy-glow: none;
+    --xq-bg-color: #33201a;
+}
+
+:root[data-theme="light"] {
+    --hm-wood-deep: #3a241a;
+    --hm-paper: #fbf1dc;
+    --hm-paper-warm: #f1dfba;
+    --hm-rest: 0 1px 0 rgba(255, 255, 255, 0.7) inset,
+        0 1px 2px rgba(90, 50, 25, 0.2), 0 6px 14px rgba(90, 50, 25, 0.12);
+    --hm-lift: 0 1px 0 rgba(255, 255, 255, 0.8) inset,
+        0 3px 5px rgba(90, 50, 25, 0.22), 0 12px 22px rgba(90, 50, 25, 0.16);
+    --glass-bg-dark: rgba(255, 249, 235, 0.96);
+    --glass-bg-red: #c4573a;
+    --glass-border: rgba(138, 84, 44, 0.3);
+    --liquid-highlight: rgba(255, 255, 255, 0.6);
+    --liquid-shadow: 0 2px 5px rgba(90, 50, 25, 0.2);
+    --royal-gold: #8f5413;
+    --royal-gold-light: #4a2a1b;
+    --xq-bg-color: #f3e4c4;
+}
+
+/* --------------------------------------------------------------------------
+   2. Atmosphere: quiet wood-and-paper room, no drifting glows
+   -------------------------------------------------------------------------- */
+body {
+    font-family: var(--hm-sans) !important;
+    line-height: 1.65;
+    text-rendering: optimizeLegibility;
+}
+body::before {
+    animation: none !important;
+    background:
+        radial-gradient(
+            ellipse 70% 45% at 50% -5%,
+            rgba(236, 170, 90, 0.2),
+            transparent 70%
+        ),
+        linear-gradient(180deg, rgba(43, 26, 18, 0.5), rgba(33, 18, 12, 0.78)) !important;
+}
+:root[data-theme="light"] body::before {
+    background:
+        radial-gradient(
+            ellipse 70% 45% at 50% -5%,
+            rgba(255, 205, 120, 0.5),
+            transparent 70%
+        ),
+        linear-gradient(180deg, rgba(251, 241, 220, 0.9), rgba(241, 223, 186, 0.95)) !important;
+}
+/* paper grain, very light */
+body::after {
+    opacity: 0.07;
+}
+
+::selection {
+    background: var(--hm-persimmon);
+    color: #fff8ea;
+}
+
+/* --------------------------------------------------------------------------
+   3. Type: a friendly serif voice, sentence case, no neon shadow
+   -------------------------------------------------------------------------- */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+    font-family: var(--hm-serif) !important;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    text-shadow: none;
+}
+h1,
+.h1 {
+    font-weight: 800;
+}
+
+/* a small hand-drawn underline under page titles */
+h1::after,
+.page-title::after {
+    content: "";
+    display: block;
+    width: 3.2em;
+    height: 6px;
+    margin: 0.35em auto 0;
+    border-radius: 6px 3px 7px 3px;
+    background: var(--hm-persimmon);
+    opacity: 0.85;
+    transform: rotate(-1.2deg);
+}
+.text-left h1::after,
+h1.text-left::after {
+    margin-left: 0;
+}
+
+p,
+li {
+    font-size: 1rem;
+}
+
+a {
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+.article-body a,
+p a,
+li a:not(.btn):not(.cz-link):not(.cz-item) {
+    text-decoration-line: underline;
+    text-decoration-color: rgba(239, 191, 106, 0.5);
+}
+a:hover {
+    text-decoration-color: currentColor;
+}
+
+:focus-visible {
+    outline: 3px solid var(--hm-honey);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   4. Buttons: pressed-wood tokens
+   -------------------------------------------------------------------------- */
+.btn {
+    border-radius: 11px;
+    font-family: var(--hm-sans);
+    font-weight: 700;
+    text-transform: none !important;
+    letter-spacing: 0.01em !important;
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        background-color 0.15s ease;
+}
+/* retire the shimmer sweep */
+.btn::before {
+    display: none !important;
+}
+.btn:hover {
+    transform: translateY(-1px);
+}
+.btn:active {
+    transform: translateY(1px);
+    box-shadow: inset 0 2px 4px rgba(15, 6, 2, 0.4) !important;
+}
+
+.btn-danger,
+.btn-primary {
+    background: linear-gradient(180deg, #dc6e4c, var(--hm-persimmon-deep)) !important;
+    border: 1px solid #8d3820 !important;
+    color: #fff6e6 !important;
+    box-shadow: var(--hm-rest);
+    text-shadow: 0 1px 0 rgba(90, 25, 10, 0.5);
+}
+.btn-danger:hover,
+.btn-primary:hover {
+    background: linear-gradient(180deg, #e67a58, #b64c30) !important;
+    box-shadow: var(--hm-lift);
+}
+
+.btn-dark,
+.btn-secondary {
+    background: linear-gradient(180deg, #5a3a28, var(--hm-wood)) !important;
+    border: 1px solid #2e1b11 !important;
+    color: #f6e8cb !important;
+    box-shadow: var(--hm-rest);
+}
+.btn-dark:hover,
+.btn-secondary:hover {
+    background: linear-gradient(180deg, #684332, #543524) !important;
+    color: #fff3da !important;
+    border-color: #2e1b11 !important;
+    box-shadow: var(--hm-lift);
+}
+
+.btn-success {
+    background: linear-gradient(180deg, #8aab6d, #5f7f48) !important;
+    border: 1px solid #466235 !important;
+    color: #fffaf0 !important;
+    box-shadow: var(--hm-rest);
+}
+
+:root[data-theme="light"] .btn-dark,
+:root[data-theme="light"] .btn-secondary {
+    background: linear-gradient(180deg, #fff6e2, var(--hm-paper-warm)) !important;
+    border: 1px solid #b98f5e !important;
+    color: #4a2a1b !important;
+}
+:root[data-theme="light"] .btn-dark:hover,
+:root[data-theme="light"] .btn-secondary:hover {
+    background: #fff9ec !important;
+    color: #2e170d !important;
+}
+
+.btn-lg {
+    border-radius: 14px;
+}
+.btn-sm {
+    border-radius: 9px;
+}
+
+/* --------------------------------------------------------------------------
+   5. Cards, panels, tables: paper on wood
+   -------------------------------------------------------------------------- */
+.card,
+.info,
+.article-card,
+.panel {
+    border-radius: var(--hm-r);
+    box-shadow: var(--hm-rest);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+.card {
+    background: var(--glass-bg-dark);
+    border: 1px solid var(--glass-border);
+}
+.info {
+    background-color: rgba(58, 36, 25, 0.9);
+    border: 1px solid var(--glass-border);
+    padding: 14px;
+}
+:root[data-theme="light"] .info {
+    background-color: rgba(255, 249, 235, 0.96);
+}
+
+/* every second card sits a hair off-square, like it was set down by hand */
+.row > [class*="col-"]:nth-child(even) > .card:not(.no-tilt),
+.article-card:nth-child(even) {
+    transform: rotate(0.25deg);
+}
+.row > [class*="col-"]:nth-child(odd) > .card:not(.no-tilt),
+.article-card:nth-child(odd) {
+    transform: rotate(-0.2deg);
+}
+.card:hover,
+.article-card:hover {
+    transform: rotate(0deg) translateY(-3px) !important;
+    box-shadow: var(--hm-lift);
+}
+
+.table {
+    border-radius: var(--hm-r-sm);
+}
+.table thead th {
+    font-family: var(--hm-serif);
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-size: 0.98rem;
+}
+.table tbody tr:nth-child(even) {
+    background-color: rgba(255, 240, 210, 0.04);
+}
+:root[data-theme="light"] .table tbody tr:nth-child(even) {
+    background-color: rgba(138, 84, 44, 0.05);
+}
+
+.table-responsive,
+.dataTables_wrapper {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+/* --------------------------------------------------------------------------
+   6. Forms: like writing on paper
+   -------------------------------------------------------------------------- */
+.form-control,
+.custom-select {
+    background-color: var(--hm-paper) !important;
+    color: var(--hm-ink) !important;
+    border: 1.5px solid #b98f5e !important;
+    border-radius: 10px;
+    font-family: var(--hm-sans);
+    box-shadow: inset 0 1px 3px rgba(90, 50, 25, 0.18);
+}
+.form-control::placeholder {
+    color: #8c6e55;
+    font-style: italic;
+}
+.form-control:focus,
+.custom-select:focus {
+    border-color: var(--hm-persimmon) !important;
+    box-shadow:
+        inset 0 1px 3px rgba(90, 50, 25, 0.18),
+        0 0 0 3px rgba(210, 96, 63, 0.28) !important;
+}
+label {
+    font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   7. Modals: a note card instead of a glass slab
+   -------------------------------------------------------------------------- */
+.modal-content {
+    background: var(--hm-wood-deep) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    border: 1px solid rgba(236, 200, 140, 0.3) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 24px 60px rgba(10, 4, 2, 0.6) !important;
+}
+.modal-header {
+    background: var(--hm-wood) !important;
+    border-bottom: 1px dashed rgba(236, 200, 140, 0.3) !important;
+}
+.modal-title {
+    font-family: var(--hm-serif) !important;
+    text-transform: none !important;
+}
+.modal-footer {
+    border-top: 1px dashed rgba(236, 200, 140, 0.25) !important;
+}
+:root[data-theme="light"] .modal-content {
+    background: var(--hm-paper) !important;
+    border-color: #c9a577 !important;
+    box-shadow: 0 24px 60px rgba(90, 50, 25, 0.35) !important;
+}
+:root[data-theme="light"] .modal-header {
+    background: var(--hm-paper-warm) !important;
+}
+.modal-backdrop.show {
+    opacity: 0.6;
+}
+
+/* --------------------------------------------------------------------------
+   8. Header: calmer bar, no gloss (JS contract untouched)
+   -------------------------------------------------------------------------- */
+.cz-header,
+header.site-header {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+.cz-bar {
+    background: rgba(43, 26, 18, 0.96) !important;
+    border-bottom: 1px solid rgba(236, 200, 140, 0.22);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.18), 0 8px 18px rgba(15, 6, 2, 0.25);
+}
+:root[data-theme="light"] .cz-bar {
+    background: rgba(251, 241, 220, 0.97) !important;
+    border-bottom-color: rgba(138, 84, 44, 0.25);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8), 0 6px 14px rgba(90, 50, 25, 0.12);
+}
+.cz-brand {
+    font-family: var(--hm-serif);
+    font-weight: 800;
+    text-transform: none;
+    letter-spacing: -0.01em;
+    text-shadow: none;
+}
+.cz-link,
+.cz-item {
+    font-family: var(--hm-sans);
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-weight: 600;
+    border-radius: 10px;
+}
+.cz-link::before,
+.cz-link::after {
+    animation: none !important;
+}
+.cz-panel,
+.cz-mega {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-radius: 14px;
+    box-shadow: var(--hm-lift) !important;
+}
+.cz-cta {
+    border-radius: 11px;
+    text-transform: none !important;
+    letter-spacing: 0.01em !important;
+    box-shadow: var(--hm-rest) !important;
+    animation: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   9. Board frame: a wooden tray, not a glowing shrine
+   (only the frame around #ban-co — internals are in ban-co.css)
+   -------------------------------------------------------------------------- */
+#ban-co {
+    background-color: #5a3a28;
+    border: 1px solid #2e1b11;
+    border-radius: 14px;
+    box-shadow:
+        0 0 0 3px #7a5238,
+        0 0 0 4px #2e1b11,
+        0 3px 4px rgba(10, 4, 2, 0.45),
+        0 18px 34px rgba(10, 4, 2, 0.45),
+        inset 0 1px 0 rgba(255, 240, 210, 0.18),
+        inset 0 -2px 5px rgba(10, 4, 2, 0.35) !important;
+    transition: none;
+}
+#ban-co:hover {
+    transform: none;
+    box-shadow:
+        0 0 0 3px #7a5238,
+        0 0 0 4px #2e1b11,
+        0 3px 4px rgba(10, 4, 2, 0.45),
+        0 18px 34px rgba(10, 4, 2, 0.45),
+        inset 0 1px 0 rgba(255, 240, 210, 0.18),
+        inset 0 -2px 5px rgba(10, 4, 2, 0.35) !important;
+}
+#ban-co:has(.notation-8c7a2) {
+    background-color: #e4c68e !important;
+}
+#ban-co .square-2b8ce:hover img {
+    filter: drop-shadow(0 2px 3px rgba(10, 4, 2, 0.6));
+}
+#ban-co .highlight1-e13fc,
+#ban-co .highlight2-e0a03 {
+    box-shadow: inset 0 0 0 3px var(--hm-persimmon);
+    background: rgba(210, 96, 63, 0.22);
+}
+
+/* --------------------------------------------------------------------------
+   10. Kỳ phổ, chat, invite: same warm paper language
+   -------------------------------------------------------------------------- */
+.kypho-panel {
+    --kp-surface: var(--hm-wood);
+    --kp-shadow: var(--hm-rest);
+    --kp-cur-bg: var(--hm-honey);
+    --kp-cur-glow: rgba(0, 0, 0, 0);
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    animation: none !important;
+    border-radius: var(--hm-r) !important;
+}
+.kypho-panel::before {
+    display: none;
+}
+.kypho-move.kypho-current {
+    animation: none !important;
+    transform: none !important;
+    box-shadow: 0 0 0 2px rgba(15, 6, 2, 0.35);
+}
+.kypho-header h5 {
+    font-family: var(--hm-serif);
+    text-transform: none;
+    text-shadow: none;
+}
+.kypho-panel .kypho-controls .btn {
+    border-radius: 10px;
+}
+
+#chat-wrapper,
+.invite-card,
+[class^="invite-"] {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+#chat-wrapper {
+    border-radius: var(--hm-r);
+    box-shadow: var(--hm-rest);
+}
+.msg-container {
+    border-radius: 14px 14px 14px 4px;
+}
+
+/* --------------------------------------------------------------------------
+   11. Footer: end of the table
+   -------------------------------------------------------------------------- */
+footer {
+    background-color: var(--hm-wood-deep);
+    border-top: 0;
+    background-image: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.25),
+        transparent 12px
+    );
+    box-shadow: inset 0 3px 0 var(--hm-persimmon);
+    color: var(--royal-gold-light);
+}
+footer a {
+    color: #e2c28f;
+}
+footer a:hover {
+    color: #fff0d0;
+}
+:root[data-theme="light"] footer {
+    background-color: #efd9b0;
+    color: #4a2a1b;
+    background-image: none;
+}
+:root[data-theme="light"] footer a {
+    color: #8c3d27;
+}
+
+/* --------------------------------------------------------------------------
+   12. Ads: keep the unit pristine; only the frame becomes paper-like
+   (no animation, no covering, no cropping — see ads-cozy.css)
+   -------------------------------------------------------------------------- */
+.ad-slot {
+    --ad-surface: rgba(255, 240, 210, 0.05);
+    --ad-border: rgba(236, 200, 140, 0.25);
+}
+.ad-slot__label {
+    text-transform: none;
+    letter-spacing: 0.02em;
+    font-weight: 600;
+}
+:root[data-theme="light"] .ad-slot {
+    --ad-surface: rgba(255, 249, 235, 0.7);
+    --ad-border: rgba(138, 84, 44, 0.28);
+}
+
+/* --------------------------------------------------------------------------
+   13. Scrollbars & small touches
+   -------------------------------------------------------------------------- */
+::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+}
+hr {
+    border: 0;
+    border-top: 2px dashed rgba(236, 200, 140, 0.28);
+}
+:root[data-theme="light"] hr {
+    border-top-color: rgba(138, 84, 44, 0.3);
+}
+.badge {
+    border-radius: 8px;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+/* --------------------------------------------------------------------------
+   14. Reduced motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+    .card,
+    .article-card {
+        transform: none !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .row > [class*="col-"] > .card,
+    .article-card {
+        transform: none !important;
+    }
+}
