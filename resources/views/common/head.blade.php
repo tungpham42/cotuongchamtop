@@ -78,7 +78,6 @@
 <link href="{{ asset('css/header-cozy.css?v=9') }}" rel="stylesheet">
 <link href="{{ asset('css/ads-cozy.css?v=6') }}" rel="stylesheet">
 <link href="{{ asset('css/theme-light.css?v=48') }}" rel="stylesheet">
-<link href="{{ asset('css/theme-human.css?v=1') }}" rel="stylesheet">
 <style>
   #st-3, #st-3 * {
     z-index: 0 !important;
