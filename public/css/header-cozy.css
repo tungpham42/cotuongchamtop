@@ -783,39 +783,40 @@ body.cz-lock {
 /* --------------------------------------------------------------------------
    7. Tablet & phone (< 1200px): sheet menu
    -------------------------------------------------------------------------- */
-@media (max-width: 1280px) {
-    header.site-header.cz-header {
+/* Collapsed layout: sheet menu (class set by the fit script in header.blade.php) */
+header.site-header.cz-header.is-collapsed {
         --cz-h: 66px;
     }
-    header.site-header.cz-header.is-scrolled,
-    header.site-header.cz-header.is-scrolled:hover {
+header.site-header.cz-header.is-collapsed.is-scrolled,
+header.site-header.cz-header.is-collapsed.is-scrolled:hover {
         --cz-h: 58px;
     }
-    .cz-bar {
+header.site-header.cz-header.is-collapsed .cz-bar {
         gap: 12px;
         padding-left: max(14px, env(safe-area-inset-left, 0px));
         padding-right: max(14px, env(safe-area-inset-right, 0px));
     }
-    .cz-burger {
+header.site-header.cz-header.is-collapsed .cz-burger {
         display: inline-block;
     }
-    header.site-header.cz-header .cz-brand {
+header.site-header.cz-header.is-collapsed .cz-brand {
         margin-right: auto;
     }
-    header.site-header.cz-header .cz-brand img.xiangqi-logo {
+header.site-header.cz-header.is-collapsed .cz-brand img.xiangqi-logo {
         width: 40px;
         height: 40px;
     }
-    header.site-header.cz-header.is-scrolled .cz-brand img.xiangqi-logo {
+header.site-header.cz-header.is-collapsed.is-scrolled .cz-brand img.xiangqi-logo {
         width: 36px;
         height: 36px;
     }
-    header.site-header.cz-header .cz-brand-name {
+header.site-header.cz-header.is-collapsed .cz-brand-name {
         font-size: 1.3rem;
     }
 
+
     /* The sheet */
-    header.site-header.cz-header .cz-nav {
+header.site-header.cz-header.is-collapsed .cz-nav {
         position: absolute;
         top: 100%;
         left: 0;
@@ -846,18 +847,17 @@ body.cz-lock {
             transform 0.35s var(--cz-ease),
             visibility 0s linear 0.35s;
     }
-    header.site-header.cz-header.is-open .cz-nav {
+header.site-header.cz-header.is-collapsed.is-open .cz-nav {
         opacity: 1;
         visibility: visible;
         pointer-events: auto;
         transform: none;
         transition-delay: 0s;
     }
-
-    header.site-header.cz-header .cz-nav {
+header.site-header.cz-header.is-collapsed .cz-nav {
         display: block; /* undo .navbar's flex so the list can fill the sheet */
     }
-    header.site-header.cz-header .cz-menu {
+header.site-header.cz-header.is-collapsed .cz-menu {
         width: 100%;
         flex-direction: column;
         align-items: stretch;
@@ -868,13 +868,13 @@ body.cz-lock {
         background: none;
         box-shadow: none;
     }
-    header.site-header.cz-header .cz-menu > li {
+header.site-header.cz-header.is-collapsed .cz-menu > li {
         width: 100%;
     }
-    header.site-header.cz-header .cz-menu > li.cz-has-mega {
+header.site-header.cz-header.is-collapsed .cz-menu > li.cz-has-mega {
         position: relative;
     }
-    header.site-header.cz-header .cz-link {
+header.site-header.cz-header.is-collapsed .cz-link {
         width: 100%;
         padding: 14px 16px;
         font-size: 1.02rem;
@@ -882,10 +882,10 @@ body.cz-lock {
         background: rgba(255, 246, 228, 0.07);
         border: 1px solid rgba(255, 200, 97, 0.16);
     }
-    header.site-header.cz-header .cz-link.dropdown-toggle::after {
+header.site-header.cz-header.is-collapsed .cz-link.dropdown-toggle::after {
         margin-left: auto;
     }
-    header.site-header.cz-header .cz-link.cz-vip {
+header.site-header.cz-header.is-collapsed .cz-link.cz-vip {
         background: linear-gradient(
             135deg,
             rgba(255, 217, 138, 0.22),
@@ -894,9 +894,10 @@ body.cz-lock {
         border-color: rgba(255, 200, 97, 0.6);
     }
 
+
     /* Dropdowns become accordions inside the sheet */
-    header.site-header.cz-header .cz-menu .dropdown-menu,
-    header.site-header.cz-header .cz-menu .cz-mega {
+header.site-header.cz-header.is-collapsed .cz-menu .dropdown-menu,
+header.site-header.cz-header.is-collapsed .cz-menu .cz-mega {
         position: static !important;
         transform: none !important;
         inset: auto !important;
@@ -911,36 +912,37 @@ body.cz-lock {
         box-shadow: none !important;
         animation: czExpand 0.28s var(--cz-ease) both;
     }
-    header.site-header.cz-header .cz-panel--mega {
+header.site-header.cz-header.is-collapsed .cz-panel--mega {
         grid-template-columns: 1fr;
         gap: 4px;
         padding: 10px;
     }
-    header.site-header.cz-header .cz-group + .cz-group {
+header.site-header.cz-header.is-collapsed .cz-group + .cz-group {
         margin-top: 8px;
     }
-    header.site-header.cz-header .dropdown-menu .cz-item {
+header.site-header.cz-header.is-collapsed .dropdown-menu .cz-item {
         padding: 11px 10px;
     }
-    header.site-header.cz-header .dropdown-menu .cz-item:hover,
-    header.site-header.cz-header .dropdown-menu .cz-item:focus {
+header.site-header.cz-header.is-collapsed .dropdown-menu .cz-item:hover,
+header.site-header.cz-header.is-collapsed .dropdown-menu .cz-item:focus {
         transform: none;
     }
-    header.site-header.cz-header .cz-lang-toggle {
+header.site-header.cz-header.is-collapsed .cz-lang-toggle {
         padding: 14px 16px;
     }
-    header.site-header.cz-header .cz-lang-toggle .fi {
+header.site-header.cz-header.is-collapsed .cz-lang-toggle .fi {
         width: 1.5em;
     }
-    header.site-header.cz-header .cz-lang-menu {
+header.site-header.cz-header.is-collapsed .cz-lang-menu {
         min-width: 0;
     }
-    header.site-header.cz-header .cz-panel--lang {
+header.site-header.cz-header.is-collapsed .cz-panel--lang {
         padding: 8px;
     }
 
+
     /* The avatar menu still floats from the bar's right edge */
-    header.site-header.cz-header .cz-user .dropdown-menu {
+header.site-header.cz-header.is-collapsed .cz-user .dropdown-menu {
         position: absolute !important;
         top: 100%;
         left: auto !important;
@@ -960,8 +962,9 @@ body.cz-lock {
         animation: czPop 0.28s var(--cz-ease) both;
     }
 
+
     /* Dimmed backdrop behind the open sheet */
-    .cz-scrim {
+header.site-header.cz-header.is-collapsed ~ .cz-scrim {
         display: block;
         position: fixed;
         inset: 0;
@@ -975,82 +978,183 @@ body.cz-lock {
             opacity 0.3s ease,
             visibility 0s linear 0.3s;
     }
-    .cz-header.is-open ~ .cz-scrim {
+.cz-header.is-open ~ .cz-scrim {
         opacity: 1;
         visibility: visible;
         transition-delay: 0s;
     }
+
+
+/* --------------------------------------------------------------------------
+   7b. Fit tiers (set by the fit script in header.blade.php)
+   The script measures the real width of the bar in every language and picks:
+     (none)        everything fits  -> full rail with icons and tagline
+     .is-tight     almost fits      -> hide tagline + link icons, trim padding
+     .is-collapsed still too wide   -> burger + sheet menu (section 7)
+   Long labels (Wettkampf, Соревнование, Jouer maintenant…) therefore never
+   wrap or overflow; they simply move to the next tier earlier.
+   -------------------------------------------------------------------------- */
+header.site-header.cz-header.is-tight .cz-bar {
+    gap: 12px;
+}
+header.site-header.cz-header.is-tight .cz-brand-tag {
+    display: none;
+}
+header.site-header.cz-header.is-tight .cz-link {
+    padding: 9px 12px;
+    gap: 6px;
+    font-size: 0.9rem;
+}
+header.site-header.cz-header.is-tight .cz-link > i {
+    display: none;
+}
+header.site-header.cz-header.is-tight .cz-lang-toggle {
+    padding: 9px 10px;
+}
+header.site-header.cz-header.is-tight .cz-actions {
+    gap: 8px;
+}
+header.site-header.cz-header.is-tight .cz-cta {
+    padding: 10px 15px;
+}
+header.site-header.cz-header.is-tight .cz-login {
+    padding: 9px 14px;
 }
 
-/* Tablet portrait & small laptops: tighten the rail so nothing wraps just above the breakpoint */
-@media (min-width: 1200px) and (max-width: 1379.98px) {
-    header.site-header.cz-header .cz-link {
-        padding: 9px 13px;
-        gap: 7px;
-    }
-    header.site-header.cz-header .cz-brand-tag {
+header.site-header.cz-header.is-fitting,
+header.site-header.cz-header.is-fitting * {
+    transition: none !important;
+}
+
+/* Language switcher: short code in the rail, full name in the sheet */
+header.site-header.cz-header .cz-lang-label {
+    display: none;
+}
+header.site-header.cz-header.is-collapsed .cz-lang-code {
+    display: none;
+}
+header.site-header.cz-header.is-collapsed .cz-lang-label {
+    display: inline;
+}
+
+/* Collapsed bar: the brand and the buttons may shrink and truncate with an
+   ellipsis instead of pushing each other off-screen (any language, any width). */
+header.site-header.cz-header.is-collapsed .cz-burger {
+    flex-shrink: 0;
+}
+header.site-header.cz-header.is-collapsed .cz-brand {
+    flex: 0 1 auto;
+    min-width: 0;
+}
+header.site-header.cz-header.is-collapsed .cz-brand-text {
+    min-width: 0;
+    overflow: hidden;
+}
+header.site-header.cz-header.is-collapsed .cz-brand-name,
+header.site-header.cz-header.is-collapsed .cz-brand-tag {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+header.site-header.cz-header.is-collapsed .cz-actions {
+    flex: 0 1 auto;
+    min-width: 0;
+}
+header.site-header.cz-header.is-collapsed .cz-cta,
+header.site-header.cz-header.is-collapsed .cz-login {
+    min-width: 0;
+    max-width: 100%;
+}
+header.site-header.cz-header.is-collapsed .cz-cta-text,
+header.site-header.cz-header.is-collapsed .cz-login-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: min(11rem, 30vw);
+}
+/* The tagline is the first thing to go when the collapsed bar gets narrow */
+@media (max-width: 767.98px) {
+    header.site-header.cz-header.is-collapsed .cz-brand-tag {
         display: none;
     }
-    header.site-header.cz-header .cz-cta {
-        padding: 10px 16px;
-    }
+}
+/* Touch targets in the sheet stay comfortable and hover/focus keep their tint
+   (the collapsed rules above are a class more specific than the base hover). */
+header.site-header.cz-header.is-collapsed .cz-link:hover,
+header.site-header.cz-header.is-collapsed .cz-link:focus-visible {
+    color: var(--cz-gold);
+    background: rgba(255, 200, 97, 0.16);
+    transform: none;
+}
+header.site-header.cz-header.is-collapsed .cz-link {
+    min-height: 48px;
+    overflow-wrap: anywhere;
+}
+header.site-header.cz-header.is-collapsed .dropdown-menu .cz-item {
+    min-height: 48px;
+}
+/* Rail dropdowns can never be wider than the viewport */
+header.site-header.cz-header:not(.is-collapsed) .dropdown-menu {
+    max-width: calc(100vw - 24px);
+}
+header.site-header.cz-header .cz-item-label,
+header.site-header.cz-header .cz-item-hint {
+    overflow-wrap: anywhere;
 }
 
 /* Phones */
 @media (max-width: 575.98px) {
-    header.site-header.cz-header {
+header.site-header.cz-header.is-collapsed {
         border-radius: 0 0 18px 18px;
     }
-    .cz-bar {
+header.site-header.cz-header.is-collapsed .cz-bar {
         gap: 10px;
     }
-    header.site-header.cz-header .cz-brand-tag {
+header.site-header.cz-header.is-collapsed .cz-brand-tag {
         display: none;
     }
-    header.site-header.cz-header .cz-brand {
+header.site-header.cz-header.is-collapsed .cz-brand {
         gap: 9px;
     }
-    header.site-header.cz-header .cz-actions {
+header.site-header.cz-header.is-collapsed .cz-actions {
         gap: 8px;
     }
-    header.site-header.cz-header .cz-cta {
+header.site-header.cz-header.is-collapsed .cz-cta {
         padding: 11px 15px;
     }
-    header.site-header.cz-header .cz-login {
+header.site-header.cz-header.is-collapsed .cz-login {
         padding: 11px 13px;
     }
-    header.site-header.cz-header .cz-login-text {
+header.site-header.cz-header.is-collapsed .cz-login-text {
         display: none;
     }
-    header.site-header.cz-header .nav-avatar {
+header.site-header.cz-header.is-collapsed .nav-avatar {
         width: 38px;
         height: 38px;
     }
-    header.site-header.cz-header .cz-nav {
+header.site-header.cz-header.is-collapsed .cz-nav {
         padding-left: 12px;
         padding-right: 12px;
     }
-    header.site-header.cz-header .cz-panel--lang {
+header.site-header.cz-header.is-collapsed .cz-panel--lang {
         grid-template-columns: 1fr 1fr;
     }
 }
 /* Very narrow phones: the play button collapses to an icon so the brand never gets squeezed */
 @media (max-width: 439.98px) {
-    header.site-header.cz-header .cz-cta-text {
+header.site-header.cz-header.is-collapsed .cz-cta-text {
         display: none;
     }
-    header.site-header.cz-header .cz-cta {
+header.site-header.cz-header.is-collapsed .cz-cta {
         width: 42px;
         height: 42px;
         padding: 0;
         justify-content: center;
     }
-    header.site-header.cz-header .cz-brand-name {
+header.site-header.cz-header.is-collapsed .cz-brand-name {
         font-size: 1.18rem;
     }
 }
 @media (max-width: 359.98px) {
-    header.site-header.cz-header .cz-brand-name {
+header.site-header.cz-header.is-collapsed .cz-brand-name {
         display: none;
     }
 }

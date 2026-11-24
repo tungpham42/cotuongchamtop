@@ -75,9 +75,9 @@
 <link href="{{ asset('css/index_new.css?v=89') }}" rel="stylesheet">
 <link href="{{ asset('css/ban-co.css?v=10') }}" rel="stylesheet">
 <link href="{{ asset('css/theme-cozy.css?v=3') }}" rel="stylesheet">
-<link href="{{ asset('css/header-cozy.css?v=8') }}" rel="stylesheet">
+<link href="{{ asset('css/header-cozy.css?v=9') }}" rel="stylesheet">
 <link href="{{ asset('css/ads-cozy.css?v=6') }}" rel="stylesheet">
-<link href="{{ asset('css/theme-light.css?v=42') }}" rel="stylesheet">
+<link href="{{ asset('css/theme-light.css?v=43') }}" rel="stylesheet">
 <style>
   #st-3, #st-3 * {
     z-index: 0 !important;

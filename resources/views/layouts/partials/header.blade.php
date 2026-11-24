@@ -235,8 +235,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <li class="dropdown cz-lang">
                     <a class="cz-link cz-lang-toggle dropdown-toggle" href="javascript:void(0);" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{ __('Ngôn ngữ') }}">
                         <span class="shadow-sm fi fi-{{ $flags[$activeLocale] ?? $activeLocale }}"></span>
-                        <span class="d-none d-xl-inline">{{ strtoupper($activeLocale) }}</span>
-                        <span class="d-xl-none">{{ $labels[$activeLocale] ?? $labels[config('locales.default')] ?? '' }}</span>
+                        <span class="cz-lang-code">{{ strtoupper($activeLocale) }}</span>
+                        <span class="cz-lang-label">{{ $labels[$activeLocale] ?? $labels[config('locales.default')] ?? '' }}</span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right cz-lang-menu">
                         <div class="cz-panel cz-panel--lang">
@@ -327,7 +327,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var scrim = document.getElementById('czScrim');
     if (!header || !burger) { return; }
 
-    var desktop = window.matchMedia('(min-width: 1200px)');
+    var bar = header.querySelector('.cz-bar');
+
+    function isCollapsed() { return header.classList.contains('is-collapsed'); }
 
     function closeDropdowns() {
         // Bootstrap 4 dropdowns: collapse anything left open so the sheet reopens clean.
@@ -355,7 +357,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     document.getElementById('czNav').addEventListener('click', function (e) {
         var link = e.target.closest('a');
         if (!link || link.getAttribute('data-toggle') === 'dropdown') { return; }
-        if (!desktop.matches) { setOpen(false); }
+        if (isCollapsed()) { setOpen(false); }
     });
 
     document.addEventListener('keydown', function (e) {
@@ -365,10 +367,55 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
     });
 
-    // Rotating a tablet or resizing a window past the breakpoint must not leave the page scroll-locked.
-    var onBreakpoint = function (e) { if (e.matches) { setOpen(false); } };
-    if (desktop.addEventListener) { desktop.addEventListener('change', onBreakpoint); }
-    else if (desktop.addListener) { desktop.addListener(onBreakpoint); }
+    // Responsive fit, measured instead of guessed. Labels differ a lot between the 10 languages
+    // (Wettkampf, Соревнование, Jouer maintenant, 日本語 ...), so a fixed pixel breakpoint can never be right
+    // for all of them. We try three layouts in order and keep the first one that fits the bar:
+    //   full  ->  .is-tight (no tagline / link icons, tighter padding)  ->  .is-collapsed (burger + sheet).
+    var SLACK = 16;
+    function barFits() {
+        var cs = getComputedStyle(bar);
+        var gap = parseFloat(cs.columnGap) || parseFloat(cs.gap) || 0;
+        var need = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+        var shown = 0;
+        for (var i = 0; i < bar.children.length; i++) {
+            var w = bar.children[i].getBoundingClientRect().width;
+            if (w > 0) { need += w; shown++; }
+        }
+        need += gap * Math.max(0, shown - 1);
+        return need + SLACK <= bar.clientWidth;
+    }
+    var fitQueued = false;
+    function fit() {
+        fitQueued = false;
+        var wasCollapsed = isCollapsed();
+        header.classList.add('is-fitting'); // no transitions while the layout switches (no flash of the desktop menu)
+        // Measure at the largest size (the logo shrinks while scrolled) so the layout does not flip on scroll.
+        var wasScrolled = header.classList.contains('is-scrolled');
+        header.classList.remove('is-scrolled', 'is-tight', 'is-collapsed');
+        var tier = '';
+        if (!barFits()) {
+            header.classList.add('is-tight');
+            tier = barFits() ? 'is-tight' : 'is-collapsed';
+            header.classList.remove('is-tight');
+        }
+        if (tier) { header.classList.add(tier); }
+        if (wasScrolled) { header.classList.add('is-scrolled'); }
+        void header.offsetWidth; // settle the new layout while transitions are off
+        header.classList.remove('is-fitting');
+        if (wasCollapsed && tier !== 'is-collapsed') { setOpen(false); }
+    }
+    function queueFit() {
+        if (fitQueued) { return; }
+        fitQueued = true;
+        (window.requestAnimationFrame || window.setTimeout)(fit);
+    }
+
+    fit();
+    window.addEventListener('resize', queueFit);
+    window.addEventListener('orientationchange', queueFit);
+    window.addEventListener('load', queueFit);
+    // Web fonts change text widths after first paint.
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(queueFit); }
 
 })();
 </script>
