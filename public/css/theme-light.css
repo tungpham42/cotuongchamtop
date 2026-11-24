@@ -1198,3 +1198,442 @@ pseudo-element (an animation cannot beat an !important declaration). */
 :root[data-theme="light"] .royal-board-wrapper {
     background: var(--cozy-paper) !important;
 }
+
+/* ==========================================================================
+   12. REDESIGN v2 — "Sunlit Tea House" (rạng đông quán trà)
+       A livelier, warmer light mode: sunrise sky, rice-paper lattice,
+       vermilion + saffron + honey accents, lantern glows, soft springy
+       motion. Loaded last, so it refines everything above. Dark mode is
+       untouched (every rule is scoped to :root[data-theme="light"]).
+   ========================================================================== */
+
+:root[data-theme="light"] {
+    --lt-vermilion: #d6452b;
+    --lt-vermilion-deep: #a52f1c;
+    --lt-coral: #ff7a54;
+    --lt-saffron: #ffb534;
+    --lt-honey: #ffd27a;
+    --lt-peach: #ffe3c4;
+    --lt-rice: #fffaf0;
+    --lt-jade: #2f8f6b;
+    --lt-ink: #3a1f14;
+    --lt-ring: 0 0 0 3px rgba(255, 181, 52, 0.55);
+    --lt-card-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.9) inset,
+        0 10px 26px rgba(165, 47, 28, 0.16),
+        0 2px 6px rgba(107, 58, 34, 0.12);
+    --lt-card-shadow-hover:
+        0 1px 0 rgba(255, 255, 255, 0.9) inset,
+        0 22px 44px rgba(165, 47, 28, 0.26),
+        0 0 30px rgba(255, 181, 52, 0.4);
+    --xq-bg-color: #ffecd0;
+}
+
+/* ---- 12.1 Atmosphere: sunrise sky + paper lattice + breathing glow ------ */
+:root[data-theme="light"] body::before {
+    background:
+        radial-gradient(
+            ellipse 60% 45% at 10% -4%,
+            rgba(255, 181, 52, 0.7),
+            transparent 70%
+        ),
+        radial-gradient(
+            ellipse 55% 45% at 94% 2%,
+            rgba(255, 122, 84, 0.45),
+            transparent 70%
+        ),
+        radial-gradient(
+            ellipse 70% 40% at 50% 108%,
+            rgba(255, 181, 52, 0.35),
+            transparent 70%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(255, 233, 205, 0.9) 0%,
+            rgba(255, 246, 228, 0.92) 38%,
+            rgba(251, 232, 196, 0.94) 100%
+        ) !important;
+    animation: xqSunBreath 8s ease-in-out infinite alternate !important;
+}
+:root[data-theme="light"] body::after {
+    opacity: 0.09;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'><g fill='none' stroke='%23a52f1c' stroke-width='1.1'><path d='M28 2 54 28 28 54 2 28Z'/><path d='M28 14 42 28 28 42 14 28Z'/></g><circle cx='28' cy='28' r='2' fill='%23a52f1c'/></svg>");
+    background-size: 56px 56px;
+}
+@keyframes xqSunBreath {
+    from {
+        opacity: 0.82;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* ---- 12.2 Typography: gilded headings, lively links ---------------------- */
+:root[data-theme="light"] h1,
+:root[data-theme="light"] .h1,
+:root[data-theme="light"] h2,
+:root[data-theme="light"] .h2 {
+    color: var(--lt-vermilion-deep);
+    text-shadow:
+        0 2px 0 rgba(255, 210, 122, 0.7),
+        0 6px 14px rgba(214, 69, 43, 0.18);
+    letter-spacing: 0.01em;
+}
+:root[data-theme="light"] a {
+    color: var(--lt-vermilion);
+    text-decoration-color: rgba(255, 181, 52, 0.85);
+    text-underline-offset: 3px;
+    transition: color 0.2s ease;
+}
+:root[data-theme="light"] a:hover {
+    color: var(--lt-vermilion-deep);
+}
+:root[data-theme="light"] :focus-visible {
+    outline: 2px solid var(--lt-saffron);
+    outline-offset: 2px;
+}
+:root[data-theme="light"] ::selection {
+    background: var(--lt-saffron);
+    color: var(--lt-ink);
+}
+
+/* ---- 12.3 Header & footer: lacquer with a gold seam ---------------------- */
+:root[data-theme="light"] header.site-header.cz-header,
+:root[data-theme="light"] header.site-header.cz-header:hover {
+    background:
+        radial-gradient(
+            520px 140px at 6% -30%,
+            rgba(255, 226, 150, 0.75),
+            transparent 70%
+        ),
+        radial-gradient(
+            480px 140px at 96% -40%,
+            rgba(255, 150, 100, 0.55),
+            transparent 70%
+        ),
+        linear-gradient(180deg, #ea5a38 0%, #d6452b 55%, #b73520 100%) !important;
+    box-shadow:
+        0 12px 30px rgba(165, 47, 28, 0.38),
+        inset 0 1px 0 rgba(255, 240, 210, 0.55),
+        inset 0 -3px 0 rgba(255, 210, 122, 0.95) !important;
+}
+:root[data-theme="light"] footer {
+    background:
+        radial-gradient(
+            600px 120px at 50% 0%,
+            rgba(255, 181, 52, 0.22),
+            transparent 70%
+        ),
+        linear-gradient(180deg, #7a3a22, #3a1f14);
+    border-top: 3px solid var(--lt-saffron);
+}
+
+/* ---- 12.4 Cards: rice paper with a vermilion ribbon, spring lift --------- */
+:root[data-theme="light"] .card,
+:root[data-theme="light"] .royal-grid-card,
+:root[data-theme="light"] .article-card,
+:root[data-theme="light"] .article-detail-card,
+:root[data-theme="light"] .match-card,
+:root[data-theme="light"] .royal-glass-card,
+:root[data-theme="light"] .pvp-scoreboard,
+:root[data-theme="light"] .hero .hero-box {
+    border-top: 4px solid var(--lt-vermilion) !important;
+    border-radius: 18px;
+    box-shadow: var(--lt-card-shadow) !important;
+    transition:
+        transform 0.35s var(--cozy-spring, cubic-bezier(0.34, 1.56, 0.64, 1)),
+        box-shadow 0.3s ease,
+        border-color 0.25s ease !important;
+}
+:root[data-theme="light"] .card:hover,
+:root[data-theme="light"] .royal-grid-card:hover,
+:root[data-theme="light"] .article-card:hover,
+:root[data-theme="light"] .match-card:hover,
+:root[data-theme="light"] .royal-glass-card:hover {
+    transform: translateY(-5px);
+    border-top-color: var(--lt-saffron) !important;
+    box-shadow: var(--lt-card-shadow-hover) !important;
+}
+:root[data-theme="light"] .article-card:hover {
+    transform: translateY(-6px) scale(1.012);
+}
+:root[data-theme="light"] .card-header {
+    background: linear-gradient(
+        90deg,
+        rgba(214, 69, 43, 0.2),
+        rgba(255, 181, 52, 0.16) 60%,
+        rgba(214, 69, 43, 0.04)
+    ) !important;
+    color: var(--lt-vermilion-deep) !important;
+    font-weight: 700;
+}
+:root[data-theme="light"] .hero .hero-box {
+    background:
+        radial-gradient(
+            420px 160px at 0% 0%,
+            rgba(255, 210, 122, 0.55),
+            transparent 70%
+        ),
+        rgba(255, 250, 240, 0.92) !important;
+}
+
+/* Gentle staggered entrance for card grids */
+@media (prefers-reduced-motion: no-preference) {
+    :root[data-theme="light"] .royal-grid-card,
+    :root[data-theme="light"] .article-card {
+        animation: xqRise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    :root[data-theme="light"] .royal-grid-card:nth-child(2),
+    :root[data-theme="light"] .article-card:nth-child(2) {
+        animation-delay: 0.06s;
+    }
+    :root[data-theme="light"] .royal-grid-card:nth-child(3),
+    :root[data-theme="light"] .article-card:nth-child(3) {
+        animation-delay: 0.12s;
+    }
+    :root[data-theme="light"] .royal-grid-card:nth-child(4),
+    :root[data-theme="light"] .article-card:nth-child(4) {
+        animation-delay: 0.18s;
+    }
+    :root[data-theme="light"] .royal-grid-card:nth-child(n + 5),
+    :root[data-theme="light"] .article-card:nth-child(n + 5) {
+        animation-delay: 0.24s;
+    }
+}
+@keyframes xqRise {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ---- 12.5 Buttons: glossy vermilion with honey glow ---------------------- */
+:root[data-theme="light"] .btn {
+    border-radius: 999px;
+    font-weight: 600;
+    transition:
+        transform 0.25s var(--cozy-spring, cubic-bezier(0.34, 1.56, 0.64, 1)),
+        box-shadow 0.25s ease,
+        background 0.25s ease,
+        color 0.2s ease !important;
+}
+:root[data-theme="light"] .btn:active {
+    transform: scale(0.96);
+}
+:root[data-theme="light"] .btn-danger,
+:root[data-theme="light"] .btn-royal {
+    background: linear-gradient(180deg, #f2674a 0%, #d6452b 55%, #b73520 100%) !important;
+    border: 1px solid #a52f1c !important;
+    box-shadow:
+        0 8px 18px rgba(214, 69, 43, 0.4),
+        inset 0 1px 0 rgba(255, 236, 200, 0.65) !important;
+    text-shadow: 0 1px 1px rgba(90, 20, 10, 0.4);
+}
+:root[data-theme="light"] .btn-danger:hover,
+:root[data-theme="light"] .btn-royal:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(180deg, #ff7a54 0%, #e2512f 55%, #c23c24 100%) !important;
+    box-shadow:
+        0 14px 26px rgba(214, 69, 43, 0.5),
+        0 0 22px rgba(255, 181, 52, 0.55),
+        inset 0 1px 0 rgba(255, 236, 200, 0.75) !important;
+}
+:root[data-theme="light"] .btn-royal-outline,
+:root[data-theme="light"] .btn-outline-light {
+    background: rgba(255, 250, 240, 0.7);
+    color: var(--lt-vermilion-deep) !important;
+    border: 2px solid var(--lt-vermilion) !important;
+}
+:root[data-theme="light"] .btn-royal-outline:hover,
+:root[data-theme="light"] .btn-outline-light:hover {
+    background: var(--lt-vermilion) !important;
+    color: #fff6e4 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(214, 69, 43, 0.38);
+}
+/* The big "play" call-to-action gets a slow breathing glow */
+:root[data-theme="light"] .btn-royal-play {
+    background: linear-gradient(135deg, #ffb534 0%, #ff7a54 45%, #d6452b 100%);
+    color: #fff6e4;
+    box-shadow:
+        0 8px 22px rgba(214, 69, 43, 0.5),
+        inset 0 1px 0 rgba(255, 244, 214, 0.7);
+}
+@media (prefers-reduced-motion: no-preference) {
+    :root[data-theme="light"] .btn-royal-play {
+        animation: xqPlayGlow 2.8s ease-in-out infinite;
+    }
+}
+@keyframes xqPlayGlow {
+    0%,
+    100% {
+        filter: drop-shadow(0 0 0 rgba(255, 181, 52, 0));
+    }
+    50% {
+        filter: drop-shadow(0 0 12px rgba(255, 181, 52, 0.85));
+    }
+}
+:root[data-theme="light"] .page-item.active .page-link {
+    background: linear-gradient(180deg, #ffd27a, #ffb534) !important;
+    border-color: var(--lt-saffron) !important;
+    color: var(--lt-ink) !important;
+    box-shadow: 0 4px 12px rgba(255, 181, 52, 0.55);
+}
+
+/* ---- 12.6 Tables: vermilion header band, saffron zebra ------------------- */
+:root[data-theme="light"] .table thead th {
+    background: linear-gradient(180deg, #e2512f, #b73520) !important;
+    color: #fff6e4 !important;
+    border-bottom: 3px solid var(--lt-saffron) !important;
+    text-shadow: 0 1px 1px rgba(90, 20, 10, 0.35);
+    letter-spacing: 0.02em;
+}
+:root[data-theme="light"] .table tbody tr:nth-child(even) {
+    background-color: rgba(255, 181, 52, 0.1);
+}
+:root[data-theme="light"] .table tbody tr:hover {
+    background-color: rgba(255, 181, 52, 0.26) !important;
+    box-shadow: inset 4px 0 0 var(--lt-vermilion) !important;
+}
+:root[data-theme="light"] .table-responsive,
+:root[data-theme="light"] .dataTables_wrapper {
+    border-radius: 18px;
+    box-shadow: var(--lt-card-shadow);
+}
+
+/* ---- 12.7 Forms, modals, dropdowns --------------------------------------- */
+:root[data-theme="light"] .form-control,
+:root[data-theme="light"] .custom-select {
+    border-radius: 14px;
+    border-width: 2px;
+}
+:root[data-theme="light"] .form-control:focus,
+:root[data-theme="light"] .custom-select:focus {
+    border-color: var(--lt-saffron) !important;
+    box-shadow: var(--lt-ring) !important;
+}
+:root[data-theme="light"] .modal-content {
+    border-top: 5px solid var(--lt-vermilion) !important;
+    border-radius: 20px;
+}
+:root[data-theme="light"] .modal-header {
+    background: linear-gradient(
+        90deg,
+        rgba(214, 69, 43, 0.2),
+        rgba(255, 181, 52, 0.14),
+        transparent
+    ) !important;
+}
+:root[data-theme="light"] .dropdown-item:hover,
+:root[data-theme="light"] .dropdown-item:focus {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 181, 52, 0.4),
+        rgba(255, 181, 52, 0.08)
+    ) !important;
+    color: var(--lt-vermilion-deep) !important;
+}
+
+/* ---- 12.8 Game stage: the board glows like it sits under a lantern ------- */
+:root[data-theme="light"] .royal-board-wrapper {
+    background:
+        radial-gradient(
+            ellipse 80% 60% at 50% 0%,
+            rgba(255, 210, 122, 0.55),
+            transparent 70%
+        ),
+        var(--cozy-paper) !important;
+    border-radius: 22px;
+    box-shadow:
+        0 18px 44px rgba(165, 47, 28, 0.24),
+        0 0 46px rgba(255, 181, 52, 0.35) !important;
+}
+:root[data-theme="light"] #ban-co {
+    box-shadow:
+        0 0 0 3px rgba(46, 26, 19, 0.95),
+        0 0 0 5px var(--lt-saffron),
+        0 14px 28px rgba(165, 47, 28, 0.38),
+        0 28px 56px rgba(165, 47, 28, 0.3),
+        0 0 40px rgba(255, 181, 52, 0.45),
+        inset 0 1px 0 rgba(255, 236, 200, 0.4),
+        inset 0 -3px 8px rgba(10, 4, 2, 0.45) !important;
+}
+:root[data-theme="light"] #ban-co .square-2b8ce.last-move-from {
+    background: rgba(255, 181, 52, 0.5);
+}
+:root[data-theme="light"] #ban-co .square-2b8ce.last-move-to {
+    box-shadow: inset 0 0 0 3px var(--lt-vermilion);
+    background: rgba(255, 181, 52, 0.62);
+}
+:root[data-theme="light"] .pvp-turn-banner[data-state="mine"] {
+    background: linear-gradient(
+        90deg,
+        rgba(214, 69, 43, 0.18),
+        rgba(255, 181, 52, 0.6),
+        rgba(214, 69, 43, 0.18)
+    );
+    border-color: var(--lt-saffron);
+    box-shadow: 0 0 18px rgba(255, 181, 52, 0.55);
+}
+:root[data-theme="light"] .progress-bar-royal-fill {
+    background: linear-gradient(90deg, #d6452b, #ff7a54, #ffb534);
+}
+:root[data-theme="light"] .move-btn.active-step,
+:root[data-theme="light"] .kypho-move.kypho-current {
+    background: linear-gradient(180deg, #ef5a3a, #b73520) !important;
+}
+
+/* ---- 12.9 Badges, chips, scrollbar --------------------------------------- */
+:root[data-theme="light"] .badge-royal {
+    background: linear-gradient(180deg, rgba(255, 210, 122, 0.55), rgba(255, 181, 52, 0.3));
+    color: var(--lt-vermilion-deep);
+    border-color: rgba(214, 69, 43, 0.5);
+    font-weight: 700;
+}
+:root[data-theme="light"] .badge.badge-status.badge-online {
+    background: linear-gradient(180deg, #3aa57c, #2f8f6b);
+    border-color: #26775a;
+}
+:root[data-theme="light"] .chip-stat,
+:root[data-theme="light"] .article-meta-pill {
+    border-radius: 999px;
+    background: rgba(255, 250, 240, 0.92);
+    border-color: rgba(214, 69, 43, 0.3);
+    color: var(--lt-vermilion-deep);
+}
+:root[data-theme="light"] ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--lt-coral), var(--lt-vermilion));
+}
+:root[data-theme="light"] #proverb {
+    border-left-color: var(--lt-saffron);
+    border-right-color: var(--lt-saffron);
+    background: linear-gradient(
+        90deg,
+        rgba(255, 181, 52, 0.3),
+        rgba(255, 181, 52, 0.06),
+        rgba(255, 181, 52, 0.3)
+    );
+    color: var(--lt-vermilion-deep);
+    font-style: italic;
+}
+
+/* ---- 12.10 Motion safety ------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    :root[data-theme="light"] body::before {
+        animation: none !important;
+    }
+    :root[data-theme="light"] .card:hover,
+    :root[data-theme="light"] .royal-grid-card:hover,
+    :root[data-theme="light"] .article-card:hover,
+    :root[data-theme="light"] .match-card:hover,
+    :root[data-theme="light"] .royal-glass-card:hover,
+    :root[data-theme="light"] .btn:hover {
+        transform: none;
+    }
+}
