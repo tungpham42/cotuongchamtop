@@ -160,6 +160,10 @@ html.theme-switching *::after {
 :root[data-theme="light"] a:hover {
     color: #7a291c;
 }
+:root[data-theme="light"] .msg-content a,
+:root[data-theme="light"] .msg-content a:hover {
+    color: var(--cozy-paper) !important;
+}
 :root[data-theme="light"] a.animate.text-light:hover {
     color: var(--cozy-paper) !important;
 }
@@ -1105,9 +1109,14 @@ pseudo-element (an animation cannot beat an !important declaration). */
 
 /* Kỳ phổ — daylight tea-house paper scroll */
 :root[data-theme="light"] .kypho-panel {
-    --kp-surface: linear-gradient(160deg, rgba(255, 252, 242, 0.96), rgba(247, 231, 198, 0.96));
+    --kp-surface: linear-gradient(
+        160deg,
+        rgba(255, 252, 242, 0.96),
+        rgba(247, 231, 198, 0.96)
+    );
     --kp-border: rgba(138, 74, 36, 0.32);
-    --kp-shadow: 0 14px 32px rgba(107, 58, 34, 0.22), 0 0 26px rgba(255, 190, 90, 0.2);
+    --kp-shadow:
+        0 14px 32px rgba(107, 58, 34, 0.22), 0 0 26px rgba(255, 190, 90, 0.2);
     --kp-title: #8a2f1d;
     --kp-well: rgba(255, 253, 246, 0.85);
     --kp-well-border: rgba(138, 74, 36, 0.22);
@@ -1147,7 +1156,9 @@ pseudo-element (an animation cannot beat an !important declaration). */
 :root[data-theme="light"] .kypho-move.kypho-current {
     background: var(--kp-cur-bg) !important;
     border-color: #8a2f1d;
-    box-shadow: 0 0 0 3px rgba(255, 200, 97, 0.55), 0 4px 14px var(--kp-cur-glow);
+    box-shadow:
+        0 0 0 3px rgba(255, 200, 97, 0.55),
+        0 4px 14px var(--kp-cur-glow);
 }
 :root[data-theme="light"] .kypho-move.kypho-current .kypho-move-number {
     color: rgba(255, 246, 228, 0.8);
@@ -1165,10 +1176,14 @@ pseudo-element (an animation cannot beat an !important declaration). */
 :root[data-theme="light"] .kypho-panel .kypho-controls .btn-dark:hover {
     background: rgba(58, 31, 20, 0.96) !important;
     color: #ffc861 !important;
-    box-shadow: 0 8px 18px rgba(107, 58, 34, 0.35), 0 0 14px rgba(255, 190, 90, 0.35) !important;
+    box-shadow:
+        0 8px 18px rgba(107, 58, 34, 0.35),
+        0 0 14px rgba(255, 190, 90, 0.35) !important;
 }
 :root[data-theme="light"] .kypho-panel .kypho-controls .btn-danger {
-    box-shadow: 0 6px 14px rgba(196, 81, 58, 0.35), inset 0 1px 0 rgba(255, 236, 200, 0.5) !important;
+    box-shadow:
+        0 6px 14px rgba(196, 81, 58, 0.35),
+        inset 0 1px 0 rgba(255, 236, 200, 0.5) !important;
 }
 
 :root[data-theme="light"] body.game-detail .royal-glass-card {
