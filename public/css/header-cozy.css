@@ -785,205 +785,202 @@ body.cz-lock {
    -------------------------------------------------------------------------- */
 /* Collapsed layout: sheet menu (class set by the fit script in header.blade.php) */
 header.site-header.cz-header.is-collapsed {
-        --cz-h: 66px;
-    }
+    --cz-h: 66px;
+}
 header.site-header.cz-header.is-collapsed.is-scrolled,
 header.site-header.cz-header.is-collapsed.is-scrolled:hover {
-        --cz-h: 58px;
-    }
+    --cz-h: 58px;
+}
 header.site-header.cz-header.is-collapsed .cz-bar {
-        gap: 12px;
-        padding-left: max(14px, env(safe-area-inset-left, 0px));
-        padding-right: max(14px, env(safe-area-inset-right, 0px));
-    }
+    gap: 12px;
+    padding-left: max(14px, env(safe-area-inset-left, 0px));
+    padding-right: max(14px, env(safe-area-inset-right, 0px));
+}
 header.site-header.cz-header.is-collapsed .cz-burger {
-        display: inline-block;
-    }
+    display: inline-block;
+}
 header.site-header.cz-header.is-collapsed .cz-brand {
-        margin-right: auto;
-    }
+    margin-right: auto;
+}
 header.site-header.cz-header.is-collapsed .cz-brand img.xiangqi-logo {
-        width: 40px;
-        height: 40px;
-    }
-header.site-header.cz-header.is-collapsed.is-scrolled .cz-brand img.xiangqi-logo {
-        width: 36px;
-        height: 36px;
-    }
+    width: 40px;
+    height: 40px;
+}
+header.site-header.cz-header.is-collapsed.is-scrolled
+    .cz-brand
+    img.xiangqi-logo {
+    width: 36px;
+    height: 36px;
+}
 header.site-header.cz-header.is-collapsed .cz-brand-name {
-        font-size: 1.3rem;
-    }
+    font-size: 1.3rem;
+}
 
-
-    /* The sheet */
+/* The sheet */
 header.site-header.cz-header.is-collapsed .cz-nav {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        margin: 0;
-        padding: 16px 16px max(22px, env(safe-area-inset-bottom, 0px));
-        max-height: calc(100vh - var(--cz-h) - 16px);
-        max-height: calc(100dvh - var(--cz-h) - 16px);
-        overflow-y: auto;
-        overscroll-behavior: contain;
-        -webkit-overflow-scrolling: touch;
-        border-radius: 0 0 24px 24px;
-        background:
-            radial-gradient(
-                400px 160px at 100% 0%,
-                rgba(255, 170, 70, 0.16),
-                transparent 70%
-            ),
-            linear-gradient(180deg, #7a2a1c, #451a10);
-        border-top: 1px solid rgba(255, 200, 97, 0.3) !important;
-        box-shadow: 0 30px 50px rgba(10, 4, 2, 0.6) !important;
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        transform: translateY(-12px);
-        transition:
-            opacity 0.25s ease,
-            transform 0.35s var(--cz-ease),
-            visibility 0s linear 0.35s;
-    }
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 16px 16px max(22px, env(safe-area-inset-bottom, 0px));
+    max-height: calc(100vh - var(--cz-h) - 16px);
+    max-height: calc(100dvh - var(--cz-h) - 16px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 0 0 24px 24px;
+    background:
+        radial-gradient(
+            400px 160px at 100% 0%,
+            rgba(255, 170, 70, 0.16),
+            transparent 70%
+        ),
+        linear-gradient(180deg, #7a2a1c, #451a10);
+    border-top: 1px solid rgba(255, 200, 97, 0.3) !important;
+    box-shadow: 0 30px 50px rgba(10, 4, 2, 0.6) !important;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-12px);
+    transition:
+        opacity 0.25s ease,
+        transform 0.35s var(--cz-ease),
+        visibility 0s linear 0.35s;
+}
 header.site-header.cz-header.is-collapsed.is-open .cz-nav {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-        transform: none;
-        transition-delay: 0s;
-    }
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+    transition-delay: 0s;
+}
 header.site-header.cz-header.is-collapsed .cz-nav {
-        display: block; /* undo .navbar's flex so the list can fill the sheet */
-    }
+    display: block; /* undo .navbar's flex so the list can fill the sheet */
+}
 header.site-header.cz-header.is-collapsed .cz-menu {
-        width: 100%;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-        padding: 0;
-        border: 0;
-        border-radius: 0;
-        background: none;
-        box-shadow: none;
-    }
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
 header.site-header.cz-header.is-collapsed .cz-menu > li {
-        width: 100%;
-    }
+    width: 100%;
+}
 header.site-header.cz-header.is-collapsed .cz-menu > li.cz-has-mega {
-        position: relative;
-    }
+    position: relative;
+}
 header.site-header.cz-header.is-collapsed .cz-link {
-        width: 100%;
-        padding: 14px 16px;
-        font-size: 1.02rem;
-        border-radius: 16px;
-        background: rgba(255, 246, 228, 0.07);
-        border: 1px solid rgba(255, 200, 97, 0.16);
-    }
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 1.02rem;
+    border-radius: 16px;
+    background: rgba(255, 246, 228, 0.07);
+    border: 1px solid rgba(255, 200, 97, 0.16);
+}
 header.site-header.cz-header.is-collapsed .cz-link.dropdown-toggle::after {
-        margin-left: auto;
-    }
+    margin-left: auto;
+}
 header.site-header.cz-header.is-collapsed .cz-link.cz-vip {
-        background: linear-gradient(
-            135deg,
-            rgba(255, 217, 138, 0.22),
-            rgba(240, 169, 62, 0.1)
-        );
-        border-color: rgba(255, 200, 97, 0.6);
-    }
+    background: linear-gradient(
+        135deg,
+        rgba(255, 217, 138, 0.22),
+        rgba(240, 169, 62, 0.1)
+    );
+    border-color: rgba(255, 200, 97, 0.6);
+}
 
-
-    /* Dropdowns become accordions inside the sheet */
+/* Dropdowns become accordions inside the sheet */
 header.site-header.cz-header.is-collapsed .cz-menu .dropdown-menu,
 header.site-header.cz-header.is-collapsed .cz-menu .cz-mega {
-        position: static !important;
-        transform: none !important;
-        inset: auto !important;
-        float: none;
-        width: auto;
-        min-width: 0;
-        margin: 6px 0 0;
-        border-radius: 18px;
-        background: rgba(20, 8, 4, 0.38) !important;
-        border: 1px solid rgba(255, 200, 97, 0.2) !important;
-        border-top: 1px solid rgba(255, 200, 97, 0.2) !important;
-        box-shadow: none !important;
-        animation: czExpand 0.28s var(--cz-ease) both;
-    }
+    position: static !important;
+    transform: none !important;
+    inset: auto !important;
+    float: none;
+    width: auto;
+    min-width: 0;
+    margin: 6px 0 0;
+    border-radius: 18px;
+    background: rgba(20, 8, 4, 0.38) !important;
+    border: 1px solid rgba(255, 200, 97, 0.2) !important;
+    border-top: 1px solid rgba(255, 200, 97, 0.2) !important;
+    box-shadow: none !important;
+    animation: czExpand 0.28s var(--cz-ease) both;
+}
 header.site-header.cz-header.is-collapsed .cz-panel--mega {
-        grid-template-columns: 1fr;
-        gap: 4px;
-        padding: 10px;
-    }
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 10px;
+}
 header.site-header.cz-header.is-collapsed .cz-group + .cz-group {
-        margin-top: 8px;
-    }
+    margin-top: 8px;
+}
 header.site-header.cz-header.is-collapsed .dropdown-menu .cz-item {
-        padding: 11px 10px;
-    }
+    padding: 11px 10px;
+}
 header.site-header.cz-header.is-collapsed .dropdown-menu .cz-item:hover,
 header.site-header.cz-header.is-collapsed .dropdown-menu .cz-item:focus {
-        transform: none;
-    }
+    transform: none;
+}
 header.site-header.cz-header.is-collapsed .cz-lang-toggle {
-        padding: 14px 16px;
-    }
+    padding: 14px 16px;
+}
 header.site-header.cz-header.is-collapsed .cz-lang-toggle .fi {
-        width: 1.5em;
-    }
+    width: 1.5em;
+}
 header.site-header.cz-header.is-collapsed .cz-lang-menu {
-        min-width: 0;
-    }
+    min-width: 0;
+}
 header.site-header.cz-header.is-collapsed .cz-panel--lang {
-        padding: 8px;
-    }
+    padding: 8px;
+}
 
-
-    /* The avatar menu still floats from the bar's right edge */
+/* The avatar menu still floats from the bar's right edge */
 header.site-header.cz-header.is-collapsed .cz-user .dropdown-menu {
-        position: absolute !important;
-        top: 100%;
-        left: auto !important;
-        right: 0 !important;
-        transform: none !important;
-        width: min(300px, calc(100vw - 28px));
-        margin-top: calc(var(--cz-h) / 2 - 20px + 10px);
-        border-radius: 22px;
-        background: linear-gradient(
-            180deg,
-            rgba(62, 34, 25, 0.985),
-            rgba(37, 19, 13, 0.985)
-        ) !important;
-        border: 1px solid rgba(255, 200, 97, 0.38) !important;
-        border-top: 2px solid rgba(255, 200, 97, 0.85) !important;
-        box-shadow: 0 28px 60px rgba(10, 4, 2, 0.65) !important;
-        animation: czPop 0.28s var(--cz-ease) both;
-    }
+    position: absolute !important;
+    top: 100%;
+    left: auto !important;
+    right: 0 !important;
+    transform: none !important;
+    width: min(300px, calc(100vw - 28px));
+    margin-top: calc(var(--cz-h) / 2 - 20px + 10px);
+    border-radius: 22px;
+    background: linear-gradient(
+        180deg,
+        rgba(62, 34, 25, 0.985),
+        rgba(37, 19, 13, 0.985)
+    ) !important;
+    border: 1px solid rgba(255, 200, 97, 0.38) !important;
+    border-top: 2px solid rgba(255, 200, 97, 0.85) !important;
+    box-shadow: 0 28px 60px rgba(10, 4, 2, 0.65) !important;
+    animation: czPop 0.28s var(--cz-ease) both;
+}
 
-
-    /* Dimmed backdrop behind the open sheet */
+/* Dimmed backdrop behind the open sheet */
 header.site-header.cz-header.is-collapsed ~ .cz-scrim {
-        display: block;
-        position: fixed;
-        inset: 0;
-        z-index: 1040;
-        background: rgba(18, 7, 4, 0.62);
-        -webkit-backdrop-filter: blur(3px);
-        backdrop-filter: blur(3px);
-        opacity: 0;
-        visibility: hidden;
-        transition:
-            opacity 0.3s ease,
-            visibility 0s linear 0.3s;
-    }
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1040;
+    background: rgba(18, 7, 4, 0.62);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity 0.3s ease,
+        visibility 0s linear 0.3s;
+}
 .cz-header.is-open ~ .cz-scrim {
-        opacity: 1;
-        visibility: visible;
-        transition-delay: 0s;
-    }
-
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+}
 
 /* --------------------------------------------------------------------------
    7b. Fit tiers (set by the fit script in header.blade.php)
@@ -1102,59 +1099,59 @@ header.site-header.cz-header .cz-item-hint {
 
 /* Phones */
 @media (max-width: 575.98px) {
-header.site-header.cz-header.is-collapsed {
+    header.site-header.cz-header.is-collapsed {
         border-radius: 0 0 18px 18px;
     }
-header.site-header.cz-header.is-collapsed .cz-bar {
+    header.site-header.cz-header.is-collapsed .cz-bar {
         gap: 10px;
     }
-header.site-header.cz-header.is-collapsed .cz-brand-tag {
+    header.site-header.cz-header.is-collapsed .cz-brand-tag {
         display: none;
     }
-header.site-header.cz-header.is-collapsed .cz-brand {
+    header.site-header.cz-header.is-collapsed .cz-brand {
         gap: 9px;
     }
-header.site-header.cz-header.is-collapsed .cz-actions {
+    header.site-header.cz-header.is-collapsed .cz-actions {
         gap: 8px;
     }
-header.site-header.cz-header.is-collapsed .cz-cta {
+    header.site-header.cz-header.is-collapsed .cz-cta {
         padding: 11px 15px;
     }
-header.site-header.cz-header.is-collapsed .cz-login {
+    header.site-header.cz-header.is-collapsed .cz-login {
         padding: 11px 13px;
     }
-header.site-header.cz-header.is-collapsed .cz-login-text {
+    header.site-header.cz-header.is-collapsed .cz-login-text {
         display: none;
     }
-header.site-header.cz-header.is-collapsed .nav-avatar {
+    header.site-header.cz-header.is-collapsed .nav-avatar {
         width: 38px;
         height: 38px;
     }
-header.site-header.cz-header.is-collapsed .cz-nav {
+    header.site-header.cz-header.is-collapsed .cz-nav {
         padding-left: 12px;
         padding-right: 12px;
     }
-header.site-header.cz-header.is-collapsed .cz-panel--lang {
+    header.site-header.cz-header.is-collapsed .cz-panel--lang {
         grid-template-columns: 1fr 1fr;
     }
 }
 /* Very narrow phones: the play button collapses to an icon so the brand never gets squeezed */
-@media (max-width: 439.98px) {
-header.site-header.cz-header.is-collapsed .cz-cta-text {
+@media (max-width: 449.98px) {
+    header.site-header.cz-header.is-collapsed .cz-cta-text {
         display: none;
     }
-header.site-header.cz-header.is-collapsed .cz-cta {
+    header.site-header.cz-header.is-collapsed .cz-cta {
         width: 42px;
         height: 42px;
         padding: 0;
         justify-content: center;
     }
-header.site-header.cz-header.is-collapsed .cz-brand-name {
+    header.site-header.cz-header.is-collapsed .cz-brand-name {
         font-size: 1.18rem;
     }
 }
 @media (max-width: 359.98px) {
-header.site-header.cz-header.is-collapsed .cz-brand-name {
+    header.site-header.cz-header.is-collapsed .cz-brand-name {
         display: none;
     }
 }
