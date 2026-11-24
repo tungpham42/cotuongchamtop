@@ -72,12 +72,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..900&family=Lexend+Deca:wght@100..900&family=Pacifico&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Roboto:ital,wght@0,100..900;1,100..900&family=Texturina:ital,opsz,wght@0,12..72,100..900;1,12..72,100..900&display=swap" rel="stylesheet">
 {{-- <link href="{{ asset('css/index.css?v=321') }}" rel="stylesheet"> --}}
-<link href="{{ asset('css/index_new.css?v=88') }}" rel="stylesheet">
-<link href="{{ asset('css/ban-co.css?v=9') }}" rel="stylesheet">
-<link href="{{ asset('css/theme-cozy.css?v=2') }}" rel="stylesheet">
-<link href="{{ asset('css/header-cozy.css?v=7') }}" rel="stylesheet">
-<link href="{{ asset('css/ads-cozy.css?v=5') }}" rel="stylesheet">
-<link href="{{ asset('css/theme-light.css?v=38') }}" rel="stylesheet">
+<link href="{{ asset('css/index_new.css?v=89') }}" rel="stylesheet">
+<link href="{{ asset('css/ban-co.css?v=10') }}" rel="stylesheet">
+<link href="{{ asset('css/theme-cozy.css?v=3') }}" rel="stylesheet">
+<link href="{{ asset('css/header-cozy.css?v=8') }}" rel="stylesheet">
+<link href="{{ asset('css/ads-cozy.css?v=6') }}" rel="stylesheet">
+<link href="{{ asset('css/theme-light.css?v=39') }}" rel="stylesheet">
 <style>
   #st-3, #st-3 * {
     z-index: 0 !important;

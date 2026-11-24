@@ -88,11 +88,7 @@ body::before {
             rgba(20, 8, 4, 0.7),
             transparent 70%
         ),
-        linear-gradient(
-            180deg,
-            rgba(58, 29, 20, 0.35),
-            rgba(30, 14, 9, 0.55)
-        );
+        linear-gradient(180deg, rgba(58, 29, 20, 0.35), rgba(30, 14, 9, 0.55));
     animation: cozyLantern 9s ease-in-out infinite alternate;
 }
 
@@ -145,8 +141,8 @@ h6,
 .h5,
 .h6 {
     font-family:
-        "Fraunces", "Texturina", "Noto Sans JP", "Noto Sans KR",
-        "Noto Sans SC", serif !important;
+        "Fraunces", "Texturina", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC",
+        serif !important;
     text-transform: none;
     letter-spacing: 0.1px;
     font-weight: 700;
@@ -211,12 +207,11 @@ body {
    4. Header — a warm lacquered rail with a soft gold underglow
    -------------------------------------------------------------------------- */
 header.site-header {
-    background:
-        linear-gradient(
-            180deg,
-            rgba(176, 66, 46, 0.9),
-            rgba(122, 41, 28, 0.88)
-        );
+    background: linear-gradient(
+        180deg,
+        rgba(176, 66, 46, 0.9),
+        rgba(122, 41, 28, 0.88)
+    );
     border-bottom: 1px solid rgba(255, 200, 97, 0.45);
     border-radius: 0 0 var(--cozy-radius) var(--cozy-radius);
     box-shadow:
@@ -290,7 +285,7 @@ header.site-header ul.navbar-nav .dropdown-menu {
     border-radius: var(--cozy-radius-sm);
 }
 
-@media (max-width: 1199.98px) {
+@media (max-width: 1280px) {
     header.site-header .menu-toggle.close ~ nav.navbar {
         background: linear-gradient(180deg, #8a3223, #4a1c12);
         border-bottom: 1px solid rgba(255, 200, 97, 0.5);
@@ -496,13 +491,12 @@ header.site-header ul.navbar-nav .dropdown-menu {
     border-radius: var(--cozy-radius);
     border-left: 4px solid var(--royal-gold);
     border-right: 4px solid var(--royal-gold);
-    background:
-        linear-gradient(
-            90deg,
-            rgba(168, 64, 44, 0.3),
-            rgba(168, 64, 44, 0.08),
-            rgba(168, 64, 44, 0.3)
-        );
+    background: linear-gradient(
+        90deg,
+        rgba(168, 64, 44, 0.3),
+        rgba(168, 64, 44, 0.08),
+        rgba(168, 64, 44, 0.3)
+    );
     text-shadow: 0 2px 8px rgba(20, 8, 4, 0.7);
 }
 
@@ -656,11 +650,7 @@ header.site-header .dropdown-menu .dropdown-item:active {
 }
 .modal-header {
     border-bottom: 1px solid rgba(255, 200, 97, 0.2);
-    background: linear-gradient(
-        90deg,
-        rgba(168, 64, 44, 0.45),
-        transparent
-    );
+    background: linear-gradient(90deg, rgba(168, 64, 44, 0.45), transparent);
 }
 .modal-footer {
     border-top: 1px solid rgba(255, 200, 97, 0.2);
@@ -713,8 +703,7 @@ header.site-header .dropdown-menu .dropdown-item:active {
    10. The board — a lacquered walnut tray under lantern light
    -------------------------------------------------------------------------- */
 #ban-co {
-    background:
-        linear-gradient(145deg, #7a4630, #4a2615 55%, #5e321d);
+    background: linear-gradient(145deg, #7a4630, #4a2615 55%, #5e321d);
     border: 1px solid rgba(255, 200, 97, 0.65);
     border-radius: 20px;
     padding: 12px;
@@ -803,8 +792,7 @@ header.site-header .dropdown-menu .dropdown-item:active {
    11. Footer — warm hearth
    -------------------------------------------------------------------------- */
 footer {
-    background:
-        linear-gradient(180deg, #2c1710, #170a06);
+    background: linear-gradient(180deg, #2c1710, #170a06);
     border-top: 1px solid rgba(255, 200, 97, 0.5);
     border-radius: 28px 28px 0 0;
     margin-top: 2rem;
@@ -827,13 +815,17 @@ footer ul li {
 }
 footer ul.list-unstyled > li > a {
     display: inline-block;
-    transition: transform 0.25s var(--cozy-ease), color 0.2s ease;
+    transition:
+        transform 0.25s var(--cozy-ease),
+        color 0.2s ease;
 }
 footer ul.list-unstyled > li > a:hover {
     transform: translateX(4px);
 }
 footer .display-4 {
-    transition: transform 0.3s var(--cozy-spring), color 0.2s ease;
+    transition:
+        transform 0.3s var(--cozy-spring),
+        color 0.2s ease;
     display: inline-block;
 }
 footer .display-4:hover {

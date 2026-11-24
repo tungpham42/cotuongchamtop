@@ -508,7 +508,7 @@ header.site-header .menu-toggle.close {
     height: 15px;
 }
 
-@media (max-width: 1199.98px) {
+@media (max-width: 1280px) {
     header.site-header ul.navbar-nav {
         overflow-y: auto !important;
         max-height: calc(100vh - 74px);
@@ -2793,7 +2793,7 @@ div.dataTables_wrapper div.dataTables_processing .indicator:nth-child(3) {
     overflow-x: hidden;
 }
 
-@media (max-width: 1199.98px) {
+@media (max-width: 1280px) {
     .scrollable-menu {
         max-height: 100%;
     }
