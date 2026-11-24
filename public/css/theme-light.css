@@ -1194,3 +1194,7 @@ pseudo-element (an animation cannot beat an !important declaration). */
 :root[data-theme="light"] .puzzle-reaction-mini .reaction-btn .reaction-count {
     background: unset !important;
 }
+
+:root[data-theme="light"] .royal-board-wrapper {
+    background: var(--cozy-paper) !important;
+}
