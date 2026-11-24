@@ -630,10 +630,10 @@
 
         // ---- PvP UX helpers: last-move highlight, turn banner, tab title ----
         const baseTitle = document.title;
-        const T_YOUR_TURN = '{{ __("Đến lượt bạn") }}';
-        const T_WAITING = '{{ __("Chờ đối thủ đi") }}';
-        const T_TURN_OF = '{{ __("Lượt của") }}';
-        const T_OVER = '{{ __("Hết trận") }}';
+        const T_YOUR_TURN = @json(__("Đến lượt bạn"));
+        const T_WAITING = @json(__("Chờ đối thủ đi"));
+        const T_TURN_OF = @json(__("Lượt của"));
+        const T_OVER = @json(__("Hết trận"));
 
         function markLastMove() {
             $('#ban-co .square-2b8ce').removeClass('last-move-from last-move-to');
