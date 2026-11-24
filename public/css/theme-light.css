@@ -1651,8 +1651,6 @@ pseudo-element (an animation cannot beat an !important declaration). */
 }
 
 :root[data-theme="light"] #app table th,
-:root[data-theme="light"] #app table td,
-:root[data-theme="light"] #app .table th,
-:root[data-theme="light"] #app .table td {
+:root[data-theme="light"] #app .table th {
     color: var(--cozy-paper) !important;
 }
