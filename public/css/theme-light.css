@@ -1214,12 +1214,10 @@ pseudo-element (an animation cannot beat an !important declaration). */
     --lt-ring: 0 0 0 3px rgba(255, 181, 52, 0.55);
     --lt-card-shadow:
         0 1px 0 rgba(255, 255, 255, 0.9) inset,
-        0 10px 26px rgba(165, 47, 28, 0.16),
-        0 2px 6px rgba(107, 58, 34, 0.12);
+        0 10px 26px rgba(165, 47, 28, 0.16), 0 2px 6px rgba(107, 58, 34, 0.12);
     --lt-card-shadow-hover:
         0 1px 0 rgba(255, 255, 255, 0.9) inset,
-        0 22px 44px rgba(165, 47, 28, 0.26),
-        0 0 30px rgba(255, 181, 52, 0.4);
+        0 22px 44px rgba(165, 47, 28, 0.26), 0 0 30px rgba(255, 181, 52, 0.4);
     --xq-bg-color: #ffecd0;
 }
 
@@ -1422,7 +1420,12 @@ pseudo-element (an animation cannot beat an !important declaration). */
 }
 :root[data-theme="light"] .btn-danger,
 :root[data-theme="light"] .btn-royal {
-    background: linear-gradient(180deg, #f2674a 0%, #d6452b 55%, #b73520 100%) !important;
+    background: linear-gradient(
+        180deg,
+        #f2674a 0%,
+        #d6452b 55%,
+        #b73520 100%
+    ) !important;
     border: 1px solid #a52f1c !important;
     box-shadow:
         0 8px 18px rgba(214, 69, 43, 0.4),
@@ -1432,7 +1435,12 @@ pseudo-element (an animation cannot beat an !important declaration). */
 :root[data-theme="light"] .btn-danger:hover,
 :root[data-theme="light"] .btn-royal:hover {
     transform: translateY(-2px);
-    background: linear-gradient(180deg, #ff7a54 0%, #e2512f 55%, #c23c24 100%) !important;
+    background: linear-gradient(
+        180deg,
+        #ff7a54 0%,
+        #e2512f 55%,
+        #c23c24 100%
+    ) !important;
     box-shadow:
         0 14px 26px rgba(214, 69, 43, 0.5),
         0 0 22px rgba(255, 181, 52, 0.55),
@@ -1548,6 +1556,12 @@ pseudo-element (an animation cannot beat an !important declaration). */
         0 18px 44px rgba(165, 47, 28, 0.24),
         0 0 46px rgba(255, 181, 52, 0.35) !important;
 }
+:root[data-theme="light"]
+    .royal-board-wrapper
+    .xiangqiboard-8ddcb
+    .board-1ef78 {
+    box-shadow: none !important;
+}
 :root[data-theme="light"] #ban-co {
     box-shadow:
         0 0 0 3px rgba(46, 26, 19, 0.95),
@@ -1585,7 +1599,11 @@ pseudo-element (an animation cannot beat an !important declaration). */
 
 /* ---- 12.9 Badges, chips, scrollbar --------------------------------------- */
 :root[data-theme="light"] .badge-royal {
-    background: linear-gradient(180deg, rgba(255, 210, 122, 0.55), rgba(255, 181, 52, 0.3));
+    background: linear-gradient(
+        180deg,
+        rgba(255, 210, 122, 0.55),
+        rgba(255, 181, 52, 0.3)
+    );
     color: var(--lt-vermilion-deep);
     border-color: rgba(214, 69, 43, 0.5);
     font-weight: 700;
