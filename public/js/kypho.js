@@ -332,8 +332,36 @@
             );
             if (active) {
                 active.classList.add("kypho-current");
+                // keep the current move visible inside the scrollable list
+                var top = active.offsetTop - listEl.offsetTop;
+                if (top < listEl.scrollTop) {
+                    listEl.scrollTop = top - 6;
+                } else if (
+                    top + active.offsetHeight >
+                    listEl.scrollTop + listEl.clientHeight
+                ) {
+                    listEl.scrollTop =
+                        top + active.offsetHeight - listEl.clientHeight + 6;
+                }
             }
         }
+
+        // click a move to jump the board to that position
+        listEl.addEventListener("click", function (e) {
+            var chip = e.target.closest
+                ? e.target.closest(".kypho-move")
+                : null;
+            if (!chip || !listEl.contains(chip)) {
+                return;
+            }
+            var idx = parseInt(chip.getAttribute("data-kypho-index"), 10);
+            if (isNaN(idx)) {
+                return;
+            }
+            stopPlayback();
+            setIndex(idx + 1);
+            playMoveSound();
+        });
 
         function stopPlayback() {
             if (state.playTimer) {

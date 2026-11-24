@@ -1103,12 +1103,72 @@ pseudo-element (an animation cannot beat an !important declaration). */
     border-top-color: rgba(138, 74, 36, 0.3) !important;
 }
 
-:root[data-theme="light"] .kypho-moves {
-    background-color: var(--cozy-paper) !important;
+/* Kỳ phổ — daylight tea-house paper scroll */
+:root[data-theme="light"] .kypho-panel {
+    --kp-surface: linear-gradient(160deg, rgba(255, 252, 242, 0.96), rgba(247, 231, 198, 0.96));
+    --kp-border: rgba(138, 74, 36, 0.32);
+    --kp-shadow: 0 14px 32px rgba(107, 58, 34, 0.22), 0 0 26px rgba(255, 190, 90, 0.2);
+    --kp-title: #8a2f1d;
+    --kp-well: rgba(255, 253, 246, 0.85);
+    --kp-well-border: rgba(138, 74, 36, 0.22);
+    --kp-chip: rgba(196, 81, 58, 0.06);
+    --kp-chip-border: rgba(138, 74, 36, 0.16);
+    --kp-chip-hover: rgba(255, 200, 97, 0.4);
+    --kp-num: #9a6a3a;
+    --kp-red: #b3261e;
+    --kp-red-dot: #d9382c;
+    --kp-black: #3a1f14;
+    --kp-black-dot: #2a2a2e;
+    --kp-black-ring: #8a4f2b;
+    --kp-cur-bg: linear-gradient(180deg, #d9674c, #b04630);
+    --kp-cur-text: #fff6e4;
+    --kp-cur-glow: rgba(196, 81, 58, 0.5);
 }
-
+:root[data-theme="light"] .kypho-panel::before {
+    background: linear-gradient(90deg, transparent, #c4513a, transparent);
+}
+:root[data-theme="light"] .kypho-header h5 {
+    text-shadow: none;
+}
+:root[data-theme="light"] .kypho-header h5 i {
+    box-shadow: 0 4px 12px rgba(196, 81, 58, 0.4);
+}
+:root[data-theme="light"] .kypho-moves {
+    background: var(--kp-well) !important;
+    box-shadow: inset 0 2px 8px rgba(107, 58, 34, 0.12);
+    scrollbar-color: rgba(196, 81, 58, 0.6) transparent;
+}
 :root[data-theme="light"] .kypho-move {
-    background-color: var(--cozy-cream) !important;
+    background: var(--kp-chip) !important;
+}
+:root[data-theme="light"] .kypho-move:hover {
+    background: var(--kp-chip-hover) !important;
+}
+:root[data-theme="light"] .kypho-move.kypho-current {
+    background: var(--kp-cur-bg) !important;
+    border-color: #8a2f1d;
+    box-shadow: 0 0 0 3px rgba(255, 200, 97, 0.55), 0 4px 14px var(--kp-cur-glow);
+}
+:root[data-theme="light"] .kypho-move.kypho-current .kypho-move-number {
+    color: rgba(255, 246, 228, 0.8);
+}
+:root[data-theme="light"] .kypho-move.kypho-current::before {
+    box-shadow: 0 0 0 1.5px rgba(255, 246, 228, 0.8);
+}
+/* nav buttons: cocoa fill with cream text (matches other light .btn-dark) */
+:root[data-theme="light"] .kypho-panel .kypho-controls .btn-dark {
+    background: rgba(90, 47, 27, 0.92) !important;
+    border-color: rgba(58, 31, 20, 0.5) !important;
+    color: #fff6e4 !important;
+    box-shadow: 0 5px 12px rgba(107, 58, 34, 0.28) !important;
+}
+:root[data-theme="light"] .kypho-panel .kypho-controls .btn-dark:hover {
+    background: rgba(58, 31, 20, 0.96) !important;
+    color: #ffc861 !important;
+    box-shadow: 0 8px 18px rgba(107, 58, 34, 0.35), 0 0 14px rgba(255, 190, 90, 0.35) !important;
+}
+:root[data-theme="light"] .kypho-panel .kypho-controls .btn-danger {
+    box-shadow: 0 6px 14px rgba(196, 81, 58, 0.35), inset 0 1px 0 rgba(255, 236, 200, 0.5) !important;
 }
 
 :root[data-theme="light"] body.game-detail .royal-glass-card {
