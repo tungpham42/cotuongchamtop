@@ -1070,6 +1070,14 @@ header.site-header.cz-header.is-collapsed .cz-login-text {
     header.site-header.cz-header.is-collapsed .cz-brand-tag {
         display: none;
     }
+    header.site-header.cz-header.is-collapsed .cz-cta,
+    header.site-header.cz-header.is-collapsed .cz-login {
+        width: 42px;
+        height: 42px;
+        padding: 0;
+        justify-content: center;
+        display: flex;
+    }
 }
 /* Touch targets in the sheet stay comfortable and hover/focus keep their tint
    (the collapsed rules above are a class more specific than the base hover). */
