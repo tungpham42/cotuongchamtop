@@ -990,9 +990,9 @@ header.site-header.cz-header.is-collapsed ~ .cz-scrim {
 header.site-header.cz-header.is-tight .cz-bar {
     gap: 12px;
 }
-header.site-header.cz-header.is-tight .cz-brand-tag {
+/* header.site-header.cz-header.is-tight .cz-brand-tag {
     display: none;
-}
+} */
 header.site-header.cz-header.is-tight .cz-link {
     padding: 9px 12px;
     gap: 6px;
