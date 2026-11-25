@@ -368,8 +368,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     // Responsive fit, measured instead of guessed. Labels differ a lot between the 10 languages
     // (Wettkampf, Соревнование, Jouer maintenant, 日本語 ...), so a fixed pixel breakpoint can never be right
-    // for all of them. We try two layouts in order and keep the first one that fits the bar:
-    //   full  ->  .is-collapsed (burger + sheet).
+    // for all of them. We try three layouts in order and keep the first one that fits the bar:
+    //   full  ->  .is-tight (no tagline / link icons, tighter padding)  ->  .is-collapsed (burger + sheet).
     var SLACK = 16;
     function barFits() {
         var cs = getComputedStyle(bar);
@@ -390,13 +390,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         header.classList.add('is-fitting'); // no transitions while the layout switches (no flash of the desktop menu)
         // Measure at the largest size (the logo shrinks while scrolled) so the layout does not flip on scroll.
         var wasScrolled = header.classList.contains('is-scrolled');
-        header.classList.remove('is-scrolled', 'is-collapsed');
-        var collapsed = !barFits();
-        if (collapsed) { header.classList.add('is-collapsed'); }
+        header.classList.remove('is-scrolled', 'is-tight', 'is-collapsed');
+        var tier = '';
+        if (!barFits()) {
+            header.classList.add('is-tight');
+            tier = barFits() ? 'is-tight' : 'is-collapsed';
+            header.classList.remove('is-tight');
+        }
+        if (tier) { header.classList.add(tier); }
         if (wasScrolled) { header.classList.add('is-scrolled'); }
         void header.offsetWidth; // settle the new layout while transitions are off
         header.classList.remove('is-fitting');
-        if (wasCollapsed && !collapsed) { setOpen(false); }
+        if (wasCollapsed && tier !== 'is-collapsed') { setOpen(false); }
     }
     function queueFit() {
         if (fitQueued) { return; }
