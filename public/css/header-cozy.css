@@ -1065,6 +1065,8 @@ header.site-header.cz-header.is-collapsed .cz-login-text {
 }
 /* The tagline is the first thing to go when the collapsed bar gets narrow */
 @media (max-width: 767.98px) {
+    header.site-header.cz-header.is-collapsed .cz-cta-text,
+    header.site-header.cz-header.is-collapsed .cz-login-text,
     header.site-header.cz-header.is-collapsed .cz-brand-tag {
         display: none;
     }
