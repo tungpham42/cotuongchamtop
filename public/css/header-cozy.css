@@ -1133,7 +1133,8 @@ header.site-header.cz-header .cz-item-hint {
 }
 /* Very narrow phones: the play button collapses to an icon so the brand never gets squeezed */
 @media (max-width: 449.98px) {
-    header.site-header.cz-header.is-collapsed .cz-cta-text {
+    header.site-header.cz-header.is-collapsed .cz-cta-text,
+    header.site-header.cz-header.is-collapsed .cz-brand-text {
         display: none;
     }
     header.site-header.cz-header.is-collapsed .cz-cta {
