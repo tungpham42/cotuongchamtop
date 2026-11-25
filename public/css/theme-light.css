@@ -1654,3 +1654,8 @@ pseudo-element (an animation cannot beat an !important declaration). */
 :root[data-theme="light"] #app .table th {
     color: var(--cozy-paper) !important;
 }
+
+:root[data-theme="light"] .puzzle-side-card:hover,
+:root[data-theme="light"] .puzzle-comment-feed:hover {
+    box-shadow: 0 0 18px rgba(255, 181, 52, 0.55) !important;
+}
