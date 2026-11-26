@@ -5,7 +5,6 @@
       - seal (帥 / 將) says whose tray it is
       - one token per kind, with a ×N counter
       - the latest capture keeps a warm ember ring, and flies in from its square
-      - a gold +N badge marks the side that has won more material
 
     Included from head; initBoardClickInteraction() creates the trays, so every playable board gets
     them without per-page markup. What is "captured" is derived from the position on screen:
@@ -60,16 +59,10 @@
         line-height: 1;
         user-select: none;
         -webkit-user-select: none;
-        transition: border-color .3s ease, box-shadow .3s ease;
     }
     /* #ban-co keeps a 15px bottom margin and has a 5px gilded rim: sit just clear of it. */
     .xq-captured-top { margin-bottom: 10px; }
     .xq-captured-bottom { margin-top: -5px; margin-bottom: 10px; }
-    .xq-captured.is-leading {
-        border-color: #ffc861;
-        box-shadow: var(--cap-inner), var(--cap-shadow), 0 0 12px var(--cap-glow);
-    }
-
     /* ---------- Seal: whose tray this is ---------- */
     .xqc-seal {
         flex: none;
@@ -163,20 +156,6 @@
     }
     .xqc-item.is-incoming { visibility: hidden; }
 
-    /* ---------- Material lead ---------- */
-    .xqc-lead {
-        flex: none;
-        padding: 4px 8px;
-        border-radius: 999px;
-        background: linear-gradient(180deg, #ffe29a, #e9a73c);
-        color: #3a1c0c;
-        font-size: clamp(.66rem, calc(var(--cap-h) * .022rem), .8rem);
-        font-weight: 900;
-        font-variant-numeric: tabular-nums;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 1px 4px rgba(0, 0, 0, .35);
-    }
-    .xqc-lead[hidden] { display: none; }
-
     /* ---------- Piece in flight from its square to the tray ---------- */
     .xqc-flyer {
         position: fixed;
@@ -207,7 +186,6 @@
     @container (max-width: 290px) {
         .xqc-seal { display: none; }
         .xqc-list { padding-left: 4px; }
-        .xqc-lead { padding: 3px 5px; }
         .xqc-count { right: -4px; bottom: -4px; min-width: 0; padding: 0 1px; font-size: 8px; }
     }
 
@@ -218,14 +196,12 @@
 </style>
 <script>
 window.initCapturedPieces = function (board, element, config) {
-    // Most valuable first. Kings are never captured. Values are the usual rough xiangqi weights.
+    // Display order in a tray. Kings are never captured.
     const ORDER = ['R', 'C', 'N', 'B', 'A', 'P'];
-    const VALUE = { R: 9, C: 4.5, N: 4, B: 2, A: 2, P: 1 };
     const START = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR';
     const TEXT = {
         title: @json(__('Quân đã bị ăn')),
-        empty: @json(__('Chưa ăn được quân nào')),
-        lead: @json(__('Hơn quân'))
+        empty: @json(__('Chưa ăn được quân nào'))
     };
 
     // Counts pieces by board code ('rR', 'bP', ...) from 'start', a FEN or a position object.
@@ -258,12 +234,9 @@ window.initCapturedPieces = function (board, element, config) {
         tray.setAttribute('role', 'img');
         const seal = node('span', 'xqc-seal');
         const list = node('div', 'xqc-list');
-        const lead = node('span', 'xqc-lead');
-        lead.title = TEXT.lead;
-        lead.hidden = true;
-        tray.append(seal, list, lead);
+        tray.append(seal, list);
         element.parentNode.insertBefore(tray, place === 'top' ? element : element.nextSibling);
-        return { el: tray, seal: seal, list: list, lead: lead, key: '' };
+        return { el: tray, seal: seal, list: list, key: '' };
     }
     const top = createTray('top');
     const bottom = createTray('bottom');
@@ -286,28 +259,22 @@ window.initCapturedPieces = function (board, element, config) {
     function missing(onBoard, color) {
         return ORDER.map(type => {
             const code = color + type;
-            return { code: code, type: type, n: Math.max(0, (baseline[code] || 0) - (onBoard[code] || 0)) };
+            return { code: code, n: Math.max(0, (baseline[code] || 0) - (onBoard[code] || 0)) };
         }).filter(item => item.n);
     }
 
-    const worth = items => items.reduce((sum, item) => sum + item.n * VALUE[item.type], 0);
-
     // `owner` is the player the tray belongs to; `items` are the opponent pieces they have taken.
-    function render(tray, owner, items, advantage) {
-        const key = [config.pieceTheme, owner, latest, advantage,
+    function render(tray, owner, items) {
+        const key = [config.pieceTheme, owner, latest,
             ...items.map(item => item.code + item.n)].join('|');
         if (tray.key === key) return;
         tray.key = key;
 
         tray.el.dataset.owner = owner;
         tray.seal.textContent = owner === 'r' ? '帥' : '將';
-        tray.el.classList.toggle('is-leading', advantage > 0);
-        tray.lead.hidden = !(advantage > 0);
-        tray.lead.textContent = '+' + advantage;
 
         const spoken = items.map(item => pieceName(item.code) + ' ×' + item.n).join(', ');
-        tray.el.setAttribute('aria-label', TEXT.title + ': ' + (spoken || TEXT.empty) +
-            (advantage > 0 ? '. ' + TEXT.lead + ' +' + advantage : ''));
+        tray.el.setAttribute('aria-label', TEXT.title + ': ' + (spoken || TEXT.empty));
 
         if (!items.length) {
             tray.list.replaceChildren(node('span', 'xqc-empty', TEXT.empty));
@@ -403,11 +370,8 @@ window.initCapturedPieces = function (board, element, config) {
 
         const bottomColor = board.orientation() === 'black' ? 'b' : 'r';
         const topColor = bottomColor === 'r' ? 'b' : 'r';
-        const takenByTop = missing(onBoard, bottomColor);
-        const takenByBottom = missing(onBoard, topColor);
-        const diff = worth(takenByBottom) - worth(takenByTop);
-        render(top, topColor, takenByTop, Math.max(0, -diff));
-        render(bottom, bottomColor, takenByBottom, Math.max(0, diff));
+        render(top, topColor, missing(onBoard, bottomColor));
+        render(bottom, bottomColor, missing(onBoard, topColor));
 
         if (captured) {
             const square = Object.keys(previous).find(name =>
