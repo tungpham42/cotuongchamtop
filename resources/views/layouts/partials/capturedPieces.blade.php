@@ -14,8 +14,10 @@
 --}}
 <style>
     /* ---------- Tokens: lamp-lit lacquer wood (dark) / morning tea paper (light) ---------- */
+    /* One tray size for every page, game rooms included. */
+    :root { --xq-captured-size: clamp(30px, 9vw, 38px); }
     .xq-captured {
-        --cap-h: var(--xq-captured-h, clamp(30px, 9vw, 38px));
+        --cap-h: var(--xq-captured-size);
         --cap-piece: calc(var(--cap-h) - 10px);
         --cap-bg: linear-gradient(180deg, rgba(92, 52, 30, .94), rgba(45, 24, 14, .96));
         --cap-border: rgba(255, 200, 97, .42);
@@ -169,18 +171,19 @@
     @keyframes xqcRipple { from { transform: scale(.9); opacity: 1; } to { transform: scale(2); opacity: 0; } }
 
     /* ---------- Responsive ---------- */
-    /* Fit-to-viewport stage (play pages): size by screen height and budget both trays. */
+    /* Fit-to-viewport stage (game rooms): same trays and spacing as elsewhere. The stage only
+       reserves their height, so the board is sized to leave room for them. */
     .xq-stage.xq-has-captured {
-        --xq-captured-h: clamp(28px, 4.6vh, 36px);
-        --xq-captured-total: calc(2 * (var(--xq-captured-h) + var(--xq-gap)));
+        --xq-captured-space: 10px;   /* between a tray and the board */
+        --xq-captured-total: calc(2 * (var(--xq-captured-size) + var(--xq-captured-space)));
     }
     .xq-stage .xq-captured { max-width: none; margin: 0; }
-    @media (max-height: 700px) {
-        .xq-stage.xq-has-captured { --xq-captured-h: 26px; }
-    }
+    /* the stage already puts --xq-gap between its children: add only the difference */
+    .xq-stage .xq-captured-top { margin-bottom: calc(var(--xq-captured-space) - var(--xq-gap)); }
+    .xq-stage .xq-captured-bottom { margin-top: calc(var(--xq-captured-space) - var(--xq-gap)); }
+    /* Very short screens (landscape phones): slimmer trays */
     @media (max-height: 560px) {
-        .xq-stage.xq-has-captured { --xq-captured-h: 22px; }
-        .xq-stage .xq-captured { --cap-piece: calc(var(--cap-h) - 7px); }
+        .xq-stage { --xq-captured-size: 28px; }
     }
     /* Narrow boards: give the tokens the room */
     @container (max-width: 290px) {
