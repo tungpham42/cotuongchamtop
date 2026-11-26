@@ -1,6 +1,11 @@
 {{--
-    Captured pieces, shown quietly around the board: each side's tray sits next to that side and
-    holds the pieces it has taken (top tray = top player, bottom tray = bottom player).
+    Capture trays: a small lacquer tray on each side of the board holding the pieces that side has
+    taken (top tray = top player, bottom tray = bottom player).
+
+      - seal (帥 / 將) says whose tray it is
+      - one token per kind, with a ×N counter
+      - the latest capture keeps a warm ember ring, and flies in from its square
+      - a gold +N badge marks the side that has won more material
 
     Included from head; initBoardClickInteraction() creates the trays, so every playable board gets
     them without per-page markup. What is "captured" is derived from the position on screen:
@@ -9,54 +14,219 @@
     (where game.history() is empty).
 --}}
 <style>
+    /* ---------- Tokens: lamp-lit lacquer wood (dark) / morning tea paper (light) ---------- */
     .xq-captured {
+        --cap-h: var(--xq-captured-h, clamp(30px, 9vw, 38px));
+        --cap-piece: calc(var(--cap-h) - 10px);
+        --cap-bg: linear-gradient(180deg, rgba(92, 52, 30, .94), rgba(45, 24, 14, .96));
+        --cap-border: rgba(255, 200, 97, .42);
+        --cap-inner: inset 0 1px 0 rgba(255, 226, 170, .22), inset 0 -6px 14px rgba(0, 0, 0, .32);
+        --cap-shadow: 0 3px 8px rgba(0, 0, 0, .38);
+        --cap-glow: rgba(255, 168, 66, .5);
+        --cap-text: rgba(255, 232, 196, .72);
+        --cap-count-bg: #ffe3a8;
+        --cap-count-text: #3a1c0c;
+    }
+    :root[data-theme="light"] .xq-captured {
+        --cap-bg: linear-gradient(180deg, #fff8e8, #f4dfb8);
+        --cap-border: rgba(160, 84, 40, .38);
+        --cap-inner: inset 0 1px 0 #fff, inset 0 -6px 14px rgba(180, 116, 56, .16);
+        --cap-shadow: 0 3px 8px rgba(107, 58, 34, .2);
+        --cap-glow: rgba(214, 103, 60, .45);
+        --cap-text: #7a4a2c;
+        --cap-count-bg: #a8402c;
+        --cap-count-text: #fff6e4;
+    }
+
+    /* ---------- Tray ---------- */
+    .xq-captured {
+        container-type: inline-size;
+        position: relative;
         display: flex;
         align-items: center;
+        gap: 8px;
         flex: none;
         box-sizing: border-box;
         width: 100%;
         max-width: 382px;          /* #ban-co incl. border; the script then tracks its real width */
-        height: var(--xq-captured-h, 20px);
+        height: var(--cap-h);
         margin-left: auto;
         margin-right: auto;
-        padding: 0 6px;
-        overflow: hidden;
-        opacity: .72;
-        pointer-events: none;
+        padding: 0 5px 0 4px;
+        border: 1px solid var(--cap-border);
+        border-radius: 999px;
+        background: var(--cap-bg);
+        box-shadow: var(--cap-inner), var(--cap-shadow);
+        line-height: 1;
         user-select: none;
         -webkit-user-select: none;
+        transition: border-color .3s ease, box-shadow .3s ease;
     }
-    /* #ban-co keeps a 15px bottom margin and has a 5px gilded rim: sit just under it. */
-    .xq-captured-top { margin-bottom: 8px; }
-    .xq-captured-bottom { margin-top: -7px; margin-bottom: 8px; }
+    /* #ban-co keeps a 15px bottom margin and has a 5px gilded rim: sit just clear of it. */
+    .xq-captured-top { margin-bottom: 10px; }
+    .xq-captured-bottom { margin-top: -5px; margin-bottom: 10px; }
+    .xq-captured.is-leading {
+        border-color: #ffc861;
+        box-shadow: var(--cap-inner), var(--cap-shadow), 0 0 12px var(--cap-glow);
+    }
 
-    /* Identical pieces overlap into a small stack; a little air separates the kinds. */
-    .xq-captured img {
-        flex: 0 1 auto;
-        width: var(--xq-captured-h, 20px);
-        height: var(--xq-captured-h, 20px);
+    /* ---------- Seal: whose tray this is ---------- */
+    .xqc-seal {
+        flex: none;
+        display: grid;
+        place-items: center;
+        width: calc(var(--cap-h) - 8px);
+        height: calc(var(--cap-h) - 8px);
+        border-radius: 32%;
+        font-family: "Texturina", "Noto Serif SC", serif;
+        font-size: calc(var(--cap-h) * .43);
+        font-weight: 900;
+        color: #fff3da;
+        box-shadow: inset 0 0 0 1.5px rgba(255, 226, 170, .65), 0 1px 3px rgba(0, 0, 0, .35);
+    }
+    .xq-captured[data-owner="r"] .xqc-seal { background: linear-gradient(145deg, #d8543b, #8e1f16); }
+    .xq-captured[data-owner="b"] .xqc-seal { background: linear-gradient(145deg, #55464a, #17100f); }
+
+    /* ---------- Captured tokens ---------- */
+    .xqc-list {
+        flex: 1 1 auto;
         min-width: 0;
-        object-fit: contain;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: clamp(3px, 2.2cqw, 10px);
     }
-    .xq-captured img + img { margin-left: 5px; }
-    .xq-captured img.is-repeat { margin-left: calc(var(--xq-captured-h, 20px) * -.5); }
+    .xqc-empty {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: clamp(.66rem, 3.2cqw, .76rem);
+        font-style: italic;
+        letter-spacing: .3px;
+        color: var(--cap-text);
+    }
+    .xqc-item {
+        position: relative;
+        flex: 0 1 auto;
+        width: var(--cap-piece);
+        min-width: 0;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        cursor: help;
+        transition: transform .2s cubic-bezier(.2, 1.6, .4, 1);
+    }
+    .xqc-item:hover { transform: translateY(-2px) scale(1.14); z-index: 2; }
+    .xqc-item img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .45));
+    }
+    /* a second bead peeking out underneath = "more than one" */
+    .xqc-item.is-stack::before {
+        content: "";
+        position: absolute;
+        inset: 1px -3px -1px 3px;
+        border-radius: 50%;
+        background: #b98a52;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, .4);
+    }
+    .xqc-item.is-stack img { position: relative; }
+    .xqc-count {
+        position: absolute;
+        right: -5px;
+        bottom: -3px;
+        min-width: 1.5em;
+        padding: 1px 2px;
+        box-sizing: border-box;
+        border-radius: 999px;
+        background: var(--cap-count-bg);
+        color: var(--cap-count-text);
+        font-size: clamp(8px, calc(var(--cap-h) * .27), 11px);
+        font-weight: 800;
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .45);
+    }
 
-    /* Fit-to-viewport stage (play pages): budget the two trays so the stack still fits the screen. */
+    /* Latest capture: ember ring */
+    .xqc-item.is-latest { box-shadow: 0 0 0 2px #ffb347, 0 0 10px 3px var(--cap-glow); }
+    .xqc-item.is-landing { animation: xqcLand .55s cubic-bezier(.2, 1.5, .4, 1); }
+    .xqc-item.is-landing::after {
+        content: "";
+        position: absolute;
+        inset: -3px;
+        border-radius: 50%;
+        border: 2px solid #ffd27a;
+        pointer-events: none;
+        animation: xqcRipple .65s ease-out forwards;
+    }
+    .xqc-item.is-incoming { visibility: hidden; }
+
+    /* ---------- Material lead ---------- */
+    .xqc-lead {
+        flex: none;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, #ffe29a, #e9a73c);
+        color: #3a1c0c;
+        font-size: clamp(.66rem, calc(var(--cap-h) * .022rem), .8rem);
+        font-weight: 900;
+        font-variant-numeric: tabular-nums;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6), 0 1px 4px rgba(0, 0, 0, .35);
+    }
+    .xqc-lead[hidden] { display: none; }
+
+    /* ---------- Piece in flight from its square to the tray ---------- */
+    .xqc-flyer {
+        position: fixed;
+        z-index: 2000;
+        pointer-events: none;
+        transform-origin: top left;
+        will-change: transform;
+    }
+
+    @keyframes xqcLand   { 0% { transform: scale(1.6); } 60% { transform: scale(.88); } 100% { transform: scale(1); } }
+    @keyframes xqcRipple { from { transform: scale(.9); opacity: 1; } to { transform: scale(2); opacity: 0; } }
+
+    /* ---------- Responsive ---------- */
+    /* Fit-to-viewport stage (play pages): size by screen height and budget both trays. */
     .xq-stage.xq-has-captured {
-        --xq-captured-h: 18px;
+        --xq-captured-h: clamp(28px, 4.6vh, 36px);
         --xq-captured-total: calc(2 * (var(--xq-captured-h) + var(--xq-gap)));
     }
     .xq-stage .xq-captured { max-width: none; margin: 0; }
+    @media (max-height: 700px) {
+        .xq-stage.xq-has-captured { --xq-captured-h: 26px; }
+    }
     @media (max-height: 560px) {
-        .xq-stage.xq-has-captured { --xq-captured-h: 14px; }
+        .xq-stage.xq-has-captured { --xq-captured-h: 22px; }
+        .xq-stage .xq-captured { --cap-piece: calc(var(--cap-h) - 7px); }
+    }
+    /* Narrow boards: give the tokens the room */
+    @container (max-width: 290px) {
+        .xqc-seal { display: none; }
+        .xqc-list { padding-left: 4px; }
+        .xqc-lead { padding: 3px 5px; }
+        .xqc-count { right: -4px; bottom: -4px; min-width: 0; padding: 0 1px; font-size: 8px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .xq-captured, .xq-captured * { animation: none !important; transition: none !important; }
+        .xqc-item.is-landing::after { display: none; }
     }
 </style>
 <script>
 window.initCapturedPieces = function (board, element, config) {
-    // Most valuable first. Kings are never captured.
+    // Most valuable first. Kings are never captured. Values are the usual rough xiangqi weights.
     const ORDER = ['R', 'C', 'N', 'B', 'A', 'P'];
+    const VALUE = { R: 9, C: 4.5, N: 4, B: 2, A: 2, P: 1 };
     const START = 'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR';
-    const label = @json(__('Quân đã bị ăn'));
+    const TEXT = {
+        title: @json(__('Quân đã bị ăn')),
+        empty: @json(__('Chưa ăn được quân nào')),
+        lead: @json(__('Hơn quân'))
+    };
 
     // Counts pieces by board code ('rR', 'bP', ...) from 'start', a FEN or a position object.
     function count(position) {
@@ -76,42 +246,178 @@ window.initCapturedPieces = function (board, element, config) {
 
     const baseline = count(config.capturedBaseline || config.position);
 
+    function node(tag, className, text) {
+        const el = document.createElement(tag);
+        el.className = className;
+        if (text !== undefined) el.textContent = text;
+        return el;
+    }
+
     function createTray(place) {
-        const tray = document.createElement('div');
-        tray.className = 'xq-captured xq-captured-' + place;
+        const tray = node('div', 'xq-captured xq-captured-' + place);
         tray.setAttribute('role', 'img');
+        const seal = node('span', 'xqc-seal');
+        const list = node('div', 'xqc-list');
+        const lead = node('span', 'xqc-lead');
+        lead.title = TEXT.lead;
+        lead.hidden = true;
+        tray.append(seal, list, lead);
         element.parentNode.insertBefore(tray, place === 'top' ? element : element.nextSibling);
-        return tray;
+        return { el: tray, seal: seal, list: list, lead: lead, key: '' };
     }
     const top = createTray('top');
     const bottom = createTray('bottom');
 
-    function fill(tray, color) {
-        const onBoard = count(board.position());
-        const codes = [];
-        ORDER.forEach(type => {
-            const code = color + type;
-            for (let i = (onBoard[code] || 0); i < (baseline[code] || 0); i++) codes.push(code);
-        });
+    let previous = null;      // position at the last update
+    let latest = null;        // code of the most recent capture
+    let flight = null;
+
+    function pieceUrl(code) {
         const theme = config.pieceTheme;
-        const key = [theme, ...codes].join('|');
-        if (tray.dataset.key === key) return;
-        tray.dataset.key = key;
-        tray.setAttribute('aria-label', label + ': ' + codes.length);
-        tray.replaceChildren(...codes.map((code, i) => {
+        return typeof theme === 'function' ? theme(code) : theme.replace('{piece}', code);
+    }
+
+    function pieceName(code) {
+        const names = window.locale || {};
+        return names['piece_' + code.charAt(1).toLowerCase()] || code.charAt(1);
+    }
+
+    // Pieces of one colour that are missing from the board.
+    function missing(onBoard, color) {
+        return ORDER.map(type => {
+            const code = color + type;
+            return { code: code, type: type, n: Math.max(0, (baseline[code] || 0) - (onBoard[code] || 0)) };
+        }).filter(item => item.n);
+    }
+
+    const worth = items => items.reduce((sum, item) => sum + item.n * VALUE[item.type], 0);
+
+    // `owner` is the player the tray belongs to; `items` are the opponent pieces they have taken.
+    function render(tray, owner, items, advantage) {
+        const key = [config.pieceTheme, owner, latest, advantage,
+            ...items.map(item => item.code + item.n)].join('|');
+        if (tray.key === key) return;
+        tray.key = key;
+
+        tray.el.dataset.owner = owner;
+        tray.seal.textContent = owner === 'r' ? '帥' : '將';
+        tray.el.classList.toggle('is-leading', advantage > 0);
+        tray.lead.hidden = !(advantage > 0);
+        tray.lead.textContent = '+' + advantage;
+
+        const spoken = items.map(item => pieceName(item.code) + ' ×' + item.n).join(', ');
+        tray.el.setAttribute('aria-label', TEXT.title + ': ' + (spoken || TEXT.empty) +
+            (advantage > 0 ? '. ' + TEXT.lead + ' +' + advantage : ''));
+
+        if (!items.length) {
+            tray.list.replaceChildren(node('span', 'xqc-empty', TEXT.empty));
+            return;
+        }
+        tray.list.replaceChildren(...items.map(item => {
+            const token = node('span', 'xqc-item');
+            token.dataset.code = item.code;
+            token.title = pieceName(item.code) + ' ×' + item.n;
+            if (item.n > 1) token.classList.add('is-stack');
+            if (item.code === latest) token.classList.add('is-latest');
             const image = document.createElement('img');
-            image.src = typeof theme === 'function' ? theme(code) : theme.replace('{piece}', code);
+            image.src = pieceUrl(item.code);
             image.alt = '';
-            if (code === codes[i - 1]) image.className = 'is-repeat';
-            return image;
+            token.appendChild(image);
+            if (item.n > 1) token.appendChild(node('span', 'xqc-count', '×' + item.n));
+            return token;
         }));
     }
 
+    // Exactly one more piece gone than last time = a capture that just happened. Anything else
+    // (first paint, undo, reset, jumping through the move list) is shown without ceremony.
+    function newCapture(before, now) {
+        let gained = null, total = 0;
+        ['r', 'b'].forEach(color => ORDER.forEach(type => {
+            const code = color + type;
+            const diff = (before[code] || 0) - (now[code] || 0);
+            total += Math.abs(diff);
+            if (diff === 1) gained = code;
+        }));
+        return total === 1 ? gained : null;
+    }
+
+    function land(token) {
+        token.classList.remove('is-incoming');
+        token.classList.add('is-landing');
+        token.addEventListener('animationend', event => {
+            if (event.animationName === 'xqcLand') token.classList.remove('is-landing');
+        });
+    }
+
+    function stopFlight() {
+        if (flight) flight.cancel();
+    }
+
+    // Carries a copy of the captured piece from its square into the tray.
+    function fly(code, squareName, token) {
+        const from = element.querySelector('.square-' + squareName);
+        const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (still || !from || !token.animate) return land(token);
+        const a = from.getBoundingClientRect();
+        const b = token.getBoundingClientRect();
+        if (!a.width || !b.width) return land(token);
+
+        const flyer = node('img', 'xqc-flyer');
+        flyer.src = pieceUrl(code);
+        flyer.alt = '';
+        Object.assign(flyer.style, { left: a.left + 'px', top: a.top + 'px', width: a.width + 'px', height: a.height + 'px' });
+        document.body.appendChild(flyer);
+        token.classList.add('is-incoming');
+
+        const dx = b.left - a.left;
+        const dy = b.top - a.top;
+        const scale = b.width / a.width;
+        const animation = flyer.animate([
+            { transform: 'translate(0, 0) scale(1)', filter: 'drop-shadow(0 0 0 rgba(255,190,90,0))' },
+            { transform: `translate(${dx * .35}px, ${dy * .35 - a.height * .7}px) scale(1.35)`,
+              filter: 'drop-shadow(0 10px 8px rgba(0,0,0,.45)) drop-shadow(0 0 14px rgba(255,190,90,1))', offset: .38 },
+            { transform: `translate(${dx}px, ${dy}px) scale(${scale})`, filter: 'drop-shadow(0 0 6px rgba(255,190,90,.8))' }
+        ], { duration: 620, easing: 'cubic-bezier(.45, .05, .3, 1)' });
+        flight = animation;
+        const done = () => {
+            flyer.remove();
+            if (flight === animation) flight = null;
+            land(token);
+        };
+        animation.onfinish = done;
+        animation.oncancel = done;
+    }
+
     function update() {
+        const position = board.position();
+        const onBoard = count(position);
+        const moved = previous && JSON.stringify(previous) !== JSON.stringify(position);
+        let captured = null;
+        if (moved) {
+            stopFlight();
+            captured = newCapture(count(previous), onBoard);
+            // The ring follows the newest capture and is dropped once that piece is back.
+            if (captured) latest = captured;
+            else if (latest && (onBoard[latest] || 0) > (count(previous)[latest] || 0)) latest = null;
+        }
+
         const bottomColor = board.orientation() === 'black' ? 'b' : 'r';
-        // Each player's tray holds the opponent's pieces.
-        fill(top, bottomColor);
-        fill(bottom, bottomColor === 'r' ? 'b' : 'r');
+        const topColor = bottomColor === 'r' ? 'b' : 'r';
+        const takenByTop = missing(onBoard, bottomColor);
+        const takenByBottom = missing(onBoard, topColor);
+        const diff = worth(takenByBottom) - worth(takenByTop);
+        render(top, topColor, takenByTop, Math.max(0, -diff));
+        render(bottom, bottomColor, takenByBottom, Math.max(0, diff));
+
+        if (captured) {
+            const square = Object.keys(previous).find(name =>
+                previous[name] === captured && position[name] && position[name] !== captured);
+            const token = [top, bottom].map(tray =>
+                tray.list.querySelector('[data-code="' + captured + '"]')).find(Boolean);
+            if (token && square) fly(captured, square, token);
+            else if (token) land(token);
+        }
+        previous = position;
     }
 
     const stage = element.closest('.xq-stage');
@@ -122,9 +428,12 @@ window.initCapturedPieces = function (board, element, config) {
     } else if (window.ResizeObserver) {
         new ResizeObserver(() => {
             const width = element.offsetWidth + 'px';
-            [top, bottom].forEach(tray => { tray.style.width = tray.style.maxWidth = width; });
+            [top, bottom].forEach(tray => { tray.el.style.width = tray.el.style.maxWidth = width; });
         }).observe(element);
     }
+    // A flight aims at fixed screen coordinates: finish it early if the page moves underneath.
+    window.addEventListener('scroll', stopFlight, { passive: true });
+    window.addEventListener('resize', stopFlight);
 
     update();
     return { update: update };

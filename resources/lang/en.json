@@ -1023,5 +1023,7 @@
     "Chuyển sang giao diện tối": "Switch to dark theme",
     "Tối": "Dark",
     "VIP": "VIP",
-    "Quân đã bị ăn": "Captured pieces"
+    "Quân đã bị ăn": "Captured pieces",
+    "Chưa ăn được quân nào": "No captures yet",
+    "Hơn quân": "Material lead"
 }
