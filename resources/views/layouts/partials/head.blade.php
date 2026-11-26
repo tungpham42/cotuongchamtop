@@ -19,4 +19,5 @@
     #ban-co .highlight2-e0a03 { box-shadow: none !important; background: transparent !important; }
 </style>
 
+@include('layouts.partials.capturedPieces')
 @include('layouts.partials.boardClickInteraction')

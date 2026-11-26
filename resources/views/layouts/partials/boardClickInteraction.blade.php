@@ -244,7 +244,9 @@ window.initBoardClickInteraction = function (board, game, config) {
         element.querySelectorAll('img[data-piece]').forEach(image => {
             image.src = pieceTheme.replace('{piece}', image.dataset.piece);
         });
+        captured?.update();
     };
+    let captured = null;
     // Render once, then slide the actual destination image. No flying clones.
     const originalPosition = board.position;
     let sliding = [];
@@ -434,6 +436,7 @@ window.initBoardClickInteraction = function (board, game, config) {
     }
 
     function paint() {
+        captured?.update();
         if (board.isReviewing || selectedFen !== game.fen()) selected = null;
         element.querySelectorAll('.square-2b8ce').forEach(el => {
             el.classList.remove('click-selected', 'click-target', 'click-last-from', 'click-last-to');
@@ -499,6 +502,7 @@ window.initBoardClickInteraction = function (board, game, config) {
     });
     // Lets kypho.js repaint after it updates the move list for an unchanged position.
     board.refreshArrows = paint;
+    captured = window.initCapturedPieces(board, element, config);
     paint();
 };
 </script>

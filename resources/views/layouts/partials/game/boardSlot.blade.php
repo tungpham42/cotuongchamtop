@@ -29,7 +29,7 @@
            The board's height follows from its width (9 files x 10 ranks), so we solve for the
            width that makes the whole stack exactly as tall as the space below the sticky header:
 
-             stack height  = N*(timer + gap)  +  board chrome  +  (W - 12px) * 10/9
+             stack height  = N*(timer + gap)  +  captured trays  +  board chrome  +  (W - 12px) * 10/9
              => W          = (available - N*(timer + gap) - chrome) * 9/10
 
            and clamp it between a readable minimum and the original 380px maximum.
@@ -47,7 +47,7 @@
             --xq-board-min: 240px;           /* never shrink below this: scroll instead */
 
             --xq-avail: calc(var(--xq-vh) - var(--xq-header) - var(--xq-breathing));
-            --xq-reserved: calc(var(--xq-timer-count, 0) * (var(--xq-timer-h) + var(--xq-gap)) + var(--xq-board-chrome));
+            --xq-reserved: calc(var(--xq-timer-count, 0) * (var(--xq-timer-h) + var(--xq-gap)) + var(--xq-board-chrome) + var(--xq-captured-total, 0px));
             --xq-board-w: clamp(
                 var(--xq-board-min),
                 calc((var(--xq-avail) - var(--xq-reserved)) * 9 / 10),

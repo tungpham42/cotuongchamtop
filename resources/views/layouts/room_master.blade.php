@@ -796,7 +796,9 @@
             onDragStart: onDragStart,
             onDrop: onDrop,
             onSnapEnd: onSnapEnd,
-            showNotation: true
+            showNotation: true,
+            // Rooms can be opened mid-game, so captures are counted against the opening setup.
+            capturedBaseline: '{{ config('xiangqi.initial_fen') }}'
         };
 
         config.clickMovesEnabled = config.draggable;
