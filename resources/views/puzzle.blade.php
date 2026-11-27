@@ -435,7 +435,7 @@
                     </div>
                     <div class="custom-control custom-radio mt-1">
                         <input type="radio" id="save-puzzle-private" name="save-puzzle-privacy" class="custom-control-input" value="private">
-                        <label class="custom-control-label" for="save-puzzle-private">{{ __("Riêng tư (chỉ ai có link mới xem được))") }}</label>
+                        <label class="custom-control-label" for="save-puzzle-private">{{ __("Riêng tư (chỉ ai có link mới xem được)") }}</label>
                     </div>
                 </div>
                 <div class="alert alert-danger d-none mt-3 mb-0" id="save-puzzle-error"></div>
