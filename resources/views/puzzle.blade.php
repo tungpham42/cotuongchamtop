@@ -41,8 +41,8 @@
 
 @section('belowContent')
     <p class="w-100 text-center mt-0 mb-1">
-        <a data-step="2" data-intro="Ấn vào đây để vào trang giải {{ __("thế cờ") }}" id="solve-puzzle" class="w-25 btn btn-dark btn-lg" href="{{ url('/giai-co-the') }}"><i class="fad fa-abacus"></i> {{ __("Giải cờ thế") }}</a>
-        <a data-step="3" data-intro="Ấn vào đây để lưu và chia sẻ {{ __("thế cờ") }}" id="name-puzzle" class="w-25 btn btn-lg btn-dark" href="javascript:void(0);"><i class="fad fa-save"></i> {{ __("Lưu & chia sẻ") }}</a>
+        <a data-step="2" data-intro="{{ __("Ấn vào đây để vào trang giải thế cờ") }}" id="solve-puzzle" class="w-25 btn btn-dark btn-lg" href="{{ localized_url('puzzle.ai.solve') }}"><i class="fad fa-abacus"></i> {{ __("Giải cờ thế") }}</a>
+        <a data-step="3" data-intro="{{ __("Ấn vào đây để lưu và chia sẻ thế cờ") }}" id="name-puzzle" class="w-25 btn btn-lg btn-dark" href="javascript:void(0);"><i class="fad fa-save"></i> {{ __("Lưu & chia sẻ") }}</a>
     </p>
     <p class="w-100 text-center mt-0 mb-1">
         <a data-step="4" data-intro="Ấn vào đây để lưu trạng thái bàn cờ" id="new-board" class="w-25 btn btn-dark btn-lg"><i class="fad fa-chess-board"></i> {{ __("Lưu bàn cờ") }}</a>
@@ -420,22 +420,22 @@
         const savePuzzleFormTemplate = `
             <form id="save-puzzle-form">
                 <div class="form-group">
-                    <label for="save-puzzle-name" class="font-weight-bold">Tên {{ __("thế cờ") }}</label>
-                    <input type="text" class="form-control" id="save-puzzle-name" maxlength="255" placeholder="Ví dụ: Cửu tử hồn - thế khó nhất 2025" required>
+                    <label for="save-puzzle-name" class="font-weight-bold">{{ __("Tên thế cờ") }}</label>
+                    <input type="text" class="form-control" id="save-puzzle-name" maxlength="255" placeholder="{{ __("Ví dụ: Cửu tử hồn - thế khó nhất 2025") }}" required>
                 </div>
                 <div class="form-group">
-                    <label for="save-puzzle-description" class="font-weight-bold">Mô tả / hướng dẫn (không bắt buộc)</label>
-                    <textarea class="form-control" id="save-puzzle-description" rows="3" maxlength="1000" placeholder="Viết ghi chú ngắn hoặc hướng giải..."></textarea>
+                    <label for="save-puzzle-description" class="font-weight-bold">{{ __("Mô tả / hướng dẫn (không bắt buộc)") }}</label>
+                    <textarea class="form-control" id="save-puzzle-description" rows="3" maxlength="1000" placeholder="{{ __("Viết ghi chú ngắn hoặc hướng giải...") }}"></textarea>
                 </div>
                 <div class="form-group mb-0">
-                    <label class="font-weight-bold d-block">Chế độ hiển thị</label>
+                    <label class="font-weight-bold d-block">{{ __("Chế độ hiển thị") }}</label>
                     <div class="custom-control custom-radio">
                         <input type="radio" id="save-puzzle-public" name="save-puzzle-privacy" class="custom-control-input" value="public" checked>
-                        <label class="custom-control-label" for="save-puzzle-public">Công khai (mọi người đều xem được)</label>
+                        <label class="custom-control-label" for="save-puzzle-public">{{ __("Công khai (mọi người đều xem được)") }}</label>
                     </div>
                     <div class="custom-control custom-radio mt-1">
                         <input type="radio" id="save-puzzle-private" name="save-puzzle-privacy" class="custom-control-input" value="private">
-                        <label class="custom-control-label" for="save-puzzle-private">{{ __("Riêng tư") }} (chỉ ai có link mới xem được)</label>
+                        <label class="custom-control-label" for="save-puzzle-private">{{ __("Riêng tư (chỉ ai có link mới xem được))") }}</label>
                     </div>
                 </div>
                 <div class="alert alert-danger d-none mt-3 mb-0" id="save-puzzle-error"></div>
@@ -482,7 +482,7 @@
                 window.location.href = response.url;
             }).fail(function(xhr) {
                 confirmButton.prop('disabled', false).html('<i class="fas fa-share-alt"></i> {{ __("Lưu & chia sẻ") }}');
-                let message = 'Không thể lưu {{ __("thế cờ") }}, vui lòng thử lại.';
+                let message = '{{ __("Không thể lưu thế cờ, vui lòng thử lại.") }}';
                 if (xhr.responseJSON) {
                     if (xhr.responseJSON.message) {
                         message = xhr.responseJSON.message;
@@ -517,14 +517,14 @@
             }
 
             const dialog = bootbox.dialog({
-                title: "{{ __("Lưu & chia sẻ") }} {{ __("thế cờ") }}",
+                title: "{{ __("Lưu & chia sẻ thế cờ") }}",
                 message: savePuzzleFormTemplate,
                 locale: '{{ __("vi") }}',
                 centerVertical: true,
                 closeButton: false,
                 buttons: {
                     cancel: {
-                        label: 'Hủy',
+                        label: '{{ __("Hủy") }}',
                         className: 'btn-dark text-light'
                     },
                     confirm: {
