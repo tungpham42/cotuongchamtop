@@ -1337,7 +1337,7 @@ $localizedBoardPages = [
         'view' => 'boardAi',
         'level' => '2',
         'titles' => [
-            'vi' => ['title' => 'Bàn cờ dễ', 'levelTxt' => 'Dễ'],
+            'vi' => ['title' => 'Bàn cờ dễ dàng', 'levelTxt' => 'Dễ dàng'],
             'en' => ['title' => 'Easy board', 'levelTxt' => 'Easy'],
             'ja' => ['title' => 'イージーボード', 'levelTxt' => '簡単'],
             'ko' => ['title' => '이지보드', 'levelTxt' => '쉬운'],
@@ -1491,7 +1491,7 @@ $localizedLevelPages = [
         'pt' => ['title' => 'Iniciante', 'level' => '1', 'levelTxt' => 'Iniciante'],
     ],
     'ai.easy' => [
-        'vi' => ['title' => 'Dễ', 'level' => '2', 'levelTxt' => 'Dễ'],
+        'vi' => ['title' => 'Dễ dàng', 'level' => '2', 'levelTxt' => 'Dễ dàng'],
         'en' => ['title' => 'Easy', 'level' => '2', 'levelTxt' => 'Easy'],
         'ja' => ['title' => '簡単', 'level' => '2', 'levelTxt' => '簡単'],
         'ko' => ['title' => '쉬운', 'level' => '2', 'levelTxt' => '쉬운'],
