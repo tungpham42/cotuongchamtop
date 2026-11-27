@@ -1409,7 +1409,7 @@
     "ban-co/{fen}": "ban-co/{fen}",
     "ban-co-de-nhat/{fen}": "ban-co-de-nhat/{fen}",
     "ban-co-moi-choi/{fen}": "ban-co-moi-choi/{fen}",
-    "ban-co-de/{fen}": "ban-co-de/{fen}",
+    "ban-co-de/{fen}": "ban-co-de-dang/{fen}",
     "ban-co-binh-thuong/{fen}": "ban-co-binh-thuong/{fen}",
     "ban-co-kho/{fen}": "ban-co-kho/{fen}",
     "ban-co-kho-nhat/{fen}": "ban-co-kho-nhat/{fen}",

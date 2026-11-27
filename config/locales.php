@@ -75,6 +75,72 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Retired level paths
+    |--------------------------------------------------------------------------
+    |
+    | Old path => current path. routes/web.php answers each old path with a 301.
+    | 'level' paths are exact; 'board' paths are followed by "/{fen}".
+    |
+    */
+    'redirects' => [
+        'level' => [
+            'zuijiandan' => 'zuirongyide',
+            'einfachste' => 'am-einfachsten',
+            'tres-facile' => 'le-plus-facile',
+            'facilisimo' => 'mas-facil',
+            'facilimo' => 'mais-facil',
+            'principiante' => 'novato',
+            'iji' => 'swiun',
+            'leicht' => 'einfach',
+            'nomol' => 'nomeol',
+            'putong' => 'dianxingde',
+            'normalnyy' => 'obychnyy',
+            'ying' => 'jiangude',
+            'mottomo-muzukashi' => 'mottomo-muzukashii',
+            'zuiying' => 'zuinande',
+            'schwerste' => 'am-schwersten',
+            'tres-difficile' => 'le-plus-difficile',
+            'dificilisimo' => 'mas-dificil',
+            'dificilimo' => 'mais-dificil',
+            'dashi' => 'dashiji',
+            'grossmeyster' => 'master',
+        ],
+        'board' => [
+            'ban-co-de' => 'ban-co-de-dang',
+            'jianyiban' => 'rongyideban',
+            'mottomo-kantanna-bodo' => 'mottomo-kantan-bodo',
+            'zuijiandandeban' => 'zuirongyideban',
+            'einfachstes-brett' => 'am-einfachsten-brett',
+            'plateau-tres-facile' => 'plateau-le-plus-facile',
+            'tablero-facilisimo' => 'tablero-mas-facil',
+            'samaya-legkaya-doska' => 'doska-samyy-legkiy',
+            'tabuleiro-facilimo' => 'tabuleiro-mais-facil',
+            'tablero-principiante' => 'tablero-novato',
+            'doska-novichka' => 'doska-novichok',
+            'iji-bodeu' => 'swiun-bodeu',
+            'leichtes-brett' => 'einfach-brett',
+            'legkaya-doska' => 'doska-legkiy',
+            'nomol-bodeu' => 'nomeol-bodeu',
+            'putongban' => 'dianxingdeban',
+            'normales-brett' => 'normalerweise-brett',
+            'plateau-normal' => 'plateau-normalement',
+            'tablero-normal' => 'tablero-normalmente',
+            'normalnaya-doska' => 'doska-obychnyy',
+            'yingban' => 'jiangudeban',
+            'schweres-brett' => 'schwer-brett',
+            'slozhnaya-doska' => 'doska-slozhnyy',
+            'mottomo-muzukashi-bodo' => 'mottomo-muzukashii-bodo',
+            'zuiyingban' => 'zuinandeban',
+            'schwerstes-brett' => 'am-schwersten-brett',
+            'plateau-tres-difficile' => 'plateau-le-plus-difficile',
+            'tablero-dificilisimo' => 'tablero-mas-dificil',
+            'samaya-slozhnaya-doska' => 'doska-samyy-slozhnyy',
+            'tabuleiro-dificilimo' => 'tabuleiro-mais-dificil',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Legacy SEO paths
     |--------------------------------------------------------------------------
     |
@@ -108,24 +174,24 @@ return [
 
         // AI / Bots
         'board.self'         => ['vi' => 'ban-co/{fen}', 'en' => 'board/{fen}', 'ja' => 'bodo/{fen}', 'ko' => 'bodeu/{fen}', 'zh' => 'ban/{fen}', 'de' => 'brett/{fen}', 'fr' => 'plateau/{fen}', 'es' => 'tablero/{fen}', 'ru' => 'doska/{fen}', 'pt' => 'tabuleiro/{fen}'],
-        'board.ai.easiest'   => ['vi' => 'ban-co-de-nhat/{fen}', 'en' => 'easiest-board/{fen}', 'ja' => 'mottomo-kantanna-bodo/{fen}', 'ko' => 'gajang-swiun-bodeu/{fen}', 'zh' => 'zuijiandandeban/{fen}', 'de' => 'einfachstes-brett/{fen}', 'fr' => 'plateau-tres-facile/{fen}', 'es' => 'tablero-facilisimo/{fen}', 'ru' => 'samaya-legkaya-doska/{fen}', 'pt' => 'tabuleiro-facilimo/{fen}'],
-        'board.ai.newbie'    => ['vi' => 'ban-co-moi-choi/{fen}', 'en' => 'newbie-board/{fen}', 'ja' => 'shoshinsha-bodo/{fen}', 'ko' => 'nyubi-bodeu/{fen}', 'zh' => 'xinshouban/{fen}', 'de' => 'anfaenger-brett/{fen}', 'fr' => 'plateau-debutant/{fen}', 'es' => 'tablero-principiante/{fen}', 'ru' => 'doska-novichka/{fen}', 'pt' => 'tabuleiro-iniciante/{fen}'],
-        'board.ai.easy'      => ['vi' => 'ban-co-de/{fen}', 'en' => 'easy-board/{fen}', 'ja' => 'kantan-bodo/{fen}', 'ko' => 'iji-bodeu/{fen}', 'zh' => 'jianyiban/{fen}', 'de' => 'leichtes-brett/{fen}', 'fr' => 'plateau-facile/{fen}', 'es' => 'tablero-facil/{fen}', 'ru' => 'legkaya-doska/{fen}', 'pt' => 'tabuleiro-facil/{fen}'],
-        'board.ai.normal'    => ['vi' => 'ban-co-binh-thuong/{fen}', 'en' => 'normal-board/{fen}', 'ja' => 'tsujo-bodo/{fen}', 'ko' => 'nomol-bodeu/{fen}', 'zh' => 'putongban/{fen}', 'de' => 'normales-brett/{fen}', 'fr' => 'plateau-normal/{fen}', 'es' => 'tablero-normal/{fen}', 'ru' => 'normalnaya-doska/{fen}', 'pt' => 'tabuleiro-normal/{fen}'],
-        'board.ai.hard'      => ['vi' => 'ban-co-kho/{fen}', 'en' => 'hard-board/{fen}', 'ja' => 'hado-bodo/{fen}', 'ko' => 'hadeu-bodeu/{fen}', 'zh' => 'yingban/{fen}', 'de' => 'schweres-brett/{fen}', 'fr' => 'plateau-difficile/{fen}', 'es' => 'tablero-dificil/{fen}', 'ru' => 'slozhnaya-doska/{fen}', 'pt' => 'tabuleiro-dificil/{fen}'],
-        'board.ai.hardest'   => ['vi' => 'ban-co-kho-nhat/{fen}', 'en' => 'hardest-board/{fen}', 'ja' => 'mottomo-muzukashi-bodo/{fen}', 'ko' => 'gajang-dandanhan-bodeu/{fen}', 'zh' => 'zuiyingban/{fen}', 'de' => 'schwerstes-brett/{fen}', 'fr' => 'plateau-tres-difficile/{fen}', 'es' => 'tablero-dificilisimo/{fen}', 'ru' => 'samaya-slozhnaya-doska/{fen}', 'pt' => 'tabuleiro-dificilimo/{fen}'],
+        'board.ai.easiest'   => ['vi' => 'ban-co-de-nhat/{fen}', 'en' => 'easiest-board/{fen}', 'ja' => 'mottomo-kantan-bodo/{fen}', 'ko' => 'gajang-swiun-bodeu/{fen}', 'zh' => 'zuirongyideban/{fen}', 'de' => 'am-einfachsten-brett/{fen}', 'fr' => 'plateau-le-plus-facile/{fen}', 'es' => 'tablero-mas-facil/{fen}', 'ru' => 'doska-samyy-legkiy/{fen}', 'pt' => 'tabuleiro-mais-facil/{fen}'],
+        'board.ai.newbie'    => ['vi' => 'ban-co-moi-choi/{fen}', 'en' => 'newbie-board/{fen}', 'ja' => 'shoshinsha-bodo/{fen}', 'ko' => 'nyubi-bodeu/{fen}', 'zh' => 'xinshouban/{fen}', 'de' => 'anfaenger-brett/{fen}', 'fr' => 'plateau-debutant/{fen}', 'es' => 'tablero-novato/{fen}', 'ru' => 'doska-novichok/{fen}', 'pt' => 'tabuleiro-iniciante/{fen}'],
+        'board.ai.easy'      => ['vi' => 'ban-co-de-dang/{fen}', 'en' => 'easy-board/{fen}', 'ja' => 'kantan-bodo/{fen}', 'ko' => 'swiun-bodeu/{fen}', 'zh' => 'rongyideban/{fen}', 'de' => 'einfach-brett/{fen}', 'fr' => 'plateau-facile/{fen}', 'es' => 'tablero-facil/{fen}', 'ru' => 'doska-legkiy/{fen}', 'pt' => 'tabuleiro-facil/{fen}'],
+        'board.ai.normal'    => ['vi' => 'ban-co-binh-thuong/{fen}', 'en' => 'normal-board/{fen}', 'ja' => 'tsujo-bodo/{fen}', 'ko' => 'nomeol-bodeu/{fen}', 'zh' => 'dianxingdeban/{fen}', 'de' => 'normalerweise-brett/{fen}', 'fr' => 'plateau-normalement/{fen}', 'es' => 'tablero-normalmente/{fen}', 'ru' => 'doska-obychnyy/{fen}', 'pt' => 'tabuleiro-normal/{fen}'],
+        'board.ai.hard'      => ['vi' => 'ban-co-kho/{fen}', 'en' => 'hard-board/{fen}', 'ja' => 'hado-bodo/{fen}', 'ko' => 'hadeu-bodeu/{fen}', 'zh' => 'jiangudeban/{fen}', 'de' => 'schwer-brett/{fen}', 'fr' => 'plateau-difficile/{fen}', 'es' => 'tablero-dificil/{fen}', 'ru' => 'doska-slozhnyy/{fen}', 'pt' => 'tabuleiro-dificil/{fen}'],
+        'board.ai.hardest'   => ['vi' => 'ban-co-kho-nhat/{fen}', 'en' => 'hardest-board/{fen}', 'ja' => 'mottomo-muzukashii-bodo/{fen}', 'ko' => 'gajang-dandanhan-bodeu/{fen}', 'zh' => 'zuinandeban/{fen}', 'de' => 'am-schwersten-brett/{fen}', 'fr' => 'plateau-le-plus-difficile/{fen}', 'es' => 'tablero-mas-dificil/{fen}', 'ru' => 'doska-samyy-slozhnyy/{fen}', 'pt' => 'tabuleiro-mais-dificil/{fen}'],
         'puzzle.ai.solve'    => ['vi' => 'giai-co-the/{fen}', 'en' => 'solve-puzzle/{fen}', 'ja' => 'pazuru-o-toku/{fen}', 'ko' => 'pojeureul-pulda/{fen}', 'zh' => 'jiejuenanti/{fen}', 'de' => 'puzzle-loesen/{fen}', 'fr' => 'resoudre-probleme/{fen}', 'es' => 'resolver-problema/{fen}', 'ru' => 'reshit-zadachu/{fen}', 'pt' => 'resolver-quebra-cabeca/{fen}'],
         'puzzle.rating'      => ['vi' => 'the-co/{slug}', 'en' => 'puzzle-record/{slug}', 'ja' => 'pazuru-kiroku/{slug}', 'ko' => 'peojeul-girog/{slug}', 'zh' => 'mi-jilu/{slug}', 'de' => 'puzzle-eintrag/{slug}', 'fr' => 'fiche-probleme/{slug}', 'es' => 'registro-problema/{slug}', 'ru' => 'zapis-zadachi/{slug}', 'pt' => 'registro-quebra-cabeca/{slug}'],
 
         // AI Home / Levels
         'ai.home'    => ['vi' => '/', 'en' => 'en', 'ja' => 'ja', 'ko' => 'ko', 'zh' => 'zh', 'de' => 'de', 'fr' => 'fr', 'es' => 'es', 'ru' => 'ru', 'pt' => 'pt'],
-        'ai.easiest' => ['vi' => 'de-nhat', 'en' => 'easiest', 'ja' => 'mottomo-kantan', 'ko' => 'gajang-swiun', 'zh' => 'zuijiandan', 'de' => 'einfachste', 'fr' => 'tres-facile', 'es' => 'facilisimo', 'ru' => 'samyy-legkiy', 'pt' => 'facilimo'],
-        'ai.newbie'  => ['vi' => 'moi-choi', 'en' => 'newbie', 'ja' => 'shoshinsha', 'ko' => 'nyubi', 'zh' => 'xinshou', 'de' => 'anfaenger', 'fr' => 'debutant', 'es' => 'principiante', 'ru' => 'novichok', 'pt' => 'iniciante'],
-        'ai.easy'    => ['vi' => 'de-dang', 'en' => 'easy', 'ja' => 'kantan', 'ko' => 'iji', 'zh' => 'jianyiban', 'de' => 'leicht', 'fr' => 'facile', 'es' => 'facil', 'ru' => 'legkiy', 'pt' => 'modo-facil'],
-        'ai.normal'  => ['vi' => 'binh-thuong', 'en' => 'normal', 'ja' => 'tsujo', 'ko' => 'nomol', 'zh' => 'putong', 'de' => 'normalerweise', 'fr' => 'normalement', 'es' => 'normalmente', 'ru' => 'normalnyy', 'pt' => 'modo-normal'],
-        'ai.hard'    => ['vi' => 'kho', 'en' => 'hard', 'ja' => 'hado', 'ko' => 'hadeu', 'zh' => 'ying', 'de' => 'schwer', 'fr' => 'difficile', 'es' => 'dificil', 'ru' => 'slozhnyy', 'pt' => 'modo-dificil'],
-        'ai.hardest' => ['vi' => 'kho-nhat', 'en' => 'hardest', 'ja' => 'mottomo-muzukashi', 'ko' => 'gajang-dandanhan', 'zh' => 'zuiying', 'de' => 'schwerste', 'fr' => 'tres-difficile', 'es' => 'dificilisimo', 'ru' => 'samyy-slozhnyy', 'pt' => 'dificilimo'],
-        'ai.master'  => ['vi' => 'kien-tuong', 'en' => 'grandmaster', 'ja' => 'masuta', 'ko' => 'maseuteo', 'zh' => 'dashi', 'de' => 'meister', 'fr' => 'maitre', 'es' => 'maestro', 'ru' => 'grossmeyster', 'pt' => 'mestre'],
+        'ai.easiest' => ['vi' => 'de-nhat', 'en' => 'easiest', 'ja' => 'mottomo-kantan', 'ko' => 'gajang-swiun', 'zh' => 'zuirongyide', 'de' => 'am-einfachsten', 'fr' => 'le-plus-facile', 'es' => 'mas-facil', 'ru' => 'samyy-legkiy', 'pt' => 'mais-facil'],
+        'ai.newbie'  => ['vi' => 'moi-choi', 'en' => 'newbie', 'ja' => 'shoshinsha', 'ko' => 'nyubi', 'zh' => 'xinshou', 'de' => 'anfaenger', 'fr' => 'debutant', 'es' => 'novato', 'ru' => 'novichok', 'pt' => 'iniciante'],
+        'ai.easy'    => ['vi' => 'de-dang', 'en' => 'easy', 'ja' => 'kantan', 'ko' => 'swiun', 'zh' => 'rongyide', 'de' => 'einfach', 'fr' => 'facile', 'es' => 'facil', 'ru' => 'legkiy', 'pt' => 'modo-facil'],
+        'ai.normal'  => ['vi' => 'binh-thuong', 'en' => 'normal', 'ja' => 'tsujo', 'ko' => 'nomeol', 'zh' => 'dianxingde', 'de' => 'normalerweise', 'fr' => 'normalement', 'es' => 'normalmente', 'ru' => 'obychnyy', 'pt' => 'modo-normal'],
+        'ai.hard'    => ['vi' => 'kho', 'en' => 'hard', 'ja' => 'hado', 'ko' => 'hadeu', 'zh' => 'jiangude', 'de' => 'schwer', 'fr' => 'difficile', 'es' => 'dificil', 'ru' => 'slozhnyy', 'pt' => 'modo-dificil'],
+        'ai.hardest' => ['vi' => 'kho-nhat', 'en' => 'hardest', 'ja' => 'mottomo-muzukashii', 'ko' => 'gajang-dandanhan', 'zh' => 'zuinande', 'de' => 'am-schwersten', 'fr' => 'le-plus-difficile', 'es' => 'mas-dificil', 'ru' => 'samyy-slozhnyy', 'pt' => 'mais-dificil'],
+        'ai.master'  => ['vi' => 'kien-tuong', 'en' => 'grandmaster', 'ja' => 'masuta', 'ko' => 'maseuteo', 'zh' => 'dashiji', 'de' => 'meister', 'fr' => 'maitre', 'es' => 'maestro', 'ru' => 'master', 'pt' => 'mestre'],
 
         // Application (Dashboard, Profile, Settings)
         'app.dashboard' => ['vi' => 'thi-dau', 'en' => 'compete', 'ja' => 'kyogi', 'ko' => 'gyeong-gi', 'zh' => 'jingzheng', 'de' => 'wettkampf', 'fr' => 'competition', 'es' => 'competir', 'ru' => 'sorevnovanie', 'pt' => 'competicao'],

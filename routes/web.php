@@ -504,7 +504,7 @@ Route::get('/choi-voi-may/moi-choi', function () {
     return redirect('/moi-choi', 301);
 });
 Route::get('/choi-voi-may/de', function () {
-    return redirect('/de', 301);
+    return redirect('/de-dang', 301);
 });
 Route::get('/choi-voi-may/binh-thuong', function () {
     return redirect('/binh-thuong', 301);
@@ -1359,7 +1359,7 @@ $localizedBoardPages = [
             'ko' => ['title' => '노멀 보드', 'levelTxt' => '노멀'],
             'zh' => ['title' => '普通板', 'levelTxt' => '典型的'],
             'de' => ['title' => 'Normales Brett', 'levelTxt' => 'Normalerweise'],
-            'fr' => ['title' => 'Plateau normal', 'levelTxt' => 'Nnormalement'],
+            'fr' => ['title' => 'Plateau normal', 'levelTxt' => 'Normalement'],
             'es' => ['title' => 'Tablero normal', 'levelTxt' => 'Normalmente'],
             'ru' => ['title' => 'Обычная доска', 'levelTxt' => 'Обычный'],
             'pt' => ['title' => 'Tabuleiro normal', 'levelTxt' => 'Normal'],
@@ -1461,7 +1461,7 @@ $localizedLevelPages = [
         'ko' => ['title' => '홈페이지', 'level' => '3', 'levelTxt' => '노멀'],
         'zh' => ['title' => '主页', 'level' => '3', 'levelTxt' => '典型的'],
         'de' => ['title' => 'Startseite', 'level' => '3', 'levelTxt' => 'Normalerweise'],
-        'fr' => ['title' => 'Accueil', 'level' => '3', 'levelTxt' => 'Nnormalement'],
+        'fr' => ['title' => 'Accueil', 'level' => '3', 'levelTxt' => 'Normalement'],
         'es' => ['title' => 'Inicio', 'level' => '3', 'levelTxt' => 'Normalmente'],
         'ru' => ['title' => 'Главная', 'level' => '3', 'levelTxt' => 'Обычный'],
         'pt' => ['title' => 'Início', 'level' => '3', 'levelTxt' => 'Normal'],
@@ -1596,6 +1596,23 @@ Route::match(['get', 'post'], '/play-with-ai/hard', function () {
 Route::match(['get', 'post'], '/play-with-ai/hardest', function () {
     return redirect('/hardest', 301);
 });
+
+// 301 redirects from retired level and board-level paths (config/locales.php 'redirects').
+foreach (config('locales.redirects', []) as $type => $redirects) {
+    foreach ($redirects as $old => $new) {
+        $route = Route::match(['get', 'post'], $type === 'board' ? $old . '/{fen}' : $old, function (Request $request) use ($old, $new) {
+            // Swap only the first segment so the encoded FEN and the query string survive.
+            $target = '/' . $new . substr($request->getPathInfo(), strlen('/' . $old));
+            $query = $request->getQueryString();
+
+            return redirect($query ? $target . '?' . $query : $target, 301);
+        });
+
+        if ($type === 'board') {
+            $route->where(['fen' => $fenRegex]);
+        }
+    }
+}
 
 $localizedStaticPages = [
     'about' => [
