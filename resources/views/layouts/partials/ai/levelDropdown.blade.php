@@ -27,8 +27,11 @@
 
     // localized_url() already returns the URL for the current locale. Reduce it to a path without a
     // leading slash so request()->is() and url('/' . $path) work for either a full URL or a path.
+    // The board.ai.* routes end in "/{fen}": strip that placeholder (raw or URL-encoded), because the
+    // "add-fen" script appends the real FEN on click.
     $levelItems = array_map(function ($item) use ($routePrefix, $matchByLevelTxt, $levelTxt) {
-        $item['path'] = ltrim((string) parse_url(localized_url($routePrefix . '.' . $item['key']), PHP_URL_PATH), '/');
+        $path = (string) parse_url(localized_url($routePrefix . '.' . $item['key']), PHP_URL_PATH);
+        $item['path'] = trim(str_replace(['{fen}', '%7Bfen%7D', '%7BFEN%7D'], '', $path), '/');
         $item['active'] = $matchByLevelTxt ? $levelTxt === $item['label'] : request()->is($item['path']);
         return $item;
     }, $levelItems);
