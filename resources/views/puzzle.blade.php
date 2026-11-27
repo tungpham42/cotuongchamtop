@@ -473,7 +473,8 @@
                     description: descriptionInput.val().trim(),
                     fen: board.fen(),
                     is_public: privacyValue === 'public' ? 1 : 0,
-                    rating: 0
+                    rating: 0,
+                    lang: "{{ app()->getLocale() }}",
                 },
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'

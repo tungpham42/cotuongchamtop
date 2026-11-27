@@ -66,6 +66,8 @@ class PuzzleController extends Controller
      */
     public function create(Request $request): JsonResponse
     {
+        if ($request->has('lang')) app()->setLocale((string) $request->input('lang'));
+
         $payload = $request->validate([
             'name' => 'required|string|max:255',
             'fen' => 'required|string|max:255',
@@ -104,7 +106,7 @@ class PuzzleController extends Controller
             'message' => 'Tạo thế cờ thành công!',
             'code' => 1,
             'slug' => $puzzle->slug,
-            'url' => url('/').__("/the-co/").$puzzle->slug,
+            'url' => localized_url('puzzle.rating', ['slug' => $puzzle->slug])
         ], 201);
     }
 
