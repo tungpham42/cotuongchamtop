@@ -55,9 +55,9 @@
                             <span class="badge badge-status badge-online pulse-gold" style="border-color: var(--royal-gold); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);">
                                 <i class="fas fa-play" style="color: var(--royal-gold); text-shadow: 0 0 8px var(--royal-gold);"></i> <span style="color: var(--royal-gold-light);">{{ __('Tới lượt') }}</span>
                                 @if (str_contains($board->fen, ' r '))
-                                    <span style="color: var(--royal-red-light); text-shadow: 0 0 5px rgba(230,57,70,0.8); margin-left: 2px;">{{ __('Đỏ') }}</span>
+                                    <span class="red-side" style="color: var(--royal-red-light); text-shadow: 0 0 5px rgba(230,57,70,0.8); margin-left: 2px;">{{ __('Đỏ') }}</span>
                                 @elseif (str_contains($board->fen, ' b '))
-                                    <span style="color: #fff; text-shadow: 0 0 5px rgba(255,255,255,0.8); margin-left: 2px;">{{ __('Đen') }}</span>
+                                    <span class="black-side" style="color: #fff; text-shadow: 0 0 5px rgba(255,255,255,0.8); margin-left: 2px;">{{ __('Đen') }}</span>
                                 @endif
                                 <span style="color: var(--royal-gold-light);">{{ __('đi') }}</span>
                             </span>
