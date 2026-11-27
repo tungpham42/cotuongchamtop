@@ -2,15 +2,19 @@
 
 @section('aboveBoard')
     @php
-        $locale = app()->getLocale() ?: 'vi';
-        $levelUrls = [
-            'vi' => ['ban-co-moi-choi', 'ban-co-de', 'ban-co-binh-thuong', 'ban-co-kho', 'ban-co-kho-nhat'],
-            'en' => ['newbie-board', 'easy-board', 'normal-board', 'hard-board', 'hardest-board'],
-            'ja' => ['shoshinsha-bodo', 'kantan-bodo', 'tsujo-bodo', 'hado-bodo', 'mottomo-muzukashi-bodo'],
-            'ko' => ['nyubi-bodeu', 'iji-bodeu', 'nomol-bodeu', 'hadeu-bodeu', 'gajang-dandanhan-bodeu'],
-            'zh' => ['xinshouban', 'jianyiban', 'putongban', 'yingban', 'zuiyingban'],
-        ];
-        $urls = $levelUrls[$locale] ?? $levelUrls['vi'];
+        // Level URLs come from config/locales.php ('board.ai.*' keys) so every supported
+        // locale (vi, en, ja, ko, zh, de, fr, es, ru, pt) gets its own translated path.
+        // NOTE: use the array directly, the keys contain dots so config('locales.paths.board.ai.x') won't work.
+        $defaultLocale = config('locales.default', 'vi');
+        $locale        = app()->getLocale() ?: $defaultLocale;
+        $boardAiPaths  = config('locales.paths', []);
+
+        $urls = array_map(function (string $level) use ($boardAiPaths, $locale, $defaultLocale) {
+            $byLocale = $boardAiPaths['board.ai.' . $level] ?? [];
+            $path     = $byLocale[$locale] ?? $byLocale[$defaultLocale] ?? '';
+            // Strip the {fen} placeholder: the script appends the current FEN on click.
+            return trim(str_replace('{fen}', '', $path), '/');
+        }, ['newbie', 'easy', 'normal', 'hard', 'hardest']);
     @endphp
     <h5 class="text-center my-1" data-toggle="tooltip" data-placement="top" title="{{ __("Tăng kỹ năng chơi cờ") }}">{{ __("Bạn đang giải") }}<span id="puzzle-title"></span></h5>
     <p class="w-100 text-center m-0">
