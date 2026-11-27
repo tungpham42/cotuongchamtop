@@ -30,7 +30,7 @@
             'step'  => 4,
             'intro' => 'Ấn vào đây để tự giải bàn cờ',
             'class' => 'add-fen w-25 btn btn-dark btn-lg',
-            'href'  => url('/ban-co'),
+            'href'  => url(__('/ban-co/')),
             'icon'  => 'fa-user',
             'label' => __("Tự giải"),
         ],
