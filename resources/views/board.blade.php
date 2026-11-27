@@ -36,7 +36,7 @@
         </button>
         <div class="dropdown-menu dropdown-menu-right shadow-lg" aria-labelledby="levelDropdown">
             <a class="add-fen dropdown-item" href="{{ url('/' . $urls[0]) }}" style="cursor: pointer !important;">{{ __("Mới chơi") }}</a>
-            <a class="add-fen dropdown-item" href="{{ url('/' . $urls[1]) }}" style="cursor: pointer !important;">{{ __("Dễ") }}</a>
+            <a class="add-fen dropdown-item" href="{{ url('/' . $urls[1]) }}" style="cursor: pointer !important;">{{ __("Dễ dàng") }}</a>
             <a class="add-fen dropdown-item" href="{{ url('/' . $urls[2]) }}" style="cursor: pointer !important;">{{ __("Bình thường") }}</a>
             <a class="add-fen dropdown-item" href="{{ url('/' . $urls[3]) }}" style="cursor: pointer !important;">{{ __("Khó") }}</a>
             <a class="add-fen dropdown-item" href="{{ url('/' . $urls[4]) }}" style="cursor: pointer !important;">{{ __("Khó nhất") }}</a>

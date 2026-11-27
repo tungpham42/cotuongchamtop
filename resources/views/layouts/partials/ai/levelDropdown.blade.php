@@ -16,7 +16,7 @@
 
     $levelItems = [
         ['key' => 'newbie',  'label' => 'Mới chơi'],
-        ['key' => 'easy',    'label' => 'Dễ'],
+        ['key' => 'easy',    'label' => 'Dễ dàng'],
         ['key' => 'normal',  'label' => 'Bình thường'],
         ['key' => 'hard',    'label' => 'Khó'],
         ['key' => 'hardest', 'label' => 'Khó nhất'],
@@ -32,7 +32,7 @@
     $levelItems = array_map(function ($item) use ($routePrefix, $matchByLevelTxt, $levelTxt) {
         $path = (string) parse_url(localized_url($routePrefix . '.' . $item['key']), PHP_URL_PATH);
         $item['path'] = trim(str_replace(['{fen}', '%7Bfen%7D', '%7BFEN%7D'], '', $path), '/');
-        $item['active'] = $matchByLevelTxt ? $levelTxt === $item['label'] : request()->is($item['path']);
+        $item['active'] = $matchByLevelTxt ? __($item['label']) === $levelTxt : request()->is($item['path']);
         return $item;
     }, $levelItems);
 @endphp
